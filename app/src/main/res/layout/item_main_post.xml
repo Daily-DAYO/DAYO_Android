@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_marginHorizontal="8dp">
+
+        <ImageView
+            android:id="@+id/img_main_post"
+            android:layout_width="155dp"
+            android:layout_height="155dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_dayo_grayscale"/>
+
+        <ImageButton
+            android:id="@+id/btn_main_post_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_like_default"
+            app:layout_constraintRight_toRightOf="@id/img_main_post"
+            app:layout_constraintBottom_toBottomOf="@id/img_main_post"
+            android:background="@android:color/transparent"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"/>
+
+        <ImageView
+            android:id="@+id/img_main_post_user_profile"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            app:layout_constraintTop_toBottomOf="@id/img_main_post"
+            app:layout_constraintLeft_toLeftOf="@+id/img_main_post"
+            android:layout_marginTop="14dp"
+            android:layout_marginLeft="6dp"
+            tools:src="@drawable/ic_dayo_grayscale"
+            />
+
+        <TextView
+            android:id="@+id/tv_main_post_user_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12dp"
+            android:textStyle="bold"
+            android:textColor="@color/gray_1_313131"
+            app:layout_constraintTop_toTopOf="@id/img_main_post_user_profile"
+            app:layout_constraintBottom_toBottomOf="@id/img_main_post_user_profile"
+            app:layout_constraintLeft_toRightOf="@id/img_main_post_user_profile"
+            android:layout_marginLeft="5dp"
+            tools:text="Nickname"/>
+
+        <TextView
+            android:id="@+id/tv_main_post_hit_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10dp"
+            android:textColor="@color/gray_3_9C9C9C"
+            app:layout_constraintTop_toBottomOf="@id/img_main_post_user_profile"
+            app:layout_constraintLeft_toLeftOf="@id/img_main_post_user_profile"
+            android:layout_marginTop="10dp"
+            tools:text="조회수 1,230"/>
+
+        <TextView
+            android:id="@+id/tv_main_post_like_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10dp"
+            android:textColor="@color/gray_3_9C9C9C"
+            app:layout_constraintTop_toTopOf="@id/tv_main_post_hit_count"
+            app:layout_constraintLeft_toRightOf="@id/tv_main_post_hit_count"
+            android:layout_marginLeft="5dp"
+            tools:text="좋아요 135"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

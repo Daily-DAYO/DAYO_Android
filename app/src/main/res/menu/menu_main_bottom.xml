@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/HomeFragment"
+        android:icon="@drawable/ic_home"
+        android:title="@string/home" />
+    <item
+        android:id="@+id/FeedFragment"
+        android:icon="@drawable/ic_feed"
+        android:title="@string/feed" />
+    <item
+        android:id="@+id/WriteFragment"
+        android:title=""
+        />
+    <item
+        android:id="@+id/NotificationFragment"
+        android:icon="@drawable/ic_notification"
+        android:title="@string/notification" />
+    <item
+        android:id="@+id/MyPageFragment"
+        android:icon="@drawable/ic_my_page"
+        android:title="@string/my_page" />
+</menu>
