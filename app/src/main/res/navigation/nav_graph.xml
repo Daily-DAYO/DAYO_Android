@@ -16,6 +16,13 @@
     </fragment>
 
     <fragment
+        android:id="@+id/feedFragment"
+        android:name="com.daily.dayo.feed.FeedFragment"
+        android:label="fragment_feed"
+        tools:layout="@layout/fragment_feed">
+    </fragment>
+
+    <fragment
         android:id="@+id/writeFragment"
         android:name="com.daily.dayo.write.WriteFragment"
         android:label="fragment_write"
