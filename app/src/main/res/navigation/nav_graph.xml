@@ -7,12 +7,9 @@
 
     <fragment
         android:id="@+id/HomeFragment"
-        android:name="com.daily.dayo.HomeFragment"
-        android:label="fragment_on_boarding"
+        android:name="com.daily.dayo.home.HomeFragment"
+        android:label="fragment_home"
         tools:layout="@layout/fragment_home">
-        <action
-            android:id="@+id/action_feedFragment_to_writeFragment"
-            app:destination="@id/writeFragment" />
     </fragment>
 
     <fragment
@@ -27,6 +24,16 @@
         android:name="com.daily.dayo.write.WriteFragment"
         android:label="fragment_write"
         tools:layout="@layout/fragment_write">
+        <action
+            android:id="@+id/action_writeFragment_to_writeTagFragment"
+            app:destination="@id/writeTagFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/writeTagFragment"
+        android:name="com.daily.dayo.write.WriteTagFragment"
+        android:label="fragment_write_tag"
+        tools:layout="@layout/fragment_write_tag">
     </fragment>
 
 </navigation>
