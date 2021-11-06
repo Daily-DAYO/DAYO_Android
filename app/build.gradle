@@ -55,6 +55,9 @@ dependencies {
     // Testing Navigation
     androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
 
+    // ViewPager2
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
+
     // Google Flexbox-Layout
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
 
