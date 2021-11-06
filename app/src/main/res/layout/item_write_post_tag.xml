@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    >
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_write_post_tag"
+        android:layout_width="73dp"
+        android:layout_height="24dp"
+        android:textSize="11dp"
+        android:textColor="@color/primary_green_23C882"
+        android:textAlignment="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:background="@drawable/selector_button_write_post_tag"
+        tools:text="카테고리 이름"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>
