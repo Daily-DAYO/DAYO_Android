@@ -6,5 +6,28 @@
     <string name="write">글쓰기</string>
     <string name="notification">알림</string>
     <string name="my_page">마이 페이지</string>
+    <string name="confirm">확인</string>
+
+    <!-- Home -->
+    <string name="DayoPick">DAYO PICK</string>
+    <string name="New">New</string>
+
+    <!-- Category -->
+    <string name="all">전체</string>
+    <string name="scheduler">스케줄러</string>
+    <string name="studyplanner">스터디 플래너</string>
+    <string name="pocketbook">포켓북</string>
+    <string name="sixHoleDiary">6공 다이어리</string>
+    <string name="digital">굿노트</string>
+    <string name="etc">기타</string>
+
+    <!-- Write -->
+    <string name="hint_write_description">내용을 작성해주세요.</string>
+    <string name="upload">올리기</string>
+    <string name="write_post_tag_add">태그 추가</string>
+    <string name="hint_write_post_tag_add"># 키워드를 입력해주세요</string>
+    
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

@@ -27,6 +27,38 @@
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"/>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_post_ranking_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/img_main_post"
+            app:layout_constraintLeft_toLeftOf="@id/img_main_post"
+            android:layout_marginTop="11dp"
+            android:layout_marginLeft="12dp"
+            android:visibility="visible"
+            >
+            <ImageView
+                android:id="@+id/img_background_post_ranking_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_background_post_ranking_number"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+            <TextView
+                android:id="@+id/tv_post_ranking_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:textStyle="bold"
+                android:textColor="@color/white_FFFFFF"
+                android:gravity="center"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                tools:text="1" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <ImageView
             android:id="@+id/img_main_post_user_profile"
             android:layout_width="12dp"
