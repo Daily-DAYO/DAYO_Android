@@ -13,7 +13,14 @@
     </fragment>
 
     <fragment
-        android:id="@+id/feedFragment"
+        android:id="@+id/SearchFragment"
+        android:name="com.daily.dayo.search.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search">
+    </fragment>
+
+    <fragment
+        android:id="@+id/FeedFragment"
         android:name="com.daily.dayo.feed.FeedFragment"
         android:label="fragment_feed"
         tools:layout="@layout/fragment_feed">
