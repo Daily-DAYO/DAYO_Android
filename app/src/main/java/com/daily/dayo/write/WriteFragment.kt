@@ -9,6 +9,7 @@ import com.daily.dayo.databinding.FragmentWriteBinding
 import android.widget.RadioGroup
 import android.widget.RadioButton
 import androidx.navigation.fragment.findNavController
+import com.daily.dayo.R
 
 private var mRgLine1: RadioGroup? = null
 private var mRgLine2: RadioGroup? = null
@@ -29,10 +30,20 @@ class WriteFragment : Fragment() {
         mRgLine1!!.setOnCheckedChangeListener(listener1)
         mRgLine2!!.setOnCheckedChangeListener(listener2)
 
+        setBackButtonClickListener()
+        setUploadButtonClickListener()
+        return binding.root
+    }
+
+    private fun setBackButtonClickListener(){
         binding.btnWritePostBack.setOnClickListener {
             findNavController().navigateUp()
         }
-        return binding.root
+    }
+    private fun setUploadButtonClickListener(){
+        binding.btnWritePostUpload.setOnClickListener {
+            findNavController().navigate(R.id.action_writeFragment_to_writeOptionFragment)
+        }
     }
 
     private val listener1: RadioGroup.OnCheckedChangeListener = object :
