@@ -27,17 +27,28 @@
     </fragment>
 
     <fragment
-        android:id="@+id/writeFragment"
+        android:id="@+id/WriteFragment"
         android:name="com.daily.dayo.write.WriteFragment"
         android:label="fragment_write"
         tools:layout="@layout/fragment_write">
         <action
-            android:id="@+id/action_writeFragment_to_writeTagFragment"
-            app:destination="@id/writeTagFragment" />
+            android:id="@+id/action_writeFragment_to_writeOptionFragment"
+            app:destination="@id/WriteOptionFragment"
+            />
     </fragment>
 
+    <dialog
+        android:id="@+id/WriteOptionFragment"
+        android:name="com.daily.dayo.write.WriteOptionFragment"
+        android:label="fragment_write_option"
+        tools:layout="@layout/fragment_write_option">
+        <action
+            android:id="@+id/action_writeOptionFragment_to_writeTagFragment"
+            app:destination="@id/WriteTagFragment" />
+    </dialog>
+
     <fragment
-        android:id="@+id/writeTagFragment"
+        android:id="@+id/WriteTagFragment"
         android:name="com.daily.dayo.write.WriteTagFragment"
         android:label="fragment_write_tag"
         tools:layout="@layout/fragment_write_tag">
