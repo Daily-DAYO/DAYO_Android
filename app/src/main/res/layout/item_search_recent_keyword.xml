@@ -10,7 +10,7 @@
         android:id="@+id/tv_search_recent_keyword_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
+        android:textSize="12dp"
         android:textColor="@color/gray_2_5D5D5D"
         android:textAlignment="center"
         app:layout_constraintTop_toTopOf="parent"
