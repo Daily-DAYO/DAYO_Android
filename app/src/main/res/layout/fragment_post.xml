@@ -214,23 +214,15 @@
                         tools:text="댓글 4개"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <View
-                    android:id="@+id/view_post_reaction_list_horizontal_line"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:background="@color/gray_4_D3D2D2"
-                    app:layout_constraintTop_toBottomOf="@id/layout_post_reaction_result_count_list"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_post_comment_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@+id/view_post_reaction_list_horizontal_line"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_post_reaction_result_count_list"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:overScrollMode="never"/>
+                    android:overScrollMode="never"
+                    tools:listitem="@layout/item_post_comment"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
