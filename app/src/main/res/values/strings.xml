@@ -7,6 +7,7 @@
     <string name="notification">알림</string>
     <string name="my_page">마이 페이지</string>
     <string name="confirm">확인</string>
+    <string name="delete">삭제하기</string>
 
     <!-- Home -->
     <string name="DayoPick">DAYO PICK</string>
