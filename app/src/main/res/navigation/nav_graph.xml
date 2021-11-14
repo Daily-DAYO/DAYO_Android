@@ -10,6 +10,10 @@
         android:name="com.daily.dayo.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_postFragment"
+            app:destination="@id/PostFragment"
+            />
     </fragment>
 
     <fragment
@@ -52,6 +56,13 @@
         android:name="com.daily.dayo.write.WriteTagFragment"
         android:label="fragment_write_tag"
         tools:layout="@layout/fragment_write_tag">
+    </fragment>
+
+    <fragment
+        android:id="@+id/PostFragment"
+        android:name="com.daily.dayo.post.PostFragment"
+        android:label="fragment_post"
+        tools:layout="@layout/fragment_post">
     </fragment>
 
 </navigation>
