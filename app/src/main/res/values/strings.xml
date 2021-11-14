@@ -35,6 +35,10 @@
     <string name="write_option_title_tag">태그 추가</string>
     <string name="write_option_description_tag">오늘의 기록과 어울리는 키워드를 추가해보세요</string>
 
+    <!-- Post -->
+    <string name="hint_post_comment_write_description">댓글을 남겨주세요</string>
+    <string name="post_comment_write_upload">게시</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
