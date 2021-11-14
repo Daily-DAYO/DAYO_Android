@@ -32,11 +32,13 @@ class MainActivity : AppCompatActivity() {
             binding.layoutBottomNavigationMain.visibility = when (destination.id) {
                 R.id.HomeFragment -> View.VISIBLE
                 R.id.FeedFragment -> View.VISIBLE
+                R.id.MyProfileFragment -> View.VISIBLE
                 else -> View.GONE
             }
             binding.btnBottomNavigationWrite.visibility = when (destination.id) {
                 R.id.HomeFragment -> View.VISIBLE
                 R.id.FeedFragment -> View.VISIBLE
+                R.id.MyProfileFragment -> View.VISIBLE
                 else -> View.GONE
             }
 
