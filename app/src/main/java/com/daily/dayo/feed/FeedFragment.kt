@@ -5,9 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
+import com.daily.dayo.databinding.FragmentFeedBinding
 
 class FeedFragment: Fragment() {
+
+    private var _binding: FragmentFeedBinding? = null
+    private val binding get() = requireNotNull(_binding)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,7 +22,15 @@ class FeedFragment: Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_feed, container, false)
+        _binding = FragmentFeedBinding.inflate(inflater, container, false)
+
+        setPostSearchButtonClickListener()
+        return binding.root
+    }
+
+    private fun setPostSearchButtonClickListener() {
+        binding.btnPostSearch.setOnClickListener {
+            findNavController().navigate(R.id.action_FeedFragment_to_SearchFragment)
+        }
     }
 }

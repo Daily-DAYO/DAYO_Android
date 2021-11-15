@@ -27,18 +27,26 @@
             android:layout_marginBottom="15dp"
             android:layout_marginStart="18dp"/>
 
-        <View
-            android:id="@+id/view_search_horizontal_line"
+        <MultiAutoCompleteTextView
+            android:id="@+id/tv_search_keyword_input"
             android:layout_width="0dp"
-            android:layout_height="1dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:layout_marginEnd="8dp"
+            android:completionThreshold="2"
+            android:inputType="text"
+            android:textSize="16dp"
+            android:backgroundTint="@color/white_FFFFFF"
+            android:textCursorDrawable="@color/gray_1_313131"
+            android:textColor="@color/gray_1_313131"
+            android:textColorHint="@color/gray_4_D3D2D2"
+            android:hint="@string/hint_search_keyword_input"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:background="@color/gray_5_F6F6F6"
-            />
+            app:layout_constraintStart_toEndOf="@id/btn_search_back"
+            app:layout_constraintEnd_toStartOf="@+id/btn_search_keyword" />
 
         <ImageButton
-            android:id="@+id/btn_post_search"
+            android:id="@+id/btn_search_keyword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
@@ -48,8 +56,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginTop="15dp"
-            android:layout_marginEnd="15dp"
-            />
+            android:layout_marginEnd="16dp" />
+        
+        <View
+            android:id="@+id/view_search_horizontal_line"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@color/gray_5_F6F6F6" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -87,7 +103,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="21dp"
-        android:layout_marginHorizontal="18dp"/>
+        android:layout_marginHorizontal="18dp"
+        tools:itemCount="6"
+        tools:listitem="@layout/item_search_recent_keyword"/>
 
     <TextView
         android:id="@+id/tv_search_recommend_keyword"
@@ -112,6 +130,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="21dp"
-        android:layout_marginHorizontal="18dp"/>
+        android:layout_marginHorizontal="18dp"
+        tools:listitem="@layout/item_search_recommend_keyword"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
