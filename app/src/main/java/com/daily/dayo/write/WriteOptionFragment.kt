@@ -31,5 +31,8 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
         binding.layoutWriteOptionTag.setOnClickListener {
             findNavController().navigate(R.id.action_writeOptionFragment_to_writeTagFragment)
         }
+        binding.layoutWriteOptionFolder.setOnClickListener {
+            findNavController().navigate(R.id.action_writeOptionFragment_to_writeFolderFragment)
+        }
     }
 }
