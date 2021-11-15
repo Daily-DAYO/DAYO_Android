@@ -56,6 +56,9 @@
         <action
             android:id="@+id/action_writeOptionFragment_to_writeTagFragment"
             app:destination="@id/WriteTagFragment" />
+        <action
+            android:id="@+id/action_writeOptionFragment_to_writeFolderFragment"
+            app:destination="@id/WriteFolderFragment" />
     </dialog>
 
     <fragment
@@ -63,6 +66,23 @@
         android:name="com.daily.dayo.write.WriteTagFragment"
         android:label="fragment_write_tag"
         tools:layout="@layout/fragment_write_tag">
+    </fragment>
+
+    <fragment
+        android:id="@+id/WriteFolderFragment"
+        android:name="com.daily.dayo.write.WriteFolderFragment"
+        android:label="fragment_write_folder"
+        tools:layout="@layout/fragment_write_folder">
+        <action
+            android:id="@+id/action_writeFolderFragment_to_folderAddFragment"
+            app:destination="@id/FolderAddFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/FolderAddFragment"
+        android:name="com.daily.dayo.FolderAddFragment"
+        android:label="fragment_write_add"
+        tools:layout="@layout/fragment_folder_add">
     </fragment>
 
     <fragment
