@@ -21,7 +21,7 @@
         android:enabled="true"
         android:title="@string/notification" />
     <item
-        android:id="@+id/MyPageFragment"
+        android:id="@+id/MyProfileFragment"
         android:icon="@drawable/ic_my_page"
         android:enabled="true"
         android:title="@string/my_page" />

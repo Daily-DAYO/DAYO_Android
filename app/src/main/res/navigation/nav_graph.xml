@@ -41,6 +41,13 @@
             />
     </fragment>
 
+    <fragment
+        android:id="@+id/MyProfileFragment"
+        android:name="com.daily.dayo.profile.MyProfileFragment"
+        android:label="fragment_my_profile"
+        tools:layout="@layout/fragment_my_profile">
+    </fragment>
+
     <dialog
         android:id="@+id/WriteOptionFragment"
         android:name="com.daily.dayo.write.WriteOptionFragment"
