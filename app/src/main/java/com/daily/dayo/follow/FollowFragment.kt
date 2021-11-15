@@ -1,4 +1,4 @@
-package com.daily.dayo.profile
+package com.daily.dayo.follow
 
 import android.os.Bundle
 import android.util.Log
@@ -8,17 +8,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
-import com.daily.dayo.R
-import com.daily.dayo.databinding.FragmentMyProfileBinding
-import com.daily.dayo.home.DayoPickPostListFragment
-import com.daily.dayo.home.HomeFragmentPagerStateAdapter
-import com.daily.dayo.home.NewPostListFragment
+import com.daily.dayo.databinding.FragmentFollowBinding
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
-class MyProfileFragment : Fragment() {
+class FollowFragment : Fragment() {
 
-    private var _binding: FragmentMyProfileBinding? = null
+    private var _binding: FragmentFollowBinding? = null
     private val binding get() = requireNotNull(_binding)
     private lateinit var viewPager : ViewPager2
     private lateinit var tabLayout: TabLayout
@@ -32,21 +28,20 @@ class MyProfileFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentMyProfileBinding.inflate(inflater, container, false)
-        viewPager = binding.pagerMyProfile
-        tabLayout = binding.tabsMyProfile
+        _binding = FragmentFollowBinding.inflate(inflater, container, false)
+        viewPager = binding.pagerFollow
+        tabLayout = binding.tabsFollow
 
-        setFollowerButtonClickListener()
-        setFollowingButtonClickListener()
+        setBackButtonClickListener()
         return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val pagerAdapter = MyProfileFragmentPagerStateAdapter(requireActivity())
-        pagerAdapter.addFragment(ProfileFolderListFragment())
-        pagerAdapter.addFragment(ProfileLikePostListFragment())
+        val pagerAdapter = FollowFragmentPagerStateAdapter(requireActivity())
+        pagerAdapter.addFragment(FollowerListFragment())
+        pagerAdapter.addFragment(FollowingListFragment())
         viewPager.adapter = pagerAdapter
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -58,21 +53,15 @@ class MyProfileFragment : Fragment() {
 
         TabLayoutMediator(tabLayout, viewPager){ tab, position ->
             when (position){
-                0 -> tab.text = "작성한 글"
-                1 -> tab.text = "좋아요"
+                0 -> tab.text = "팔로워"
+                1 -> tab.text = "팔로잉"
             }
         }.attach()
     }
 
-    private fun setFollowerButtonClickListener(){
-        binding.layoutMyProfileFollowerCount.setOnClickListener {
-            findNavController().navigate(R.id.action_myProfileFragment_to_followFragment)
-        }
-    }
-
-    private fun setFollowingButtonClickListener(){
-        binding.layoutMyProfileFollowingCount.setOnClickListener {
-            findNavController().navigate(R.id.action_myProfileFragment_to_followFragment)
+    private fun setBackButtonClickListener(){
+        binding.btnFollowBack.setOnClickListener {
+            findNavController().navigateUp()
         }
     }
 }
