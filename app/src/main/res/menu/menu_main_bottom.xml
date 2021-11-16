@@ -12,7 +12,7 @@
         android:title="@string/feed" />
     <item
         android:id="@+id/WriteFragment"
-        android:enabled="true"
+        android:enabled="false"
         android:title=""
         />
     <item
