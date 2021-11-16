@@ -126,7 +126,8 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/vp_post_image"
                         android:layout_marginTop="22dp"
-                        android:layout_marginHorizontal="19dp"
+                        android:layout_marginStart="21dp"
+                        android:layout_marginEnd="17dp"
                         tools:text="다이어리를 꾸며봤어요~! 블랙 앤 화이트로 꾸며봤습니다:) 일기를 써보았어요. 이러쿵 저러쿵 이러쿵 저러쿵 이러쿵 저러쿵 팔로잉 피드 게시글 내용입니다."
                         />
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -180,10 +181,31 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_post_tag_list"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/layout_post_reaction_button_list"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:paddingTop="18dp"
+                    android:paddingBottom="22dp"
+                    android:paddingHorizontal="18dp">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_post_tag_list"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        tools:listitem="@layout/item_post_tag"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layout_post_reaction_result_count_list"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@+id/layout_post_reaction_button_list"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_post_tag_list"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="9dp"

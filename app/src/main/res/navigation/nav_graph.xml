@@ -12,8 +12,10 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_postFragment"
-            app:destination="@id/PostFragment"
-            />
+            app:destination="@id/PostFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_writeFragment"
+            app:destination="@id/WriteFragment" />
     </fragment>
 
     <fragment
@@ -31,6 +33,9 @@
         <action
             android:id="@+id/action_FeedFragment_to_SearchFragment"
             app:destination="@id/SearchFragment" />
+        <action
+            android:id="@+id/action_feedFragment_to_writeFragment"
+            app:destination="@id/WriteFragment" />
     </fragment>
 
     <fragment
@@ -93,6 +98,9 @@
         android:name="com.daily.dayo.profile.MyProfileFragment"
         android:label="fragment_my_profile"
         tools:layout="@layout/fragment_my_profile">
+        <action
+            android:id="@+id/action_myProfileFragment_to_writeFragment"
+            app:destination="@id/WriteFragment" />
         <action
             android:id="@+id/action_myProfileFragment_to_followFragment"
             app:destination="@id/FollowFragment">
