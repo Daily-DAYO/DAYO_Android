@@ -54,14 +54,15 @@
                 app:menu="@menu/menu_main_bottom" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageView
+        <ImageButton
             android:id="@+id/btn_bottom_navigation_write"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_dayo_grayscale"
+            android:layout_height="0dp"
+            android:src="@drawable/selector_button_write"
+            android:background="@android:color/transparent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="5dp"/>
+            app:layout_constraintStart_toStartOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
