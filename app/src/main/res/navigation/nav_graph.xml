@@ -28,6 +28,9 @@
         android:name="com.daily.dayo.feed.FeedFragment"
         android:label="fragment_feed"
         tools:layout="@layout/fragment_feed">
+        <action
+            android:id="@+id/action_FeedFragment_to_SearchFragment"
+            app:destination="@id/SearchFragment" />
     </fragment>
 
     <fragment
