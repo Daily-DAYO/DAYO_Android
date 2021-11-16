@@ -38,7 +38,7 @@
             android:id="@+id/tv_write_option_icon_folder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_right_sign__light_gray"
+            android:src="@drawable/ic_right_sign_light_gray"
             app:layout_constraintTop_toTopOf="@id/tv_write_option_title_folder"
             app:layout_constraintBottom_toBottomOf="@id/tv_write_option_title_folder"
             app:layout_constraintRight_toRightOf="parent" />
