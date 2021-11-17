@@ -6,16 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.daily.dayo.databinding.FragmentFollowingListBinding
+import com.daily.dayo.util.autoCleared
 
 class FollowingListFragment : Fragment() {
-    private var _binding: FragmentFollowingListBinding? = null
-    private val binding get() = requireNotNull(_binding)
+    private var binding by autoCleared<FragmentFollowingListBinding>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentFollowingListBinding.inflate(inflater, container, false)
+        binding = FragmentFollowingListBinding.inflate(inflater, container, false)
         return binding.root
     }
 }

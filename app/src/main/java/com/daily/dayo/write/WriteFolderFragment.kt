@@ -9,15 +9,15 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentWriteFolderBinding
+import com.daily.dayo.util.autoCleared
 
 class WriteFolderFragment : Fragment() {
-    private var _binding: FragmentWriteFolderBinding? = null
-    private val binding get() = requireNotNull(_binding)
+    private var binding by autoCleared<FragmentWriteFolderBinding>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentWriteFolderBinding.inflate(inflater, container, false)
+        binding = FragmentWriteFolderBinding.inflate(inflater, container, false)
 
         setBackButtonClickListener()
         setConfirmButtonClickListener()
