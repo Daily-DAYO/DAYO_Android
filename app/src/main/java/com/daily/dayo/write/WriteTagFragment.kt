@@ -7,16 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.databinding.FragmentWriteTagBinding
+import com.daily.dayo.util.autoCleared
 
 class WriteTagFragment : Fragment() {
-    private var _binding: FragmentWriteTagBinding? = null
-    private val binding get() = requireNotNull(_binding)
+    private var binding by autoCleared<FragmentWriteTagBinding>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentWriteTagBinding.inflate(inflater, container, false)
+        binding = FragmentWriteTagBinding.inflate(inflater, container, false)
         setBackButtonClickListener()
         return binding.root
     }

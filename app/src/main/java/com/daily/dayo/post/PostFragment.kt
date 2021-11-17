@@ -8,16 +8,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.daily.dayo.databinding.FragmentPostBinding
+import com.daily.dayo.util.autoCleared
 
 class PostFragment : Fragment() {
-    private var _binding: FragmentPostBinding? = null
-    private val binding get() = requireNotNull(_binding)
+    private var binding by autoCleared<FragmentPostBinding>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentPostBinding.inflate(inflater, container, false)
+        binding = FragmentPostBinding.inflate(inflater, container, false)
         setCommentListAdapter()
         return binding.root
     }
