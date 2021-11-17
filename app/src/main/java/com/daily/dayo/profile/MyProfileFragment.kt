@@ -13,13 +13,13 @@ import com.daily.dayo.databinding.FragmentMyProfileBinding
 import com.daily.dayo.home.DayoPickPostListFragment
 import com.daily.dayo.home.HomeFragmentPagerStateAdapter
 import com.daily.dayo.home.NewPostListFragment
+import com.daily.dayo.util.autoCleared
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MyProfileFragment : Fragment() {
 
-    private var _binding: FragmentMyProfileBinding? = null
-    private val binding get() = requireNotNull(_binding)
+    private var binding by autoCleared<FragmentMyProfileBinding>()
     private lateinit var viewPager : ViewPager2
     private lateinit var tabLayout: TabLayout
 
@@ -32,7 +32,7 @@ class MyProfileFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentMyProfileBinding.inflate(inflater, container, false)
+        binding = FragmentMyProfileBinding.inflate(inflater, container, false)
         viewPager = binding.pagerMyProfile
         tabLayout = binding.tabsMyProfile
 

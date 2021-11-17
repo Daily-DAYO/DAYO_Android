@@ -6,16 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.daily.dayo.databinding.FragmentProfileFolderListBinding
+import com.daily.dayo.util.autoCleared
 
 class ProfileFolderListFragment : Fragment() {
-    private var _binding: FragmentProfileFolderListBinding? = null
-    private val binding get() = requireNotNull(_binding)
+    private var binding by autoCleared<FragmentProfileFolderListBinding>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentProfileFolderListBinding.inflate(inflater, container, false)
+        binding = FragmentProfileFolderListBinding.inflate(inflater, container, false)
         return binding.root
     }
 }

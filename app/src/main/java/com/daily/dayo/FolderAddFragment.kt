@@ -8,15 +8,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.databinding.FragmentFolderAddBinding
+import com.daily.dayo.util.autoCleared
 
 class FolderAddFragment : Fragment() {
-    private var _binding: FragmentFolderAddBinding? = null
-    private val binding get() = requireNotNull(_binding)
+    private var binding by autoCleared<FragmentFolderAddBinding>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentFolderAddBinding.inflate(inflater, container, false)
+        binding = FragmentFolderAddBinding.inflate(inflater, container, false)
         setBackButtonClickListener()
         setConfirmButtonClickListener()
 

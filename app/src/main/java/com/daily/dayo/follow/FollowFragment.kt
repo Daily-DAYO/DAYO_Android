@@ -9,13 +9,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.daily.dayo.databinding.FragmentFollowBinding
+import com.daily.dayo.util.autoCleared
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class FollowFragment : Fragment() {
-
-    private var _binding: FragmentFollowBinding? = null
-    private val binding get() = requireNotNull(_binding)
+    private var binding by autoCleared<FragmentFollowBinding>()
     private lateinit var viewPager : ViewPager2
     private lateinit var tabLayout: TabLayout
 
@@ -28,7 +27,7 @@ class FollowFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentFollowBinding.inflate(inflater, container, false)
+        binding = FragmentFollowBinding.inflate(inflater, container, false)
         viewPager = binding.pagerFollow
         tabLayout = binding.tabsFollow
 

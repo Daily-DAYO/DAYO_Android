@@ -8,17 +8,17 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentWriteOptionBinding
+import com.daily.dayo.util.autoCleared
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class WriteOptionFragment : BottomSheetDialogFragment() {
-    private var _binding: FragmentWriteOptionBinding? = null
-    private val binding get() = requireNotNull(_binding)
+    private var binding by autoCleared<FragmentWriteOptionBinding>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentWriteOptionBinding.inflate(inflater, container, false)
+        binding = FragmentWriteOptionBinding.inflate(inflater, container, false)
 
         return binding.root
     }
