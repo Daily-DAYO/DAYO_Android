@@ -6,16 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.daily.dayo.databinding.FragmentNewPostListBinding
+import com.daily.dayo.util.autoCleared
 
 class NewPostListFragment : Fragment() {
-    private var _binding: FragmentNewPostListBinding? = null
-    private val binding get() = requireNotNull(_binding)
+    private var binding by autoCleared<FragmentNewPostListBinding>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentNewPostListBinding.inflate(inflater, container, false)
+        binding = FragmentNewPostListBinding.inflate(inflater, container, false)
         return binding.root
     }
 }

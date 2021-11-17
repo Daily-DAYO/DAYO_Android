@@ -8,12 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager2.widget.ViewPager2
 import com.daily.dayo.databinding.FragmentHomeBinding
+import com.daily.dayo.util.autoCleared
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class HomeFragment : Fragment() {
-    private var _binding: FragmentHomeBinding? = null
-    private val binding get() = requireNotNull(_binding)
+    private var binding by autoCleared<FragmentHomeBinding>()
     private lateinit var viewPager : ViewPager2
     private lateinit var tabLayout: TabLayout
 
@@ -21,7 +21,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
         viewPager = binding.pagerHomePost
         tabLayout = binding.tabsActionbarHomeCategory
 

@@ -10,19 +10,19 @@ import android.widget.RadioGroup
 import android.widget.RadioButton
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
+import com.daily.dayo.util.autoCleared
 
 private var mRgLine1: RadioGroup? = null
 private var mRgLine2: RadioGroup? = null
 
 class WriteFragment : Fragment() {
-    private var _binding: FragmentWriteBinding? = null
-    private val binding get() = requireNotNull(_binding)
+    private var binding by autoCleared<FragmentWriteBinding>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentWriteBinding.inflate(inflater, container, false)
+        binding = FragmentWriteBinding.inflate(inflater, container, false)
         mRgLine1 = binding.radiogroupWritePostCategoryLine1
         mRgLine2 = binding.radiogroupWritePostCategoryLine2
         mRgLine1!!.clearCheck()
