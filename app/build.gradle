@@ -5,13 +5,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.daily.dayo"
         minSdkVersion 23
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
@@ -34,6 +34,10 @@ android {
     buildFeatures {
         dataBinding true
         viewBinding true
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion compose_version
     }
 }
 
@@ -41,6 +45,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     def nav_version = "2.3.5"
     def lifecycle_version = "2.4.0"
+    def compose_version = "1.0.5"
 
     // Java language implementation Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
@@ -79,6 +84,19 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
 
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
+
+    // Integration with activities
+    implementation "androidx.activity:activity-compose:1.4.0"
+
+    // Jetpack Compose
+    // Compose Material Design
+    implementation "androidx.compose.material:material:$compose_version"
+    // Animations
+    implementation "androidx.compose.animation:animation:$compose_version"
+    // Tooling support (Previews, etc.)
+    implementation "androidx.compose.ui:ui-tooling:$compose_version"
+    // UI Tests
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.7.0'
