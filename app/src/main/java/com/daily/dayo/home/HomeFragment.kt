@@ -8,10 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager2.widget.ViewPager2
 import com.daily.dayo.databinding.FragmentHomeBinding
+import com.daily.dayo.home.adapter.HomeFragmentPagerStateAdapter
 import com.daily.dayo.util.autoCleared
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
     private var binding by autoCleared<FragmentHomeBinding>()
     private lateinit var viewPager : ViewPager2
