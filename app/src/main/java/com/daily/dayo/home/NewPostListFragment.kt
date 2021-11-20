@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.daily.dayo.databinding.FragmentNewPostListBinding
 import com.daily.dayo.util.autoCleared
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class NewPostListFragment : Fragment() {
     private var binding by autoCleared<FragmentNewPostListBinding>()
 

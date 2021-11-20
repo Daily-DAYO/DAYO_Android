@@ -1,4 +1,4 @@
-package com.daily.dayo.home
+package com.daily.dayo.home.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
