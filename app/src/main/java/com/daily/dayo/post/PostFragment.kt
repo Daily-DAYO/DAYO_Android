@@ -5,8 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentPostBinding
 import com.daily.dayo.util.autoCleared
 
@@ -19,6 +21,7 @@ class PostFragment : Fragment() {
     ): View? {
         binding = FragmentPostBinding.inflate(inflater, container, false)
         setCommentListAdapter()
+        setPostOptionClickListener()
         return binding.root
     }
 
@@ -39,6 +42,13 @@ class PostFragment : Fragment() {
                 swipeHelperCallback.removePreviousClamp(this)
                 false
             }
+        }
+    }
+
+    private fun setPostOptionClickListener() {
+        binding.btnPostOption.setOnClickListener {
+            //PostOptionFragment().show(requireActivity().supportFragmentManager, "PostOptionDialog")
+            findNavController().navigate(R.id.action_postFragment_to_postOptionFragment)
         }
     }
 }
