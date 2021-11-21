@@ -35,7 +35,7 @@ android {
     buildFeatures {
         dataBinding true
         viewBinding true
-        compose true
+    //    compose true
     }
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
@@ -90,6 +90,7 @@ dependencies {
     implementation "androidx.activity:activity-compose:1.4.0"
 
     // Jetpack Compose
+    implementation "androidx.compose.compiler:compiler:$compose_version"
     // Compose Material Design
     implementation "androidx.compose.material:material:$compose_version"
     // Animations
