@@ -5,6 +5,10 @@ plugins {
     id 'dagger.hilt.android.plugin'
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def NATIVE_APP_KEY = properties.getProperty('NATIVE_APP_KEY')
+
 android {
     compileSdkVersion 31
     buildToolsVersion "30.0.3"
@@ -17,6 +21,9 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField ("String", "NATIVE_APP_KEY", properties['NATIVE_APP_KEY_STR'])
+        manifestPlaceholders = [NATIVE_APP_KEY: NATIVE_APP_KEY]
     }
 
     buildTypes {
@@ -102,6 +109,9 @@ dependencies {
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
+    
+    // Kakao sdk
+    implementation "com.kakao.sdk:v2-user:2.8.3"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.7.0'
