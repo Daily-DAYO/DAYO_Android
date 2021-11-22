@@ -42,6 +42,8 @@
     <!-- Post -->
     <string name="hint_post_comment_write_description">댓글을 남겨주세요</string>
     <string name="post_comment_write_upload">게시</string>
+    <string name="post_option_report">신고</string>
+    <string name="post_option_hide">이 게시물 숨기기</string>
 
     <!-- Folder -->
     <string name="post_folder_add_title">폴더 추가</string>

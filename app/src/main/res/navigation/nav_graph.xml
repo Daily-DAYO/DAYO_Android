@@ -91,7 +91,16 @@
         android:name="com.daily.dayo.post.PostFragment"
         android:label="fragment_post"
         tools:layout="@layout/fragment_post">
+        <action
+            android:id="@+id/action_postFragment_to_postOptionFragment"
+            app:destination="@id/PostOptionFragment"/>
     </fragment>
+    <dialog
+        android:id="@+id/PostOptionFragment"
+        android:name="com.daily.dayo.post.PostOptionFragment"
+        android:label="fragment_post_option"
+        tools:layout="@layout/fragment_post_option">
+    </dialog>
 
     <fragment
         android:id="@+id/MyProfileFragment"

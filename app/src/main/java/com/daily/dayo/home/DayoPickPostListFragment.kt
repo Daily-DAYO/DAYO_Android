@@ -7,9 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.daily.dayo.databinding.FragmentDayoPickPostListBinding
+//import com.daily.dayo.home.adapter.HomeDayoPickAdapater
 import com.daily.dayo.util.autoCleared
+import dagger.hilt.android.AndroidEntryPoint
 
 private const val ARG_OBJECT = "object"
+
+@AndroidEntryPoint
 class DayoPickPostListFragment : Fragment() {
     private var binding by autoCleared<FragmentDayoPickPostListBinding>()
 
@@ -27,4 +31,8 @@ class DayoPickPostListFragment : Fragment() {
             textView.text = getInt(ARG_OBJECT).toString()
         }
     }
+/*
+    private fun setRvDayoPickPostAdapter() {
+        binding.rvDayopickPost.adapter = HomeDayoPickAdapater()
+    }*/
 }
