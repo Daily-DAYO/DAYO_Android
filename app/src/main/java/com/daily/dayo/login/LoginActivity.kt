@@ -1,14 +1,23 @@
 package com.daily.dayo.login
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
 import com.daily.dayo.MainActivity
 import com.daily.dayo.databinding.ActivityLoginBinding
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.user.UserApiClient
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityLoginBinding
+    private val loginViewModel : LoginViewModel by viewModels(){
+        LoginViewModelFactory(LoginRepository(LoginServiceImpl()))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +30,26 @@ class LoginActivity : AppCompatActivity() {
 
     fun setKakaoLoginButtonClickListener(){
         binding.btnLoginKakao.setOnClickListener {
+            if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
+                UserApiClient.instance.loginWithKakaoTalk(this, callback = callback)
+            } else {
+                UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
+            }
+        }
+    }
 
+    val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+        if (error != null) {
+            Log.e(TAG, "로그인 실패", error)
+        }
+        else if (token != null) {
+            Log.i(TAG, "로그인 성공 ${token.accessToken}")
+
+            loginViewModel.loginRequest(LoginRequest(token.accessToken))
+
+            val intent = Intent(applicationContext, MainActivity::class.java)
+            startActivity(intent)
+            this.finish()
         }
     }
 
