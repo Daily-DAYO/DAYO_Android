@@ -12,80 +12,79 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.util.autoCleared
 
-private var mRgLine1: RadioGroup? = null
-private var mRgLine2: RadioGroup? = null
-
 class WriteFragment : Fragment() {
     private var binding by autoCleared<FragmentWriteBinding>()
+    private var radioGroupCategoryLine1: RadioGroup? = null
+    private var radioGroupCategoryLine2: RadioGroup? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater,
+                              container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         binding = FragmentWriteBinding.inflate(inflater, container, false)
-        mRgLine1 = binding.radiogroupWritePostCategoryLine1
-        mRgLine2 = binding.radiogroupWritePostCategoryLine2
-        mRgLine1!!.clearCheck()
-        mRgLine2!!.clearCheck()
-        mRgLine1!!.setOnCheckedChangeListener(listener1)
-        mRgLine2!!.setOnCheckedChangeListener(listener2)
-
+        setRadioButtonGrouping()
         setBackButtonClickListener()
         setUploadButtonClickListener()
         return binding.root
     }
 
-    private fun setBackButtonClickListener(){
+    private fun setRadioButtonGrouping() {
+        radioGroupCategoryLine1 = binding.radiogroupWritePostCategoryLine1
+        radioGroupCategoryLine2 = binding.radiogroupWritePostCategoryLine2
+        radioGroupCategoryLine1?.let {
+            it.clearCheck()
+            it.setOnCheckedChangeListener(listener1)
+        }
+        radioGroupCategoryLine2?.let {
+            it.clearCheck()
+            it.setOnCheckedChangeListener(listener2)
+        }
+    }
+
+    private fun setBackButtonClickListener() {
         binding.btnWritePostBack.setOnClickListener {
             findNavController().navigateUp()
         }
     }
-    private fun setUploadButtonClickListener(){
+
+    private fun setUploadButtonClickListener() {
+        var selectedCategoryName = ""
         binding.btnWritePostUpload.setOnClickListener {
+            if (radioGroupCategoryLine1!!.checkedRadioButtonId > 0) {
+                val radioButton = radioGroupCategoryLine1?.findViewById<View>(radioGroupCategoryLine1!!.checkedRadioButtonId)
+                val radioId = radioGroupCategoryLine1!!.indexOfChild(radioButton)
+                val btn = radioGroupCategoryLine1!!.getChildAt(radioId) as RadioButton
+                selectedCategoryName = btn.text as String
+            } else if (radioGroupCategoryLine2!!.checkedRadioButtonId > 0) {
+                val radioButton = radioGroupCategoryLine2?.findViewById<View>(radioGroupCategoryLine2!!.checkedRadioButtonId)
+                val radioId = radioGroupCategoryLine2!!.indexOfChild(radioButton)
+                val btn = radioGroupCategoryLine2!!.getChildAt(radioId) as RadioButton
+                selectedCategoryName = btn.text as String
+            }
+
             findNavController().navigate(R.id.action_writeFragment_to_writeOptionFragment)
         }
     }
 
-    private val listener1: RadioGroup.OnCheckedChangeListener = object :
-        RadioGroup.OnCheckedChangeListener {
+    private val listener1: RadioGroup.OnCheckedChangeListener = object : RadioGroup.OnCheckedChangeListener {
         override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
             if (checkedId != -1) {
-                mRgLine2!!.setOnCheckedChangeListener(null)
-                mRgLine2!!.clearCheck()
-                mRgLine2!!.setOnCheckedChangeListener(listener2)
-            }
-        }
-    }
-
-    private val listener2: RadioGroup.OnCheckedChangeListener = object :
-        RadioGroup.OnCheckedChangeListener {
-        override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
-            if (checkedId != -1) {
-                mRgLine1!!.setOnCheckedChangeListener(null)
-                mRgLine1!!.clearCheck()
-                mRgLine1!!.setOnCheckedChangeListener(listener1)
-            }
-        }
-    }
-    fun onClick(v: View) {
-        // TODO Auto-generated method stub
-        binding.btnWritePostUpload.setOnClickListener {
-                var selectedResult = ""
-                if (mRgLine1!!.checkedRadioButtonId > 0) {
-                    val radioButton = mRgLine1?.findViewById<View>(
-                        mRgLine1!!.checkedRadioButtonId
-                    )
-                    val radioId = mRgLine1!!.indexOfChild(radioButton)
-                    val btn = mRgLine1!!.getChildAt(radioId) as RadioButton
-                    selectedResult = btn.text as String
-                } else if (mRgLine2!!.checkedRadioButtonId > 0) {
-                    val radioButton = mRgLine2?.findViewById<View>(
-                        mRgLine2!!.checkedRadioButtonId
-                    )
-                    val radioId = mRgLine2!!.indexOfChild(radioButton)
-                    val btn = mRgLine2!!.getChildAt(radioId) as RadioButton
-                    selectedResult = btn.text as String
+                radioGroupCategoryLine2!!.apply {
+                    setOnCheckedChangeListener(null)
+                    clearCheck()
+                    setOnCheckedChangeListener(listener2)
                 }
             }
         }
     }
+    private val listener2: RadioGroup.OnCheckedChangeListener = object : RadioGroup.OnCheckedChangeListener {
+        override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
+            if (checkedId != -1) {
+                radioGroupCategoryLine1!!.apply {
+                    setOnCheckedChangeListener(null)
+                    clearCheck()
+                    setOnCheckedChangeListener(listener1)
+                }
+            }
+        }
+    }
+}
