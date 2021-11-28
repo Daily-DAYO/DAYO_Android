@@ -54,6 +54,9 @@
         android:name="com.daily.dayo.write.WriteOptionFragment"
         android:label="fragment_write_option"
         tools:layout="@layout/fragment_write_option">
+        <argument
+            android:name="postTagList"
+            app:argType="string[]"/>
         <action
             android:id="@+id/action_writeOptionFragment_to_writeTagFragment"
             app:destination="@id/WriteTagFragment" />
@@ -67,6 +70,9 @@
         android:name="com.daily.dayo.write.WriteTagFragment"
         android:label="fragment_write_tag"
         tools:layout="@layout/fragment_write_tag">
+        <argument
+            android:name="postTagList"
+            app:argType="string[]"/>
     </fragment>
 
     <fragment
