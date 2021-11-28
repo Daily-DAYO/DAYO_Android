@@ -16,11 +16,13 @@ class WriteFragment : Fragment() {
     private var binding by autoCleared<FragmentWriteBinding>()
     private var radioGroupCategoryLine1: RadioGroup? = null
     private var radioGroupCategoryLine2: RadioGroup? = null
+    private lateinit var postTagList : List<String>
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         binding = FragmentWriteBinding.inflate(inflater, container, false)
+        observeNavigationTagListCallBack()
         setRadioButtonGrouping()
         setBackButtonClickListener()
         setUploadButtonClickListener()
@@ -61,7 +63,13 @@ class WriteFragment : Fragment() {
                 selectedCategoryName = btn.text as String
             }
 
-            findNavController().navigate(R.id.action_writeFragment_to_writeOptionFragment)
+            if(this::postTagList.isInitialized){
+                val navigateWithDataPassAction = WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(postTagList.toTypedArray())
+                findNavController().navigate(navigateWithDataPassAction)
+            } else {
+                val navigateWithDataPassAction = WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(emptyArray())
+                findNavController().navigate(navigateWithDataPassAction)
+            }
         }
     }
 
@@ -85,6 +93,12 @@ class WriteFragment : Fragment() {
                     setOnCheckedChangeListener(listener1)
                 }
             }
+        }
+    }
+
+    private fun observeNavigationTagListCallBack() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<List<String>>("postTagList")?.observe(viewLifecycleOwner) {
+            postTagList = it
         }
     }
 }
