@@ -24,4 +24,9 @@
         parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/dialog_bottom_sheet_default</item>
     </style>
+
+    <style name="WritePostTagTextStyle">
+        <item name="android:textSize">11dp</item>
+        <item name="android:textColor">@color/primary_green_23C882</item>
+    </style>
 </resources>

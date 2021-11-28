@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.chip.Chip xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:chipBackgroundColor="#1A7FD4B0"
+    app:chipCornerRadius="16dp"
+    app:chipStrokeWidth="0.8dp"
+    app:chipStrokeColor="@color/primary_green_23C882"
+    app:closeIconEnabled="true"
+    app:closeIconTint="#995D5D5D"
+    app:closeIcon="@drawable/ic_x_sign"
+    app:closeIconSize="13dp"
+    tools:text="#시험기간" />
