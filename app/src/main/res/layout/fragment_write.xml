@@ -198,7 +198,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="116dp">
-
             <ImageView
                 android:id="@+id/img_upload_first"
                 android:layout_width="116dp"
@@ -209,14 +208,15 @@
                 app:layout_constraintLeft_toLeftOf="parent"/>
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_img_upload_list"
+                android:minWidth="116dp"
                 android:layout_width="wrap_content"
                 android:layout_height="116dp"
+                android:orientation="horizontal"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@+id/img_upload_first"
-                app:layout_constraintRight_toLeftOf="@id/btn_upload_image"
-                android:layout_marginHorizontal="10dp"
-                />
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginRight="10dp" />
 
             <ImageButton
                 android:id="@+id/btn_upload_image"
@@ -226,7 +226,7 @@
                 android:scaleType="center"
                 android:background="@drawable/button_default_white"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toRightOf="@+id/img_upload_first"
+                app:layout_constraintLeft_toRightOf="@+id/rv_img_upload_list"
                 android:layout_marginLeft="10dp"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </HorizontalScrollView>
