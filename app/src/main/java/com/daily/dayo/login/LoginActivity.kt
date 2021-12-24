@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProviders
 import com.daily.dayo.MainActivity
 import com.daily.dayo.databinding.ActivityLoginBinding
+import com.daily.dayo.network.login.LoginServiceImpl
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 
