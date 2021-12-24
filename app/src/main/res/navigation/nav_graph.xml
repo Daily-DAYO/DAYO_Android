@@ -87,7 +87,7 @@
 
     <fragment
         android:id="@+id/FolderAddFragment"
-        android:name="com.daily.dayo.FolderAddFragment"
+        android:name="com.daily.dayo.profile.FolderAddFragment"
         android:label="fragment_write_add"
         tools:layout="@layout/fragment_folder_add">
     </fragment>

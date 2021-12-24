@@ -1,8 +1,12 @@
 package com.daily.dayo.di
 
+import com.daily.dayo.network.folder.FolderApiHelper
+import com.daily.dayo.network.folder.FolderApiHelperImpl
+import com.daily.dayo.network.folder.FolderApiService
 import com.daily.dayo.network.home.HomeApiHelper
 import com.daily.dayo.network.home.HomeApiHelperImpl
 import com.daily.dayo.network.home.HomeApiService
+import com.daily.dayo.repository.FolderRepository
 import com.daily.dayo.repository.HomeRepository
 import dagger.Module
 import dagger.Provides
@@ -26,4 +30,17 @@ object ServiceModule {
     @Singleton
     @Provides
     fun provideHomeRepository(homeApiHelper: HomeApiHelper) : HomeRepository = HomeRepository(homeApiHelper)
+
+    @Singleton
+    @Provides
+    fun provideFolderApiService(retrofit: Retrofit) = retrofit.create(FolderApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideFolderApiHelper(folderApiHelperImpl: FolderApiHelperImpl): FolderApiHelper = folderApiHelperImpl
+
+    @Singleton
+    @Provides
+    fun provideFolderRepository(folderApiHelper: FolderApiHelper) : FolderRepository = FolderRepository(folderApiHelper)
+
 }
