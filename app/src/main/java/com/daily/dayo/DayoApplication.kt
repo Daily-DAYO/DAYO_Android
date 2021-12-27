@@ -8,6 +8,10 @@ import com.kakao.sdk.common.KakaoSdk
 @HiltAndroidApp
 class DayoApplication : Application(){
 
+    init{
+        instance = this
+    }
+
     companion object {
         lateinit var instance: DayoApplication
         fun applicationContext(): Context {

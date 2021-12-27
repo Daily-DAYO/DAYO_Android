@@ -1,6 +1,8 @@
 package com.daily.dayo.profile
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +13,6 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.FragmentFolderAddBinding
-import com.daily.dayo.profile.model.RequestCreateFolder
 import com.daily.dayo.util.autoCleared
 
 class FolderAddFragment : Fragment() {
@@ -41,7 +42,7 @@ class FolderAddFragment : Fragment() {
 
     private fun createFolder(){
         val name:String = binding.etPostFolderAddSetTitle.text.toString()
-        val memberId = SharedManager(DayoApplication.applicationContext()).getCurrentUser().id
-        folderAddViewModel.requestCreateFolder(RequestCreateFolder(name,"",memberId))
+        val memberId:String = SharedManager(DayoApplication.applicationContext()).getCurrentUser().id.toString()
+        folderAddViewModel.requestCreateFolder(memberId, name, null, null)
     }
 }
