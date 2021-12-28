@@ -4,9 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
-            name="post"
-            type="com.daily.dayo.home.model.Post" />
-        <variable
             name="postData"
             type="com.daily.dayo.home.model.PostContent" />
     </data>
@@ -82,7 +79,6 @@
             android:id="@+id/tv_main_post_user_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{postData.nickname}"
             android:textSize="12dp"
             android:textStyle="bold"
             android:textColor="@color/gray_1_313131"
@@ -90,6 +86,7 @@
             app:layout_constraintBottom_toBottomOf="@id/img_main_post_user_profile"
             app:layout_constraintLeft_toRightOf="@id/img_main_post_user_profile"
             android:layout_marginLeft="5dp"
+            android:text="@{postData.nickname}"
             tools:text="Nickname"/>
 
         <TextView
@@ -101,6 +98,7 @@
             app:layout_constraintTop_toBottomOf="@id/img_main_post_user_profile"
             app:layout_constraintLeft_toLeftOf="@id/img_main_post_user_profile"
             android:layout_marginTop="10dp"
+            android:text="조회수 0"
             tools:text="조회수 1,230"/>
 
         <TextView
@@ -112,6 +110,7 @@
             app:layout_constraintTop_toTopOf="@id/tv_main_post_hit_count"
             app:layout_constraintLeft_toRightOf="@id/tv_main_post_hit_count"
             android:layout_marginLeft="5dp"
+            android:text="@{`좋아요 `+ Integer.toString(postData.heartCount)}"
             tools:text="좋아요 135"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

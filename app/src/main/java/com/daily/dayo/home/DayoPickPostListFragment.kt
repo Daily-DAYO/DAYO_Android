@@ -46,7 +46,7 @@ class DayoPickPostListFragment : Fragment() {
                     when(it.status){
                         Status.SUCCESS -> {
                             it.data?.let { postList ->
-                                homeDayoPickAdapter.submitList(postList.posts)
+                                homeDayoPickAdapter.submitList(postList.data)
                             }
                         }
                         Status.LOADING -> {
