@@ -1,11 +1,9 @@
 package com.daily.dayo.home.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daily.dayo.home.model.Post
 import com.daily.dayo.home.model.ResponseHomePost
 import com.daily.dayo.repository.HomeRepository
 import com.daily.dayo.util.Resource

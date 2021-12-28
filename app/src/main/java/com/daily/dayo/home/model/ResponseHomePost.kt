@@ -3,11 +3,6 @@ package com.daily.dayo.home.model
 import com.google.gson.annotations.SerializedName
 
 data class ResponseHomePost (
-    @SerializedName("posts")
-    val posts: List<Post>
-)
-
-data class Post(
     @SerializedName("count")
     val count: Int,
     @SerializedName("data")
