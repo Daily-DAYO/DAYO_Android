@@ -1,5 +1,7 @@
-package com.daily.dayo.login
+package com.daily.dayo.network.login
 
+import com.daily.dayo.login.LoginRequest
+import com.daily.dayo.login.LoginResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 
