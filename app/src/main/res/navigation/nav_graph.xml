@@ -118,8 +118,17 @@
             app:destination="@id/WriteFragment" />
         <action
             android:id="@+id/action_myProfileFragment_to_followFragment"
-            app:destination="@id/FollowFragment">
-        </action>
+            app:destination="@id/FollowFragment" />
+        <action
+            android:id="@+id/action_myProfileFragment_to_myProfileEditFragment"
+            app:destination="@id/MyProfileEditFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/MyProfileEditFragment"
+        android:name="com.daily.dayo.profile.MyProfileEditFragment"
+        android:label="fragment_my_profile_edit"
+        tools:layout="@layout/fragment_my_profile_edit">
     </fragment>
 
     <fragment

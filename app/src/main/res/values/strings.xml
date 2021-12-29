@@ -7,6 +7,7 @@
     <string name="notification">알림</string>
     <string name="my_page">마이 페이지</string>
     <string name="confirm">확인</string>
+    <string name="complete">완료</string>
     <string name="cancel">취소</string>
     <string name="delete">삭제하기</string>
 
@@ -54,7 +55,15 @@
     <string name="post_folder_add_set_private_following">팔로잉</string>
     <string name="post_folder_add_set_private_only_me">나만보기</string>
 
+    <!-- My Profile -->
+    <string name="my_profile_edit_title">프로필 수정</string>
+    <string name="my_profile_edit_nickname_edittext_hint">닉네임을 입력해 주세요.</string>
+    <string name="my_profile_edit_nickname_edittext_count"> / 10</string>
+    <string name="my_profile_edit_nickname_message_format_fail">닉네임에는 한글, 영문, 숫자만 사용할 수 있어요.</string>
+    <string name="my_profile_edit_nickname_message_length_fail">닉네임을 2글자 이상 입력해주세요.</string>
     <!-- Search -->
     <string name="hint_search_keyword_input">검색어를 입력해주세요.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
