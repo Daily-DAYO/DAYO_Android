@@ -29,4 +29,16 @@
         <item name="android:textSize">11dp</item>
         <item name="android:textColor">@color/primary_green_23C882</item>
     </style>
+
+    <style name="EditTextStyle" parent="Theme.DAYO">
+        <!-- EditText Color -->
+        <item name="colorControlActivated">@color/gray_1_313131</item>
+        <item name="colorControlNormal">@color/gray_4_D3D2D2</item>
+        <item name="colorAccent">@color/gray_1_313131</item>
+    </style>
+
+    <style name="roundedImageViewRounded">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>
