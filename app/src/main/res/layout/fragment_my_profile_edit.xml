@@ -60,8 +60,8 @@
         android:layout_marginTop="80dp">
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/img_my_profile_edit_user_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
             app:strokeWidth="1dp"
             app:strokeColor="@color/gray_4_D3D2D2"

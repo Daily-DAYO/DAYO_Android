@@ -129,7 +129,16 @@
         android:name="com.daily.dayo.profile.MyProfileEditFragment"
         android:label="fragment_my_profile_edit"
         tools:layout="@layout/fragment_my_profile_edit">
+        <action
+            android:id="@+id/action_myProfileEditFragment_to_myProfileEditImageOptionFragment"
+            app:destination="@id/MyProfileEditImageOptionFragment"/>
     </fragment>
+    <dialog
+        android:id="@+id/MyProfileEditImageOptionFragment"
+        android:name="com.daily.dayo.profile.MyProfileEditImageOptionFragment"
+        android:label="fragment_my_profile_edit_image_option"
+        tools:layout="@layout/fragment_my_profile_edit_image_option">
+    </dialog>
 
     <fragment
         android:id="@+id/FollowFragment"
