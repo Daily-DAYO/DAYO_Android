@@ -1,4 +1,4 @@
-package com.daily.dayo.profile
+package com.daily.dayo.write
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +9,7 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class FolderAddViewModel @Inject constructor(
+class WriteFolderAddViewModel @Inject constructor(
     private val folderRepository: FolderRepository
 ) : ViewModel(){
 
