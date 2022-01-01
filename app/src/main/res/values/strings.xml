@@ -50,7 +50,12 @@
     <!-- Folder -->
     <string name="post_folder_add_title">폴더 추가</string>
     <string name="post_folder_add_set_title">폴더 이름</string>
-    <string name="hint_post_folder_add_set_title">16자 이내로 입력해주세요.</string>
+    <string name="folder_setting_add_set_title">폴더 이름</string>
+    <string name="folder_setting_add_set_subheading">폴더 소개</string>
+    <string name="folder_setting_add_set_private">공개설정</string>
+    <string name="hint_post_folder_add_set_title">10자 이내로 입력해주세요.</string>
+    <string name="hint_folder_setting_add_set_title">폴더 이름을 적어주세요.</string>
+    <string name="hint_folder_setting_add_set_subheading">폴더를 설명해 주세요.</string>
     <string name="post_folder_add_set_private_title">공개 설정</string>
     <string name="post_folder_add_set_private_all">전체공개</string>
     <string name="post_folder_add_set_private_following">팔로잉</string>

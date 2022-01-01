@@ -1,8 +1,6 @@
-package com.daily.dayo.profile
+package com.daily.dayo.write
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,17 +10,17 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.SharedManager
-import com.daily.dayo.databinding.FragmentFolderAddBinding
+import com.daily.dayo.databinding.FragmentWriteFolderAddBinding
 import com.daily.dayo.util.autoCleared
 
-class FolderAddFragment : Fragment() {
-    private var binding by autoCleared<FragmentFolderAddBinding>()
-    private val folderAddViewModel by activityViewModels<FolderAddViewModel>()
+class WriteFolderAddFragment : Fragment() {
+    private var binding by autoCleared<FragmentWriteFolderAddBinding>()
+    private val folderAddViewModel by activityViewModels<WriteFolderAddViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentFolderAddBinding.inflate(inflater, container, false)
+        binding = FragmentWriteFolderAddBinding.inflate(inflater, container, false)
         setBackButtonClickListener()
         setConfirmButtonClickListener()
 
