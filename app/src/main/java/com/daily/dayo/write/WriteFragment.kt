@@ -5,17 +5,18 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.daily.dayo.databinding.FragmentWriteBinding
 import android.widget.RadioGroup
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isEmpty
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.daily.dayo.R
+import com.daily.dayo.util.DefaultDialogAlert
 import com.daily.dayo.util.autoCleared
 
 class WriteFragment : Fragment() {
@@ -72,12 +73,32 @@ class WriteFragment : Fragment() {
                 selectedCategoryName = btn.text as String
             }
 
-            if(this::postTagList.isInitialized){
-                val navigateWithDataPassAction = WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(postTagList.toTypedArray())
-                findNavController().navigate(navigateWithDataPassAction)
+            if(binding.etWriteDetail.text.isNullOrBlank()) {
+                var mAlertDialog = DefaultDialogAlert.createDialog(requireContext(), R.string.write_post_upload_alert_message_empty_content)
+                if(mAlertDialog != null && !mAlertDialog.isShowing) {
+                    mAlertDialog.show()
+                    DefaultDialogAlert.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.5f)
+                }
+            } else if(binding.rvImgUploadList.isEmpty()) {
+                var mAlertDialog = DefaultDialogAlert.createDialog(requireContext(), R.string.write_post_upload_alert_message_empty_image)
+                if(mAlertDialog != null && !mAlertDialog.isShowing) {
+                    mAlertDialog.show()
+                    DefaultDialogAlert.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.5f)
+                }
+            } else if(selectedCategoryName.toString() == "") {
+                var mAlertDialog = DefaultDialogAlert.createDialog(requireContext(), R.string.write_post_upload_alert_message_empty_category)
+                if(mAlertDialog != null && !mAlertDialog.isShowing) {
+                    mAlertDialog.show()
+                    DefaultDialogAlert.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.5f)
+                }
             } else {
-                val navigateWithDataPassAction = WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(emptyArray())
-                findNavController().navigate(navigateWithDataPassAction)
+                if(this::postTagList.isInitialized){
+                    val navigateWithDataPassAction = WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(postTagList.toTypedArray())
+                    findNavController().navigate(navigateWithDataPassAction)
+                } else {
+                    val navigateWithDataPassAction = WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(emptyArray())
+                    findNavController().navigate(navigateWithDataPassAction)
+                }
             }
         }
     }
