@@ -40,6 +40,9 @@
     <string name="write_option_description_tag">오늘의 기록과 어울리는 키워드를 추가해보세요</string>
     <string name="write_post_folder_title">폴더 설정</string>
     <string name="write_post_folder_new_title">폴더 추가</string>
+    <string name="write_post_upload_alert_message_empty_content">내용을 입력해 주세요.</string>
+    <string name="write_post_upload_alert_message_empty_image">사진을 추가해 주세요.</string>
+    <string name="write_post_upload_alert_message_empty_category">카테고리를 선택해 주세요.</string>
 
     <!-- Post -->
     <string name="hint_post_comment_write_description">댓글을 남겨주세요</string>
