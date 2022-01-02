@@ -8,9 +8,11 @@ import android.graphics.Point
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import com.daily.dayo.databinding.DialogDefaultAlertBinding
+import com.daily.dayo.databinding.DialogDefaultConfirmBinding
 
 object DefaultDialogAlert {
     fun createDialog(context: Context, dialogDescriptionResId: Int) : AlertDialog {
@@ -31,7 +33,53 @@ object DefaultDialogAlert {
 
         return mAlertDialog
     }
+}
 
+object DefaultDialogConfirm {
+    fun createDialog(context: Context, dialogDescriptionResId: Int,
+                     confirmButtonShow: Boolean, cancelButtonShow: Boolean,
+                     confirmButtonTextResId: Int?, cancelButtonTextResId: Int?,
+                     confirmButtonFunction: (() -> Unit)?, cancelButtonFunction: (() -> Unit)?) : AlertDialog {
+        val binding = DialogDefaultConfirmBinding.inflate(LayoutInflater.from(context))
+        val dialogBuilder = AlertDialog.Builder(context).setView(binding.root)
+        val mAlertDialog = dialogBuilder.create()
+        mAlertDialog.setCancelable(false)
+
+        with(binding) {
+            tvDefaultDialogDescription.setText(dialogDescriptionResId)
+
+            if(confirmButtonShow){
+                tvDefaultDialogConfirm.visibility = View.VISIBLE
+                confirmButtonTextResId?.let { tvDefaultDialogConfirm.setText(it) }
+            } else {
+                tvDefaultDialogConfirm.visibility = View.GONE
+            }
+            if(cancelButtonShow){
+                tvDefaultDialogCancel.visibility = View.VISIBLE
+                cancelButtonTextResId?.let { tvDefaultDialogCancel.setText(it) }
+            } else {
+                tvDefaultDialogCancel.visibility = View.GONE
+            }
+
+            tvDefaultDialogConfirm.setOnClickListener {
+                if (confirmButtonFunction != null) {
+                    confirmButtonFunction()
+                }
+                mAlertDialog.dismiss()
+            }
+            tvDefaultDialogCancel.setOnClickListener {
+                if(cancelButtonFunction != null) {
+                    cancelButtonFunction()
+                }
+                mAlertDialog.dismiss()
+            }
+        }
+
+        return mAlertDialog
+    }
+}
+
+object DefaultDialogConfigure {
     fun dialogResize(context: Context, dialog: Dialog, width: Float, height: Float){
         val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
