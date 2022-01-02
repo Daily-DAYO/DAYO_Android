@@ -43,6 +43,7 @@
     <string name="write_post_upload_alert_message_empty_content">내용을 입력해 주세요.</string>
     <string name="write_post_upload_alert_message_empty_image">사진을 추가해 주세요.</string>
     <string name="write_post_upload_alert_message_empty_category">카테고리를 선택해 주세요.</string>
+    <string name="write_post_upload_loading_message">등록 중 입니다.</string>
 
     <!-- Post -->
     <string name="hint_post_comment_write_description">댓글을 남겨주세요</string>
