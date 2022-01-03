@@ -17,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.daily.dayo.R
 import com.daily.dayo.util.DefaultDialogAlert
+import com.daily.dayo.util.DefaultDialogConfigure
 import com.daily.dayo.util.autoCleared
 
 class WriteFragment : Fragment() {
@@ -77,19 +78,19 @@ class WriteFragment : Fragment() {
                 var mAlertDialog = DefaultDialogAlert.createDialog(requireContext(), R.string.write_post_upload_alert_message_empty_content)
                 if(mAlertDialog != null && !mAlertDialog.isShowing) {
                     mAlertDialog.show()
-                    DefaultDialogAlert.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.5f)
+                    DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.5f)
                 }
             } else if(binding.rvImgUploadList.isEmpty()) {
                 var mAlertDialog = DefaultDialogAlert.createDialog(requireContext(), R.string.write_post_upload_alert_message_empty_image)
                 if(mAlertDialog != null && !mAlertDialog.isShowing) {
                     mAlertDialog.show()
-                    DefaultDialogAlert.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.5f)
+                    DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.5f)
                 }
             } else if(selectedCategoryName.toString() == "") {
                 var mAlertDialog = DefaultDialogAlert.createDialog(requireContext(), R.string.write_post_upload_alert_message_empty_category)
                 if(mAlertDialog != null && !mAlertDialog.isShowing) {
                     mAlertDialog.show()
-                    DefaultDialogAlert.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.5f)
+                    DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.5f)
                 }
             } else {
                 if(this::postTagList.isInitialized){
