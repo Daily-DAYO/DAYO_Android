@@ -4,11 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentWriteOptionBinding
+import com.daily.dayo.util.DefaultDialogConfigure
+import com.daily.dayo.util.DefaultDialogConfirm
 import com.daily.dayo.util.autoCleared
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -31,7 +32,12 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
 
     private fun setUploadButtonClickListener() {
         binding.btnWriteOptionConfirm.setOnClickListener {
-            Toast.makeText(requireContext(),"업로드 버튼 클릭", Toast.LENGTH_SHORT).show()
+            var mAlertDialog = DefaultDialogConfirm.createDialog(requireContext(), R.string.write_post_upload_loading_message,
+            false, false, null, null, null, null)
+            if(mAlertDialog != null && !mAlertDialog.isShowing) {
+                mAlertDialog.show()
+                DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.14f)
+            }
         }
     }
 
