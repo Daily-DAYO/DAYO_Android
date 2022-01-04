@@ -1,4 +1,4 @@
-package com.daily.dayo.profile
+package com.daily.dayo.profile.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
