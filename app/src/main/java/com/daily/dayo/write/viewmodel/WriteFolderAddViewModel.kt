@@ -1,4 +1,4 @@
-package com.daily.dayo.write
+package com.daily.dayo.write.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

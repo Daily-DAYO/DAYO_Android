@@ -12,6 +12,7 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.FragmentWriteFolderAddBinding
 import com.daily.dayo.util.autoCleared
+import com.daily.dayo.write.viewmodel.WriteFolderAddViewModel
 
 class WriteFolderAddFragment : Fragment() {
     private var binding by autoCleared<FragmentWriteFolderAddBinding>()

@@ -1,4 +1,4 @@
-package com.daily.dayo.write
+package com.daily.dayo.write.adapter
 
 import android.content.Context
 import android.net.Uri

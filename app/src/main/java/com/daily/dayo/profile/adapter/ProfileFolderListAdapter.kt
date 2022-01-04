@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.daily.dayo.databinding.ItemProfileFolderBinding
 import com.daily.dayo.profile.model.Folder
 
-class ProfileFolderListAdapter : RecyclerView.Adapter<ProfileFolderListAdapter.ProfileFolderListAdapterViewHolder>(){
+class ProfileFolderListAdapter : RecyclerView.Adapter<ProfileFolderListAdapter.ProfileFolderListViewHolder>(){
 
     companion object{
         private val diffCallback = object : DiffUtil.ItemCallback<Folder>() {
@@ -24,13 +24,13 @@ class ProfileFolderListAdapter : RecyclerView.Adapter<ProfileFolderListAdapter.P
     private val differ = AsyncListDiffer(this, diffCallback)
     fun submitList(list: List<Folder>) = differ.submitList(list)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : ProfileFolderListAdapterViewHolder {
-        return ProfileFolderListAdapterViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : ProfileFolderListViewHolder {
+        return ProfileFolderListViewHolder(
             ItemProfileFolderBinding.inflate(LayoutInflater.from(parent.context), parent,false)
         )
     }
 
-    override fun onBindViewHolder(holder: ProfileFolderListAdapterViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ProfileFolderListViewHolder, position: Int) {
         val item = differ.currentList[position]
         holder.bind(item)
     }
@@ -39,7 +39,7 @@ class ProfileFolderListAdapter : RecyclerView.Adapter<ProfileFolderListAdapter.P
         return differ.currentList.size
     }
 
-    inner class ProfileFolderListAdapterViewHolder(private val binding: ItemProfileFolderBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class ProfileFolderListViewHolder(private val binding: ItemProfileFolderBinding): RecyclerView.ViewHolder(binding.root) {
 
         val thumbnailImg = binding.btnProfileFolderItem
         val folderPostCnt = binding.tvProfileFolderPostCount
