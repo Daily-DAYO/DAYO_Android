@@ -36,6 +36,7 @@ class MyProfileFragment : Fragment() {
 
         setFollowerButtonClickListener()
         setFollowingButtonClickListener()
+        setMyProfileOptionClickListener()
         return binding.root
     }
 
@@ -71,6 +72,12 @@ class MyProfileFragment : Fragment() {
     private fun setFollowingButtonClickListener(){
         binding.layoutMyProfileFollowingCount.setOnClickListener {
             findNavController().navigate(R.id.action_myProfileFragment_to_followFragment)
+        }
+    }
+
+    private fun setMyProfileOptionClickListener() {
+        binding.btnMyProfileOption.setOnClickListener {
+            findNavController().navigate(R.id.action_myProfileFragment_to_myProfileOptionFragment)
         }
     }
 }
