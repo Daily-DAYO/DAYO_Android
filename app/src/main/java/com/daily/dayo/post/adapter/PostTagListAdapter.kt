@@ -26,13 +26,9 @@ class PostTagListAdapter: ListAdapter<String, PostTagListAdapter.PostTagListView
         holder.bind(getItem(position))
     }
 
-    override fun getItemCount(): Int {
-        TODO("Not yet implemented")
-    }
-
     class PostTagListViewHolder(private val binding: ItemPostTagBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(tagString: String) {
-            binding.tvPostTag.text = tagString
+            binding.tvPostTag.text = "#$tagString"
         }
     }
 
