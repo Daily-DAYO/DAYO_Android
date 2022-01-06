@@ -122,7 +122,26 @@
         <action
             android:id="@+id/action_myProfileFragment_to_myProfileEditFragment"
             app:destination="@id/MyProfileEditFragment" />
+
+        <action
+            android:id="@+id/action_myProfileFragment_to_myProfileOptionFragment"
+            app:destination="@id/MyProfileOptionFragment"/>
     </fragment>
+
+    <dialog
+        android:id="@+id/MyProfileOptionFragment"
+        android:name="com.daily.dayo.profile.MyProfileOptionFragment"
+        android:label="fragment_my_profile_option"
+        tools:layout="@layout/fragment_my_profile_option">
+
+        <action
+            android:id="@+id/action_myProfileOptionFragment_to_folderSettingFragment"
+            app:destination="@id/FolderSettingFragment" />
+
+        <action
+            android:id="@+id/action_myProfileOptionFragment_to_myProfileEditFragment"
+            app:destination="@+id/MyProfileEditFragment"/>
+    </dialog>
 
     <fragment
         android:id="@+id/FolderSettingFragment"
@@ -131,13 +150,12 @@
         tools:layout="@layout/fragment_folder_setting">
         <action android:id="@+id/action_folderSettingFragment_to_folderSettingAddFragment"
             app:destination="@id/FolderSettingAddFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/FolderSettingAddFragment"
         android:name="com.daily.dayo.profile.FolderSettingAddFragment"
         tools:layout="@layout/fragment_folder_setting_add">
-    </fragment>
-
     </fragment>
 
     <fragment

@@ -43,11 +43,11 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_option_horizontal"
+            android:src="@drawable/ic_order_change"
             app:layout_constraintTop_toTopOf="@id/btn_folder_setting_back"
             app:layout_constraintBottom_toBottomOf="@id/btn_folder_setting_back"
             app:layout_constraintEnd_toEndOf="parent"
-            android:paddingEnd="16dp" />
+            android:layout_marginEnd="8dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
