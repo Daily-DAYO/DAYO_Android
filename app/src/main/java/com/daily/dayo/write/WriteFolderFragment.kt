@@ -34,8 +34,8 @@ class WriteFolderFragment : Fragment() {
         setBackButtonClickListener()
         setConfirmButtonClickListener()
         setFolderAddButtonClickListener()
-        setRvProfileFolderListAdapter()
-        setProfileFolderList()
+        setRvWriteFolderListAdapter()
+        setWriteFolderList()
         return binding.root
     }
 
@@ -55,14 +55,14 @@ class WriteFolderFragment : Fragment() {
         }
     }
 
-    private fun setRvProfileFolderListAdapter() {
+    private fun setRvWriteFolderListAdapter() {
         val layoutManager = LinearLayoutManager(this.context)
         writeFolderAdapter = WriteFolderAdapter()
         binding.rvWriteFolderListSaved.adapter = writeFolderAdapter
         binding.rvWriteFolderListSaved.layoutManager = layoutManager
     }
 
-    private fun setProfileFolderList(){
+    private fun setWriteFolderList(){
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 writeFolderViewModel.folderList.observe(viewLifecycleOwner, Observer {
