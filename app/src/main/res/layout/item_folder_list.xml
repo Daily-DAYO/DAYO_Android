@@ -13,7 +13,7 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginHorizontal="19dp">
         <TextView
-            android:id="@+id/tv_post_folder_title"
+            android:id="@+id/tv_folder_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14dp"
@@ -24,7 +24,7 @@
             android:paddingVertical="16dp"
             tools:text="Folder Name" />
         <TextView
-            android:id="@+id/tv_post_folder_count"
+            android:id="@+id/tv_folder_post_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"

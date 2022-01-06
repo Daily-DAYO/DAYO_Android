@@ -19,6 +19,7 @@ import com.daily.dayo.R
 import com.daily.dayo.util.DefaultDialogAlert
 import com.daily.dayo.util.DefaultDialogConfigure
 import com.daily.dayo.util.autoCleared
+import com.daily.dayo.write.adapter.WriteUploadImageListAdapter
 
 class WriteFragment : Fragment() {
     private var binding by autoCleared<FragmentWriteBinding>()
