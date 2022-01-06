@@ -97,6 +97,9 @@
         android:name="com.daily.dayo.post.PostFragment"
         android:label="fragment_post"
         tools:layout="@layout/fragment_post">
+        <argument
+            android:name="id"
+            app:argType="integer" />
         <action
             android:id="@+id/action_postFragment_to_postOptionFragment"
             app:destination="@id/PostOptionFragment"/>
