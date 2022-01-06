@@ -3,8 +3,9 @@ import com.daily.dayo.login.LoginRequest
 import com.daily.dayo.login.LoginResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
-class LoginServiceImpl {
+class LoginServiceImpl @Inject constructor() : LoginService{
 
     private val BASE_URL = "http://www.endlesscreation.kr:8080"
 
@@ -15,6 +16,6 @@ class LoginServiceImpl {
 
     val loginService: LoginService = retrofit.create(LoginService::class.java)
 
-    suspend fun requestLogin(request: LoginRequest): LoginResponse =
+    override suspend fun requestLogin(request: LoginRequest): LoginResponse =
         loginService.requestLogin(request)
 }
