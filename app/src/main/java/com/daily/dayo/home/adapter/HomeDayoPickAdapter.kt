@@ -2,12 +2,12 @@ package com.daily.dayo.home.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.navigation.findNavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.*
 import com.bumptech.glide.Glide
 import com.daily.dayo.BR
-import com.daily.dayo.R
 import com.daily.dayo.databinding.ItemMainPostBinding
+import com.daily.dayo.home.HomeFragmentDirections
 import com.daily.dayo.home.model.PostContent
 
 class HomeDayoPickAdapter : RecyclerView.Adapter<HomeDayoPickAdapter.HomeDayoPickViewHolder>(){
@@ -58,7 +58,7 @@ class HomeDayoPickAdapter : RecyclerView.Adapter<HomeDayoPickAdapter.HomeDayoPic
                 .into(userThumbnailImg)
 
             setBindingSetVariable(postContent)
-            setRootClickListener()
+            setRootClickListener(postContent.id)
         }
         private fun setBindingSetVariable(postContent: PostContent) {
             with(binding) {
@@ -66,9 +66,9 @@ class HomeDayoPickAdapter : RecyclerView.Adapter<HomeDayoPickAdapter.HomeDayoPic
                 executePendingBindings()
             }
         }
-        private fun setRootClickListener() {
+        private fun setRootClickListener(postId: Int) {
             binding.root.setOnClickListener {
-                it.findNavController().navigate(R.id.action_homeFragment_to_postFragment)
+                Navigation.findNavController(it).navigate(HomeFragmentDirections.actionHomeFragmentToPostFragment(postId))
             }
         }
     }
