@@ -8,22 +8,20 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.daily.dayo.MainActivity
 import com.daily.dayo.databinding.ActivityLoginBinding
-import com.daily.dayo.network.login.LoginServiceImpl
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityLoginBinding
-    private val loginViewModel : LoginViewModel by viewModels(){
-        LoginViewModelFactory(LoginRepository(LoginServiceImpl()))
-    }
+    private val loginViewModel by viewModels<LoginViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setKakaoLoginButtonClickListener()
         setEmailLoginButtonClickListener()
     }
