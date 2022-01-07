@@ -1,5 +1,8 @@
 package com.daily.dayo.di
 
+import com.daily.dayo.network.Post.PostApiHelper
+import com.daily.dayo.network.Post.PostApiHelperImpl
+import com.daily.dayo.network.Post.PostApiService
 import com.daily.dayo.network.folder.FolderApiHelper
 import com.daily.dayo.network.folder.FolderApiHelperImpl
 import com.daily.dayo.network.folder.FolderApiService
@@ -8,6 +11,7 @@ import com.daily.dayo.network.home.HomeApiHelperImpl
 import com.daily.dayo.network.home.HomeApiService
 import com.daily.dayo.repository.FolderRepository
 import com.daily.dayo.repository.HomeRepository
+import com.daily.dayo.repository.PostRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,5 +46,18 @@ object ServiceModule {
     @Singleton
     @Provides
     fun provideFolderRepository(folderApiHelper: FolderApiHelper) : FolderRepository = FolderRepository(folderApiHelper)
+
+    @Singleton
+    @Provides
+    fun providePostApiService(retrofit: Retrofit) = retrofit.create(PostApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun providePostApiHelper(postApiHelperImpl: PostApiHelperImpl): PostApiHelper = postApiHelperImpl
+
+    // Repository를 @Provides를 통해 제공하여 ViewModel에서 Constructor에 @Inject 어노테이션과 함께 작성하기만하면 해당 Repository 객체를 자유자재로 접근 가능
+    @Singleton
+    @Provides
+    fun providePostRepository(postApiHelper: PostApiHelper) : PostRepository = PostRepository(postApiHelper)
 
 }
