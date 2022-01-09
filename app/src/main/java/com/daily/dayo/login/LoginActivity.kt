@@ -42,9 +42,8 @@ class LoginActivity : AppCompatActivity() {
         }
         else if (token != null) {
             Log.i(TAG, "로그인 성공 ${token.accessToken}")
-
-            loginViewModel.loginRequest(LoginRequest(token.accessToken))
-
+            loginViewModel.requestLogin(LoginRequest(token.accessToken))
+            loginViewModel.requestMemberInfo()
             val intent = Intent(applicationContext, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(intent)
