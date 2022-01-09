@@ -41,7 +41,7 @@ class WriteFolderAddFragment : Fragment() {
 
     private fun createFolder(){
         val name:String = binding.etPostFolderAddSetTitle.text.toString()
-        val memberId:String = SharedManager(DayoApplication.applicationContext()).getCurrentUser().id.toString()
+        val memberId:String = SharedManager(DayoApplication.applicationContext()).getCurrentUser().memberId.toString()
         folderAddViewModel.requestCreateFolder(memberId, name, null, null)
     }
 }

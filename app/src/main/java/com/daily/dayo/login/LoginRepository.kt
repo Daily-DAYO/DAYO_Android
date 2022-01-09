@@ -2,17 +2,22 @@ package com.daily.dayo.login
 
 import com.daily.dayo.SharedManager
 import com.daily.dayo.User
-import com.daily.dayo.network.login.LoginServiceImpl
+import com.daily.dayo.network.login.LoginApiHelperImpl
+import retrofit2.Response
 import javax.inject.Inject
 
-class LoginRepository @Inject constructor(private val loginServiceImpl: LoginServiceImpl, private val sharedManager: SharedManager) {
+class LoginRepository @Inject constructor(private val loginApiHelperImpl: LoginApiHelperImpl, private val sharedManager: SharedManager) {
     suspend fun requestLogin(request: LoginRequest): LoginResponse {
-        val response = loginServiceImpl.requestLogin(request)
-        val accessToken = response.accessToken
-        val refreshToken = response.refreshToken
-        sharedManager.saveCurrentUser(User("null", accessToken, refreshToken))
-
+        val response = loginApiHelperImpl.requestLogin(request)
+        sharedManager.saveCurrentUser(response)
         return response
     }
+
+    suspend fun requestMemberInfo(): Response<MemberResponse> {
+        val response = loginApiHelperImpl.requestMemberInfo()
+        sharedManager.saveCurrentUser(response.body())
+        return response
+    }
+
 }
 
