@@ -45,8 +45,10 @@
         tools:layout="@layout/fragment_write">
         <action
             android:id="@+id/action_writeFragment_to_writeOptionFragment"
-            app:destination="@id/WriteOptionFragment"
-            />
+            app:destination="@id/WriteOptionFragment"/>
+        <action
+            android:id="@+id/action_writeFragment_to_postFragment"
+            app:destination="@id/PostFragment" />
     </fragment>
 
     <dialog
@@ -54,6 +56,15 @@
         android:name="com.daily.dayo.write.WriteOptionFragment"
         android:label="fragment_write_option"
         tools:layout="@layout/fragment_write_option">
+        <argument
+            android:name="postCategory"
+            app:argType="string"/>
+        <argument
+            android:name="postContents"
+            app:argType="string"/>
+        <argument
+            android:name="postImages"
+            app:argType="string[]"/>
         <argument
             android:name="postTagList"
             app:argType="string[]"/>
