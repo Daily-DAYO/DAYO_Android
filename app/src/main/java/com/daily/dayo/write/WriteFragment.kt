@@ -3,8 +3,12 @@ package com.daily.dayo.write
 import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.*
 import androidx.fragment.app.Fragment
 import com.daily.dayo.databinding.FragmentWriteBinding
@@ -12,6 +16,7 @@ import android.widget.RadioGroup
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.view.isEmpty
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,13 +25,19 @@ import com.daily.dayo.util.DefaultDialogAlert
 import com.daily.dayo.util.DefaultDialogConfigure
 import com.daily.dayo.util.autoCleared
 import com.daily.dayo.write.adapter.WriteUploadImageListAdapter
+import dagger.hilt.android.AndroidEntryPoint
+import java.io.ByteArrayOutputStream
+import java.util.*
+import kotlin.collections.ArrayList
 
+@AndroidEntryPoint
 class WriteFragment : Fragment() {
     private var binding by autoCleared<FragmentWriteBinding>()
     private var radioGroupCategoryLine1: RadioGroup? = null
     private var radioGroupCategoryLine2: RadioGroup? = null
     private lateinit var postTagList : List<String> // 현재 작성할 게시글에 저장된 태그 리스트
     private var uploadImageList = ArrayList<Uri>() // 갤러리에서 불러온 이미지 리스트
+    private var uploadImageListString = ArrayList<String>() // Bitmap을 String으로 변환
     private lateinit var uploadImageListAdapter : WriteUploadImageListAdapter
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -61,47 +72,61 @@ class WriteFragment : Fragment() {
     }
 
     private fun setUploadButtonClickListener() {
-        var selectedCategoryName = ""
         binding.btnWritePostUpload.setOnClickListener {
-            if (radioGroupCategoryLine1!!.checkedRadioButtonId > 0) {
-                val radioButton = radioGroupCategoryLine1?.findViewById<View>(radioGroupCategoryLine1!!.checkedRadioButtonId)
-                val radioId = radioGroupCategoryLine1!!.indexOfChild(radioButton)
-                val btn = radioGroupCategoryLine1!!.getChildAt(radioId) as RadioButton
-                selectedCategoryName = btn.text as String
-            } else if (radioGroupCategoryLine2!!.checkedRadioButtonId > 0) {
-                val radioButton = radioGroupCategoryLine2?.findViewById<View>(radioGroupCategoryLine2!!.checkedRadioButtonId)
-                val radioId = radioGroupCategoryLine2!!.indexOfChild(radioButton)
-                val btn = radioGroupCategoryLine2!!.getChildAt(radioId) as RadioButton
-                selectedCategoryName = btn.text as String
-            }
-
+            val selectedCategoryName = setCategoryName()
             if(binding.etWriteDetail.text.isNullOrBlank()) {
-                var mAlertDialog = DefaultDialogAlert.createDialog(requireContext(), R.string.write_post_upload_alert_message_empty_content)
-                if(mAlertDialog != null && !mAlertDialog.isShowing) {
+                val mAlertDialog = DefaultDialogAlert.createDialog(requireContext(), R.string.write_post_upload_alert_message_empty_content)
+                if(!mAlertDialog.isShowing) {
                     mAlertDialog.show()
                     DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.5f)
                 }
             } else if(binding.rvImgUploadList.isEmpty()) {
                 var mAlertDialog = DefaultDialogAlert.createDialog(requireContext(), R.string.write_post_upload_alert_message_empty_image)
-                if(mAlertDialog != null && !mAlertDialog.isShowing) {
+                if(!mAlertDialog.isShowing) {
                     mAlertDialog.show()
                     DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.5f)
                 }
             } else if(selectedCategoryName.toString() == "") {
                 var mAlertDialog = DefaultDialogAlert.createDialog(requireContext(), R.string.write_post_upload_alert_message_empty_category)
-                if(mAlertDialog != null && !mAlertDialog.isShowing) {
+                if(!mAlertDialog.isShowing) {
                     mAlertDialog.show()
                     DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.5f)
                 }
             } else {
                 if(this::postTagList.isInitialized){
-                    val navigateWithDataPassAction = WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(postTagList.toTypedArray())
+                    val navigateWithDataPassAction = WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(
+                        selectedCategoryName, binding.etWriteDetail.text.toString(), uploadImageListString.toTypedArray(),postTagList.toTypedArray())
                     findNavController().navigate(navigateWithDataPassAction)
                 } else {
-                    val navigateWithDataPassAction = WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(emptyArray())
+                    val navigateWithDataPassAction = WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(
+                        selectedCategoryName, binding.etWriteDetail.text.toString(),  uploadImageListString.toTypedArray(),emptyArray())
                     findNavController().navigate(navigateWithDataPassAction)
                 }
             }
+        }
+    }
+
+    private fun setCategoryName() : String {
+        var selectedCategoryName = ""
+        if (radioGroupCategoryLine1!!.checkedRadioButtonId > 0) {
+            val radioButton = radioGroupCategoryLine1?.findViewById<View>(radioGroupCategoryLine1!!.checkedRadioButtonId)
+            val radioId = radioGroupCategoryLine1!!.indexOfChild(radioButton)
+            val btn = radioGroupCategoryLine1!!.getChildAt(radioId) as RadioButton
+            selectedCategoryName = btn.text as String
+        } else if (radioGroupCategoryLine2!!.checkedRadioButtonId > 0) {
+            val radioButton = radioGroupCategoryLine2?.findViewById<View>(radioGroupCategoryLine2!!.checkedRadioButtonId)
+            val radioId = radioGroupCategoryLine2!!.indexOfChild(radioButton)
+            val btn = radioGroupCategoryLine2!!.getChildAt(radioId) as RadioButton
+            selectedCategoryName = btn.text as String
+        }
+        when(selectedCategoryName) {
+            "스케줄러" -> return "SCHEDULER"
+            "스터디 플래너" -> return "STUDY_PLANNER"
+            "굿노트" -> return "GOOD_NOTE"
+            "포켓북" -> return "POCKET_BOOK"
+            "6공 다이어리" -> return "SIX_DIARY"
+            "스터디 플래너" -> return "ETC"
+            else -> return ""
         }
     }
 
@@ -170,8 +195,7 @@ class WriteFragment : Fragment() {
         requestActivity.launch(intent)
     }
 
-    val requestActivity =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+    val requestActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
             if(activityResult.resultCode == RESULT_OK) {
                 binding.imgUploadFirst.visibility = View.INVISIBLE
                 uploadImageList.clear()
@@ -185,16 +209,36 @@ class WriteFragment : Fragment() {
                     for (i in 0 until count) {
                         val imageUri = data.clipData!!.getItemAt(i).uri
                         uploadImageList.add(imageUri)
+                        val imageBitmap = imageUri.toBitmap()
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { uploadImageListString.add(imageBitmap.toBase64String()) }
                     }
                 } else { // 단일 선택
                     data?.data?.let { uri ->
                         val imageUri : Uri?= data?.data
                         if (imageUri != null){
                             uploadImageList.add(imageUri)
+                            val imageBitmap = imageUri.toBitmap()
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { uploadImageListString.add(imageBitmap.toBase64String()) }
                         }
                     }
                 }
                 uploadImageListAdapter.notifyDataSetChanged()
             }
         }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun Bitmap.toBase64String(): String {
+        ByteArrayOutputStream().apply {
+            compress(Bitmap.CompressFormat.JPEG, 100, this)
+            return Base64.getEncoder().encodeToString(toByteArray())
+        }
+    }
+
+    fun Uri.toBitmap(): Bitmap {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            ImageDecoder.decodeBitmap(ImageDecoder.createSource(requireContext().contentResolver, this) )
+        } else {
+            MediaStore.Images.Media.getBitmap(requireContext().contentResolver, this)
+        }
+    }
 }
