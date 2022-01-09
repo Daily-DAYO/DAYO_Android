@@ -10,9 +10,9 @@ interface FolderApiService {
 
     @Multipart
     @POST("/api/v1/folders")
-    suspend fun requestCreateFolder(@Part("memberId") numberId:String, @Part("name") name:String, @Part("subheading") subheading:String?, @Part thumbnailImage : MultipartBody.Part?): Response<ResponseCreateFolder>
+    suspend fun requestCreateFolder(@Part("name") name:String, @Part("privacy") privacy:String, @Part("subheading") subheading:String?, @Part thumbnailImage : MultipartBody.Part?): Response<ResponseCreateFolder>
 
-    @GET("/api/v1/folders/{memberId}")
+    @GET("/api/v1/folders/list/{memberId}")
     suspend fun requestAllFolderList(@Path("memberId") memberId:String) :Response<ResponseAllFolderList>
 
 }

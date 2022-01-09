@@ -9,6 +9,9 @@ import com.daily.dayo.network.folder.FolderApiService
 import com.daily.dayo.network.home.HomeApiHelper
 import com.daily.dayo.network.home.HomeApiHelperImpl
 import com.daily.dayo.network.home.HomeApiService
+import com.daily.dayo.network.login.LoginApiHelper
+import com.daily.dayo.network.login.LoginApiHelperImpl
+import com.daily.dayo.network.login.LoginApiService
 import com.daily.dayo.repository.FolderRepository
 import com.daily.dayo.repository.HomeRepository
 import com.daily.dayo.repository.PostRepository
@@ -22,6 +25,15 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ServiceModule {
+
+    @Singleton
+    @Provides
+    fun provideLoginApiService(retrofit: Retrofit) = retrofit.create(LoginApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideLoginApiHelper(loginApiHelperImpl: LoginApiHelperImpl): LoginApiHelper = loginApiHelperImpl
+
     @Singleton
     @Provides
     fun provideHomeApiService(retrofit: Retrofit) = retrofit.create(HomeApiService::class.java)
