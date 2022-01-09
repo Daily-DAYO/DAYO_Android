@@ -26,7 +26,7 @@ class WriteFolderViewModel @Inject constructor(
     }
 
     fun requestAllFolderList() = viewModelScope.launch {
-        val memberId:String = SharedManager(DayoApplication.applicationContext()).getCurrentUser().id.toString()
+        val memberId:String = SharedManager(DayoApplication.applicationContext()).getCurrentUser().memberId.toString()
         _folderList.postValue(Resource.loading(null))
         folderRepository.requestAllFolderList(memberId).let {
             if(it.isSuccessful){
