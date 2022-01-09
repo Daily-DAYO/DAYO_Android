@@ -9,9 +9,13 @@ import com.daily.dayo.network.folder.FolderApiService
 import com.daily.dayo.network.home.HomeApiHelper
 import com.daily.dayo.network.home.HomeApiHelperImpl
 import com.daily.dayo.network.home.HomeApiService
+import com.daily.dayo.network.write.WriteApiHelper
+import com.daily.dayo.network.write.WriteApiHelperImpl
+import com.daily.dayo.network.write.WriteApiService
 import com.daily.dayo.repository.FolderRepository
 import com.daily.dayo.repository.HomeRepository
 import com.daily.dayo.repository.PostRepository
+import com.daily.dayo.repository.WriteRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -59,5 +63,17 @@ object ServiceModule {
     @Singleton
     @Provides
     fun providePostRepository(postApiHelper: PostApiHelper) : PostRepository = PostRepository(postApiHelper)
+
+    @Singleton
+    @Provides
+    fun provideWriteApiService(retrofit: Retrofit) = retrofit.create(WriteApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideWriteApiHelper(writeApiHelperImpl: WriteApiHelperImpl): WriteApiHelper = writeApiHelperImpl
+
+    @Singleton
+    @Provides
+    fun provideWriteRepository(writeApiHelper: WriteApiHelper) : WriteRepository = WriteRepository(writeApiHelper)
 
 }
