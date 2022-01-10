@@ -1,15 +1,12 @@
 package com.daily.dayo.post
 
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,7 +24,9 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import android.widget.LinearLayout
+import androidx.lifecycle.*
 import com.daily.dayo.post.adapter.PostTagListAdapter
+import com.daily.dayo.post.model.RequestCreatePostComment
 
 @AndroidEntryPoint
 class PostFragment : Fragment() {
@@ -50,7 +49,10 @@ class PostFragment : Fragment() {
         setTagList()
         setPostOptionClickListener()
         postViewModel.requestPostDetail(args.id)
+        postViewModel.requestPostComment(args.id)
         setPostDetailCollect()
+        setPostCommentCollect()
+        setCreatePostComment()
         return binding.root
     }
 
@@ -93,6 +95,23 @@ class PostFragment : Fragment() {
                                         executePendingBindings()
                                     }
                                 }
+                            }
+                        }
+                        Status.LOADING -> { }
+                        Status.ERROR -> { }
+                    }
+                })
+            }
+        }
+    }
+    private fun setPostCommentCollect() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                postViewModel.postComment.observe(viewLifecycleOwner, Observer {
+                    when(it.status){
+                        Status.SUCCESS -> {
+                            it.data?.let { postComment ->
+                                postCommentAdapter.submitList(postComment.data?.toMutableList())
                             }
                         }
                         Status.LOADING -> { }
@@ -160,5 +179,26 @@ class PostFragment : Fragment() {
                 )
             }
         }
+    }
+
+    private fun setCreatePostComment() {
+        binding.tvPostCommentUpload.setOnClickListener {
+            val commentDescription = RequestCreatePostComment(
+                contents = binding.etPostCommentDescription.text.toString(),
+                postId = args.id)
+            postViewModel.requestCreatePostComment(commentDescription)
+
+            // TODO : Handler 수정 필요
+            Handler().postDelayed(
+                {with(binding.rvPostCommentList.adapter as PostCommentAdapter) {
+                    postViewModel.requestPostComment(args.id)
+                    submitList(postViewModel.postComment.value?.data?.data?.subList(0, postCommentAdapter.itemCount)?.toMutableList())
+                }},60
+            )
+            Handler().postDelayed({afterCreatedScroll()}, 200)
+        }
+    }
+    private fun afterCreatedScroll() {
+        binding.layoutScrollPost.fullScroll(View.FOCUS_DOWN)
     }
 }
