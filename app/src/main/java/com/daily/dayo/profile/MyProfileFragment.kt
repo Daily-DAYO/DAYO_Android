@@ -6,24 +6,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
+import com.bumptech.glide.Glide
 import com.daily.dayo.R
+import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.FragmentMyProfileBinding
 import com.daily.dayo.profile.adapter.MyProfileFragmentPagerStateAdapter
+import com.daily.dayo.profile.viewmodel.MyProfileViewModel
 import com.daily.dayo.util.autoCleared
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MyProfileFragment : Fragment() {
-
     private var binding by autoCleared<FragmentMyProfileBinding>()
+    private val myProfileViewModel by activityViewModels<MyProfileViewModel>()
     private lateinit var viewPager : ViewPager2
     private lateinit var tabLayout: TabLayout
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,6 +38,8 @@ class MyProfileFragment : Fragment() {
         setFollowerButtonClickListener()
         setFollowingButtonClickListener()
         setMyProfileOptionClickListener()
+        setMyProfileEditButtonClickListener()
+        setMyProfileDescription()
         return binding.root
     }
 
@@ -46,6 +49,7 @@ class MyProfileFragment : Fragment() {
         val pagerAdapter = MyProfileFragmentPagerStateAdapter(requireActivity())
         pagerAdapter.addFragment(ProfileFolderListFragment())
         pagerAdapter.addFragment(ProfileLikePostListFragment())
+        pagerAdapter.addFragment(ProfileBookmarkPostListFragment())
         viewPager.adapter = pagerAdapter
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -59,6 +63,7 @@ class MyProfileFragment : Fragment() {
             when (position){
                 0 -> tab.text = "작성한 글"
                 1 -> tab.text = "좋아요"
+                2 -> tab.text = "북마크"
             }
         }.attach()
     }
@@ -78,6 +83,18 @@ class MyProfileFragment : Fragment() {
     private fun setMyProfileOptionClickListener() {
         binding.btnMyProfileOption.setOnClickListener {
             findNavController().navigate(R.id.action_myProfileFragment_to_myProfileOptionFragment)
+        }
+    }
+
+    private fun setMyProfileDescription() {
+        binding.userInfo = SharedManager(requireContext()).getCurrentUser()
+        Glide.with(requireContext())
+            .load("http://www.endlesscreation.kr:8080/images/" + SharedManager(requireContext()).getCurrentUser().profileImg.toString())
+            .into(binding.imgMyProfileUserProfile)
+    }
+    private fun setMyProfileEditButtonClickListener() {
+        binding.btnMyProfileEdit.setOnClickListener {
+            findNavController().navigate(R.id.action_myProfileFragment_to_myProfileEditFragment)
         }
     }
 }
