@@ -111,15 +111,38 @@
         <argument
             android:name="id"
             app:argType="integer" />
+        <argument
+            android:name="nickname"
+            app:argType="string" />
         <action
             android:id="@+id/action_postFragment_to_postOptionFragment"
             app:destination="@id/PostOptionFragment"/>
+        <action
+            android:id="@+id/action_postFragment_to_postOptionMineFragment"
+            app:destination="@id/PostOptionMineFragment"/>
     </fragment>
     <dialog
         android:id="@+id/PostOptionFragment"
         android:name="com.daily.dayo.post.PostOptionFragment"
         android:label="fragment_post_option"
         tools:layout="@layout/fragment_post_option">
+        <argument
+            android:name="id"
+            app:argType="integer" />
+    </dialog>
+    <dialog
+        android:id="@+id/PostOptionMineFragment"
+        android:name="com.daily.dayo.post.PostOptionMineFragment"
+        android:label="fragment_post_option_mine"
+        tools:layout="@layout/fragment_post_option_mine">
+        <argument
+            android:name="id"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_postOptionMineFragment_to_HomeFragment"
+            app:destination="@+id/HomeFragment"
+            app:popUpTo="@id/PostFragment"
+            app:popUpToInclusive="true"/>
     </dialog>
 
     <fragment

@@ -1,8 +1,8 @@
 package com.daily.dayo.di
 
-import com.daily.dayo.network.Post.PostApiHelper
-import com.daily.dayo.network.Post.PostApiHelperImpl
-import com.daily.dayo.network.Post.PostApiService
+import com.daily.dayo.network.post.PostApiHelper
+import com.daily.dayo.network.post.PostApiHelperImpl
+import com.daily.dayo.network.post.PostApiService
 import com.daily.dayo.network.folder.FolderApiHelper
 import com.daily.dayo.network.folder.FolderApiHelperImpl
 import com.daily.dayo.network.folder.FolderApiService
