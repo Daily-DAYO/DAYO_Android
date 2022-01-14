@@ -70,7 +70,7 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
         binding.btnWriteOptionConfirm.setOnClickListener {
             if(mAlertDialog != null && !mAlertDialog.isShowing) {
                 val privacy = setPrivacySetting()
-                val memberId = SharedManager(DayoApplication.applicationContext()).getCurrentUser().id.toString()
+                val memberId = SharedManager(DayoApplication.applicationContext()).getCurrentUser().memberId.toString()
                 val folderId = binding.tvWriteOptionDescriptionFolder.id
 
                 // TODO : folderId와 memberId를 얻는 과정 작성 필요
@@ -83,7 +83,7 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
         writeOptionViewModel.writeSuccess.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             mAlertDialog.dismiss()
             if(it) {
-                findNavController().navigate(WriteFragmentDirections.actionWriteFragmentToPostFragment(writeOptionViewModel.writePostId.toString().toInt()))
+                //findNavController().navigate(WriteFragmentDirections.actionWriteFragmentToPostFragment(writeOptionViewModel.writePostId.toString().toInt()))
             } else {
                 // TODO : 등록 실패 메시지 띄우기
             }
