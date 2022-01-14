@@ -1,6 +1,6 @@
 package com.daily.dayo.repository
 
-import com.daily.dayo.network.Post.PostApiHelper
+import com.daily.dayo.network.post.PostApiHelper
 import com.daily.dayo.post.model.RequestCreatePostComment
 import com.daily.dayo.post.model.ResponseCreatePostComment
 import com.daily.dayo.post.model.ResponsePost
@@ -10,8 +10,10 @@ import javax.inject.Inject
 
 class PostRepository @Inject constructor(private val postApiHelper: PostApiHelper) {
     suspend fun requestPostDetail(postId: Int) = postApiHelper.requestPostDetail(postId).verify()
+    suspend fun requestDeletePost(postId: Int) = postApiHelper.requestDeletePost(postId)
     suspend fun requestPostComment(postId: Int) = postApiHelper.requestPostComment(postId).verify()
     suspend fun requestCreatePostComment(request: RequestCreatePostComment) = postApiHelper.requestCreatePostComment(request).verify()
+    suspend fun requestDeletePostComment(commentId: Int) = postApiHelper.requestDeletePostComment(commentId)
 
     fun Response<ResponsePost>.verify() : Response<ResponsePost> {
         if (this.isSuccessful && this.code() in 200..299) {
