@@ -58,7 +58,7 @@ class HomeDayoPickAdapter : RecyclerView.Adapter<HomeDayoPickAdapter.HomeDayoPic
                 .into(userThumbnailImg)
 
             setBindingSetVariable(postContent)
-            setRootClickListener(postContent.id)
+            setRootClickListener(postContent.id, postContent.nickname)
         }
         private fun setBindingSetVariable(postContent: PostContent) {
             with(binding) {
@@ -66,9 +66,9 @@ class HomeDayoPickAdapter : RecyclerView.Adapter<HomeDayoPickAdapter.HomeDayoPic
                 executePendingBindings()
             }
         }
-        private fun setRootClickListener(postId: Int) {
+        private fun setRootClickListener(postId: Int, nickname: String) {
             binding.root.setOnClickListener {
-                Navigation.findNavController(it).navigate(HomeFragmentDirections.actionHomeFragmentToPostFragment(postId))
+                Navigation.findNavController(it).navigate(HomeFragmentDirections.actionHomeFragmentToPostFragment(postId, nickname))
             }
         }
     }

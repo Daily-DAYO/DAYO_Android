@@ -25,7 +25,12 @@ import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import android.widget.LinearLayout
 import androidx.lifecycle.*
+import androidx.navigation.Navigation
+import com.daily.dayo.DayoApplication
+import com.daily.dayo.SharedManager
+import com.daily.dayo.home.HomeFragmentDirections
 import com.daily.dayo.post.adapter.PostTagListAdapter
+import com.daily.dayo.post.model.PostCommentContent
 import com.daily.dayo.post.model.RequestCreatePostComment
 
 @AndroidEntryPoint
@@ -53,6 +58,7 @@ class PostFragment : Fragment() {
         setPostDetailCollect()
         setPostCommentCollect()
         setCreatePostComment()
+        setPostCommentClickListener()
         return binding.root
     }
 
@@ -69,9 +75,13 @@ class PostFragment : Fragment() {
     }
 
     private fun setPostOptionClickListener() {
+        val currentUserNickname = SharedManager(DayoApplication.applicationContext()).getCurrentUser().nickname.toString()
         binding.btnPostOption.setOnClickListener {
-            //PostOptionFragment().show(requireActivity().supportFragmentManager, "PostOptionDialog")
-            findNavController().navigate(R.id.action_postFragment_to_postOptionFragment)
+            if(args.nickname == currentUserNickname) {
+                Navigation.findNavController(it).navigate(PostFragmentDirections.actionPostFragmentToPostOptionMineFragment(args.id))
+            } else {
+                Navigation.findNavController(it).navigate(PostFragmentDirections.actionPostFragmentToPostOptionFragment(args.id))
+            }
         }
     }
 
@@ -120,6 +130,18 @@ class PostFragment : Fragment() {
                 })
             }
         }
+    }
+    private fun setPostCommentClickListener() {
+        postCommentAdapter.setOnItemClickListener(object : PostCommentAdapter.OnItemClickListener{
+            override fun onItemClick(v: View, data: PostCommentContent, pos: Int) {
+                // Item 자체를 클릭하는 경우 나타나는 Event 작성
+            }
+
+            override fun DeletePostCommentClick(data: PostCommentContent, pos: Int) {
+                postViewModel.requestDeletePostComment(data.commentId)
+                refreshPostComment()
+            }
+        })
     }
     private fun setTagList() {
         postTagListAdapter = PostTagListAdapter()
@@ -187,16 +209,19 @@ class PostFragment : Fragment() {
                 contents = binding.etPostCommentDescription.text.toString(),
                 postId = args.id)
             postViewModel.requestCreatePostComment(commentDescription)
-
-            // TODO : Handler 수정 필요
-            Handler().postDelayed(
-                {with(binding.rvPostCommentList.adapter as PostCommentAdapter) {
-                    postViewModel.requestPostComment(args.id)
-                    submitList(postViewModel.postComment.value?.data?.data?.subList(0, postCommentAdapter.itemCount)?.toMutableList())
-                }},60
-            )
-            Handler().postDelayed({afterCreatedScroll()}, 200)
+            refreshPostComment()
         }
+    }
+    private fun refreshPostComment() {
+        // TODO : Handler 수정 필요
+        Handler().postDelayed(
+            {with(binding.rvPostCommentList.adapter as PostCommentAdapter) {
+                postViewModel.requestPostComment(args.id)
+                submitList(postViewModel.postComment.value?.data?.data?.subList(0, postCommentAdapter.itemCount)?.toMutableList())
+            }},60
+        )
+        Handler().postDelayed({afterCreatedScroll()}, 200)
+
     }
     private fun afterCreatedScroll() {
         binding.layoutScrollPost.fullScroll(View.FOCUS_DOWN)

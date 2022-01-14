@@ -37,6 +37,10 @@ class PostViewModel @Inject constructor(private val postRepository: PostReposito
         }
     }
 
+    fun requestDeletePost(postId: Int) = viewModelScope.launch {
+        postRepository.requestDeletePost(postId)
+    }
+
     fun requestPostComment(postId: Int) = viewModelScope.launch {
         _postComment.postValue(Resource.loading(null))
         postRepository.requestPostComment(postId).let {
@@ -52,5 +56,9 @@ class PostViewModel @Inject constructor(private val postRepository: PostReposito
 
     fun requestCreatePostComment(request: RequestCreatePostComment) = viewModelScope.launch {
         postRepository.requestCreatePostComment(request)
+    }
+
+    fun requestDeletePostComment(commentId: Int) = viewModelScope.launch {
+        postRepository.requestDeletePostComment(commentId)
     }
 }
