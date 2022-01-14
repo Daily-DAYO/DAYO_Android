@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.SharedManager
 import com.daily.dayo.profile.model.ResponseAllFolderList
+import com.daily.dayo.profile.model.ResponseAllMyFolderList
 import com.daily.dayo.repository.FolderRepository
 import com.daily.dayo.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,17 +19,16 @@ class FolderSettingViewModel @Inject constructor(
     private val folderRepository: FolderRepository
 ) : ViewModel(){
 
-    private val _folderList = MutableLiveData<Resource<ResponseAllFolderList>>()
-    val folderList : LiveData<Resource<ResponseAllFolderList>> get() = _folderList
+    private val _folderList = MutableLiveData<Resource<ResponseAllMyFolderList>>()
+    val folderList : LiveData<Resource<ResponseAllMyFolderList>> get() = _folderList
 
     init {
-        requestAllFolderList()
+        requestAllMyFolderList()
     }
 
-    fun requestAllFolderList() = viewModelScope.launch {
-        val memberId:String = SharedManager(DayoApplication.applicationContext()).getCurrentUser().memberId.toString()
+    fun requestAllMyFolderList() = viewModelScope.launch {
         _folderList.postValue(Resource.loading(null))
-        folderRepository.requestAllFolderList(memberId).let {
+        folderRepository.requestAllMyFolderList().let {
             if(it.isSuccessful){
                 _folderList.postValue(Resource.success(it.body()))
             } else{

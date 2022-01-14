@@ -1,12 +1,15 @@
 package com.daily.dayo.network.folder
 
+import com.daily.dayo.profile.model.RequestCreateFolderInPost
 import com.daily.dayo.profile.model.ResponseAllFolderList
-import com.daily.dayo.profile.model.ResponseCreateFolder
+import com.daily.dayo.profile.model.ResponseAllMyFolderList
+import com.daily.dayo.profile.model.ResponseFolderId
 import okhttp3.MultipartBody
 import retrofit2.Response
 
 interface FolderApiHelper {
-    suspend fun requestCreateFolder(memberId : String, name:String, subheading:String?, thumbnailImage: MultipartBody.Part?): Response<ResponseCreateFolder>
-
+    suspend fun requestCreateFolder(memberId : String, name:String, subheading:String?, thumbnailImage: MultipartBody.Part?): Response<ResponseFolderId>
+    suspend fun requestAllMyFolderList() : Response<ResponseAllMyFolderList>
     suspend fun requestAllFolderList(memberId: String) : Response<ResponseAllFolderList>
+    suspend fun requestCreateFolderInPost(request: RequestCreateFolderInPost) : Response<ResponseFolderId>
 }
