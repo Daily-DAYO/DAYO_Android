@@ -4,36 +4,33 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.daily.dayo.databinding.ItemFolderListBinding
 import com.daily.dayo.profile.model.Folder
 
-class WriteFolderAdapter: RecyclerView.Adapter<WriteFolderAdapter.WriteFolderViewHolder>() {
+class WriteFolderAdapter: ListAdapter<Folder, WriteFolderAdapter.WriteFolderViewHolder>(diffCallback) {
 
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Folder>() {
             override fun areItemsTheSame(oldItem: Folder, newItem: Folder) =
-                oldItem.folderId == newItem.folderId
+                oldItem === newItem
 
             override fun areContentsTheSame(oldItem: Folder, newItem: Folder): Boolean =
                 oldItem.hashCode() == newItem.hashCode()
         }
     }
 
-    private val differ = AsyncListDiffer(this, diffCallback)
-    fun submitList(list: List<Folder>) = differ.submitList(list)
+    override fun submitList(list: List<Folder>?) {
+        super.submitList(list)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WriteFolderViewHolder {
         return WriteFolderViewHolder(ItemFolderListBinding.inflate(LayoutInflater.from(parent.context),parent, false))
     }
 
     override fun onBindViewHolder(holder: WriteFolderViewHolder, position: Int) {
-        val item = differ.currentList[position]
-        holder.bind(item)
-    }
-
-    override fun getItemCount(): Int {
-        return differ.currentList.size
+        holder.bind(getItem(position))
     }
 
     class WriteFolderViewHolder(binding: ItemFolderListBinding) : RecyclerView.ViewHolder(binding.root) {

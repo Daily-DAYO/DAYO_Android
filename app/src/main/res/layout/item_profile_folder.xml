@@ -10,6 +10,7 @@
         android:id="@+id/btn_profile_folder_item"
         android:layout_width="match_parent"
         android:layout_height="163dp"
+        android:scaleType="centerCrop"
         android:background="@drawable/button_profile_folder_default_gray"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

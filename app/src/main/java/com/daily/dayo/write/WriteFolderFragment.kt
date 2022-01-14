@@ -25,6 +25,7 @@ class WriteFolderFragment : Fragment() {
     private var binding by autoCleared<FragmentWriteFolderBinding>()
     private val writeFolderViewModel  by activityViewModels<WriteFolderViewModel>()
     private lateinit var writeFolderAdapter: WriteFolderAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,6 +37,7 @@ class WriteFolderFragment : Fragment() {
         setFolderAddButtonClickListener()
         setRvWriteFolderListAdapter()
         setWriteFolderList()
+
         return binding.root
     }
 
@@ -69,7 +71,7 @@ class WriteFolderFragment : Fragment() {
                     when(it.status){
                         Status.SUCCESS -> {
                             it.data?.let { folderList ->
-                                writeFolderAdapter.submitList(folderList.data)
+                                writeFolderAdapter.submitList(folderList.data?.toMutableList())
                             }
                         }
                     }
@@ -77,4 +79,5 @@ class WriteFolderFragment : Fragment() {
             }
         }
     }
+
 }
