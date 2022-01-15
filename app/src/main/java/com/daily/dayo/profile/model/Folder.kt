@@ -40,3 +40,23 @@ data class RequestCreateFolderInPost(
     val privacy:String
 )
 
+data class ResponseDetailListFolder(
+    @SerializedName("count")
+    val count:Int,
+    @SerializedName("data")
+    val data: List<FolderDetail>,
+    @SerializedName("name")
+    val name:String,
+    @SerializedName("subheading")
+    val subheading: String,
+    @SerializedName("thumbnailImage")
+    val thumbnailImage: String
+)
+
+data class FolderDetail(
+    @SerializedName("postId")
+    val postId:Int,
+    @SerializedName("thumbnailImage")
+    val thumbnailImage: String
+)
+

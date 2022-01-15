@@ -159,11 +159,44 @@
         <action
             android:id="@+id/action_myProfileFragment_to_myProfileEditFragment"
             app:destination="@id/MyProfileEditFragment" />
-
         <action
             android:id="@+id/action_myProfileFragment_to_myProfileOptionFragment"
             app:destination="@id/MyProfileOptionFragment"/>
+        <action
+            android:id="@+id/action_myProfileFragment_to_folderFragment"
+            app:destination="@+id/FolderFragment"/>
     </fragment>
+
+    <fragment
+        android:id="@+id/FolderFragment"
+        android:name="com.daily.dayo.profile.FolderFragment"
+        android:label="fragment_folder"
+        tools:layout="@layout/fragment_folder">
+
+        <argument
+            android:name="folderId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_folderFragment_to_folderOptionFragment"
+            app:destination="@id/FolderOptionFragment" />
+        <action
+            android:id="@+id/action_folderFragment_to_postFragment"
+            app:destination="@id/PostFragment" />
+
+    </fragment>
+
+    <dialog
+        android:id="@+id/FolderOptionFragment"
+        android:name="com.daily.dayo.profile.FolderOptionFragment"
+        android:label="fragment_folder_option"
+        tools:layout="@layout/fragment_folder_option">
+        <argument
+            android:name="folderId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_folderOptionFragment_to_myProfileFragment"
+            app:destination="@+id/MyProfileFragment" />
+    </dialog>
 
     <dialog
         android:id="@+id/MyProfileOptionFragment"
