@@ -16,6 +16,19 @@
         <action
             android:id="@+id/action_homeFragment_to_writeFragment"
             app:destination="@id/WriteFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_otherProfileFragment"
+            app:destination="@+id/OtherProfileFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/OtherProfileFragment"
+        android:name="com.daily.dayo.profile.OtherProfileFragment"
+        android:label="fragment_other_profile"
+        tools:layout="@layout/fragment_other_profile">
+        <argument
+            android:name="memberId"
+            app:argType="string"/>
     </fragment>
 
     <fragment
