@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_login"
+    app:startDestination="@id/LoginFragment">
+
+    <fragment
+        android:id="@+id/LoginFragment"
+        android:name="com.daily.dayo.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_signupEmailSetEmailAddressFragment"
+            app:destination="@+id/SignupEmailSetEmailAddressFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/SignupEmailSetEmailAddressFragment"
+        android:name="com.daily.dayo.signup.email.SignupEmailSetEmailAddressFragment"
+        android:label="fragment_signup_email_set_email_address"
+        tools:layout="@layout/fragment_signup_email_set_email_address">
+        <action
+            android:id="@+id/action_signupEmailSetEmailAddressFragment_to_signupEmailSetPasswordFragment"
+            app:destination="@+id/SignupEmailSetPasswordFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/SignupEmailSetPasswordFragment"
+        android:name="com.daily.dayo.signup.email.SignupEmailSetPasswordFragment"
+        android:label="fragment_signup_email_set_password"
+        tools:layout="@layout/fragment_signup_email_set_password">
+        <argument
+            android:name="email"
+            app:argType="string"/>
+        <action
+            android:id="@+id/action_signupEmailSetPasswordFragment_to_signupEmailSetPasswordConfirmationFragment"
+            app:destination="@+id/SignupEmailSetPasswordConfirmationFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/SignupEmailSetPasswordConfirmationFragment"
+        android:name="com.daily.dayo.signup.email.SignupEmailSetPasswordConfirmationFragment"
+        android:label="fragment_signup_email_set_password_confirmation"
+        tools:layout="@layout/fragment_signup_email_set_password_confirmation">
+        <argument
+            android:name="email"
+            app:argType="string"/>
+        <argument
+            android:name="password"
+            app:argType="string"/>
+        <action
+            android:id="@+id/action_signupEmailSetPasswordConfirmationFragment_to_signupEmailSetProfileFragment"
+            app:destination="@+id/SignupEmailSetProfileFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/SignupEmailSetProfileFragment"
+        android:name="com.daily.dayo.signup.email.SignupEmailSetProfileFragment"
+        android:label="fragment_signup_email_set_profile"
+        tools:layout="@layout/fragment_signup_email_set_profile">
+        <argument
+            android:name="email"
+            app:argType="string"/>
+        <argument
+            android:name="password"
+            app:argType="string"/>
+    </fragment>
+
+</navigation>
