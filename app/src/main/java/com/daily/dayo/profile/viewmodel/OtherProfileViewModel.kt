@@ -5,8 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.profile.model.ResponseAllFolderList
-import com.daily.dayo.profile.model.ResponseAllMyFolderList
+import com.daily.dayo.profile.model.ResponseOtherProfile
 import com.daily.dayo.repository.FolderRepository
+import com.daily.dayo.repository.ProfileRepository
 import com.daily.dayo.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -14,11 +15,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OtherProfileViewModel @Inject constructor(
-    private val folderRepository: FolderRepository
+    private val folderRepository: FolderRepository,
+    private val profileRepository: ProfileRepository
 ) : ViewModel() {
 
     private val _folderList = MutableLiveData<Resource<ResponseAllFolderList>>()
     val folderList : LiveData<Resource<ResponseAllFolderList>> get() = _folderList
+
+    private val _otherProfile = MutableLiveData<Resource<ResponseOtherProfile>>()
+    val otherProfile : LiveData<Resource<ResponseOtherProfile>> get() = _otherProfile
 
     fun requestAllFolderList(memberId:String) = viewModelScope.launch {
         _folderList.postValue(Resource.loading(null))
@@ -27,6 +32,16 @@ class OtherProfileViewModel @Inject constructor(
                 _folderList.postValue(Resource.success(it.body()))
             } else{
                 _folderList.postValue(Resource.error(it.errorBody().toString(), null))
+            }
+        }
+    }
+
+    fun requestOtherProfile(memberId: String) = viewModelScope.launch {
+        profileRepository.requestOtherProfile(memberId).let {
+            if(it.isSuccessful){
+                _otherProfile.postValue(Resource.success(it.body()))
+            }else{
+                _otherProfile.postValue(Resource.error(it.errorBody().toString(),null))
             }
         }
     }

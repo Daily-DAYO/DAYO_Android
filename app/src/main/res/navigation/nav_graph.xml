@@ -29,6 +29,12 @@
         <argument
             android:name="memberId"
             app:argType="string"/>
+        <action
+            android:id="@+id/action_otherProfileFragment_to_FolderFragment"
+            app:destination="@+id/FolderFragment"/>
+        <action
+            android:id="@+id/action_otherProfileFragment_to_followFragment"
+            app:destination="@id/FollowFragment" />
     </fragment>
 
     <fragment
