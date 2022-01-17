@@ -12,13 +12,13 @@ import com.daily.dayo.network.home.HomeApiService
 import com.daily.dayo.network.login.LoginApiHelper
 import com.daily.dayo.network.login.LoginApiHelperImpl
 import com.daily.dayo.network.login.LoginApiService
+import com.daily.dayo.network.profile.ProfileApiHelper
+import com.daily.dayo.network.profile.ProfileApiHelperImpl
+import com.daily.dayo.network.profile.ProfileApiService
 import com.daily.dayo.network.write.WriteApiHelper
 import com.daily.dayo.network.write.WriteApiHelperImpl
 import com.daily.dayo.network.write.WriteApiService
-import com.daily.dayo.repository.FolderRepository
-import com.daily.dayo.repository.HomeRepository
-import com.daily.dayo.repository.PostRepository
-import com.daily.dayo.repository.WriteRepository
+import com.daily.dayo.repository.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -87,5 +87,18 @@ object ServiceModule {
     @Singleton
     @Provides
     fun provideWriteRepository(writeApiHelper: WriteApiHelper) : WriteRepository = WriteRepository(writeApiHelper)
+
+    @Singleton
+    @Provides
+    fun provideProfileApiService(retrofit: Retrofit) = retrofit.create(ProfileApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideProfileApiHelper(profileApiHelperImpl: ProfileApiHelperImpl): ProfileApiHelper = profileApiHelperImpl
+
+    @Singleton
+    @Provides
+    fun provideProfileRepository(profileApiHelper: ProfileApiHelper) : ProfileRepository = ProfileRepository(profileApiHelper)
+
 
 }
