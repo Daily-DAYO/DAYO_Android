@@ -1,9 +1,6 @@
 package com.daily.dayo.network.folder
 
-import com.daily.dayo.profile.model.RequestCreateFolderInPost
-import com.daily.dayo.profile.model.ResponseAllFolderList
-import com.daily.dayo.profile.model.ResponseAllMyFolderList
-import com.daily.dayo.profile.model.ResponseFolderId
+import com.daily.dayo.profile.model.*
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -25,5 +22,11 @@ interface FolderApiService {
 
     @POST("/api/v1/folders/inPost")
     suspend fun requestCreateFolderInPost(@Body body:RequestCreateFolderInPost) : Response<ResponseFolderId>
+
+    @GET("/api/v1/folders/{folderId}")
+    suspend fun requestDetailListFolder(@Path("folderId") folderId:Int) : Response<ResponseDetailListFolder>
+
+    @POST("/api/v1/folders/delete/{folderId}")
+    suspend fun requestDeleteFolder(@Path("folderId") folderId:Int) : Response<Void>
 
 }

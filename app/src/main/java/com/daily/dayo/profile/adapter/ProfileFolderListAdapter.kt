@@ -2,11 +2,14 @@ package com.daily.dayo.profile.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.daily.dayo.databinding.ItemProfileFolderBinding
+import com.daily.dayo.home.HomeFragmentDirections
+import com.daily.dayo.profile.MyProfileFragmentDirections
 import com.daily.dayo.profile.model.Folder
 
 class ProfileFolderListAdapter : RecyclerView.Adapter<ProfileFolderListAdapter.ProfileFolderListViewHolder>(){
@@ -53,6 +56,10 @@ class ProfileFolderListAdapter : RecyclerView.Adapter<ProfileFolderListAdapter.P
             folderPostCnt.text = folder.postCount.toString()
             folderName.text = folder.name
             folderSubheading.text = folder.subheading
+
+            binding.root.setOnClickListener {
+                Navigation.findNavController(it).navigate(MyProfileFragmentDirections.actionMyProfileFragmentToFolderFragment(folder.folderId))
+            }
         }
     }
 
