@@ -76,7 +76,7 @@ class MyProfileEditFragment : Fragment() {
                         }
                     } else {
                         tvProfileEditNicknameMessage.visibility = View.VISIBLE
-                        tvProfileEditNicknameMessage.text = getString(R.string.my_profile_edit_nickname_message_length_fail)
+                        tvProfileEditNicknameMessage.text = getString(R.string.my_profile_edit_nickname_message_length_fail_min)
                         btnMyProfileEditComplete.setTextColor(resources.getColorStateList(R.color.gray_4_D3D2D2, context?.theme))
                         btnMyProfileEditComplete.isEnabled = false
                     }

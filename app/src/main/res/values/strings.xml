@@ -6,6 +6,7 @@
     <string name="write">글쓰기</string>
     <string name="notification">알림</string>
     <string name="my_page">마이 페이지</string>
+    <string name="next">다음</string>
     <string name="confirm">확인</string>
     <string name="complete">완료</string>
     <string name="cancel">취소</string>
@@ -73,12 +74,34 @@
     <string name="my_profile_edit_title">프로필 수정</string>
     <string name="my_profile_edit_nickname_edittext_hint">닉네임을 입력해 주세요.</string>
     <string name="my_profile_edit_nickname_edittext_count"> / 10</string>
+    <string name="my_profile_edit_nickname_message_success">사용할 수 있는 닉네임이에요.</string>
     <string name="my_profile_edit_nickname_message_format_fail">닉네임에는 한글, 영문, 숫자만 사용할 수 있어요.</string>
-    <string name="my_profile_edit_nickname_message_length_fail">닉네임을 2글자 이상 입력해주세요.</string>
+    <string name="my_profile_edit_nickname_message_length_fail_min">닉네임을 2글자 이상 입력해주세요.</string>
+    <string name="my_profile_edit_nickname_message_length_fail_max">닉네임을 10글자 이하로 가능해요.</string>
+    <string name="my_profile_edit_nickname_message_duplicate_fail">이미 사용중인 닉네임이에요.</string>
     <string name="my_profile_edit_image_select_gallery">앨범에서 선택</string>
     <string name="my_profile_edit_image_reset">프로필 사진 초기화</string>
     <!-- Search -->
     <string name="hint_search_keyword_input">검색어를 입력해주세요.</string>
+
+    <!-- Signup -->
+    <!-- Signup Email Set Address -->
+    <string name="email">이메일</string>
+    <string name="email_address">이메일 주소</string>
+    <string name="signup_email_set_email_address_title">이메일을 입력해주세요.</string>
+    <string name="signup_email_set_email_address_message_format_fail">올바른 이메일 주소를 입력해주세요.</string>
+    <string name="signup_email_set_email_address_message_duplicate_fail">이미 사용중인 이메일 주소예요.</string>
+    <!-- Signup Email Set Password -->
+    <string name="password">비밀번호</string>
+    <string name="signup_email_set_password_title">비밀번호를 입력해주세요.</string>
+    <string name="signup_email_set_password_message_format_fail">영문 소문자, 숫자를 사용해주세요.</string>
+    <string name="signup_email_set_password_message_length_fail_min">8자리 이상을 입력해주세요</string>
+    <string name="signup_email_set_password_message_length_fail_max">16자까지만 입력할 수 있어요.</string>
+    <string name="password_confirmation">비밀번호 확인</string>
+    <string name="signup_email_set_password_confirmation_edittext_hint">다시 한번 입력해주세요</string>
+    <string name="signup_email_set_password_confirmation_title">비밀번호를 확인해주세요.</string>
+    <string name="signup_email_set_password_confirmation_message_fail">같은 비밀번호를 입력해주세요</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
