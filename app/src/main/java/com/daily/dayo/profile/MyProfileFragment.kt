@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
@@ -15,6 +16,7 @@ import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.FragmentMyProfileBinding
 import com.daily.dayo.profile.adapter.MyProfileFragmentPagerStateAdapter
 import com.daily.dayo.profile.viewmodel.MyProfileViewModel
+import com.daily.dayo.util.Status
 import com.daily.dayo.util.autoCleared
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -87,10 +89,18 @@ class MyProfileFragment : Fragment() {
     }
 
     private fun setMyProfileDescription() {
-        binding.userInfo = SharedManager(requireContext()).getCurrentUser()
-        Glide.with(requireContext())
-            .load("http://www.endlesscreation.kr:8080/images/" + SharedManager(requireContext()).getCurrentUser().profileImg.toString())
-            .into(binding.imgMyProfileUserProfile)
+        myProfileViewModel.myProfile.observe(viewLifecycleOwner, Observer {
+            when(it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { userInfo ->
+                        binding.userInfo = userInfo
+                        Glide.with(requireContext())
+                            .load("http://www.endlesscreation.kr:8080/images/" + userInfo.profileImg)
+                            .into(binding.imgMyProfileUserProfile)
+                    }
+                }
+            }
+        })
     }
     private fun setMyProfileEditButtonClickListener() {
         binding.btnMyProfileEdit.setOnClickListener {

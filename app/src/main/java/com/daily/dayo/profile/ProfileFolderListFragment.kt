@@ -12,9 +12,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.daily.dayo.databinding.FragmentProfileFolderListBinding
 import com.daily.dayo.profile.adapter.ProfileFolderListAdapter
+import com.daily.dayo.profile.model.Folder
 import com.daily.dayo.profile.viewmodel.MyProfileViewModel
 import com.daily.dayo.util.Status
 import com.daily.dayo.util.autoCleared
@@ -40,6 +43,11 @@ class ProfileFolderListFragment : Fragment() {
         profileFolderListAdapter = ProfileFolderListAdapter()
         binding.rvProfileFolder.adapter = profileFolderListAdapter
         binding.rvProfileFolder.layoutManager = layoutManager
+        profileFolderListAdapter.setOnItemClickListener(object :ProfileFolderListAdapter.OnItemClickListener{
+            override fun onItemClick(v: View, folder: Folder, pos: Int) {
+                findNavController().navigate(MyProfileFragmentDirections.actionMyProfileFragmentToFolderFragment(folder.folderId))
+            }
+        })
     }
 
     private fun setProfileFolderList(){

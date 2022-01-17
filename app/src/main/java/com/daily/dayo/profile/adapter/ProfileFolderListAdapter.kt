@@ -1,6 +1,7 @@
 package com.daily.dayo.profile.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
@@ -20,7 +21,7 @@ class ProfileFolderListAdapter : RecyclerView.Adapter<ProfileFolderListAdapter.P
                 oldItem.folderId == newItem.folderId
 
             override fun areContentsTheSame(oldItem: Folder, newItem: Folder): Boolean =
-                oldItem.hashCode() == newItem.hashCode()
+                oldItem == newItem
         }
     }
 
@@ -42,6 +43,14 @@ class ProfileFolderListAdapter : RecyclerView.Adapter<ProfileFolderListAdapter.P
         return differ.currentList.size
     }
 
+    interface OnItemClickListener{
+        fun onItemClick(v: View, folder: Folder, pos : Int)
+    }
+    private var listener : OnItemClickListener? = null
+    fun setOnItemClickListener(listener : OnItemClickListener) {
+        this.listener = listener
+    }
+
     inner class ProfileFolderListViewHolder(private val binding: ItemProfileFolderBinding): RecyclerView.ViewHolder(binding.root) {
 
         val thumbnailImg = binding.btnProfileFolderItem
@@ -57,8 +66,12 @@ class ProfileFolderListAdapter : RecyclerView.Adapter<ProfileFolderListAdapter.P
             folderName.text = folder.name
             folderSubheading.text = folder.subheading
 
-            binding.root.setOnClickListener {
-                Navigation.findNavController(it).navigate(MyProfileFragmentDirections.actionMyProfileFragmentToFolderFragment(folder.folderId))
+            val pos = adapterPosition
+            if(pos!= RecyclerView.NO_POSITION)
+            {
+                itemView.setOnClickListener {
+                    listener?.onItemClick(itemView,folder,pos)
+                }
             }
         }
     }

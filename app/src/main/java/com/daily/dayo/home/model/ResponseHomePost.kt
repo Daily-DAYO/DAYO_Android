@@ -16,6 +16,8 @@ data class PostContent(
     val heartCount: Int,
     @SerializedName("id")
     val id: Int,
+    @SerializedName("memberId")
+    val memberId: String,
     @SerializedName("nickname")
     val nickname: String,
     @SerializedName("thumbnailImage")
