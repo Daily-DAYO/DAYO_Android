@@ -4,11 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daily.dayo.DayoApplication
-import com.daily.dayo.SharedManager
 import com.daily.dayo.profile.model.ResponseAllFolderList
-import com.daily.dayo.profile.model.ResponseAllMyFolderList
-import com.daily.dayo.profile.model.ResponseMyProfile
+import com.daily.dayo.profile.model.ResponseOtherProfile
 import com.daily.dayo.repository.FolderRepository
 import com.daily.dayo.repository.ProfileRepository
 import com.daily.dayo.util.Resource
@@ -17,25 +14,20 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MyProfileViewModel@Inject constructor(
+class OtherProfileViewModel @Inject constructor(
     private val folderRepository: FolderRepository,
     private val profileRepository: ProfileRepository
 ) : ViewModel() {
 
-    private val _folderList = MutableLiveData<Resource<ResponseAllMyFolderList>>()
-    val folderList : LiveData<Resource<ResponseAllMyFolderList>> get() = _folderList
+    private val _folderList = MutableLiveData<Resource<ResponseAllFolderList>>()
+    val folderList : LiveData<Resource<ResponseAllFolderList>> get() = _folderList
 
-    private val _myProfile = MutableLiveData<Resource<ResponseMyProfile>>()
-    val myProfile : LiveData<Resource<ResponseMyProfile>> get() = _myProfile
+    private val _otherProfile = MutableLiveData<Resource<ResponseOtherProfile>>()
+    val otherProfile : LiveData<Resource<ResponseOtherProfile>> get() = _otherProfile
 
-    init {
-        requestAllMyFolderList()
-        requestMyProfile()
-    }
-
-    fun requestAllMyFolderList() = viewModelScope.launch {
+    fun requestAllFolderList(memberId:String) = viewModelScope.launch {
         _folderList.postValue(Resource.loading(null))
-        folderRepository.requestAllMyFolderList().let {
+        folderRepository.requestAllFolderList(memberId).let {
             if(it.isSuccessful){
                 _folderList.postValue(Resource.success(it.body()))
             } else{
@@ -44,15 +36,14 @@ class MyProfileViewModel@Inject constructor(
         }
     }
 
-    fun requestMyProfile() = viewModelScope.launch {
-        profileRepository.requestMyProfile().let {
+    fun requestOtherProfile(memberId: String) = viewModelScope.launch {
+        profileRepository.requestOtherProfile(memberId).let {
             if(it.isSuccessful){
-                _myProfile.postValue(Resource.success(it.body()))
+                _otherProfile.postValue(Resource.success(it.body()))
             }else{
-                _myProfile.postValue(Resource.error(it.errorBody().toString(),null))
+                _otherProfile.postValue(Resource.error(it.errorBody().toString(),null))
             }
         }
     }
-
 
 }
