@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import com.daily.dayo.databinding.DialogDefaltExplanationConfirmBinding
 import com.daily.dayo.databinding.DialogDefaultAlertBinding
 import com.daily.dayo.databinding.DialogDefaultConfirmBinding
 
@@ -68,6 +69,51 @@ object DefaultDialogConfirm {
                 mAlertDialog.dismiss()
             }
             tvDefaultDialogCancel.setOnClickListener {
+                if(cancelButtonFunction != null) {
+                    cancelButtonFunction()
+                }
+                mAlertDialog.dismiss()
+            }
+        }
+
+        return mAlertDialog
+    }
+}
+
+object DefaultDialogExplanationConfirm {
+    fun createDialog(context: Context, dialogDescriptionResId: Int, dialogExplanationResId: Int,
+                     confirmButtonShow: Boolean = true, cancelButtonShow: Boolean,
+                     confirmButtonTextResId: Int?, cancelButtonTextResId: Int?,
+                     confirmButtonFunction: (() -> Unit)?, cancelButtonFunction: (() -> Unit)?) : AlertDialog {
+        val binding = DialogDefaltExplanationConfirmBinding.inflate(LayoutInflater.from(context))
+        val dialogBuilder = AlertDialog.Builder(context).setView(binding.root)
+        val mAlertDialog = dialogBuilder.create()
+        mAlertDialog.setCancelable(false)
+
+        with(binding) {
+            tvDefaultDialogDescription.setText(dialogDescriptionResId)
+            tvDefaultDialogExplanation.setText(dialogExplanationResId)
+
+            if(confirmButtonShow){
+                tvDefaultDialogExplanationConfirm.visibility = View.VISIBLE
+                confirmButtonTextResId?.let { tvDefaultDialogExplanationConfirm.setText(it) }
+            } else {
+                tvDefaultDialogExplanationConfirm.visibility = View.GONE
+            }
+            if(cancelButtonShow){
+                tvDefaultDialogExplanationCancel.visibility = View.VISIBLE
+                cancelButtonTextResId?.let { tvDefaultDialogExplanationCancel.setText(it) }
+            } else {
+                tvDefaultDialogExplanationCancel.visibility = View.GONE
+            }
+
+            tvDefaultDialogExplanationConfirm.setOnClickListener {
+                if (confirmButtonFunction != null) {
+                    confirmButtonFunction()
+                }
+                mAlertDialog.dismiss()
+            }
+            tvDefaultDialogExplanationCancel.setOnClickListener {
                 if(cancelButtonFunction != null) {
                     cancelButtonFunction()
                 }

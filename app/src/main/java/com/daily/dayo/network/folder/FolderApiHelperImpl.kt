@@ -1,9 +1,6 @@
 package com.daily.dayo.network.folder
 
-import com.daily.dayo.profile.model.RequestCreateFolderInPost
-import com.daily.dayo.profile.model.ResponseAllFolderList
-import com.daily.dayo.profile.model.ResponseAllMyFolderList
-import com.daily.dayo.profile.model.ResponseFolderId
+import com.daily.dayo.profile.model.*
 import okhttp3.MultipartBody
 import retrofit2.Response
 import javax.inject.Inject
@@ -20,4 +17,11 @@ class FolderApiHelperImpl @Inject constructor(private val folderApiService: Fold
 
     override suspend fun requestCreateFolderInPost(request : RequestCreateFolderInPost) : Response<ResponseFolderId> =
         folderApiService.requestCreateFolderInPost(request)
+
+    override suspend fun requestDeleteFolder(folderId:Int):Response<Void> =
+        folderApiService.requestDeleteFolder(folderId)
+
+    override suspend fun requestDetailListFolder(folderId: Int) : Response<ResponseDetailListFolder> =
+        folderApiService.requestDetailListFolder(folderId)
+
 }
