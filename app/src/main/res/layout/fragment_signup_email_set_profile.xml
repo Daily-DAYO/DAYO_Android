@@ -124,6 +124,7 @@
             android:id="@+id/btn_signup_email_set_profile_next"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:enabled="false"
             android:text="@string/next"
             android:textSize="16dp"
             android:textStyle="bold"
