@@ -58,7 +58,7 @@ object NetworkModule {
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient, gsonConverterFactory: GsonConverterFactory) : Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://www.endlesscreation.kr:8080")
+            .baseUrl("http://117.17.198.45:8080")
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(gsonConverterFactory)
             .client(okHttpClient)

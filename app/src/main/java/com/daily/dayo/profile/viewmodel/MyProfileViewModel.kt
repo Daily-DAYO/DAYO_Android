@@ -4,9 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daily.dayo.DayoApplication
-import com.daily.dayo.SharedManager
-import com.daily.dayo.profile.model.ResponseAllFolderList
 import com.daily.dayo.profile.model.ResponseAllMyFolderList
 import com.daily.dayo.profile.model.ResponseMyProfile
 import com.daily.dayo.repository.FolderRepository
@@ -14,6 +11,7 @@ import com.daily.dayo.repository.ProfileRepository
 import com.daily.dayo.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,7 +28,6 @@ class MyProfileViewModel@Inject constructor(
 
     init {
         requestAllMyFolderList()
-        requestMyProfile()
     }
 
     fun requestAllMyFolderList() = viewModelScope.launch {
@@ -54,5 +51,7 @@ class MyProfileViewModel@Inject constructor(
         }
     }
 
-
+    suspend fun requestUpdateMyProfile(nickname: String?, profileImg: File?) = viewModelScope.launch {
+        profileRepository.requestUpdateMyProfile(nickname, profileImg)
+    }
 }

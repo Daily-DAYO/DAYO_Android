@@ -71,7 +71,7 @@ class FolderFragment : Fragment(){
                                 binding.tvFolderSubheading.text = detailFolderList.subheading
                                 binding.tvFolderPostCount.text = detailFolderList.count.toString()
                                 Glide.with(binding.imgFolderThumbnail.context)
-                                    .load("http://www.endlesscreation.kr:8080/images/" + detailFolderList.thumbnailImage)
+                                    .load("http://117.17.198.45:8080/images/" + detailFolderList.thumbnailImage)
                                     .into(binding.imgFolderThumbnail)
                                 folderPostListAdapter.submitList(detailFolderList.data)
                             }
