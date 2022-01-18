@@ -60,7 +60,7 @@ class ProfileFolderListAdapter : RecyclerView.Adapter<ProfileFolderListAdapter.P
 
         fun bind(folder: Folder) {
             Glide.with(thumbnailImg.context)
-                .load("http://www.endlesscreation.kr:8080/images/" + folder.thumbnailImage)
+                .load("http://117.17.198.45:8080/images/" + folder.thumbnailImage)
                 .into(thumbnailImg)
             folderPostCnt.text = folder.postCount.toString()
             folderName.text = folder.name
