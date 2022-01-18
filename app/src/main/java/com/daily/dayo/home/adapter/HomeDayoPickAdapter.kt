@@ -51,7 +51,7 @@ class HomeDayoPickAdapter : RecyclerView.Adapter<HomeDayoPickAdapter.HomeDayoPic
         fun bind(postContent: PostContent, currentPosition: Int) {
             rankingNumber.text = (currentPosition+1).toString()
             Glide.with(postImg.context)
-                .load("http://www.endlesscreation.kr:8080/images/" + postContent.thumbnailImage)
+                .load("http://117.17.198.45:8080/images/" + postContent.thumbnailImage)
                 .into(postImg)
             Glide.with(userThumbnailImg.context)
                 .load(postContent.userProfileImage)

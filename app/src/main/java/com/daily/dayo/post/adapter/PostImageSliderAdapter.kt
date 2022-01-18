@@ -34,7 +34,7 @@ class PostImageSliderAdapter : ListAdapter<String, PostImageSliderAdapter.PostIm
     inner class PostImageViewHolder(private val binding: ItemPostImageSliderBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bindSliderImage(imageURL: String?) {
             Glide.with(binding.imgSlider.context)
-                .load("http://www.endlesscreation.kr:8080/images/" + imageURL)
+                .load("http://117.17.198.45:8080/images/" + imageURL)
                 .into(binding.imgSlider)
         }
     }

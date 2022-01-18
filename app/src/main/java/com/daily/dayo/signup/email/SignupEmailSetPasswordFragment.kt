@@ -89,7 +89,6 @@ class SignupEmailSetPasswordFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 with(binding.layoutSignupEmailSetPasswordUserPassword) {
                     isErrorEnabled = true
-                    isCounterEnabled = true
                     if(s.toString().trim().length < 8){ // 비밀번호 길이 검사 1
                         error = getString(R.string.signup_email_set_password_message_length_fail_min)
                     } else if(s.toString().trim().length > 16) { // 비밀번호 길이 검사 2
@@ -98,7 +97,6 @@ class SignupEmailSetPasswordFragment : Fragment() {
                         error = getString(R.string.signup_email_set_password_message_format_fail)
                     } else {
                         isErrorEnabled = false
-                        isCounterEnabled = false
                     }
 
                     if(isErrorEnabled){

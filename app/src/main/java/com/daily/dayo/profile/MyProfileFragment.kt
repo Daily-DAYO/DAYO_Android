@@ -12,7 +12,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.daily.dayo.R
-import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.FragmentMyProfileBinding
 import com.daily.dayo.profile.adapter.MyProfileFragmentPagerStateAdapter
 import com.daily.dayo.profile.viewmodel.MyProfileViewModel
@@ -89,13 +88,14 @@ class MyProfileFragment : Fragment() {
     }
 
     private fun setMyProfileDescription() {
+        myProfileViewModel.requestMyProfile()
         myProfileViewModel.myProfile.observe(viewLifecycleOwner, Observer {
             when(it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { userInfo ->
                         binding.userInfo = userInfo
                         Glide.with(requireContext())
-                            .load("http://www.endlesscreation.kr:8080/images/" + userInfo.profileImg)
+                            .load("http://117.17.198.45:8080/images/" + userInfo.profileImg)
                             .into(binding.imgMyProfileUserProfile)
                     }
                 }

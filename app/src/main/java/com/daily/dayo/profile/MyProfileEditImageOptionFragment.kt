@@ -53,7 +53,7 @@ class MyProfileEditImageOptionFragment : DialogFragment() {
 
     private fun setImageResetClickListener() {
         binding.layoutMyProfileEditImageOptionReset.setOnClickListener {
-            setMyProfileImage("resetMyProfileImage")
+            setMyProfileImage("resetMyProfileImage", "")
         }
     }
 
@@ -90,12 +90,15 @@ class MyProfileEditImageOptionFragment : DialogFragment() {
                 val data: Intent? = activityResult.data
                 // 호출된 갤러리에서 이미지 선택시, data의 data속성으로 해당 이미지의 Uri 전달
                 val uri = data?.data!!
-                setMyProfileImage(uri.toString())
+                // 이미지 파일과 함께, 파일 확장자도 같이 저장
+                val fileExtension = requireContext().contentResolver.getType(uri).toString().split("/")[1]
+                setMyProfileImage(uri.toString(), fileExtension)
             }
         }
 
-    private fun setMyProfileImage(ImageString : String) {
+    private fun setMyProfileImage(ImageString : String, fileExtension : String) {
         findNavController().previousBackStackEntry?.savedStateHandle?.set("userProfileImageString", ImageString)
+        findNavController().previousBackStackEntry?.savedStateHandle?.set("fileExtension", fileExtension)
         findNavController().popBackStack()
     }
 }
