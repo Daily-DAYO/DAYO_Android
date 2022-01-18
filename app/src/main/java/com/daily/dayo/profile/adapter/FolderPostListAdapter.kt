@@ -47,7 +47,7 @@ class FolderPostListAdapter: RecyclerView.Adapter<FolderPostListAdapter.FolderPo
 
         fun bind(folderDetail: FolderDetail) {
             Glide.with(binding.imgFolderPost.context)
-                .load("http://www.endlesscreation.kr:8080/images/" + folderDetail.thumbnailImage)
+                .load("http://117.17.198.45:8080/images/" + folderDetail.thumbnailImage)
                 .into(binding.imgFolderPost)
 
             binding.root.setOnClickListener {
