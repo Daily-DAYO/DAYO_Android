@@ -6,6 +6,9 @@ import com.daily.dayo.network.post.PostApiService
 import com.daily.dayo.network.folder.FolderApiHelper
 import com.daily.dayo.network.folder.FolderApiHelperImpl
 import com.daily.dayo.network.folder.FolderApiService
+import com.daily.dayo.network.follow.FollowApiHelper
+import com.daily.dayo.network.follow.FollowApiHelperImpl
+import com.daily.dayo.network.follow.FollowApiService
 import com.daily.dayo.network.home.HomeApiHelper
 import com.daily.dayo.network.home.HomeApiHelperImpl
 import com.daily.dayo.network.home.HomeApiService
@@ -99,6 +102,18 @@ object ServiceModule {
     @Singleton
     @Provides
     fun provideProfileRepository(profileApiHelper: ProfileApiHelper) : ProfileRepository = ProfileRepository(profileApiHelper)
+
+    @Singleton
+    @Provides
+    fun provideFollowApiService(retrofit: Retrofit) = retrofit.create(FollowApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideFollowApiHelper(followApiHelperImpl: FollowApiHelperImpl): FollowApiHelper = followApiHelperImpl
+
+    @Singleton
+    @Provides
+    fun provideFollowRepository(followApiHelper: FollowApiHelper) : FollowRepository = FollowRepository(followApiHelper)
 
 
 }
