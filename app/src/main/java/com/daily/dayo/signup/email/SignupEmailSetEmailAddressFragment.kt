@@ -1,6 +1,5 @@
 package com.daily.dayo.signup.email
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -10,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
@@ -33,8 +31,8 @@ class SignupEmailSetEmailAddressFragment : Fragment() {
         binding = FragmentSignupEmailSetEmailAddressBinding.inflate(inflater, container, false)
         setBackClickListener()
         setNextClickListener()
+        initEditText()
         setLimitEditTextInputType()
-        setEditTextErrorMessage()
         setTextEditorActionListener()
         return binding.root
     }
@@ -42,10 +40,9 @@ class SignupEmailSetEmailAddressFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.setOnTouchListener { _, _ ->
-            val inputMethodManager : InputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.hideSoftInputFromWindow(activity?.currentFocus?.windowToken, 0)
-            setEditTextTitle()
-            setVerifyEmailAddress()
+            HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetEmailAddressUserInput)
+            changeEditTextTitle()
+            verifyEmailAddress()
             true
         }
     }
@@ -55,26 +52,42 @@ class SignupEmailSetEmailAddressFragment : Fragment() {
             when(actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
                     HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetEmailAddressUserInput)
-                    setEditTextTitle()
-                    setVerifyEmailAddress()
+                    changeEditTextTitle()
+                    verifyEmailAddress()
                     true
                 } else -> false
             }
         }
-        binding.etSignupEmailSetEmailAddressUserInput.setOnFocusChangeListener { _, hasFocus ->
-            with(binding.layoutSignupEmailSetEmailAddressUserInput) {
-                if(hasFocus){
-                    hint = getString(R.string.email)
-                } else {
-                    hint = getString(R.string.email_address)
+    }
+
+    private fun initEditText() {
+        with(binding.etSignupEmailSetEmailAddressUserInput) {
+            setOnFocusChangeListener { _, hasFocus -> // Title
+                with(binding.layoutSignupEmailSetEmailAddressUserInput) {
+                    if(hasFocus){
+                        hint = getString(R.string.email)
+                        boxStrokeColor = resources.getColor(R.color.primary_green_23C882, context?.theme)
+                    } else {
+                        hint = getString(R.string.email_address)
+                    }
                 }
             }
+            addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {  }
+                override fun afterTextChanged(s: Editable?) {
+                    with(binding.layoutSignupEmailSetEmailAddressUserInput) {
+                        isErrorEnabled = false
+                        boxStrokeColor = resources.getColor(R.color.primary_green_23C882, context?.theme)
+                    }
+                }
+            })
         }
     }
 
-    private fun setEditTextTitle() {
+    private fun changeEditTextTitle() {
         with(binding.layoutSignupEmailSetEmailAddressUserInput) {
-            if(binding.etSignupEmailSetEmailAddressUserInput.text.isNullOrEmpty() && !binding.etSignupEmailSetEmailAddressUserInput.isFocused) {
+            if(binding.etSignupEmailSetEmailAddressUserInput.text.isNullOrEmpty()) {
                 hint = getString(R.string.email_address)
             } else {
                 hint = getString(R.string.email)
@@ -82,41 +95,34 @@ class SignupEmailSetEmailAddressFragment : Fragment() {
         }
     }
 
-    private fun setVerifyEmailAddress() {
-        with(binding.layoutSignupEmailSetEmailAddressUserInput) {
-            isErrorEnabled = true
-            if(android.util.Patterns.EMAIL_ADDRESS.matcher(binding.etSignupEmailSetEmailAddressUserInput.text.toString().trim()).matches()){ // 이메일 주소 양식 검사
-                if(true) { // TODO : 서버와 통신하여 이메일 중복 체크 필요
-                    ButtonActivation.setSignupButtonActive(requireContext(), binding.btnSignupEmailSetEmailAddressNext)
-                    isErrorEnabled = false
-                } else {
-                    ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetEmailAddressNext)
-                    error = getString(R.string.signup_email_set_email_address_message_duplicate_fail)
-                }
+    private fun verifyEmailAddress() {
+        if(android.util.Patterns.EMAIL_ADDRESS.matcher(binding.etSignupEmailSetEmailAddressUserInput.text.toString().trim()).matches()){ // 이메일 주소 양식 검사
+            if(true) { // TODO : 서버와 통신하여 이메일 중복 체크 필요
+                setEditTextTheme(null, true)
+                ButtonActivation.setSignupButtonActive(requireContext(), binding.btnSignupEmailSetEmailAddressNext)
             } else {
+                setEditTextTheme(getString(R.string.signup_email_set_email_address_message_duplicate_fail), false)
                 ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetEmailAddressNext)
-                error = getString(R.string.signup_email_set_email_address_message_format_fail)
             }
-
-            if(isErrorEnabled){
-                boxStrokeColor = resources.getColor(R.color.red_FF4545, context?.theme)
-                endIconDrawable = null
-            } else {
-                boxStrokeColor = resources.getColor(R.color.primary_green_23C882, context?.theme)
-                endIconDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_check_ok_sign)
-            }
+        } else {
+            setEditTextTheme(getString(R.string.signup_email_set_email_address_message_format_fail), false)
+            ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetEmailAddressNext)
         }
     }
 
-    private fun setEditTextErrorMessage() {
-        binding.etSignupEmailSetEmailAddressUserInput.addTextChangedListener(object :
-            TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
-            override fun afterTextChanged(s: Editable?) {
-
+    private fun setEditTextTheme(errorMessage: String?, pass: Boolean) {
+        with(binding.layoutSignupEmailSetEmailAddressUserInput) {
+            error = errorMessage
+            if(pass) {
+                isErrorEnabled = false
+                boxStrokeColor = resources.getColor(R.color.primary_green_23C882, context?.theme)
+                endIconDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_check_ok_sign)
+            } else {
+                isErrorEnabled = true
+                boxStrokeColor = resources.getColor(R.color.red_FF4545, context?.theme)
+                endIconDrawable = null
             }
-        })
+        }
     }
 
     private fun setLimitEditTextInputType() {
@@ -139,9 +145,7 @@ class SignupEmailSetEmailAddressFragment : Fragment() {
 
     private fun setNextClickListener() {
         binding.btnSignupEmailSetEmailAddressNext.setOnClickListener {
-            if(!binding.etSignupEmailSetEmailAddressUserInput.text.isNullOrBlank()) {
-                Navigation.findNavController(it).navigate(SignupEmailSetEmailAddressFragmentDirections.actionSignupEmailSetEmailAddressFragmentToSignupEmailSetPasswordFragment(binding.etSignupEmailSetEmailAddressUserInput.text.toString().trim()))
-            }
+            Navigation.findNavController(it).navigate(SignupEmailSetEmailAddressFragmentDirections.actionSignupEmailSetEmailAddressFragmentToSignupEmailSetPasswordFragment(binding.etSignupEmailSetEmailAddressUserInput.text.toString().trim()))
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.daily.dayo.signup.email
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -10,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -34,19 +32,18 @@ class SignupEmailSetPasswordConfirmationFragment : Fragment() {
         binding = FragmentSignupEmailSetPasswordConfirmationBinding.inflate(inflater, container, false)
         setBackClickListener()
         setNextClickListener()
+        initEditText()
         setLimitEditTextInputType()
-        setEditTextErrorMessage()
         setTextEditorActionListener()
+        verifyNickname()
         setUserPasswordEditText()
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.setOnTouchListener { _, _ ->
-            binding.etSignupEmailSetPasswordConfirmationUserInput.clearFocus()
-            val inputMethodManager : InputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.hideSoftInputFromWindow(activity?.currentFocus?.windowToken, 0)
-            setEditTextTitle()
+            HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetPasswordConfirmationUserInput)
+            changeEditTextTitle()
             true
         }
     }
@@ -56,15 +53,19 @@ class SignupEmailSetPasswordConfirmationFragment : Fragment() {
             when(actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
                     HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetPasswordConfirmationUserInput)
-                    setEditTextTitle()
+                    changeEditTextTitle()
                     true
                 } else -> false
             }
         }
+    }
+
+    private fun initEditText() {
         binding.etSignupEmailSetPasswordConfirmationUserInput.setOnFocusChangeListener { _, hasFocus ->
             with(binding.layoutSignupEmailSetPasswordConfirmationUserInput) {
                 if(hasFocus){
                     hint = getString(R.string.password_confirmation)
+                    boxStrokeColor = resources.getColor(R.color.primary_green_23C882, context?.theme)
                 } else {
                     hint = getString(R.string.signup_email_set_password_confirmation_edittext_hint)
                 }
@@ -72,10 +73,9 @@ class SignupEmailSetPasswordConfirmationFragment : Fragment() {
         }
     }
 
-
-    private fun setEditTextTitle() {
+    private fun changeEditTextTitle() {
         with(binding.layoutSignupEmailSetPasswordConfirmationUserInput) {
-            if(binding.etSignupEmailSetPasswordConfirmationUserInput.text.isNullOrEmpty() && !binding.etSignupEmailSetPasswordConfirmationUserInput.isFocused) {
+            if(binding.etSignupEmailSetPasswordConfirmationUserInput.text.isNullOrEmpty()) {
                 hint = getString(R.string.signup_email_set_password_confirmation_edittext_hint)
             } else {
                 hint = getString(R.string.password_confirmation)
@@ -83,29 +83,34 @@ class SignupEmailSetPasswordConfirmationFragment : Fragment() {
         }
     }
 
-    private fun setEditTextErrorMessage() {
+    private fun verifyNickname() {
         binding.etSignupEmailSetPasswordConfirmationUserInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
             override fun afterTextChanged(s: Editable?) {
-                with(binding.layoutSignupEmailSetPasswordConfirmationUserInput) {
-                    isErrorEnabled = true
-                    if(args.password != binding.etSignupEmailSetPasswordConfirmationUserInput.text.toString().trim() ){ // 동일 비밀번호 검사
-                        error = getString(R.string.signup_email_set_password_confirmation_message_fail)
-                    } else {
-                        isErrorEnabled = false
-                    }
-
-                    if(isErrorEnabled){
-                        binding.layoutSignupEmailSetPasswordConfirmationUserInput.boxStrokeColor = resources.getColor(R.color.red_FF4545, context?.theme)
-                        ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetPasswordConfirmationNext)
-                    } else {
-                        binding.layoutSignupEmailSetPasswordConfirmationUserInput.boxStrokeColor = resources.getColor(R.color.primary_green_23C882, context?.theme)
-                        ButtonActivation.setSignupButtonActive(requireContext(), binding.btnSignupEmailSetPasswordConfirmationNext)
-                    }
+                if(args.password != binding.etSignupEmailSetPasswordConfirmationUserInput.text.toString().trim() ){ // 동일 비밀번호 검사
+                    setEditTextTheme(getString(R.string.signup_email_set_password_confirmation_message_fail), false)
+                    ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetPasswordConfirmationNext)
+                } else {
+                    setEditTextTheme(null, true)
+                    ButtonActivation.setSignupButtonActive(requireContext(), binding.btnSignupEmailSetPasswordConfirmationNext)
                 }
             }
         })
+    }
+
+    private fun setEditTextTheme(errorMessage: String?, pass: Boolean) {
+        with(binding.layoutSignupEmailSetPasswordConfirmationUserInput) {
+            error = errorMessage
+            errorIconDrawable = null
+            if(pass) {
+                isErrorEnabled = false
+                boxStrokeColor = resources.getColor(R.color.primary_green_23C882, context?.theme)
+            } else {
+                isErrorEnabled = true
+                boxStrokeColor = resources.getColor(R.color.red_FF4545, context?.theme)
+            }
+        }
     }
 
     private fun setLimitEditTextInputType() {
@@ -132,9 +137,7 @@ class SignupEmailSetPasswordConfirmationFragment : Fragment() {
 
     private fun setNextClickListener() {
         binding.btnSignupEmailSetPasswordConfirmationNext.setOnClickListener {
-            if(!binding.etSignupEmailSetPasswordConfirmationUserInput.text.isNullOrBlank()) {
-                Navigation.findNavController(it).navigate(SignupEmailSetPasswordConfirmationFragmentDirections.actionSignupEmailSetPasswordConfirmationFragmentToSignupEmailSetProfileFragment(args.email,args.password))
-            }
+            Navigation.findNavController(it).navigate(SignupEmailSetPasswordConfirmationFragmentDirections.actionSignupEmailSetPasswordConfirmationFragmentToSignupEmailSetProfileFragment(args.email,args.password))
         }
     }
 }
