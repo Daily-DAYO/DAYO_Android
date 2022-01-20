@@ -178,9 +178,9 @@ class MyProfileEditFragment : Fragment() {
             runBlocking {
                 if(this@MyProfileEditFragment::userProfileImageString.isInitialized) {
                     setUploadImagePath(userProfileImageExtension)
-                    val profileImgBitmap = bitmapToFile(userProfileImageString.toUri().toBitmap(), imagePath)
+                    val profileImgFile = bitmapToFile(userProfileImageString.toUri().toBitmap(), imagePath)
 
-                    myProfileViewModel.requestUpdateMyProfile(nickname, profileImgBitmap).invokeOnCompletion {throwable ->
+                    myProfileViewModel.requestUpdateMyProfile(nickname, profileImgFile).invokeOnCompletion {throwable ->
                         when(throwable) {
                             is CancellationException -> Log.e("My Profile Update", "CANCELLED")
                             null -> {
