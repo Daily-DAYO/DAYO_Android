@@ -1,6 +1,11 @@
 package com.daily.dayo.signup.email
 
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
@@ -9,20 +14,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.core.net.toUri
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentSignupEmailSetProfileBinding
 import com.daily.dayo.util.ButtonActivation
 import com.daily.dayo.util.HideKeyBoardUtil
 import com.daily.dayo.util.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.regex.Pattern
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 
 @AndroidEntryPoint
 class SignupEmailSetProfileFragment : Fragment() {
     private var binding by autoCleared<FragmentSignupEmailSetProfileBinding>()
     private val args by navArgs<SignupEmailSetProfileFragmentArgs>()
+    private lateinit var userProfileImageString : String
+    private var imagePath: String? = null
+    private val imageFileTimeFormat = SimpleDateFormat("yyyy-MM-d-HH-mm-ss", Locale.KOREA)
+    private lateinit var userProfileImageExtension : String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +52,8 @@ class SignupEmailSetProfileFragment : Fragment() {
         setLimitEditTextInputType()
         setTextEditorActionListener()
         verifyNickname()
+        setProfilePhotoClickListener()
+        observeNavigationMyProfileImageCallBack()
         return binding.root
     }
 
@@ -120,6 +140,74 @@ class SignupEmailSetProfileFragment : Fragment() {
         binding.etSignupEmailSetProfileNickname.filters = arrayOf(filterInputCheck, lengthFilter)
     }
 
+    private fun setProfilePhotoClickListener() {
+        binding.layoutSignupEmailSetProfileUserImg.setOnClickListener {
+            findNavController().navigate(R.id.action_signupEmailSetProfileFragment_to_signupEmailSetProfileImageOptionFragment)
+        }
+    }
+    private fun observeNavigationMyProfileImageCallBack() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>("userProfileImageString")?.observe(viewLifecycleOwner) {
+            userProfileImageString = it
+            if(this::userProfileImageString.isInitialized){
+                if(userProfileImageString == "resetMyProfileImage") {
+                    Glide.with(requireContext())
+                        .load(R.drawable.ic_user_profile_image_empty)
+                        .centerCrop()
+                        .into(binding.imgSignupEmailSetProfileUserImage)
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        Glide.with(requireContext())
+                            .load(userProfileImageString.toUri())
+                            .centerCrop()
+                            .into(binding.imgSignupEmailSetProfileUserImage)
+                    }
+                }
+            }
+        }
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>("fileExtension")?.observe(viewLifecycleOwner) {
+            userProfileImageExtension = it
+        }
+    }
+    private fun setUploadImagePath(fileExtension: String) {
+        // uri를 통하여 불러온 이미지를 임시로 파일로 저장할 경로로 앱 내부 캐시 디렉토리로 설정,
+        // 파일 이름은 불러온 시간 사용
+        val fileName = imageFileTimeFormat.format(Date(System.currentTimeMillis())).toString() + "." + fileExtension
+        val cacheDir = requireContext().cacheDir.toString()
+        imagePath = "$cacheDir/$fileName"
+    }
+
+    fun bitmapToFile(bitmap: Bitmap?, path: String?): File? {
+        if (bitmap == null || path == null) { return null }
+        var file = File(path)
+        var out: OutputStream? = null
+        try { file.createNewFile()
+            out = FileOutputStream(file)
+            bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, out)
+        } finally { out?.close() }
+        return file
+    }
+
+    fun Uri.toBitmap(): Bitmap {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            ImageDecoder.decodeBitmap(ImageDecoder.createSource(requireContext().contentResolver, this) )
+        } else {
+            MediaStore.Images.Media.getBitmap(requireContext().contentResolver, this)
+        }
+    }
+
+    private fun vectorDrawableToBitmapDrawable(drawable: Drawable): Bitmap? {
+        try {
+            val bitmap: Bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            drawable.setBounds(0, 0, canvas.width, canvas.height)
+            drawable.draw(canvas)
+            return bitmap
+        } catch (e: OutOfMemoryError) {
+            // TODO: Handle the error
+            return null
+        }
+    }
+
     private fun setBackClickListener(){
         binding.btnSignupEmailSetProfileBack.setOnClickListener {
             findNavController().navigateUp()
@@ -128,7 +216,19 @@ class SignupEmailSetProfileFragment : Fragment() {
 
     private fun setNextClickListener() {
         binding.btnSignupEmailSetProfileNext.setOnClickListener {
-            //
+            var profileImgFile: File?= null
+            if(this::userProfileImageString.isInitialized) {
+                setUploadImagePath(userProfileImageExtension)
+                profileImgFile = bitmapToFile(userProfileImageString.toUri().toBitmap(), imagePath)
+            } else { // 기본 프로필 사진으로 설정
+                val profileEmptyDrawable = resources.getDrawable(R.drawable.ic_user_profile_image_empty, context?.theme)
+                val profileEmptyBitmap = vectorDrawableToBitmapDrawable(profileEmptyDrawable)
+
+                setUploadImagePath("png")
+                profileImgFile = bitmapToFile(profileEmptyBitmap, imagePath)
+            }
+
+            // TODO : 서버와 연동하는 코드 작성
         }
     }
 }
