@@ -18,11 +18,10 @@ class ProfileRepository @Inject constructor(private val profileApiHelper: Profil
             val fileNameDivideList: List<String> = profileImg.toString().split("/")
             var requestBodyFile : RequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), profileImg!!)
             uploadFile = MultipartBody.Part.createFormData("profileImg",fileNameDivideList[fileNameDivideList.size - 1], requestBodyFile)
-        } else if(profileImg == null){
-            var requestBodyEmpty : RequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), "")
-            uploadFile = MultipartBody.Part.createFormData("profileImg", "", requestBodyEmpty)
+            return profileApiHelper.requestUpdateMyProfile(nickname, uploadFile)
+        } else {
+            return profileApiHelper.requestUpdateMyProfile(nickname, null)
         }
-        return profileApiHelper.requestUpdateMyProfile(nickname, uploadFile)
     }
     suspend fun requestOtherProfile(memberId:String): Response<ResponseOtherProfile> = profileApiHelper.requestOtherProfile(memberId)
 }
