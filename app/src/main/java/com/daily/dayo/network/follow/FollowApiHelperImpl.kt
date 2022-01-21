@@ -1,13 +1,14 @@
 package com.daily.dayo.network.follow
 
+import com.daily.dayo.profile.model.RequestCreateFollow
 import com.daily.dayo.profile.model.ResponseCreateFollow
 import com.daily.dayo.profile.model.ResponseListAllFollow
 import retrofit2.Response
 import javax.inject.Inject
 
 class FollowApiHelperImpl @Inject constructor(private val followApiService: FollowApiService) : FollowApiHelper {
-    override suspend fun requestCreateFollow(followerId: String): Response<ResponseCreateFollow> =
-        followApiService.requestCreateFollow(followerId)
+    override suspend fun requestCreateFollow(body:RequestCreateFollow): Response<ResponseCreateFollow> =
+        followApiService.requestCreateFollow(body)
 
     override suspend fun requestDeleteFollow(followerId: String): Response<Void> =
         followApiService.requestDeleteFollow(followerId)
@@ -24,6 +25,6 @@ class FollowApiHelperImpl @Inject constructor(private val followApiService: Foll
     override suspend fun requestListAllMyFollowing(): Response<ResponseListAllFollow> =
         followApiService.requestListAllMyFollowing()
 
-    override suspend fun requestCreateFollowUp(followerId: String): Response<ResponseCreateFollow> =
-        followApiService.requestCreateFollowUp(followerId)
+    override suspend fun requestCreateFollowUp(body:RequestCreateFollow): Response<ResponseCreateFollow> =
+        followApiService.requestCreateFollowUp(body)
 }

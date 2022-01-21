@@ -268,6 +268,18 @@
         android:name="com.daily.dayo.follow.FollowFragment"
         android:label="fragment_follow"
         tools:layout="@layout/fragment_follow">
+        <argument
+            android:name="memberId"
+            app:argType="string"/>
+        <argument
+            android:name="nickname"
+            app:argType="string"/>
+        <action
+            android:id="@+id/action_followFragment_to_otherProfileFragment"
+            app:destination="@+id/OtherProfileFragment"/>
+        <action
+            android:id="@+id/action_followFragment_to_myProfileFragment"
+            app:destination="@+id/MyProfileFragment"/>
     </fragment>
 
 </navigation>

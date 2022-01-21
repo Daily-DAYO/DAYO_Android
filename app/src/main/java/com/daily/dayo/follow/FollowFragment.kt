@@ -6,17 +6,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.daily.dayo.databinding.FragmentFollowBinding
+import com.daily.dayo.follow.viewmodel.FollowViewModel
 import com.daily.dayo.util.autoCleared
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class FollowFragment : Fragment() {
     private var binding by autoCleared<FragmentFollowBinding>()
+    private val followViewModel: FollowViewModel by activityViewModels<FollowViewModel>()
     private lateinit var viewPager : ViewPager2
     private lateinit var tabLayout: TabLayout
+    private val args by navArgs<FollowFragmentArgs>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +38,7 @@ class FollowFragment : Fragment() {
         tabLayout = binding.tabsFollow
 
         setBackButtonClickListener()
+        setFollowFragmentDescription()
         return binding.root
     }
 
@@ -62,5 +69,10 @@ class FollowFragment : Fragment() {
         binding.btnFollowBack.setOnClickListener {
             findNavController().navigateUp()
         }
+    }
+
+    private fun setFollowFragmentDescription(){
+        binding.tvFollowUserNickname.text = args.nickname
+        followViewModel.setMemberId(args.memberId)
     }
 }
