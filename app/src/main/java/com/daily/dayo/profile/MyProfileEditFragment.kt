@@ -1,7 +1,9 @@
 package com.daily.dayo.profile
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.ImageDecoder
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -18,6 +20,7 @@ import com.daily.dayo.databinding.FragmentMyProfileEditBinding
 import com.daily.dayo.util.autoCleared
 import android.text.InputFilter
 import android.util.Log
+import android.view.inputmethod.EditorInfo
 import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
@@ -26,6 +29,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.daily.dayo.profile.viewmodel.MyProfileViewModel
+import com.daily.dayo.util.ButtonActivation
+import com.daily.dayo.util.HideKeyBoardUtil
 import com.daily.dayo.util.Status
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
@@ -50,9 +55,11 @@ class MyProfileEditFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMyProfileEditBinding.inflate(inflater, container, false)
-        initMyProfile()
         setBackButtonClickListener()
-        textWatcherEditText()
+        setLimitEditTextInputType()
+        setTextEditorActionListener()
+        verifyNickname()
+        initMyProfile()
         setProfileImageOptionClickListener()
         observeNavigationMyProfileImageCallBack()
 
@@ -61,7 +68,23 @@ class MyProfileEditFragment : Fragment() {
         }
         return binding.root
     }
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        view.setOnTouchListener { _, _ ->
+            HideKeyBoardUtil.hide(requireContext(), binding.etMyProfileEditNickname)
+            true
+        }
+    }
+    private fun setTextEditorActionListener() {
+        binding.etMyProfileEditNickname.setOnEditorActionListener {  _, actionId, _ ->
+            when(actionId) {
+                EditorInfo.IME_ACTION_DONE -> {
+                    HideKeyBoardUtil.hide(requireContext(), binding.etMyProfileEditNickname)
+                    true
+                } else -> false
+            }
+        }
+    }
     private fun setBackButtonClickListener(){
         binding.btnMyProfileEditBack.setOnClickListener {
             findNavController().navigateUp()
@@ -95,7 +118,7 @@ class MyProfileEditFragment : Fragment() {
         }
     }
 
-    private fun textWatcherEditText() {
+    private fun setLimitEditTextInputType() {
         // InputFilter로 띄어쓰기 입력만 막고 나머지는 안내메시지로 띄워지도록 사용자에게 유도
         val filterInputCheck = InputFilter { source, start, end, dest, dstart, dend ->
             val ps = Pattern.compile("^[ ]+\$")
@@ -106,7 +129,9 @@ class MyProfileEditFragment : Fragment() {
         }
         val lengthFilter = InputFilter.LengthFilter(10)
         binding.etMyProfileEditNickname.filters = arrayOf(filterInputCheck, lengthFilter)
+    }
 
+    private fun verifyNickname() {
         binding.etMyProfileEditNickname.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
@@ -118,26 +143,44 @@ class MyProfileEditFragment : Fragment() {
                         tvMyProfileEditNicknameCount.text = "${s.toString().trim().length}${getString(R.string.my_profile_edit_nickname_edittext_count)}"
                     }
 
-                    if(s.toString().trim().length >= 2) {
-                        if(Pattern.matches("^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9|]+\$", s.toString().trim())) {
-                            tvProfileEditNicknameMessage.visibility = View.INVISIBLE
-                            btnMyProfileEditComplete.setTextColor(resources.getColorStateList(R.color.primary_green_23C882, context?.theme))
-                            btnMyProfileEditComplete.isEnabled = true
-                        } else {
-                            tvProfileEditNicknameMessage.visibility = View.VISIBLE
-                            tvProfileEditNicknameMessage.text = getString(R.string.my_profile_edit_nickname_message_format_fail)
-                            btnMyProfileEditComplete.setTextColor(resources.getColorStateList(R.color.gray_4_D3D2D2, context?.theme))
-                            btnMyProfileEditComplete.isEnabled = false
-                        }
+                    if(s.toString().trim().length < 2) { // 닉네임 길이 검사 1
+                        setEditTextTheme(getString(R.string.my_profile_edit_nickname_message_length_fail_min), false)
+                        ButtonActivation.setTextViewButtonInactive(requireContext(), btnMyProfileEditComplete)
+                    } else if(s.toString().trim().length > 10) { // 닉네임 길이 검사 2
+                        setEditTextTheme(getString(R.string.my_profile_edit_nickname_message_length_fail_max), false)
+                        ButtonActivation.setTextViewButtonInactive(requireContext(), btnMyProfileEditComplete)
                     } else {
-                        tvProfileEditNicknameMessage.visibility = View.VISIBLE
-                        tvProfileEditNicknameMessage.text = getString(R.string.my_profile_edit_nickname_message_length_fail_min)
-                        btnMyProfileEditComplete.setTextColor(resources.getColorStateList(R.color.gray_4_D3D2D2, context?.theme))
-                        btnMyProfileEditComplete.isEnabled = false
+                        if(Pattern.matches("^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9|]+\$", s.toString().trim())) { // 닉네임 양식 검사
+                            if(true) { // TODO : 닉네임 중복검사 통과 코드 작성
+                                setEditTextTheme(getString(R.string.my_profile_edit_nickname_message_success), true)
+                                ButtonActivation.setTextViewButtonActive(requireContext(), btnMyProfileEditComplete)
+                            } else {
+                                setEditTextTheme(getString(R.string.my_profile_edit_nickname_message_duplicate_fail), false)
+                                ButtonActivation.setTextViewButtonInactive(requireContext(), btnMyProfileEditComplete)
+                            }
+                        } else {
+                            setEditTextTheme(getString(R.string.my_profile_edit_nickname_message_format_fail), false)
+                            ButtonActivation.setTextViewButtonInactive(requireContext(), btnMyProfileEditComplete)
+                        }
                     }
                 }
             }
         })
+    }
+
+    private fun setEditTextTheme(checkMessage: String?, pass: Boolean) {
+        with(binding.tvProfileEditNicknameMessage) {
+            visibility = View.VISIBLE
+            if(pass) {
+                text = checkMessage
+                setTextColor(resources.getColor(R.color.primary_green_23C882, context?.theme))
+                binding.tvProfileEditNicknameMessage.backgroundTintList = resources.getColorStateList(R.color.primary_green_23C882, context?.theme)
+            } else {
+                text = checkMessage
+                setTextColor(resources.getColor(R.color.red_FF4545, context?.theme))
+                binding.tvProfileEditNicknameMessage.backgroundTintList = resources.getColorStateList(R.color.red_FF4545, context?.theme)
+            }
+        }
     }
 
     private fun setProfileImageOptionClickListener() {
@@ -174,12 +217,12 @@ class MyProfileEditFragment : Fragment() {
     private fun setProfileUpdateClickListener() {
         binding.btnMyProfileEditComplete.setOnClickListener {
             val nickname: String? = binding.etMyProfileEditNickname.text.toString().trim()
+            var profileImgFile: File?
 
             runBlocking {
                 if(this@MyProfileEditFragment::userProfileImageString.isInitialized) {
-                    setUploadImagePath(userProfileImageExtension)
-                    val profileImgFile = bitmapToFile(userProfileImageString.toUri().toBitmap(), imagePath)
-
+                    // 프로필 사진을 변경하는 경우
+                    profileImgFile = changeMyProfileImage()
                     myProfileViewModel.requestUpdateMyProfile(nickname, profileImgFile).invokeOnCompletion {throwable ->
                         when(throwable) {
                             is CancellationException -> Log.e("My Profile Update", "CANCELLED")
@@ -191,6 +234,7 @@ class MyProfileEditFragment : Fragment() {
                         }
                     }
                 } else {
+                    // 프로필 사진을 변경하지 않는 경우
                     myProfileViewModel.requestUpdateMyProfile(nickname, null).invokeOnCompletion {throwable ->
                         when(throwable) {
                             is CancellationException -> Log.e("My Profile Update", "CANCELLED")
@@ -203,6 +247,20 @@ class MyProfileEditFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun changeMyProfileImage() : File? {
+        // 1. 프로필 사진 초기화를 한 경우
+        if(userProfileImageString == "resetMyProfileImage"){
+            val profileEmptyDrawable = resources.getDrawable(R.drawable.ic_user_profile_image_empty, context?.theme)
+            val profileEmptyBitmap = vectorDrawableToBitmapDrawable(profileEmptyDrawable)
+
+            setUploadImagePath("png")
+            return bitmapToFile(profileEmptyBitmap, imagePath)
+        } else { // 2. 프로필 사진을 다른 사진으로 변경 한 경우
+            setUploadImagePath(userProfileImageExtension)
+            return bitmapToFile(userProfileImageString.toUri().toBitmap(), imagePath)
         }
     }
 
@@ -231,6 +289,19 @@ class MyProfileEditFragment : Fragment() {
             ImageDecoder.decodeBitmap(ImageDecoder.createSource(requireContext().contentResolver, this) )
         } else {
             MediaStore.Images.Media.getBitmap(requireContext().contentResolver, this)
+        }
+    }
+
+    private fun vectorDrawableToBitmapDrawable(drawable: Drawable): Bitmap? {
+        try {
+            val bitmap: Bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            drawable.setBounds(0, 0, canvas.width, canvas.height)
+            drawable.draw(canvas)
+            return bitmap
+        } catch (e: OutOfMemoryError) {
+            // TODO: Handle the error
+            return null
         }
     }
 }
