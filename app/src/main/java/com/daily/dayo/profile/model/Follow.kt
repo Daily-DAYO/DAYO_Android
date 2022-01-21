@@ -20,7 +20,7 @@ data class ResponseListAllFollow(
 
 data class FollowInfo(
     @SerializedName("isAccept")
-    val boolean: Boolean,
+    val isAccept: Boolean,
     @SerializedName("memberId")
     val memberId: String,
     @SerializedName("nickname")
@@ -29,3 +29,7 @@ data class FollowInfo(
     val profile: String
 )
 
+data class RequestCreateFollow(
+    @SerializedName("followerId")
+    val followerId: String
+)
