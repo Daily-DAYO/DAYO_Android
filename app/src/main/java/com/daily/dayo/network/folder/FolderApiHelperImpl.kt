@@ -3,6 +3,7 @@ package com.daily.dayo.network.folder
 import com.daily.dayo.profile.model.*
 import okhttp3.MultipartBody
 import retrofit2.Response
+import java.io.File
 import javax.inject.Inject
 
 class FolderApiHelperImpl @Inject constructor(private val folderApiService: FolderApiService) : FolderApiHelper{
@@ -23,5 +24,8 @@ class FolderApiHelperImpl @Inject constructor(private val folderApiService: Fold
 
     override suspend fun requestDetailListFolder(folderId: Int) : Response<ResponseDetailListFolder> =
         folderApiService.requestDetailListFolder(folderId)
+
+    override suspend fun requestEditFolder(folderId:Int, name:String, privacy:String, subheading:String?, thumbnailImg: File?): Response<ResponseFolderId> =
+        folderApiService.requestEditFolder(folderId,name,privacy,subheading,thumbnailImg)
 
 }

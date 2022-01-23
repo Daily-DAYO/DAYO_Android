@@ -44,16 +44,20 @@ data class ResponseDetailListFolder(
     @SerializedName("count")
     val count:Int,
     @SerializedName("data")
-    val data: List<FolderDetail>,
+    val data: List<FolderPost>,
+    @SerializedName("memberId")
+    val memberId : String,
     @SerializedName("name")
     val name:String,
+    @SerializedName("privacy")
+    val privacy: String,
     @SerializedName("subheading")
     val subheading: String,
     @SerializedName("thumbnailImage")
     val thumbnailImage: String
 )
 
-data class FolderDetail(
+data class FolderPost(
     @SerializedName("postId")
     val postId:Int,
     @SerializedName("thumbnailImage")
