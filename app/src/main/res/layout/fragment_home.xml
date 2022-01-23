@@ -75,9 +75,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginHorizontal="15dp"
-                    android:layout_marginTop="21dp"
-                    android:layout_marginBottom="27dp"/>
+                    android:layout_marginBottom="19dp"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
