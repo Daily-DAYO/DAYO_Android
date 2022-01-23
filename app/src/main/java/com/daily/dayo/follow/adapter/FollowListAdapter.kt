@@ -2,6 +2,7 @@ package com.daily.dayo.follow.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.CheckBox
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -43,6 +44,14 @@ class FollowListAdapter : RecyclerView.Adapter<FollowListAdapter.FollowListViewH
         return differ.currentList.size
     }
 
+    interface OnItemClickListener{
+        fun onItemClick(checkbox: CheckBox, followInfo: FollowInfo, pos : Int)
+    }
+    private var listener : OnItemClickListener? = null
+    fun setOnItemClickListener(listener : OnItemClickListener) {
+        this.listener = listener
+    }
+
     inner class FollowListViewHolder(private val binding: ItemFollowBinding): RecyclerView.ViewHolder(binding.root) {
 
         val userProfileImg = binding.imgFollowUserProfile
@@ -54,9 +63,11 @@ class FollowListAdapter : RecyclerView.Adapter<FollowListAdapter.FollowListViewH
                 .load("http://117.17.198.45:8080/images/" + followInfo.profile)
                 .into(userProfileImg)
             userNickname.text = followInfo.nickname
-            userFollowBtn.isChecked = followInfo.isAccept
+            userFollowBtn.isChecked = true
 
             setRootClickListener(followInfo.memberId)
+            setFollowButtonTextState()
+            setFollowButtonClickListener(followInfo)
         }
 
         private fun setRootClickListener(memberId : String){
@@ -66,6 +77,21 @@ class FollowListAdapter : RecyclerView.Adapter<FollowListAdapter.FollowListViewH
                 }
                 else{
                     Navigation.findNavController(it).navigate(FollowFragmentDirections.actionFollowFragmentToOtherProfileFragment(memberId))
+                }
+            }
+        }
+
+        private fun setFollowButtonTextState() = when(binding.btnFollowUserFollow.isChecked){
+            true -> binding.btnFollowUserFollow.text = "팔로잉"
+            false -> binding.btnFollowUserFollow.text = "팔로우"
+        }
+
+        private fun setFollowButtonClickListener(followInfo: FollowInfo){
+            val pos = adapterPosition
+            if(pos!= RecyclerView.NO_POSITION)
+            {
+                binding.btnFollowUserFollow.setOnClickListener {
+                    listener?.onItemClick(binding.btnFollowUserFollow,followInfo,pos)
                 }
             }
         }
