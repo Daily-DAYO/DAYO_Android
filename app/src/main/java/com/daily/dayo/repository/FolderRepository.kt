@@ -30,4 +30,6 @@ class FolderRepository @Inject constructor(private val folderApiHelper: FolderAp
     suspend fun requestDetailListFolder(folderId:Int) = folderApiHelper.requestDetailListFolder(folderId)
 
     suspend fun requestDeleteFolder(folderId: Int) = folderApiHelper.requestDeleteFolder(folderId)
+
+    suspend fun requestEditFolder(folderId:Int, name:String, privacy:String, subheading:String?, thumbnailImg: File?) = folderApiHelper.requestEditFolder(folderId,name,privacy,subheading,thumbnailImg)
 }

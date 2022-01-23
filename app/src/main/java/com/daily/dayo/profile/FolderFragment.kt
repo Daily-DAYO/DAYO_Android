@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -12,12 +13,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.daily.dayo.R
+import com.daily.dayo.DayoApplication
+import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.FragmentFolderBinding
 import com.daily.dayo.profile.adapter.FolderPostListAdapter
-import com.daily.dayo.profile.adapter.ProfileFolderListAdapter
 import com.daily.dayo.profile.viewmodel.FolderViewModel
 import com.daily.dayo.util.Status
 import com.daily.dayo.util.autoCleared
@@ -74,6 +74,7 @@ class FolderFragment : Fragment(){
                                     .load("http://117.17.198.45:8080/images/" + detailFolderList.thumbnailImage)
                                     .into(binding.imgFolderThumbnail)
                                 folderPostListAdapter.submitList(detailFolderList.data)
+                                if(detailFolderList.memberId == SharedManager(DayoApplication.applicationContext()).getCurrentUser().memberId) binding.btnFolderOption.isVisible = true
                             }
                         }
                     }
