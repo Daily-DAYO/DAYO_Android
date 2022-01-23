@@ -69,6 +69,8 @@
     <string name="folder_delete_description_message">폴더를 삭제할까요?</string>
     <string name="folder_delete_explanation_message">해당 폴더에 등록된 게시물도 함께 삭제됩니다.</string>
 
+    <!-- Follow -->
+    <string name="follow_delete_description_message">팔로우를 취소할까요?</string>
 
     <!-- My Profile -->
     <string name="my_profile_edit_title">프로필 수정</string>

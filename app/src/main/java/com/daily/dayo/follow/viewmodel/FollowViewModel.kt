@@ -23,6 +23,9 @@ class FollowViewModel @Inject constructor(private val followRepository: FollowRe
     private val _followingList = MutableLiveData<Resource<ResponseListAllFollow>>()
     val followingList : LiveData<Resource<ResponseListAllFollow>> get() = _followingList
 
+    private val followSuccess = MutableLiveData<Boolean>()
+    private val unfollowSuccess = MutableLiveData<Boolean>()
+
     fun setMemberId(id: String) {
         _memberId.value = id
     }
@@ -43,6 +46,28 @@ class FollowViewModel @Inject constructor(private val followRepository: FollowRe
                 _followingList.postValue(Resource.success(it.body()))
             }else{
                 _followingList.postValue(Resource.error(it.errorBody().toString(),null))
+            }
+        }
+    }
+
+    fun requestCreateFollow(followerId:String) = viewModelScope.launch {
+        followRepository.requestCreateFollow(followerId).let {
+            if(it.isSuccessful){
+                followSuccess.postValue(true)
+            }
+            else{
+                followSuccess.postValue(false)
+            }
+        }
+    }
+
+    fun requestDeleteFollow(followerId:String) = viewModelScope.launch {
+        followRepository.requestDeleteFollow(followerId).let {
+            if(it.isSuccessful){
+                unfollowSuccess.postValue(true)
+            }
+            else{
+                unfollowSuccess.postValue(false)
             }
         }
     }
