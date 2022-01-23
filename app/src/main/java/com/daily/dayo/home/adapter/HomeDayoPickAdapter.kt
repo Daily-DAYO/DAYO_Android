@@ -1,7 +1,9 @@
 package com.daily.dayo.home.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.*
 import com.bumptech.glide.Glide
@@ -10,7 +12,7 @@ import com.daily.dayo.databinding.ItemMainPostBinding
 import com.daily.dayo.home.HomeFragmentDirections
 import com.daily.dayo.home.model.PostContent
 
-class HomeDayoPickAdapter : RecyclerView.Adapter<HomeDayoPickAdapter.HomeDayoPickViewHolder>(){
+class HomeDayoPickAdapter : ListAdapter<PostContent, HomeDayoPickAdapter.HomeDayoPickViewHolder>(diffCallback){
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<PostContent>() {
             override fun areItemsTheSame(oldItem: PostContent, newItem: PostContent) =
@@ -20,8 +22,14 @@ class HomeDayoPickAdapter : RecyclerView.Adapter<HomeDayoPickAdapter.HomeDayoPic
                 oldItem.hashCode() == newItem.hashCode()
         }
     }
-    private val differ = AsyncListDiffer(this,diffCallback)
-    fun submitList(list: List<PostContent>) = differ.submitList(list)
+
+    interface OnItemClickListener{
+        fun likePostClick(btn: ImageButton, data: PostContent, pos: Int)
+    }
+    private var listener: OnItemClickListener?= null
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        this.listener = listener
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : HomeDayoPickViewHolder {
         // ViewHolder 객체를 생성 후 Return
@@ -29,15 +37,15 @@ class HomeDayoPickAdapter : RecyclerView.Adapter<HomeDayoPickAdapter.HomeDayoPic
         )
     }
 
-    override fun getItemCount(): Int {
-        return differ.currentList.size
-    }
-
     override fun onBindViewHolder(holder: HomeDayoPickViewHolder, position: Int) {
         // ViewHolder가 재활용될 때 사용되는 메소드
         // ViewHolder에 Data Binding
-        val item = differ.currentList[position]
+        val item = getItem(position)
         holder.bind(item, position)
+    }
+
+    override fun submitList(list: MutableList<PostContent>?) {
+        super.submitList(list?.let { ArrayList(it) })
     }
 
     // Item View를 저장하는 Class
@@ -49,17 +57,31 @@ class HomeDayoPickAdapter : RecyclerView.Adapter<HomeDayoPickAdapter.HomeDayoPic
         var userThumbnailImg = binding.imgMainPostUserProfile
 
         fun bind(postContent: PostContent, currentPosition: Int) {
-            rankingNumber.text = (currentPosition+1).toString()
+            if(currentPosition > 3 ){
+                binding.layoutPostRankingNumber.visibility = View.INVISIBLE
+            } else {
+                binding.layoutPostRankingNumber.visibility = View.VISIBLE
+                rankingNumber.text = (currentPosition+1).toString()
+            }
             Glide.with(postImg.context)
                 .load("http://117.17.198.45:8080/images/" + postContent.thumbnailImage)
+                .centerCrop()
                 .into(postImg)
             Glide.with(userThumbnailImg.context)
-                .load(postContent.userProfileImage)
+                .load("http://117.17.198.45:8080/images/" + postContent.userProfileImage)
+                .centerCrop()
                 .into(userThumbnailImg)
 
             setBindingSetVariable(postContent)
             setRootClickListener(postContent.id, postContent.nickname)
             setNicknameClickListener(postContent.memberId)
+
+            val pos = adapterPosition
+            if(pos!= RecyclerView.NO_POSITION) {
+                binding.btnMainPostLike.setOnClickListener {
+                    listener?.likePostClick(binding.btnMainPostLike, postContent, pos)
+                }
+            }
         }
         private fun setBindingSetVariable(postContent: PostContent) {
             with(binding) {
