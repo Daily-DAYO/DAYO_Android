@@ -23,8 +23,15 @@ class FolderEditViewModel@Inject constructor(
     val _thumbnailUri = MutableLiveData<String>()
     val thumbnailUri : LiveData<String> get() = _thumbnailUri
 
-    fun requestEditFolder(folderId:Int, name:String, privacy:String, subheading:String?, thumbnailImg: File?) = viewModelScope.launch {
-        folderRepository.requestEditFolder(folderId,name,privacy,subheading,thumbnailImg)
+    val editSuccess = MutableLiveData<Boolean>()
+
+    fun requestEditFolder(folderId:Int, name:String, privacy:String, subheading:String?, thumbnailImage: File?) = viewModelScope.launch {
+        val response = folderRepository.requestEditFolder(folderId,name,privacy,subheading,thumbnailImage)
+        if(response.isSuccessful){
+            editSuccess.postValue(true)
+        }else{
+            editSuccess.postValue(false)
+        }
     }
 
     fun requestDetailListFolder(folderId:Int) = viewModelScope.launch {

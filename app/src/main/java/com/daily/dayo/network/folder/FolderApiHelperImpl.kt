@@ -25,7 +25,7 @@ class FolderApiHelperImpl @Inject constructor(private val folderApiService: Fold
     override suspend fun requestDetailListFolder(folderId: Int) : Response<ResponseDetailListFolder> =
         folderApiService.requestDetailListFolder(folderId)
 
-    override suspend fun requestEditFolder(folderId:Int, name:String, privacy:String, subheading:String?, thumbnailImg: File?): Response<ResponseFolderId> =
-        folderApiService.requestEditFolder(folderId,name,privacy,subheading,thumbnailImg)
+    override suspend fun requestEditFolder(folderId:Int, name:String, privacy:String, subheading:String?, thumbnailImage: MultipartBody.Part?): Response<ResponseFolderId> =
+        folderApiService.requestEditFolder(folderId,name,privacy,subheading,thumbnailImage)
 
 }
