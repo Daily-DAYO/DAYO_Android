@@ -36,6 +36,6 @@ interface FolderApiService {
                                   @Part("name") name:String,
                                   @Part("privacy") privacy:String,
                                   @Part("subheading") subheading:String?,
-                                  @Part("thumbnailImg") thumbnailImg: File?): Response<ResponseFolderId>
+                                  @Part thumbnailImage: MultipartBody.Part?): Response<ResponseFolderId>
 
 }

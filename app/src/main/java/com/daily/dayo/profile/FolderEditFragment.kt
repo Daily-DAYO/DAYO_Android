@@ -89,7 +89,11 @@ class FolderEditFragment  : Fragment() {
         binding.tvFolderSettingAddConfirm.setOnClickListener {
             editFolder()
             Toast.makeText(requireContext(), "확인 버튼 클릭", Toast.LENGTH_SHORT).show()
-            findNavController().popBackStack()
+            folderEditViewModel.editSuccess.observe(viewLifecycleOwner, Observer {
+                if(it){
+                    findNavController().popBackStack()
+                }
+            })
         }
     }
 
@@ -145,14 +149,14 @@ class FolderEditFragment  : Fragment() {
         }
         folderEditViewModel.thumbnailUri.observe(viewLifecycleOwner, Observer { it ->
             if(it != initThumbnailImg){
-                val thumbnailImg = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val thumbnailImage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                    ImageDecoder.decodeBitmap(ImageDecoder.createSource(requireContext().contentResolver, it.toUri()))
                    } else { MediaStore.Images.Media.getBitmap(requireContext().contentResolver, it.toUri())
                    }?.let { bitmapToFile(it) }
-                folderEditViewModel.requestEditFolder(args.folderId,name,privacy,subheading,thumbnailImg)
+                folderEditViewModel.requestEditFolder(args.folderId,name,privacy,subheading,thumbnailImage)
                 }
             else{
-                folderEditViewModel.requestEditFolder(args.folderId,name,privacy,subheading, File(initThumbnailImg))
+                folderEditViewModel.requestEditFolder(args.folderId,name,privacy,subheading,null)
             }
         })
     }
