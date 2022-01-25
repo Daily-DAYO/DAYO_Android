@@ -13,6 +13,7 @@ import javax.inject.Inject
 
 class HomeRepository @Inject constructor(private val homeApiHelper: HomeApiHelper) {
     suspend fun requestPostList() = homeApiHelper.requestPostList().verify()
+    suspend fun requestPostListCategory(category: String) = homeApiHelper.requestPostListCategory(category).verify()
     suspend fun requestLikePost(request : RequestLikePost) = homeApiHelper.requestLikePost(request).verify()
     suspend fun requestUnlikePost(postId: Int) = homeApiHelper.requestUnlikePost(postId)
 }

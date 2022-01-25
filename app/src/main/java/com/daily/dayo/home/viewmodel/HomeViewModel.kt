@@ -29,10 +29,20 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         requestHomePostList()
     }
 
-    private fun requestHomePostList() = viewModelScope.launch {
+    fun requestHomePostList() = viewModelScope.launch {
         _postList.postValue(Resource.loading(null))
         homeRepository.requestPostList().let {
             if(it.isSuccessful){
+                _postList.postValue(Resource.success(it.body()))
+            } else {
+                _postList.postValue(Resource.error(it.errorBody().toString(), null))
+            }
+        }
+    }
+
+    fun requestHomePostListCategory(category: String) = viewModelScope.launch {
+        homeRepository.requestPostListCategory(category).let {
+            if(it.isSuccessful) {
                 _postList.postValue(Resource.success(it.body()))
             } else {
                 _postList.postValue(Resource.error(it.errorBody().toString(), null))
