@@ -11,6 +11,8 @@ interface HomeApiService {
     // 네트워크 작업 Call
     @GET("/api/v1/posts")
     suspend fun requestPostList(): Response<ResponseHomePost>
+    @GET("/api/v1/posts/category/{category}")
+    suspend fun requestPostListCategory(@Path("category") category : String): Response<ResponseHomePost>
     @POST("/api/v1/heart")
     suspend fun requestLikePost(@Body body : RequestLikePost) : Response<ResponseLikePost>
     @POST("/api/v1/heart/delete/{postId}")

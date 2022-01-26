@@ -65,6 +65,29 @@ class DayoPickPostListFragment : Fragment() {
                 })
             }
         }
+        with(binding) {
+            radiobuttonDayopickPostCategoryAll.setOnClickListener {
+                homeViewModel.requestHomePostList()
+            }
+            radiobuttonDayopickPostCategoryScheduler.setOnClickListener {
+                homeViewModel.requestHomePostListCategory(getString(R.string.scheduler_eng))
+            }
+            radiobuttonDayopickPostCategoryStudyplanner.setOnClickListener {
+                homeViewModel.requestHomePostListCategory(getString(R.string.studyplanner_eng))
+            }
+            radiobuttonDayopickPostCategoryPocketbook.setOnClickListener {
+                homeViewModel.requestHomePostListCategory(getString(R.string.pocketbook_eng))
+            }
+            radiobuttonDayopickPostCategory6holediary.setOnClickListener {
+                homeViewModel.requestHomePostListCategory(getString(R.string.sixHoleDiary_eng))
+            }
+            radiobuttonDayopickPostCategoryDigital.setOnClickListener {
+                homeViewModel.requestHomePostListCategory(getString(R.string.digital_eng))
+            }
+            radiobuttonDayopickPostCategoryDigital.setOnClickListener {
+                homeViewModel.requestHomePostListCategory(getString(R.string.etc_eng))
+            }
+        }
     }
 
     private fun setPostLikeClickListener() {
