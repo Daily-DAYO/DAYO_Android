@@ -26,6 +26,13 @@
     <string name="sixHoleDiary">6공 다이어리</string>
     <string name="digital">굿노트</string>
     <string name="etc">기타</string>
+    <string name="all_eng">ALL</string>
+    <string name="scheduler_eng">SCHEDULER</string>
+    <string name="studyplanner_eng">STUDY_PLANNER</string>
+    <string name="pocketbook_eng">POCKET_BOOK</string>
+    <string name="sixHoleDiary_eng">SIX_DIARY</string>
+    <string name="digital_eng">GOOD_NOTE</string>
+    <string name="etc_eng">ETC</string>
 
     <!-- Write -->
     <string name="hint_write_description">내용을 작성해주세요.</string>
