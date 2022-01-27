@@ -8,8 +8,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.daily.dayo.DayoApplication
-import com.daily.dayo.MainActivity
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentFolderOptionBinding
 import com.daily.dayo.profile.viewmodel.FolderOptionViewModel
@@ -17,8 +15,6 @@ import com.daily.dayo.util.DefaultDialogConfigure
 import com.daily.dayo.util.DefaultDialogExplanationConfirm
 import com.daily.dayo.util.autoCleared
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import dagger.hilt.android.qualifiers.ApplicationContext
-import retrofit2.Response
 
 class FolderOptionFragment : BottomSheetDialogFragment()  {
     private var binding by autoCleared<FragmentFolderOptionBinding>()
@@ -31,6 +27,7 @@ class FolderOptionFragment : BottomSheetDialogFragment()  {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFolderOptionBinding.inflate(inflater, container, false)
+        setEditClickListenter()
         setDeleteClickListener()
         return binding.root
     }
@@ -38,6 +35,12 @@ class FolderOptionFragment : BottomSheetDialogFragment()  {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+    }
+
+    private fun setEditClickListenter(){
+        binding.layoutFolderOptionEdit.setOnClickListener {
+            findNavController().navigate(FolderOptionFragmentDirections.actionFolderOptionFragmentToFolderEditFragment(args.folderId))
+        }
     }
 
     private fun setDeleteClickListener(){

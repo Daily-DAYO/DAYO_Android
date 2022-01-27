@@ -18,7 +18,7 @@ class ProfileFolderListAdapter : RecyclerView.Adapter<ProfileFolderListAdapter.P
     companion object{
         private val diffCallback = object : DiffUtil.ItemCallback<Folder>() {
             override fun areItemsTheSame(oldItem: Folder, newItem: Folder) =
-                oldItem.folderId == newItem.folderId
+                oldItem === newItem
 
             override fun areContentsTheSame(oldItem: Folder, newItem: Folder): Boolean =
                 oldItem == newItem

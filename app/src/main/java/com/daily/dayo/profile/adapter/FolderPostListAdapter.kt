@@ -11,22 +11,22 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.ItemFolderPostBinding
 import com.daily.dayo.profile.FolderFragmentDirections
-import com.daily.dayo.profile.model.FolderDetail
+import com.daily.dayo.profile.model.FolderPost
 
 class FolderPostListAdapter: RecyclerView.Adapter<FolderPostListAdapter.FolderPostListViewHolder>(){
 
     companion object{
-        private val diffCallback = object : DiffUtil.ItemCallback<FolderDetail>() {
-            override fun areItemsTheSame(oldItem: FolderDetail, newItem: FolderDetail) =
+        private val diffCallback = object : DiffUtil.ItemCallback<FolderPost>() {
+            override fun areItemsTheSame(oldItem: FolderPost, newItem: FolderPost) =
                 oldItem === newItem
 
-            override fun areContentsTheSame(oldItem: FolderDetail, newItem: FolderDetail): Boolean =
+            override fun areContentsTheSame(oldItem: FolderPost, newItem: FolderPost): Boolean =
                 oldItem.hashCode() == newItem.hashCode()
         }
     }
 
     private val differ = AsyncListDiffer(this, diffCallback)
-    fun submitList(list: List<FolderDetail>) = differ.submitList(list)
+    fun submitList(list: List<FolderPost>) = differ.submitList(list)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : FolderPostListViewHolder {
         return FolderPostListViewHolder(
@@ -45,13 +45,13 @@ class FolderPostListAdapter: RecyclerView.Adapter<FolderPostListAdapter.FolderPo
 
     inner class FolderPostListViewHolder(private val binding: ItemFolderPostBinding): RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(folderDetail: FolderDetail) {
+        fun bind(folderPost: FolderPost) {
             Glide.with(binding.imgFolderPost.context)
-                .load("http://117.17.198.45:8080/images/" + folderDetail.thumbnailImage)
+                .load("http://117.17.198.45:8080/images/" + folderPost.thumbnailImage)
                 .into(binding.imgFolderPost)
 
             binding.root.setOnClickListener {
-                Navigation.findNavController(it).navigate(FolderFragmentDirections.actionFolderFragmentToPostFragment(folderDetail.postId,
+                Navigation.findNavController(it).navigate(FolderFragmentDirections.actionFolderFragmentToPostFragment(folderPost.postId,
                     SharedManager(DayoApplication.applicationContext()).getCurrentUser().nickname.toString()))
             }
         }
