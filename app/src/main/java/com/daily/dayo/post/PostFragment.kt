@@ -32,6 +32,7 @@ import com.daily.dayo.home.HomeFragmentDirections
 import com.daily.dayo.post.adapter.PostTagListAdapter
 import com.daily.dayo.post.model.PostCommentContent
 import com.daily.dayo.post.model.RequestCreatePostComment
+import com.daily.dayo.post.model.RequestLikePost
 
 @AndroidEntryPoint
 class PostFragment : Fragment() {
@@ -57,6 +58,8 @@ class PostFragment : Fragment() {
         postViewModel.requestPostComment(args.id)
         setPostDetailCollect()
         setPostCommentCollect()
+        setPostLikeClickListener()
+        setPostBookmarkClickListener()
         setCreatePostComment()
         setPostCommentClickListener()
         return binding.root
@@ -100,7 +103,7 @@ class PostFragment : Fragment() {
                                         post = postDetail
                                         // isMine =
                                         Glide.with(requireContext())
-                                            .load(postDetail.profileImg)
+                                            .load("http://117.17.198.45:8080/images/" + postDetail.profileImg)
                                             .into(imgPostUserProfile)
                                         executePendingBindings()
                                     }
@@ -122,6 +125,7 @@ class PostFragment : Fragment() {
                         Status.SUCCESS -> {
                             it.data?.let { postComment ->
                                 postCommentAdapter.submitList(postComment.data?.toMutableList())
+                                binding.postCommentCount = postComment.count
                             }
                         }
                         Status.LOADING -> { }
@@ -203,7 +207,37 @@ class PostFragment : Fragment() {
         }
     }
 
+    private fun setPostLikeClickListener() {
+        with(binding.btnPostLike) {
+            setOnClickListener {
+                if(true) { // TODO: Like한 Post인지 아닌지 판단하는 조건 필요
+                    setImageDrawable(resources.getDrawable(R.drawable.ic_like_pressed, context?.theme))
+                    postViewModel.requestLikePost(RequestLikePost(args.id))
+                } else {
+                    setImageDrawable(resources.getDrawable(R.drawable.ic_like_default, context?.theme))
+                    postViewModel.requestUnlikePost(args.id)
+                }
+            }
+        }
+    }
+
+    private fun setPostBookmarkClickListener() {
+        binding.btnPostBookmark.setOnClickListener {
+            if(binding.btnPostBookmark.isSelected) {
+                // TODO: Like한 Post인지 아닌지 판단하는 조건 필요
+                // TODO : bookmark 서버 연동 필요
+                binding.btnPostBookmark.isSelected = false
+            } else {
+                binding.btnPostBookmark.isSelected = true
+            }
+        }
+    }
+
     private fun setCreatePostComment() {
+        Glide.with(requireContext())
+            .load("http://117.17.198.45:8080/images/" + SharedManager(requireContext()).getCurrentUser().profileImg)
+            .into(binding.imgPostCommentMyProfile)
+
         binding.tvPostCommentUpload.setOnClickListener {
             val commentDescription = RequestCreatePostComment(
                 contents = binding.etPostCommentDescription.text.toString(),

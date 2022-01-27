@@ -21,19 +21,24 @@
             android:id="@+id/view_post_comment_list_horizontal_line"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/gray_4_D3D2D2"
+            android:background="@color/gray_7_F6F6F6"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/img_post_comment_user_profile"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/gray_4_D3D2D2"
+            android:src="@drawable/ic_user_profile_image_empty"
+            android:scaleType="centerCrop"
             app:layout_constraintTop_toBottomOf="@+id/view_post_comment_list_horizontal_line"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="12dp"
             android:layout_marginStart="16dp"
-            tools:src="@drawable/ic_dayo_grayscale"/>
+            tools:src="@drawable/ic_dayo_grayscale" />
         <TextView
             android:id="@+id/tv_post_comment_user_nickname"
             android:layout_width="wrap_content"

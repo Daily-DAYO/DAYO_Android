@@ -4,9 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daily.dayo.post.model.RequestCreatePostComment
-import com.daily.dayo.post.model.ResponsePost
-import com.daily.dayo.post.model.ResponsePostComment
+import com.daily.dayo.post.model.*
 import com.daily.dayo.repository.PostRepository
 import com.daily.dayo.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +17,9 @@ import javax.inject.Inject
 class PostViewModel @Inject constructor(private val postRepository: PostRepository): ViewModel() {
     private val _postDetail = MutableLiveData<Resource<ResponsePost>>()
     val postDetail: LiveData<Resource<ResponsePost>> get() = _postDetail
+
+    private val _postliked = MutableLiveData<Resource<ResponseLikePost>>()
+    val postLiked: LiveData<Resource<ResponseLikePost>> get() = _postliked
 
     private val _requestCreatePostComment = MutableSharedFlow<Boolean>()
     val requestCreatePostComment = _requestCreatePostComment.asSharedFlow()
@@ -39,6 +40,20 @@ class PostViewModel @Inject constructor(private val postRepository: PostReposito
 
     fun requestDeletePost(postId: Int) = viewModelScope.launch {
         postRepository.requestDeletePost(postId)
+    }
+
+    fun requestLikePost(request: RequestLikePost) = viewModelScope.launch {
+        postRepository.requestLikePost(request).let {
+            if(it.isSuccessful) {
+                _postliked.postValue(Resource.success(it.body()))
+            } else {
+                _postliked.postValue(Resource.error(it.errorBody().toString(), null))
+            }
+        }
+    }
+
+    fun requestUnlikePost(postId: Int) = viewModelScope.launch {
+        postRepository.requestUnlikePost(postId)
     }
 
     fun requestPostComment(postId: Int) = viewModelScope.launch {

@@ -49,7 +49,7 @@ object ServiceModule {
     // Repository를 @Provides를 통해 제공하여 ViewModel에서 Constructor에 @Inject 어노테이션과 함께 작성하기만하면 해당 Repository 객체를 자유자재로 접근 가능
     @Singleton
     @Provides
-    fun provideHomeRepository(homeApiHelper: HomeApiHelper) : HomeRepository = HomeRepository(homeApiHelper)
+    fun provideHomeRepository(homeApiHelper: HomeApiHelper, postApiHelper: PostApiHelper) : HomeRepository = HomeRepository(homeApiHelper, postApiHelper)
 
     @Singleton
     @Provides
