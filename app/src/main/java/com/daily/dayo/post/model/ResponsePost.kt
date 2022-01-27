@@ -11,10 +11,26 @@ data class ResponsePost (
     val createdDateTime: String,
     @SerializedName("hashtags")
     val hashtags: List<String>,
+    @SerializedName("heart")
+    val heart: Boolean,
+    @SerializedName("heartCount")
+    val heartCount: Int,
     @SerializedName("images")
     val images: List<String>,
     @SerializedName("nickname")
     val nickname: String,
     @SerializedName("profileImg")
     val profileImg: String
-    )
+)
+
+data class RequestLikePost(
+    @SerializedName("postId")
+    val postId: Int
+)
+
+data class ResponseLikePost(
+    @SerializedName("memberId")
+    val memberId: String,
+    @SerializedName("postId")
+    val postId: Int
+)

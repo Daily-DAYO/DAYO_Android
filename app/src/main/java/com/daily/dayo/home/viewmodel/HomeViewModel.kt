@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daily.dayo.home.model.RequestLikePost
 import com.daily.dayo.home.model.ResponseHomePost
-import com.daily.dayo.home.model.ResponseLikePost
+import com.daily.dayo.post.model.RequestLikePost
+import com.daily.dayo.post.model.ResponseLikePost
 import com.daily.dayo.repository.HomeRepository
 import com.daily.dayo.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel

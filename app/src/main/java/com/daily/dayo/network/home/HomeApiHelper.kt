@@ -1,8 +1,6 @@
 package com.daily.dayo.network.home
 
-import com.daily.dayo.home.model.RequestLikePost
 import com.daily.dayo.home.model.ResponseHomePost
-import com.daily.dayo.home.model.ResponseLikePost
 import retrofit2.Response
 
 interface HomeApiHelper {
@@ -10,6 +8,4 @@ interface HomeApiHelper {
     // (ApiHelper will help ApiService to be accessed via repository maintaining encapsulation.)
     suspend fun requestPostList(): Response<ResponseHomePost>
     suspend fun requestPostListCategory(category: String): Response<ResponseHomePost>
-    suspend fun requestLikePost(request : RequestLikePost) : Response<ResponseLikePost>
-    suspend fun requestUnlikePost(postId: Int) : Response<Void>
 }
