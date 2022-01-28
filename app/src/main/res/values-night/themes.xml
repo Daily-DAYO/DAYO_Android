@@ -30,6 +30,14 @@
         <item name="android:textColor">@color/primary_green_23C882</item>
     </style>
 
+    <style name="WriteEditTextStyle" parent="Theme.DAYO">
+        <!-- EditText Color -->
+        <item name="colorControlActivated">@android:color/transparent</item>
+        <item name="colorControlNormal">@android:color/transparent</item>
+        <item name="android:textCursorDrawable">@drawable/background_cursor_color_gray_1</item>
+        <item name="colorAccent">@color/gray_1_313131</item>
+    </style>
+
     <style name="EditTextStyle" parent="Theme.DAYO">
         <!-- EditText Color -->
         <item name="colorControlActivated">@color/gray_1_313131</item>

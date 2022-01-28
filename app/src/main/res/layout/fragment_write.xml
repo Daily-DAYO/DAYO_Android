@@ -12,6 +12,7 @@
         android:layout_height="?actionBarSize"
         android:elevation="24dp"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/layout_radiogroup_write_post_category"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
         <ImageButton
@@ -29,10 +30,10 @@
             android:id="@+id/view_actionbar_horizontal_line"
             android:layout_width="0dp"
             android:layout_height="1dp"
+            android:background="@color/gray_6_EDEDED"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:background="@color/gray_4_D3D2D2"/>
+            app:layout_constraintEnd_toEndOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
@@ -41,65 +42,52 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@id/layout_write_action_bar"
+        app:layout_constraintBottom_toTopOf="@id/layout_scroll_write_detail"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginVertical="16dp"
-        android:layout_marginHorizontal="17dp">
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="19dp">
         <RadioGroup
             android:id="@+id/radiogroup_write_post_category_line1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="10">
+            android:weightSum="3">
             <RadioButton
                 android:id="@+id/radiobutton_write_post_category_scheduler"
                 android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="2.5"
-                android:checked="true"
+                android:layout_height="29dp"
+                android:layout_weight="1"
                 android:text="@string/scheduler"
-                android:textSize="10dp"
-                android:textColor="@drawable/selector_button_home_post_category_text"
+                android:textSize="13dp"
+                android:textColor="@drawable/selector_button_write_post_category_text"
                 android:textAlignment="center"
-                android:background="@drawable/selector_button_home_post_category"
+                android:background="@drawable/selector_button_write_post_category"
                 android:button="@null"
-                android:layout_marginRight="9dp"/>
+                android:layout_marginRight="10dp"/>
             <RadioButton
                 android:id="@+id/radiobutton_write_post_category_studyplanner"
                 android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="2.5"
+                android:layout_height="29dp"
+                android:layout_weight="1"
                 android:text="@string/studyplanner"
-                android:textSize="10dp"
-                android:textColor="@drawable/selector_button_home_post_category_text"
+                android:textSize="13dp"
+                android:textColor="@drawable/selector_button_write_post_category_text"
                 android:textAlignment="center"
-                android:background="@drawable/selector_button_home_post_category"
+                android:background="@drawable/selector_button_write_post_category"
                 android:button="@null"
-                android:layout_marginRight="9dp"/>
+                android:layout_marginRight="10dp"/>
             <RadioButton
                 android:id="@+id/radiobutton_write_post_category_digital"
                 android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="2.5"
+                android:layout_height="29dp"
+                android:layout_weight="1"
                 android:text="@string/digital"
-                android:textSize="10dp"
-                android:textColor="@drawable/selector_button_home_post_category_text"
+                android:textSize="13dp"
+                android:textColor="@drawable/selector_button_write_post_category_text"
                 android:textAlignment="center"
-                android:background="@drawable/selector_button_home_post_category"
-                android:button="@null"
-                android:layout_marginRight="9dp"/>
-            <RadioButton
-                android:id="@+id/radiobutton_write_post_category_pocketbook"
-                android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="2.5"
-                android:text="@string/pocketbook"
-                android:textSize="10dp"
-                android:textColor="@drawable/selector_button_home_post_category_text"
-                android:textAlignment="center"
-                android:background="@drawable/selector_button_home_post_category"
-                android:button="@null"
-                android:layout_marginRight="9dp"/>
+                android:background="@drawable/selector_button_write_post_category"
+                android:button="@null"/>
         </RadioGroup>
 
         <RadioGroup
@@ -108,42 +96,53 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="9dp"
-            android:weightSum="10">
+            android:weightSum="3">
+            <RadioButton
+                android:id="@+id/radiobutton_write_post_category_pocketbook"
+                android:layout_width="0dp"
+                android:layout_height="29dp"
+                android:layout_weight="1"
+                android:text="@string/pocketbook"
+                android:textSize="13dp"
+                android:textColor="@drawable/selector_button_write_post_category_text"
+                android:textAlignment="center"
+                android:background="@drawable/selector_button_write_post_category"
+                android:button="@null"
+                android:layout_marginRight="10dp"/>
             <RadioButton
                 android:id="@+id/radiobutton_write_post_category_sixHoleDiary"
                 android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="2.5"
+                android:layout_height="29dp"
+                android:layout_weight="1"
                 android:text="@string/sixHoleDiary"
-                android:textSize="10dp"
-                android:textColor="@drawable/selector_button_home_post_category_text"
+                android:textSize="13dp"
+                android:textColor="@drawable/selector_button_write_post_category_text"
                 android:textAlignment="center"
-                android:background="@drawable/selector_button_home_post_category"
+                android:background="@drawable/selector_button_write_post_category"
                 android:button="@null"
-                android:layout_marginRight="9dp"/>
+                android:layout_marginRight="10dp"/>
             <RadioButton
                 android:id="@+id/radiobutton_write_post_category_etc"
                 android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="2.5"
+                android:layout_height="29dp"
+                android:layout_weight="1"
                 android:text="@string/etc"
-                android:textSize="10dp"
-                android:textColor="@drawable/selector_button_home_post_category_text"
+                android:textSize="13dp"
+                android:textColor="@drawable/selector_button_write_post_category_text"
                 android:textAlignment="center"
-                android:background="@drawable/selector_button_home_post_category"
-                android:button="@null"
-                android:layout_marginRight="20dp"/>
+                android:background="@drawable/selector_button_write_post_category"
+                android:button="@null"/>
         </RadioGroup>
         <View
             android:id="@+id/view_post_category_horizontal_line"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="0.7dp"
-            android:background="@color/gray_4_D3D2D2"
+            android:background="@color/gray_5_D3D2D2"
             app:layout_constraintTop_toBottomOf="@id/radiogroup_write_post_category_line2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="11dp"/>
     </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -154,23 +153,50 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layout_radiogroup_write_post_category"
         app:layout_constraintBottom_toTopOf="@id/layout_scroll_uploaded_images"
-        android:layout_marginVertical="20dp"
+        android:layout_marginTop="12dp"
         android:layout_marginHorizontal="20dp">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="0dp">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_write_detail_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+                <TextView
+                    android:id="@+id/tv_write_detail_count_current"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/gray_3_9C9C9C"
+                    app:layout_constraintTop_toTopOf="@id/tv_write_detail_count_limit"
+                    app:layout_constraintEnd_toStartOf="@id/tv_write_detail_count_limit"
+                    tools:text="0자" />
+                <TextView
+                    android:id="@+id/tv_write_detail_count_limit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/write_post_description_count_limit"
+                    android:textSize="11dp"
+                    android:textColor="@color/gray_5_D3D2D2"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <EditText
                 android:id="@+id/et_write_detail"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:hint="@string/hint_write_description"
                 android:breakStrategy="simple"
                 android:textSize="15dp"
                 android:textColorHint="@color/gray_3_9C9C9C"
-                />
+                android:theme="@style/WriteEditTextStyle"
+                app:layout_constraintTop_toBottomOf="@id/layout_write_detail_count"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="6dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -178,44 +204,38 @@
         android:id="@+id/layout_scroll_uploaded_images"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/layout_scroll_write_detail"
         app:layout_constraintBottom_toTopOf="@id/btn_write_post_upload"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginVertical="23dp">
+        android:layout_marginTop="17dp">
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="116dp">
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
             <ImageView
-                android:id="@+id/img_upload_first"
-                android:layout_width="116dp"
-                android:layout_height="116dp"
-                android:src="@drawable/hint_upload_picture"
-                android:background="@drawable/button_default_white"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_img_upload_list"
-                android:minWidth="116dp"
-                android:layout_width="wrap_content"
-                android:layout_height="116dp"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:layout_marginRight="10dp" />
-
-            <ImageButton
                 android:id="@+id/btn_upload_image"
-                android:layout_width="116dp"
-                android:layout_height="116dp"
-                android:src="@drawable/ic_plus_sign"
+                android:layout_width="141dp"
+                android:layout_height="141dp"
+                android:src="@drawable/ic_upload_picture"
                 android:scaleType="center"
                 android:background="@drawable/button_default_white"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toRightOf="@+id/rv_img_upload_list"
-                android:layout_marginLeft="10dp"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/rv_img_upload_list"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_img_upload_list"
+                android:minWidth="141dp"
+                android:layout_width="wrap_content"
+                android:layout_height="141dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btn_upload_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginLeft="10dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </HorizontalScrollView>
 
@@ -228,11 +248,12 @@
         android:textSize="16dp"
         android:textColor="@color/white_FFFFFF"
         android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/layout_scroll_uploaded_images"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginVertical="23dp"
-        android:layout_marginHorizontal="20dp"
-        />
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="18dp"
+        android:layout_marginHorizontal="20dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
