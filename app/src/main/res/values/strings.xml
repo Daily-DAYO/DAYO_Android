@@ -36,6 +36,7 @@
 
     <!-- Write -->
     <string name="hint_write_description">내용을 작성해주세요.</string>
+    <string name="write_post_description_count_limit"> / 최대 200자</string>
     <string name="upload">올리기</string>
     <string name="write_post_tag_add">태그 추가</string>
     <string name="hint_write_post_tag_add"># 키워드를 입력해주세요</string>

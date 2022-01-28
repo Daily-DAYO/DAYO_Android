@@ -7,8 +7,8 @@
 
     <ImageView
         android:id="@+id/img_upload"
-        android:layout_width="116dp"
-        android:layout_height="116dp"
+        android:layout_width="141dp"
+        android:layout_height="141dp"
         android:scaleType="center"
         android:background="@drawable/button_default_white"
         app:layout_constraintTop_toTopOf="parent"

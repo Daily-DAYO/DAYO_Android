@@ -197,7 +197,6 @@ class WriteFragment : Fragment() {
 
     val requestActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
             if(activityResult.resultCode == RESULT_OK) {
-                binding.imgUploadFirst.visibility = View.INVISIBLE
                 uploadImageList.clear()
                 val data: Intent?= activityResult.data
 
