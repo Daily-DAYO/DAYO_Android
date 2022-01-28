@@ -1,8 +1,6 @@
 package com.daily.dayo.network.home
 
-import com.daily.dayo.home.model.RequestLikePost
 import com.daily.dayo.home.model.ResponseHomePost
-import com.daily.dayo.home.model.ResponseLikePost
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -15,6 +13,4 @@ class HomeApiHelperImpl @Inject constructor(private val homeApiService: HomeApiS
     // In this way we can have only one instance of ApiService throughout the application lifecycle for any number of network calls.
     override suspend fun requestPostList(): Response<ResponseHomePost> = homeApiService.requestPostList()
     override suspend fun requestPostListCategory(category: String): Response<ResponseHomePost> = homeApiService.requestPostListCategory(category)
-    override suspend fun requestLikePost(request: RequestLikePost): Response<ResponseLikePost> = homeApiService.requestLikePost(request)
-    override suspend fun requestUnlikePost(postId: Int): Response<Void> = homeApiService.requestUnlikePost(postId)
 }

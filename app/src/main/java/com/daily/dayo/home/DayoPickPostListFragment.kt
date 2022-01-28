@@ -15,7 +15,7 @@ import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentDayoPickPostListBinding
 import com.daily.dayo.home.adapter.HomeDayoPickAdapter
 import com.daily.dayo.home.model.PostContent
-import com.daily.dayo.home.model.RequestLikePost
+import com.daily.dayo.post.model.RequestLikePost
 import com.daily.dayo.home.viewmodel.HomeViewModel
 import com.daily.dayo.util.GridSpacingItemDecoration
 import com.daily.dayo.util.Status
