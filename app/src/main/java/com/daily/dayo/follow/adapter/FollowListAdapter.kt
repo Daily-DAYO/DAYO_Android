@@ -3,6 +3,7 @@ package com.daily.dayo.follow.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.CheckBox
+import androidx.core.view.isVisible
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -59,11 +60,12 @@ class FollowListAdapter : RecyclerView.Adapter<FollowListAdapter.FollowListViewH
         val userFollowBtn = binding.btnFollowUserFollow
 
         fun bind(followInfo: FollowInfo) {
+            if(followInfo.memberId == SharedManager(DayoApplication.applicationContext()).getCurrentUser().memberId) userFollowBtn.isVisible = false
             Glide.with(userProfileImg.context)
                 .load("http://117.17.198.45:8080/images/" + followInfo.profile)
                 .into(userProfileImg)
             userNickname.text = followInfo.nickname
-            userFollowBtn.isChecked = true
+            userFollowBtn.isChecked = followInfo.isFollow
 
             setRootClickListener(followInfo.memberId)
             setFollowButtonTextState()
