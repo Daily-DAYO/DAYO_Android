@@ -1,9 +1,6 @@
 package com.daily.dayo.network.post
 
-import com.daily.dayo.post.model.RequestCreatePostComment
-import com.daily.dayo.post.model.ResponseCreatePostComment
-import com.daily.dayo.post.model.ResponsePost
-import com.daily.dayo.post.model.ResponsePostComment
+import com.daily.dayo.post.model.*
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -15,6 +12,10 @@ interface PostApiService {
     suspend fun requestPostDetail(@Path("postId") postId : Int) : Response<ResponsePost>
     @POST("/api/v1/posts/delete/{postId}")
     suspend fun requestDeletePost(@Path("postId") postId : Int) : Response<Void>
+    @POST("/api/v1/heart")
+    suspend fun requestLikePost(@Body body : RequestLikePost) : Response<ResponseLikePost>
+    @POST("/api/v1/heart/delete/{postId}")
+    suspend fun requestUnlikePost(@Path("postId") postId : Int) : Response<Void>
     @GET("/api/v1/comments/{postId}")
     suspend fun requestPostComment(@Path("postId") postId : Int) : Response<ResponsePostComment>
     @POST("/api/v1/comments")

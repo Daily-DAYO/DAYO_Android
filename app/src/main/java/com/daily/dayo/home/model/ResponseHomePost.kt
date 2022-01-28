@@ -25,15 +25,3 @@ data class PostContent(
     @SerializedName("userProfileImage")
     val userProfileImage: String
 )
-
-data class RequestLikePost(
-    @SerializedName("postId")
-    val postId: Int
-)
-
-data class ResponseLikePost(
-    @SerializedName("memberId")
-    val memberId: String,
-    @SerializedName("postId")
-    val postId: Int
-)
