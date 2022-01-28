@@ -19,8 +19,8 @@ data class ResponseListAllFollow(
 )
 
 data class FollowInfo(
-    @SerializedName("isAccept")
-    val isAccept: Boolean,
+    @SerializedName("isFollow")
+    val isFollow: Boolean,
     @SerializedName("memberId")
     val memberId: String,
     @SerializedName("nickname")

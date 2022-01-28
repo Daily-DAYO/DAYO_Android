@@ -40,20 +40,20 @@ class FollowerListFragment : Fragment(){
             override fun onItemClick(checkbox: CheckBox, followInfo: FollowInfo, pos: Int) {
                 checkbox.setOnCheckedChangeListener { compoundButton, b ->
                     when (compoundButton.isChecked) {
-//                        true and followInfo.isFollowing -> { // 팔로우하지 않았을 시 팔로우
-//                                setFollow(followInfo.memberId)
-//                        }
-//                        false and followInfo.isFollowing -> { // 팔로우한 상태일 시 클릭하면 언팔로우
-//                            var mAlertDialog = DefaultDialogConfirm.createDialog(requireContext(), R.string.follow_delete_description_message,
-//                                true, true, R.string.confirm, R.string.cancel, {setUnfollow(followInfo.memberId)}, {checkbox.isChecked=true})
-//                            if(!mAlertDialog.isShowing) {
-//                                mAlertDialog.show()
-//                                DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.23f)
-//                            }
-//                            mAlertDialog.setOnCancelListener {
-//                                mAlertDialog.dismiss()
-//                            }
-//                        }
+                        true and !followInfo.isFollow -> { // 클릭 시 팔로우
+                            setFollow(followInfo.memberId)
+                        }
+                        !false and followInfo.isFollow-> { // 클릭 시 언팔로우
+                            var mAlertDialog = DefaultDialogConfirm.createDialog(requireContext(), R.string.follow_delete_description_message,
+                                true, true, R.string.confirm, R.string.cancel, {setUnfollow(followInfo.memberId)}, {checkbox.isChecked=true})
+                            if(!mAlertDialog.isShowing) {
+                                mAlertDialog.show()
+                                DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.23f)
+                            }
+                            mAlertDialog.setOnCancelListener {
+                                mAlertDialog.dismiss()
+                            }
+                        }
                     }
                 }
                 followerListAdapter.notifyDataSetChanged()
