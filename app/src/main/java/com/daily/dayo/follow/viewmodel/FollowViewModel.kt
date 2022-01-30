@@ -23,8 +23,8 @@ class FollowViewModel @Inject constructor(private val followRepository: FollowRe
     private val _followingList = MutableLiveData<Resource<ResponseListAllFollow>>()
     val followingList : LiveData<Resource<ResponseListAllFollow>> get() = _followingList
 
-    private val followSuccess = MutableLiveData<Boolean>()
-    private val unfollowSuccess = MutableLiveData<Boolean>()
+    val followSuccess = MutableLiveData<Boolean>()
+    val unfollowSuccess = MutableLiveData<Boolean>()
 
     fun setMemberId(id: String) {
         _memberId.value = id
