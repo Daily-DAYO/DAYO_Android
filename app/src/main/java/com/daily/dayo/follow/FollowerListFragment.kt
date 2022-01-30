@@ -38,21 +38,19 @@ class FollowerListFragment : Fragment(){
         binding.rvFollower.adapter = followerListAdapter
         followerListAdapter.setOnItemClickListener(object : FollowListAdapter.OnItemClickListener{
             override fun onItemClick(checkbox: CheckBox, followInfo: FollowInfo, pos: Int) {
-                checkbox.setOnCheckedChangeListener { compoundButton, b ->
-                    when (compoundButton.isChecked) {
-                        true and !followInfo.isFollow -> { // 클릭 시 팔로우
-                            setFollow(followInfo.memberId)
+                when (followInfo.isFollow) {
+                    false -> { // 클릭 시 팔로우
+                        setFollow(followInfo.memberId)
+                    }
+                    true -> { // 클릭 시 언팔로우
+                        var mAlertDialog = DefaultDialogConfirm.createDialog(requireContext(), R.string.follow_delete_description_message,
+                            true, true, R.string.confirm, R.string.cancel, {setUnfollow(followInfo.memberId)}, {checkbox.isChecked=true})
+                        if(!mAlertDialog.isShowing) {
+                            mAlertDialog.show()
+                            DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.23f)
                         }
-                        !false and followInfo.isFollow-> { // 클릭 시 언팔로우
-                            var mAlertDialog = DefaultDialogConfirm.createDialog(requireContext(), R.string.follow_delete_description_message,
-                                true, true, R.string.confirm, R.string.cancel, {setUnfollow(followInfo.memberId)}, {checkbox.isChecked=true})
-                            if(!mAlertDialog.isShowing) {
-                                mAlertDialog.show()
-                                DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.23f)
-                            }
-                            mAlertDialog.setOnCancelListener {
-                                mAlertDialog.dismiss()
-                            }
+                        mAlertDialog.setOnCancelListener {
+                            mAlertDialog.dismiss()
                         }
                     }
                 }
@@ -63,10 +61,22 @@ class FollowerListFragment : Fragment(){
 
     private fun setFollow(memberId: String){
         followViewModel.requestCreateFollow(memberId)
+        followViewModel.followSuccess.observe(viewLifecycleOwner, Observer {
+            if(it) {
+                setFollowerList()
+                followViewModel.followSuccess.value = false
+            }
+        })
     }
 
     private fun setUnfollow(memberId: String){
         followViewModel.requestDeleteFollow(memberId)
+        followViewModel.unfollowSuccess.observe(viewLifecycleOwner, Observer {
+            if(it) {
+                setFollowerList()
+                followViewModel.unfollowSuccess.value = false
+            }
+        })
     }
 
     private fun setFollowerList(){

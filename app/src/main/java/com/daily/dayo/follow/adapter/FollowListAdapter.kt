@@ -60,7 +60,7 @@ class FollowListAdapter : RecyclerView.Adapter<FollowListAdapter.FollowListViewH
         val userFollowBtn = binding.btnFollowUserFollow
 
         fun bind(followInfo: FollowInfo) {
-            if(followInfo.memberId == SharedManager(DayoApplication.applicationContext()).getCurrentUser().memberId) userFollowBtn.isVisible = false
+            userFollowBtn.isVisible = followInfo.memberId != SharedManager(DayoApplication.applicationContext()).getCurrentUser().memberId
             Glide.with(userProfileImg.context)
                 .load("http://117.17.198.45:8080/images/" + followInfo.profile)
                 .into(userProfileImg)

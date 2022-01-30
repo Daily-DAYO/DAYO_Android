@@ -1,7 +1,6 @@
 package com.daily.dayo.profile
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +29,7 @@ class OtherProfileFragment : Fragment() {
     private val args by navArgs<OtherProfileFragmentArgs>()
     private lateinit var profileFolderListAdapter: ProfileFolderListAdapter
     private lateinit var nickname:String
+    private var isFollow:Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -87,6 +87,7 @@ class OtherProfileFragment : Fragment() {
                             .load("http://117.17.198.45:8080/images/" + userInfo.profileImg)
                             .into(binding.imgOtherProfileUserProfile)
                         nickname = userInfo.nickname
+                        isFollow = userInfo.follow
                     }
                 }
             }
@@ -99,20 +100,32 @@ class OtherProfileFragment : Fragment() {
         }
 
     private fun setFollowButtonClickListener() {
-        binding.btnOtherProfileFollow.setOnCheckedChangeListener { compoundButton, b ->
-            when (compoundButton.isChecked) {
-                true -> setFollow()
-                false -> setUnfollow()
+        binding.btnOtherProfileFollow.setOnClickListener {
+            when (isFollow) {
+                false -> setFollow()
+                true -> setUnfollow()
             }
         }
     }
 
     private fun setFollow(){
         otherProfileViewModel.requestCreateFollow(args.memberId)
+        otherProfileViewModel.followSuccess.observe(viewLifecycleOwner, Observer {
+            if(it) {
+                setOtherProfileDescription()
+                otherProfileViewModel.followSuccess.value = false
+            }
+        })
     }
 
     private fun setUnfollow(){
         otherProfileViewModel.requestDeleteFollow(args.memberId)
+        otherProfileViewModel.unfollowSuccess.observe(viewLifecycleOwner, Observer {
+            if(it) {
+                setOtherProfileDescription()
+                otherProfileViewModel.unfollowSuccess.value = false
+            }
+        })
     }
 
     private fun setFollowerCountButtonClickListener(){
