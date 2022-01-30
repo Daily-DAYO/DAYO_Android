@@ -10,11 +10,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentOtherProfileBinding
 import com.daily.dayo.profile.adapter.ProfileFolderListAdapter
 import com.daily.dayo.profile.model.Folder
@@ -28,6 +28,8 @@ class OtherProfileFragment : Fragment() {
     private val otherProfileViewModel by activityViewModels<OtherProfileViewModel>()
     private val args by navArgs<OtherProfileFragmentArgs>()
     private lateinit var profileFolderListAdapter: ProfileFolderListAdapter
+    private lateinit var nickname:String
+    private var isFollow:Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,9 +40,10 @@ class OtherProfileFragment : Fragment() {
         setRvProfileFolderListAdapter()
         setProfileFolderList()
         setOtherProfileDescription()
-        setFollowButtonState()
-        setFollowerButtonClickListener()
-        setFollowingButtonClickListener()
+        setFollowerCountButtonClickListener()
+        setFollowingCountButtonClickListener()
+        setFollowButtonTextState()
+        setFollowButtonClickListener()
         return binding.root
     }
 
@@ -72,6 +75,7 @@ class OtherProfileFragment : Fragment() {
             }
         }
     }
+
     private fun setOtherProfileDescription() {
         otherProfileViewModel.requestOtherProfile(args.memberId)
         otherProfileViewModel.otherProfile.observe(viewLifecycleOwner, Observer {
@@ -82,30 +86,58 @@ class OtherProfileFragment : Fragment() {
                         Glide.with(requireContext())
                             .load("http://117.17.198.45:8080/images/" + userInfo.profileImg)
                             .into(binding.imgOtherProfileUserProfile)
+                        nickname = userInfo.nickname
+                        isFollow = userInfo.follow
                     }
                 }
             }
         })
     }
 
-    private fun setFollowButtonState(){
-        binding.btnOtherProfileFollow.setOnCheckedChangeListener { buttonView, isChecked ->
-            when(isChecked){
-                true -> binding.btnOtherProfileFollow.text = "팔로잉"
-                false -> binding.btnOtherProfileFollow.text = "팔로우"
+    private fun setFollowButtonTextState() = when(binding.btnOtherProfileFollow.isChecked){
+            true -> binding.btnOtherProfileFollow.text = "팔로잉"
+            false -> binding.btnOtherProfileFollow.text = "팔로우"
+        }
+
+    private fun setFollowButtonClickListener() {
+        binding.btnOtherProfileFollow.setOnClickListener {
+            when (isFollow) {
+                false -> setFollow()
+                true -> setUnfollow()
             }
         }
     }
 
-    private fun setFollowerButtonClickListener(){
+    private fun setFollow(){
+        otherProfileViewModel.requestCreateFollow(args.memberId)
+        otherProfileViewModel.followSuccess.observe(viewLifecycleOwner, Observer {
+            if(it) {
+                setOtherProfileDescription()
+                otherProfileViewModel.followSuccess.value = false
+            }
+        })
+    }
+
+    private fun setUnfollow(){
+        otherProfileViewModel.requestDeleteFollow(args.memberId)
+        otherProfileViewModel.unfollowSuccess.observe(viewLifecycleOwner, Observer {
+            if(it) {
+                setOtherProfileDescription()
+                otherProfileViewModel.unfollowSuccess.value = false
+            }
+        })
+    }
+
+    private fun setFollowerCountButtonClickListener(){
         binding.layoutOtherProfileFollowerCount.setOnClickListener {
-            findNavController().navigate(R.id.action_otherProfileFragment_to_followFragment)
+            Navigation.findNavController(it).navigate(OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment(args.memberId, nickname))
         }
     }
 
-    private fun setFollowingButtonClickListener(){
+    private fun setFollowingCountButtonClickListener(){
         binding.layoutOtherProfileFollowingCount.setOnClickListener {
-            findNavController().navigate(R.id.action_otherProfileFragment_to_followFragment)
+            Navigation.findNavController(it).navigate(OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment(args.memberId, nickname))
         }
     }
+
 }

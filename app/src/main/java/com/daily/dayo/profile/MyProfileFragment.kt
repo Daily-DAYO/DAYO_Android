@@ -8,10 +8,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
+import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
+import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.FragmentMyProfileBinding
 import com.daily.dayo.profile.adapter.MyProfileFragmentPagerStateAdapter
 import com.daily.dayo.profile.viewmodel.MyProfileViewModel
@@ -25,7 +28,7 @@ class MyProfileFragment : Fragment() {
     private val myProfileViewModel by activityViewModels<MyProfileViewModel>()
     private lateinit var viewPager : ViewPager2
     private lateinit var tabLayout: TabLayout
-
+    private val currentUser = SharedManager(DayoApplication.applicationContext().applicationContext).getCurrentUser()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,8 +39,8 @@ class MyProfileFragment : Fragment() {
         viewPager = binding.pagerMyProfile
         tabLayout = binding.tabsMyProfile
 
-        setFollowerButtonClickListener()
-        setFollowingButtonClickListener()
+        setFollowerCountButtonClickListener()
+        setFollowingCountButtonClickListener()
         setMyProfileOptionClickListener()
         setMyProfileEditButtonClickListener()
         setMyProfileDescription()
@@ -69,18 +72,6 @@ class MyProfileFragment : Fragment() {
         }.attach()
     }
 
-    private fun setFollowerButtonClickListener(){
-        binding.layoutMyProfileFollowerCount.setOnClickListener {
-            findNavController().navigate(R.id.action_myProfileFragment_to_followFragment)
-        }
-    }
-
-    private fun setFollowingButtonClickListener(){
-        binding.layoutMyProfileFollowingCount.setOnClickListener {
-            findNavController().navigate(R.id.action_myProfileFragment_to_followFragment)
-        }
-    }
-
     private fun setMyProfileOptionClickListener() {
         binding.btnMyProfileOption.setOnClickListener {
             findNavController().navigate(R.id.action_myProfileFragment_to_myProfileOptionFragment)
@@ -105,6 +96,18 @@ class MyProfileFragment : Fragment() {
     private fun setMyProfileEditButtonClickListener() {
         binding.btnMyProfileEdit.setOnClickListener {
             findNavController().navigate(R.id.action_myProfileFragment_to_myProfileEditFragment)
+        }
+    }
+
+    private fun setFollowerCountButtonClickListener(){
+        binding.layoutMyProfileFollowerCount.setOnClickListener {
+            Navigation.findNavController(it).navigate(MyProfileFragmentDirections.actionMyProfileFragmentToFollowFragment(currentUser.memberId?:"", currentUser.nickname?:""))
+        }
+    }
+
+    private fun setFollowingCountButtonClickListener(){
+        binding.layoutMyProfileFollowingCount.setOnClickListener {
+            Navigation.findNavController(it).navigate(MyProfileFragmentDirections.actionMyProfileFragmentToFollowFragment(currentUser.memberId?:"", currentUser.nickname?:""))
         }
     }
 }

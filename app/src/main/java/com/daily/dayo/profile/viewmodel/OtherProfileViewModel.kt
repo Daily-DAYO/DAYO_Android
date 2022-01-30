@@ -5,8 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.profile.model.ResponseAllFolderList
+import com.daily.dayo.profile.model.ResponseCreateFollow
 import com.daily.dayo.profile.model.ResponseOtherProfile
 import com.daily.dayo.repository.FolderRepository
+import com.daily.dayo.repository.FollowRepository
 import com.daily.dayo.repository.ProfileRepository
 import com.daily.dayo.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class OtherProfileViewModel @Inject constructor(
     private val folderRepository: FolderRepository,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val followRepository: FollowRepository
 ) : ViewModel() {
 
     private val _folderList = MutableLiveData<Resource<ResponseAllFolderList>>()
@@ -24,6 +27,9 @@ class OtherProfileViewModel @Inject constructor(
 
     private val _otherProfile = MutableLiveData<Resource<ResponseOtherProfile>>()
     val otherProfile : LiveData<Resource<ResponseOtherProfile>> get() = _otherProfile
+
+    val followSuccess = MutableLiveData<Boolean>()
+    val unfollowSuccess = MutableLiveData<Boolean>()
 
     fun requestAllFolderList(memberId:String) = viewModelScope.launch {
         _folderList.postValue(Resource.loading(null))
@@ -45,5 +51,28 @@ class OtherProfileViewModel @Inject constructor(
             }
         }
     }
+
+    fun requestCreateFollow(followerId:String) = viewModelScope.launch {
+        followRepository.requestCreateFollow(followerId).let {
+            if(it.isSuccessful){
+                followSuccess.postValue(true)
+            }
+            else{
+                followSuccess.postValue(false)
+            }
+        }
+    }
+
+    fun requestDeleteFollow(followerId:String) = viewModelScope.launch {
+        followRepository.requestDeleteFollow(followerId).let {
+            if(it.isSuccessful){
+                unfollowSuccess.postValue(true)
+            }
+            else{
+                unfollowSuccess.postValue(false)
+            }
+        }
+    }
+
 
 }
