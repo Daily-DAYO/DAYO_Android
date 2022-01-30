@@ -68,7 +68,16 @@
         <action
             android:id="@+id/action_writeFragment_to_postFragment"
             app:destination="@id/PostFragment" />
+        <action
+            android:id="@+id/action_writeFragment_to_writeImageOptionFragment"
+            app:destination="@id/WriteImageOptionFragment"/>
     </fragment>
+    <dialog
+        android:id="@+id/WriteImageOptionFragment"
+        android:name="com.daily.dayo.write.WriteImageOptionFragment"
+        android:label="fragment_write_image_option"
+        tools:layout="@layout/fragment_write_image_option">
+    </dialog>
 
     <dialog
         android:id="@+id/WriteOptionFragment"

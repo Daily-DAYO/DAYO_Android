@@ -126,6 +126,31 @@ object DefaultDialogExplanationConfirm {
 }
 
 object DefaultDialogConfigure {
+    fun getDeviceWidthSize(context: Context): Int {
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        if (Build.VERSION.SDK_INT < 30){
+            val display = windowManager.defaultDisplay
+            val size = Point()
+            display.getSize(size)
+            return size.x
+        }else{
+            val rect = windowManager.currentWindowMetrics.bounds
+            return rect.width()
+        }
+    }
+    fun getDeviceHeightSize(context: Context): Int {
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        if (Build.VERSION.SDK_INT < 30){
+            val display = windowManager.defaultDisplay
+            val size = Point()
+            display.getSize(size)
+            return size.y
+        }else{
+            val rect = windowManager.currentWindowMetrics.bounds
+            return rect.height()
+        }
+    }
+
     fun dialogResize(context: Context, dialog: Dialog, width: Float, height: Float){
         val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
 

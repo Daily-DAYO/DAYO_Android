@@ -1,28 +1,24 @@
 package com.daily.dayo.write
 
-import android.Manifest
-import android.app.Activity.RESULT_OK
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.InputFilter
+import android.text.TextWatcher
 import android.view.*
 import androidx.fragment.app.Fragment
 import com.daily.dayo.databinding.FragmentWriteBinding
 import android.widget.RadioGroup
 import android.widget.RadioButton
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.core.view.isEmpty
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.daily.dayo.R
-import com.daily.dayo.util.DefaultDialogAlert
-import com.daily.dayo.util.DefaultDialogConfigure
 import com.daily.dayo.util.autoCleared
 import com.daily.dayo.write.adapter.WriteUploadImageListAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,6 +36,10 @@ class WriteFragment : Fragment() {
     private var uploadImageListString = ArrayList<String>() // Bitmap을 String으로 변환
     private lateinit var uploadImageListAdapter : WriteUploadImageListAdapter
 
+    private var isCategorySelected : Boolean = false
+    private var isContentsFilled :Boolean= false
+    private var isImageUploaded : Boolean= false
+
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -47,8 +47,11 @@ class WriteFragment : Fragment() {
         observeNavigationTagListCallBack()
         setRadioButtonGrouping()
         setBackButtonClickListener()
-        setUploadButtonClickListener()
+        setEditTextCountLimit()
         setImageUploadButtonClickListener()
+        observeNavigationWritingImageCallBack()
+        setImageDeleteClickListener()
+        setUploadButtonActivation()
         return binding.root
     }
 
@@ -71,38 +74,26 @@ class WriteFragment : Fragment() {
         }
     }
 
-    private fun setUploadButtonClickListener() {
-        binding.btnWritePostUpload.setOnClickListener {
-            val selectedCategoryName = setCategoryName()
-            if(binding.etWriteDetail.text.isNullOrBlank()) {
-                val mAlertDialog = DefaultDialogAlert.createDialog(requireContext(), R.string.write_post_upload_alert_message_empty_content)
-                if(!mAlertDialog.isShowing) {
-                    mAlertDialog.show()
-                    DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.5f)
+    private fun setEditTextCountLimit() {
+        val lengthFilter = InputFilter.LengthFilter(200)
+        with(binding.etWriteDetail) {
+            filters = arrayOf(lengthFilter)
+            addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+                override fun afterTextChanged(s: Editable?) {
+                    binding.editTextCount = s.toString().length
+                    if(s.toString().length > 200) {
+                        Toast.makeText(requireContext(), R.string.write_post_upload_alert_message_edittext_length_fail_max, Toast.LENGTH_SHORT).show()
+                    } else if(s.toString().length == 0){
+                        isContentsFilled = false
+                        setUploadButtonActivation()
+                    } else {
+                        isContentsFilled = true
+                        setUploadButtonActivation()
+                    }
                 }
-            } else if(binding.rvImgUploadList.isEmpty()) {
-                var mAlertDialog = DefaultDialogAlert.createDialog(requireContext(), R.string.write_post_upload_alert_message_empty_image)
-                if(!mAlertDialog.isShowing) {
-                    mAlertDialog.show()
-                    DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.5f)
-                }
-            } else if(selectedCategoryName.toString() == "") {
-                var mAlertDialog = DefaultDialogAlert.createDialog(requireContext(), R.string.write_post_upload_alert_message_empty_category)
-                if(!mAlertDialog.isShowing) {
-                    mAlertDialog.show()
-                    DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.5f)
-                }
-            } else {
-                if(this::postTagList.isInitialized){
-                    val navigateWithDataPassAction = WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(
-                        selectedCategoryName, binding.etWriteDetail.text.toString(), uploadImageListString.toTypedArray(),postTagList.toTypedArray())
-                    findNavController().navigate(navigateWithDataPassAction)
-                } else {
-                    val navigateWithDataPassAction = WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(
-                        selectedCategoryName, binding.etWriteDetail.text.toString(),  uploadImageListString.toTypedArray(),emptyArray())
-                    findNavController().navigate(navigateWithDataPassAction)
-                }
-            }
+            })
         }
     }
 
@@ -119,19 +110,21 @@ class WriteFragment : Fragment() {
             val btn = radioGroupCategoryLine2!!.getChildAt(radioId) as RadioButton
             selectedCategoryName = btn.text as String
         }
-        when(selectedCategoryName) {
-            "스케줄러" -> return "SCHEDULER"
-            "스터디 플래너" -> return "STUDY_PLANNER"
-            "굿노트" -> return "GOOD_NOTE"
-            "포켓북" -> return "POCKET_BOOK"
-            "6공 다이어리" -> return "SIX_DIARY"
-            "스터디 플래너" -> return "ETC"
-            else -> return ""
+        return when(selectedCategoryName) {
+            getString(R.string.scheduler) -> getString(R.string.scheduler_eng)
+            getString(R.string.studyplanner) -> getString(R.string.studyplanner_eng)
+            getString(R.string.digital) -> getString(R.string.digital_eng)
+            getString(R.string.pocketbook) -> getString(R.string.pocketbook)
+            getString(R.string.sixHoleDiary) -> getString(R.string.sixHoleDiary)
+            getString(R.string.etc) -> getString(R.string.etc_eng)
+            else -> ""
         }
     }
 
     private val listener1: RadioGroup.OnCheckedChangeListener = object : RadioGroup.OnCheckedChangeListener {
         override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
+            isCategorySelected = true
+            setUploadButtonActivation()
             if (checkedId != -1) {
                 radioGroupCategoryLine2!!.apply {
                     setOnCheckedChangeListener(null)
@@ -143,6 +136,8 @@ class WriteFragment : Fragment() {
     }
     private val listener2: RadioGroup.OnCheckedChangeListener = object : RadioGroup.OnCheckedChangeListener {
         override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
+            isCategorySelected = true
+            setUploadButtonActivation()
             if (checkedId != -1) {
                 radioGroupCategoryLine1!!.apply {
                     setOnCheckedChangeListener(null)
@@ -165,65 +160,81 @@ class WriteFragment : Fragment() {
         uploadImageListAdapter = WriteUploadImageListAdapter(uploadImageList, requireContext())
 
         btnUploadImage.setOnClickListener {
-            requestOpenGallery.launch(
-                arrayOf(
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-            )
+            findNavController().navigate(R.id.action_writeFragment_to_writeImageOptionFragment)
         }
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         rvUploadImageList.layoutManager = layoutManager
         rvUploadImageList.adapter = uploadImageListAdapter
     }
-
-    private val requestOpenGallery =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            permissions.entries.forEach {
-                if (it.value == false) {
-                    return@registerForActivityResult
+    private fun observeNavigationWritingImageCallBack() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<List<Uri>>("userWritingPostImageUri")?.observe(viewLifecycleOwner) {
+            for(element in it) {
+                uploadImageList.add(element)
+                val imageBitmap = element.toBitmap()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    uploadImageListString.add(imageBitmap.toBase64String())
+                }
+                if(uploadImageList.size >= 5) {
+                    Toast.makeText(requireContext(), getString(R.string.write_post_upload_alert_message_image_fail_max), Toast.LENGTH_SHORT).show()
+                    binding.btnUploadImage.visibility = View.GONE
+                    break
+                }
+                if(uploadImageList.size != 0) {
+                    isImageUploaded = true
+                    setUploadButtonActivation()
                 }
             }
-            openGallery()
+            uploadImageListAdapter.notifyDataSetChanged()
         }
-
-    private fun openGallery() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-            type = "image/*"
-            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        }
-        requestActivity.launch(intent)
     }
 
-    val requestActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
-            if(activityResult.resultCode == RESULT_OK) {
-                uploadImageList.clear()
-                val data: Intent?= activityResult.data
-
-                if (data?.clipData != null) { //사진 여러 개 선택 시
-                    val count = data.clipData!!.itemCount
-                    if (count > 10) {
-                        Toast.makeText(requireContext(), "사진은 10장까지만 선택 가능합니다", Toast.LENGTH_SHORT).show()
-                    }
-                    for (i in 0 until count) {
-                        val imageUri = data.clipData!!.getItemAt(i).uri
-                        uploadImageList.add(imageUri)
-                        val imageBitmap = imageUri.toBitmap()
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { uploadImageListString.add(imageBitmap.toBase64String()) }
-                    }
-                } else { // 단일 선택
-                    data?.data?.let { uri ->
-                        val imageUri : Uri?= data?.data
-                        if (imageUri != null){
-                            uploadImageList.add(imageUri)
-                            val imageBitmap = imageUri.toBitmap()
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { uploadImageListString.add(imageBitmap.toBase64String()) }
-                        }
-                    }
-                }
+    private fun setImageDeleteClickListener() {
+        uploadImageListAdapter.setOnItemClickListener(object : WriteUploadImageListAdapter.OnItemClickListener{
+            override fun deleteUploadImageClick(pos: Int) {
+                uploadImageList.removeAt(pos)
+                uploadImageListString.removeAt(pos)
                 uploadImageListAdapter.notifyDataSetChanged()
+                binding.btnUploadImage.visibility = View.VISIBLE
+                if (uploadImageList.size == 0) {
+                    isImageUploaded = false
+                    setUploadButtonActivation()
+                }
+            }
+        })
+    }
+
+    private fun setUploadButtonActivation() {
+        if (!isCategorySelected) {
+            binding.btnWritePostUpload.isSelected = false
+            binding.btnWritePostUpload.setOnClickListener {
+                Toast.makeText(requireContext(), R.string.write_post_upload_alert_message_empty_category, Toast.LENGTH_SHORT).show()
+            }
+        } else if (!isContentsFilled) {
+            binding.btnWritePostUpload.isSelected = false
+            binding.btnWritePostUpload.setOnClickListener {
+                Toast.makeText(requireContext(), R.string.write_post_upload_alert_message_empty_content, Toast.LENGTH_SHORT).show()
+            }
+        } else if (!isImageUploaded) {
+            binding.btnWritePostUpload.isSelected = false
+            binding.btnWritePostUpload.setOnClickListener {
+                Toast.makeText(requireContext(), R.string.write_post_upload_alert_message_empty_image, Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            var selectedCategoryName = setCategoryName()
+            binding.btnWritePostUpload.isSelected = true
+            binding.btnWritePostUpload.setOnClickListener {
+                if (this::postTagList.isInitialized) {
+                    val navigateWithDataPassAction =
+                        WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(selectedCategoryName, binding.etWriteDetail.text.toString(), uploadImageListString.toTypedArray(), postTagList.toTypedArray())
+                    findNavController().navigate(navigateWithDataPassAction)
+                } else {
+                    val navigateWithDataPassAction =
+                        WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(selectedCategoryName, binding.etWriteDetail.text.toString(), uploadImageListString.toTypedArray(), emptyArray())
+                    findNavController().navigate(navigateWithDataPassAction)
+                }
             }
         }
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun Bitmap.toBase64String(): String {

@@ -1,4 +1,4 @@
-package com.daily.dayo.signup.email
+package com.daily.dayo.write
 
 import android.Manifest
 import android.app.Activity
@@ -10,23 +10,30 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.BuildConfig
-import com.daily.dayo.databinding.FragmentSignupEmailSetProfileImageOptionBinding
+import com.daily.dayo.R
+import com.daily.dayo.databinding.FragmentWriteImageOptionBinding
 import com.daily.dayo.util.DefaultDialogConfigure
 import com.daily.dayo.util.autoCleared
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
-class SignupEmailSetProfileImageOptionFragment : DialogFragment() {
-    private var binding by autoCleared<FragmentSignupEmailSetProfileImageOptionBinding>()
+@AndroidEntryPoint
+class WriteImageOptionFragment : DialogFragment() {
+    private var binding by autoCleared<FragmentWriteImageOptionBinding>()
     private lateinit var currentTakenPhotoPath: String
+    private var uploadImageList = ArrayList<Uri>() // 갤러리에서 불러온 이미지 리스트
+    private var uploadImageExtensionList = ArrayList<String>() // 갤러리에서 불러온 이미지 확장자 리스트
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         isCancelable = true
@@ -36,7 +43,7 @@ class SignupEmailSetProfileImageOptionFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentSignupEmailSetProfileImageOptionBinding.inflate(inflater, container, false)
+        binding = FragmentWriteImageOptionBinding.inflate(inflater, container, false)
         // DialogFragment Radius 설정
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         // Android Version 4.4 이하에서 Blue Line이 상단에 나타는 것 방지
@@ -44,7 +51,6 @@ class SignupEmailSetProfileImageOptionFragment : DialogFragment() {
         dialog?.window?.setGravity(Gravity.BOTTOM)
         return binding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setImageSelectGalleryClickListener()
@@ -64,7 +70,7 @@ class SignupEmailSetProfileImageOptionFragment : DialogFragment() {
     }
 
     private fun setImageSelectGalleryClickListener(){
-        binding.layoutSignupEmailSetProfileImageOptionSelectGallery.setOnClickListener {
+        binding.layoutWriteImageOptionSelectGallery.setOnClickListener {
             requestOpenGallery.launch(
                 arrayOf(
                     Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -74,32 +80,55 @@ class SignupEmailSetProfileImageOptionFragment : DialogFragment() {
         }
     }
     private val requestOpenGallery = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            permissions.entries.forEach {
-                if (it.value == false) {
-                    return@registerForActivityResult
-                }
+        permissions.entries.forEach {
+            if (it.value == false) {
+                return@registerForActivityResult
             }
-            openGallery()
+        }
+        openGallery()
     }
     private fun openGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = MediaStore.Images.Media.CONTENT_TYPE
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = "image/*"
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        }
         requestSelectGalleryActivity.launch(intent)
     }
     @RequiresApi(Build.VERSION_CODES.O)
     val requestSelectGalleryActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
         if (activityResult.resultCode == Activity.RESULT_OK) {
+            uploadImageList.clear()
+            uploadImageExtensionList.clear()
             val data: Intent? = activityResult.data
-            // 호출된 갤러리에서 이미지 선택시, data의 data속성으로 해당 이미지의 Uri 전달
-            val uri = data?.data!!
-            // 이미지 파일과 함께, 파일 확장자도 같이 저장
-            val fileExtension = requireContext().contentResolver.getType(uri).toString().split("/")[1]
-            setMyProfileImage(uri.toString(), fileExtension)
+
+            if (data?.clipData != null) { //사진 여러 개 선택 시
+                val count = data.clipData!!.itemCount
+                if (count > 5) {
+                    Toast.makeText(requireContext(), getString(R.string.write_post_upload_alert_message_image_fail_max), Toast.LENGTH_SHORT).show()
+                }
+                for (i in 0 until count) {
+                    val imageUri = data.clipData!!.getItemAt(i).uri
+                    val fileExtension = requireContext().contentResolver.getType(imageUri).toString().split("/")[1]
+                    uploadImageList.add(imageUri)
+                    uploadImageExtensionList.add(fileExtension)
+                }
+                setWritingPostImage(uploadImageList, uploadImageExtensionList)
+            } else { // 단일 선택
+                data?.data?.let { uri ->
+                    val imageUri : Uri?= data?.data
+                    if (imageUri != null){
+                        uploadImageList.add(imageUri)
+                        val fileExtension = requireContext().contentResolver.getType(imageUri).toString().split("/")[1]
+                        uploadImageExtensionList.add(fileExtension)
+                        setWritingPostImage(uploadImageList, uploadImageExtensionList)
+                    }
+                }
+            }
         }
     }
 
     private fun setImageTakePhotoClickListener() {
-        binding.layoutSignupEmailSetProfileImageOptionTakePhoto.setOnClickListener {
+        binding.layoutWriteImageOptionTakePhoto.setOnClickListener {
             requestOpenCamera.launch(
                 arrayOf(
                     Manifest.permission.CAMERA,
@@ -132,7 +161,7 @@ class SignupEmailSetProfileImageOptionFragment : DialogFragment() {
                 e.printStackTrace()
             }
             if(photoFile!= null){
-                val photoURI=FileProvider.getUriForFile(Objects.requireNonNull(requireContext().applicationContext), BuildConfig.APPLICATION_ID+".fileprovider", photoFile)
+                val photoURI= FileProvider.getUriForFile(Objects.requireNonNull(requireContext().applicationContext), BuildConfig.APPLICATION_ID+".fileprovider", photoFile)
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                 requestTakePhotoActivity.launch(intent)
             }
@@ -141,13 +170,17 @@ class SignupEmailSetProfileImageOptionFragment : DialogFragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     val requestTakePhotoActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
         if (activityResult.resultCode == Activity.RESULT_OK) {
+            uploadImageList.clear()
+            uploadImageExtensionList.clear()
             val photoFile = File(currentTakenPhotoPath)
-            setMyProfileImage(Uri.fromFile(photoFile).toString(), "jpg")
+            uploadImageList.add(Uri.fromFile(photoFile))
+            uploadImageExtensionList.add("jpg")
+            setWritingPostImage(uploadImageList, uploadImageExtensionList)
         }
     }
 
-    private fun setMyProfileImage(ImageString : String, fileExtension : String) {
-        findNavController().previousBackStackEntry?.savedStateHandle?.set("userProfileImageString", ImageString)
+    private fun setWritingPostImage(ImageUri : List<Uri>, fileExtension : List<String>) {
+        findNavController().previousBackStackEntry?.savedStateHandle?.set("userWritingPostImageUri", ImageUri)
         findNavController().previousBackStackEntry?.savedStateHandle?.set("fileExtension", fileExtension)
         findNavController().popBackStack()
     }
