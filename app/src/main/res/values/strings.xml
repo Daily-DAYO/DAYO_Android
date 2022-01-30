@@ -53,6 +53,8 @@
     <string name="write_post_upload_alert_message_empty_content">내용을 입력해 주세요.</string>
     <string name="write_post_upload_alert_message_empty_image">사진을 추가해 주세요.</string>
     <string name="write_post_upload_alert_message_empty_category">카테고리를 선택해 주세요.</string>
+    <string name="write_post_upload_alert_message_edittext_length_fail_max">내용은 200자까지 작성할 수 있어요.</string>
+    <string name="write_post_upload_alert_message_image_fail_max">사진은 5장까지만 선택 가능합니다</string>
     <string name="write_post_upload_loading_message">등록 중 입니다.</string>
 
     <!-- Post -->
@@ -111,9 +113,9 @@
     <string name="signup_email_set_password_confirmation_edittext_hint">다시 한번 입력해주세요</string>
     <string name="signup_email_set_password_confirmation_title">비밀번호를 확인해주세요.</string>
     <string name="signup_email_set_password_confirmation_message_fail">같은 비밀번호를 입력해주세요</string>
-    <!-- Signup Email Set Profile -->
-    <string name="signup_email_set_profile_image_option_gallery">앨범에서 선택</string>
-    <string name="signup_email_set_profile_image_option_camera">사진 직접촬영</string>
+    <!-- Select Image  -->
+    <string name="image_option_gallery">앨범에서 선택</string>
+    <string name="image_option_camera">사진 직접촬영</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
