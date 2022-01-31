@@ -38,4 +38,7 @@ interface FolderApiService {
                                   @Part("subheading") subheading:String?,
                                   @Part thumbnailImage: MultipartBody.Part?): Response<ResponseFolderId>
 
+    @POST("/api/v1/folders/order")
+    suspend fun requestOrderFolder(@Body body: List<FolderOrder>) : Response<Void>
+
 }

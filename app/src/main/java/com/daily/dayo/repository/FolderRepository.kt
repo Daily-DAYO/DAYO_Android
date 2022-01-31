@@ -1,6 +1,7 @@
 package com.daily.dayo.repository
 
 import com.daily.dayo.network.folder.FolderApiHelper
+import com.daily.dayo.profile.model.FolderOrder
 import com.daily.dayo.profile.model.RequestCreateFolderInPost
 import com.daily.dayo.profile.model.ResponseFolderId
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -40,4 +41,6 @@ class FolderRepository @Inject constructor(private val folderApiHelper: FolderAp
             folderApiHelper.requestEditFolder(folderId,name,privacy,subheading,null)
         }
     }
+
+    suspend fun requestOrderFolder(body:List<FolderOrder>): Response<Void> = folderApiHelper.requestOrderFolder(body)
 }
