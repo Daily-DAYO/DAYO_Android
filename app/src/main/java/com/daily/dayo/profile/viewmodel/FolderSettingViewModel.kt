@@ -20,6 +20,8 @@ class FolderSettingViewModel @Inject constructor(
     private val _folderList = MutableLiveData<Resource<ResponseAllMyFolderList>>()
     val folderList : LiveData<Resource<ResponseAllMyFolderList>> get() = _folderList
 
+    val orderFolderSuccess = MutableLiveData<Boolean>()
+
     init {
         requestAllMyFolderList()
     }
@@ -36,6 +38,11 @@ class FolderSettingViewModel @Inject constructor(
     }
 
     fun requestOrderFolder(body: List<FolderOrder>) = viewModelScope.launch {
-        folderRepository.requestOrderFolder(body)
+        folderRepository.requestOrderFolder(body).let {
+            if(it.isSuccessful)
+                orderFolderSuccess.postValue(true)
+            else
+                orderFolderSuccess.postValue(false)
+        }
     }
 }
