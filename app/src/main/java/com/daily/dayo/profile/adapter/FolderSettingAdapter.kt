@@ -1,6 +1,7 @@
 package com.daily.dayo.profile.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -8,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.daily.dayo.databinding.ItemFolderListBinding
 import com.daily.dayo.profile.model.Folder
 
-class FolderSettingAdapter : RecyclerView.Adapter<FolderSettingAdapter.FolderSettingViewHolder>() {
+class FolderSettingAdapter(val isChange:Boolean) : RecyclerView.Adapter<FolderSettingAdapter.FolderSettingViewHolder>() {
 
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Folder>() {
@@ -29,6 +30,8 @@ class FolderSettingAdapter : RecyclerView.Adapter<FolderSettingAdapter.FolderSet
 
     override fun onBindViewHolder(holder: FolderSettingViewHolder, position: Int) {
         val item = differ.currentList[position]
+        if(isChange) holder.changeOrderImg.visibility = View.VISIBLE
+        else holder.changeOrderImg.visibility = View.GONE
         holder.bind(item)
     }
 
@@ -37,6 +40,7 @@ class FolderSettingAdapter : RecyclerView.Adapter<FolderSettingAdapter.FolderSet
     }
 
     class FolderSettingViewHolder(binding: ItemFolderListBinding) : RecyclerView.ViewHolder(binding.root) {
+        val changeOrderImg = binding.imgFolderChangeOrder
         val folderName = binding.tvFolderName
         val folderPostCnt = binding.tvFolderPostCount
         fun bind(folder: Folder) {
@@ -44,4 +48,5 @@ class FolderSettingAdapter : RecyclerView.Adapter<FolderSettingAdapter.FolderSet
             folderPostCnt.text = folder.postCount.toString()
         }
     }
+
 }

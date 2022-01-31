@@ -11,10 +11,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentFolderSettingBinding
 import com.daily.dayo.profile.adapter.FolderSettingAdapter
+import com.daily.dayo.profile.model.FolderOrder
 import com.daily.dayo.profile.viewmodel.FolderSettingViewModel
 import com.daily.dayo.util.Status
 import com.daily.dayo.util.autoCleared
@@ -24,6 +24,7 @@ class FolderSettingFragment : Fragment() {
     private var binding by autoCleared<FragmentFolderSettingBinding>()
     private val folderSettingViewModel by activityViewModels<FolderSettingViewModel>()
     private lateinit var folderSettingAdapter: FolderSettingAdapter
+    private lateinit var folderOrderList : MutableList<FolderOrder>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,6 +36,8 @@ class FolderSettingFragment : Fragment() {
         setFolderAddButtonClickListener()
         setRvFolderSettingListAdapter()
         setProfileFolderList()
+        setChangeOrderButtonClickListener()
+        setSaveButtonClickListener()
 
         return binding.root
     }
@@ -52,10 +55,8 @@ class FolderSettingFragment : Fragment() {
     }
 
     private fun setRvFolderSettingListAdapter() {
-        val layoutManager = LinearLayoutManager(this.context)
-        folderSettingAdapter = FolderSettingAdapter()
+        folderSettingAdapter = FolderSettingAdapter(false)
         binding.rvFolderSettingListSaved.adapter = folderSettingAdapter
-        binding.rvFolderSettingListSaved.layoutManager = layoutManager
     }
 
     private fun setProfileFolderList(){
@@ -71,6 +72,51 @@ class FolderSettingFragment : Fragment() {
                     }
                 })
             }
+        }
+    }
+
+    private fun setProfileOrderFolderList(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                folderSettingViewModel.folderList.observe(viewLifecycleOwner, Observer {
+                    when(it.status){
+                        Status.SUCCESS -> {
+                            it.data?.let { folderList ->
+                                val size = folderList.data.size
+                                folderOrderList = mutableListOf()
+                                for(i in 0 until size){
+                                    folderOrderList.add(FolderOrder(folderList.data[i].folderId,i))
+                                }
+                                folderSettingAdapter.submitList(folderList.data)
+                            }
+                        }
+                    }
+                })
+            }
+        }
+    }
+
+    private fun setChangeOrderButtonClickListener(){
+        binding.btnFolderSettingChangeOrderOption.setOnClickListener {
+            binding.btnFolderSettingSave.visibility = View.VISIBLE
+            folderSettingAdapter = FolderSettingAdapter(true)
+            binding.rvFolderSettingListSaved.adapter = folderSettingAdapter
+            setProfileOrderFolderList()
+        }
+    }
+
+    private fun setSaveButtonClickListener(){
+        binding.btnFolderSettingSave.setOnClickListener {
+            //폴더 순서 변경
+
+
+            //변경된 순서 저장
+            folderSettingViewModel.requestOrderFolder(folderOrderList)
+
+            //순서 변경 불가능한 리스트 상태로 돌아가기
+            setRvFolderSettingListAdapter()
+            setProfileFolderList()
+            binding.btnFolderSettingSave.visibility = View.GONE
         }
     }
 }

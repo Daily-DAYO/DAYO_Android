@@ -13,4 +13,5 @@ interface FolderApiHelper {
     suspend fun requestDeleteFolder(folderId : Int) : Response<Void>
     suspend fun requestDetailListFolder(folderId: Int) : Response<ResponseDetailListFolder>
     suspend fun requestEditFolder(folderId:Int, name:String, privacy:String, subheading:String?, thumbnailImage: MultipartBody.Part?): Response<ResponseFolderId>
+    suspend fun requestOrderFolder(body: List<FolderOrder>):Response<Void>
 }
