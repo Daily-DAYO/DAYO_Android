@@ -21,6 +21,7 @@ import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentWriteImageOptionBinding
 import com.daily.dayo.util.DefaultDialogConfigure
 import com.daily.dayo.util.autoCleared
+import com.daily.dayo.util.setNavigationResult
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.IOException
@@ -33,7 +34,6 @@ class WriteImageOptionFragment : DialogFragment() {
     private var binding by autoCleared<FragmentWriteImageOptionBinding>()
     private lateinit var currentTakenPhotoPath: String
     private var uploadImageList = ArrayList<Uri>() // 갤러리에서 불러온 이미지 리스트
-    private var uploadImageExtensionList = ArrayList<String>() // 갤러리에서 불러온 이미지 확장자 리스트
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         isCancelable = true
@@ -98,7 +98,6 @@ class WriteImageOptionFragment : DialogFragment() {
     val requestSelectGalleryActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
         if (activityResult.resultCode == Activity.RESULT_OK) {
             uploadImageList.clear()
-            uploadImageExtensionList.clear()
             val data: Intent? = activityResult.data
 
             if (data?.clipData != null) { //사진 여러 개 선택 시
@@ -108,19 +107,15 @@ class WriteImageOptionFragment : DialogFragment() {
                 }
                 for (i in 0 until count) {
                     val imageUri = data.clipData!!.getItemAt(i).uri
-                    val fileExtension = requireContext().contentResolver.getType(imageUri).toString().split("/")[1]
                     uploadImageList.add(imageUri)
-                    uploadImageExtensionList.add(fileExtension)
                 }
-                setWritingPostImage(uploadImageList, uploadImageExtensionList)
+                setWritingPostImage(uploadImageList)
             } else { // 단일 선택
                 data?.data?.let { uri ->
                     val imageUri : Uri?= data?.data
                     if (imageUri != null){
                         uploadImageList.add(imageUri)
-                        val fileExtension = requireContext().contentResolver.getType(imageUri).toString().split("/")[1]
-                        uploadImageExtensionList.add(fileExtension)
-                        setWritingPostImage(uploadImageList, uploadImageExtensionList)
+                        setWritingPostImage(uploadImageList)
                     }
                 }
             }
@@ -171,17 +166,14 @@ class WriteImageOptionFragment : DialogFragment() {
     val requestTakePhotoActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
         if (activityResult.resultCode == Activity.RESULT_OK) {
             uploadImageList.clear()
-            uploadImageExtensionList.clear()
             val photoFile = File(currentTakenPhotoPath)
             uploadImageList.add(Uri.fromFile(photoFile))
-            uploadImageExtensionList.add("jpg")
-            setWritingPostImage(uploadImageList, uploadImageExtensionList)
+            setWritingPostImage(uploadImageList)
         }
     }
 
-    private fun setWritingPostImage(ImageUri : List<Uri>, fileExtension : List<String>) {
-        findNavController().previousBackStackEntry?.savedStateHandle?.set("userWritingPostImageUri", ImageUri)
-        findNavController().previousBackStackEntry?.savedStateHandle?.set("fileExtension", fileExtension)
+    private fun setWritingPostImage(ImageUri : List<Uri>) {
+        setNavigationResult("userWritingPostImageUri", ImageUri)
         findNavController().popBackStack()
     }
 }
