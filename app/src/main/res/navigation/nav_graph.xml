@@ -67,7 +67,9 @@
             app:destination="@id/WriteOptionFragment"/>
         <action
             android:id="@+id/action_writeFragment_to_postFragment"
-            app:destination="@id/PostFragment" />
+            app:destination="@id/PostFragment"
+            app:popUpTo="@id/WriteFragment"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_writeFragment_to_writeImageOptionFragment"
             app:destination="@id/WriteImageOptionFragment"/>

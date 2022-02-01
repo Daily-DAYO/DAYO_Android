@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -16,17 +17,18 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.FragmentWriteOptionBinding
-import com.daily.dayo.util.DefaultDialogConfigure
-import com.daily.dayo.util.DefaultDialogConfirm
 import com.daily.dayo.util.autoCleared
 import com.daily.dayo.write.viewmodel.WriteOptionViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class WriteOptionFragment : BottomSheetDialogFragment() {
@@ -64,51 +66,47 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
     }
 
     private fun setUploadButtonClickListener() {
-        var mAlertDialog = DefaultDialogConfirm.createDialog(requireContext(), R.string.write_post_upload_loading_message,
-            false, false, null, null, null, null)
-
         binding.btnWriteOptionConfirm.setOnClickListener {
-            if(mAlertDialog != null && !mAlertDialog.isShowing) {
-                val privacy = setPrivacySetting()
-                val memberId = SharedManager(DayoApplication.applicationContext()).getCurrentUser().memberId.toString()
-                val folderId = binding.tvWriteOptionDescriptionFolder.id
-
-                // TODO : folderId와 memberId를 얻는 과정 작성 필요
-                writeOptionViewModel.requestUploadPost(postCategory, postContents, postImageFileList.toTypedArray(),
-                    folderId, memberId, privacy, postTagList)
-                mAlertDialog.show()
-                DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.14f)
-            }
+            val privacy = setPrivacySetting()
+            // TODO : folderId를 얻는 과정 작성 필요
+            val memberId = SharedManager(DayoApplication.applicationContext()).getCurrentUser().memberId.toString()
+            val folderId = binding.tvWriteOptionDescriptionFolder.id
+            writeOptionViewModel.requestUploadPost(postCategory, postContents, postImageFileList.toTypedArray(),
+                folderId, memberId, privacy, postTagList)
+            Toast.makeText(requireContext(), R.string.write_post_upload_alert_message_loading, Toast.LENGTH_SHORT).show()
+            findNavController().navigateUp()
         }
-        writeOptionViewModel.writeSuccess.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            mAlertDialog.dismiss()
-            if(it) {
-                //findNavController().navigate(WriteFragmentDirections.actionWriteFragmentToPostFragment(writeOptionViewModel.writePostId.toString().toInt()))
-            } else {
-                // TODO : 등록 실패 메시지 띄우기
-            }
-        })
     }
 
     private fun setPrivacySetting() : String {
         val radioButton = binding.radiogroupWriteOptionDescriptionPrivate?.findViewById<View>(binding.radiogroupWriteOptionDescriptionPrivate!!.checkedRadioButtonId)
         val radioId = binding.radiogroupWriteOptionDescriptionPrivate!!.indexOfChild(radioButton)
         val btn = binding.radiogroupWriteOptionDescriptionPrivate!!.getChildAt(radioId) as RadioButton
-        val privacy = btn.text as String
-        return when(privacy) {
-            "전체공개" -> "ALL"
-            "팔로잉" -> "FOLLOWING"
-            "비공개" -> "ONLY_ME"
-            else -> "FOLLOWING"
+        return when(btn.text as String) {
+            getString(R.string.privacy_all) -> getString(R.string.privacy_all_eng)
+            getString(R.string.privacy_following) -> getString(R.string.privacy_following_eng)
+            getString(R.string.privacy_private) -> getString(R.string.privacy_private_eng)
+            else -> getString(R.string.privacy_private_eng)
         }
     }
 
     private fun setOptionTagListOriginalValue() {
         if(!postTagList.isNullOrEmpty()){
+                binding.tvWriteOptionDescriptionTag.visibility = View.GONE
             (0 until postTagList.size).mapNotNull { index ->
-                binding.tvWriteOptionDescriptionTag.text =
-                    binding.tvWriteOptionDescriptionTag.text.toString() + "#${postTagList[index]}"
+                val chip = LayoutInflater.from(context).inflate(R.layout.item_write_post_tag_chip, null) as Chip
+                val layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
+                with(chip) {
+                    setTextAppearance(R.style.WritePostTagTextStyle)
+                    isCloseIconVisible = false
+                    isCheckable = false
+                    setEnsureMinTouchTargetSize(false)
+                    text = "# ${postTagList[index].trim()}"
+                }
+                binding.chipgroupWriteOptionTagListSaved.addView(chip, layoutParams)
             }
+        } else {
+            binding.tvWriteOptionDescriptionTag.visibility = View.VISIBLE
         }
     }
     private fun setOptionTagClickListener() {
