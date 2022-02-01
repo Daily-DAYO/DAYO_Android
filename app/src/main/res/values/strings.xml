@@ -33,7 +33,15 @@
     <string name="sixHoleDiary_eng">SIX_DIARY</string>
     <string name="digital_eng">GOOD_NOTE</string>
     <string name="etc_eng">ETC</string>
-
+    
+    <!-- Privacy -->
+    <string name="privacy_all">전체공개</string>
+    <string name="privacy_following">팔로잉</string>
+    <string name="privacy_private">나만보기</string>
+    <string name="privacy_all_eng">ALL</string>
+    <string name="privacy_following_eng">FOLLOWING</string>
+    <string name="privacy_private_eng">ONLY_ME</string>
+    
     <!-- Write -->
     <string name="hint_write_description">내용을 작성해주세요.</string>
     <string name="write_post_description_count_limit"> / 최대 200자</string>
@@ -41,13 +49,12 @@
     <string name="write_post_tag_add">태그 추가</string>
     <string name="hint_write_post_tag_add"># 키워드를 입력해주세요</string>
     <string name="write_option_title_folder">폴더 설정</string>
-    <string name="write_option_description_folder">폴더 이름</string>
+    <string name="write_option_description_folder">폴더 생성하기</string>
     <string name="write_option_title_private">공개 설정</string>
-    <string name="write_option_description_private_all">전체공개</string>
-    <string name="write_option_description_private_following">팔로잉</string>
-    <string name="write_option_description_private_only_me">비공개</string>
     <string name="write_option_title_tag">태그 추가</string>
-    <string name="write_option_description_tag">오늘의 기록과 어울리는 키워드를 추가해보세요</string>
+    <string name="write_option_description_tag">기록에 관한 키워드를 추가해보세요.</string>
+    <string name="write_post_tag_count_limit"> / 8</string>
+    <string name="write_post_tag_alert_message_tag_size_fail_max">태그는 8개까지 등록 가능해요.</string>
     <string name="write_post_folder_title">폴더 설정</string>
     <string name="write_post_folder_new_title">폴더 추가</string>
     <string name="write_post_upload_alert_message_empty_content">내용을 입력해 주세요.</string>
@@ -55,7 +62,8 @@
     <string name="write_post_upload_alert_message_empty_category">카테고리를 선택해 주세요.</string>
     <string name="write_post_upload_alert_message_edittext_length_fail_max">내용은 200자까지 작성할 수 있어요.</string>
     <string name="write_post_upload_alert_message_image_fail_max">사진은 5장까지만 선택 가능합니다</string>
-    <string name="write_post_upload_loading_message">등록 중 입니다.</string>
+    <string name="write_post_upload_alert_message_loading">게시글을 올리고 있어요! 잠시만 기다려주세요.</string>
+    <string name="write_post_upload_alert_message_fail">게시글을 업로드 할 수 없어요. 다시 시도해주세요.</string>
 
     <!-- Post -->
     <string name="hint_post_comment_write_description">댓글을 남겨주세요</string>
