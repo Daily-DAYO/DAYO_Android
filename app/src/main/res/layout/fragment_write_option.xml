@@ -42,7 +42,7 @@
             app:layout_constraintTop_toTopOf="@id/tv_write_option_title_folder"
             app:layout_constraintBottom_toBottomOf="@id/tv_write_option_title_folder"
             app:layout_constraintEnd_toEndOf="parent"
-            android:paddingLeft="15dp"/>
+            android:paddingStart="15dp"/>
         <TextView
             android:id="@+id/tv_write_option_description_folder"
             android:layout_width="wrap_content"
@@ -100,7 +100,7 @@
                 android:textAlignment="center"
                 android:background="@drawable/selector_button_write_option_private"
                 android:button="@null"
-                android:layout_marginRight="7dp"/>
+                android:layout_marginEnd="7dp"/>
             <RadioButton
                 android:id="@+id/radiobutton_write_option_description_private_following"
                 android:layout_width="77dp"
@@ -111,7 +111,7 @@
                 android:textAlignment="center"
                 android:background="@drawable/selector_button_write_option_private"
                 android:button="@null"
-                android:layout_marginRight="7dp"/>
+                android:layout_marginEnd="7dp"/>
             <RadioButton
                 android:id="@+id/radiobutton_write_option_description_private_only_me"
                 android:layout_width="77dp"
@@ -140,7 +140,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/view_private_horizontal_line"
         app:layout_constraintStart_toStartOf="parent"
-        android:paddingTop="23dp"
+        android:paddingTop="18dp"
         android:layout_marginHorizontal="18dp">
         <TextView
             android:id="@+id/tv_write_option_title_tag"
@@ -150,7 +150,9 @@
             android:textSize="15dp"
             android:textColor="@color/gray_1_313131"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            android:paddingBottom="5dp"
+            android:layout_marginTop="5dp"/>
         <TextView
             android:id="@+id/tv_write_option_description_tag"
             android:layout_width="0dp"
@@ -160,11 +162,12 @@
             android:textColorHint="@color/gray_5_D3D2D2"
             android:visibility="visible"
             android:breakStrategy="high_quality"
-            android:gravity="right"
+            android:gravity="end"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tv_write_option_title_tag"
             app:layout_constraintEnd_toStartOf="@id/img_write_option_icon_tag"
-            android:layout_marginLeft="21dp"/>
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="21dp"/>
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/layout_write_option_tag_list_saved"
             android:layout_width="0dp"
@@ -176,7 +179,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tv_write_option_title_tag"
             app:layout_constraintEnd_toStartOf="@id/img_write_option_icon_tag"
-            android:layout_marginLeft="21dp">
+            android:layout_marginStart="21dp">
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipgroup_write_option_tag_list_saved"
                 android:layout_width="match_parent"
@@ -191,7 +194,9 @@
             app:layout_constraintTop_toTopOf="@id/tv_write_option_title_tag"
             app:layout_constraintBottom_toBottomOf="@id/tv_write_option_title_tag"
             app:layout_constraintEnd_toEndOf="parent"
-            android:paddingLeft="15dp"/>
+            android:paddingBottom="5dp"
+            android:paddingStart="15dp"
+            android:layout_marginTop="5dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.appcompat.widget.AppCompatButton
@@ -207,7 +212,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="43dp"
         android:layout_marginBottom="18dp"
         android:layout_marginHorizontal="18dp" />
 
