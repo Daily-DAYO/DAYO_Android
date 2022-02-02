@@ -4,34 +4,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_item_folder_list"
+
+    <ImageView
+        android:id="@+id/img_folder_change_order"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:src="@drawable/ic_change_order"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="2dp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginHorizontal="19dp">
-        <TextView
-            android:id="@+id/tv_folder_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14dp"
-            android:textColor="@color/gray_1_313131"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:paddingVertical="16dp"
-            tools:text="Folder Name" />
-        <TextView
-            android:id="@+id/tv_folder_post_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            tools:text="10"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/tv_folder_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:paddingVertical="16dp"
+        android:textColor="@color/gray_1_313131"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tv_folder_post_count"
+        app:layout_constraintStart_toEndOf="@+id/img_folder_change_order"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Folder Name" />
+
+    <TextView
+        android:id="@+id/tv_folder_post_count"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toRightOf="@id/tv_folder_name"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="0" />
+
     <View
         android:id="@+id/view_write_folder_actionbar_horizontal_line"
         android:layout_width="0dp"
