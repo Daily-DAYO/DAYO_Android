@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
+import androidx.core.view.size
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.daily.dayo.R
@@ -25,20 +27,10 @@ class WriteTagFragment : Fragment() {
     ): View? {
         binding = FragmentWriteTagBinding.inflate(inflater, container, false)
         setBackButtonClickListener()
-
-        (0 until postTagList.size).mapNotNull { index ->
-            val chip = LayoutInflater.from(context).inflate(R.layout.item_write_post_tag_chip, null) as Chip
-            val layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
-            with(chip) {
-                setTextAppearance(R.style.WritePostTagTextStyle)
-                setOnCloseIconClickListener { binding.chipgroupWriteTagListSaved.removeView(chip as View)}
-                text = "${postTagList[index].trim()}"
-            }
-            binding.chipgroupWriteTagListSaved.addView(chip, layoutParams)
-        }
-
         setSubmitButtonClickListener()
         setEditTextAddTagKeyClickListener()
+        initPreviousTagList()
+        setTagCountLimit()
         return binding.root
     }
 
@@ -50,7 +42,7 @@ class WriteTagFragment : Fragment() {
 
     private fun setSubmitButtonClickListener(){
         binding.btnWritePostTagSubmit.setOnClickListener {
-            findNavController().previousBackStackEntry?.savedStateHandle?.set("postTagList", binding.chipgroupWriteTagListSaved.getAllChipsText())
+            findNavController().previousBackStackEntry?.savedStateHandle?.set("postTagList", binding.chipgroupWriteTagListSaved.getAllChipsTagText())
             findNavController().popBackStack()
         }
     }
@@ -63,11 +55,18 @@ class WriteTagFragment : Fragment() {
                     val layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
                     with(chip) {
                         setTextAppearance(R.style.WritePostTagTextStyle)
-                        setOnCloseIconClickListener { binding.chipgroupWriteTagListSaved.removeView(chip as View)}
-                        text = "#${binding.etWriteTagAdd.text.toString().trim()}"
+                        setOnCloseIconClickListener {
+                            binding.chipgroupWriteTagListSaved.removeView(chip as View)
+                            setTagCountLimit()
+                        }
+                        text = "# ${binding.etWriteTagAdd.text.toString().trim()}"
                     }
-                    binding.chipgroupWriteTagListSaved.addView(chip, layoutParams)
+                    if(binding.chipgroupWriteTagListSaved.size < 8) {
+                        binding.chipgroupWriteTagListSaved.addView(chip, layoutParams)
+                        setTagCountLimit()
+                    }
                     binding.etWriteTagAdd.setText("")
+                    binding.etWriteTagAdd.clearFocus()
                     true
                 }
                 else -> false
@@ -75,10 +74,47 @@ class WriteTagFragment : Fragment() {
         }
     }
 
-    private fun ChipGroup.getAllChipsText(): List<String> {
+    private fun initPreviousTagList() {
+        (0 until postTagList.size).mapNotNull { index ->
+            val chip = LayoutInflater.from(context).inflate(R.layout.item_write_post_tag_chip, null) as Chip
+            val layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
+            with(chip) {
+                setTextAppearance(R.style.WritePostTagTextStyle)
+                setOnCloseIconClickListener {
+                    binding.chipgroupWriteTagListSaved.removeView(chip as View)
+                    setTagCountLimit()
+                }
+                text = "# ${postTagList[index].trim()}"
+            }
+            binding.chipgroupWriteTagListSaved.addView(chip, layoutParams)
+        }
+        setTagCountLimit()
+    }
+
+    private fun setTagCountLimit() {
+        with(binding) {
+            val currentTagCount = chipgroupWriteTagListSaved.size
+            tagCount = chipgroupWriteTagListSaved.size
+            if(currentTagCount >= 8){
+                Toast.makeText(requireContext(), R.string.write_post_tag_alert_message_tag_size_fail_max, Toast.LENGTH_SHORT).show()
+            } else if(currentTagCount > 0){
+                tvWriteTagListCountSaved.setTextColor(resources.getColor(R.color.primary_green_23C882, context?.theme))
+                btnWritePostTagSubmit.setTextColor(resources.getColor(R.color.gray_1_313131, context?.theme))
+                btnWritePostTagSubmit.isEnabled = true
+                imgWriteTagListEmpty.visibility = View.INVISIBLE
+            } else {
+                tvWriteTagListCountSaved.setTextColor(resources.getColor(R.color.gray_5_D3D2D2, context?.theme))
+                btnWritePostTagSubmit.setTextColor(resources.getColor(R.color.gray_5_D3D2D2, context?.theme))
+                btnWritePostTagSubmit.isEnabled = false
+                imgWriteTagListEmpty.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun ChipGroup.getAllChipsTagText(): List<String> {
         return (0 until childCount).mapNotNull { index ->
             val currentChip = getChildAt(index) as? Chip
-            currentChip?.text.toString()
+            currentChip?.text.toString().split("# ")[1]
         }
     }
 
