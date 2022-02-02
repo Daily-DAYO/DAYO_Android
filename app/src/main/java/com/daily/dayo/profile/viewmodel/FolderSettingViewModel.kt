@@ -4,9 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daily.dayo.DayoApplication
-import com.daily.dayo.SharedManager
-import com.daily.dayo.profile.model.ResponseAllFolderList
+import com.daily.dayo.profile.model.FolderOrder
 import com.daily.dayo.profile.model.ResponseAllMyFolderList
 import com.daily.dayo.repository.FolderRepository
 import com.daily.dayo.util.Resource
@@ -22,6 +20,8 @@ class FolderSettingViewModel @Inject constructor(
     private val _folderList = MutableLiveData<Resource<ResponseAllMyFolderList>>()
     val folderList : LiveData<Resource<ResponseAllMyFolderList>> get() = _folderList
 
+    val orderFolderSuccess = MutableLiveData<Boolean>()
+
     init {
         requestAllMyFolderList()
     }
@@ -34,6 +34,15 @@ class FolderSettingViewModel @Inject constructor(
             } else{
                 _folderList.postValue(Resource.error(it.errorBody().toString(), null))
             }
+        }
+    }
+
+    fun requestOrderFolder(body: List<FolderOrder>) = viewModelScope.launch {
+        folderRepository.requestOrderFolder(body).let {
+            if(it.isSuccessful)
+                orderFolderSuccess.postValue(true)
+            else
+                orderFolderSuccess.postValue(false)
         }
     }
 }

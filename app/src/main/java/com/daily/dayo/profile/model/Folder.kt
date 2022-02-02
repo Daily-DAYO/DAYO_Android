@@ -64,3 +64,9 @@ data class FolderPost(
     val thumbnailImage: String
 )
 
+data class FolderOrder(
+    @SerializedName("folderId")
+    var folderId: Int,
+    @SerializedName("orderIndex")
+    var orderIndex: Int
+)
