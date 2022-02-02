@@ -16,11 +16,16 @@ import android.widget.RadioGroup
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
+import com.daily.dayo.SharedManager
 import com.daily.dayo.util.autoCleared
 import com.daily.dayo.write.adapter.WriteUploadImageListAdapter
+import com.daily.dayo.write.viewmodel.WriteOptionViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.ByteArrayOutputStream
 import java.util.*
@@ -29,6 +34,7 @@ import kotlin.collections.ArrayList
 @AndroidEntryPoint
 class WriteFragment : Fragment() {
     private var binding by autoCleared<FragmentWriteBinding>()
+    private val writeOptionViewModel by activityViewModels<WriteOptionViewModel>()
     private var radioGroupCategoryLine1: RadioGroup? = null
     private var radioGroupCategoryLine2: RadioGroup? = null
     private lateinit var postTagList : List<String> // 현재 작성할 게시글에 저장된 태그 리스트
@@ -52,6 +58,7 @@ class WriteFragment : Fragment() {
         observeNavigationWritingImageCallBack()
         setImageDeleteClickListener()
         setUploadButtonActivation()
+        observeUploadStateCallBack()
         return binding.root
     }
 
@@ -114,8 +121,8 @@ class WriteFragment : Fragment() {
             getString(R.string.scheduler) -> getString(R.string.scheduler_eng)
             getString(R.string.studyplanner) -> getString(R.string.studyplanner_eng)
             getString(R.string.digital) -> getString(R.string.digital_eng)
-            getString(R.string.pocketbook) -> getString(R.string.pocketbook)
-            getString(R.string.sixHoleDiary) -> getString(R.string.sixHoleDiary)
+            getString(R.string.pocketbook) -> getString(R.string.pocketbook_eng)
+            getString(R.string.sixHoleDiary) -> getString(R.string.sixHoleDiary_eng)
             getString(R.string.etc) -> getString(R.string.etc_eng)
             else -> ""
         }
@@ -234,6 +241,19 @@ class WriteFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun observeUploadStateCallBack() {
+        writeOptionViewModel.writeSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
+            if(isSuccess.getContentIfNotHandled() == true) {
+                writeOptionViewModel.writePostId.value?.getContentIfNotHandled()?.let { writePostId ->
+                    findNavController().navigate(WriteFragmentDirections.actionWriteFragmentToPostFragment
+                        (writePostId, SharedManager(DayoApplication.applicationContext()).getCurrentUser().nickname.toString()))
+                }
+            } else if (isSuccess.getContentIfNotHandled() == false) {
+                Toast.makeText(requireContext(), R.string.write_post_upload_alert_message_fail, Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

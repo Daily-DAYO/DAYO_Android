@@ -13,111 +13,111 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_swipe_top_bar"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="20dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="9dp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_write_option_folder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/img_write_option_swipe_top_bar"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="31dp"
         android:layout_marginHorizontal="18dp">
         <TextView
             android:id="@+id/tv_write_option_title_folder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/write_option_title_folder"
-            android:textSize="13dp"
-            android:textColor="@color/black_000000"
+            android:textSize="15dp"
+            android:textColor="@color/gray_1_313131"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"/>
         <ImageView
-            android:id="@+id/tv_write_option_icon_folder"
+            android:id="@+id/img_write_option_icon_folder"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:src="@drawable/ic_right_sign_light_gray"
             app:layout_constraintTop_toTopOf="@id/tv_write_option_title_folder"
             app:layout_constraintBottom_toBottomOf="@id/tv_write_option_title_folder"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            android:paddingLeft="15dp"/>
         <TextView
             android:id="@+id/tv_write_option_description_folder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/write_option_description_folder"
-            android:textSize="13dp"
+            android:textSize="15dp"
             android:textColor="@color/gray_3_9C9C9C"
             app:layout_constraintTop_toTopOf="@id/tv_write_option_title_folder"
             app:layout_constraintBottom_toBottomOf="@id/tv_write_option_title_folder"
-            app:layout_constraintRight_toLeftOf="@id/tv_write_option_icon_folder"
-            android:layout_marginRight="25dp" />
+            app:layout_constraintEnd_toStartOf="@id/img_write_option_icon_folder" />
     </androidx.constraintlayout.widget.ConstraintLayout>
     <View
         android:id="@+id/view_folder_horizontal_line"
-        android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        android:background="@color/gray_4_D3D2D2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray_6_EDEDED"
         app:layout_constraintTop_toBottomOf="@id/layout_write_option_folder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginHorizontal="10dp"/>
+        android:layout_marginTop="23dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_write_option_private"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/view_folder_horizontal_line"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:paddingTop="18dp"
-        android:layout_marginHorizontal="18dp">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingTop="17dp"
+        android:layout_marginHorizontal="18dp" >
         <TextView
             android:id="@+id/tv_write_option_title_private"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/write_option_title_private"
-            android:textSize="13dp"
-            android:textColor="@color/black_000000"
+            android:textSize="15dp"
+            android:textColor="@color/gray_1_313131"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"/>
         <RadioGroup
             android:id="@+id/radiogroup_write_option_description_private"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toRightOf="parent">
-            <RadioButton
-                android:id="@+id/radiobutton_write_option_description_private_all"
-                android:layout_width="73dp"
-                android:layout_height="24dp"
-                android:text="@string/write_option_description_private_all"
-                android:textSize="10dp"
-                android:textColor="@drawable/selector_button_write_option_private_text"
-                android:textAlignment="center"
-                android:background="@drawable/selector_button_write_option_private"
-                android:button="@null"
-                android:layout_marginRight="9dp"/>
+            app:layout_constraintEnd_toEndOf="parent">
             <RadioButton
                 android:checked="true"
-                android:id="@+id/radiobutton_write_option_description_private_following"
-                android:layout_width="73dp"
-                android:layout_height="24dp"
-                android:text="@string/write_option_description_private_following"
-                android:textSize="10dp"
+                android:id="@+id/radiobutton_write_option_description_private_all"
+                android:layout_width="77dp"
+                android:layout_height="27dp"
+                android:text="@string/privacy_all"
+                android:textSize="13dp"
                 android:textColor="@drawable/selector_button_write_option_private_text"
                 android:textAlignment="center"
                 android:background="@drawable/selector_button_write_option_private"
                 android:button="@null"
-                android:layout_marginRight="5dp"/>
+                android:layout_marginRight="7dp"/>
+            <RadioButton
+                android:id="@+id/radiobutton_write_option_description_private_following"
+                android:layout_width="77dp"
+                android:layout_height="27dp"
+                android:text="@string/privacy_following"
+                android:textSize="13dp"
+                android:textColor="@drawable/selector_button_write_option_private_text"
+                android:textAlignment="center"
+                android:background="@drawable/selector_button_write_option_private"
+                android:button="@null"
+                android:layout_marginRight="7dp"/>
             <RadioButton
                 android:id="@+id/radiobutton_write_option_description_private_only_me"
-                android:layout_width="73dp"
-                android:layout_height="24dp"
-                android:text="@string/write_option_description_private_only_me"
-                android:textSize="10dp"
+                android:layout_width="77dp"
+                android:layout_height="27dp"
+                android:text="@string/privacy_private"
+                android:textSize="13dp"
                 android:textColor="@drawable/selector_button_write_option_private_text"
                 android:textAlignment="center"
                 android:background="@drawable/selector_button_write_option_private"
@@ -126,56 +126,72 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
     <View
         android:id="@+id/view_private_horizontal_line"
-        android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        android:background="@color/gray_4_D3D2D2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray_6_EDEDED"
         app:layout_constraintTop_toBottomOf="@id/layout_write_option_private"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginHorizontal="10dp"/>
+        android:layout_marginTop="17dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_write_option_tag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/view_private_horizontal_line"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:paddingTop="18dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingTop="23dp"
         android:layout_marginHorizontal="18dp">
         <TextView
             android:id="@+id/tv_write_option_title_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/write_option_title_tag"
-            android:textSize="13dp"
-            android:textColor="@color/black_000000"
+            android:textSize="15dp"
+            android:textColor="@color/gray_1_313131"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent" />
         <TextView
             android:id="@+id/tv_write_option_description_tag"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/write_option_description_tag"
-            android:textSize="13dp"
-            android:textColorHint="@color/gray_4_D3D2D2"
+            android:textSize="15dp"
+            android:textColorHint="@color/gray_5_D3D2D2"
             android:visibility="visible"
             android:breakStrategy="high_quality"
             android:gravity="right"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/tv_write_option_title_tag"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginLeft="30dp"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_write_option_description_tag_list"
-            android:layout_width="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/tv_write_option_title_tag"
+            app:layout_constraintEnd_toStartOf="@id/img_write_option_icon_tag"
+            android:layout_marginLeft="21dp"/>
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/layout_write_option_tag_list_saved"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
+            app:flexWrap="wrap"
+            app:alignItems="stretch"
+            app:alignContent="stretch"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/tv_write_option_title_tag"
-            app:layout_constraintRight_toRightOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_write_option_title_tag"
+            app:layout_constraintEnd_toStartOf="@id/img_write_option_icon_tag"
+            android:layout_marginLeft="21dp">
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipgroup_write_option_tag_list_saved"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </com.google.android.flexbox.FlexboxLayout>
+
+        <ImageView
+            android:id="@+id/img_write_option_icon_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_right_sign_light_gray"
+            app:layout_constraintTop_toTopOf="@id/tv_write_option_title_tag"
+            app:layout_constraintBottom_toBottomOf="@id/tv_write_option_title_tag"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:paddingLeft="15dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.appcompat.widget.AppCompatButton
@@ -183,15 +199,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/button_default_green"
-        android:text="@string/confirm"
+        android:text="@string/upload"
         android:textSize="16dp"
         android:textColor="@color/white_FFFFFF"
         style="@style/Animation.Design.BottomSheetDialog"
         app:layout_constraintTop_toBottomOf="@id/layout_write_option_tag"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginVertical="25dp"
-        android:layout_marginHorizontal="20dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="48dp"
+        android:layout_marginBottom="18dp"
+        android:layout_marginHorizontal="18dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

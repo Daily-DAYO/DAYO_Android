@@ -19,14 +19,6 @@ class WriteRepository @Inject constructor(private val writeApiHelper: WriteApiHe
             val uploadFile = MultipartBody.Part.createFormData("files",fileNameDivideList[fileNameDivideList.size - 1], requestBodyFile)
             uploadFiles.add(uploadFile)
         }
-        return writeApiHelper.requestUploadPost(postCategory, postContents, uploadFiles, postFolderId, memberId, postPrivacy, postTags).verify()
-    }
-
-    fun Response<ResponseWrite>.verify() : Response<ResponseWrite> {
-        if (this.isSuccessful && this.code() in 200..299) {
-            return this
-        } else {
-            throw Exception("${this.code()}")
-        }
+        return writeApiHelper.requestUploadPost(postCategory, postContents, uploadFiles, postFolderId, memberId, postPrivacy, postTags)
     }
 }

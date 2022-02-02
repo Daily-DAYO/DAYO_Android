@@ -84,7 +84,7 @@ class DayoPickPostListFragment : Fragment() {
             radiobuttonDayopickPostCategoryDigital.setOnClickListener {
                 homeViewModel.requestHomePostListCategory(getString(R.string.digital_eng))
             }
-            radiobuttonDayopickPostCategoryDigital.setOnClickListener {
+            radiobuttonDayopickPostCategoryEtc.setOnClickListener {
                 homeViewModel.requestHomePostListCategory(getString(R.string.etc_eng))
             }
         }
