@@ -24,6 +24,7 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.SharedManager
 import com.daily.dayo.util.autoCleared
+import com.daily.dayo.util.getNavigationResult
 import com.daily.dayo.write.adapter.WriteUploadImageListAdapter
 import com.daily.dayo.write.viewmodel.WriteOptionViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -174,7 +175,7 @@ class WriteFragment : Fragment() {
         rvUploadImageList.adapter = uploadImageListAdapter
     }
     private fun observeNavigationWritingImageCallBack() {
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<List<Uri>>("userWritingPostImageUri")?.observe(viewLifecycleOwner) {
+        getNavigationResult<List<Uri>>(R.id.WriteFragment, "userWritingPostImageUri") {
             for(element in it) {
                 uploadImageList.add(element)
                 val imageBitmap = element.toBitmap()

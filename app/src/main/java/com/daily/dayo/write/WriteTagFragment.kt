@@ -59,6 +59,7 @@ class WriteTagFragment : Fragment() {
                             binding.chipgroupWriteTagListSaved.removeView(chip as View)
                             setTagCountLimit()
                         }
+                        ensureAccessibleTouchTarget(42.toPx())
                         text = "# ${binding.etWriteTagAdd.text.toString().trim()}"
                     }
                     if(binding.chipgroupWriteTagListSaved.size < 8) {
@@ -124,5 +125,10 @@ class WriteTagFragment : Fragment() {
             if (view is Chip) view else null
         }
         chipViews.forEach { removeView(it) }
+    }
+
+    fun Int.toPx() : Int {
+        val density = resources.displayMetrics.density
+        return (this * density).toInt()
     }
 }

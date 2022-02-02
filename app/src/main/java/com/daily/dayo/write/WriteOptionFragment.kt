@@ -100,7 +100,7 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
                     setTextAppearance(R.style.WritePostTagTextStyle)
                     isCloseIconVisible = false
                     isCheckable = false
-                    setEnsureMinTouchTargetSize(false)
+                    ensureAccessibleTouchTarget(42.toPx())
                     text = "# ${postTagList[index].trim()}"
                 }
                 binding.chipgroupWriteOptionTagListSaved.addView(chip, layoutParams)
@@ -152,5 +152,10 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
         val fileName = imageFileTimeFormat.format(Date(System.currentTimeMillis())).toString() + ".jpg"
         val cacheDir = requireContext().cacheDir.toString()
         return "$cacheDir/$fileName"
+    }
+
+    fun Int.toPx() : Int {
+        val density = resources.displayMetrics.density
+        return (this * density).toInt()
     }
 }

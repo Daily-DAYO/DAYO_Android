@@ -224,10 +224,11 @@
                 android:id="@+id/btn_upload_image"
                 android:layout_width="141dp"
                 android:layout_height="141dp"
-                android:src="@drawable/ic_upload_picture"
-                android:scaleType="center"
                 android:background="@drawable/button_default_white"
-                android:layout_marginTop="12dp"/>
+                android:scaleType="center"
+                android:src="@drawable/ic_upload_picture"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_img_upload_list"
@@ -253,7 +254,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:layout_marginBottom="18dp"
         android:layout_marginHorizontal="18dp" />
 
