@@ -1,5 +1,6 @@
 package com.daily.dayo.post
 
+import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -11,12 +12,17 @@ import androidx.navigation.fragment.navArgs
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentPostOptionMineBinding
 import com.daily.dayo.post.viewmodel.PostViewModel
+import com.daily.dayo.util.DefaultDialogConfigure
+import com.daily.dayo.util.DefaultDialogConfirm
 import com.daily.dayo.util.autoCleared
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PostOptionMineFragment : DialogFragment() {
     private var binding by autoCleared<FragmentPostOptionMineBinding>()
     private val postViewModel by activityViewModels<PostViewModel>()
     private val args by navArgs<PostOptionFragmentArgs>()
+    private lateinit var mAlertDialog: AlertDialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         isCancelable = true
@@ -32,25 +38,43 @@ class PostOptionMineFragment : DialogFragment() {
         // Android Version 4.4 이하에서 Blue Line이 상단에 나타는 것 방지
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
         dialog?.window?.setGravity(Gravity.BOTTOM)
-
         return binding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setCancelClickListener()
         setDeletePostClickListener()
     }
 
+    override fun onResume() {
+        super.onResume()
+        resizePostOptionMineDialogFragment()
+    }
+
+    private fun resizePostOptionMineDialogFragment() {
+        val params: ViewGroup.LayoutParams? = dialog?.window?.attributes
+        val deviceWidth = DefaultDialogConfigure.getDeviceWidthSize(requireContext())
+        params?.width = (deviceWidth * 0.9).toInt()
+        dialog?.window?.attributes = params as WindowManager.LayoutParams
+    }
+
     private fun setDeletePostClickListener() {
-        binding.layoutPostOptionMineDelete.setOnClickListener {
+        val deletePost = {
             postViewModel.requestDeletePost(args.id)
             findNavController().navigate(R.id.action_postOptionMineFragment_to_HomeFragment)
         }
-    }
-    private fun setCancelClickListener() {
-        binding.layoutPostOptionMineCancel.setOnClickListener {
-           findNavController().navigateUp()
+        mAlertDialog = DefaultDialogConfirm.createDialog(requireContext(), R.string.post_option_mine_delete_alert_message, true, true, null, null,
+            deletePost,{
+                binding.layoutPostOptionMine.visibility = View.VISIBLE
+                this.mAlertDialog.dismiss()
+            } )
+        mAlertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        binding.layoutPostOptionMineDelete.setOnClickListener {
+            if(!mAlertDialog.isShowing) {
+                binding.layoutPostOptionMine.visibility = View.INVISIBLE
+                mAlertDialog.show()
+                DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.19f)
+            }
         }
     }
 }
