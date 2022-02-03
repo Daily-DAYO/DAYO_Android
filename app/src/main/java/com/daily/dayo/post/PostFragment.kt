@@ -1,11 +1,10 @@
 package com.daily.dayo.post
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -16,8 +15,6 @@ import com.daily.dayo.databinding.FragmentPostBinding
 import com.daily.dayo.post.adapter.PostCommentAdapter
 import com.daily.dayo.post.adapter.PostImageSliderAdapter
 import com.daily.dayo.post.viewmodel.PostViewModel
-import com.daily.dayo.util.Status
-import com.daily.dayo.util.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
@@ -28,11 +25,11 @@ import androidx.lifecycle.*
 import androidx.navigation.Navigation
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.SharedManager
-import com.daily.dayo.home.HomeFragmentDirections
-import com.daily.dayo.post.adapter.PostTagListAdapter
 import com.daily.dayo.post.model.PostCommentContent
 import com.daily.dayo.post.model.RequestCreatePostComment
 import com.daily.dayo.post.model.RequestLikePost
+import com.google.android.material.chip.Chip
+import com.daily.dayo.util.*
 
 @AndroidEntryPoint
 class PostFragment : Fragment() {
@@ -41,8 +38,17 @@ class PostFragment : Fragment() {
     private val args by navArgs<PostFragmentArgs>()
     private lateinit var postCommentAdapter : PostCommentAdapter
     private lateinit var postImageSliderAdapter: PostImageSliderAdapter
-    private lateinit var postTagListAdapter: PostTagListAdapter
     private lateinit var indicators : Array<ImageView?>
+    private lateinit var keyboardVisibilityUtils: KeyboardVisibilityUtils
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        keyboardVisibilityUtils = KeyboardVisibilityUtils(requireActivity().window,
+            onShowKeyboard = { keyboardHeight ->
+                binding.layoutScrollPost.run {
+                    scrollTo(0, binding.layoutScrollPost.bottom + keyboardHeight)
+                }
+            })
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,7 +58,6 @@ class PostFragment : Fragment() {
         setBackButtonClickListener()
         setCommentListAdapter()
         setImageSlider()
-        setTagList()
         setPostOptionClickListener()
         postViewModel.requestPostDetail(args.id)
         postViewModel.requestPostComment(args.id)
@@ -63,6 +68,11 @@ class PostFragment : Fragment() {
         setCreatePostComment()
         setPostCommentClickListener()
         return binding.root
+    }
+
+    override fun onDestroy() {
+        keyboardVisibilityUtils.detachKeyboardListeners()
+        super.onDestroy()
     }
 
     private fun setBackButtonClickListener(){
@@ -96,11 +106,21 @@ class PostFragment : Fragment() {
                         Status.SUCCESS -> {
                             it.data?.let { postDetail ->
                                 postImageSliderAdapter.submitList(postDetail.images)
-                                postTagListAdapter.submitList(postDetail.hashtags)
                                 setupIndicators(postDetail.images.size)
                                 postDetail?.let {
                                     with(binding) {
                                         post = postDetail
+                                        postCategory = when(postDetail.category) {
+                                            getString(R.string.scheduler_eng) -> getString(R.string.scheduler)
+                                            getString(R.string.studyplanner_eng) -> getString(R.string.studyplanner)
+                                            getString(R.string.digital_eng) -> getString(R.string.digital)
+                                            getString(R.string.pocketbook_eng) -> getString(R.string.pocketbook)
+                                            getString(R.string.sixHoleDiary_eng) -> getString(R.string.sixHoleDiary)
+                                            getString(R.string.etc_eng) -> getString(R.string.etc)
+                                            else -> ""
+                                        }
+                                        postCreateTime = TimeChangerUtil.timeChange(requireContext(), postDetail.createDateTime)
+                                        setTagList(postDetail.hashtags)
                                         // isMine =
                                         Glide.with(requireContext())
                                             .load("http://117.17.198.45:8080/images/" + postDetail.profileImg)
@@ -147,9 +167,27 @@ class PostFragment : Fragment() {
             }
         })
     }
-    private fun setTagList() {
-        postTagListAdapter = PostTagListAdapter()
-        binding.rvPostTagList.adapter = postTagListAdapter
+    private fun setTagList(tagList : List<String>) {
+        binding.chipgroupPostTagList.removeAllViews()
+        if(!tagList.isNullOrEmpty()){
+            (0 until tagList.size).mapNotNull { index ->
+                val chip = LayoutInflater.from(context).inflate(R.layout.item_post_tag, null) as Chip
+                val layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
+                with(chip) {
+                    chipBackgroundColor =
+                        ColorStateList(arrayOf(intArrayOf(-android.R.attr.state_pressed), intArrayOf(android.R.attr.state_pressed)),
+                    intArrayOf(resources.getColor(R.color.gray_7_F6F6F6, context?.theme), resources.getColor(R.color.primary_green_23C882, context?.theme)))
+
+                    setTextColor(
+                        ColorStateList(arrayOf(intArrayOf(-android.R.attr.state_pressed), intArrayOf(android.R.attr.state_pressed)),
+                        intArrayOf(resources.getColor(R.color.gray_1_313131,context?.theme), resources.getColor(R.color.white_FFFFFF, context?.theme)))
+                    )
+                    ensureAccessibleTouchTarget(42.toPx())
+                    text = "# ${tagList[index].trim()}"
+                }
+                binding.chipgroupPostTagList.addView(chip, layoutParams)
+            }
+        }
     }
 
     private fun setImageSlider() {
@@ -211,10 +249,10 @@ class PostFragment : Fragment() {
         with(binding.btnPostLike) {
             setOnClickListener {
                 if(true) { // TODO: Like한 Post인지 아닌지 판단하는 조건 필요
-                    setImageDrawable(resources.getDrawable(R.drawable.ic_like_pressed, context?.theme))
+                    setImageDrawable(resources.getDrawable(R.drawable.ic_post_like_checked, context?.theme))
                     postViewModel.requestLikePost(RequestLikePost(args.id))
                 } else {
-                    setImageDrawable(resources.getDrawable(R.drawable.ic_like_default, context?.theme))
+                    setImageDrawable(resources.getDrawable(R.drawable.ic_post_like_default, context?.theme))
                     postViewModel.requestUnlikePost(args.id)
                 }
             }
@@ -224,7 +262,7 @@ class PostFragment : Fragment() {
     private fun setPostBookmarkClickListener() {
         binding.btnPostBookmark.setOnClickListener {
             if(binding.btnPostBookmark.isSelected) {
-                // TODO: Like한 Post인지 아닌지 판단하는 조건 필요
+                // TODO: Bookmark한 Post인지 아닌지 판단하는 조건 필요
                 // TODO : bookmark 서버 연동 필요
                 binding.btnPostBookmark.isSelected = false
             } else {
@@ -239,11 +277,16 @@ class PostFragment : Fragment() {
             .into(binding.imgPostCommentMyProfile)
 
         binding.tvPostCommentUpload.setOnClickListener {
-            val commentDescription = RequestCreatePostComment(
-                contents = binding.etPostCommentDescription.text.toString(),
-                postId = args.id)
-            postViewModel.requestCreatePostComment(commentDescription)
-            refreshPostComment()
+            if(!binding.etPostCommentDescription.text.toString().isNullOrEmpty()) {
+                val commentDescription = RequestCreatePostComment(contents = binding.etPostCommentDescription.text.toString(), postId = args.id)
+                postViewModel.requestCreatePostComment(commentDescription)
+                with(binding.etPostCommentDescription) {
+                    setText("")
+                    clearFocus()
+                    HideKeyBoardUtil.hide(requireContext(), this)
+                }
+                refreshPostComment()
+            }
         }
     }
     private fun refreshPostComment() {
@@ -259,5 +302,10 @@ class PostFragment : Fragment() {
     }
     private fun afterCreatedScroll() {
         binding.layoutScrollPost.fullScroll(View.FOCUS_DOWN)
+    }
+
+    fun Int.toPx() : Int {
+        val density = resources.displayMetrics.density
+        return (this * density).toInt()
     }
 }

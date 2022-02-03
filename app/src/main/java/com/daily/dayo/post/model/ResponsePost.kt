@@ -7,8 +7,8 @@ data class ResponsePost (
     val category: String,
     @SerializedName("contents")
     val contents: String,
-    @SerializedName("createdDateTime")
-    val createdDateTime: String,
+    @SerializedName("createDateTime")
+    val createDateTime: String,
     @SerializedName("hashtags")
     val hashtags: List<String>,
     @SerializedName("heart")
