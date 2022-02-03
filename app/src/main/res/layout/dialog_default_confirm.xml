@@ -3,53 +3,83 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_confirm_default">
 
     <TextView
         android:id="@+id/tv_default_dialog_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="14dp"
         android:textColor="@color/gray_1_313131"
+        android:textSize="15dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/guideline_default_dialog_confirm_contents_confirmation"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="34dp"
-        tools:text="게시물을 삭제할까요?"/>
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="게시물을 삭제할까요?" />
 
     <View
         android:id="@+id/view_default_dialog_confirm_horizontal_line"
-        android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_default_dialog_description"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="34dp"
-        android:background="@color/gray_4_D3D2D2"/>
-
-    <TextView
-        android:id="@+id/tv_default_dialog_cancel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/cancel"
-        android:textSize="13dp"
-        android:textColor="@color/gray_3_9C9C9C"
-        app:layout_constraintEnd_toStartOf="@id/tv_default_dialog_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray_7_F6F6F6"
+        app:layout_constraintTop_toBottomOf="@id/guideline_default_dialog_confirm_contents_confirmation"
+        app:layout_constraintBottom_toTopOf="@id/guideline_default_dialog_confirm_contents_confirmation"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/view_default_dialog_confirm_horizontal_line"
-        android:paddingVertical="13dp"/>
-    <TextView
-        android:id="@+id/tv_default_dialog_confirm"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/confirm"
-        android:textSize="13dp"
-        android:textColor="@color/primary_green_23C882"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_default_dialog_cancel"
-        app:layout_constraintTop_toBottomOf="@id/view_default_dialog_confirm_horizontal_line"
-        android:paddingVertical="13dp"/>
+        android:layout_marginTop="32dp"/>
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_default_dialog_confirm_contents_confirmation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.66"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_default_dialog_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/guideline_default_dialog_confirm_contents_confirmation"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_default_dialog_confirm_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5"/>
+
+        <TextView
+            android:id="@+id/tv_default_dialog_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_dialog_confirm_default_button_left"
+            android:gravity="center"
+            android:text="@string/cancel"
+            android:textColor="@color/gray_3_9C9C9C"
+            android:textSize="13dp"
+            app:layout_constraintTop_toTopOf="@id/guideline_default_dialog_confirm_description"
+            app:layout_constraintBottom_toBottomOf="@id/guideline_default_dialog_confirm_description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tv_default_dialog_confirm"
+            android:paddingVertical="13dp"/>
+
+        <TextView
+            android:id="@+id/tv_default_dialog_confirm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_dialog_confirm_default_button_right"
+            android:gravity="center"
+            android:text="@string/confirm"
+            android:textColor="@color/primary_green_23C882"
+            android:textSize="13dp"
+            app:layout_constraintTop_toTopOf="@id/guideline_default_dialog_confirm_description"
+            app:layout_constraintBottom_toBottomOf="@id/guideline_default_dialog_confirm_description"
+            app:layout_constraintStart_toEndOf="@id/tv_default_dialog_cancel"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:paddingVertical="13dp"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
