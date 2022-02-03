@@ -12,6 +12,7 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.ItemPostCommentBinding
 import com.daily.dayo.post.model.PostCommentContent
+import com.daily.dayo.util.TimeChangerUtil
 import com.google.android.material.snackbar.Snackbar
 
 class PostCommentAdapter : ListAdapter<PostCommentContent, PostCommentAdapter.PostCommentViewHolder>(diffCallback) {
@@ -78,6 +79,7 @@ class PostCommentAdapter : ListAdapter<PostCommentContent, PostCommentAdapter.Po
         private fun setBindingSetVariable(postCommentContent: PostCommentContent) {
             with(binding) {
                 setVariable(BR.comment, postCommentContent)
+                setVariable(BR.commentCreateTime, TimeChangerUtil.timeChange(tvPostCommentWriteTime.context, postCommentContent.createTime))
                 executePendingBindings()
             }
         }
