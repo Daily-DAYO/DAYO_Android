@@ -40,7 +40,7 @@ class HomeFragment : Fragment() {
         val pagerAdapter = HomeFragmentPagerStateAdapter(requireActivity())
         pagerAdapter.addFragment(DayoPickPostListFragment())
         pagerAdapter.addFragment(NewPostListFragment())
-        homeViewModel.requestHomePostList()
+        homeViewModel.requestPostList()
         for (i in 0 until pagerAdapter.itemCount) {
             pagerAdapter.refreshFragment(i,pagerAdapter.fragments[i])
             Log.e("Refresh Fragment", "Page ${i+1}")
