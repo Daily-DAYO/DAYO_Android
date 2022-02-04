@@ -24,12 +24,12 @@
             android:id="@+id/btn_main_post_like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_like_default"
+            android:background="@android:color/transparent"
+            android:src="@{postData.heart == true ? @drawable/ic_like_pressed : @drawable/ic_like_default}"
             app:layout_constraintRight_toRightOf="@id/img_main_post"
             app:layout_constraintBottom_toBottomOf="@id/img_main_post"
-            android:background="@android:color/transparent"
-            android:layout_marginRight="11.5dp"
-            android:layout_marginBottom="11.5dp"/>
+            android:paddingBottom="11.5dp"
+            android:paddingEnd="11.5dp"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_post_ranking_number"

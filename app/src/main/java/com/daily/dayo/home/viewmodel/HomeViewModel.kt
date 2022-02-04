@@ -25,10 +25,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     private val _postliked = MutableLiveData<Resource<ResponseLikePost>>()
     val postLiked: LiveData<Resource<ResponseLikePost>> get() = _postliked
 
-    init {
-        requestHomePostList()
-    }
-
     fun requestHomePostList() = viewModelScope.launch {
         _postList.postValue(Resource.loading(null))
         homeRepository.requestPostList().let {

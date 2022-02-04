@@ -24,4 +24,9 @@ class HomeFragmentPagerStateAdapter(fragmentActivity: FragmentActivity) : Fragme
         fragments.removeLast()
         notifyItemRemoved(fragments.size)
     }
+
+    fun refreshFragment(index: Int, fragment: Fragment) {
+        fragments[index] = fragment
+        notifyItemChanged(index)
+    }
 }
