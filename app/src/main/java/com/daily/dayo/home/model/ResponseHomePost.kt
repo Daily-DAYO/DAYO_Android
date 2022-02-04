@@ -12,6 +12,8 @@ data class ResponseHomePost (
 data class PostContent(
     @SerializedName("commentCount")
     val commentCount: Int,
+    @SerializedName("heart")
+    val heart: Boolean,
     @SerializedName("heartCount")
     val heartCount: Int,
     @SerializedName("id")

@@ -197,7 +197,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
-                            android:src="@drawable/ic_post_like_default"
+                            android:src="@{post.heart == true ? @drawable/ic_post_like_checked : @drawable/ic_post_like_default}"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             android:paddingVertical="10dp"

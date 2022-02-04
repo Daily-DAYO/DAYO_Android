@@ -3,6 +3,7 @@ package com.daily.dayo.post
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -30,6 +31,7 @@ import com.daily.dayo.post.model.RequestCreatePostComment
 import com.daily.dayo.post.model.RequestLikePost
 import com.google.android.material.chip.Chip
 import com.daily.dayo.util.*
+import kotlinx.coroutines.CancellationException
 
 @AndroidEntryPoint
 class PostFragment : Fragment() {
@@ -58,12 +60,8 @@ class PostFragment : Fragment() {
         setBackButtonClickListener()
         setCommentListAdapter()
         setImageSlider()
-        setPostOptionClickListener()
-        postViewModel.requestPostDetail(args.id)
-        postViewModel.requestPostComment(args.id)
         setPostDetailCollect()
         setPostCommentCollect()
-        setPostLikeClickListener()
         setPostBookmarkClickListener()
         setCreatePostComment()
         setPostCommentClickListener()
@@ -87,10 +85,10 @@ class PostFragment : Fragment() {
         binding.rvPostCommentList.adapter = postCommentAdapter
     }
 
-    private fun setPostOptionClickListener() {
+    private fun setPostOptionClickListener(writerNickname: String) {
         val currentUserNickname = SharedManager(DayoApplication.applicationContext()).getCurrentUser().nickname.toString()
         binding.btnPostOption.setOnClickListener {
-            if(args.nickname == currentUserNickname) {
+            if(writerNickname == currentUserNickname) {
                 Navigation.findNavController(it).navigate(PostFragmentDirections.actionPostFragmentToPostOptionMineFragment(args.id))
             } else {
                 Navigation.findNavController(it).navigate(PostFragmentDirections.actionPostFragmentToPostOptionFragment(args.id))
@@ -101,6 +99,7 @@ class PostFragment : Fragment() {
     private fun setPostDetailCollect() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                postViewModel.requestPostDetail(args.id)
                 postViewModel.postDetail.observe(viewLifecycleOwner, Observer {
                     when(it.status){
                         Status.SUCCESS -> {
@@ -120,8 +119,9 @@ class PostFragment : Fragment() {
                                             else -> ""
                                         }
                                         postCreateTime = TimeChangerUtil.timeChange(requireContext(), postDetail.createDateTime)
+                                        setPostLikeClickListener(postDetail.heart)
                                         setTagList(postDetail.hashtags)
-                                        // isMine =
+                                        setPostOptionClickListener(postDetail.nickname)
                                         Glide.with(requireContext())
                                             .load("http://117.17.198.45:8080/images/" + postDetail.profileImg)
                                             .into(imgPostUserProfile)
@@ -140,6 +140,7 @@ class PostFragment : Fragment() {
     private fun setPostCommentCollect() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                postViewModel.requestPostComment(args.id)
                 postViewModel.postComment.observe(viewLifecycleOwner, Observer {
                     when(it.status){
                         Status.SUCCESS -> {
@@ -245,16 +246,23 @@ class PostFragment : Fragment() {
         }
     }
 
-    private fun setPostLikeClickListener() {
+    private fun setPostLikeClickListener(isChecked: Boolean) {
         with(binding.btnPostLike) {
             setOnClickListener {
-                if(true) { // TODO: Like한 Post인지 아닌지 판단하는 조건 필요
+                if(!isChecked) {
                     setImageDrawable(resources.getDrawable(R.drawable.ic_post_like_checked, context?.theme))
                     postViewModel.requestLikePost(RequestLikePost(args.id))
                 } else {
                     setImageDrawable(resources.getDrawable(R.drawable.ic_post_like_default, context?.theme))
                     postViewModel.requestUnlikePost(args.id)
-                }
+                }.let { it.invokeOnCompletion { throwable ->
+                    when (throwable) {
+                        is CancellationException -> Log.e("Post Like Click", "CANCELLED")
+                        null -> {
+                            postViewModel.requestPostDetail(args.id)
+                        }
+                    }
+                } }
             }
         }
     }
@@ -277,7 +285,7 @@ class PostFragment : Fragment() {
             .into(binding.imgPostCommentMyProfile)
 
         binding.tvPostCommentUpload.setOnClickListener {
-            if(!binding.etPostCommentDescription.text.toString().isNullOrEmpty()) {
+            if(!binding.etPostCommentDescription.text.toString().trim().isNullOrEmpty()) {
                 val commentDescription = RequestCreatePostComment(contents = binding.etPostCommentDescription.text.toString(), postId = args.id)
                 postViewModel.requestCreatePostComment(commentDescription)
                 with(binding.etPostCommentDescription) {
