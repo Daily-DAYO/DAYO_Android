@@ -22,6 +22,11 @@
     <string name="time_day_ago">일 전</string>
     <string name="time_year_ago">년 전</string>
 
+    <!-- Login -->
+    <string name="signup_guide_message_email">아직 계정이 없으신가요? <u>회원가입</u>하기</string>
+    <string name="login_select_method_kakao">카카오톡으로 시작하기</string>
+    <string name="login_select_method_email">이메일로 시작하기</string>
+
     <!-- Home -->
     <string name="DayoPick">DAYO PICK</string>
     <string name="New">New</string>
@@ -41,7 +46,7 @@
     <string name="sixHoleDiary_eng">SIX_DIARY</string>
     <string name="digital_eng">GOOD_NOTE</string>
     <string name="etc_eng">ETC</string>
-    
+
     <!-- Privacy -->
     <string name="privacy_all">전체공개</string>
     <string name="privacy_following">팔로잉</string>
@@ -49,7 +54,7 @@
     <string name="privacy_all_eng">ALL</string>
     <string name="privacy_following_eng">FOLLOWING</string>
     <string name="privacy_private_eng">ONLY_ME</string>
-    
+
     <!-- Write -->
     <string name="hint_write_description">내용을 작성해주세요.</string>
     <string name="write_post_description_count_limit"> / 최대 200자</string>
@@ -138,6 +143,8 @@
     <!-- Select Image  -->
     <string name="image_option_gallery">앨범에서 선택</string>
     <string name="image_option_camera">사진 직접촬영</string>
+    <!-- Signup Email Complete -->
+    <string name="signup_email_complete_guide_message"><b>%s</b>님,\n가입을 축하드려요!</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

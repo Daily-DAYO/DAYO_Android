@@ -18,7 +18,7 @@
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/ic_dayo_grayscale"/>
+            tools:src="@drawable/ic_dayo_circle_grayscale"/>
 
         <ImageButton
             android:id="@+id/btn_main_post_like"
@@ -75,7 +75,7 @@
             app:layout_constraintLeft_toLeftOf="@+id/img_main_post"
             android:layout_marginTop="14dp"
             android:layout_marginLeft="6dp"
-            tools:src="@drawable/ic_dayo_grayscale"
+            tools:src="@drawable/ic_dayo_circle_grayscale"
             />
 
         <TextView
