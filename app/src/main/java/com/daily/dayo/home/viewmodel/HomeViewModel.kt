@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daily.dayo.R
 import com.daily.dayo.home.model.ResponseHomePost
 import com.daily.dayo.post.model.RequestLikePost
 import com.daily.dayo.post.model.ResponseLikePost
@@ -24,6 +25,18 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
     private val _postliked = MutableLiveData<Resource<ResponseLikePost>>()
     val postLiked: LiveData<Resource<ResponseLikePost>> get() = _postliked
+
+    var currentCategory = "ALL"
+
+    fun requestPostList() = viewModelScope.launch {
+        if(currentCategory == "ALL"){
+            requestHomePostList()
+        } else if(!currentCategory.isNullOrEmpty()) {
+            requestHomePostListCategory(currentCategory)
+        } else {
+            // ERROR
+        }
+    }
 
     fun requestHomePostList() = viewModelScope.launch {
         _postList.postValue(Resource.loading(null))
