@@ -46,7 +46,7 @@
         android:id="@+id/img_other_profile_user_profile"
         android:layout_width="82dp"
         android:layout_height="82dp"
-        android:src="@drawable/ic_dayo_grayscale"
+        android:src="@drawable/ic_dayo_circle_grayscale"
         android:layout_marginTop="17dp"
         app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
         android:scaleType="centerCrop"

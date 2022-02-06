@@ -13,6 +13,6 @@
         android:layout_height="160dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_dayo_grayscale"/>
+        tools:src="@drawable/ic_dayo_circle_grayscale"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

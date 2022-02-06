@@ -37,7 +37,7 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="15dp"
             android:layout_marginStart="18dp"
-            tools:src="@drawable/ic_dayo_grayscale" />
+            tools:src="@drawable/ic_dayo_circle_grayscale" />
         <TextView
             android:id="@+id/tv_post_comment_user_nickname"
             android:layout_width="wrap_content"

@@ -21,7 +21,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="16dp"
-            tools:src="@drawable/ic_dayo_grayscale"/>
+            tools:src="@drawable/ic_dayo_circle_grayscale"/>
 
         <TextView
             android:id="@+id/tv_feed_post_user_nickname"

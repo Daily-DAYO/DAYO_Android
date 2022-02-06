@@ -68,6 +68,10 @@
         <action
             android:id="@+id/action_signupEmailSetProfileFragment_to_signupEmailSetProfileImageOptionFragment"
             app:destination="@id/SignupEmailSetProfileImageOptionFragment"/>
+        <action
+            android:id="@+id/action_signupEmailSetProfileFragment_to_signupEmailCompleteFragment"
+            app:destination="@id/SignupEmailCompleteFragment"
+            app:popUpTo="@id/LoginFragment"/>
     </fragment>
     <dialog
         android:id="@+id/SignupEmailSetProfileImageOptionFragment"
@@ -76,4 +80,14 @@
         tools:layout="@layout/fragment_signup_email_set_profile_image_option">
     </dialog>
 
+    <fragment
+        android:id="@+id/SignupEmailCompleteFragment"
+        android:name="com.daily.dayo.signup.email.SignupEmailCompleteFragment"
+        android:label="fragment_signup_email_complete"
+        tools:layout="@layout/fragment_signup_email_complete"
+        >
+        <argument
+            android:name="nickname"
+            app:argType="string"/>
+    </fragment>
 </navigation>

@@ -30,10 +30,11 @@ class LoginFragment : Fragment() {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         setKakaoLoginButtonClickListener()
         setEmailLoginButtonClickListener()
+        setSignupEmailButtonClickListener()
         return binding.root
     }
 
-    fun setKakaoLoginButtonClickListener(){
+    private fun setKakaoLoginButtonClickListener(){
         binding.btnLoginKakao.setOnClickListener {
             if (UserApiClient.instance.isKakaoTalkLoginAvailable(requireContext())) {
                 UserApiClient.instance.loginWithKakaoTalk(requireContext(), callback = callback)
@@ -58,14 +59,15 @@ class LoginFragment : Fragment() {
         }
     }
 
-    fun setEmailLoginButtonClickListener(){
+    private fun setEmailLoginButtonClickListener(){
         binding.btnLoginEmail.setOnClickListener {
-            /*
-            //타 기능 구현시 테스트를 위해 임의로 email버튼 클릭시 메인액티비티로 가도록 설정해두었습니다.
-            val intent = Intent(requireContext(), MainActivity::class.java)
-            startActivity(intent)
-             */
-            findNavController().navigate(R.id.action_loginFragment_to_signupEmailSetEmailAddressFragment)
+            // TODO : 이메일 로그인 화면 이동 구현
         }
     }
+
+    private fun setSignupEmailButtonClickListener() {
+        binding.tvLoginSignupEmailGuideMessage.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_signupEmailSetEmailAddressFragment) }
+    }
+
 }
