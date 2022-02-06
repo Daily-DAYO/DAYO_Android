@@ -71,33 +71,37 @@ class DayoPickPostListFragment : Fragment() {
         }
         with(binding) {
             radiobuttonDayopickPostCategoryAll.setOnClickListener {
-                homeViewModel.requestHomePostList()
-                currentCategory = getString(R.string.all_eng)
+                setCategoryPostList(getString(R.string.all_eng))
             }
             radiobuttonDayopickPostCategoryScheduler.setOnClickListener {
-                homeViewModel.requestHomePostListCategory(getString(R.string.scheduler_eng))
-                currentCategory = getString(R.string.scheduler_eng)
+                setCategoryPostList(getString(R.string.scheduler_eng))
             }
             radiobuttonDayopickPostCategoryStudyplanner.setOnClickListener {
-                homeViewModel.requestHomePostListCategory(getString(R.string.studyplanner_eng))
-                currentCategory = getString(R.string.studyplanner_eng)
+                setCategoryPostList(getString(R.string.studyplanner_eng))
             }
             radiobuttonDayopickPostCategoryPocketbook.setOnClickListener {
-                homeViewModel.requestHomePostListCategory(getString(R.string.pocketbook_eng))
-                currentCategory = getString(R.string.pocketbook_eng)
+                setCategoryPostList(getString(R.string.pocketbook_eng))
             }
             radiobuttonDayopickPostCategory6holediary.setOnClickListener {
-                homeViewModel.requestHomePostListCategory(getString(R.string.sixHoleDiary_eng))
-                currentCategory = getString(R.string.sixHoleDiary_eng)
+                setCategoryPostList(getString(R.string.sixHoleDiary_eng))
             }
             radiobuttonDayopickPostCategoryDigital.setOnClickListener {
-                homeViewModel.requestHomePostListCategory(getString(R.string.digital_eng))
-                currentCategory = getString(R.string.digital_eng)
+                setCategoryPostList(getString(R.string.digital_eng))
             }
             radiobuttonDayopickPostCategoryEtc.setOnClickListener {
-                homeViewModel.requestHomePostListCategory(getString(R.string.etc_eng))
-                currentCategory = getString(R.string.etc_eng)
+                setCategoryPostList(getString(R.string.etc_eng))
             }
+        }
+    }
+
+    private fun setCategoryPostList(selectCategory: String) {
+        currentCategory = selectCategory
+        if(selectCategory == getString(R.string.all_eng)) {
+            homeViewModel.currentCategory = selectCategory
+            homeViewModel.requestHomePostList()
+        } else if(!selectCategory.isNullOrEmpty()) {
+            homeViewModel.currentCategory = selectCategory
+            homeViewModel.requestHomePostListCategory(selectCategory)
         }
     }
 
