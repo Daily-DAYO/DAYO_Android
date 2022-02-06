@@ -32,6 +32,7 @@ import java.util.*
 import java.util.regex.Pattern
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
+import androidx.navigation.Navigation
 
 @AndroidEntryPoint
 class SignupEmailSetProfileFragment : Fragment() {
@@ -229,6 +230,12 @@ class SignupEmailSetProfileFragment : Fragment() {
             }
 
             // TODO : 서버와 연동하는 코드 작성
+
+            if(true){
+                Navigation.findNavController(it).navigate(SignupEmailSetProfileFragmentDirections.actionSignupEmailSetProfileFragmentToSignupEmailCompleteFragment(binding.etSignupEmailSetProfileNickname.text.toString().trim()))
+            } else {
+
+            }
         }
     }
 }

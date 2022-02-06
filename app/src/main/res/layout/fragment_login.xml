@@ -7,41 +7,82 @@
     tools:context=".login.LoginFragment">
     <ImageView
         android:id= "@+id/img_login_dayo_logo"
-        android:layout_width="101dp"
-        android:layout_height="155dp"
-        android:src="@drawable/ic_dayo_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_dayo_logo_text_vertical"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/btn_login_kakao"
+        app:layout_constraintBottom_toTopOf="@+id/layout_login_select_method"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-    <ImageButton
-        android:id="@+id/btn_login_kakao"
-        android:layout_width="310dp"
-        android:layout_height="40dp"
-        android:src="@drawable/button_login_kakao"
-        android:background="@android:color/transparent"
-        android:layout_marginBottom="10dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_login_select_method"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/tv_login_signup_email_guide_message"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/btn_login_google"/>
-    <ImageButton
-        android:id="@+id/btn_login_google"
+        android:layout_marginHorizontal="19dp"
+        android:layout_marginBottom="30dp">
+        <ImageButton
+            android:id="@+id/btn_login_kakao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/button_login_kakao"
+            android:background="@android:color/transparent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/btn_login_email"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="10dp"/>
+        <TextView
+            android:id="@+id/tv_login_kakao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="-0.01"
+            android:text="@string/login_select_method_kakao"
+            android:textSize="13dp"
+            android:textColor="#3B1F1E"
+            android:gravity="center_horizontal|center_vertical"
+            app:layout_constraintTop_toTopOf="@id/btn_login_kakao"
+            app:layout_constraintBottom_toBottomOf="@id/btn_login_kakao"
+            app:layout_constraintStart_toStartOf="@id/btn_login_kakao"
+            app:layout_constraintEnd_toEndOf="@id/btn_login_kakao"
+            android:layout_marginStart="15dp" />
+        <ImageButton
+            android:id="@+id/btn_login_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/button_login_email"
+            android:background="@android:color/transparent"
+            app:layout_constraintTop_toBottomOf="@id/btn_login_kakao"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/tv_login_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="-0.01"
+            android:text="@string/login_select_method_email"
+            android:textSize="14dp"
+            android:textColor="@color/white_FFFFFF"
+            android:gravity="center_horizontal|center_vertical"
+            app:layout_constraintTop_toTopOf="@id/btn_login_email"
+            app:layout_constraintBottom_toBottomOf="@id/btn_login_email"
+            app:layout_constraintStart_toStartOf="@id/btn_login_email"
+            app:layout_constraintEnd_toEndOf="@id/btn_login_email"
+            android:layout_marginStart="15dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/tv_login_signup_email_guide_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/button_login_google"
-        android:background="@android:color/transparent"
-        android:layout_marginBottom="10dp"
+        android:text="@string/signup_guide_message_email"
+        android:textSize="12dp"
+        android:textColor="@color/gray_3_9C9C9C"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/btn_login_email"/>
-    <ImageButton
-        android:id="@+id/btn_login_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/button_login_email"
-        android:background="@android:color/transparent"
-        android:layout_marginBottom="25dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="18dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

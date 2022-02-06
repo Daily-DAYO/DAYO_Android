@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:scaleType="centerCrop"
         app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-        tools:src="@drawable/ic_dayo_grayscale"/>
+        tools:src="@drawable/ic_dayo_circle_grayscale"/>
     <TextView
         android:id="@+id/tv_follow_user_nickname"
         android:layout_width="wrap_content"
