@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.daily.dayo.databinding.FragmentSignupEmailCompleteBinding
 import com.daily.dayo.util.autoCleared
@@ -29,6 +30,7 @@ class SignupEmailCompleteFragment : Fragment() {
 
     private fun setCloseClickListener() {
         binding.btnSignupEmailCompleteClose.setOnClickListener {
+            findNavController().navigateUp()
             // TODO : 1. 가입한 정보를 통해 로그인
             //        2, MainActivity로 이동후 LoginActivity Destory
         }

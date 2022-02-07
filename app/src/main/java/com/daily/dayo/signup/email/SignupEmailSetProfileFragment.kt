@@ -32,11 +32,16 @@ import java.util.*
 import java.util.regex.Pattern
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
+import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
+import com.daily.dayo.login.LoginViewModel
+import com.daily.dayo.login.model.SignupEmailRequest
 
 @AndroidEntryPoint
 class SignupEmailSetProfileFragment : Fragment() {
     private var binding by autoCleared<FragmentSignupEmailSetProfileBinding>()
+    private val loginViewModel by activityViewModels<LoginViewModel>()
     private val args by navArgs<SignupEmailSetProfileFragmentArgs>()
     private lateinit var userProfileImageString : String
     private var imagePath: String? = null
@@ -55,6 +60,7 @@ class SignupEmailSetProfileFragment : Fragment() {
         verifyNickname()
         setProfilePhotoClickListener()
         observeNavigationMyProfileImageCallBack()
+        observeSignupCallback()
         return binding.root
     }
 
@@ -228,14 +234,17 @@ class SignupEmailSetProfileFragment : Fragment() {
                 setUploadImagePath("png")
                 profileImgFile = bitmapToFile(profileEmptyBitmap, imagePath)
             }
-
-            // TODO : 서버와 연동하는 코드 작성
-
-            if(true){
-                Navigation.findNavController(it).navigate(SignupEmailSetProfileFragmentDirections.actionSignupEmailSetProfileFragmentToSignupEmailCompleteFragment(binding.etSignupEmailSetProfileNickname.text.toString().trim()))
-            } else {
-
-            }
+            loginViewModel.requestSignupEmail(args.email, binding.etSignupEmailSetProfileNickname.text.toString().trim(), args.password, profileImgFile)
+            Toast.makeText(requireContext(), R.string.signup_email_alert_message_loading, Toast.LENGTH_SHORT).show()
         }
+    }
+    private fun observeSignupCallback() {
+        loginViewModel.signupSuccess.observe(viewLifecycleOwner, androidx.lifecycle.Observer {  isSuccess ->
+            if(isSuccess.getContentIfNotHandled() == true) {
+                Navigation.findNavController(requireView()).navigate(SignupEmailSetProfileFragmentDirections.actionSignupEmailSetProfileFragmentToSignupEmailCompleteFragment(binding.etSignupEmailSetProfileNickname.text.toString().trim()))
+            } else if(isSuccess.getContentIfNotHandled() == false){
+                Toast.makeText(requireContext(), R.string.signup_email_alert_message_fail_network, Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }
