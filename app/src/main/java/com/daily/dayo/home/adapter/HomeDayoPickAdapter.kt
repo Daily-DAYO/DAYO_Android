@@ -12,7 +12,7 @@ import com.daily.dayo.databinding.ItemMainPostBinding
 import com.daily.dayo.home.HomeFragmentDirections
 import com.daily.dayo.home.model.PostContent
 
-class HomeDayoPickAdapter : ListAdapter<PostContent, HomeDayoPickAdapter.HomeDayoPickViewHolder>(diffCallback){
+class HomeDayoPickAdapter(val rankingShowing:Boolean) : ListAdapter<PostContent, HomeDayoPickAdapter.HomeDayoPickViewHolder>(diffCallback){
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<PostContent>() {
             override fun areItemsTheSame(oldItem: PostContent, newItem: PostContent) =
@@ -57,7 +57,7 @@ class HomeDayoPickAdapter : ListAdapter<PostContent, HomeDayoPickAdapter.HomeDay
         var userThumbnailImg = binding.imgMainPostUserProfile
 
         fun bind(postContent: PostContent, currentPosition: Int) {
-            if(currentPosition > 3 ){
+            if(currentPosition > 3 || !rankingShowing){
                 binding.layoutPostRankingNumber.visibility = View.INVISIBLE
             } else {
                 binding.layoutPostRankingNumber.visibility = View.VISIBLE
