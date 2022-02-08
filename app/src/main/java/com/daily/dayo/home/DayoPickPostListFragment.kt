@@ -45,7 +45,7 @@ class DayoPickPostListFragment : Fragment() {
     }
 
     private fun setRvDayoPickPostAdapter() {
-        homeDayoPickAdapter = HomeDayoPickAdapter()
+        homeDayoPickAdapter = HomeDayoPickAdapter(true)
         binding.rvDayopickPost.adapter = homeDayoPickAdapter
         binding.rvDayopickPost.addItemDecoration(GridSpacingItemDecoration(2, 29.toPx(), 4.toPx()))
     }
