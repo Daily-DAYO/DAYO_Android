@@ -98,6 +98,12 @@
         <argument
             android:name="postTagList"
             app:argType="string[]"/>
+        <argument
+            android:name="postFolderId"
+            app:argType="string"/>
+        <argument
+            android:name="postFolderName"
+            app:argType="string"/>
         <action
             android:id="@+id/action_writeOptionFragment_to_writeTagFragment"
             app:destination="@id/WriteTagFragment" />

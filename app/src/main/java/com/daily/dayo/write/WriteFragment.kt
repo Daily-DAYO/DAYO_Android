@@ -9,13 +9,14 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import android.view.*
-import androidx.fragment.app.Fragment
-import com.daily.dayo.databinding.FragmentWriteBinding
-import android.widget.RadioGroup
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.SharedManager
+import com.daily.dayo.databinding.FragmentWriteBinding
 import com.daily.dayo.util.autoCleared
 import com.daily.dayo.util.getNavigationResult
 import com.daily.dayo.write.adapter.WriteUploadImageListAdapter
@@ -30,7 +32,6 @@ import com.daily.dayo.write.viewmodel.WriteOptionViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.ByteArrayOutputStream
 import java.util.*
-import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class WriteFragment : Fragment() {
@@ -47,6 +48,9 @@ class WriteFragment : Fragment() {
     private var isContentsFilled :Boolean= false
     private var isImageUploaded : Boolean= false
 
+    private var postFolderId:String = ""
+    private var postFolderName:String = ""
+
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -60,6 +64,7 @@ class WriteFragment : Fragment() {
         setImageDeleteClickListener()
         setUploadButtonActivation()
         observeUploadStateCallBack()
+        observeNavigationFolderCallBack()
         return binding.root
     }
 
@@ -162,6 +167,15 @@ class WriteFragment : Fragment() {
         }
     }
 
+    private fun observeNavigationFolderCallBack(){
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>("postFolderId")?.observe(viewLifecycleOwner){
+            postFolderId = it
+        }
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>("postFolderName")?.observe(viewLifecycleOwner){
+            postFolderName = it
+        }
+    }
+
     private fun setImageUploadButtonClickListener() {
         val btnUploadImage = binding.btnUploadImage
         val rvUploadImageList = binding.rvImgUploadList
@@ -233,11 +247,11 @@ class WriteFragment : Fragment() {
             binding.btnWritePostUpload.setOnClickListener {
                 if (this::postTagList.isInitialized) {
                     val navigateWithDataPassAction =
-                        WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(selectedCategoryName, binding.etWriteDetail.text.toString(), uploadImageListString.toTypedArray(), postTagList.toTypedArray())
+                        WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(selectedCategoryName, binding.etWriteDetail.text.toString(), uploadImageListString.toTypedArray(), postTagList.toTypedArray(), postFolderId, postFolderName)
                     findNavController().navigate(navigateWithDataPassAction)
                 } else {
                     val navigateWithDataPassAction =
-                        WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(selectedCategoryName, binding.etWriteDetail.text.toString(), uploadImageListString.toTypedArray(), emptyArray())
+                        WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(selectedCategoryName, binding.etWriteDetail.text.toString(), uploadImageListString.toTypedArray(), emptyArray(), postFolderId, postFolderName)
                     findNavController().navigate(navigateWithDataPassAction)
                 }
             }
