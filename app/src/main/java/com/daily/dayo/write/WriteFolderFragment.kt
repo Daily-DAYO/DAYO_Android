@@ -1,11 +1,11 @@
 package com.daily.dayo.write
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentWriteFolderBinding
+import com.daily.dayo.profile.model.Folder
 import com.daily.dayo.util.Status
 import com.daily.dayo.util.autoCleared
 import com.daily.dayo.write.adapter.WriteFolderAdapter
@@ -62,6 +63,13 @@ class WriteFolderFragment : Fragment() {
         writeFolderAdapter = WriteFolderAdapter()
         binding.rvWriteFolderListSaved.adapter = writeFolderAdapter
         binding.rvWriteFolderListSaved.layoutManager = layoutManager
+        writeFolderAdapter.setOnItemClickListener(object :WriteFolderAdapter.OnItemClickListener{
+            override fun onItemClick(v: View, folder: Folder, pos: Int) {
+                findNavController().previousBackStackEntry?.savedStateHandle?.set("postFolderId", folder.folderId.toString())
+                findNavController().previousBackStackEntry?.savedStateHandle?.set("postFolderName", folder.name)
+                findNavController().popBackStack()
+            }
+        })
     }
 
     private fun setWriteFolderList(){
