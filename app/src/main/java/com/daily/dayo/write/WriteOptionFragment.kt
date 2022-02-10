@@ -21,14 +21,12 @@ import com.daily.dayo.util.autoCleared
 import com.daily.dayo.write.viewmodel.WriteOptionViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class WriteOptionFragment : BottomSheetDialogFragment() {
@@ -39,6 +37,8 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
     private val postCategory by lazy {args.postCategory}
     private val postContents by lazy {args.postContents}
     private val postTagList by lazy {args.postTagList}
+    private val postFolderId by lazy { args.postFolderId }
+    private val postFolderName by lazy { args.postFolderName }
 
     private val postImagesStringList by lazy {args.postImages}
     private var postImageFileList = ArrayList<File>()
@@ -54,6 +54,7 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
         setOptionTagListOriginalValue()
         setOptionTagClickListener()
         setOptionFolderClickListener()
+        setFolderDescription()
         return binding.root
     }
 
@@ -68,13 +69,22 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
     private fun setUploadButtonClickListener() {
         binding.btnWriteOptionConfirm.setOnClickListener {
             val privacy = setPrivacySetting()
-            // TODO : folderId를 얻는 과정 작성 필요
             val memberId = SharedManager(DayoApplication.applicationContext()).getCurrentUser().memberId.toString()
-            val folderId = binding.tvWriteOptionDescriptionFolder.id
-            writeOptionViewModel.requestUploadPost(postCategory, postContents, postImageFileList.toTypedArray(),
-                folderId, memberId, privacy, postTagList)
-            Toast.makeText(requireContext(), R.string.write_post_upload_alert_message_loading, Toast.LENGTH_SHORT).show()
-            findNavController().navigateUp()
+            if(postFolderId==""){
+                Toast.makeText(requireContext(), "폴더를 선택해 주세요", Toast.LENGTH_SHORT).show()
+            }
+            else{
+                writeOptionViewModel.requestUploadPost(postCategory, postContents, postImageFileList.toTypedArray(),
+                    postFolderId.toInt(), memberId, privacy, postTagList)
+                Toast.makeText(requireContext(), R.string.write_post_upload_alert_message_loading, Toast.LENGTH_SHORT).show()
+                findNavController().navigateUp()
+            }
+        }
+    }
+
+    private fun setFolderDescription(){
+        if(postFolderId!=""){
+            binding.tvWriteOptionDescriptionFolder.text = postFolderName
         }
     }
 
@@ -109,6 +119,7 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
             binding.tvWriteOptionDescriptionTag.visibility = View.VISIBLE
         }
     }
+
     private fun setOptionTagClickListener() {
         binding.layoutWriteOptionTag.setOnClickListener {
             if(postTagList.isNullOrEmpty()) {
@@ -123,7 +134,7 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
 
     private fun setOptionFolderClickListener() {
         binding.layoutWriteOptionFolder.setOnClickListener {
-            findNavController().navigate(R.id.action_writeOptionFragment_to_writeFolderFragment)
+            findNavController().navigate(WriteOptionFragmentDirections.actionWriteOptionFragmentToWriteFolderFragment())
         }
     }
 
