@@ -1,6 +1,7 @@
 package com.daily.dayo.write.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -33,12 +34,30 @@ class WriteFolderAdapter: ListAdapter<Folder, WriteFolderAdapter.WriteFolderView
         holder.bind(getItem(position))
     }
 
-    class WriteFolderViewHolder(binding: ItemFolderListBinding) : RecyclerView.ViewHolder(binding.root) {
+    interface OnItemClickListener{
+        fun onItemClick(v: View, folder: Folder, pos : Int)
+    }
+    private var listener : OnItemClickListener? = null
+    fun setOnItemClickListener(listener : OnItemClickListener) {
+        this.listener = listener
+    }
+
+    inner class WriteFolderViewHolder(binding: ItemFolderListBinding) : RecyclerView.ViewHolder(binding.root) {
         val folderName = binding.tvFolderName
         val folderPostCnt = binding.tvFolderPostCount
+        val changeOrderImg = binding.imgFolderChangeOrder
         fun bind(folder: Folder) {
+            changeOrderImg.visibility = View.GONE
             folderName.text = folder.name
             folderPostCnt.text = folder.postCount.toString()
+
+            val pos = adapterPosition
+            if(pos!= RecyclerView.NO_POSITION)
+            {
+                itemView.setOnClickListener {
+                    listener?.onItemClick(itemView,folder,pos)
+                }
+            }
        }
     }
 }
