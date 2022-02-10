@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.post.model.*
 import com.daily.dayo.repository.PostRepository
+import com.daily.dayo.util.Event
 import com.daily.dayo.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,6 +24,9 @@ class PostViewModel @Inject constructor(private val postRepository: PostReposito
 
     private val _requestCreatePostComment = MutableSharedFlow<Boolean>()
     val requestCreatePostComment = _requestCreatePostComment.asSharedFlow()
+
+    private val _postCommentDeleteSuccess = MutableLiveData<Event<Boolean>>()
+    val postCommentDeleteSuccess get() = _postCommentDeleteSuccess
 
     private val _postComment = MutableLiveData<Resource<ResponsePostComment>>()
     val postComment: LiveData<Resource<ResponsePostComment>> get() = _postComment
@@ -74,6 +78,12 @@ class PostViewModel @Inject constructor(private val postRepository: PostReposito
     }
 
     fun requestDeletePostComment(commentId: Int) = viewModelScope.launch {
-        postRepository.requestDeletePostComment(commentId)
+        postRepository.requestDeletePostComment(commentId).let {
+            if(it.isSuccessful) {
+                _postCommentDeleteSuccess.postValue(Event(true))
+            } else {
+                _postCommentDeleteSuccess.postValue(Event(false))
+            }
+        }
     }
 }
