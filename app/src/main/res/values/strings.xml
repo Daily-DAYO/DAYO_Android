@@ -83,6 +83,9 @@
     <string name="post_comment_write_upload">게시</string>
     <string name="post_option_report">신고</string>
     <string name="post_option_hide">이 게시물 숨기기</string>
+    <string name="post_comment_delete_alert_message">댓글을 삭제할까요?</string>
+    <string name="post_comment_delete_alert_message_success">댓글이 삭제되었습니다.</string>
+    <string name="post_comment_delete_alert_message_fail">댓글 삭제를 실패하였습니다. 다시 시도해주세요.</string>
     <string name="post_option_hide_alert_message_description">게시물을 숨길까요?</string>
     <string name="post_option_hide_alert_message_explanation">게시물을 숨기면 다시 피드에서 볼 수 없어요.</string>
     <string name="post_option_hide_alert_message_success">게시물을 숨겼습니다.</string>

@@ -1,6 +1,9 @@
 package com.daily.dayo.post
 
+import android.app.AlertDialog
 import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -22,6 +25,7 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.lifecycle.*
 import androidx.navigation.Navigation
 import com.daily.dayo.DayoApplication
@@ -38,6 +42,8 @@ class PostFragment : Fragment() {
     private var binding by autoCleared<FragmentPostBinding>()
     private val postViewModel by activityViewModels<PostViewModel>()
     private val args by navArgs<PostFragmentArgs>()
+    private lateinit var mAlertDialog: AlertDialog
+
     private lateinit var postCommentAdapter : PostCommentAdapter
     private lateinit var postImageSliderAdapter: PostImageSliderAdapter
     private lateinit var indicators : Array<ImageView?>
@@ -65,6 +71,7 @@ class PostFragment : Fragment() {
         setPostBookmarkClickListener()
         setCreatePostComment()
         setPostCommentClickListener()
+        observePostCommentDeleteStateCallback()
         return binding.root
     }
 
@@ -163,11 +170,31 @@ class PostFragment : Fragment() {
             }
 
             override fun DeletePostCommentClick(data: PostCommentContent, pos: Int) {
-                postViewModel.requestDeletePostComment(data.commentId)
-                refreshPostComment()
+                val deleteComment = {
+                    postViewModel.requestDeletePostComment(data.commentId)
+                    refreshPostComment() }
+
+                mAlertDialog = DefaultDialogConfirm.createDialog(requireContext(), R.string.post_comment_delete_alert_message, true, true, null, null,
+                    deleteComment,{ this@PostFragment.mAlertDialog.dismiss() } )
+                mAlertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+                if(!mAlertDialog.isShowing) {
+                    mAlertDialog.show()
+                    DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.19f)
+                }
             }
         })
     }
+    private fun observePostCommentDeleteStateCallback() {
+        postViewModel.postCommentDeleteSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
+            if (isSuccess.getContentIfNotHandled() == true) {
+                Toast.makeText(requireContext(), R.string.post_comment_delete_alert_message_success, Toast.LENGTH_SHORT).show()
+            } else if(isSuccess.getContentIfNotHandled() == false) {
+                Toast.makeText(requireContext(), R.string.post_comment_delete_alert_message_fail, Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
     private fun setTagList(tagList : List<String>) {
         binding.chipgroupPostTagList.removeAllViews()
         if(!tagList.isNullOrEmpty()){
