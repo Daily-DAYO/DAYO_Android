@@ -50,13 +50,13 @@ class PostCommentAdapter : ListAdapter<PostCommentContent, PostCommentAdapter.Po
         fun bind(postCommentContent: PostCommentContent) {
             val currentUserNickname = SharedManager(DayoApplication.applicationContext()).getCurrentUser().nickname.toString()
             if(postCommentContent.nickname == currentUserNickname) {
-                binding.imgPostCommentDelete.visibility = View.VISIBLE
+                binding.layoutPostCommentDelete.visibility = View.VISIBLE
             } else {
-                binding.imgPostCommentDelete.visibility = View.INVISIBLE
+                binding.layoutPostCommentDelete.visibility = View.INVISIBLE
             }
 
             with(binding) {
-                imgPostCommentDelete.setOnClickListener {
+                layoutPostCommentDelete.setOnClickListener {
                     Snackbar.make(it, "삭제버튼 클릭", Snackbar.LENGTH_SHORT).show()
                 }
                 Glide.with(imgPostCommentUserProfile.context)
@@ -69,7 +69,7 @@ class PostCommentAdapter : ListAdapter<PostCommentContent, PostCommentAdapter.Po
                 itemView.setOnClickListener {
                     listener?.onItemClick(itemView, postCommentContent, pos)
                 }
-                binding.imgPostCommentDelete.setOnClickListener{
+                binding.layoutPostCommentDelete.setOnClickListener{
                     listener?.DeletePostCommentClick(postCommentContent, pos)
                 }
             }

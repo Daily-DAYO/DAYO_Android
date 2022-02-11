@@ -264,8 +264,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginTop="9dp"
                         android:paddingTop="20dp"
-                        android:paddingBottom="12dp"
-                        android:paddingHorizontal="21dp">
+                        android:paddingBottom="12dp">
                         <TextView
                             android:id="@+id/tv_post_content_count"
                             android:layout_width="wrap_content"
@@ -276,7 +275,19 @@
                             android:textColor="@color/gray_1_313131"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
+                            android:paddingHorizontal="21dp"
                             tools:text="좋아요 135개   |   댓글 12개"/>
+
+                        <View
+                            android:id="@+id/view_post_reaction_result_count_list_horizontal_line"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/gray_7_F6F6F6"
+                            app:layout_constraintTop_toBottomOf="@id/tv_post_content_count"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_marginTop="17dp"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
