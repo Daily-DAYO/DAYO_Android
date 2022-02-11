@@ -1,5 +1,8 @@
 package com.daily.dayo.di
 
+import com.daily.dayo.network.feed.FeedApiHelper
+import com.daily.dayo.network.feed.FeedApiHelperImpl
+import com.daily.dayo.network.feed.FeedApiService
 import com.daily.dayo.network.post.PostApiHelper
 import com.daily.dayo.network.post.PostApiHelperImpl
 import com.daily.dayo.network.post.PostApiService
@@ -114,6 +117,18 @@ object ServiceModule {
     @Singleton
     @Provides
     fun provideFollowRepository(followApiHelper: FollowApiHelper) : FollowRepository = FollowRepository(followApiHelper)
+
+    @Singleton
+    @Provides
+    fun provideFeedApiService(retrofit: Retrofit) = retrofit.create(FeedApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideFeedApiHelper(feedApiHelperImpl: FeedApiHelperImpl): FeedApiHelper = feedApiHelperImpl
+
+    @Singleton
+    @Provides
+    fun provideFeedRepository(feedApiHelper: FeedApiHelper) : FeedRepository = FeedRepository(feedApiHelper)
 
 
 }
