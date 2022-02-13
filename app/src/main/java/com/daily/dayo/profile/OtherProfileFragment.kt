@@ -42,7 +42,6 @@ class OtherProfileFragment : Fragment() {
         setOtherProfileDescription()
         setFollowerCountButtonClickListener()
         setFollowingCountButtonClickListener()
-        setFollowButtonTextState()
         setFollowButtonClickListener()
         return binding.root
     }
@@ -93,11 +92,6 @@ class OtherProfileFragment : Fragment() {
             }
         })
     }
-
-    private fun setFollowButtonTextState() = when(binding.btnOtherProfileFollow.isChecked){
-            true -> binding.btnOtherProfileFollow.text = "팔로잉"
-            false -> binding.btnOtherProfileFollow.text = "팔로우"
-        }
 
     private fun setFollowButtonClickListener() {
         binding.btnOtherProfileFollow.setOnClickListener {
