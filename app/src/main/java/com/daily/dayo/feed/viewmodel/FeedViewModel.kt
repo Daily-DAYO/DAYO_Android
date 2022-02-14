@@ -21,10 +21,6 @@ class FeedViewModel @Inject constructor(private val feedRepository: FeedReposito
     private val _postliked = MutableLiveData<Resource<ResponseLikePost>>()
     val postLiked: LiveData<Resource<ResponseLikePost>> get() = _postliked
 
-    init {
-        requestFeedList()
-    }
-
     fun requestFeedList() = viewModelScope.launch {
         _feedList.postValue(Resource.loading(null))
         feedRepository.requestFeedList().let {
