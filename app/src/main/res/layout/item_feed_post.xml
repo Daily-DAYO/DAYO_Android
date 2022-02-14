@@ -208,7 +208,7 @@
         android:layout_marginTop="4dp"
         android:layout_marginBottom="18dp"
         android:layout_marginStart="19dp"
-        android:text="@{`댓글 `+ Integer.toString(feedContent.commentCount)+`개 더보기`}"
+        android:text="@{`댓글 `+ Integer.toString(feedContent.commentCount - 2) +`개 더보기`}"
         app:layout_constraintTop_toBottomOf="@id/rv_feed_post_comment"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
