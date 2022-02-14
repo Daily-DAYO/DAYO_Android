@@ -12,16 +12,24 @@ data class ResponseFeedList(
 )
 
 data class FeedContent(
+    @SerializedName("category")
+    val category: String,
     @SerializedName("commentCount")
     val commentCount: Int,
     @SerializedName("comments")
-    val comments: PostCommentContent,
+    val comments: List<PostCommentContent>,
+    @SerializedName("contents")
+    val contents: String,
+    @SerializedName("hashtags")
+    val hashtags: List<String>,
     @SerializedName("heart")
     val heart: Boolean,
     @SerializedName("heartCount")
     val heartCount: Int,
     @SerializedName("id")
     val id: Int,
+    @SerializedName("localDateTime")
+    val localDateTime: String,
     @SerializedName("memberId")
     val memberId: String,
     @SerializedName("nickname")
