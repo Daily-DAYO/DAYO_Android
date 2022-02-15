@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="tab_profile" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">13dp</item>
+    </style>
+</resources>
