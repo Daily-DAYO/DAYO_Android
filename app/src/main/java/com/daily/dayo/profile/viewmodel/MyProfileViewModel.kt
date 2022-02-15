@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.profile.model.ResponseAllMyFolderList
+import com.daily.dayo.profile.model.ResponseLikePostList
 import com.daily.dayo.profile.model.ResponseMyProfile
 import com.daily.dayo.repository.FolderRepository
 import com.daily.dayo.repository.ProfileRepository
@@ -26,9 +27,8 @@ class MyProfileViewModel@Inject constructor(
     private val _myProfile = MutableLiveData<Resource<ResponseMyProfile>>()
     val myProfile : LiveData<Resource<ResponseMyProfile>> get() = _myProfile
 
-    init {
-        requestAllMyFolderList()
-    }
+    private val _likePostList = MutableLiveData<Resource<ResponseLikePostList>>()
+    val likePostList : LiveData<Resource<ResponseLikePostList>> get() = _likePostList
 
     fun requestAllMyFolderList() = viewModelScope.launch {
         _folderList.postValue(Resource.loading(null))
@@ -53,5 +53,15 @@ class MyProfileViewModel@Inject constructor(
 
     suspend fun requestUpdateMyProfile(nickname: String?, profileImg: File?) = viewModelScope.launch {
         profileRepository.requestUpdateMyProfile(nickname, profileImg)
+    }
+
+    fun requestAllMyLikePostList() = viewModelScope.launch {
+        profileRepository.requestAllMyLikePostList().let {
+            if(it.isSuccessful){
+                _likePostList.postValue(Resource.success(it.body()))
+            } else{
+                _likePostList.postValue(Resource.error(it.errorBody().toString(), null))
+            }
+        }
     }
 }
