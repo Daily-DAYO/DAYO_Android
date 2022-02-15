@@ -55,6 +55,15 @@
         <action
             android:id="@+id/action_feedFragment_to_writeFragment"
             app:destination="@id/WriteFragment" />
+        <action
+            android:id="@+id/action_feedFragment_to_otherProfileFragment"
+            app:destination="@+id/OtherProfileFragment"/>
+        <action
+            android:id="@+id/action_feedFragment_to_myProfileFragment"
+            app:destination="@+id/MyProfileFragment"/>
+        <action
+            android:id="@+id/action_feedFragment_to_postFragment"
+            app:destination="@+id/PostFragment"/>
     </fragment>
 
     <fragment
