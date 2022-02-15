@@ -89,15 +89,16 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_folder_post"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:overScrollMode="never"
         android:layout_marginTop="28dp"
-        android:layout_marginHorizontal="8dp"
+        android:layout_marginHorizontal="12dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/img_folder_thumbnail"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:listitem="@layout/item_folder_post" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
