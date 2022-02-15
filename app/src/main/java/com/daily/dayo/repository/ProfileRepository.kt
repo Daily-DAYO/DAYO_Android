@@ -24,4 +24,5 @@ class ProfileRepository @Inject constructor(private val profileApiHelper: Profil
         }
     }
     suspend fun requestOtherProfile(memberId:String): Response<ResponseOtherProfile> = profileApiHelper.requestOtherProfile(memberId)
+    suspend fun requestAllMyLikePostList() = profileApiHelper.requestAllMyLikePostList()
 }

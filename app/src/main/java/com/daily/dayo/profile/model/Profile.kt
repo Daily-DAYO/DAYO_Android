@@ -33,3 +33,17 @@ data class ResponseOtherProfile(
     @SerializedName("profileImg")
     val profileImg:	String
 )
+
+data class ResponseLikePostList(
+    @SerializedName("count")
+    val count:Int,
+    @SerializedName("data")
+    val data:List<LikePostListData>
+)
+
+data class LikePostListData(
+    @SerializedName("postId")
+    val postId: Int,
+    @SerializedName("thumbnailImage")
+    val thumbnailImage: String
+)

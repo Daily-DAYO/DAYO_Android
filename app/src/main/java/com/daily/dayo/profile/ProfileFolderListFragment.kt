@@ -1,7 +1,6 @@
 package com.daily.dayo.profile
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,6 +44,7 @@ class ProfileFolderListFragment : Fragment() {
     }
 
     private fun setProfileFolderList(){
+        myProfileViewModel.requestAllMyFolderList()
         myProfileViewModel.folderList.observe(viewLifecycleOwner, Observer {
             when(it.status){
                 Status.SUCCESS -> {
