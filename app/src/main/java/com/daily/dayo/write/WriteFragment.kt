@@ -2,6 +2,7 @@ package com.daily.dayo.write
 
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +22,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.SharedManager
@@ -30,6 +36,7 @@ import com.daily.dayo.util.getNavigationResult
 import com.daily.dayo.write.adapter.WriteUploadImageListAdapter
 import com.daily.dayo.write.viewmodel.WriteOptionViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CancellationException
 import java.io.ByteArrayOutputStream
 import java.util.*
 
@@ -37,6 +44,8 @@ import java.util.*
 class WriteFragment : Fragment() {
     private var binding by autoCleared<FragmentWriteBinding>()
     private val writeOptionViewModel by activityViewModels<WriteOptionViewModel>()
+    private val args by navArgs<WriteFragmentArgs>()
+
     private var radioGroupCategoryLine1: RadioGroup? = null
     private var radioGroupCategoryLine2: RadioGroup? = null
     private lateinit var postTagList : List<String> // 현재 작성할 게시글에 저장된 태그 리스트
@@ -50,6 +59,11 @@ class WriteFragment : Fragment() {
 
     private var postFolderId:String = ""
     private var postFolderName:String = ""
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initWritingContents()
+    }
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -107,6 +121,58 @@ class WriteFragment : Fragment() {
                     }
                 }
             })
+        }
+    }
+
+    private fun initWritingContents() {
+        if(args.postId != 0) {
+            writeOptionViewModel.requestPostDetail(args.postId).invokeOnCompletion { throwable ->
+                when (throwable) {
+                    is CancellationException -> Log.e("Getting Post", "CANCELLED")
+                    null -> {
+                        writeOptionViewModel.getCurrentPostSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
+                            if(isSuccess.getContentIfNotHandled() == true) {
+                                isCategorySelected = true
+                                isContentsFilled = true
+                                isImageUploaded = true
+
+                                writeOptionViewModel.writeCurrentPostDetail.value?.getContentIfNotHandled()?.let { postData ->
+                                    when(postData.category) {
+                                        getString(R.string.scheduler_eng) -> binding.radiobuttonWritePostCategoryScheduler.isChecked = true
+                                        getString(R.string.studyplanner_eng) -> binding.radiobuttonWritePostCategoryStudyplanner.isChecked = true
+                                        getString(R.string.digital_eng) -> binding.radiobuttonWritePostCategoryDigital.isChecked = true
+                                        getString(R.string.pocketbook_eng) -> binding.radiobuttonWritePostCategoryPocketbook.isChecked = true
+                                        getString(R.string.sixHoleDiary_eng) -> binding.radiobuttonWritePostCategorySixHoleDiary.isChecked = true
+                                        getString(R.string.etc_eng) -> binding.radiobuttonWritePostCategoryEtc.isChecked = true
+                                    }
+
+                                    binding.etWriteDetail.setText(postData.contents)
+
+                                    for(element in postData.images) {
+                                        uploadImageList.add(Uri.parse("http://117.17.198.45:8080/images/$element"))
+                                        lateinit var imageBitmap : Bitmap
+                                        Glide.with(requireContext())
+                                            .asBitmap()
+                                            .load("http://117.17.198.45:8080/images/$element")
+                                            .into(object: CustomTarget<Bitmap>() {
+                                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                                    imageBitmap = resource
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                        uploadImageListString.add(imageBitmap.toBase64String())
+                                                    }
+                                                }
+                                                override fun onLoadCleared(placeholder: Drawable?) { }
+                                            })
+                                    }
+                                    uploadImageListAdapter.notifyDataSetChanged()
+                                    postTagList = postData.hashtags
+                                    // TODO : 폴더 및 공개설정 처리 여부 결
+                                }
+                            }
+                        })
+                    }
+                }
+            }
         }
     }
 
