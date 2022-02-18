@@ -58,6 +58,7 @@ class MyProfileFragment : Fragment() {
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
+                pagerAdapter.refreshFragment(position ,pagerAdapter.fragments[position])
                 Log.e("ViewPagerFragment", "Page ${position+1}")
             }
         })

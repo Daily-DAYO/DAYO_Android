@@ -219,6 +219,9 @@
         <action
             android:id="@+id/action_myProfileFragment_to_folderFragment"
             app:destination="@+id/FolderFragment"/>
+        <action
+            android:id="@+id/action_myProfileFragment_to_postFragment"
+            app:destination="@+id/PostFragment"/>
     </fragment>
 
     <fragment

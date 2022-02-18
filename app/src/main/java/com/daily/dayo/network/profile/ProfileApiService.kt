@@ -1,5 +1,6 @@
 package com.daily.dayo.network.profile
 
+import com.daily.dayo.profile.model.ResponseLikePostList
 import com.daily.dayo.profile.model.ResponseMyProfile
 import com.daily.dayo.profile.model.ResponseOtherProfile
 import okhttp3.MultipartBody
@@ -17,4 +18,6 @@ interface ProfileApiService {
     @GET("/api/v1/members/profile/other/{memberId}")
     suspend fun requestOtherProfile(@Path("memberId") memberId:String):Response<ResponseOtherProfile>
 
+    @GET("/api/v1/heart/list")
+    suspend fun requestAllMyLikePostList(): Response<ResponseLikePostList>
 }

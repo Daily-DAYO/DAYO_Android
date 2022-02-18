@@ -11,8 +11,18 @@
         android:label="fragment_login"
         tools:layout="@layout/fragment_login">
         <action
+            android:id="@+id/action_loginFragment_to_loginEmailFragment"
+            app:destination="@+id/LoginEmailFragment"/>
+        <action
             android:id="@+id/action_loginFragment_to_signupEmailSetEmailAddressFragment"
             app:destination="@+id/SignupEmailSetEmailAddressFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/LoginEmailFragment"
+        android:name="com.daily.dayo.login.LoginEmailFragment"
+        android:label="fragment_login_email"
+        tools:layout="@layout/fragment_login_email">
     </fragment>
 
     <fragment
