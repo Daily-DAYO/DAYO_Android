@@ -43,6 +43,7 @@ class PostOptionMineFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setDeletePostClickListener()
+        setModifyPostClickListener()
     }
 
     override fun onResume() {
@@ -75,6 +76,13 @@ class PostOptionMineFragment : DialogFragment() {
                 mAlertDialog.show()
                 DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.19f)
             }
+        }
+    }
+
+    private fun setModifyPostClickListener() {
+        binding.layoutPostOptionMineModify.setOnClickListener {
+            val navigateWithDataPassAction = PostOptionMineFragmentDirections.actionPostOptionMineFragmentToWriteFragment(args.id)
+            findNavController().navigate(navigateWithDataPassAction)
         }
     }
 }
