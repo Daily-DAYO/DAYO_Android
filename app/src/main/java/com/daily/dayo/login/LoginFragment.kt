@@ -61,7 +61,7 @@ class LoginFragment : Fragment() {
 
     private fun setEmailLoginButtonClickListener(){
         binding.btnLoginEmail.setOnClickListener {
-            // TODO : 이메일 로그인 화면 이동 구현
+            findNavController().navigate(R.id.action_loginFragment_to_loginEmailFragment)
         }
     }
 
