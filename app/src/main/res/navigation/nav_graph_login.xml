@@ -31,7 +31,20 @@
         android:label="fragment_signup_email_set_email_address"
         tools:layout="@layout/fragment_signup_email_set_email_address">
         <action
-            android:id="@+id/action_signupEmailSetEmailAddressFragment_to_signupEmailSetPasswordFragment"
+            android:id="@+id/action_signupEmailSetEmailAddressFragment_to_signupEmailSetEmailAddressCertificateFragment"
+            app:destination="@+id/SignupEmailSetEmailAddressCertificateFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/SignupEmailSetEmailAddressCertificateFragment"
+        android:name="com.daily.dayo.signup.email.SignupEmailSetEmailAddressCertificateFragment"
+        android:label="fragment_signup_email_set_email_address_certificate"
+        tools:layout="@layout/fragment_signup_email_set_email_address_certificate">
+        <argument
+            android:name="email"
+            app:argType="string"/>
+        <action
+            android:id="@+id/action_signupEmailSetEmailAddressCertificateFragment_to_signupEmailSetPasswordFragment"
             app:destination="@+id/SignupEmailSetPasswordFragment"/>
     </fragment>
 
