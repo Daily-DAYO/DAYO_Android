@@ -16,14 +16,13 @@
         <ImageButton
             android:id="@+id/btn_signup_email_set_email_address_back"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_back_sign"
             tools:ignore="ContentDescription"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:paddingBottom="15dp"
-            android:paddingStart="18dp"/>
+            android:paddingHorizontal="18dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -54,8 +53,10 @@
             app:boxBackgroundColor="@android:color/transparent"
             app:boxStrokeColor="@color/gray_6_EDEDED"
             app:boxStrokeWidthFocused="1dp"
+
             android:hint="@string/email_address"
             app:hintEnabled="true"
+            android:textColorHint="@color/gray_5_D3D2D2"
             app:hintTextColor="@color/gray_3_9C9C9C"
 
             app:endIconMode="custom"
@@ -70,7 +71,7 @@
             app:layout_constraintTop_toBottomOf="@id/tv_signup_email_set_email_address_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="35dp">
+            android:layout_marginTop="61dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_signup_email_set_email_address_user_input"
                 android:layout_width="match_parent"
@@ -79,7 +80,8 @@
                 android:textColor="@color/gray_1_313131"
                 android:textColorHint="@color/gray_7_F6F6F6"
                 android:singleLine="true"
-                android:imeOptions="actionDone"/>
+                android:imeOptions="actionDone"
+                android:paddingStart="0dp"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.appcompat.widget.AppCompatButton
@@ -87,7 +89,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:enabled="false"
-            android:text="@string/next"
+            android:text="@string/signup_email_set_email_address_get_certificate"
             android:textSize="16dp"
             android:textStyle="bold"
             android:textColor="@color/white_FFFFFF"

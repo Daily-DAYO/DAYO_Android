@@ -140,9 +140,17 @@
     <!-- Signup Email Set Address -->
     <string name="email">이메일</string>
     <string name="email_address">이메일 주소</string>
+    <string name="email_address_certificate">이메일 인증</string>
     <string name="signup_email_set_email_address_title">이메일을 입력해주세요.</string>
     <string name="signup_email_set_email_address_message_format_fail">올바른 이메일 주소를 입력해주세요.</string>
     <string name="signup_email_set_email_address_message_duplicate_fail">이미 사용중인 이메일 주소예요.</string>
+    <string name="signup_email_set_email_address_get_certificate">인증번호 받기</string>
+    <string name="signup_email_set_email_address_certificate_title">인증번호를 입력해주세요.</string>
+    <string name="signup_email_set_email_address_certificate_description">메일로 인증번호가 발송되었어요!</string>
+    <string name="signup_email_set_email_address_certificate_resend"><u>인증번호 재발송</u></string>
+    <string name="signup_email_set_email_address_certificate_alert_message__resend">인증번호가 발송되었습니다.</string>
+    <string name="signup_email_set_email_address_certificate_alert_message_match_fail">잘못된 인증번호입니다. 다시 확인해보세요.</string>
+    <string name="signup_email_set_email_address_certificate_alert_message_time_fail">제한 시간을 초과했어요.</string>
     <!-- Signup Email Set Password -->
     <string name="password">비밀번호</string>
     <string name="signup_email_set_password_title">비밀번호를 입력해주세요.</string>
