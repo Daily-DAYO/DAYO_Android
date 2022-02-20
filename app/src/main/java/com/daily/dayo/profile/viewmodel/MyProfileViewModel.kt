@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.profile.model.ResponseAllMyFolderList
+import com.daily.dayo.profile.model.ResponseBookmarkPostList
 import com.daily.dayo.profile.model.ResponseLikePostList
 import com.daily.dayo.profile.model.ResponseMyProfile
 import com.daily.dayo.repository.FolderRepository
@@ -29,6 +30,9 @@ class MyProfileViewModel@Inject constructor(
 
     private val _likePostList = MutableLiveData<Resource<ResponseLikePostList>>()
     val likePostList : LiveData<Resource<ResponseLikePostList>> get() = _likePostList
+
+    private val _bookmarkPostList = MutableLiveData<Resource<ResponseBookmarkPostList>>()
+    val bookmarkPostList : LiveData<Resource<ResponseBookmarkPostList>> get() = _bookmarkPostList
 
     fun requestAllMyFolderList() = viewModelScope.launch {
         _folderList.postValue(Resource.loading(null))
@@ -61,6 +65,16 @@ class MyProfileViewModel@Inject constructor(
                 _likePostList.postValue(Resource.success(it.body()))
             } else{
                 _likePostList.postValue(Resource.error(it.errorBody().toString(), null))
+            }
+        }
+    }
+
+    fun requestAllMyBookmarkPostList() = viewModelScope.launch {
+        profileRepository.requestAllMyBookmarkPostList().let {
+            if(it.isSuccessful){
+                _bookmarkPostList.postValue(Resource.success(it.body()))
+            } else{
+                _bookmarkPostList.postValue(Resource.error(it.errorBody().toString(), null))
             }
         }
     }

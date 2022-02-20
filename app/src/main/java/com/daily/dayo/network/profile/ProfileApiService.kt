@@ -1,5 +1,6 @@
 package com.daily.dayo.network.profile
 
+import com.daily.dayo.profile.model.ResponseBookmarkPostList
 import com.daily.dayo.profile.model.ResponseLikePostList
 import com.daily.dayo.profile.model.ResponseMyProfile
 import com.daily.dayo.profile.model.ResponseOtherProfile
@@ -20,4 +21,7 @@ interface ProfileApiService {
 
     @GET("/api/v1/heart/list")
     suspend fun requestAllMyLikePostList(): Response<ResponseLikePostList>
+
+    @GET("/api/v1/bookmark/list")
+    suspend fun requestAllMyBookmarkPostList(): Response<ResponseBookmarkPostList>
 }
