@@ -10,6 +10,8 @@ class PostRepository @Inject constructor(private val postApiHelper: PostApiHelpe
     suspend fun requestDeletePost(postId: Int) = postApiHelper.requestDeletePost(postId)
     suspend fun requestLikePost(request : RequestLikePost) = postApiHelper.requestLikePost(request).verify()
     suspend fun requestUnlikePost(postId: Int) = postApiHelper.requestUnlikePost(postId)
+    suspend fun requestBookmarkPost(request : RequestBookmarkPost) = postApiHelper.requestBookmarkPost(request).verify()
+    suspend fun requestDeleteBookmarkPost(postId: Int) = postApiHelper.requestDeleteBookmarkPost(postId)
     suspend fun requestPostComment(postId: Int) = postApiHelper.requestPostComment(postId).verify()
     suspend fun requestCreatePostComment(request: RequestCreatePostComment) = postApiHelper.requestCreatePostComment(request).verify()
     suspend fun requestDeletePostComment(commentId: Int) = postApiHelper.requestDeletePostComment(commentId)
@@ -42,6 +44,15 @@ class PostRepository @Inject constructor(private val postApiHelper: PostApiHelpe
 
     @JvmName("verifyResponseLikePost")
     fun Response<ResponseLikePost>.verify() : Response<ResponseLikePost> {
+        if (this.isSuccessful && this.code() in 200..299) {
+            return this
+        } else {
+            throw Exception("${this.code()}")
+        }
+    }
+
+    @JvmName("verifyResponseBookmarkPost")
+    fun Response<ResponseBookmarkPost>.verify() : Response<ResponseBookmarkPost> {
         if (this.isSuccessful && this.code() in 200..299) {
             return this
         } else {

@@ -219,7 +219,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
-                            android:src="@drawable/selector_bookmark"
+                            android:src="@{post.bookmark == true ? @drawable/ic_bookmark_checked : @drawable/ic_bookmark_default}"
                             app:layout_constraintTop_toTopOf="@id/btn_post_like"
                             app:layout_constraintBottom_toBottomOf="@id/btn_post_like"
                             app:layout_constraintEnd_toEndOf="parent"

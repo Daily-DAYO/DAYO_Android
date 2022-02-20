@@ -3,6 +3,8 @@ package com.daily.dayo.post.model
 import com.google.gson.annotations.SerializedName
 
 data class ResponsePost (
+    @SerializedName("bookmark")
+    val bookmark: Boolean,
     @SerializedName("category")
     val category: String,
     @SerializedName("contents")
@@ -29,6 +31,18 @@ data class RequestLikePost(
 )
 
 data class ResponseLikePost(
+    @SerializedName("memberId")
+    val memberId: String,
+    @SerializedName("postId")
+    val postId: Int
+)
+
+data class RequestBookmarkPost(
+    @SerializedName("postId")
+    val postId: Int
+)
+
+data class ResponseBookmarkPost(
     @SerializedName("memberId")
     val memberId: String,
     @SerializedName("postId")
