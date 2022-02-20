@@ -10,6 +10,11 @@
             type="com.daily.dayo.profile.model.ResponseOtherProfile" />
     </data>
 
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -21,18 +26,19 @@
             android:layout_height="wrap_content"
             android:background="@drawable/background_profile_round_bottom_corner"
             android:paddingBottom="30dp"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="0dp">
 
             <ImageButton
                 android:id="@+id/btn_other_profile_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
                 android:layout_marginStart="18dp"
+                android:layout_marginTop="15dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_back_sign"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="ContentDescription" />
 
             <com.google.android.material.imageview.ShapeableImageView
@@ -181,7 +187,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_marginTop="18dp"
             android:background="@color/white_FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -199,16 +205,17 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_other_profile_folder"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="30dp"
                 android:overScrollMode="never"
+                android:nestedScrollingEnabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/view_other_profile_horizontal_line"
                 tools:listitem="@layout/item_profile_folder" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>
