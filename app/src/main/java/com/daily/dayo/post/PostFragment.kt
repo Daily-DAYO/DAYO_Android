@@ -31,6 +31,7 @@ import androidx.navigation.Navigation
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.SharedManager
 import com.daily.dayo.post.model.PostCommentContent
+import com.daily.dayo.post.model.RequestBookmarkPost
 import com.daily.dayo.post.model.RequestCreatePostComment
 import com.daily.dayo.post.model.RequestLikePost
 import com.google.android.material.chip.Chip
@@ -68,7 +69,6 @@ class PostFragment : Fragment() {
         setImageSlider()
         setPostDetailCollect()
         setPostCommentCollect()
-        setPostBookmarkClickListener()
         setCreatePostComment()
         setPostCommentClickListener()
         observePostCommentDeleteStateCallback()
@@ -127,6 +127,7 @@ class PostFragment : Fragment() {
                                         }
                                         postCreateTime = TimeChangerUtil.timeChange(requireContext(), postDetail.createDateTime)
                                         setPostLikeClickListener(postDetail.heart)
+                                        setPostBookmarkClickListener(postDetail.bookmark)
                                         setTagList(postDetail.hashtags)
                                         setPostOptionClickListener(postDetail.nickname)
                                         Glide.with(requireContext())
@@ -294,14 +295,23 @@ class PostFragment : Fragment() {
         }
     }
 
-    private fun setPostBookmarkClickListener() {
-        binding.btnPostBookmark.setOnClickListener {
-            if(binding.btnPostBookmark.isSelected) {
-                // TODO: Bookmark한 Post인지 아닌지 판단하는 조건 필요
-                // TODO : bookmark 서버 연동 필요
-                binding.btnPostBookmark.isSelected = false
-            } else {
-                binding.btnPostBookmark.isSelected = true
+    private fun setPostBookmarkClickListener(isChecked: Boolean) {
+        with(binding.btnPostBookmark) {
+            setOnClickListener {
+                if(!isChecked) {
+                    setImageDrawable(resources.getDrawable(R.drawable.ic_bookmark_checked, context?.theme))
+                    postViewModel.requestBookmarkPost(RequestBookmarkPost(args.id))
+                } else {
+                    setImageDrawable(resources.getDrawable(R.drawable.ic_bookmark_default, context?.theme))
+                    postViewModel.requestDeleteBookmarkPost(args.id)
+                }.let { it.invokeOnCompletion { throwable ->
+                    when (throwable) {
+                        is CancellationException -> Log.e("Post Bookmark Click", "CANCELLED")
+                        null -> {
+                            postViewModel.requestPostDetail(args.id)
+                        }
+                    }
+                } }
             }
         }
     }

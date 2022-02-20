@@ -16,6 +16,10 @@ interface PostApiService {
     suspend fun requestLikePost(@Body body : RequestLikePost) : Response<ResponseLikePost>
     @POST("/api/v1/heart/delete/{postId}")
     suspend fun requestUnlikePost(@Path("postId") postId : Int) : Response<Void>
+    @POST("/api/v1/bookmark")
+    suspend fun requestBookmarkPost(@Body body : RequestBookmarkPost) : Response<ResponseBookmarkPost>
+    @POST("/api/v1/bookmark/delete/{postId}")
+    suspend fun requestDeleteBookmarkPost(@Path("postId") postId : Int) : Response<Void>
     @GET("/api/v1/comments/{postId}")
     suspend fun requestPostComment(@Path("postId") postId : Int) : Response<ResponsePostComment>
     @POST("/api/v1/comments")
