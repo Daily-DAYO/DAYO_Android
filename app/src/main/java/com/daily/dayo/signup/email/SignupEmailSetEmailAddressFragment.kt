@@ -145,7 +145,7 @@ class SignupEmailSetEmailAddressFragment : Fragment() {
 
     private fun setNextClickListener() {
         binding.btnSignupEmailSetEmailAddressNext.setOnClickListener {
-            Navigation.findNavController(it).navigate(SignupEmailSetEmailAddressFragmentDirections.actionSignupEmailSetEmailAddressFragmentToSignupEmailSetPasswordFragment(binding.etSignupEmailSetEmailAddressUserInput.text.toString().trim()))
+            Navigation.findNavController(it).navigate(SignupEmailSetEmailAddressFragmentDirections.actionSignupEmailSetEmailAddressFragmentToSignupEmailSetEmailAddressCertificateFragment(binding.etSignupEmailSetEmailAddressUserInput.text.toString().trim()))
         }
     }
 }
