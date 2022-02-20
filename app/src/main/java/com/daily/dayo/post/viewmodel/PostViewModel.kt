@@ -22,6 +22,9 @@ class PostViewModel @Inject constructor(private val postRepository: PostReposito
     private val _postliked = MutableLiveData<Resource<ResponseLikePost>>()
     val postLiked: LiveData<Resource<ResponseLikePost>> get() = _postliked
 
+    private val _postBookmarked = MutableLiveData<Resource<ResponseBookmarkPost>>()
+    val postBookmarked: LiveData<Resource<ResponseBookmarkPost>> get() = _postBookmarked
+
     private val _requestCreatePostComment = MutableSharedFlow<Boolean>()
     val requestCreatePostComment = _requestCreatePostComment.asSharedFlow()
 
@@ -58,6 +61,20 @@ class PostViewModel @Inject constructor(private val postRepository: PostReposito
 
     fun requestUnlikePost(postId: Int) = viewModelScope.launch {
         postRepository.requestUnlikePost(postId)
+    }
+
+    fun requestBookmarkPost(request: RequestBookmarkPost) = viewModelScope.launch {
+        postRepository.requestBookmarkPost(request).let {
+            if(it.isSuccessful) {
+                _postBookmarked.postValue(Resource.success(it.body()))
+            } else {
+                _postBookmarked.postValue(Resource.error(it.errorBody().toString(), null))
+            }
+        }
+    }
+
+    fun requestDeleteBookmarkPost(postId: Int) = viewModelScope.launch {
+        postRepository.requestDeleteBookmarkPost(postId)
     }
 
     fun requestPostComment(postId: Int) = viewModelScope.launch {
