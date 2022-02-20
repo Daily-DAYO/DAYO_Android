@@ -26,6 +26,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 class MyProfileFragment : Fragment() {
     private var binding by autoCleared<FragmentMyProfileBinding>()
     private val myProfileViewModel by activityViewModels<MyProfileViewModel>()
+    private lateinit var pagerAdapter : MyProfileFragmentPagerStateAdapter
     private lateinit var viewPager : ViewPager2
     private lateinit var tabLayout: TabLayout
     private val currentUser = SharedManager(DayoApplication.applicationContext().applicationContext).getCurrentUser()
@@ -39,6 +40,7 @@ class MyProfileFragment : Fragment() {
         viewPager = binding.pagerMyProfile
         tabLayout = binding.tabsMyProfile
 
+        setViewPager()
         setFollowerCountButtonClickListener()
         setFollowingCountButtonClickListener()
         setMyProfileOptionClickListener()
@@ -46,22 +48,17 @@ class MyProfileFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onResume() {
+        super.onResume()
+        setViewPagerChangeEvent()
+    }
 
-        val pagerAdapter = MyProfileFragmentPagerStateAdapter(requireActivity())
+    private fun setViewPager(){
+        pagerAdapter = MyProfileFragmentPagerStateAdapter(requireActivity())
         pagerAdapter.addFragment(ProfileFolderListFragment())
         pagerAdapter.addFragment(ProfileLikePostListFragment())
         pagerAdapter.addFragment(ProfileBookmarkPostListFragment())
         viewPager.adapter = pagerAdapter
-
-        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                pagerAdapter.refreshFragment(position ,pagerAdapter.fragments[position])
-                Log.e("ViewPagerFragment", "Page ${position+1}")
-            }
-        })
 
         TabLayoutMediator(tabLayout, viewPager){ tab, position ->
             when (position){
@@ -70,6 +67,27 @@ class MyProfileFragment : Fragment() {
                 2 -> tab.text = "북마크"
             }
         }.attach()
+    }
+
+    private fun setViewPagerChangeEvent(){
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                pagerAdapter.refreshFragment(position ,pagerAdapter.fragments[position])
+                val view = pagerAdapter.fragments[position].view
+                if (view != null) {
+                    val wMeasureSpec = View.MeasureSpec.makeMeasureSpec(view!!.width, View.MeasureSpec.EXACTLY)
+                    val hMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                    view.measure(wMeasureSpec, hMeasureSpec)
+                    if (viewPager.layoutParams.height != view.measuredHeight) {
+                        viewPager.layoutParams = viewPager.layoutParams.also { lp ->
+                            lp.height = view.measuredHeight
+                        }
+                    }
+                }
+                Log.e("ViewPagerFragment", "Page ${position+1}")
+            }
+        })
     }
 
     private fun setMyProfileOptionClickListener() {
