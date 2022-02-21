@@ -333,4 +333,13 @@
             app:destination="@+id/MyProfileFragment"/>
     </fragment>
 
+    <fragment
+        android:id="@+id/NotificationFragment"
+        android:name="com.daily.dayo.notification.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification">
+    <action
+        android:id="@+id/action_notificationFragment_to_writeFragment"
+        app:destination="@id/WriteFragment" />
+    </fragment>
 </navigation>

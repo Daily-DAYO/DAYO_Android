@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
             when(findNavController().currentDestination!!.id){
                 R.id.HomeFragment -> findNavController().navigate(R.id.action_homeFragment_to_writeFragment)
                 R.id.FeedFragment -> findNavController().navigate(R.id.action_feedFragment_to_writeFragment)
-                // R.id.NotificationFragment -> findNavController().navigate(R.id.action_notificationFragment_to_writeFragment)
+                R.id.NotificationFragment -> findNavController().navigate(R.id.action_notificationFragment_to_writeFragment)
                 R.id.MyProfileFragment -> findNavController().navigate(R.id.action_myProfileFragment_to_writeFragment)
             }
         }
@@ -43,12 +43,14 @@ class MainActivity : AppCompatActivity() {
             binding.layoutBottomNavigationMain.visibility = when (destination.id) {
                 R.id.HomeFragment -> View.VISIBLE
                 R.id.FeedFragment -> View.VISIBLE
+                R.id.NotificationFragment -> View.VISIBLE
                 R.id.MyProfileFragment -> View.VISIBLE
                 else -> View.GONE
             }
             binding.btnBottomNavigationWrite.visibility = when (destination.id) {
                 R.id.HomeFragment -> View.VISIBLE
                 R.id.FeedFragment -> View.VISIBLE
+                R.id.NotificationFragment -> View.VISIBLE
                 R.id.MyProfileFragment -> View.VISIBLE
                 else -> View.GONE
             }

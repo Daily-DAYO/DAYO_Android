@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="notificationTime"
+            type="String" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_notification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:paddingTop="22dp"
+            android:paddingBottom="21dp"
+            android:paddingHorizontal="18dp">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_notification_contents"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/img_notification_unread"
+                android:layout_marginEnd="15dp">
+                <TextView
+                    android:id="@+id/tv_notification_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14dp"
+                    android:textColor="@color/gray_1_313131"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginEnd="15dp"
+                    tools:text="조재영바보님이 회원님의 게시글을 좋아해요."/>
+                <TextView
+                    android:id="@+id/tv_notification_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    android:textSize="13dp"
+                    android:textColor="@color/gray_2_5D5D5D"
+                    app:layout_constraintTop_toBottomOf="@id/tv_notification_title"
+                    app:layout_constraintStart_toStartOf="@id/tv_notification_title"
+                    android:layout_marginTop="9dp"
+                    tools:text="어떤 부분들이 업데이트 됐을까용!"/>
+                <TextView
+                    android:id="@+id/tv_notification_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{notificationTime}"
+                    android:textSize="12dp"
+                    android:textColor="@color/gray_3_9C9C9C"
+                    app:layout_constraintTop_toBottomOf="@id/tv_notification_description"
+                    app:layout_constraintStart_toStartOf="@id/tv_notification_title"
+                    android:layout_marginTop="14dp"
+                    tools:text="2일 전" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/img_notification_unread"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_unread"
+                android:visibility="visible"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <View
+            android:id="@+id/view_feed_post_horizontal_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray_6_EDEDED"
+            app:layout_constraintTop_toBottomOf="@id/layout_notification"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
