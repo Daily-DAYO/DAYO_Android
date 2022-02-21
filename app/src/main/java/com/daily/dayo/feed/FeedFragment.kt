@@ -15,6 +15,7 @@ import com.daily.dayo.databinding.FragmentFeedBinding
 import com.daily.dayo.feed.adapter.FeedListAdapter
 import com.daily.dayo.feed.model.FeedContent
 import com.daily.dayo.feed.viewmodel.FeedViewModel
+import com.daily.dayo.post.model.RequestBookmarkPost
 import com.daily.dayo.post.model.RequestLikePost
 import com.daily.dayo.util.Status
 import com.daily.dayo.util.autoCleared
@@ -33,7 +34,7 @@ class FeedFragment : Fragment() {
         binding = FragmentFeedBinding.inflate(inflater, container, false)
         setRvFeedListAdapter()
         setFeedPostList()
-        setFeedPostLikeClickListener()
+        setFeedPostClickListener()
         return binding.root
     }
 
@@ -66,36 +67,74 @@ class FeedFragment : Fragment() {
         }
     }
 
-    private fun setFeedPostLikeClickListener() {
+    private fun setFeedPostClickListener(){
         feedListAdapter.setOnItemClickListener(object : FeedListAdapter.OnItemClickListener {
             override fun likePostClick(btn: ImageButton, data: FeedContent, pos: Int) {
-                if (!data.heart) {
-                    btn.setImageDrawable(
-                        resources.getDrawable(
-                            R.drawable.ic_post_like_checked,
-                            context?.theme
-                        )
-                    )
-                    feedViewModel.requestLikePost(RequestLikePost(data.id))
-                } else {
-                    btn.setImageDrawable(
-                        resources.getDrawable(
-                            R.drawable.ic_post_like_default,
-                            context?.theme
-                        )
-                    )
-                    feedViewModel.requestUnlikePost(data.id)
-                }.let { it.invokeOnCompletion { throwable ->
-                    when (throwable) {
-                        is CancellationException -> Log.e("Post Like Click", "CANCELLED")
-                        null -> {
-                            feedViewModel.requestFeedList()
-                            }
-                        }
+                setFeedPostLikeClickListener(btn, data, pos)
+            }
+
+            override fun bookmarkPostClick(btn: ImageButton, data: FeedContent, pos: Int) {
+                setFeedPostBookmarkClickListener(btn, data, pos)
+            }
+        })
+    }
+
+    private fun setFeedPostLikeClickListener(btn: ImageButton, data: FeedContent, pos: Int) {
+        if (!data.heart) {
+            btn.setImageDrawable(
+                resources.getDrawable(
+                    R.drawable.ic_post_like_checked,
+                    context?.theme
+                )
+            )
+            feedViewModel.requestLikePost(RequestLikePost(data.id))
+        } else {
+            btn.setImageDrawable(
+                resources.getDrawable(
+                    R.drawable.ic_post_like_default,
+                    context?.theme
+                )
+            )
+            feedViewModel.requestUnlikePost(data.id)
+        }.let {
+            it.invokeOnCompletion { throwable ->
+                when (throwable) {
+                    is CancellationException -> Log.e("Post Like Click", "CANCELLED")
+                    null -> {
+                        feedViewModel.requestFeedList()
                     }
                 }
             }
-        })
+        }
+    }
+
+    private fun setFeedPostBookmarkClickListener(btn: ImageButton, data: FeedContent, pos: Int) {
+        if (!data.bookmark) {
+            btn.setImageDrawable(
+                resources.getDrawable(
+                    R.drawable.ic_bookmark_checked,
+                    context?.theme
+                )
+            )
+            feedViewModel.requestBookmarkPost(RequestBookmarkPost(data.id))
+        } else {
+            btn.setImageDrawable(
+                resources.getDrawable(
+                    R.drawable.ic_bookmark_default,
+                    context?.theme
+                )
+            )
+            feedViewModel.requestDeleteBookmarkPost(data.id)
+        }.let {
+            it.invokeOnCompletion { throwable ->
+                when (throwable) {
+                    is CancellationException -> Log.e("Post Bookmark Click", "CANCELLED")
+                    null -> {
+                        feedViewModel.requestFeedList()
+                    }
+                }
+            }
+        }
     }
 
 }

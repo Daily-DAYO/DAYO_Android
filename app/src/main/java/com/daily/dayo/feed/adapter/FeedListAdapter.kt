@@ -33,7 +33,9 @@ class FeedListAdapter : ListAdapter<FeedContent, FeedListAdapter.FeedListViewHol
 
     interface OnItemClickListener{
         fun likePostClick(btn: ImageButton, data: FeedContent, pos: Int)
+        fun bookmarkPostClick(btn: ImageButton, data: FeedContent, pos: Int)
     }
+
     private var listener: OnItemClickListener?= null
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.listener = listener
@@ -103,6 +105,13 @@ class FeedListAdapter : ListAdapter<FeedContent, FeedListAdapter.FeedListViewHol
             if(pos!= RecyclerView.NO_POSITION) {
                 binding.btnFeedPostLike.setOnClickListener {
                     listener?.likePostClick(binding.btnFeedPostLike, feedContent, pos)
+                }
+            }
+
+            // 북마크
+            if(pos!= RecyclerView.NO_POSITION) {
+                binding.btnFeedPostBookmark.setOnClickListener {
+                    listener?.bookmarkPostClick(binding.btnFeedPostBookmark, feedContent, pos)
                 }
             }
         }
