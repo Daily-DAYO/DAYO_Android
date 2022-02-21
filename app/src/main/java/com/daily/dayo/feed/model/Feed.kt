@@ -12,6 +12,8 @@ data class ResponseFeedList(
 )
 
 data class FeedContent(
+    @SerializedName("bookmark")
+    val bookmark: Boolean,
     @SerializedName("category")
     val category: String,
     @SerializedName("commentCount")
