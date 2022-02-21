@@ -47,3 +47,17 @@ data class LikePostListData(
     @SerializedName("thumbnailImage")
     val thumbnailImage: String
 )
+
+data class ResponseBookmarkPostList(
+    @SerializedName("count")
+    val count: Int,
+    @SerializedName("data")
+    val data: List<BookmarkPostListData>
+)
+
+data class BookmarkPostListData(
+    @SerializedName("postId")
+    val postId:Int,
+    @SerializedName("thumbnailImage")
+    val thumbnailImage: String
+)
