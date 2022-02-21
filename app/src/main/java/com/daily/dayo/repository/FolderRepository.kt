@@ -32,13 +32,13 @@ class FolderRepository @Inject constructor(private val folderApiHelper: FolderAp
 
     suspend fun requestDeleteFolder(folderId: Int) = folderApiHelper.requestDeleteFolder(folderId)
 
-    suspend fun requestEditFolder(folderId:Int, name:String, privacy:String, subheading:String?, thumbnailImage: File?) : Response<ResponseFolderId>{
+    suspend fun requestEditFolder(folderId:Int, name:String, privacy:String, subheading:String?,isFileChange:Boolean, thumbnailImage: File?) : Response<ResponseFolderId>{
         return if(thumbnailImage!=null) {
             val requestThumbnailImage : MultipartBody.Part =
                 MultipartBody.Part.createFormData("thumbnailImage",thumbnailImage.name, RequestBody.create("image/*".toMediaTypeOrNull(),thumbnailImage) )
-            folderApiHelper.requestEditFolder(folderId,name,privacy,subheading,requestThumbnailImage)
+            folderApiHelper.requestEditFolder(folderId,name,privacy,subheading, isFileChange, requestThumbnailImage)
         } else{
-            folderApiHelper.requestEditFolder(folderId,name,privacy,subheading,null)
+            folderApiHelper.requestEditFolder(folderId,name,privacy,subheading, isFileChange,null)
         }
     }
 

@@ -4,7 +4,6 @@ import com.daily.dayo.profile.model.*
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
-import java.io.File
 
 interface FolderApiService {
 
@@ -36,6 +35,7 @@ interface FolderApiService {
                                   @Part("name") name:String,
                                   @Part("privacy") privacy:String,
                                   @Part("subheading") subheading:String?,
+                                  @Part("isFileChange") isFileChange:Boolean,
                                   @Part thumbnailImage: MultipartBody.Part?): Response<ResponseFolderId>
 
     @POST("/api/v1/folders/order")

@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="10dp"
         app:layout_constraintBottom_toTopOf="@id/guideline_default_dialog_explanation_confirm_contents_confirmation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -30,12 +31,12 @@
             android:id="@+id/tv_default_dialog_explanation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/gray_1_313131"
+            android:textColor="@color/gray_5_D3D2D2"
             android:textSize="11dp"
             app:layout_constraintTop_toBottomOf="@+id/tv_default_dialog_description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="10dp"
             tools:text="해당 폴더에 등록된 게시물도 함께 삭제됩니다." />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -61,7 +62,8 @@
         android:id="@+id/layout_default_dialog_explanation_confirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/guideline_default_dialog_explanation_confirm_contents_confirmation"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/layout_default_dialog_explanation_confirm_contents"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">

@@ -76,6 +76,8 @@ object DefaultDialogConfirm {
             }
         }
 
+        mAlertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
         return mAlertDialog
     }
 }
@@ -120,6 +122,8 @@ object DefaultDialogExplanationConfirm {
                 mAlertDialog.dismiss()
             }
         }
+
+        mAlertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         return mAlertDialog
     }
