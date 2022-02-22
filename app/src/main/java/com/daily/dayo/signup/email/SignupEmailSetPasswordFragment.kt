@@ -16,6 +16,7 @@ import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentSignupEmailSetPasswordBinding
 import com.daily.dayo.util.ButtonActivation
 import com.daily.dayo.util.HideKeyBoardUtil
+import com.daily.dayo.util.SetTextInputLayout
 import com.daily.dayo.util.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.regex.Pattern
@@ -44,6 +45,7 @@ class SignupEmailSetPasswordFragment : Fragment() {
         view.setOnTouchListener { _, _ ->
             HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetPasswordUserPassword)
             changeEditTextTitle()
+            SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword.text.isNullOrEmpty())
             true
         }
     }
@@ -53,6 +55,7 @@ class SignupEmailSetPasswordFragment : Fragment() {
                 EditorInfo.IME_ACTION_DONE -> {
                     HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetPasswordUserPassword)
                     changeEditTextTitle()
+                    SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword.text.isNullOrEmpty())
                     true
                 } else -> false
             }
@@ -60,14 +63,16 @@ class SignupEmailSetPasswordFragment : Fragment() {
     }
 
     private fun initEditText() {
+        SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword.text.isNullOrEmpty())
         with(binding.etSignupEmailSetPasswordUserPassword) {
             setOnFocusChangeListener { _, hasFocus -> // EditText Title 설정
                 with(binding.layoutSignupEmailSetPasswordUserPassword) {
                     if(hasFocus){
                         hint = getString(R.string.password)
-                        boxStrokeColor = resources.getColor(R.color.primary_green_23C882, context?.theme)
+                        SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, false)
                     } else {
                         hint = getString(R.string.signup_email_set_password_message_length_fail_min)
+                        SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, true)
                     }
                 }
             }
@@ -89,37 +94,22 @@ class SignupEmailSetPasswordFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
             override fun afterTextChanged(s: Editable?) {
-                if(s.toString().trim().length < 8){ // 비밀번호 길이 검사 1
-                    setEditTextTheme(getString(R.string.signup_email_set_password_message_length_fail_min), false)
+                if(s.toString().trim().length < 8){ // 비밀번호 길이 검사 1에
+                    SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, false)
+                    // 8자 이하일 때에는 오류 검사 실패시, 에러메시지가 나오지 않도록 디자인 수정
                     ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetPasswordNext)
                 } else if(s.toString().trim().length > 16) { // 비밀번호 길이 검사 2
-                    setEditTextTheme(getString(R.string.signup_email_set_password_message_length_fail_max), false)
+                    SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, getString(R.string.signup_email_set_password_message_length_fail_max), false)
                     ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetPasswordNext)
                 } else if(!Pattern.matches("^[a-z|0-9|]+\$", s.toString().trim())) { // 비밀번호 양식 검사
-                    setEditTextTheme(getString(R.string.signup_email_set_password_message_format_fail), false)
+                    SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, getString(R.string.signup_email_set_password_message_format_fail), false)
                     ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetPasswordNext)
                 } else {
-                    setEditTextTheme(null, true)
+                    SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, null, true)
                     ButtonActivation.setSignupButtonActive(requireContext(), binding.btnSignupEmailSetPasswordNext)
                 }
             }
         })
-    }
-
-    private fun setEditTextTheme(errorMessage: String?, pass:Boolean) {
-        with(binding.layoutSignupEmailSetPasswordUserPassword) {
-            error = errorMessage
-            errorIconDrawable = null
-            if(pass) {
-                isErrorEnabled = false
-                isCounterEnabled = false
-                boxStrokeColor = resources.getColor(R.color.primary_green_23C882, context?.theme)
-            } else {
-                isErrorEnabled = true
-                isCounterEnabled = true
-                boxStrokeColor = resources.getColor(R.color.red_FF4545, context?.theme)
-            }
-        }
     }
 
     private fun setLimitEditTextInputType() {

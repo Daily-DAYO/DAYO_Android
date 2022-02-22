@@ -88,12 +88,6 @@ class SignupEmailSetProfileFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
             override fun afterTextChanged(s: Editable?) {
                 with(binding) {
-                    if(s.toString().length == 0){
-                        tvSignupEmailSetProfileNicknameCount.text = "0${getString(R.string.my_profile_edit_nickname_edittext_count)}"
-                    } else {
-                        tvSignupEmailSetProfileNicknameCount.text = "${s.toString().trim().length}${getString(R.string.my_profile_edit_nickname_edittext_count)}"
-                    }
-
                     if(s.toString().trim().length < 2) { // 닉네임 길이 검사 1
                         setEditTextTheme(getString(R.string.my_profile_edit_nickname_message_length_fail_min), false)
                         ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetProfileNext)
