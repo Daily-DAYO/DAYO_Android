@@ -14,8 +14,8 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.databinding.FragmentMyProfileEditImageOptionBinding
+import com.daily.dayo.util.DefaultDialogConfigure
 import com.daily.dayo.util.autoCleared
-import java.util.*
 
 class MyProfileEditImageOptionFragment : DialogFragment() {
     private var binding by autoCleared<FragmentMyProfileEditImageOptionBinding>()
@@ -40,15 +40,20 @@ class MyProfileEditImageOptionFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setBackButtonClickListener()
         setImageSelectGalleryClickListener()
         setImageResetClickListener()
     }
 
-    private fun setBackButtonClickListener() {
-        binding.layoutMyProfileEditImageOptionCancel.setOnClickListener {
-            findNavController().navigateUp()
-        }
+    override fun onResume() {
+        super.onResume()
+        resizeOptionDialogFragment()
+    }
+
+    private fun resizeOptionDialogFragment() {
+        val params: ViewGroup.LayoutParams? = dialog?.window?.attributes
+        val deviceWidth = DefaultDialogConfigure.getDeviceWidthSize(requireContext())
+        params?.width = (deviceWidth * 0.9).toInt()
+        dialog?.window?.attributes = params as WindowManager.LayoutParams
     }
 
     private fun setImageResetClickListener() {
@@ -93,6 +98,8 @@ class MyProfileEditImageOptionFragment : DialogFragment() {
                 // 이미지 파일과 함께, 파일 확장자도 같이 저장
                 val fileExtension = requireContext().contentResolver.getType(uri).toString().split("/")[1]
                 setMyProfileImage(uri.toString(), fileExtension)
+            } else{
+                findNavController().popBackStack()
             }
         }
 
