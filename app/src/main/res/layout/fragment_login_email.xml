@@ -33,7 +33,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginHorizontal="20dp"
+        android:layout_marginHorizontal="18dp"
         android:layout_marginBottom="18dp">
         <TextView
             android:id="@+id/tv_login_email_title"
@@ -42,29 +42,32 @@
             android:text="@string/login"
             android:textSize="22dp"
             android:textColor="@color/gray_1_313131"
+            android:includeFontPadding="false"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="48dp"/>
+            android:layout_marginTop="48dp"
+            android:layout_marginStart="2dp"/>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_login_email_address_contents"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/tv_login_email_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="65dp" >
+            android:layout_marginTop="65dp"
+            android:layout_marginStart="2dp" >
             <TextView
                 android:id="@+id/tv_login_email_address_title"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/email"
                 android:textSize="12dp"
                 android:textColor="@color/gray_3_9C9C9C"
-                android:gravity="start"
+                android:includeFontPadding="false"
+                app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
-
+                app:layout_constraintEnd_toEndOf="parent" />
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layout_login_email_address"
                 android:layout_width="match_parent"
@@ -94,19 +97,19 @@
                     android:textColorHint="@color/gray_5_D3D2D2"
                     android:singleLine="true"
                     android:paddingStart="0dp"
-                    android:paddingVertical="0dp"
-                    android:includeFontPadding="false"/>
+                    android:paddingVertical="0dp" />
             </com.google.android.material.textfield.TextInputLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_login_email_password_contents"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/layout_login_email_address_contents"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="30dp" >
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="2dp" >
             <TextView
                 android:id="@+id/tv_login_email_password_title"
                 android:layout_width="0dp"
@@ -117,7 +120,7 @@
                 android:gravity="start"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent" />
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layout_login_email_password"
                 android:layout_width="match_parent"
@@ -144,8 +147,7 @@
                     android:inputType="textPassword"
                     android:singleLine="true"
                     android:paddingStart="0dp"
-                    android:paddingVertical="0dp"
-                    android:includeFontPadding="false"/>
+                    android:paddingVertical="0dp" />
             </com.google.android.material.textfield.TextInputLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -164,7 +166,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_login_email_forget"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@id/btn_login_email_next"
             app:layout_constraintStart_toStartOf="parent"
@@ -180,12 +182,15 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:padding="10dp" />
+                android:paddingTop="11dp"
+                android:paddingBottom="12dp"
+                android:paddingStart="9dp"
+                android:paddingEnd="8dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_login_email_next"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="false"
             android:text="@string/login"
