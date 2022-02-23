@@ -17,6 +17,7 @@ import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentSignupEmailSetEmailAddressCertificateBinding
 import com.daily.dayo.util.ButtonActivation
 import com.daily.dayo.util.HideKeyBoardUtil
+import com.daily.dayo.util.SetTextInputLayout
 import com.daily.dayo.util.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.regex.Pattern
@@ -39,7 +40,7 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
         setTextEditorActionListener()
         setEmailResendClickListener()
         certificateEmail()
-        setUserPasswordEditText()
+        setUserAddressEditText()
 
         return binding.root
     }
@@ -48,7 +49,7 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
         view.setOnTouchListener { _, _ ->
             HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetEmailAddressCertificateUserInput)
             changeEditTextTitle()
-            setEditTextTheme(binding.etSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty())
+            SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty())
             true
         }
     }
@@ -58,7 +59,7 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
                 EditorInfo.IME_ACTION_DONE -> {
                     HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetEmailAddressCertificateUserInput)
                     changeEditTextTitle()
-                    setEditTextTheme(binding.etSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty())
+                    SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty())
                     true
                 } else -> false
             }
@@ -66,14 +67,15 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
     }
 
     private fun initEditText() {
+        SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty())
         binding.etSignupEmailSetEmailAddressCertificateUserInput.setOnFocusChangeListener { _, hasFocus ->
             with(binding.layoutSignupEmailSetEmailAddressCertificateUserInput) {
                 if(hasFocus){
                     hint = getString(R.string.email_address_certificate)
-                    setEditTextTheme(binding.etSignupEmailSetEmailAddressCertificateUserInput, false)
+                    SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, false)
                 } else {
                     hint = getString(R.string.signup_email_set_email_address_certificate_title)
-                    setEditTextTheme(binding.etSignupEmailSetEmailAddressCertificateUserInput, true)
+                    SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, true)
                 }
             }
         }
@@ -91,31 +93,21 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
         }
     }
 
-    private fun setEditTextTheme(editText: EditText, isEditTextEmpty: Boolean) {
-        if(isEditTextEmpty) {
-            binding.layoutSignupEmailSetEmailAddressCertificateUserInput.defaultHintTextColor = resources.getColorStateList(R.color.gray_5_D3D2D2, context?.theme)
-            if(!binding.layoutSignupEmailSetEmailAddressCertificateUserInput.isErrorEnabled) {
-                editText.backgroundTintList = resources.getColorStateList(R.color.gray_6_EDEDED, context?.theme)
-            }
-        } else {
-            binding.layoutSignupEmailSetEmailAddressCertificateUserInput.defaultHintTextColor = resources.getColorStateList(R.color.gray_3_9C9C9C, context?.theme)
-            if(!binding.layoutSignupEmailSetEmailAddressCertificateUserInput.isErrorEnabled) {
-                editText.backgroundTintList = resources.getColorStateList(R.color.primary_green_23C882, context?.theme)
-            }
-        }
-    }
-    private fun setEditTextErrorTheme(errorMessage: String?, pass: Boolean) {
-        with(binding.layoutSignupEmailSetEmailAddressCertificateUserInput) {
-            error = errorMessage
-            errorIconDrawable = null
-            if(pass) {
-                isErrorEnabled = false
-                binding.etSignupEmailSetEmailAddressCertificateUserInput.backgroundTintList = resources.getColorStateList(R.color.primary_green_23C882, context?.theme)
+    private fun certificateEmail() {
+        /*
+        binding.tvSignupEmailSetEmailAddressCertificateTitle.setOnClickListener {// TODO : 인증 체크 API 서버와 연동
+            if(!binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty()) {
+                ButtonActivation.setSignupButtonActive(requireContext(), binding.btnSignupEmailSetEmailAddressCertificateNext)
+                SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, null, true)
+                currentCountDownTimer?.cancel()
+                currentCountDownTimer = null
+                binding.tvSignupEmailSetEmailAddressCertificateResend.isEnabled = false
             } else {
-                isErrorEnabled = true
-                binding.etSignupEmailSetEmailAddressCertificateUserInput.backgroundTintList = resources.getColorStateList(R.color.red_FF4545, context?.theme)
+                ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetEmailAddressCertificateNext)
+                SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, getString(R.string.signup_email_set_email_address_certificate_alert_message_match_fail), false)
             }
         }
+         */
     }
 
     private fun setLimitEditTextInputType() {
@@ -137,7 +129,7 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
             binding.tvSignupEmailSetEmailAddressCertificateTimer.text = "${"%02d".format(remainMinutes)}:${"%02d".format(remainSeconds)}"
         }
         override fun onFinish() {
-            setEditTextErrorTheme(getString(R.string.signup_email_set_email_address_certificate_alert_message_time_fail), false)
+            SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, getString(R.string.signup_email_set_email_address_certificate_alert_message_time_fail),false)
         }
     }
 
@@ -149,29 +141,13 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
 
             changeEditTextTitle()
             binding.layoutSignupEmailSetEmailAddressCertificateUserInput.isErrorEnabled = false
-            setEditTextTheme(binding.etSignupEmailSetEmailAddressCertificateUserInput, true)
+            SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, true)
 
             Toast.makeText(requireContext(), R.string.signup_email_set_email_address_certificate_alert_message__resend, Toast.LENGTH_SHORT).show() // 4. 토스트 메시지 보여짐
         }
     }
 
-    private fun certificateEmail() {
-        /*
-        binding.tvSignupEmailSetEmailAddressCertificateTitle.setOnClickListener {// TODO : 인증 체크 API 서버와 연동
-            if(!binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty()) {
-                ButtonActivation.setSignupButtonActive(requireContext(), binding.btnSignupEmailSetEmailAddressCertificateNext)
-                setEditTextErrorTheme(null, true)
-                currentCountDownTimer?.cancel()
-                currentCountDownTimer = null
-            } else {
-                ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetEmailAddressCertificateNext)
-                setEditTextErrorTheme(getString(R.string.signup_email_set_email_address_certificate_alert_message_match_fail), false)
-            }
-        }
-        */
-    }
-
-    private fun setUserPasswordEditText() {
+    private fun setUserAddressEditText() {
         binding.email = args.email
     }
 
