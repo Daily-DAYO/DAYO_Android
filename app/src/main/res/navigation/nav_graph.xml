@@ -250,6 +250,9 @@
         <argument
             android:name="folderId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_folderEditFragment_to_folderSettingAddImageOptionFragment"
+            app:destination="@id/FolderSettingEditImageOptionFragment"/>
     </fragment>
 
     <dialog
@@ -296,7 +299,18 @@
         android:id="@+id/FolderSettingAddFragment"
         android:name="com.daily.dayo.profile.FolderSettingAddFragment"
         tools:layout="@layout/fragment_folder_setting_add">
+
+        <action android:id="@+id/action_folderSettingAddFragment_to_folderSettingAddImageOptionFragment"
+            app:destination="@id/FolderSettingEditImageOptionFragment" />
+
     </fragment>
+
+    <dialog
+        android:id="@+id/FolderSettingEditImageOptionFragment"
+        android:name="com.daily.dayo.profile.FolderSettingEditImageOptionFragment"
+        android:label="fragment_folder_setting_edit_image_option"
+        tools:layout="@layout/fragment_folder_setting_edit_image_option">
+    </dialog>
 
     <fragment
         android:id="@+id/MyProfileEditFragment"

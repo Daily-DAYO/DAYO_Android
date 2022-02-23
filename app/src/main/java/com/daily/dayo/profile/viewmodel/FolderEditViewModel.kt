@@ -25,8 +25,8 @@ class FolderEditViewModel@Inject constructor(
 
     val editSuccess = MutableLiveData<Boolean>()
 
-    fun requestEditFolder(folderId:Int, name:String, privacy:String, subheading:String?, thumbnailImage: File?) = viewModelScope.launch {
-        val response = folderRepository.requestEditFolder(folderId,name,privacy,subheading,thumbnailImage)
+    fun requestEditFolder(folderId:Int, name:String, privacy:String, subheading:String?, isFileChange:Boolean, thumbnailImage: File?) = viewModelScope.launch {
+        val response = folderRepository.requestEditFolder(folderId,name,privacy,subheading, isFileChange,thumbnailImage)
         if(response.isSuccessful){
             editSuccess.postValue(true)
         }else{
