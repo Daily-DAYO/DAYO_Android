@@ -11,6 +11,8 @@ class HomeApiHelperImpl @Inject constructor(private val homeApiService: HomeApiS
     // In ApiHelperImpl we have injected ApiService in the constructor itself
     // So we do not have to create new instance of ApiService instead it is passed as a dependency to the ApiHelperImpl.
     // In this way we can have only one instance of ApiService throughout the application lifecycle for any number of network calls.
-    override suspend fun requestPostList(): Response<ResponseHomePost> = homeApiService.requestPostList()
-    override suspend fun requestPostListCategory(category: String): Response<ResponseHomePost> = homeApiService.requestPostListCategory(category)
+    override suspend fun requestNewPostList(): Response<ResponseHomePost> = homeApiService.requestNewPostList()
+    override suspend fun requestNewPostListCategory(category: String): Response<ResponseHomePost> = homeApiService.requestNewPostListCategory(category)
+    override suspend fun requestDayoPickPostList(): Response<ResponseHomePost> = homeApiService.requestDayoPickPostList()
+    override suspend fun requestDayoPickPostListCategory(category: String): Response<ResponseHomePost> = homeApiService.requestDayoPickPostListCategory(category)
 }

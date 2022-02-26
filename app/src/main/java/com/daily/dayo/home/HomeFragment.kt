@@ -40,7 +40,7 @@ class HomeFragment : Fragment() {
         val pagerAdapter = HomeFragmentPagerStateAdapter(requireActivity())
         pagerAdapter.addFragment(DayoPickPostListFragment())
         pagerAdapter.addFragment(NewPostListFragment())
-        homeViewModel.requestPostList()
+        homeViewModel.requestDayoPickPostList()
         for (i in 0 until pagerAdapter.itemCount) {
             pagerAdapter.refreshFragment(i,pagerAdapter.fragments[i])
             Log.e("Refresh Fragment", "Page ${i+1}")
@@ -51,6 +51,10 @@ class HomeFragment : Fragment() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 Log.e("ViewPagerFragment", "Page ${position+1}")
+                when (position){
+                    0 -> homeViewModel.requestDayoPickPostList()
+                    1 -> homeViewModel.requestNewPostList()
+                }
             }
         })
 

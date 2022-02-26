@@ -98,10 +98,10 @@ class DayoPickPostListFragment : Fragment() {
         currentCategory = selectCategory
         if(selectCategory == getString(R.string.all_eng)) {
             homeViewModel.currentCategory = selectCategory
-            homeViewModel.requestHomePostList()
+            homeViewModel.requestHomeDayoPickPostList()
         } else if(!selectCategory.isNullOrEmpty()) {
             homeViewModel.currentCategory = selectCategory
-            homeViewModel.requestHomePostListCategory(selectCategory)
+            homeViewModel.requestHomeDayoPickPostListCategory(selectCategory)
         }
     }
 
@@ -119,9 +119,9 @@ class DayoPickPostListFragment : Fragment() {
                             is CancellationException -> Log.e("Post Like Click", "CANCELLED")
                             null -> {
                                 if(currentCategory != getString(R.string.all_eng)) {
-                                    homeViewModel.requestHomePostListCategory(currentCategory)
+                                    homeViewModel.requestHomeDayoPickPostListCategory(currentCategory)
                                 } else {
-                                    homeViewModel.requestHomePostList()
+                                    homeViewModel.requestHomeDayoPickPostList()
                                 }
                             }
                         }
