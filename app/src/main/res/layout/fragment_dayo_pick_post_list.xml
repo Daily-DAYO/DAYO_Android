@@ -11,10 +11,10 @@
         android:id="@+id/layout_scroll_dayo_pick_post_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toStartOf="parent">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -25,7 +25,7 @@
                 android:scrollbars="none"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:paddingHorizontal="15dp">
+                android:paddingHorizontal="16dp">
                 <RadioGroup
                     android:id="@+id/radiogroup_dayopick_post_category"
                     android:layout_width="wrap_content"
@@ -33,12 +33,12 @@
                     android:orientation="horizontal"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:paddingTop="18dp"
+                    android:paddingTop="19dp"
                     android:paddingBottom="27dp">
                     <RadioButton
                         android:id="@+id/radiobutton_dayopick_post_category_all"
-                        android:layout_width="83.5dp"
-                        android:layout_height="27.4dp"
+                        android:layout_width="73dp"
+                        android:layout_height="24dp"
                         android:checked="true"
                         android:text="@string/all"
                         android:textSize="10dp"
@@ -49,8 +49,8 @@
                         android:layout_marginRight="9dp"/>
                     <RadioButton
                         android:id="@+id/radiobutton_dayopick_post_category_scheduler"
-                        android:layout_width="83.5dp"
-                        android:layout_height="27.4dp"
+                        android:layout_width="73dp"
+                        android:layout_height="24dp"
                         android:text="@string/scheduler"
                         android:textSize="10dp"
                         android:textColor="@drawable/selector_button_home_post_category_text"
@@ -61,8 +61,8 @@
 
                     <RadioButton
                         android:id="@+id/radiobutton_dayopick_post_category_studyplanner"
-                        android:layout_width="83.5dp"
-                        android:layout_height="27.4dp"
+                        android:layout_width="73dp"
+                        android:layout_height="24dp"
                         android:text="@string/studyplanner"
                         android:textSize="10dp"
                         android:textColor="@drawable/selector_button_home_post_category_text"
@@ -73,8 +73,8 @@
 
                     <RadioButton
                         android:id="@+id/radiobutton_dayopick_post_category_pocketbook"
-                        android:layout_width="83.5dp"
-                        android:layout_height="27.4dp"
+                        android:layout_width="73dp"
+                        android:layout_height="24dp"
                         android:text="@string/pocketbook"
                         android:textSize="10dp"
                         android:textColor="@drawable/selector_button_home_post_category_text"
@@ -85,8 +85,8 @@
 
                     <RadioButton
                         android:id="@+id/radiobutton_dayopick_post_category_6holediary"
-                        android:layout_width="83.5dp"
-                        android:layout_height="27.4dp"
+                        android:layout_width="73dp"
+                        android:layout_height="24dp"
                         android:text="@string/sixHoleDiary"
                         android:textSize="10dp"
                         android:textColor="@drawable/selector_button_home_post_category_text"
@@ -96,8 +96,8 @@
                         android:layout_marginRight="9dp"/>
                     <RadioButton
                         android:id="@+id/radiobutton_dayopick_post_category_digital"
-                        android:layout_width="83.5dp"
-                        android:layout_height="27.4dp"
+                        android:layout_width="73dp"
+                        android:layout_height="24dp"
                         android:text="@string/digital"
                         android:textSize="10dp"
                         android:textColor="@drawable/selector_button_home_post_category_text"
@@ -107,8 +107,8 @@
                         android:layout_marginRight="9dp"/>
                     <RadioButton
                         android:id="@+id/radiobutton_dayopick_post_category_etc"
-                        android:layout_width="83.5dp"
-                        android:layout_height="27.4dp"
+                        android:layout_width="73dp"
+                        android:layout_height="24dp"
                         android:text="@string/etc"
                         android:textSize="10dp"
                         android:textColor="@drawable/selector_button_home_post_category_text"

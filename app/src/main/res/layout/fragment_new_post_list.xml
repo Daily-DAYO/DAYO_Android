@@ -11,21 +11,21 @@
             android:id="@+id/layout_scroll_new_post_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintStart_toStartOf="parent">
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <HorizontalScrollView
                     android:id="@+id/layout_new_post_category"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:scrollbars="none"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:paddingHorizontal="15dp" >
+                    android:paddingHorizontal="16dp" >
                     <RadioGroup
                         android:id="@+id/radiogroup_new_post_category"
                         android:layout_width="wrap_content"
@@ -33,7 +33,7 @@
                         android:orientation="horizontal"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        android:paddingTop="18dp"
+                        android:paddingTop="19dp"
                         android:paddingBottom="27dp">
 
                         <RadioButton
@@ -93,12 +93,13 @@
                             android:textColor="@drawable/selector_button_home_post_category_text"
                             android:textAlignment="center"
                             android:background="@drawable/selector_button_home_post_category"
-                            android:button="@null"/>
+                            android:button="@null"
+                            android:layout_marginRight="9dp"/>
 
                         <RadioButton
                             android:id="@+id/radiobutton_new_post_category_digital"
-                            android:layout_width="83.5dp"
-                            android:layout_height="27.4dp"
+                            android:layout_width="73dp"
+                            android:layout_height="24dp"
                             android:text="@string/digital"
                             android:textSize="10dp"
                             android:textColor="@drawable/selector_button_home_post_category_text"
@@ -108,8 +109,8 @@
                             android:layout_marginRight="9dp"/>
                         <RadioButton
                             android:id="@+id/radiobutton_new_post_category_etc"
-                            android:layout_width="83.5dp"
-                            android:layout_height="27.4dp"
+                            android:layout_width="73dp"
+                            android:layout_height="24dp"
                             android:text="@string/etc"
                             android:textSize="10dp"
                             android:textColor="@drawable/selector_button_home_post_category_text"
@@ -121,14 +122,14 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_new_post"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:overScrollMode="never"
                     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                     app:spanCount="2"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/layout_new_post_category"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginHorizontal="21dp"
                     tools:listitem="@layout/item_main_post" />
             </androidx.constraintlayout.widget.ConstraintLayout>
