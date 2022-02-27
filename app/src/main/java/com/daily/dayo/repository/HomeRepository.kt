@@ -12,8 +12,10 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class HomeRepository @Inject constructor(private val homeApiHelper: HomeApiHelper, private val postApiHelper: PostApiHelper) {
-    suspend fun requestPostList() = homeApiHelper.requestPostList().verify()
-    suspend fun requestPostListCategory(category: String) = homeApiHelper.requestPostListCategory(category).verify()
+    suspend fun requestNewPostList() = homeApiHelper.requestNewPostList().verify()
+    suspend fun requestNewPostListCategory(category: String) = homeApiHelper.requestNewPostListCategory(category).verify()
+    suspend fun requestDayoPickPostList() = homeApiHelper.requestDayoPickPostList().verify()
+    suspend fun requestDayoPickPostListCategory(category: String) = homeApiHelper.requestDayoPickPostListCategory(category).verify()
     suspend fun requestLikePost(request : RequestLikePost) = postApiHelper.requestLikePost(request).verify()
     suspend fun requestUnlikePost(postId: Int) = postApiHelper.requestUnlikePost(postId)
 }

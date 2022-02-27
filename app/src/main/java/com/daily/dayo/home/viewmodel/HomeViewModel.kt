@@ -28,19 +28,28 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
     var currentCategory = "ALL"
 
-    fun requestPostList() = viewModelScope.launch {
+    fun requestNewPostList() = viewModelScope.launch {
         if(currentCategory == "ALL"){
-            requestHomePostList()
+            requestHomeNewPostList()
         } else if(!currentCategory.isNullOrEmpty()) {
-            requestHomePostListCategory(currentCategory)
+            requestHomeNewPostListCategory(currentCategory)
+        } else {
+            // ERROR
+        }
+    }
+    fun requestDayoPickPostList() = viewModelScope.launch {
+        if(currentCategory == "ALL"){
+            requestHomeDayoPickPostList()
+        } else if(!currentCategory.isNullOrEmpty()) {
+            requestHomeDayoPickPostListCategory(currentCategory)
         } else {
             // ERROR
         }
     }
 
-    fun requestHomePostList() = viewModelScope.launch {
+    fun requestHomeNewPostList() = viewModelScope.launch {
         _postList.postValue(Resource.loading(null))
-        homeRepository.requestPostList().let {
+        homeRepository.requestNewPostList().let {
             if(it.isSuccessful){
                 _postList.postValue(Resource.success(it.body()))
             } else {
@@ -48,9 +57,28 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             }
         }
     }
+    fun requestHomeNewPostListCategory(category: String) = viewModelScope.launch {
+        homeRepository.requestNewPostListCategory(category).let {
+            if(it.isSuccessful) {
+                _postList.postValue(Resource.success(it.body()))
+            } else {
+                _postList.postValue(Resource.error(it.errorBody().toString(), null))
+            }
+        }
+    }
 
-    fun requestHomePostListCategory(category: String) = viewModelScope.launch {
-        homeRepository.requestPostListCategory(category).let {
+    fun requestHomeDayoPickPostList() = viewModelScope.launch {
+        _postList.postValue(Resource.loading(null))
+        homeRepository.requestDayoPickPostList().let {
+            if(it.isSuccessful){
+                _postList.postValue(Resource.success(it.body()))
+            } else {
+                _postList.postValue(Resource.error(it.errorBody().toString(), null))
+            }
+        }
+    }
+    fun requestHomeDayoPickPostListCategory(category: String) = viewModelScope.launch {
+        homeRepository.requestDayoPickPostListCategory(category).let {
             if(it.isSuccessful) {
                 _postList.postValue(Resource.success(it.body()))
             } else {

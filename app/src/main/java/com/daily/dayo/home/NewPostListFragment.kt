@@ -98,10 +98,10 @@ class NewPostListFragment : Fragment() {
         currentCategory = selectCategory
         if(selectCategory == getString(R.string.all_eng)) {
             homeViewModel.currentCategory = selectCategory
-            homeViewModel.requestHomePostList()
+            homeViewModel.requestHomeNewPostList()
         } else if(!selectCategory.isNullOrEmpty()) {
             homeViewModel.currentCategory = selectCategory
-            homeViewModel.requestHomePostListCategory(selectCategory)
+            homeViewModel.requestHomeNewPostListCategory(selectCategory)
         }
     }
 
@@ -119,9 +119,9 @@ class NewPostListFragment : Fragment() {
                         is CancellationException -> Log.e("Post Like Click", "CANCELLED")
                         null -> {
                             if(currentCategory != getString(R.string.all_eng)) {
-                                homeViewModel.requestHomePostListCategory(currentCategory)
+                                homeViewModel.requestHomeNewPostListCategory(currentCategory)
                             } else {
-                                homeViewModel.requestHomePostList()
+                                homeViewModel.requestHomeNewPostList()
                             }
                         }
                     }
