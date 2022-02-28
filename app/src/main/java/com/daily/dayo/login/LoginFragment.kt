@@ -69,7 +69,6 @@ class LoginFragment : Fragment() {
     private fun loginSuccess(){
         loginViewModel.loginSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
             if (isSuccess.getContentIfNotHandled() == true) {
-                Log.e(ContentValues.TAG, SharedManager(DayoApplication.applicationContext()).getCurrentUser().toString())
                 val intent = Intent(requireContext(), MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 startActivity(intent)
