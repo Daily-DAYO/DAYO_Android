@@ -1,14 +1,11 @@
 package com.daily.dayo
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import com.daily.dayo.PreferenceHelper.get
 import com.daily.dayo.PreferenceHelper.set
-import com.daily.dayo.login.LoginResponse
-import com.daily.dayo.login.MemberResponse
+import com.daily.dayo.login.model.LoginResponse
+import com.daily.dayo.login.model.MemberResponse
 import dagger.hilt.android.qualifiers.ApplicationContext
-import retrofit2.Response
-import java.lang.reflect.Member
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,5 +35,8 @@ class SharedManager @Inject constructor(@ApplicationContext context: Context) {
             nickname = prefs["nickname",""]
             profileImg = prefs["profileImg",""]
         }
+    }
+    fun setAccessToken(accessToken:String) {
+        prefs["accessToken"] = accessToken
     }
 }

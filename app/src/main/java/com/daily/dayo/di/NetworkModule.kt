@@ -22,9 +22,6 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideOkHttpClient() = if(BuildConfig.DEBUG){
-        val sharedManager = SharedManager(DayoApplication.applicationContext())
-        val accessToken = sharedManager.getCurrentUser().accessToken.toString()
-
         val loggingInterceptor =HttpLoggingInterceptor()
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         OkHttpClient.Builder()
@@ -36,7 +33,7 @@ object NetworkModule {
                     chain.proceed(request)
                 } else {
                     chain.proceed(request.newBuilder().apply {
-                        addHeader("Authorization", "Bearer $accessToken")
+                        addHeader("Authorization", "Bearer ${SharedManager(DayoApplication.applicationContext()).getCurrentUser().accessToken.toString()}")
                     }.build())
                 }
             }
