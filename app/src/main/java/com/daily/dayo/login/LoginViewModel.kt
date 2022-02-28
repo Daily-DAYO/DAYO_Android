@@ -4,7 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daily.dayo.login.model.SignupEmailRequest
+import com.daily.dayo.SharedManager
+import com.daily.dayo.login.model.LoginRequest
+import com.daily.dayo.repository.LoginRepository
 import com.daily.dayo.util.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -13,19 +15,39 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val loginRepository: LoginRepository) : ViewModel(){
+class LoginViewModel @Inject constructor(private val loginRepository: LoginRepository, private val sharedManager: SharedManager) : ViewModel(){
 
     private val _signupSuccess = MutableLiveData<Event<Boolean>>()
     val signupSuccess : LiveData<Event<Boolean>> get() =_signupSuccess
 
-    fun requestLogin(request: LoginRequest) {
-        viewModelScope.launch(Dispatchers.IO) {
-            loginRepository.requestLogin(request)
+    private val _loginSuccess = MutableLiveData<Event<Boolean>>()
+    val loginSuccess : LiveData<Event<Boolean>> get() =_loginSuccess
+
+    fun requestLogin(request: LoginRequest) = viewModelScope.launch {
+        val response = loginRepository.requestLogin(request)
+        if (response.isSuccessful) {
+            sharedManager.saveCurrentUser(response.body())
+            requestMemberInfo()
+            _loginSuccess.postValue(Event(true))
+        } else {
+            _loginSuccess.postValue(Event(false))
         }
     }
 
-    fun requestMemberInfo() = viewModelScope.launch{
-        loginRepository.requestMemberInfo()
+    fun requestRefreshToken() = viewModelScope.launch {
+        val response = loginRepository.requestRefreshToken()
+        if(response.isSuccessful){
+            response.body()?.let { sharedManager.setAccessToken(it.accessToken) }
+            requestMemberInfo()
+            _loginSuccess.postValue(Event(true))
+        }
+    }
+
+    private fun requestMemberInfo() = viewModelScope.launch{
+        val response = loginRepository.requestMemberInfo()
+        if (response.isSuccessful) {
+            sharedManager.saveCurrentUser(response.body())
+        }
     }
 
     fun requestSignupEmail(email: String, nickname: String, password: String, profileImg: File?) = viewModelScope.launch(Dispatchers.IO) {
