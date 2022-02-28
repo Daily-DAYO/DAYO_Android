@@ -42,6 +42,16 @@
         android:name="com.daily.dayo.search.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_searchFragment_to_searchResultFragment"
+            app:destination="@id/SearchResultFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/SearchResultFragment"
+        android:name="com.daily.dayo.search.SearchResultFragment"
+        android:label="fragment_search_result"
+        tools:layout="@layout/fragment_search_result">
     </fragment>
 
     <fragment
