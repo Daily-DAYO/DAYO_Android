@@ -11,6 +11,7 @@
     <string name="complete">완료</string>
     <string name="cancel">취소</string>
     <string name="delete">삭제</string>
+    <string name="delete_all">전체삭제</string>
     <string name="modify">수정</string>
     <string name="close">닫기</string>
     <string name="login">로그인</string>
@@ -136,6 +137,8 @@
 
     <!-- Search -->
     <string name="hint_search_keyword_input">검색어를 입력해주세요.</string>
+    <string name="search_recent">최근 검색어</string>
+    <string name="search_recommend">추천 검색어</string>
 
     <!-- Signup -->
     <!-- Signup Email Set Address -->
