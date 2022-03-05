@@ -18,6 +18,8 @@ interface LoginApiService {
                                    @Part("nickname") nickname: String,
                                    @Part("password") password: String,
                                    @Part profileImg: MultipartBody.Part) : Response<SignupEmailResponse>
+    @GET("/api/v1/members/duplicate/email/{email}")
+    suspend fun requestCheckEmailDuplicate(@Path("email") email: String) : Response<Void>
 
     @GET("/api/v1/members/refresh")
     suspend fun requestRefreshToken():Response<ResponseRefreshToken>

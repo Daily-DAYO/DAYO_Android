@@ -26,5 +26,6 @@ class LoginRepository @Inject constructor(private val loginApiHelper: LoginApiHe
         uploadFile = MultipartBody.Part.createFormData("profileImg",fileNameDivideList[fileNameDivideList.size - 1], requestBodyFile)
         return loginApiHelper.requestSignupEmail(email, nickname, password, uploadFile)
     }
+    suspend fun requestCheckEmailDuplicate(email: String): Response<Void> = loginApiHelper.requestCheckEmailDuplicate(email)
 }
 
