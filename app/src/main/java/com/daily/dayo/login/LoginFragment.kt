@@ -16,7 +16,7 @@ import com.daily.dayo.MainActivity
 import com.daily.dayo.R
 import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.FragmentLoginBinding
-import com.daily.dayo.login.model.LoginRequest
+import com.daily.dayo.login.model.LoginRequestKakao
 import com.daily.dayo.util.autoCleared
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
@@ -57,7 +57,7 @@ class LoginFragment : Fragment() {
         }
         else if (token != null) {
             Log.i(ContentValues.TAG, "카카오 로그인 성공 ${token.accessToken}")
-            loginViewModel.requestLogin(LoginRequest(token.accessToken))
+            loginViewModel.requestLoginKakao(LoginRequestKakao(token.accessToken))
         }
     }
 

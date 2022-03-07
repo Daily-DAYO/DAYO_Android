@@ -28,7 +28,8 @@ object NetworkModule {
             .addInterceptor{ chain: Interceptor.Chain ->
                 val request = chain.request()
                 // Header에 AccessToken을 삽입하지 않는 대상
-                if (request.url.encodedPath.equals("/api/v1/members/kakaoOAuth", true)
+                if (request.url.encodedPath.equals("/api/v1/members/kakaoOAuth", true) ||
+                    request.url.encodedPath.equals("/api/v1/members/signIn", true)
                 ) {
                     chain.proceed(request)
                 } else {

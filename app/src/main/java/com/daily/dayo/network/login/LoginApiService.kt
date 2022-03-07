@@ -7,7 +7,9 @@ import retrofit2.http.*
 
 interface LoginApiService {
     @POST("/api/v1/members/kakaoOAuth")
-    suspend fun requestLogin(@Body body : LoginRequest) : Response<LoginResponse>
+    suspend fun requestLoginKakao(@Body body : LoginRequestKakao) : Response<LoginResponse>
+    @POST("/api/v1/members/signIn")
+    suspend fun requestLoginEmail(@Body body : LoginRequestEmail) : Response<LoginResponse>
 
     @GET("/api/v1/members/myInfo")
     suspend fun requestMemberInfo() : Response<MemberResponse>
