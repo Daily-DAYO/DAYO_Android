@@ -19,6 +19,8 @@ class LoginApiHelperImpl@Inject constructor(private val loginApiService: LoginAp
         profileImg: MultipartBody.Part
     ): Response<SignupEmailResponse> = loginApiService.requestSignupEmail(email, nickname, password, profileImg)
 
+    override suspend fun requestCheckEmailDuplicate(email: String): Response<Void> = loginApiService.requestCheckEmailDuplicate(email)
+
     override suspend fun requestRefreshToken(): Response<ResponseRefreshToken> =
         loginApiService.requestRefreshToken()
 }

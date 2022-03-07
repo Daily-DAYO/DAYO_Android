@@ -23,6 +23,9 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
     private val _loginSuccess = MutableLiveData<Event<Boolean>>()
     val loginSuccess : LiveData<Event<Boolean>> get() =_loginSuccess
 
+    private val _isEmailDuplicate = MutableLiveData<Boolean>()
+    val isEmailDuplicate : LiveData<Boolean> get() = _isEmailDuplicate
+
     fun requestLogin(request: LoginRequest) = viewModelScope.launch {
         val response = loginRepository.requestLogin(request)
         if (response.isSuccessful) {
@@ -56,6 +59,15 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
             _signupSuccess.postValue(Event(true))
         } else {
             _signupSuccess.postValue(Event(false))
+        }
+    }
+
+    fun requestCheckEmailDuplicate(email: String) = viewModelScope.launch(Dispatchers.IO) {
+        val response = loginRepository.requestCheckEmailDuplicate(email)
+        if (response.isSuccessful) {
+            _isEmailDuplicate.postValue(true)
+        } else {
+            _isEmailDuplicate.postValue(false)
         }
     }
 }
