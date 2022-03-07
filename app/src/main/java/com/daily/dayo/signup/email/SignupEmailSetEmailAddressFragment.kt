@@ -9,10 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentSignupEmailSetEmailAddressBinding
+import com.daily.dayo.login.LoginViewModel
 import com.daily.dayo.util.ButtonActivation
 import com.daily.dayo.util.HideKeyBoardUtil
 import com.daily.dayo.util.SetTextInputLayout
@@ -23,6 +26,7 @@ import java.util.regex.Pattern
 @AndroidEntryPoint
 class SignupEmailSetEmailAddressFragment : Fragment() {
     private var binding by autoCleared<FragmentSignupEmailSetEmailAddressBinding>()
+    private val loginViewModel by activityViewModels<LoginViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -101,13 +105,16 @@ class SignupEmailSetEmailAddressFragment : Fragment() {
 
     private fun verifyEmailAddress() {
         if(android.util.Patterns.EMAIL_ADDRESS.matcher(binding.etSignupEmailSetEmailAddressUserInput.text.toString().trim()).matches()){ // 이메일 주소 양식 검사
-            if(true) { // TODO : 서버와 통신하여 이메일 중복 체크 필요
-                SetTextInputLayout.setEditTextErrorThemeWithIcon(requireContext(), binding.layoutSignupEmailSetEmailAddressUserInput, binding.etSignupEmailSetEmailAddressUserInput, null, true)
-                ButtonActivation.setSignupButtonActive(requireContext(), binding.btnSignupEmailSetEmailAddressNext)
-            } else {
-                SetTextInputLayout.setEditTextErrorThemeWithIcon(requireContext(), binding.layoutSignupEmailSetEmailAddressUserInput, binding.etSignupEmailSetEmailAddressUserInput, getString(R.string.signup_email_set_email_address_message_duplicate_fail), false)
-                ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetEmailAddressNext)
-            }
+            loginViewModel.requestCheckEmailDuplicate(binding.etSignupEmailSetEmailAddressUserInput.text.toString().trim())
+            loginViewModel.isEmailDuplicate.observe(viewLifecycleOwner, Observer { isDuplicate ->
+                if(isDuplicate) {
+                    SetTextInputLayout.setEditTextErrorThemeWithIcon(requireContext(), binding.layoutSignupEmailSetEmailAddressUserInput, binding.etSignupEmailSetEmailAddressUserInput, null, true)
+                    ButtonActivation.setSignupButtonActive(requireContext(), binding.btnSignupEmailSetEmailAddressNext)
+                } else {
+                    SetTextInputLayout.setEditTextErrorThemeWithIcon(requireContext(), binding.layoutSignupEmailSetEmailAddressUserInput, binding.etSignupEmailSetEmailAddressUserInput, getString(R.string.signup_email_set_email_address_message_duplicate_fail), false)
+                    ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetEmailAddressNext)
+                }
+            })
         } else {
             SetTextInputLayout.setEditTextErrorThemeWithIcon(requireContext(), binding.layoutSignupEmailSetEmailAddressUserInput, binding.etSignupEmailSetEmailAddressUserInput, getString(R.string.signup_email_set_email_address_message_format_fail), false)
             ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetEmailAddressNext)
