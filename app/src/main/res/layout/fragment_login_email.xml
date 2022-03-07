@@ -45,7 +45,7 @@
             android:includeFontPadding="false"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="44dp"
             android:layout_marginStart="2dp"/>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_login_email_address_contents"
@@ -54,8 +54,8 @@
             app:layout_constraintTop_toBottomOf="@id/tv_login_email_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="65dp"
-            android:layout_marginStart="2dp" >
+            android:layout_marginTop="62dp"
+            android:layout_marginHorizontal="2dp" >
             <TextView
                 android:id="@+id/tv_login_email_address_title"
                 android:layout_width="match_parent"
@@ -108,8 +108,8 @@
             app:layout_constraintTop_toBottomOf="@id/layout_login_email_address_contents"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="30dp"
-            android:layout_marginStart="2dp" >
+            android:layout_marginTop="44dp"
+            android:layout_marginHorizontal="2dp" >
             <TextView
                 android:id="@+id/tv_login_email_password_title"
                 android:layout_width="0dp"

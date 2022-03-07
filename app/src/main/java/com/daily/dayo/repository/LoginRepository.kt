@@ -10,7 +10,8 @@ import java.io.File
 import javax.inject.Inject
 
 class LoginRepository @Inject constructor(private val loginApiHelper: LoginApiHelper) {
-    suspend fun requestLogin(request: LoginRequest): Response<LoginResponse> = loginApiHelper.requestLogin(request)
+    suspend fun requestLoginKakao(request: LoginRequestKakao): Response<LoginResponse> = loginApiHelper.requestLoginKakao(request)
+    suspend fun requestLoginEmail(request: LoginRequestEmail): Response<LoginResponse> = loginApiHelper.requestLoginEmail(request)
     suspend fun requestMemberInfo(): Response<MemberResponse> = loginApiHelper.requestMemberInfo()
     suspend fun requestRefreshToken(): Response<ResponseRefreshToken> = loginApiHelper.requestRefreshToken()
 

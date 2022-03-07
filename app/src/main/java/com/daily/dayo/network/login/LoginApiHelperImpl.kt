@@ -6,8 +6,10 @@ import javax.inject.Inject
 
 class LoginApiHelperImpl@Inject constructor(private val loginApiService: LoginApiService) : LoginApiHelper{
 
-    override suspend fun requestLogin(request: LoginRequest): Response<LoginResponse> =
-        loginApiService.requestLogin(request)
+    override suspend fun requestLoginKakao(request: LoginRequestKakao): Response<LoginResponse> =
+        loginApiService.requestLoginKakao(request)
+    override suspend fun requestLoginEmail(request: LoginRequestEmail): Response<LoginResponse> =
+        loginApiService.requestLoginEmail(request)
 
     override suspend fun requestMemberInfo() : Response<MemberResponse> =
         loginApiService.requestMemberInfo()

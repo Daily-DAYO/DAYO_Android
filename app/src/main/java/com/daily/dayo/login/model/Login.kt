@@ -2,9 +2,16 @@ package com.daily.dayo.login.model
 
 import com.google.gson.annotations.SerializedName
 
-data class LoginRequest(
+data class LoginRequestKakao(
     @SerializedName("accessToken")
     val accessToken : String
+)
+
+data class LoginRequestEmail(
+    @SerializedName("email")
+    val email : String,
+    @SerializedName("password")
+    val password : String
 )
 
 data class LoginResponse(
