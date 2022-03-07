@@ -5,7 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.SharedManager
-import com.daily.dayo.login.model.LoginRequest
+import com.daily.dayo.login.model.LoginRequestEmail
+import com.daily.dayo.login.model.LoginRequestKakao
 import com.daily.dayo.repository.LoginRepository
 import com.daily.dayo.util.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,8 +27,19 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
     private val _isEmailDuplicate = MutableLiveData<Boolean>()
     val isEmailDuplicate : LiveData<Boolean> get() = _isEmailDuplicate
 
-    fun requestLogin(request: LoginRequest) = viewModelScope.launch {
-        val response = loginRepository.requestLogin(request)
+    fun requestLoginKakao(request: LoginRequestKakao) = viewModelScope.launch {
+        val response = loginRepository.requestLoginKakao(request)
+        if (response.isSuccessful) {
+            sharedManager.saveCurrentUser(response.body())
+            requestMemberInfo()
+            _loginSuccess.postValue(Event(true))
+        } else {
+            _loginSuccess.postValue(Event(false))
+        }
+    }
+
+    fun requestLoginEmail(request: LoginRequestEmail) = viewModelScope.launch {
+        val response = loginRepository.requestLoginEmail(request)
         if (response.isSuccessful) {
             sharedManager.saveCurrentUser(response.body())
             requestMemberInfo()
