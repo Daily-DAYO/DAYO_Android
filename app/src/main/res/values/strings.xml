@@ -174,6 +174,10 @@
     <string name="signup_email_complete_guide_message"><b>%s</b>님,\n가입을 축하드려요!</string>
     <string name="signup_email_alert_message_fail_network">가입을 완료할 수 없어요. 다시 시도해주세요.</string>
 
+    <!-- Setting -->
+    <string name="setting_logout_message">계정을 로그아웃 할까요?</string>
+    <string name="setting_withdraw_message">계정을 삭제할까요?</string>
+    <string name="setting_withdraw_explanation_message">모든 정보가 삭제되며, 복구가 불가능합니다.</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
