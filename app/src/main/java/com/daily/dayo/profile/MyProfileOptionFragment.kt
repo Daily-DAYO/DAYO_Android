@@ -31,6 +31,7 @@ class MyProfileOptionFragment : DialogFragment() {
 
         setOptionFolderSettingClickListener()
         setOptionMyProfileEditClickListener()
+        setOptionMyProfileSettingClickListener()
         return binding.root
     }
 
@@ -55,6 +56,12 @@ class MyProfileOptionFragment : DialogFragment() {
     private fun setOptionMyProfileEditClickListener(){
         binding.layoutMyProfileOptionEditProfile.setOnClickListener {
             findNavController().navigate(R.id.action_myProfileOptionFragment_to_myProfileEditFragment)
+        }
+    }
+
+    private fun setOptionMyProfileSettingClickListener(){
+        binding.layoutMyProfileOptionSetting.setOnClickListener {
+            findNavController().navigate(R.id.action_myProfileOptionFragment_to_myProfileSettingFragment)
         }
     }
 }

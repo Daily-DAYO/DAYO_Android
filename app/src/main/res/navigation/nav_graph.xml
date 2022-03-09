@@ -290,11 +290,20 @@
         <action
             android:id="@+id/action_myProfileOptionFragment_to_folderSettingFragment"
             app:destination="@id/FolderSettingFragment" />
-
         <action
             android:id="@+id/action_myProfileOptionFragment_to_myProfileEditFragment"
             app:destination="@+id/MyProfileEditFragment"/>
+        <action
+            android:id="@+id/action_myProfileOptionFragment_to_myProfileSettingFragment"
+            app:destination="@+id/SettingFragment"/>
     </dialog>
+
+    <fragment
+        android:id="@+id/SettingFragment"
+        android:name="com.daily.dayo.setting.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting">
+    </fragment>
 
     <fragment
         android:id="@+id/FolderSettingFragment"
