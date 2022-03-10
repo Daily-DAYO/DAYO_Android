@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
+import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentHomeBinding
 import com.daily.dayo.home.adapter.HomeFragmentPagerStateAdapter
 import com.daily.dayo.home.viewmodel.HomeViewModel
@@ -31,6 +33,7 @@ class HomeFragment : Fragment() {
         viewPager = binding.pagerHomePost
         tabLayout = binding.tabsActionbarHomeCategory
 
+        setSearchClickListener()
         return binding.root
     }
 
@@ -66,5 +69,11 @@ class HomeFragment : Fragment() {
                     tab.text = "NEW"
             }
         }.attach()
+    }
+
+    private fun setSearchClickListener() {
+        binding.btnPostSearch.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_searchFragment)
+        }
     }
 }

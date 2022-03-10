@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_homeFragment_to_otherProfileFragment"
             app:destination="@+id/OtherProfileFragment"/>
+        <action
+            android:id="@+id/action_homeFragment_to_searchFragment"
+            app:destination="@+id/SearchFragment"/>
     </fragment>
 
     <fragment
@@ -44,7 +47,8 @@
         tools:layout="@layout/fragment_search">
         <action
             android:id="@+id/action_searchFragment_to_searchResultFragment"
-            app:destination="@id/SearchResultFragment" />
+            app:destination="@id/SearchResultFragment"
+            app:popUpTo="@id/HomeFragment" />
     </fragment>
 
     <fragment
@@ -52,6 +56,9 @@
         android:name="com.daily.dayo.search.SearchResultFragment"
         android:label="fragment_search_result"
         tools:layout="@layout/fragment_search_result">
+        <argument
+            android:name="searchKeyword"
+            app:argType="string"/>
     </fragment>
 
     <fragment
