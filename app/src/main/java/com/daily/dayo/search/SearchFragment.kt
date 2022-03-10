@@ -20,8 +20,15 @@ class SearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
+        setBackButtonClickListener()
         setSearchClickListener()
         return binding.root
+    }
+
+    private fun setBackButtonClickListener() {
+        binding.btnSearchBack.setOnClickListener {
+            findNavController().navigateUp()
+        }
     }
 
     private fun setSearchClickListener() {
