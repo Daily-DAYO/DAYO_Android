@@ -12,6 +12,7 @@ import javax.inject.Singleton
 @Singleton
 class SharedManager @Inject constructor(@ApplicationContext context: Context) {
     private val prefs: SharedPreferences = PreferenceHelper.defaultPrefs(context)
+    private val fcmToken = "fcmToken"
 
     fun saveCurrentUser(userInfo: Any?) = when (userInfo) {
         is LoginResponse -> {
@@ -39,4 +40,8 @@ class SharedManager @Inject constructor(@ApplicationContext context: Context) {
     fun setAccessToken(accessToken:String) {
         prefs["accessToken"] = accessToken
     }
+
+    var isFcmTokenRegistered: Boolean
+        get() = prefs.getBoolean(fcmToken, true)
+        set(value) = prefs.edit().putBoolean(fcmToken, value).apply()
 }
