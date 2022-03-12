@@ -1,14 +1,13 @@
 package com.daily.dayo
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.daily.dayo.databinding.ActivityMainBinding
+import com.daily.dayo.util.FirebaseMessagingServiceUtil
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,6 +19,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         initBottomNavigation()
         setBottomNaviVisibility()
+        if (SharedManager(DayoApplication.applicationContext()).isFcmTokenRegistered) {
+            FirebaseMessagingServiceUtil().registerFcmToken()
+        }
     }
 
     private fun initBottomNavigation() {
