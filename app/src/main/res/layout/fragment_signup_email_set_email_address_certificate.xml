@@ -177,7 +177,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:enabled="false"
-                android:text="@string/next"
+                android:text="@string/signup_email_set_email_address_certificate"
                 android:textSize="16dp"
                 android:textStyle="bold"
                 android:textColor="@color/white_FFFFFF"
