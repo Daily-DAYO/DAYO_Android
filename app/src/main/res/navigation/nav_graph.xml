@@ -186,6 +186,9 @@
         <action
             android:id="@+id/action_postFragment_to_postOptionMineFragment"
             app:destination="@id/PostOptionMineFragment"/>
+        <action
+            android:id="@+id/action_postFragment_to_searchResultFragment"
+            app:destination="@id/SearchResultFragment"/>
     </fragment>
     <dialog
         android:id="@+id/PostOptionFragment"
