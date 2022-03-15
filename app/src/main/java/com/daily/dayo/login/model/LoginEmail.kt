@@ -18,3 +18,8 @@ data class SignupEmailResponse (
     @SerializedName("memberId")
     val memberId : String
 )
+
+data class SignupEmailAuthCodeResponse (
+    @SerializedName("authCode")
+    val authCode : String
+)

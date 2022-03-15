@@ -27,6 +27,11 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
     private val _isEmailDuplicate = MutableLiveData<Boolean>()
     val isEmailDuplicate : LiveData<Boolean> get() = _isEmailDuplicate
 
+    private val _isCertificateEmailSend = MutableLiveData<Boolean>()
+    val isCertificateEmailSend : LiveData<Boolean> get() = _isCertificateEmailSend
+    private val _certificateEmailAuthCode = MutableLiveData<String>()
+    val certificateEmailAuthCode : MutableLiveData<String> get() = _certificateEmailAuthCode
+
     fun requestLoginKakao(request: LoginRequestKakao) = viewModelScope.launch {
         val response = loginRepository.requestLoginKakao(request)
         if (response.isSuccessful) {
@@ -80,6 +85,16 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
             _isEmailDuplicate.postValue(true)
         } else {
             _isEmailDuplicate.postValue(false)
+        }
+    }
+
+    fun requestCertificateEmail(email: String) = viewModelScope.launch(Dispatchers.IO) {
+        val response = loginRepository.requestCertificateEmail(email)
+        if (response.isSuccessful) {
+            _isCertificateEmailSend.postValue(true)
+            certificateEmailAuthCode.postValue(response.body()?.authCode)
+        } else {
+            _isCertificateEmailSend.postValue(false)
         }
     }
 }
