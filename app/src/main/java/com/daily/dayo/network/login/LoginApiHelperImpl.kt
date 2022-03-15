@@ -22,6 +22,7 @@ class LoginApiHelperImpl@Inject constructor(private val loginApiService: LoginAp
     ): Response<SignupEmailResponse> = loginApiService.requestSignupEmail(email, nickname, password, profileImg)
 
     override suspend fun requestCheckEmailDuplicate(email: String): Response<Void> = loginApiService.requestCheckEmailDuplicate(email)
+    override suspend fun requestCertificateEmail(email: String): Response<SignupEmailAuthCodeResponse> = loginApiService.requestCertificateEmail(email)
 
     override suspend fun requestRefreshToken(): Response<ResponseRefreshToken> =
         loginApiService.requestRefreshToken()

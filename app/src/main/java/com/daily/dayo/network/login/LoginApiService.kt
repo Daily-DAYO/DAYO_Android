@@ -22,6 +22,8 @@ interface LoginApiService {
                                    @Part profileImg: MultipartBody.Part) : Response<SignupEmailResponse>
     @GET("/api/v1/members/duplicate/email/{email}")
     suspend fun requestCheckEmailDuplicate(@Path("email") email: String) : Response<Void>
+    @GET("/api/v1/members/signUp/{email}")
+    suspend fun requestCertificateEmail(@Path("email") email: String) : Response<SignupEmailAuthCodeResponse>
 
     @GET("/api/v1/members/refresh")
     suspend fun requestRefreshToken():Response<ResponseRefreshToken>

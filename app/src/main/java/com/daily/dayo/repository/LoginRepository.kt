@@ -28,5 +28,6 @@ class LoginRepository @Inject constructor(private val loginApiHelper: LoginApiHe
         return loginApiHelper.requestSignupEmail(email, nickname, password, uploadFile)
     }
     suspend fun requestCheckEmailDuplicate(email: String): Response<Void> = loginApiHelper.requestCheckEmailDuplicate(email)
+    suspend fun requestCertificateEmail(email: String) : Response<SignupEmailAuthCodeResponse> = loginApiHelper.requestCertificateEmail(email)
 }
 
