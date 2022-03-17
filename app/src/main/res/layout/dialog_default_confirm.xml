@@ -22,7 +22,7 @@
         android:id="@+id/view_default_dialog_confirm_horizontal_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/gray_7_F6F6F6"
+        android:background="@color/gray_6_F6F6F6"
         app:layout_constraintTop_toBottomOf="@id/guideline_default_dialog_confirm_contents_confirmation"
         app:layout_constraintBottom_toTopOf="@id/guideline_default_dialog_confirm_contents_confirmation"
         app:layout_constraintStart_toStartOf="parent"

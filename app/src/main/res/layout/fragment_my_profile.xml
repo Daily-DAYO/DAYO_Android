@@ -18,7 +18,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/gray_7_F6F6F6">
+            android:background="@color/gray_6_F6F6F6">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_my_profile_action_bar"
@@ -242,7 +242,7 @@
                 android:id="@+id/view_tabs_horizontal_line"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/gray_5_F6F6F6"
+                android:background="@color/gray_6_F6F6F6"
                 app:layout_constraintBottom_toBottomOf="@+id/tabs_my_profile"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />

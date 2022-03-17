@@ -13,10 +13,10 @@ import javax.inject.Inject
 
 class FolderRepository @Inject constructor(private val folderApiHelper: FolderApiHelper){
     suspend fun requestCreateFolder(name:String, privacy:String, subheading:String?, thumbnailImage: File?) : Response<ResponseFolderId> {
-        val requestThumbnailImage : MultipartBody.Part = if(thumbnailImage!=null) {
+        val requestThumbnailImage : MultipartBody.Part? = if(thumbnailImage!=null) {
             MultipartBody.Part.createFormData("thumbnailImage",thumbnailImage.name, RequestBody.create("image/*".toMediaTypeOrNull(),thumbnailImage) )
         } else{
-            MultipartBody.Part.createFormData("thumbnailImage","", RequestBody.create("image/*".toMediaTypeOrNull(), ""))
+            null
         }
 
         return folderApiHelper.requestCreateFolder(name,privacy,subheading,requestThumbnailImage)

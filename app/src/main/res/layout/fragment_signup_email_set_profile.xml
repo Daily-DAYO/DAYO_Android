@@ -60,7 +60,7 @@
                 android:layout_height="105dp"
                 app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
                 app:strokeWidth="1dp"
-                app:strokeColor="@color/gray_6_EDEDED"
+                app:strokeColor="@color/gray_5_EDEDED"
                 android:src="@drawable/ic_user_profile_image_empty"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
@@ -94,7 +94,7 @@
                 android:hint="@string/my_profile_edit_nickname_edittext_hint"
                 android:textSize="17dp"
                 android:textColor="@color/gray_1_313131"
-                android:textColorHint="@color/gray_5_D3D2D2"
+                android:textColorHint="@color/gray_4_D3D2D2"
                 android:maxLength="10"
                 android:singleLine="true"
                 app:layout_constraintTop_toTopOf="parent"

@@ -7,36 +7,41 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.bumptech.glide.Glide
+import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
+import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.FragmentPostBinding
 import com.daily.dayo.post.adapter.PostCommentAdapter
 import com.daily.dayo.post.adapter.PostImageSliderAdapter
-import com.daily.dayo.post.viewmodel.PostViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import android.widget.ImageView
-import androidx.core.content.ContextCompat
-import android.widget.LinearLayout
-import android.widget.Toast
-import androidx.lifecycle.*
-import androidx.navigation.Navigation
-import com.daily.dayo.DayoApplication
-import com.daily.dayo.SharedManager
 import com.daily.dayo.post.model.PostCommentContent
 import com.daily.dayo.post.model.RequestBookmarkPost
 import com.daily.dayo.post.model.RequestCreatePostComment
 import com.daily.dayo.post.model.RequestLikePost
-import com.google.android.material.chip.Chip
+import com.daily.dayo.post.viewmodel.PostViewModel
 import com.daily.dayo.util.*
+import com.google.android.material.chip.Chip
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PostFragment : Fragment() {
@@ -75,9 +80,9 @@ class PostFragment : Fragment() {
         return binding.root
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
+        super.onDestroyView()
         keyboardVisibilityUtils.detachKeyboardListeners()
-        super.onDestroy()
     }
 
     private fun setBackButtonClickListener(){
@@ -205,7 +210,7 @@ class PostFragment : Fragment() {
                 with(chip) {
                     chipBackgroundColor =
                         ColorStateList(arrayOf(intArrayOf(-android.R.attr.state_pressed), intArrayOf(android.R.attr.state_pressed)),
-                    intArrayOf(resources.getColor(R.color.gray_7_F6F6F6, context?.theme), resources.getColor(R.color.primary_green_23C882, context?.theme)))
+                    intArrayOf(resources.getColor(R.color.gray_6_F6F6F6, context?.theme), resources.getColor(R.color.primary_green_23C882, context?.theme)))
 
                     setTextColor(
                         ColorStateList(arrayOf(intArrayOf(-android.R.attr.state_pressed), intArrayOf(android.R.attr.state_pressed)),

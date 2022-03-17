@@ -73,7 +73,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/tabs_follow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@color/gray_5_F6F6F6"/>
+        android:background="@color/gray_6_F6F6F6"/>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/pager_follow"

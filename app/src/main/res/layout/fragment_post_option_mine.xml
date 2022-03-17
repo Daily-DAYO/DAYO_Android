@@ -44,7 +44,7 @@
             android:id="@+id/view_post_option_mine_delete_horizontal_line"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/gray_6_EDEDED"
+            android:background="@color/gray_5_EDEDED"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

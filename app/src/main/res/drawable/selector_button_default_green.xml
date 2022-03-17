@@ -15,10 +15,10 @@
     <item android:state_selected="false">
         <shape xmlns:android="http://schemas.android.com/apk/res/android">
             <solid
-                android:color="@color/gray_6_EDEDED"/>
+                android:color="@color/gray_5_EDEDED"/>
             <stroke
                 android:width="0.5dp"
-                android:color="@color/gray_6_EDEDED"
+                android:color="@color/gray_5_EDEDED"
                 />
             <corners
                 android:radius="10dp"/>
