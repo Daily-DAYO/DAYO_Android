@@ -198,7 +198,21 @@
         <argument
             android:name="id"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_postOptionFragment_to_postReportFragment"
+            app:destination="@id/PostReportFragment"/>
     </dialog>
+
+    <fragment
+        android:id="@+id/PostReportFragment"
+        android:name="com.daily.dayo.post.PostReportFragment"
+        android:label="fragment_post_report"
+        tools:layout="@layout/fragment_post_report">
+        <argument
+            android:name="id"
+            app:argType="integer" />
+    </fragment>
+
     <dialog
         android:id="@+id/PostOptionMineFragment"
         android:name="com.daily.dayo.post.PostOptionMineFragment"
