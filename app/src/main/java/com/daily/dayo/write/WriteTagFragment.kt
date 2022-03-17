@@ -104,8 +104,8 @@ class WriteTagFragment : Fragment() {
                 btnWritePostTagSubmit.isEnabled = true
                 imgWriteTagListEmpty.visibility = View.INVISIBLE
             } else {
-                tvWriteTagListCountSaved.setTextColor(resources.getColor(R.color.gray_5_D3D2D2, context?.theme))
-                btnWritePostTagSubmit.setTextColor(resources.getColor(R.color.gray_5_D3D2D2, context?.theme))
+                tvWriteTagListCountSaved.setTextColor(resources.getColor(R.color.gray_4_D3D2D2, context?.theme))
+                btnWritePostTagSubmit.setTextColor(resources.getColor(R.color.gray_4_D3D2D2, context?.theme))
                 btnWritePostTagSubmit.isEnabled = false
                 imgWriteTagListEmpty.visibility = View.VISIBLE
             }

@@ -126,7 +126,7 @@ class FeedListAdapter : ListAdapter<FeedContent, FeedListAdapter.FeedListViewHol
                         chipBackgroundColor =
                             ColorStateList(
                                 arrayOf(intArrayOf(-android.R.attr.state_pressed), intArrayOf(android.R.attr.state_pressed)),
-                                intArrayOf(resources.getColor(R.color.gray_7_F6F6F6, context?.theme), resources.getColor(
+                                intArrayOf(resources.getColor(R.color.gray_6_F6F6F6, context?.theme), resources.getColor(
                                     R.color.primary_green_23C882, context?.theme))
                             )
 

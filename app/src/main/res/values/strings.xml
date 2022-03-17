@@ -87,7 +87,7 @@
     <!-- Post -->
     <string name="hint_post_comment_write_description">댓글을 남겨주세요</string>
     <string name="post_comment_write_upload">게시</string>
-    <string name="post_option_report">신고</string>
+    <string name="post_option_report">게시물 신고</string>
     <string name="post_option_hide">이 게시물 숨기기</string>
     <string name="post_comment_delete_alert_message">댓글을 삭제할까요?</string>
     <string name="post_comment_delete_alert_message_success">댓글이 삭제되었습니다.</string>
@@ -98,6 +98,20 @@
     <string name="post_option_mine_modify">게시물 수정</string>
     <string name="post_option_mine_delete">게시물 삭제</string>
     <string name="post_option_mine_delete_alert_message">게시물을 삭제할까요?</string>
+
+    <!-- Report -->
+    <string name="post_report_title">신고하기</string>
+    <string name="post_report_button">신고</string>
+    <string name="post_report_reason_1">성적인 내용이 포함돼있어요.</string>
+    <string name="post_report_reason_2">폭력적이거나 심한 욕설을 사용해요.</string>
+    <string name="post_report_reason_3">잘못된 정보를 제공해요.</string>
+    <string name="post_report_reason_4">유해하거나 위험한 내용이에요.</string>
+    <string name="post_report_reason_5">불법적인 내용이 포함돼있어요.</string>
+    <string name="post_report_reason_6">너무 많은 광고를 해요.</string>
+    <string name="post_report_reason_7">같은 내용으로 도배가 돼있어요.</string>
+    <string name="post_report_reason_other">기타</string>
+    <string name="post_report_reason_other_hint">신고 사유를 작성해주세요. (100자 이내)</string>
+    <string name="post_report_alert_message">신고가 접수되었어요.</string>
 
     <!-- Folder -->
     <string name="post_folder_add_title">폴더 추가</string>
