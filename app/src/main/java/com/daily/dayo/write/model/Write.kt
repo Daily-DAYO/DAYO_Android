@@ -23,3 +23,19 @@ data class ResponseWrite (
     @SerializedName("id")
     val id: Int
 )
+
+data class RequestEditWrite (
+    @SerializedName("category")
+    val category: String,
+    @SerializedName("contents")
+    val contents : String,
+    @SerializedName("folderId")
+    val folderId : Int,
+    @SerializedName("hashtags")
+    val hashtags : List<String>
+)
+
+data class ResponseEditWrite (
+    @SerializedName("postId")
+    val postId: Int
+)

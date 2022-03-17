@@ -59,16 +59,13 @@ class WriteFragment : Fragment() {
 
     private var postFolderId:String = ""
     private var postFolderName:String = ""
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        initWritingContents()
-    }
+    private var isLoadedEditPost: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         binding = FragmentWriteBinding.inflate(inflater, container, false)
+        initWritingContents()
         observeNavigationTagListCallBack()
         setRadioButtonGrouping()
         setBackButtonClickListener()
@@ -125,7 +122,15 @@ class WriteFragment : Fragment() {
     }
 
     private fun initWritingContents() {
+        // TODO : 이미지 추가 버튼 GONE처리가 풀리는 현상 임시 해결
         if(args.postId != 0) {
+            binding.btnUploadImage.visibility = View.GONE
+        }
+        // 기존 글 수정하는 경우
+        if(args.postId != 0 && !isLoadedEditPost) {
+            isLoadedEditPost = true
+
+            binding.btnUploadImage.visibility = View.GONE // 새로운 이미지 추가 불가능 처리
             writeOptionViewModel.requestPostDetail(args.postId).invokeOnCompletion { throwable ->
                 when (throwable) {
                     is CancellationException -> Log.e("Getting Post", "CANCELLED")
@@ -166,7 +171,8 @@ class WriteFragment : Fragment() {
                                     }
                                     uploadImageListAdapter.notifyDataSetChanged()
                                     postTagList = postData.hashtags
-                                    // TODO : 폴더 및 공개설정 처리 여부 결
+                                    postFolderId = postData.folderId.toString()
+                                    postFolderName = postData.folderName
                                 }
                             }
                         })
@@ -245,7 +251,7 @@ class WriteFragment : Fragment() {
     private fun setImageUploadButtonClickListener() {
         val btnUploadImage = binding.btnUploadImage
         val rvUploadImageList = binding.rvImgUploadList
-        uploadImageListAdapter = WriteUploadImageListAdapter(uploadImageList, requireContext())
+        uploadImageListAdapter = WriteUploadImageListAdapter(uploadImageList, requireContext(), args.postId)
 
         btnUploadImage.setOnClickListener {
             findNavController().navigate(R.id.action_writeFragment_to_writeImageOptionFragment)
@@ -313,11 +319,11 @@ class WriteFragment : Fragment() {
             binding.btnWritePostUpload.setOnClickListener {
                 if (this::postTagList.isInitialized) {
                     val navigateWithDataPassAction =
-                        WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(selectedCategoryName, binding.etWriteDetail.text.toString(), uploadImageListString.toTypedArray(), postTagList.toTypedArray(), postFolderId, postFolderName)
+                        WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(args.postId, selectedCategoryName, binding.etWriteDetail.text.toString(), uploadImageListString.toTypedArray(), postTagList.toTypedArray(), postFolderId, postFolderName)
                     findNavController().navigate(navigateWithDataPassAction)
                 } else {
                     val navigateWithDataPassAction =
-                        WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(selectedCategoryName, binding.etWriteDetail.text.toString(), uploadImageListString.toTypedArray(), emptyArray(), postFolderId, postFolderName)
+                        WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(args.postId, selectedCategoryName, binding.etWriteDetail.text.toString(), uploadImageListString.toTypedArray(), emptyArray(), postFolderId, postFolderName)
                     findNavController().navigate(navigateWithDataPassAction)
                 }
             }
@@ -326,6 +332,16 @@ class WriteFragment : Fragment() {
 
     private fun observeUploadStateCallBack() {
         writeOptionViewModel.writeSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
+            if(isSuccess.getContentIfNotHandled() == true) {
+                writeOptionViewModel.writePostId.value?.getContentIfNotHandled()?.let { writePostId ->
+                    findNavController().navigate(WriteFragmentDirections.actionWriteFragmentToPostFragment
+                        (writePostId, SharedManager(DayoApplication.applicationContext()).getCurrentUser().nickname.toString()))
+                }
+            } else if (isSuccess.getContentIfNotHandled() == false) {
+                Toast.makeText(requireContext(), R.string.write_post_upload_alert_message_fail, Toast.LENGTH_SHORT).show()
+            }
+        })
+        writeOptionViewModel.writeEditSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
             if(isSuccess.getContentIfNotHandled() == true) {
                 writeOptionViewModel.writePostId.value?.getContentIfNotHandled()?.let { writePostId ->
                     findNavController().navigate(WriteFragmentDirections.actionWriteFragmentToPostFragment
