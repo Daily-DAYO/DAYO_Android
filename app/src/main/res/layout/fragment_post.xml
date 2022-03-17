@@ -73,7 +73,7 @@
                             android:id="@+id/view_post_writer_info_horizontal_line"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:background="@color/gray_7_F6F6F6"
+                            android:background="@color/gray_6_F6F6F6"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -253,7 +253,7 @@
                         android:layout_height="10dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/layout_post_tag_list"
-                        android:background="@color/gray_7_F6F6F6" />
+                        android:background="@color/gray_6_F6F6F6" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/layout_post_reaction_result_count_list"
@@ -282,7 +282,7 @@
                             android:id="@+id/view_post_reaction_result_count_list_horizontal_line"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:background="@color/gray_7_F6F6F6"
+                            android:background="@color/gray_6_F6F6F6"
                             app:layout_constraintTop_toBottomOf="@id/tv_post_content_count"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -315,7 +315,7 @@
                 android:id="@+id/view_post_comment_edittext_horizontal_line"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/gray_7_F6F6F6"
+                android:background="@color/gray_6_F6F6F6"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/img_post_comment_my_profile"
                 app:layout_constraintStart_toStartOf="parent"
@@ -346,7 +346,7 @@
                 android:maxLines="3"
                 android:textSize="13dp"
                 android:textColor="@color/gray_1_313131"
-                android:textColorHint="@color/gray_5_D3D2D2"
+                android:textColorHint="@color/gray_4_D3D2D2"
                 android:background="@drawable/edittext_background_post_comment_write"
                 app:layout_constraintTop_toTopOf="@id/img_post_comment_my_profile"
                 app:layout_constraintBottom_toBottomOf="@id/img_post_comment_my_profile"

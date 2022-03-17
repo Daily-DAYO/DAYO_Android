@@ -36,7 +36,7 @@
             android:id="@+id/view_actionbar_horizontal_line"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:background="@color/gray_6_EDEDED"
+            android:background="@color/gray_5_EDEDED"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -143,7 +143,7 @@
             android:id="@+id/view_post_category_horizontal_line"
             android:layout_width="match_parent"
             android:layout_height="0.7dp"
-            android:background="@color/gray_5_D3D2D2"
+            android:background="@color/gray_4_D3D2D2"
             app:layout_constraintTop_toBottomOf="@id/radiogroup_write_post_category_line2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -187,7 +187,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/write_post_description_count_limit"
                     android:textSize="11dp"
-                    android:textColor="@color/gray_5_D3D2D2"
+                    android:textColor="@color/gray_4_D3D2D2"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -245,7 +245,7 @@
         android:id="@+id/btn_write_post_upload"
         android:layout_width="0dp"
         android:layout_height="53dp"
-        android:background="@drawable/selector_button_write_post_upload"
+        android:background="@drawable/selector_button_default_green"
         android:text="@string/upload"
         android:textSize="16dp"
         android:textColor="@color/white_FFFFFF"

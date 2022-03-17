@@ -34,7 +34,7 @@
             android:inputType="text"
             android:textSize="16dp"
             android:textColor="@color/gray_1_313131"
-            android:textColorHint="@color/gray_5_D3D2D2"
+            android:textColorHint="@color/gray_4_D3D2D2"
             android:textCursorDrawable="@color/gray_1_313131"
             android:hint="@string/hint_search_keyword_input"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -61,7 +61,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:background="@color/gray_7_F6F6F6" />
+            android:background="@color/gray_6_F6F6F6" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -87,7 +87,7 @@
             android:id="@+id/view_search_result_contents_count_post_divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/gray_7_F6F6F6"
+            android:background="@color/gray_6_F6F6F6"
             app:layout_constraintTop_toBottomOf="@id/tv_search_result_contents_post_count"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="15dp" />
@@ -116,7 +116,7 @@
                     android:id="@+id/view_search_result_contents_count_post_margin"
                     android:layout_width="match_parent"
                     android:layout_height="8dp"
-                    android:background="@color/gray_7_F6F6F6"
+                    android:background="@color/gray_6_F6F6F6"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
                 <androidx.recyclerview.widget.RecyclerView
