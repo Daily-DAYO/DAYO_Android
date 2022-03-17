@@ -65,80 +65,10 @@
         android:layout_marginTop="23dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_write_option_private"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/view_folder_horizontal_line"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:paddingTop="17dp"
-        android:layout_marginHorizontal="18dp" >
-        <TextView
-            android:id="@+id/tv_write_option_title_private"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/write_option_title_private"
-            android:textSize="15dp"
-            android:textColor="@color/gray_1_313131"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-        <RadioGroup
-            android:id="@+id/radiogroup_write_option_description_private"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-            <RadioButton
-                android:checked="true"
-                android:id="@+id/radiobutton_write_option_description_private_all"
-                android:layout_width="77dp"
-                android:layout_height="27dp"
-                android:text="@string/privacy_all"
-                android:textSize="13dp"
-                android:textColor="@drawable/selector_button_write_option_private_text"
-                android:textAlignment="center"
-                android:background="@drawable/selector_button_write_option_private"
-                android:button="@null"
-                android:layout_marginEnd="7dp"/>
-            <RadioButton
-                android:id="@+id/radiobutton_write_option_description_private_following"
-                android:layout_width="77dp"
-                android:layout_height="27dp"
-                android:text="@string/privacy_following"
-                android:textSize="13dp"
-                android:textColor="@drawable/selector_button_write_option_private_text"
-                android:textAlignment="center"
-                android:background="@drawable/selector_button_write_option_private"
-                android:button="@null"
-                android:layout_marginEnd="7dp"/>
-            <RadioButton
-                android:id="@+id/radiobutton_write_option_description_private_only_me"
-                android:layout_width="77dp"
-                android:layout_height="27dp"
-                android:text="@string/privacy_private"
-                android:textSize="13dp"
-                android:textColor="@drawable/selector_button_write_option_private_text"
-                android:textAlignment="center"
-                android:background="@drawable/selector_button_write_option_private"
-                android:button="@null"/>
-        </RadioGroup>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-    <View
-        android:id="@+id/view_private_horizontal_line"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/gray_6_EDEDED"
-        app:layout_constraintTop_toBottomOf="@id/layout_write_option_private"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="17dp"/>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_write_option_tag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/view_private_horizontal_line"
+        app:layout_constraintTop_toBottomOf="@id/view_folder_horizontal_line"
         app:layout_constraintStart_toStartOf="parent"
         android:paddingTop="18dp"
         android:layout_marginHorizontal="18dp">

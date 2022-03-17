@@ -11,6 +11,10 @@ data class ResponsePost (
     val contents: String,
     @SerializedName("createDateTime")
     val createDateTime: String,
+    @SerializedName("folderId")
+    val folderId: Int,
+    @SerializedName("folderName")
+    val folderName: String,
     @SerializedName("hashtags")
     val hashtags: List<String>,
     @SerializedName("heart")
