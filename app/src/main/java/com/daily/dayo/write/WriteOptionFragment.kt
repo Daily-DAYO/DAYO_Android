@@ -68,14 +68,16 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
 
     private fun setUploadButtonClickListener() {
         binding.btnWriteOptionConfirm.setOnClickListener {
-            val privacy = setPrivacySetting()
             val memberId = SharedManager(DayoApplication.applicationContext()).getCurrentUser().memberId.toString()
-            if(postFolderId==""){
+            if(postFolderId==""){ // 폴더 미선택시 글 업로드 불가
                 Toast.makeText(requireContext(), "폴더를 선택해 주세요", Toast.LENGTH_SHORT).show()
+            } else if(args.postId != 0) { // 기존 게시글을 수정하는 경우
+                writeOptionViewModel.requestEditPost(args.postId, postCategory, postContents, postFolderId.toInt(), postTagList)
+                Toast.makeText(requireContext(), R.string.write_post_upload_alert_message_loading, Toast.LENGTH_SHORT).show()
+                findNavController().navigateUp()
             }
-            else{
-                writeOptionViewModel.requestUploadPost(postCategory, postContents, postImageFileList.toTypedArray(),
-                    postFolderId.toInt(), memberId, privacy, postTagList)
+            else{ // 새로 글을 작성하는 경우
+                writeOptionViewModel.requestUploadPost(postCategory, postContents, postImageFileList.toTypedArray(), postFolderId.toInt(), postTagList)
                 Toast.makeText(requireContext(), R.string.write_post_upload_alert_message_loading, Toast.LENGTH_SHORT).show()
                 findNavController().navigateUp()
             }
@@ -85,18 +87,6 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
     private fun setFolderDescription(){
         if(postFolderId!=""){
             binding.tvWriteOptionDescriptionFolder.text = postFolderName
-        }
-    }
-
-    private fun setPrivacySetting() : String {
-        val radioButton = binding.radiogroupWriteOptionDescriptionPrivate?.findViewById<View>(binding.radiogroupWriteOptionDescriptionPrivate!!.checkedRadioButtonId)
-        val radioId = binding.radiogroupWriteOptionDescriptionPrivate!!.indexOfChild(radioButton)
-        val btn = binding.radiogroupWriteOptionDescriptionPrivate!!.getChildAt(radioId) as RadioButton
-        return when(btn.text as String) {
-            getString(R.string.privacy_all) -> getString(R.string.privacy_all_eng)
-            getString(R.string.privacy_following) -> getString(R.string.privacy_following_eng)
-            getString(R.string.privacy_private) -> getString(R.string.privacy_private_eng)
-            else -> getString(R.string.privacy_private_eng)
         }
     }
 
