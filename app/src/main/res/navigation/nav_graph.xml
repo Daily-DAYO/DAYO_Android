@@ -117,6 +117,10 @@
         android:label="fragment_write_option"
         tools:layout="@layout/fragment_write_option">
         <argument
+            android:name="postId"
+            app:argType="integer"
+            android:defaultValue="0"/>
+        <argument
             android:name="postCategory"
             app:argType="string"/>
         <argument
