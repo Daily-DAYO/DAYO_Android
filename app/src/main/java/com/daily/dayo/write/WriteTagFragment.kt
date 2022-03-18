@@ -1,25 +1,27 @@
 package com.daily.dayo.write
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.size
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentWriteTagBinding
+import com.daily.dayo.util.Event
 import com.daily.dayo.util.autoCleared
+import com.daily.dayo.write.viewmodel.WriteViewModel
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 
 class WriteTagFragment : Fragment() {
     private var binding by autoCleared<FragmentWriteTagBinding>()
-    private val args by navArgs<WriteTagFragmentArgs>()
-    private val postTagList by lazy {args.postTagList}
+    private val writeViewModel by activityViewModels<WriteViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,16 +36,29 @@ class WriteTagFragment : Fragment() {
         return binding.root
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                writeViewModel.showWriteOptionDialog.value = Event(true)
+                findNavController().navigateUp()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+    }
+
     private fun setBackButtonClickListener(){
         binding.btnWriteTagBack.setOnClickListener {
+            writeViewModel.showWriteOptionDialog.value = Event(true)
             findNavController().navigateUp()
         }
     }
 
     private fun setSubmitButtonClickListener(){
         binding.btnWritePostTagSubmit.setOnClickListener {
-            findNavController().previousBackStackEntry?.savedStateHandle?.set("postTagList", binding.chipgroupWriteTagListSaved.getAllChipsTagText())
-            findNavController().popBackStack()
+            writeViewModel.postTagList.replaceAll(binding.chipgroupWriteTagListSaved.getAllChipsTagText())
+            writeViewModel.showWriteOptionDialog.value = Event(true)
+            findNavController().navigateUp()
         }
     }
 
@@ -76,20 +91,26 @@ class WriteTagFragment : Fragment() {
     }
 
     private fun initPreviousTagList() {
-        (0 until postTagList.size).mapNotNull { index ->
-            val chip = LayoutInflater.from(context).inflate(R.layout.item_write_post_tag_chip, null) as Chip
-            val layoutParams = ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
-            with(chip) {
-                setTextAppearance(R.style.WritePostTagTextStyle)
-                setOnCloseIconClickListener {
-                    binding.chipgroupWriteTagListSaved.removeView(chip as View)
-                    setTagCountLimit()
+        writeViewModel.postTagList.observe(viewLifecycleOwner) {
+            (0 until it.size).mapNotNull { index ->
+                val chip = LayoutInflater.from(context)
+                    .inflate(R.layout.item_write_post_tag_chip, null) as Chip
+                val layoutParams = ViewGroup.MarginLayoutParams(
+                    ViewGroup.MarginLayoutParams.WRAP_CONTENT,
+                    ViewGroup.MarginLayoutParams.WRAP_CONTENT
+                )
+                with(chip) {
+                    setTextAppearance(R.style.WritePostTagTextStyle)
+                    setOnCloseIconClickListener {
+                        binding.chipgroupWriteTagListSaved.removeView(chip as View)
+                        setTagCountLimit()
+                    }
+                    text = "# ${it[index].trim()}"
                 }
-                text = "# ${postTagList[index].trim()}"
+                binding.chipgroupWriteTagListSaved.addView(chip, layoutParams)
             }
-            binding.chipgroupWriteTagListSaved.addView(chip, layoutParams)
+            setTagCountLimit()
         }
-        setTagCountLimit()
     }
 
     private fun setTagCountLimit() {

@@ -17,7 +17,9 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -31,10 +33,10 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.FragmentWriteBinding
+import com.daily.dayo.util.Event
 import com.daily.dayo.util.autoCleared
-import com.daily.dayo.util.getNavigationResult
 import com.daily.dayo.write.adapter.WriteUploadImageListAdapter
-import com.daily.dayo.write.viewmodel.WriteOptionViewModel
+import com.daily.dayo.write.viewmodel.WriteViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import java.io.ByteArrayOutputStream
@@ -43,40 +45,62 @@ import java.util.*
 @AndroidEntryPoint
 class WriteFragment : Fragment() {
     private var binding by autoCleared<FragmentWriteBinding>()
-    private val writeOptionViewModel by activityViewModels<WriteOptionViewModel>()
+    private val writeViewModel by activityViewModels<WriteViewModel>()
     private val args by navArgs<WriteFragmentArgs>()
 
     private var radioGroupCategoryLine1: RadioGroup? = null
     private var radioGroupCategoryLine2: RadioGroup? = null
-    private lateinit var postTagList : List<String> // 현재 작성할 게시글에 저장된 태그 리스트
-    private var uploadImageList = ArrayList<Uri>() // 갤러리에서 불러온 이미지 리스트
-    private var uploadImageListString = ArrayList<String>() // Bitmap을 String으로 변환
+    private var postImageBitmapToStringList = ArrayList<String>() // Bitmap을 String으로 변환
     private lateinit var uploadImageListAdapter : WriteUploadImageListAdapter
 
     private var isCategorySelected : Boolean = false
     private var isContentsFilled :Boolean= false
     private var isImageUploaded : Boolean= false
-
-    private var postFolderId:String = ""
-    private var postFolderName:String = ""
     private var isLoadedEditPost: Boolean = false
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?)
+    : View? {
         binding = FragmentWriteBinding.inflate(inflater, container, false)
         initWritingContents()
-        observeNavigationTagListCallBack()
+        setPostImageListAdapter()
         setRadioButtonGrouping()
         setBackButtonClickListener()
         setEditTextCountLimit()
         setImageUploadButtonClickListener()
-        observeNavigationWritingImageCallBack()
         setImageDeleteClickListener()
         setUploadButtonActivation()
         observeUploadStateCallBack()
-        observeNavigationFolderCallBack()
+        showOptionDialog()
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                writeViewModel.setInitWriteInfoValue()
+                findNavController().navigateUp()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+    }
+
+    private fun setBackButtonClickListener() {
+        binding.btnWritePostBack.setOnClickListener {
+            writeViewModel.setInitWriteInfoValue()
+            findNavController().navigateUp()
+        }
+    }
+
+    private fun showOptionDialog(){
+        writeViewModel.showWriteOptionDialog.observe(viewLifecycleOwner, Observer {
+            if(it.getContentIfNotHandled() == true) {
+                writeViewModel.showWriteOptionDialog.value = Event(false)
+                findNavController().navigate(WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment())
+            }
+        })
     }
 
     private fun setRadioButtonGrouping() {
@@ -92,12 +116,6 @@ class WriteFragment : Fragment() {
         }
     }
 
-    private fun setBackButtonClickListener() {
-        binding.btnWritePostBack.setOnClickListener {
-            findNavController().navigateUp()
-        }
-    }
-
     private fun setEditTextCountLimit() {
         val lengthFilter = InputFilter.LengthFilter(200)
         with(binding.etWriteDetail) {
@@ -109,7 +127,7 @@ class WriteFragment : Fragment() {
                     binding.editTextCount = s.toString().length
                     if(s.toString().length > 200) {
                         Toast.makeText(requireContext(), R.string.write_post_upload_alert_message_edittext_length_fail_max, Toast.LENGTH_SHORT).show()
-                    } else if(s.toString().length == 0){
+                    } else if(s.toString().isEmpty()){
                         isContentsFilled = false
                         setUploadButtonActivation()
                     } else {
@@ -129,19 +147,18 @@ class WriteFragment : Fragment() {
         // 기존 글 수정하는 경우
         if(args.postId != 0 && !isLoadedEditPost) {
             isLoadedEditPost = true
-
             binding.btnUploadImage.visibility = View.GONE // 새로운 이미지 추가 불가능 처리
-            writeOptionViewModel.requestPostDetail(args.postId).invokeOnCompletion { throwable ->
+            writeViewModel.requestPostDetail(args.postId).invokeOnCompletion { throwable ->
                 when (throwable) {
                     is CancellationException -> Log.e("Getting Post", "CANCELLED")
                     null -> {
-                        writeOptionViewModel.getCurrentPostSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
+                        writeViewModel.getCurrentPostSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
                             if(isSuccess.getContentIfNotHandled() == true) {
                                 isCategorySelected = true
                                 isContentsFilled = true
                                 isImageUploaded = true
 
-                                writeOptionViewModel.writeCurrentPostDetail.value?.getContentIfNotHandled()?.let { postData ->
+                                writeViewModel.writeCurrentPostDetail.value?.getContentIfNotHandled()?.let { postData ->
                                     when(postData.category) {
                                         getString(R.string.scheduler_eng) -> binding.radiobuttonWritePostCategoryScheduler.isChecked = true
                                         getString(R.string.studyplanner_eng) -> binding.radiobuttonWritePostCategoryStudyplanner.isChecked = true
@@ -154,7 +171,7 @@ class WriteFragment : Fragment() {
                                     binding.etWriteDetail.setText(postData.contents)
 
                                     for(element in postData.images) {
-                                        uploadImageList.add(Uri.parse("http://117.17.198.45:8080/images/$element"))
+                                        writeViewModel.postImageUriList.add(Uri.parse("http://117.17.198.45:8080/images/$element").toString())
                                         lateinit var imageBitmap : Bitmap
                                         Glide.with(requireContext())
                                             .asBitmap()
@@ -163,16 +180,17 @@ class WriteFragment : Fragment() {
                                                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                                                     imageBitmap = resource
                                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                                        uploadImageListString.add(imageBitmap.toBase64String())
+                                                        postImageBitmapToStringList.add(imageBitmap.toBase64String())
                                                     }
                                                 }
                                                 override fun onLoadCleared(placeholder: Drawable?) { }
                                             })
                                     }
                                     uploadImageListAdapter.notifyDataSetChanged()
-                                    postTagList = postData.hashtags
-                                    postFolderId = postData.folderId.toString()
-                                    postFolderName = postData.folderName
+
+                                    writeViewModel.postTagList.addAll(postData.hashtags)
+                                    writeViewModel.postFolderId.value = postData.folderId.toString()
+                                    writeViewModel.postFolderName.value = postData.folderName
                                 }
                             }
                         })
@@ -233,68 +251,62 @@ class WriteFragment : Fragment() {
         }
     }
 
-    private fun observeNavigationTagListCallBack() {
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<List<String>>("postTagList")?.observe(viewLifecycleOwner) {
-            postTagList = it
-        }
-    }
-
-    private fun observeNavigationFolderCallBack(){
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>("postFolderId")?.observe(viewLifecycleOwner){
-            postFolderId = it
-        }
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>("postFolderName")?.observe(viewLifecycleOwner){
-            postFolderName = it
-        }
-    }
-
     private fun setImageUploadButtonClickListener() {
         val btnUploadImage = binding.btnUploadImage
-        val rvUploadImageList = binding.rvImgUploadList
-        uploadImageListAdapter = WriteUploadImageListAdapter(uploadImageList, requireContext(), args.postId)
-
         btnUploadImage.setOnClickListener {
             findNavController().navigate(R.id.action_writeFragment_to_writeImageOptionFragment)
         }
-        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        rvUploadImageList.layoutManager = layoutManager
-        rvUploadImageList.adapter = uploadImageListAdapter
     }
-    private fun observeNavigationWritingImageCallBack() {
-        getNavigationResult<List<Uri>>(R.id.WriteFragment, "userWritingPostImageUri") {
-            for(element in it) {
-                uploadImageList.add(element)
-                val imageBitmap = element.toBitmap()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    uploadImageListString.add(imageBitmap.toBase64String())
-                }
-                if(uploadImageList.size >= 5) {
-                    Toast.makeText(requireContext(), getString(R.string.write_post_upload_alert_message_image_fail_max), Toast.LENGTH_SHORT).show()
-                    binding.btnUploadImage.visibility = View.GONE
-                    break
-                }
-                if(uploadImageList.size != 0) {
-                    isImageUploaded = true
-                    setUploadButtonActivation()
+
+    private fun setPostImageListAdapter() {
+        writeViewModel.postImageUriList.observe(viewLifecycleOwner) {
+            uploadImageListAdapter = WriteUploadImageListAdapter(it, requireContext(), args.postId)
+            val rvUploadImageList = binding.rvImgUploadList
+            val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            rvUploadImageList.layoutManager = layoutManager
+            rvUploadImageList.adapter = uploadImageListAdapter
+            // 새로 작성하는 글
+            if(args.postId == 0) {
+                postImageBitmapToStringList.clear()
+                for (element in it) {
+                    val imageBitmap = element.toBitmap()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        postImageBitmapToStringList.add(imageBitmap.toBase64String())
+                    }
+                    if (postImageBitmapToStringList.size >= 5) {
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.write_post_upload_alert_message_image_fail_max),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        binding.btnUploadImage.visibility = View.GONE
+                        break
+                    }
+                    if (postImageBitmapToStringList.size != 0) {
+                        isImageUploaded = true
+                        setUploadButtonActivation()
+                    }
                 }
             }
-            uploadImageListAdapter.notifyDataSetChanged()
         }
     }
 
     private fun setImageDeleteClickListener() {
-        uploadImageListAdapter.setOnItemClickListener(object : WriteUploadImageListAdapter.OnItemClickListener{
-            override fun deleteUploadImageClick(pos: Int) {
-                uploadImageList.removeAt(pos)
-                uploadImageListString.removeAt(pos)
-                uploadImageListAdapter.notifyDataSetChanged()
-                binding.btnUploadImage.visibility = View.VISIBLE
-                if (uploadImageList.size == 0) {
-                    isImageUploaded = false
-                    setUploadButtonActivation()
+        writeViewModel.postImageUriList.observe(viewLifecycleOwner) {
+            uploadImageListAdapter.setOnItemClickListener(object :
+                WriteUploadImageListAdapter.OnItemClickListener {
+                override fun deleteUploadImageClick(pos: Int) {
+                    it.removeAt(pos)
+                    postImageBitmapToStringList.removeAt(pos)
+                    uploadImageListAdapter.notifyDataSetChanged()
+                    binding.btnUploadImage.visibility = View.VISIBLE
+                    if (it.isNullOrEmpty()) {
+                        isImageUploaded = false
+                        setUploadButtonActivation()
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 
     private fun setUploadButtonActivation() {
@@ -317,23 +329,21 @@ class WriteFragment : Fragment() {
             var selectedCategoryName = setCategoryName()
             binding.btnWritePostUpload.isSelected = true
             binding.btnWritePostUpload.setOnClickListener {
-                if (this::postTagList.isInitialized) {
-                    val navigateWithDataPassAction =
-                        WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(args.postId, selectedCategoryName, binding.etWriteDetail.text.toString(), uploadImageListString.toTypedArray(), postTagList.toTypedArray(), postFolderId, postFolderName)
-                    findNavController().navigate(navigateWithDataPassAction)
-                } else {
-                    val navigateWithDataPassAction =
-                        WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment(args.postId, selectedCategoryName, binding.etWriteDetail.text.toString(), uploadImageListString.toTypedArray(), emptyArray(), postFolderId, postFolderName)
-                    findNavController().navigate(navigateWithDataPassAction)
+                writeViewModel.postId.value = args.postId
+                writeViewModel.postCategory.value = selectedCategoryName
+                writeViewModel.postContents.value = binding.etWriteDetail.text.toString()
+                writeViewModel.postImageUriList.observe(viewLifecycleOwner) {
+                    Log.e("dayo", "write upload:${it}")
                 }
+                findNavController().navigate(WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment())
             }
         }
     }
 
     private fun observeUploadStateCallBack() {
-        writeOptionViewModel.writeSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
+        writeViewModel.writeSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
             if(isSuccess.getContentIfNotHandled() == true) {
-                writeOptionViewModel.writePostId.value?.getContentIfNotHandled()?.let { writePostId ->
+                writeViewModel.writePostId.value?.getContentIfNotHandled()?.let { writePostId ->
                     findNavController().navigate(WriteFragmentDirections.actionWriteFragmentToPostFragment
                         (writePostId, SharedManager(DayoApplication.applicationContext()).getCurrentUser().nickname.toString()))
                 }
@@ -341,9 +351,9 @@ class WriteFragment : Fragment() {
                 Toast.makeText(requireContext(), R.string.write_post_upload_alert_message_fail, Toast.LENGTH_SHORT).show()
             }
         })
-        writeOptionViewModel.writeEditSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
+        writeViewModel.writeEditSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
             if(isSuccess.getContentIfNotHandled() == true) {
-                writeOptionViewModel.writePostId.value?.getContentIfNotHandled()?.let { writePostId ->
+                writeViewModel.writePostId.value?.getContentIfNotHandled()?.let { writePostId ->
                     findNavController().navigate(WriteFragmentDirections.actionWriteFragmentToPostFragment
                         (writePostId, SharedManager(DayoApplication.applicationContext()).getCurrentUser().nickname.toString()))
                 }
@@ -361,11 +371,11 @@ class WriteFragment : Fragment() {
         }
     }
 
-    fun Uri.toBitmap(): Bitmap {
+    fun String.toBitmap(): Bitmap {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            ImageDecoder.decodeBitmap(ImageDecoder.createSource(requireContext().contentResolver, this) )
+            ImageDecoder.decodeBitmap(ImageDecoder.createSource(requireContext().contentResolver, this.toUri()) )
         } else {
-            MediaStore.Images.Media.getBitmap(requireContext().contentResolver, this)
+            MediaStore.Images.Media.getBitmap(requireContext().contentResolver, this.toUri())
         }
     }
 }
