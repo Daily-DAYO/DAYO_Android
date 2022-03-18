@@ -6,19 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.load.engine.executor.GlideExecutor.UncaughtThrowableStrategy.LOG
-import com.daily.dayo.DayoApplication
-import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.FragmentWriteFolderAddBinding
 import com.daily.dayo.util.autoCleared
-import com.daily.dayo.write.viewmodel.WriteFolderAddViewModel
+import com.daily.dayo.write.viewmodel.WriteViewModel
 
 class WriteFolderAddFragment : Fragment() {
     private var binding by autoCleared<FragmentWriteFolderAddBinding>()
-    private val writeFolderAddViewModel by activityViewModels<WriteFolderAddViewModel>()
+    private val writeViewModel by activityViewModels<WriteViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,6 +46,6 @@ class WriteFolderAddFragment : Fragment() {
                 binding.radiobuttonPostFolderAddSetPrivateOnlyMe.id -> "ONLY_ME"
                 else -> ""
         }
-        writeFolderAddViewModel.requestCreateFolderInPost(name, privacy)
+        writeViewModel.requestCreateFolderInPost(name, privacy)
     }
 }

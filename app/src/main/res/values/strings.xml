@@ -66,9 +66,9 @@
     <string name="write_post_description_count_limit"> / 최대 200자</string>
     <string name="upload">올리기</string>
     <string name="write_post_tag_add">태그 추가</string>
-    <string name="hint_write_post_tag_add"># 키워드를 입력해주세요</string>
+    <string name="hint_write_post_tag_add"># 키워드를 입력해주세요.</string>
     <string name="write_option_title_folder">폴더 설정</string>
-    <string name="write_option_description_folder">폴더 생성하기</string>
+    <string name="write_option_description_folder">폴더를 선택해 주세요.</string>
     <string name="write_option_title_private">공개 설정</string>
     <string name="write_option_title_tag">태그 추가</string>
     <string name="write_option_description_tag">기록에 관한 키워드를 추가해보세요.</string>
@@ -80,7 +80,7 @@
     <string name="write_post_upload_alert_message_empty_image">사진을 추가해 주세요.</string>
     <string name="write_post_upload_alert_message_empty_category">카테고리를 선택해 주세요.</string>
     <string name="write_post_upload_alert_message_edittext_length_fail_max">내용은 200자까지 작성할 수 있어요.</string>
-    <string name="write_post_upload_alert_message_image_fail_max">사진은 5장까지만 선택 가능합니다</string>
+    <string name="write_post_upload_alert_message_image_fail_max">사진은 5장까지만 선택 가능합니다.</string>
     <string name="write_post_upload_alert_message_loading">게시글을 올리고 있어요! 잠시만 기다려주세요.</string>
     <string name="write_post_upload_alert_message_fail">게시글을 업로드 할 수 없어요. 다시 시도해주세요.</string>
 
