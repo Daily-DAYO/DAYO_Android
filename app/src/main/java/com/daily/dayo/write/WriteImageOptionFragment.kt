@@ -15,25 +15,25 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.BuildConfig
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentWriteImageOptionBinding
 import com.daily.dayo.util.DefaultDialogConfigure
 import com.daily.dayo.util.autoCleared
-import com.daily.dayo.util.setNavigationResult
+import com.daily.dayo.write.viewmodel.WriteViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class WriteImageOptionFragment : DialogFragment() {
     private var binding by autoCleared<FragmentWriteImageOptionBinding>()
+    private val writeViewModel by activityViewModels<WriteViewModel>()
     private lateinit var currentTakenPhotoPath: String
-    private var uploadImageList = ArrayList<Uri>() // 갤러리에서 불러온 이미지 리스트
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         isCancelable = true
@@ -97,7 +97,6 @@ class WriteImageOptionFragment : DialogFragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     val requestSelectGalleryActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
         if (activityResult.resultCode == Activity.RESULT_OK) {
-            uploadImageList.clear()
             val data: Intent? = activityResult.data
 
             if (data?.clipData != null) { //사진 여러 개 선택 시
@@ -107,15 +106,15 @@ class WriteImageOptionFragment : DialogFragment() {
                 }
                 for (i in 0 until count) {
                     val imageUri = data.clipData!!.getItemAt(i).uri
-                    uploadImageList.add(imageUri)
+                    writeViewModel.postImageUriList.add(imageUri.toString())
                 }
-                setWritingPostImage(uploadImageList)
+                findNavController().popBackStack()
             } else { // 단일 선택
                 data?.data?.let { uri ->
                     val imageUri : Uri?= data?.data
                     if (imageUri != null){
-                        uploadImageList.add(imageUri)
-                        setWritingPostImage(uploadImageList)
+                        writeViewModel.postImageUriList.add(imageUri.toString())
+                        findNavController().popBackStack()
                     }
                 }
             }
@@ -165,15 +164,9 @@ class WriteImageOptionFragment : DialogFragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     val requestTakePhotoActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
         if (activityResult.resultCode == Activity.RESULT_OK) {
-            uploadImageList.clear()
             val photoFile = File(currentTakenPhotoPath)
-            uploadImageList.add(Uri.fromFile(photoFile))
-            setWritingPostImage(uploadImageList)
+            writeViewModel.postImageUriList.add(Uri.fromFile(photoFile).toString())
+            findNavController().popBackStack()
         }
-    }
-
-    private fun setWritingPostImage(ImageUri : List<Uri>) {
-        setNavigationResult("userWritingPostImageUri", ImageUri)
-        findNavController().popBackStack()
     }
 }
