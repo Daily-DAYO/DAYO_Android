@@ -4,6 +4,7 @@ import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.text.bold
 import androidx.databinding.BindingAdapter
 
 object BindingAdapter {
@@ -11,6 +12,14 @@ object BindingAdapter {
     @JvmStatic
     fun setBoldString(view: AppCompatTextView, maintext: String, sequence: String) {
         view.text = getBoldText(maintext, sequence)
+    }
+    @BindingAdapter("main", "secondTextInteger")
+    @JvmStatic
+    fun setBoldStringInteger(view: AppCompatTextView, maintext: String, sequence: Int) {
+        val str = SpannableStringBuilder()
+            .append("$maintext ")
+            .bold { append(sequence.toString()) }
+        view.text = str
     }
 
     @JvmStatic

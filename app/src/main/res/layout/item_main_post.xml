@@ -9,12 +9,13 @@
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="4dp">
 
         <ImageView
             android:id="@+id/img_main_post"
-            android:layout_width="155dp"
-            android:layout_height="155dp"
+            android:layout_width="158dp"
+            android:layout_height="158dp"
             android:scaleType="centerCrop"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -22,14 +23,14 @@
 
         <ImageButton
             android:id="@+id/btn_main_post_like"
-            android:layout_width="20dp"
-            android:layout_height="18dp"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
             android:background="@android:color/transparent"
             android:src="@{postData.heart == true ? @drawable/ic_like_pressed : @drawable/ic_like_default}"
             app:layout_constraintBottom_toBottomOf="@id/img_main_post"
             app:layout_constraintEnd_toEndOf="@id/img_main_post"
-            android:paddingBottom="10dp"
-            android:paddingEnd="9dp"/>
+            android:paddingBottom="3dp"
+            android:paddingEnd="4dp"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_post_ranking_number"
@@ -38,12 +39,12 @@
             app:layout_constraintTop_toTopOf="@id/img_main_post"
             app:layout_constraintStart_toStartOf="@id/img_main_post"
             android:layout_marginTop="11dp"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="11dp"
             android:visibility="visible">
             <ImageView
                 android:id="@+id/img_background_post_ranking_number"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@drawable/ic_background_post_ranking_number"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"/>
@@ -51,7 +52,7 @@
                 android:id="@+id/tv_post_ranking_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12dp"
+                android:textSize="15dp"
                 android:textStyle="bold"
                 android:textColor="@color/white_FFFFFF"
                 android:gravity="center"
@@ -64,45 +65,45 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/img_main_post_user_profile"
-            android:layout_width="12dp"
-            android:layout_height="12dp"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
             app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
             app:strokeWidth="1dp"
             app:strokeColor="@color/gray_4_D3D2D2"
             android:src="@drawable/ic_user_profile_image_empty"
             app:layout_constraintTop_toBottomOf="@id/img_main_post"
             app:layout_constraintStart_toStartOf="@+id/img_main_post"
-            android:layout_marginTop="14dp"
-            android:layout_marginStart="6dp"
+            android:layout_marginTop="11dp"
             tools:src="@drawable/ic_dayo_circle_grayscale" />
 
         <TextView
             android:id="@+id/tv_main_post_user_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="13dp"
+            android:textSize="14dp"
             android:textStyle="bold"
             android:textColor="@color/gray_1_313131"
             app:layout_constraintTop_toTopOf="@id/img_main_post_user_profile"
             app:layout_constraintBottom_toBottomOf="@id/img_main_post_user_profile"
             app:layout_constraintStart_toEndOf="@id/img_main_post_user_profile"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="5dp"
             android:text="@{postData.nickname}"
             tools:text="Nickname"/>
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_main_post_like_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="10dp"
+            android:textSize="11dp"
             android:textColor="@color/gray_3_9C9C9C"
             app:layout_constraintTop_toBottomOf="@id/img_main_post_user_profile"
             app:layout_constraintStart_toStartOf="@id/img_main_post_user_profile"
-            android:layout_marginTop="9dp"
-            android:text="@{`좋아요 `+ Integer.toString(postData.heartCount)}"
+            android:layout_marginTop="6dp"
+            app:main="@{@string/like(Integer.toString(postData.heartCount))}"
+            app:secondTextInteger="@{postData.heartCount}"
             tools:text="좋아요 135"/>
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_main_post_hit_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -110,8 +111,9 @@
             android:textColor="@color/gray_3_9C9C9C"
             app:layout_constraintTop_toTopOf="@id/tv_main_post_like_count"
             app:layout_constraintStart_toEndOf="@id/tv_main_post_like_count"
-            android:layout_marginStart="4.5dp"
-            android:text="@{`댓글 `+ Integer.toString(postData.commentCount)}"
+            android:layout_marginStart="8dp"
+            app:main="@{@string/comment(Integer.toString(postData.commentCount))}"
+            app:secondTextInteger="@{postData.commentCount}"
             tools:text="댓글 1,230"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
