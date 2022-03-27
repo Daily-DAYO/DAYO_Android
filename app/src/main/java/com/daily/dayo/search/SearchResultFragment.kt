@@ -5,15 +5,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.daily.dayo.databinding.FragmentSearchResultBinding
+import com.daily.dayo.search.viemodel.SearchViewModel
 import com.daily.dayo.util.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SearchResultFragment : Fragment() {
     private var binding by autoCleared<FragmentSearchResultBinding>()
+    private val searchViewModel by activityViewModels<SearchViewModel>()
     private val args by navArgs<SearchResultFragmentArgs>()
 
     override fun onCreateView(
@@ -23,6 +26,7 @@ class SearchResultFragment : Fragment() {
         binding = FragmentSearchResultBinding.inflate(inflater, container, false)
         setBackButtonClickListener()
         initEditText()
+        setSearchClickListener()
         return binding.root
     }
 
@@ -33,5 +37,11 @@ class SearchResultFragment : Fragment() {
     }
     private fun initEditText() {
         binding.tvSearchResultKeywordInput.setText(args.searchKeyword)
+    }
+
+    private fun setSearchClickListener() {
+        binding.btnSearchResultKeyword.setOnClickListener{
+            searchViewModel.searchKeyword(binding.tvSearchResultKeywordInput.text.toString())
+        }
     }
 }

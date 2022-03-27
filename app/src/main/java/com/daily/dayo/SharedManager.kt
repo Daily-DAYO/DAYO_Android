@@ -5,7 +5,9 @@ import com.daily.dayo.PreferenceHelper.get
 import com.daily.dayo.PreferenceHelper.set
 import com.daily.dayo.login.model.LoginResponse
 import com.daily.dayo.login.model.MemberResponse
+import com.google.gson.JsonArray
 import dagger.hilt.android.qualifiers.ApplicationContext
+import org.json.JSONArray
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -44,4 +46,26 @@ class SharedManager @Inject constructor(@ApplicationContext context: Context) {
     var isFcmTokenRegistered: Boolean
         get() = prefs.getBoolean(fcmToken, true)
         set(value) = prefs.edit().putBoolean(fcmToken, value).apply()
+
+    fun setSearchKeywordRecent(searchKeywordRecent:ArrayList<String>) {
+        var jsonArr = JsonArray()
+        for(i in searchKeywordRecent) {
+            jsonArr.add(i)
+        }
+
+        var result = jsonArr.toString()
+        prefs["recentSearchKeyword"] = result
+    }
+    fun getSearchKeywordRecent(): ArrayList<String> {
+        val result = prefs["recentSearchKeyword", ""]
+        var resultArr = ArrayList<String>()
+        val jsonArr = JSONArray(result)
+
+        if(jsonArr.length() != 0) {
+            for(i in 0 until jsonArr.length()){
+                resultArr.add(jsonArr.optString(i))
+            }
+        }
+        return resultArr
+    }
 }
