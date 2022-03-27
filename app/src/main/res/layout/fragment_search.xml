@@ -105,7 +105,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="21dp"
             tools:itemCount="6"
-            tools:listitem="@layout/item_search_recent_keyword"/>
+            tools:listitem="@layout/item_search_keyword_recent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_search_recommend_contents"
@@ -137,7 +137,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="21dp"
-            tools:listitem="@layout/item_search_recommend_keyword"/>
+            tools:listitem="@layout/item_search_keyword_recommend"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
