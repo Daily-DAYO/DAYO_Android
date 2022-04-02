@@ -33,7 +33,6 @@ class LoginFragment : Fragment() {
     ): View? {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
 
-        autoLogin()
         loginSuccess()
         setKakaoLoginButtonClickListener()
         setEmailLoginButtonClickListener()
@@ -59,11 +58,6 @@ class LoginFragment : Fragment() {
             Log.i(ContentValues.TAG, "카카오 로그인 성공 ${token.accessToken}")
             loginViewModel.requestLoginKakao(LoginRequestKakao(token.accessToken))
         }
-    }
-
-    private fun autoLogin(){
-        // TODO: 추후 splash 화면으로 옮기기
-        loginViewModel.requestRefreshToken()
     }
 
     private fun loginSuccess(){
