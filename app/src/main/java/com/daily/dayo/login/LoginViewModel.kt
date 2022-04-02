@@ -60,7 +60,8 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
             response.body()?.let { sharedManager.setAccessToken(it.accessToken) }
             requestMemberInfo()
             _loginSuccess.postValue(Event(true))
-        }
+        } else
+            _loginSuccess.postValue(Event(false))
     }
 
     private fun requestMemberInfo() = viewModelScope.launch{
