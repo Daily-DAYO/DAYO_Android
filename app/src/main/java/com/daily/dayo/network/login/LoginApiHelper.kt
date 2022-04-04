@@ -12,4 +12,5 @@ interface LoginApiHelper {
     suspend fun requestSignupEmail(email: String, nickname: String, password: String, profileImg: MultipartBody.Part): Response<SignupEmailResponse>
     suspend fun requestCertificateEmail(email: String) : Response<SignupEmailAuthCodeResponse>
     suspend fun requestRefreshToken():Response<ResponseRefreshToken>
+    suspend fun requestDeviceToken(request: RequestDeviceToken) : Response<Void>
 }
