@@ -7,7 +7,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.daily.dayo.databinding.ActivityMainBinding
-import com.daily.dayo.util.FirebaseMessagingServiceUtil
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -19,9 +18,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         initBottomNavigation()
         setBottomNaviVisibility()
-        if (SharedManager(DayoApplication.applicationContext()).isFcmTokenRegistered) {
-            FirebaseMessagingServiceUtil().registerFcmToken()
-        }
     }
 
     private fun initBottomNavigation() {

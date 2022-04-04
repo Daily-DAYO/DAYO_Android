@@ -9,9 +9,15 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Observer
+import com.daily.dayo.DayoApplication
 import com.daily.dayo.MainActivity
+import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.ActivityLoginBinding
+import com.daily.dayo.util.FirebaseMessagingServiceUtil
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
@@ -30,6 +36,20 @@ class LoginActivity : AppCompatActivity() {
         setSplash()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        if(loginViewModel.loginSuccess.value?.peekContent() == true){
+            setFCM()
+        }
+    }
+
+    private fun setFCM(){
+        GlobalScope.launch(Dispatchers.IO) {
+            FirebaseMessagingServiceUtil().registerFcmToken()
+            loginViewModel.requestDeviceToken(SharedManager(DayoApplication.applicationContext()).fcmDeviceToken)
+        }
+    }
+
     private fun autoLogin(){
         loginViewModel.requestRefreshToken()
     }
@@ -43,7 +63,7 @@ class LoginActivity : AppCompatActivity() {
                 startActivity(intent)
                 this.finish()
             } else if(!isSuccess.peekContent()) {
-                Log.e(ContentValues.TAG, "로그인 실패")
+                Log.e(ContentValues.TAG, "자동 로그인 실패")
                 isReady = true // 로그인 실패할 경우, Splash 화면을 지우고 Login Activity 내용물이 보이도록 설정
             }
         })
