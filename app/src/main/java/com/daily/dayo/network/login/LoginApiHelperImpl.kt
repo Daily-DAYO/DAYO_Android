@@ -26,4 +26,7 @@ class LoginApiHelperImpl@Inject constructor(private val loginApiService: LoginAp
 
     override suspend fun requestRefreshToken(): Response<ResponseRefreshToken> =
         loginApiService.requestRefreshToken()
+
+    override suspend fun requestDeviceToken(request: RequestDeviceToken): Response<Void> =
+        loginApiService.requestDeviceToken(request)
 }

@@ -7,10 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.daily.dayo.SharedManager
 import com.daily.dayo.login.model.LoginRequestEmail
 import com.daily.dayo.login.model.LoginRequestKakao
+import com.daily.dayo.login.model.RequestDeviceToken
 import com.daily.dayo.repository.LoginRepository
 import com.daily.dayo.util.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -97,5 +99,9 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
         } else {
             _isCertificateEmailSend.postValue(false)
         }
+    }
+
+    suspend fun requestDeviceToken(fcmDeviceToken : String) = coroutineScope {
+        val response = loginRepository.requestDeviceToken(RequestDeviceToken(fcmDeviceToken))
     }
 }

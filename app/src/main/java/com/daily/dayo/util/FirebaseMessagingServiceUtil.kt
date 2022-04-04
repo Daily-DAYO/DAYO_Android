@@ -10,14 +10,18 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.daily.dayo.DayoApplication
 import com.daily.dayo.MainActivity
 import com.daily.dayo.R
+import com.daily.dayo.SharedManager
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
-class FirebaseMessagingServiceUtil: FirebaseMessagingService(){
+class FirebaseMessagingServiceUtil: FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -26,16 +30,17 @@ class FirebaseMessagingServiceUtil: FirebaseMessagingService(){
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-
-        remoteMessage.notification?.let{
-            sendNotification(remoteMessage)
+        if(remoteMessage.data.isNotEmpty()) {
+            val body = remoteMessage.data["body"]
+            sendNotification(body)
+        }else if (remoteMessage.notification != null) {
+            val body = remoteMessage.notification!!.body
+            sendNotification(body)
         }
     }
 
-    private fun sendNotification(remoteMessage: RemoteMessage){
+    private fun sendNotification(body: String?){
         val id = System.currentTimeMillis().toInt()
-        val title = remoteMessage.notification!!.title
-        val body = remoteMessage.notification!!.body
 
         // notification 클릭 시 이동하는 액티비티
         var intent = Intent(this, MainActivity::class.java)
@@ -43,8 +48,8 @@ class FirebaseMessagingServiceUtil: FirebaseMessagingService(){
         val pendingIntent = PendingIntent.getActivity(this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         // notification channel 생성
-        val CHANNEL_ID = System.currentTimeMillis().toString()
-        val CHANNEL_NAME = "Notice"
+        val CHANNEL_ID = "Channel"
+        val CHANNEL_NAME = "서비스 알림"
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -59,7 +64,6 @@ class FirebaseMessagingServiceUtil: FirebaseMessagingService(){
         val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_dayo_logo)
-            .setContentTitle(title)
             .setContentText(body)
             .setAutoCancel(true)
             .setSound(soundUri)
@@ -67,23 +71,22 @@ class FirebaseMessagingServiceUtil: FirebaseMessagingService(){
         notificationManager.notify(id, notificationBuilder.build())
     }
 
-    private fun getCurrentToken(){
+    private suspend fun getCurrentToken() = suspendCoroutine<String> { continuation ->
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
+            if(task.isSuccessful){
+                val token = task.result
+                Log.d(TAG, token)
+                continuation.resume(token)
+            } else {
                 Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                continuation.resume("")
                 return@OnCompleteListener
             }
-
-            // Get new FCM registration token
-            val token = task.result
-            Log.d(TAG, token)
-
-            //todo 서버로 토큰 보내기
         })
     }
 
-    fun registerFcmToken() {
-        getCurrentToken()
+    suspend fun registerFcmToken() {
+        SharedManager(DayoApplication.applicationContext()).fcmDeviceToken = getCurrentToken()
         FirebaseMessaging.getInstance().isAutoInitEnabled = true
     }
 

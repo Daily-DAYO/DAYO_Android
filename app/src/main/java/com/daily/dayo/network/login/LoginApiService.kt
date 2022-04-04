@@ -27,4 +27,7 @@ interface LoginApiService {
 
     @GET("/api/v1/members/refresh")
     suspend fun requestRefreshToken():Response<ResponseRefreshToken>
+
+    @POST("/api/v1/members")
+    suspend fun requestDeviceToken(@Body body : RequestDeviceToken) :Response<Void>
 }

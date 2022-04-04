@@ -18,6 +18,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DAYO">
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_dayo_logo" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.daily.dayo.fileprovider"
