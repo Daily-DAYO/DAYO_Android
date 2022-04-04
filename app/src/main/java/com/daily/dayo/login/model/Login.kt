@@ -36,3 +36,8 @@ data class ResponseRefreshToken(
     @SerializedName("accessToken")
     val accessToken: String
 )
+
+data class RequestDeviceToken(
+    @SerializedName("deviceToken")
+    val deviceToken: String
+)

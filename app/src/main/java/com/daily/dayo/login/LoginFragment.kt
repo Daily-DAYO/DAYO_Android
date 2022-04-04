@@ -11,10 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.daily.dayo.DayoApplication
 import com.daily.dayo.MainActivity
 import com.daily.dayo.R
-import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.FragmentLoginBinding
 import com.daily.dayo.login.model.LoginRequestKakao
 import com.daily.dayo.util.autoCleared

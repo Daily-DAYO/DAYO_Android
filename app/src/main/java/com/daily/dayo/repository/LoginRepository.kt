@@ -14,6 +14,7 @@ class LoginRepository @Inject constructor(private val loginApiHelper: LoginApiHe
     suspend fun requestLoginEmail(request: LoginRequestEmail): Response<LoginResponse> = loginApiHelper.requestLoginEmail(request)
     suspend fun requestMemberInfo(): Response<MemberResponse> = loginApiHelper.requestMemberInfo()
     suspend fun requestRefreshToken(): Response<ResponseRefreshToken> = loginApiHelper.requestRefreshToken()
+    suspend fun requestDeviceToken(request: RequestDeviceToken): Response<Void> = loginApiHelper.requestDeviceToken(request)
 
     suspend fun requestSignupEmail(
         email: String,
