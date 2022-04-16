@@ -2,27 +2,27 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/HomeFragment"
-        android:icon="@drawable/ic_home"
         android:enabled="true"
+        android:icon="@drawable/selector_menu_icon_home"
         android:title="@string/home" />
     <item
         android:id="@+id/FeedFragment"
-        android:icon="@drawable/ic_feed"
         android:enabled="true"
+        android:icon="@drawable/selector_menu_icon_feed"
         android:title="@string/feed" />
     <item
         android:id="@+id/WriteFragment"
-        android:enabled="false"
-        android:title=""
-        />
+        android:enabled="true"
+        android:icon="@drawable/selector_menu_icon_write"
+        android:title="@string/write" />
     <item
         android:id="@+id/NotificationFragment"
-        android:icon="@drawable/ic_notification"
         android:enabled="true"
+        android:icon="@drawable/selector_menu_icon_notification"
         android:title="@string/notification" />
     <item
         android:id="@+id/MyProfileFragment"
-        android:icon="@drawable/ic_my_page"
         android:enabled="true"
+        android:icon="@drawable/selector_menu_icon_my_profile"
         android:title="@string/my_page" />
 </menu>
