@@ -5,10 +5,13 @@ import android.graphics.ImageDecoder
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
 import android.text.SpannableStringBuilder
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -22,6 +25,7 @@ import com.bumptech.glide.Glide
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentFolderSettingAddBinding
 import com.daily.dayo.profile.viewmodel.FolderEditViewModel
+import com.daily.dayo.util.ButtonActivation
 import com.daily.dayo.util.Status
 import com.daily.dayo.util.autoCleared
 import kotlinx.coroutines.launch
@@ -30,6 +34,7 @@ import java.io.FileOutputStream
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.regex.Pattern
 
 class FolderEditFragment  : Fragment() {
     private var binding by autoCleared<FragmentFolderSettingAddBinding>()
@@ -50,6 +55,8 @@ class FolderEditFragment  : Fragment() {
         setConfirmButtonClickListener()
         setFolderSettingThumbnailOptionClickListener()
         observeNavigationFolderSettingImageCallBack()
+        verifyFolderName()
+
         return binding.root
     }
 
@@ -65,9 +72,8 @@ class FolderEditFragment  : Fragment() {
                                 binding.etFolderSettingAddSetSubheading.text = SpannableStringBuilder(detailFolderList.subheading?:"")
                                 when(detailFolderList.privacy){
                                     "ALL" -> binding.radiobuttonFolderSettingAddSetPrivateAll.isChecked = true
-                                    "FOLLOWING" -> binding.radiobuttonFolderSettingAddSetPrivateFollowing.isChecked = true
                                     "ONLY_ME" -> binding.radiobuttonFolderSettingAddSetPrivateOnlyMe.isChecked = true
-                                    else -> binding.radiobuttonFolderSettingAddSetPrivateFollowing.isChecked = true
+                                    else -> binding.radiobuttonFolderSettingAddSetPrivateAll.isChecked
                                 }
                                 initThumbnailImg = "http://117.17.198.45:8080/images/" + detailFolderList.thumbnailImage
                                 Glide.with(binding.ivFolderSettingThumbnail.context)
@@ -92,9 +98,8 @@ class FolderEditFragment  : Fragment() {
             val subheading:String = binding.etFolderSettingAddSetSubheading.text.toString()
             val privacy:String = when(binding.radiogroupFolderSettingAddSetPrivate.checkedRadioButtonId){
                 binding.radiobuttonFolderSettingAddSetPrivateAll.id -> "ALL"
-                binding.radiobuttonFolderSettingAddSetPrivateFollowing.id -> "FOLLOWING"
                 binding.radiobuttonFolderSettingAddSetPrivateOnlyMe.id -> "ONLY_ME"
-                else -> "FOLLOWING"
+                else -> "ALL"
             }
 
             if(this::imageUri.isInitialized){
@@ -158,5 +163,26 @@ class FolderEditFragment  : Fragment() {
             out?.close()
         }
         return file
+    }
+
+    private fun verifyFolderName(){
+        binding.etFolderSettingAddSetTitle.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+            override fun afterTextChanged(s: Editable?) {
+                when {
+                    s.toString().trim().isEmpty() -> {
+                        ButtonActivation.setTextViewConfirmButtonInactive(requireContext(), binding.tvFolderSettingAddConfirm)
+                    }
+                    Pattern.matches("[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9|\\s]*", s.toString().trim()) -> {
+                        ButtonActivation.setTextViewConfirmButtonActive(requireContext(), binding.tvFolderSettingAddConfirm)
+                    }
+                    else -> {
+                        Toast.makeText(requireContext(), getString(R.string.folder_add_message_format_fail), Toast.LENGTH_SHORT).show()
+                        ButtonActivation.setTextViewConfirmButtonInactive(requireContext(), binding.tvFolderSettingAddConfirm)
+                    }
+                }
+            }
+        })
     }
 }

@@ -5,9 +5,12 @@ import android.graphics.ImageDecoder
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -16,12 +19,14 @@ import com.bumptech.glide.Glide
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentFolderSettingAddBinding
 import com.daily.dayo.profile.viewmodel.FolderSettingAddViewModel
+import com.daily.dayo.util.ButtonActivation
 import com.daily.dayo.util.autoCleared
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.regex.Pattern
 
 class FolderSettingAddFragment  : Fragment() {
     private var binding by autoCleared<FragmentFolderSettingAddBinding>()
@@ -38,6 +43,7 @@ class FolderSettingAddFragment  : Fragment() {
         setConfirmButtonClickListener()
         setFolderSettingThumbnailOptionClickListener()
         observeNavigationFolderSettingImageCallBack()
+        verifyFolderName()
         return binding.root
     }
     private fun setBackButtonClickListener() {
@@ -51,17 +57,17 @@ class FolderSettingAddFragment  : Fragment() {
             val subheading:String = binding.etFolderSettingAddSetSubheading.text.toString()
             val privacy:String = when(binding.radiogroupFolderSettingAddSetPrivate.checkedRadioButtonId){
                 binding.radiobuttonFolderSettingAddSetPrivateAll.id -> "ALL"
-                binding.radiobuttonFolderSettingAddSetPrivateFollowing.id -> "FOLLOWING"
                 binding.radiobuttonFolderSettingAddSetPrivateOnlyMe.id -> "ONLY_ME"
-                else -> "FOLLOWING"
+                else -> "ALL"
             }
             val thumbnailImg = thumbnailImgBitmap?.let { bitmapToFile(it) }
 
             folderSettingAddViewModel.requestCreateFolder(name, privacy, subheading, thumbnailImg)
-            folderSettingAddViewModel.createFolderSuccess.observe(viewLifecycleOwner) {
-                if (it) {
-                    folderSettingAddViewModel.createFolderSuccess.value = false
-                    findNavController().navigateUp()
+            folderSettingAddViewModel.folderAddAccess.observe(viewLifecycleOwner){
+                if(it.getContentIfNotHandled() == true){
+                    findNavController().popBackStack()
+                } else if (it.getContentIfNotHandled() == false){
+                    Toast.makeText(requireContext(), R.string.folder_add_message_fail, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -112,5 +118,24 @@ class FolderSettingAddFragment  : Fragment() {
         return file
     }
 
-
+    private fun verifyFolderName(){
+        binding.etFolderSettingAddSetTitle.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+            override fun afterTextChanged(s: Editable?) {
+                when {
+                    s.toString().trim().isEmpty() -> {
+                        ButtonActivation.setTextViewConfirmButtonInactive(requireContext(), binding.tvFolderSettingAddConfirm)
+                    }
+                    Pattern.matches("[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9|\\s]*", s.toString().trim()) -> {
+                        ButtonActivation.setTextViewConfirmButtonActive(requireContext(), binding.tvFolderSettingAddConfirm)
+                    }
+                    else -> {
+                        Toast.makeText(requireContext(), getString(R.string.folder_add_message_format_fail), Toast.LENGTH_SHORT).show()
+                        ButtonActivation.setTextViewConfirmButtonInactive(requireContext(), binding.tvFolderSettingAddConfirm)
+                    }
+                }
+            }
+        })
+    }
 }

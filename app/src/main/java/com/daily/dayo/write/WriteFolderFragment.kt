@@ -90,7 +90,7 @@ class WriteFolderFragment : Fragment() {
                     when(it.status){
                         Status.SUCCESS -> {
                             it.data?.let { folderList ->
-                                writeFolderAdapter.submitList(folderList.data?.toMutableList())
+                                writeFolderAdapter.submitList(folderList.data)
                                 if(folderList.count < 5){
                                     ButtonActivation.setTextViewButtonActive(requireContext(), binding.tvWriteFolderAdd)
                                 }
