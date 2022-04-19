@@ -39,6 +39,7 @@ class LoginEmailFragment : Fragment() {
         initEditText()
         setTextEditorActionListener()
         activationNextButton()
+        setForgetAccountClickListener()
         return binding.root
     }
 
@@ -168,6 +169,12 @@ class LoginEmailFragment : Fragment() {
                     }
                 }
             })
+        }
+    }
+
+    private fun setForgetAccountClickListener() {
+        binding.tvLoginEmailForget.setOnClickListener {
+            findNavController().navigate(R.id.action_loginEmailFragment_to_findAccountPasswordCheckEmail)
         }
     }
 }

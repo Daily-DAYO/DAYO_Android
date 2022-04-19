@@ -77,10 +77,10 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
         binding.etSignupEmailSetEmailAddressCertificateUserInput.setOnFocusChangeListener { _, hasFocus ->
             with(binding.layoutSignupEmailSetEmailAddressCertificateUserInput) {
                 if(hasFocus){
-                    hint = getString(R.string.email_address_certificate)
+                    hint = getString(R.string.email_address_certification)
                     SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, false)
                 } else {
-                    hint = getString(R.string.signup_email_set_email_address_certificate_title)
+                    hint = getString(R.string.email_address_certificate_title)
                     SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, true)
                 }
             }
@@ -92,9 +92,9 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
     private fun changeEditTextTitle() {
         with(binding.layoutSignupEmailSetEmailAddressCertificateUserInput) {
             if(binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty()) {
-                hint = getString(R.string.signup_email_set_email_address_certificate_title)
+                hint = getString(R.string.email_address_certificate_title)
             } else {
-                hint = getString(R.string.email_address_certificate)
+                hint = getString(R.string.email_address_certification)
             }
         }
     }
@@ -124,7 +124,7 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
                 Navigation.findNavController(it).navigate(SignupEmailSetEmailAddressCertificateFragmentDirections.actionSignupEmailSetEmailAddressCertificateFragmentToSignupEmailSetPasswordFragment(args.email))
             } else {
                 ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetEmailAddressCertificateNext)
-                SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, getString(R.string.signup_email_set_email_address_certificate_alert_message_match_fail), false)
+                SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, getString(R.string.email_address_certificate_alert_message_match_fail), false)
                 Toast.makeText(requireContext(), "인증 실패 하였습니다.", Toast.LENGTH_SHORT).show()
             }
         }
@@ -142,7 +142,7 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
         binding.etSignupEmailSetEmailAddressCertificateUserInput.filters = arrayOf(filterInputCheck)
     }
 
-    private val countDownTimer = object : CountDownTimer(1000 * 60 * 3, 1000) {
+    private val countDownTimer = object : CountDownTimer((1000 * 60 * 3).toLong(), 1000) {
         override fun onTick(millisUntilFinished: Long) {
             isCountDownDone = false
             var remainMinutes = (millisUntilFinished / 1000) / 60
@@ -152,7 +152,7 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
         override fun onFinish() {
             isCountDownDone = true
             ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetEmailAddressCertificateNext)
-            SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, getString(R.string.signup_email_set_email_address_certificate_alert_message_time_fail),false)
+            SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, getString(R.string.email_address_certificate_alert_message_time_fail),false)
         }
     }
 
@@ -167,7 +167,7 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
             SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, true)
 
             loginViewModel.requestCertificateEmail(args.email)
-            Toast.makeText(requireContext(), R.string.signup_email_set_email_address_certificate_alert_message__resend, Toast.LENGTH_SHORT).show() // 4. 토스트 메시지 보여짐
+            Toast.makeText(requireContext(), R.string.email_address_certificate_alert_message_resend, Toast.LENGTH_SHORT).show() // 4. 토스트 메시지 보여짐
         }
     }
 
