@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentWriteFolderBinding
 import com.daily.dayo.profile.model.Folder
+import com.daily.dayo.util.ButtonActivation
 import com.daily.dayo.util.Event
 import com.daily.dayo.util.Status
 import com.daily.dayo.util.autoCleared
@@ -90,6 +91,12 @@ class WriteFolderFragment : Fragment() {
                         Status.SUCCESS -> {
                             it.data?.let { folderList ->
                                 writeFolderAdapter.submitList(folderList.data?.toMutableList())
+                                if(folderList.count < 5){
+                                    ButtonActivation.setTextViewButtonActive(requireContext(), binding.tvWriteFolderAdd)
+                                }
+                                else{
+                                    ButtonActivation.setTextViewButtonInactive(requireContext(), binding.tvWriteFolderAdd)
+                                }
                             }
                         }
                     }

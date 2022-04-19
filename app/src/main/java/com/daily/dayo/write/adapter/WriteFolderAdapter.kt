@@ -21,7 +21,7 @@ class WriteFolderAdapter(
                 oldItem === newItem
 
             override fun areContentsTheSame(oldItem: Folder, newItem: Folder): Boolean =
-                oldItem.hashCode() == newItem.hashCode()
+                oldItem.folderId == newItem.folderId
         }
     }
 
@@ -45,12 +45,14 @@ class WriteFolderAdapter(
         val onFolderClicked: (Folder) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         val folderName = binding.tvFolderName
+        val folderPrivate = binding.ivFolderPrivate
         val folderPostCnt = binding.tvFolderPostCount
         val changeOrderImg = binding.imgFolderChangeOrder
         fun bind(folder: Folder) {
             changeOrderImg.visibility = View.GONE
             folderName.text = folder.name
             folderPostCnt.text = folder.postCount.toString()
+            folderPrivate.visibility = if(folder.privacy == "ONLY_ME") View.VISIBLE else View.INVISIBLE
             if(selectedFolderId!="" && selectedFolderId.toInt() == folder.folderId)
                 binding.tvFolderName.setTypeface(null, Typeface.BOLD)
             else{
