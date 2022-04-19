@@ -18,6 +18,7 @@ import com.daily.dayo.databinding.FragmentFolderSettingBinding
 import com.daily.dayo.profile.adapter.FolderSettingAdapter
 import com.daily.dayo.profile.model.FolderOrder
 import com.daily.dayo.profile.viewmodel.FolderSettingViewModel
+import com.daily.dayo.util.ButtonActivation
 import com.daily.dayo.util.ItemTouchHelperCallback
 import com.daily.dayo.util.Status
 import com.daily.dayo.util.autoCleared
@@ -65,11 +66,18 @@ class FolderSettingFragment : Fragment() {
     private fun setProfileFolderList(){
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                folderSettingViewModel.requestAllMyFolderList()
                 folderSettingViewModel.folderList.observe(viewLifecycleOwner, Observer {
                     when(it.status){
                         Status.SUCCESS -> {
                             it.data?.let { folderList ->
                                 folderSettingAdapter.submitList(folderList.data)
+                                if(folderList.count < 5){
+                                    ButtonActivation.setTextViewButtonActive(requireContext(), binding.tvFolderSettingAdd)
+                                }
+                                else{
+                                    ButtonActivation.setTextViewButtonInactive(requireContext(), binding.tvFolderSettingAdd)
+                                }
                             }
                         }
                     }
@@ -78,25 +86,21 @@ class FolderSettingFragment : Fragment() {
         }
     }
 
-    private fun setProfileOrderFolderList(){
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                folderSettingViewModel.folderList.observe(viewLifecycleOwner, Observer {
-                    when(it.status){
-                        Status.SUCCESS -> {
-                            it.data?.let { folderList ->
-                                val size = folderList.data.size
-                                folderOrderList = mutableListOf()
-                                for(i in 0 until size){
-                                    folderOrderList.add(FolderOrder(folderList.data[i].folderId,i))
-                                }
-                                folderSettingAdapter.submitList(folderList.data)
-                            }
+    private fun setProfileOrderFolderList() {
+        folderSettingViewModel.folderList.observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { folderList ->
+                        val size = folderList.data.size
+                        folderOrderList = mutableListOf()
+                        for (i in 0 until size) {
+                            folderOrderList.add(FolderOrder(folderList.data[i].folderId, i))
                         }
+                        folderSettingAdapter.submitList(folderList.data)
                     }
-                })
+                }
             }
-        }
+        })
     }
 
     private fun setChangeOrderButtonClickListener(){
