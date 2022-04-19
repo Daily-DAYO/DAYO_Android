@@ -53,6 +53,8 @@ class WriteViewModel @Inject constructor(
     // WriteFolder
     private val _folderList = MutableLiveData<Resource<ResponseAllMyFolderList>>()
     val folderList : LiveData<Resource<ResponseAllMyFolderList>> get() = _folderList
+    private val _folderAddSuccess = MutableLiveData<Event<Boolean>>()
+    val folderAddAccess : LiveData<Event<Boolean>> get() = _folderAddSuccess
 
     fun requestUploadPost(postCategory: String, postContents: String, files: Array<File>, postFolderId: Int, postTags: Array<String>)
             = viewModelScope.launch {
@@ -100,7 +102,12 @@ class WriteViewModel @Inject constructor(
     }
 
     fun requestCreateFolderInPost(name:String, privacy:String) = viewModelScope.launch {
-        folderRepository.requestCreateFolderInPost(RequestCreateFolderInPost(name,privacy))
+        val response = folderRepository.requestCreateFolderInPost(RequestCreateFolderInPost(name,privacy))
+        if(response.isSuccessful) {
+            _folderAddSuccess.postValue(Event(true))
+        } else {
+            _folderAddSuccess.postValue(Event(false))
+        }
     }
 
     fun setInitWriteInfoValue(){

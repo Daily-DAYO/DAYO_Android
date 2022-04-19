@@ -24,4 +24,13 @@ object ButtonActivation {
         textView.isEnabled = false
         textView.setTextColor(ContextCompat.getColor(context, R.color.gray_4_D3D2D2))
     }
+
+    fun setTextViewConfirmButtonActive(context: Context, textView: TextView) {
+        textView.isEnabled = true
+        textView.setTextColor(ContextCompat.getColor(context, R.color.gray_1_313131))
+    }
+    fun setTextViewConfirmButtonInactive(context: Context, textView: TextView) {
+        textView.isEnabled = false
+        textView.setTextColor(ContextCompat.getColor(context, R.color.gray_4_D3D2D2))
+    }
 }
