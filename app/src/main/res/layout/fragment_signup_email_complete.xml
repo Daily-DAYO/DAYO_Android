@@ -42,23 +42,33 @@
         android:textSize="22dp"
         android:textColor="@color/gray_1_313131"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/guideline_signup_email_complete_message_image"
+        app:layout_constraintBottom_toTopOf="@id/guideline_signup_email_complete_message_image_top"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_signup_email_complete_message_image"
+        android:id="@+id/guideline_signup_email_complete_message_image_top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.48"/>
+        app:layout_constraintGuide_percent="0.36"/>
 
-    <ImageView
-        android:id="@+id/img_signup_email_complete_dayo_logo"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_signup_email_complete_message_image_bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_dayo_logo"
-        app:layout_constraintTop_toTopOf="@id/guideline_signup_email_complete_message_image"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.67"/>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_signup_email_complete_dayo_logo"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:lottie_rawRes="@raw/signup_email_complete_dayo_logo"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="false"
+        app:layout_constraintTop_toTopOf="@id/guideline_signup_email_complete_message_image_top"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_signup_email_complete_message_image_bottom"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
