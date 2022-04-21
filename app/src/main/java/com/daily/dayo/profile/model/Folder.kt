@@ -9,6 +9,8 @@ data class Folder(
     val name: String,
     @SerializedName("postCount")
     val postCount:Int,
+    @SerializedName("privacy")
+    val privacy: String,
     @SerializedName("subheading")
     val subheading:	String,
     @SerializedName("thumbnailImage")
