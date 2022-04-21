@@ -121,7 +121,7 @@
     <string name="folder_setting_add_set_title">폴더 이름</string>
     <string name="folder_setting_add_set_subheading">폴더 소개</string>
     <string name="folder_setting_add_set_private">공개설정</string>
-    <string name="hint_post_folder_add_set_title">10자 이내로 입력해주세요.</string>
+    <string name="hint_post_folder_add_set_title">15자 이내로 입력해주세요.</string>
     <string name="hint_folder_setting_add_set_title">폴더 이름을 적어주세요.</string>
     <string name="hint_folder_setting_add_set_subheading">폴더를 설명해 주세요.</string>
     <string name="post_folder_add_set_private_title">공개 설정</string>
@@ -131,6 +131,10 @@
     <string name="folder_cover_image_reset">커버 사진 초기화</string>
     <string name="folder_delete_description_message">폴더를 삭제할까요?</string>
     <string name="folder_delete_explanation_message">해당 폴더에 등록된 게시물도 함께 삭제됩니다.</string>
+    <string name="post_folder_add_message_length_fail_min">폴더 이름을 입력해주세요.</string>
+    <string name="post_folder_add_message_format_fail">폴더 이름에는 한글, 영문, 숫자만 사용할 수 있어요.</string>
+    <string name="post_folder_add_message_fail">폴더를 생성 할 수 없어요. 다시 시도해주세요.</string>
+
 
     <!-- Follow -->
     <string name="follow_delete_description_message">팔로우를 취소할까요?</string>
