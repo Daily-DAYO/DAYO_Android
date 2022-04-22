@@ -23,10 +23,10 @@ class FolderSettingAdapter(val isChange:Boolean) :
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Folder>() {
             override fun areItemsTheSame(oldItem: Folder, newItem: Folder) =
-                oldItem.folderId == newItem.folderId
+                oldItem === newItem
 
             override fun areContentsTheSame(oldItem: Folder, newItem: Folder): Boolean =
-                oldItem.hashCode() == newItem.hashCode()
+                oldItem.folderId == newItem.folderId
         }
     }
 
@@ -74,10 +74,12 @@ class FolderSettingAdapter(val isChange:Boolean) :
     class FolderSettingViewHolder(binding: ItemFolderListBinding) : RecyclerView.ViewHolder(binding.root) {
         val changeOrderImg = binding.imgFolderChangeOrder
         val folderName = binding.tvFolderName
+        val folderPrivate = binding.ivFolderPrivate
         val folderPostCnt = binding.tvFolderPostCount
         fun bind(folder: Folder) {
             folderName.text = folder.name
             folderPostCnt.text = folder.postCount.toString()
+            folderPrivate.visibility = if(folder.privacy == "ONLY_ME") View.VISIBLE else View.INVISIBLE
         }
     }
 

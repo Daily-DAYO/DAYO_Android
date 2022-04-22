@@ -32,7 +32,7 @@ class WriteFolderAddFragment : Fragment() {
         return binding.root
     }
     private fun setBackButtonClickListener() {
-        binding.tvPostFolderAddBack.setOnClickListener {
+        binding.btnPostFolderAddBack.setOnClickListener {
             findNavController().navigateUp()
         }
     }
@@ -43,7 +43,7 @@ class WriteFolderAddFragment : Fragment() {
                 if(it.getContentIfNotHandled() == true){
                     findNavController().popBackStack()
                 } else if (it.getContentIfNotHandled() == false){
-                    Toast.makeText(requireContext(), R.string.post_folder_add_message_fail, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), R.string.folder_add_message_fail, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -72,7 +72,7 @@ class WriteFolderAddFragment : Fragment() {
                         ButtonActivation.setTextViewConfirmButtonActive(requireContext(), binding.tvPostFolderAddConfirm)
                     }
                     else -> {
-                        Toast.makeText(requireContext(), getString(R.string.post_folder_add_message_format_fail), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.folder_add_message_format_fail), Toast.LENGTH_SHORT).show()
                         ButtonActivation.setTextViewConfirmButtonInactive(requireContext(), binding.tvPostFolderAddConfirm)
                     }
                 }
