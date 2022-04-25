@@ -27,10 +27,11 @@ import dagger.hilt.android.AndroidEntryPoint
 class LoginEmailFragment : Fragment() {
     private var binding by autoCleared<FragmentLoginEmailBinding>()
     private val loginViewModel by activityViewModels<LoginViewModel>()
+    private var isLoginButtonClick = false // TODO : 첫 화면에서 로그인 실패 메시지 등장으로 인한 임시 해결
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         binding = FragmentLoginEmailBinding.inflate(inflater, container, false)
         setBackClickListener()
@@ -45,20 +46,22 @@ class LoginEmailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-       view.setOnTouchListener { _, _ ->
+        view.setOnTouchListener { _, _ ->
             HideKeyBoardUtil.hide(requireContext(), binding.etLoginEmailAddress)
             HideKeyBoardUtil.hide(requireContext(), binding.etLoginEmailPassword)
             true
         }
     }
+
     private fun setTextEditorActionListener() {
-        binding.etLoginEmailAddress.setOnEditorActionListener{ _, actionId, _ ->
-            when(actionId) {
+        binding.etLoginEmailAddress.setOnEditorActionListener { _, actionId, _ ->
+            when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
                     HideKeyBoardUtil.hide(requireContext(), binding.etLoginEmailAddress)
                     HideKeyBoardUtil.hide(requireContext(), binding.etLoginEmailPassword)
                     true
-                } else -> false
+                }
+                else -> false
             }
         }
     }
@@ -71,23 +74,31 @@ class LoginEmailFragment : Fragment() {
 
     private fun setNextClickListener() {
         binding.btnLoginEmailNext.setOnClickListener {
+            isLoginButtonClick = true
             loginViewModel.requestLoginEmail(LoginRequestEmail(
                 binding.etLoginEmailAddress.text.toString().trim(),
                 binding.etLoginEmailPassword.text.toString().trim(),
             ))
         }
     }
-    private fun loginSuccess(){
+
+    private fun loginSuccess() {
+        binding.tvLoginEmailGuideMessage.visibility = View.INVISIBLE
         loginViewModel.loginSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
             if (isSuccess.peekContent() == true) {
                 val intent = Intent(requireContext(), MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                intent.flags =
+                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 startActivity(intent)
                 requireActivity().finish()
                 binding.tvLoginEmailGuideMessage.visibility = View.INVISIBLE
-            } else if(isSuccess.peekContent() == false) {
-                Log.e(ContentValues.TAG, "로그인 실패")
-                binding.tvLoginEmailGuideMessage.visibility = View.VISIBLE
+            } else if (isSuccess.peekContent() == false) {
+                if (isLoginButtonClick) {
+                    Log.e(ContentValues.TAG, "로그인 실패")
+                    binding.tvLoginEmailGuideMessage.visibility = View.VISIBLE
+                } else {
+                    binding.tvLoginEmailGuideMessage.visibility = View.INVISIBLE
+                }
             }
         })
     }
@@ -96,10 +107,12 @@ class LoginEmailFragment : Fragment() {
         with(binding.etLoginEmailAddress) {
             setOnFocusChangeListener { _, hasFocus -> //
                 with(binding.layoutLoginEmailAddress) {
-                    if(hasFocus){
+                    if (hasFocus) {
                         hint = ""
-                        binding.etLoginEmailAddress.backgroundTintList = resources.getColorStateList(R.color.primary_green_23C882, context?.theme)
-                    } else if(!binding.etLoginEmailAddress.text.isNullOrEmpty()){
+                        binding.etLoginEmailAddress.backgroundTintList =
+                            resources.getColorStateList(R.color.primary_green_23C882,
+                                context?.theme)
+                    } else if (!binding.etLoginEmailAddress.text.isNullOrEmpty()) {
                         hint = ""
                         binding.etLoginEmailAddress.backgroundTintList = null
                     } else {
@@ -109,11 +122,19 @@ class LoginEmailFragment : Fragment() {
                 }
             }
             addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {  }
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int,
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
                     with(binding.layoutLoginEmailAddress) {
-                        boxStrokeColor = resources.getColor(R.color.primary_green_23C882, context?.theme)
+                        boxStrokeColor =
+                            resources.getColor(R.color.primary_green_23C882, context?.theme)
                     }
                 }
             })
@@ -121,10 +142,12 @@ class LoginEmailFragment : Fragment() {
         with(binding.etLoginEmailPassword) {
             setOnFocusChangeListener { _, hasFocus -> // Title
                 with(binding.layoutLoginEmailPassword) {
-                    if(hasFocus){
+                    if (hasFocus) {
                         hint = ""
-                        binding.etLoginEmailPassword.backgroundTintList = resources.getColorStateList(R.color.primary_green_23C882, context?.theme)
-                    } else if(!binding.etLoginEmailPassword.text.isNullOrEmpty()){
+                        binding.etLoginEmailPassword.backgroundTintList =
+                            resources.getColorStateList(R.color.primary_green_23C882,
+                                context?.theme)
+                    } else if (!binding.etLoginEmailPassword.text.isNullOrEmpty()) {
                         hint = ""
                         binding.etLoginEmailPassword.backgroundTintList = null
                     } else {
@@ -134,11 +157,19 @@ class LoginEmailFragment : Fragment() {
                 }
             }
             addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {  }
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int,
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
                     with(binding.layoutLoginEmailPassword) {
-                        boxStrokeColor = resources.getColor(R.color.primary_green_23C882, context?.theme)
+                        boxStrokeColor =
+                            resources.getColor(R.color.primary_green_23C882, context?.theme)
                     }
                 }
             })
@@ -148,24 +179,46 @@ class LoginEmailFragment : Fragment() {
     private fun activationNextButton() {
         with(binding) {
             etLoginEmailAddress.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int,
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
-                    if(!s.toString().isNullOrEmpty() && !etLoginEmailPassword.text.isNullOrEmpty()) {
-                        ButtonActivation.setSignupButtonActive(requireContext(), binding.btnLoginEmailNext)
+                    if (!s.toString()
+                            .isNullOrEmpty() && !etLoginEmailPassword.text.isNullOrEmpty()
+                    ) {
+                        ButtonActivation.setSignupButtonActive(requireContext(),
+                            binding.btnLoginEmailNext)
                     } else {
-                        ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnLoginEmailNext)
+                        ButtonActivation.setSignupButtonInactive(requireContext(),
+                            binding.btnLoginEmailNext)
                     }
                 }
             })
             etLoginEmailPassword.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int,
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
-                    if(!s.toString().isNullOrEmpty() && !etLoginEmailAddress.text.isNullOrEmpty()) {
-                        ButtonActivation.setSignupButtonActive(requireContext(), binding.btnLoginEmailNext)
+                    if (!s.toString()
+                            .isNullOrEmpty() && !etLoginEmailAddress.text.isNullOrEmpty()
+                    ) {
+                        ButtonActivation.setSignupButtonActive(requireContext(),
+                            binding.btnLoginEmailNext)
                     } else {
-                        ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnLoginEmailNext)
+                        ButtonActivation.setSignupButtonInactive(requireContext(),
+                            binding.btnLoginEmailNext)
                     }
                 }
             })
