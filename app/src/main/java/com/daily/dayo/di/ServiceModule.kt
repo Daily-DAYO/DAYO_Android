@@ -1,5 +1,6 @@
 package com.daily.dayo.di
 
+import com.daily.dayo.SharedManager
 import com.daily.dayo.network.feed.FeedApiHelper
 import com.daily.dayo.network.feed.FeedApiHelperImpl
 import com.daily.dayo.network.feed.FeedApiService
@@ -21,6 +22,9 @@ import com.daily.dayo.network.login.LoginApiService
 import com.daily.dayo.network.profile.ProfileApiHelper
 import com.daily.dayo.network.profile.ProfileApiHelperImpl
 import com.daily.dayo.network.profile.ProfileApiService
+import com.daily.dayo.network.search.SearchApiHelper
+import com.daily.dayo.network.search.SearchApiHelperImpl
+import com.daily.dayo.network.search.SearchApiService
 import com.daily.dayo.network.write.WriteApiHelper
 import com.daily.dayo.network.write.WriteApiHelperImpl
 import com.daily.dayo.network.write.WriteApiService
@@ -130,5 +134,16 @@ object ServiceModule {
     @Provides
     fun provideFeedRepository(feedApiHelper: FeedApiHelper) : FeedRepository = FeedRepository(feedApiHelper)
 
+    @Singleton
+    @Provides
+    fun provideSearchApiService(retrofit: Retrofit) = retrofit.create(SearchApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideSearchApiHelper(searchApiHelperImpl: SearchApiHelperImpl): SearchApiHelper = searchApiHelperImpl
+
+    @Singleton
+    @Provides
+    fun provideSearchRepository(searchApiHelper: SearchApiHelper, sharedManager: SharedManager) : SearchRepository = SearchRepository(searchApiHelper, sharedManager)
 
 }
