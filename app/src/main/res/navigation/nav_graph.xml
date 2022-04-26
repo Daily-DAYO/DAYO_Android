@@ -306,6 +306,16 @@
         android:name="com.daily.dayo.setting.SettingFragment"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting">
+        <action
+            android:id="@+id/action_settingFragment_to_withdrawFragment"
+            app:destination="@id/WithdrawFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/WithdrawFragment"
+        android:name="com.daily.dayo.setting.WithdrawFragment"
+        android:label="fragment_withdraw"
+        tools:layout="@layout/fragment_withdraw">
     </fragment>
 
     <fragment

@@ -210,6 +210,21 @@
     <string name="setting_logout_message">계정을 로그아웃 할까요?</string>
     <string name="setting_withdraw_message">계정을 삭제할까요?</string>
     <string name="setting_withdraw_explanation_message">모든 정보가 삭제되며, 복구가 불가능합니다.</string>
+
+    <!-- Withdraw -->
+    <string name="withdraw_title">계정 삭제하기</string>
+    <string name="withdraw_subheading">정말 계정을 삭제하시겠어요?</string>
+    <string name="withdraw_subheading_explanation">계정을 삭제하는 이유에 대해 알려주세요. 적어주신 내용은 좀 더 나은 서비스를 제공하는데 사용됩니다.</string>
+    <string name="withdraw_button">계정 삭제</string>
+    <string name="withdraw_reason_1">이용이 불편해요.</string>
+    <string name="withdraw_reason_2">기록을 삭제하고 싶어요.</string>
+    <string name="withdraw_reason_3">자주 사용하지 않아요.</string>
+    <string name="withdraw_reason_4">개인정보 유출이 우려돼요.</string>
+    <string name="withdraw_reason_5">콘텐츠가 마음에 들지않아요.</string>
+    <string name="withdraw_reason_other">기타</string>
+    <string name="withdraw_reason_other_hint">탈퇴 사유를 작성해주세요. (100자 이내)</string>
+    <string name="withdraw_final_message">계정 삭제시 정보가 회원님의 모든 콘텐츠와 활동기록이 함께 삭제됩니다. 삭제된 정보는 복구할 수 없습니다.</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
