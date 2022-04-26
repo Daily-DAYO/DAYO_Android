@@ -4,29 +4,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="9dp">
+    android:paddingEnd="8dp"
+    android:paddingBottom="9dp">
 
-    <TextView
-        android:id="@+id/tv_search_recent_keyword_item"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_search_recent_keyword_contents"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12dp"
-        android:textColor="@color/gray_2_5D5D5D"
-        android:textAlignment="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        tools:text="최근 검색어"/>
-
-    <ImageButton
-        android:id="@+id/btn_search_recent_keyword_item_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_search_recent_keyword_delete"
-        android:layout_marginStart="8dp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/gray_6_F6F6F6"
+        android:paddingStart="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tv_search_recent_keyword_item"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_search_recent_keyword_item"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingEnd="3dp"
+            android:textAlignment="center"
+            android:textColor="@color/gray_2_5D5D5D"
+            android:textSize="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="최근 검색어" />
+
+        <ImageButton
+            android:id="@+id/btn_search_recent_keyword_item_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:padding="8dp"
+            android:src="@drawable/ic_search_recent_keyword_delete"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_search_recent_keyword_item"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

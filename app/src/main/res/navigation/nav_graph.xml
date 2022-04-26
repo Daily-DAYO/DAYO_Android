@@ -59,6 +59,9 @@
         <argument
             android:name="searchKeyword"
             app:argType="string"/>
+        <action
+            android:id="@+id/action_searchResultFragment_to_postFragment"
+            app:destination="@+id/PostFragment" />
     </fragment>
 
     <fragment

@@ -58,7 +58,12 @@ class SharedManager @Inject constructor(@ApplicationContext context: Context) {
     fun getSearchKeywordRecent(): ArrayList<String> {
         val result = prefs["recentSearchKeyword", ""]
         var resultArr = ArrayList<String>()
-        val jsonArr = JSONArray(result)
+        var jsonArr : JSONArray
+        if(resultArr.isEmpty()) {
+            jsonArr = JSONArray()
+        } else {
+            jsonArr = JSONArray(result)
+        }
 
         if(jsonArr.length() != 0) {
             for(i in 0 until jsonArr.length()){
