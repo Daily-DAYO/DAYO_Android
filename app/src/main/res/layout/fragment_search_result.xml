@@ -1,138 +1,194 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".search.SearchResultFragment">
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="resultPost"
+            type="com.daily.dayo.search.model.ResponseSearchTag" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_search_result_action_bar"
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        android:elevation="24dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-        <ImageButton
-            android:id="@+id/btn_search_result_back"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_back_sign"
-            tools:ignore="ContentDescription"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:paddingHorizontal="16dp"/>
+        android:layout_height="match_parent"
+        tools:context=".search.SearchResultFragment">
 
-        <MultiAutoCompleteTextView
-            android:id="@+id/tv_search_result_keyword_input"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:backgroundTint="@color/white_FFFFFF"
-            android:completionThreshold="2"
-            android:inputType="text"
-            android:textSize="16dp"
-            android:textColor="@color/gray_1_313131"
-            android:textColorHint="@color/gray_4_D3D2D2"
-            android:textCursorDrawable="@color/gray_1_313131"
-            android:hint="@string/hint_search_keyword_input"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/btn_search_result_back"
-            app:layout_constraintEnd_toStartOf="@+id/btn_search_result_keyword"
-            android:layout_marginHorizontal="10dp" />
-
-        <ImageButton
-            android:id="@+id/btn_search_result_keyword"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_search"
-            tools:ignore="ContentDescription"
-            app:layout_constraintTop_toTopOf="parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_search_result_action_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:elevation="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:paddingHorizontal="16dp" />
-
-        <View
-            android:id="@+id/view_search_result_horizontal_line"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:background="@color/gray_6_F6F6F6" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_search_result_contents"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/layout_search_result_action_bar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="15dp" >
-        <TextView
-            android:id="@+id/tv_search_result_contents_post_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="13dp"
-            android:textColor="@color/gray_1_313131"
-            tools:text="5개의 검색 결과가 있어요."
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="20dp"/>
-        <View
-            android:id="@+id/view_search_result_contents_count_post_divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/gray_6_F6F6F6"
-            app:layout_constraintTop_toBottomOf="@id/tv_search_result_contents_post_count"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="15dp" />
+            app:layout_constraintVertical_bias="0.0">
+
+            <ImageButton
+                android:id="@+id/btn_search_result_back"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:paddingHorizontal="16dp"
+                android:src="@drawable/ic_back_sign"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription" />
+
+            <MultiAutoCompleteTextView
+                android:id="@+id/tv_search_result_keyword_input"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:backgroundTint="@color/white_FFFFFF"
+                android:completionThreshold="2"
+                android:hint="@string/hint_search_keyword_input"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:textColor="@color/gray_1_313131"
+                android:textColorHint="@color/gray_4_D3D2D2"
+                android:textCursorDrawable="@color/gray_1_313131"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_search_result_remove_et_input"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@id/btn_search_result_back"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btn_search_result_remove_et_input"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="4dp"
+                android:background="@android:color/transparent"
+                android:padding="14dp"
+                android:src="@drawable/ic_remove_edittext"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/view_search_result_horizontal_line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray_6_F6F6F6"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <ImageView
             android:id="@+id/img_search_result_empty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:background="@drawable/ic_tag_list_empty"
-            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/scroll_search_result_contents_post_list"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_search_result_contents"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginTop="15dp"
             android:visibility="visible"
-            app:layout_constraintTop_toBottomOf="@id/view_search_result_contents_count_post_divider"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-            <androidx.constraintlayout.widget.ConstraintLayout
+            app:layout_constraintTop_toBottomOf="@id/layout_search_result_action_bar">
+
+            <TextView
+                android:id="@+id/tv_search_result_contents_post_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="@{Integer.toString(resultPost.count)}"
+                android:textColor="@color/primary_green_23C882"
+                android:textSize="13dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="10" />
+
+            <TextView
+                android:id="@+id/tv_search_result_contents_post_count_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" 개의 검색 결과가 있어요."
+                android:textColor="@color/gray_1_313131"
+                android:textSize="13dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@id/tv_search_result_contents_post_count"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/view_search_result_contents_count_post_divider"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <View
-                    android:id="@+id/view_search_result_contents_count_post_margin"
+                android:layout_height="1dp"
+                android:layout_marginTop="15dp"
+                android:background="@color/gray_6_F6F6F6"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_search_result_contents_post_count" />
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/scroll_search_result_contents_post_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_search_result_contents_count_post_divider">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:background="@color/gray_6_F6F6F6"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_search_result_contents_post_list"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:overScrollMode="never"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    app:spanCount="2"
-                    app:layout_constraintTop_toBottomOf="@id/view_search_result_contents_count_post_margin"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    tools:listitem="@layout/item_search_result_post"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginHorizontal="16dp" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.core.widget.NestedScrollView>
+                    android:layout_height="match_parent">
+
+                    <View
+                        android:id="@+id/view_search_result_contents_count_post_margin"
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                        android:background="@color/gray_6_F6F6F6"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline_search_result_contents_start"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.039" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline_search_result_contents_end"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.961" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_search_result_contents_post_list"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="16dp"
+                        android:overScrollMode="never"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:layout_constraintEnd_toEndOf="@id/guideline_search_result_contents_end"
+                        app:layout_constraintStart_toStartOf="@id/guideline_search_result_contents_start"
+                        app:layout_constraintTop_toBottomOf="@id/view_search_result_contents_count_post_margin"
+                        app:spanCount="2"
+                        tools:listitem="@layout/item_search_result_post" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.core.widget.NestedScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
