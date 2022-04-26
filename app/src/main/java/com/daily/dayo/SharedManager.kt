@@ -72,4 +72,8 @@ class SharedManager @Inject constructor(@ApplicationContext context: Context) {
         }
         return resultArr
     }
+
+    fun clearPreferences(){
+        prefs.edit().clear().apply()
+    }
 }
