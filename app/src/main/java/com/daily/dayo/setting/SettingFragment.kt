@@ -55,7 +55,7 @@ class SettingFragment: Fragment() {
     private fun setWithdrawButtonClickListener(){
         binding.layoutSettingWithdraw.setOnClickListener {
             val withdrawAlertDialog = DefaultDialogExplanationConfirm.createDialog(requireContext(), R.string.setting_withdraw_message,
-                R.string.setting_withdraw_explanation_message,true, true, R.string.confirm, R.string.cancel, {}, {})
+                R.string.setting_withdraw_explanation_message,true, true, R.string.confirm, R.string.cancel, {doWithdraw()}, {})
             if(!withdrawAlertDialog.isShowing) {
                 withdrawAlertDialog.show()
                 DefaultDialogConfigure.dialogResize(requireContext(), withdrawAlertDialog, 0.7f, 0.23f)
@@ -64,6 +64,10 @@ class SettingFragment: Fragment() {
                 withdrawAlertDialog.dismiss()
             }
         }
+    }
+
+    private fun doWithdraw(){
+        findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToWithdrawFragment())
     }
 
     private fun doLogout(){
