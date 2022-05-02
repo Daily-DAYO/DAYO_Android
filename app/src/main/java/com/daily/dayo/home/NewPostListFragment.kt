@@ -18,7 +18,6 @@ import com.daily.dayo.home.adapter.HomeDayoPickAdapter
 import com.daily.dayo.home.model.PostContent
 import com.daily.dayo.home.viewmodel.HomeViewModel
 import com.daily.dayo.post.model.RequestLikePost
-import com.daily.dayo.util.GridSpacingItemDecoration
 import com.daily.dayo.util.Status
 import com.daily.dayo.util.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,7 +46,6 @@ class NewPostListFragment : Fragment() {
     private fun setRvNewPostAdapter() {
         homeNewPostListAdapter = HomeDayoPickAdapter(false)
         binding.rvNewPost.adapter = homeNewPostListAdapter
-        binding.rvNewPost.addItemDecoration(GridSpacingItemDecoration(2, 29.toPx(), 4.toPx()))
     }
 
     private fun setNewPostListCollect() {
@@ -128,10 +126,5 @@ class NewPostListFragment : Fragment() {
                 } }
             }
         })
-    }
-
-    fun Int.toPx() : Int {
-        val density = resources.displayMetrics.density
-        return (this * density).toInt()
     }
 }
