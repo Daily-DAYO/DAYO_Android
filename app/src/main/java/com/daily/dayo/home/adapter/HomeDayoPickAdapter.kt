@@ -7,12 +7,19 @@ import android.widget.ImageButton
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.*
 import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
 import com.daily.dayo.BR
+import com.daily.dayo.R
 import com.daily.dayo.databinding.ItemMainPostBinding
 import com.daily.dayo.home.HomeFragmentDirections
 import com.daily.dayo.home.model.PostContent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class HomeDayoPickAdapter(val rankingShowing:Boolean) : ListAdapter<PostContent, HomeDayoPickAdapter.HomeDayoPickViewHolder>(diffCallback){
+class HomeDayoPickAdapter(val rankingShowing: Boolean) :
+    ListAdapter<PostContent, HomeDayoPickAdapter.HomeDayoPickViewHolder>(diffCallback) {
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<PostContent>() {
             override fun areItemsTheSame(oldItem: PostContent, newItem: PostContent) =
@@ -23,17 +30,20 @@ class HomeDayoPickAdapter(val rankingShowing:Boolean) : ListAdapter<PostContent,
         }
     }
 
-    interface OnItemClickListener{
+    interface OnItemClickListener {
         fun likePostClick(btn: ImageButton, data: PostContent, pos: Int)
     }
-    private var listener: OnItemClickListener?= null
+
+    private var listener: OnItemClickListener? = null
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.listener = listener
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : HomeDayoPickViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeDayoPickViewHolder {
         // ViewHolder 객체를 생성 후 Return
-        return HomeDayoPickViewHolder(ItemMainPostBinding.inflate(LayoutInflater.from(parent.context), parent,false)
+        return HomeDayoPickViewHolder(ItemMainPostBinding.inflate(LayoutInflater.from(parent.context),
+            parent,
+            false)
         )
     }
 
@@ -50,54 +60,87 @@ class HomeDayoPickAdapter(val rankingShowing:Boolean) : ListAdapter<PostContent,
 
     // Item View를 저장하는 Class
     // 생성된 ViewHolder에 값을 지정
-    inner class HomeDayoPickViewHolder(private val binding: ItemMainPostBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class HomeDayoPickViewHolder(private val binding: ItemMainPostBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         // ViewHolder에 필요한 Data들
         var postImg = binding.imgMainPost
         var rankingNumber = binding.tvPostRankingNumber
         var userThumbnailImg = binding.imgMainPostUserProfile
 
         fun bind(postContent: PostContent, currentPosition: Int) {
-            if(currentPosition > 3 || !rankingShowing){
+            if (currentPosition > 3 || !rankingShowing) {
                 binding.layoutPostRankingNumber.visibility = View.INVISIBLE
             } else {
                 binding.layoutPostRankingNumber.visibility = View.VISIBLE
-                rankingNumber.text = (currentPosition+1).toString()
+                rankingNumber.text = (currentPosition + 1).toString()
             }
-            Glide.with(postImg.context)
-                .load("http://117.17.198.45:8080/images/" + postContent.thumbnailImage)
-                .centerCrop()
-                .into(postImg)
-            Glide.with(userThumbnailImg.context)
-                .load("http://117.17.198.45:8080/images/" + postContent.userProfileImage)
-                .centerCrop()
-                .into(userThumbnailImg)
+            CoroutineScope(Dispatchers.Main).launch {
+                val postImgBitmap = withContext(Dispatchers.IO) {
+                    Glide.with(postImg.context)
+                        .asBitmap()
+                        .override(158, 158)
+                        .placeholder(R.drawable.ic_dayo_circle_grayscale)
+                        .load("http://117.17.198.45:8080/images/" + postContent.thumbnailImage)
+                        .priority(Priority.HIGH)
+                        .submit()
+                        .get()
+                }
+                val userThumbnailImgBitmap = withContext(Dispatchers.IO) {
+                    Glide.with(postImg.context)
+                        .asBitmap()
+                        .override(158, 158)
+                        .load("http://117.17.198.45:8080/images/" + postContent.userProfileImage)
+                        .submit()
+                        .get()
+                }
+
+                Glide.with(postImg.context)
+                    .load(postImgBitmap)
+                    .override(158, 158)
+                    .thumbnail(0.1f)
+                    .placeholder(R.drawable.ic_dayo_circle_grayscale)
+                    .priority(Priority.HIGH)
+                    .centerCrop()
+                    .into(postImg)
+                Glide.with(userThumbnailImg.context)
+                    .load(userThumbnailImgBitmap)
+                    .override(158, 158)
+                    .centerCrop()
+                    .into(userThumbnailImg)
+            }
 
             setBindingSetVariable(postContent)
             setRootClickListener(postContent.id, postContent.nickname)
             setNicknameClickListener(postContent.memberId)
 
             val pos = adapterPosition
-            if(pos!= RecyclerView.NO_POSITION) {
+            if (pos != RecyclerView.NO_POSITION) {
                 binding.btnMainPostLike.setOnClickListener {
                     listener?.likePostClick(binding.btnMainPostLike, postContent, pos)
                 }
             }
         }
+
         private fun setBindingSetVariable(postContent: PostContent) {
             with(binding) {
                 setVariable(BR.postData, postContent)
                 executePendingBindings()
             }
         }
+
         private fun setRootClickListener(postId: Int, nickname: String) {
             binding.root.setOnClickListener {
-                Navigation.findNavController(it).navigate(HomeFragmentDirections.actionHomeFragmentToPostFragment(postId, nickname))
+                Navigation.findNavController(it)
+                    .navigate(HomeFragmentDirections.actionHomeFragmentToPostFragment(postId,
+                        nickname))
             }
         }
 
-        private fun setNicknameClickListener(memberId:String){
+        private fun setNicknameClickListener(memberId: String) {
             binding.tvMainPostUserNickname.setOnClickListener {
-                Navigation.findNavController(it).navigate(HomeFragmentDirections.actionHomeFragmentToOtherProfileFragment(memberId))
+                Navigation.findNavController(it)
+                    .navigate(HomeFragmentDirections.actionHomeFragmentToOtherProfileFragment(
+                        memberId))
             }
         }
     }
