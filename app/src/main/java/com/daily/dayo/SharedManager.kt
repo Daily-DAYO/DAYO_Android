@@ -59,7 +59,7 @@ class SharedManager @Inject constructor(@ApplicationContext context: Context) {
         val result = prefs["recentSearchKeyword", ""]
         var resultArr = ArrayList<String>()
         var jsonArr : JSONArray
-        if(resultArr.isEmpty()) {
+        if(result.isEmpty()) {
             jsonArr = JSONArray()
         } else {
             jsonArr = JSONArray(result)
