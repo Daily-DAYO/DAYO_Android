@@ -309,6 +309,44 @@
         android:name="com.daily.dayo.setting.SettingFragment"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting">
+        <action
+            android:id="@+id/action_settingFragment_to_changePasswordAuthorizationFragment"
+            app:destination="@+id/ChangePasswordAuthorizationFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/ChangePasswordAuthorizationFragment"
+        android:name="com.daily.dayo.setting.changePassword.ChangePasswordAuthorizationFragment"
+        android:label="fragment_change_password_authorization"
+        tools:layout="@layout/fragment_change_password_authorization">
+        <action
+            android:id="@+id/action_changePasswordAuthorizationFragment_to_changePasswordNewFragment"
+            app:destination="@+id/ChangePasswordNewFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/ChangePasswordNewFragment"
+        android:name="com.daily.dayo.setting.changePassword.ChangePasswordNewFragment"
+        android:label="fragment_change_password_new"
+        tools:layout="@layout/fragment_change_password_new">
+        <action
+            android:id="@+id/action_changePasswordNewFragment_to_changePasswordNewConfirmationFragment"
+            app:destination="@+id/ChangePasswordNewConfirmationFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/ChangePasswordNewConfirmationFragment"
+        android:name="com.daily.dayo.setting.changePassword.ChangePasswordNewConfirmationFragment"
+        android:label="fragment_change_password_new_confirmation"
+        tools:layout="@layout/fragment_change_password_new_confirmation">
+        <argument
+            android:name="password"
+            app:argType="string"/>
+        <action
+            android:id="@+id/action_ChangePasswordNewConfirmationFragment_to_settingFragment"
+            app:destination="@+id/SettingFragment"
+            app:popUpTo="@id/SettingFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment

@@ -25,6 +25,9 @@ import com.daily.dayo.network.profile.ProfileApiService
 import com.daily.dayo.network.search.SearchApiHelper
 import com.daily.dayo.network.search.SearchApiHelperImpl
 import com.daily.dayo.network.search.SearchApiService
+import com.daily.dayo.network.setting.SettingApiHelper
+import com.daily.dayo.network.setting.SettingApiHelperImpl
+import com.daily.dayo.network.setting.SettingApiService
 import com.daily.dayo.network.write.WriteApiHelper
 import com.daily.dayo.network.write.WriteApiHelperImpl
 import com.daily.dayo.network.write.WriteApiService
@@ -146,4 +149,15 @@ object ServiceModule {
     @Provides
     fun provideSearchRepository(searchApiHelper: SearchApiHelper, sharedManager: SharedManager) : SearchRepository = SearchRepository(searchApiHelper, sharedManager)
 
+    @Singleton
+    @Provides
+    fun provideSettingApiService(retrofit: Retrofit): SettingApiService = retrofit.create(SettingApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideSettingApiHelper(settingApiHelperImpl: SettingApiHelperImpl): SettingApiHelper = settingApiHelperImpl
+
+    @Singleton
+    @Provides
+    fun provideSettingRepository(settingApiHelper: SettingApiHelper, sharedManager: SharedManager) : SettingRepository = SettingRepository(settingApiHelper, sharedManager)
 }
