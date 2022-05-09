@@ -25,6 +25,7 @@ class SettingFragment: Fragment() {
         setBackButtonClickListener()
         setLogoutButtonClickListener()
         setWithdrawButtonClickListener()
+        setChangePasswordButtonClickListener()
         return binding.root
     }
 
@@ -59,6 +60,12 @@ class SettingFragment: Fragment() {
             withdrawAlertDialog.setOnCancelListener {
                 withdrawAlertDialog.dismiss()
             }
+        }
+    }
+
+    private fun setChangePasswordButtonClickListener() {
+        binding.layoutSettingPasswordChange.setOnClickListener {
+            findNavController().navigate(R.id.action_settingFragment_to_changePasswordAuthorizationFragment)
         }
     }
 }

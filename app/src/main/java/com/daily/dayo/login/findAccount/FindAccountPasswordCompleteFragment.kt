@@ -9,7 +9,9 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentFindAccountPasswordCompleteBinding
 import com.daily.dayo.util.autoCleared
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FindAccountPasswordCompleteFragment : Fragment() {
     private var binding by autoCleared<FragmentFindAccountPasswordCompleteBinding>()
     override fun onCreateView(
