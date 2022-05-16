@@ -42,7 +42,6 @@ class LoginActivity : AppCompatActivity() {
                 setFCM()
             }
         }
-
     }
 
     private fun setFCM(){
