@@ -29,12 +29,19 @@ class SettingFragment: Fragment() {
         setBackButtonClickListener()
         setLogoutButtonClickListener()
         setWithdrawButtonClickListener()
+        setNotificationButtonClickListener()
         return binding.root
     }
 
     private fun setBackButtonClickListener(){
         binding.btnSettingBack.setOnClickListener {
             findNavController().navigateUp()
+        }
+    }
+
+    private fun setNotificationButtonClickListener(){
+        binding.layoutSettingNotification.setOnClickListener{
+            findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToSettingNotificationFragment())
         }
     }
 

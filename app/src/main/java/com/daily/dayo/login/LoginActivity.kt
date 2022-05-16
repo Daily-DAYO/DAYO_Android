@@ -39,7 +39,9 @@ class LoginActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         if(loginViewModel.loginSuccess.value?.peekContent() == true){
-            setFCM()
+            if(SharedManager(DayoApplication.applicationContext()).notificationPermit != "OFF") {
+                setFCM()
+            }
         }
     }
 

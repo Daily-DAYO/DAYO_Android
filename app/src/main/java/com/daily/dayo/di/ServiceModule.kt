@@ -50,6 +50,10 @@ object ServiceModule {
 
     @Singleton
     @Provides
+    fun provideLoginRepository(loginApiHelper: LoginApiHelper) : LoginRepository = LoginRepository(loginApiHelper)
+
+    @Singleton
+    @Provides
     fun provideHomeApiService(retrofit: Retrofit) = retrofit.create(HomeApiService::class.java)
 
     @Singleton

@@ -42,6 +42,10 @@ class SharedManager @Inject constructor(@ApplicationContext context: Context) {
         prefs["accessToken"] = accessToken
     }
 
+    var notificationPermit: String?
+        get() = prefs["notificationPermit"]
+        set(value) { prefs["notificationPermit"] = value }
+
     var fcmDeviceToken: String
         get() = prefs["deviceToken"]
         set(value) { prefs["deviceToken"] = value }

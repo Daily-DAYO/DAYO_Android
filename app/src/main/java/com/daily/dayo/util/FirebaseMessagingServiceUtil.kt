@@ -92,6 +92,5 @@ class FirebaseMessagingServiceUtil: FirebaseMessagingService() {
 
     fun unregisterFcmToken() {
         FirebaseMessaging.getInstance().isAutoInitEnabled = false
-        FirebaseMessaging.getInstance().deleteToken()
     }
 }
