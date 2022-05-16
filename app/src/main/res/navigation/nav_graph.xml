@@ -309,6 +309,16 @@
         android:name="com.daily.dayo.setting.SettingFragment"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting">
+        <action
+            android:id="@+id/action_settingFragment_to_settingNotificationFragment"
+            app:destination="@id/SettingNotificationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/SettingNotificationFragment"
+        android:name="com.daily.dayo.setting.SettingNotificationFragment"
+        android:label="fragment_withdraw"
+        tools:layout="@layout/fragment_setting_notification">
     </fragment>
 
     <fragment

@@ -39,5 +39,5 @@ data class ResponseRefreshToken(
 
 data class RequestDeviceToken(
     @SerializedName("deviceToken")
-    val deviceToken: String
+    val deviceToken: String?
 )
