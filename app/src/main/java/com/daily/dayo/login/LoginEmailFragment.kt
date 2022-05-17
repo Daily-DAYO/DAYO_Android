@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -75,10 +76,12 @@ class LoginEmailFragment : Fragment() {
     private fun setNextClickListener() {
         binding.btnLoginEmailNext.setOnClickListener {
             isLoginButtonClick = true
-            loginViewModel.requestLoginEmail(LoginRequestEmail(
-                binding.etLoginEmailAddress.text.toString().trim(),
-                binding.etLoginEmailPassword.text.toString().trim(),
-            ))
+            loginViewModel.requestLoginEmail(
+                LoginRequestEmail(
+                    binding.etLoginEmailAddress.text.toString().trim(),
+                    binding.etLoginEmailPassword.text.toString().trim(),
+                )
+            )
         }
     }
 
@@ -91,13 +94,16 @@ class LoginEmailFragment : Fragment() {
                     Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 startActivity(intent)
                 requireActivity().finish()
-                binding.tvLoginEmailGuideMessage.visibility = View.INVISIBLE
             } else if (isSuccess.peekContent() == false) {
                 if (isLoginButtonClick) {
                     Log.e(ContentValues.TAG, "로그인 실패")
-                    binding.tvLoginEmailGuideMessage.visibility = View.VISIBLE
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.login_email_alert_message_fail),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 } else {
-                    binding.tvLoginEmailGuideMessage.visibility = View.INVISIBLE
+
                 }
             }
         })
@@ -110,8 +116,10 @@ class LoginEmailFragment : Fragment() {
                     if (hasFocus) {
                         hint = ""
                         binding.etLoginEmailAddress.backgroundTintList =
-                            resources.getColorStateList(R.color.primary_green_23C882,
-                                context?.theme)
+                            resources.getColorStateList(
+                                R.color.primary_green_23C882,
+                                context?.theme
+                            )
                     } else if (!binding.etLoginEmailAddress.text.isNullOrEmpty()) {
                         hint = ""
                         binding.etLoginEmailAddress.backgroundTintList = null
@@ -145,8 +153,10 @@ class LoginEmailFragment : Fragment() {
                     if (hasFocus) {
                         hint = ""
                         binding.etLoginEmailPassword.backgroundTintList =
-                            resources.getColorStateList(R.color.primary_green_23C882,
-                                context?.theme)
+                            resources.getColorStateList(
+                                R.color.primary_green_23C882,
+                                context?.theme
+                            )
                     } else if (!binding.etLoginEmailPassword.text.isNullOrEmpty()) {
                         hint = ""
                         binding.etLoginEmailPassword.backgroundTintList = null
@@ -192,11 +202,15 @@ class LoginEmailFragment : Fragment() {
                     if (!s.toString()
                             .isNullOrEmpty() && !etLoginEmailPassword.text.isNullOrEmpty()
                     ) {
-                        ButtonActivation.setSignupButtonActive(requireContext(),
-                            binding.btnLoginEmailNext)
+                        ButtonActivation.setSignupButtonActive(
+                            requireContext(),
+                            binding.btnLoginEmailNext
+                        )
                     } else {
-                        ButtonActivation.setSignupButtonInactive(requireContext(),
-                            binding.btnLoginEmailNext)
+                        ButtonActivation.setSignupButtonInactive(
+                            requireContext(),
+                            binding.btnLoginEmailNext
+                        )
                     }
                 }
             })
@@ -214,11 +228,15 @@ class LoginEmailFragment : Fragment() {
                     if (!s.toString()
                             .isNullOrEmpty() && !etLoginEmailAddress.text.isNullOrEmpty()
                     ) {
-                        ButtonActivation.setSignupButtonActive(requireContext(),
-                            binding.btnLoginEmailNext)
+                        ButtonActivation.setSignupButtonActive(
+                            requireContext(),
+                            binding.btnLoginEmailNext
+                        )
                     } else {
-                        ButtonActivation.setSignupButtonInactive(requireContext(),
-                            binding.btnLoginEmailNext)
+                        ButtonActivation.setSignupButtonInactive(
+                            requireContext(),
+                            binding.btnLoginEmailNext
+                        )
                     }
                 }
             })

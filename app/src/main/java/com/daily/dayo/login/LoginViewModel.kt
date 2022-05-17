@@ -18,21 +18,26 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val loginRepository: LoginRepository, private val sharedManager: SharedManager) : ViewModel(){
+class LoginViewModel @Inject constructor(
+    private val loginRepository: LoginRepository,
+    private val sharedManager: SharedManager,
+) : ViewModel() {
 
     private val _signupSuccess = MutableLiveData<Event<Boolean>>()
-    val signupSuccess : LiveData<Event<Boolean>> get() =_signupSuccess
+    val signupSuccess: LiveData<Event<Boolean>> get() = _signupSuccess
 
     private val _loginSuccess = MutableLiveData<Event<Boolean>>()
-    val loginSuccess : LiveData<Event<Boolean>> get() =_loginSuccess
+    val loginSuccess: LiveData<Event<Boolean>> get() = _loginSuccess
 
     private val _isEmailDuplicate = MutableLiveData<Boolean>()
-    val isEmailDuplicate : LiveData<Boolean> get() = _isEmailDuplicate
+    val isEmailDuplicate: LiveData<Boolean> get() = _isEmailDuplicate
 
     private val _isCertificateEmailSend = MutableLiveData<Boolean>()
-    val isCertificateEmailSend : LiveData<Boolean> get() = _isCertificateEmailSend
+    val isCertificateEmailSend: LiveData<Boolean> get() = _isCertificateEmailSend
     private val _certificateEmailAuthCode = MutableLiveData<String>()
-    val certificateEmailAuthCode : MutableLiveData<String> get() = _certificateEmailAuthCode
+    val certificateEmailAuthCode: MutableLiveData<String> get() = _certificateEmailAuthCode
+    private val _changePasswordSuccess = MutableLiveData<Event<Boolean>>()
+    val changePasswordSuccess get() = _changePasswordSuccess
 
     fun requestLoginKakao(request: LoginRequestKakao) = viewModelScope.launch {
         val response = loginRepository.requestLoginKakao(request)
@@ -58,7 +63,7 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
 
     fun requestRefreshToken() = viewModelScope.launch {
         val response = loginRepository.requestRefreshToken()
-        if(response.isSuccessful){
+        if (response.isSuccessful) {
             response.body()?.let { sharedManager.setAccessToken(it.accessToken) }
             requestMemberInfo()
             _loginSuccess.postValue(Event(true))
@@ -66,21 +71,22 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
             _loginSuccess.postValue(Event(false))
     }
 
-    private fun requestMemberInfo() = viewModelScope.launch{
+    private fun requestMemberInfo() = viewModelScope.launch {
         val response = loginRepository.requestMemberInfo()
         if (response.isSuccessful) {
             sharedManager.saveCurrentUser(response.body())
         }
     }
 
-    fun requestSignupEmail(email: String, nickname: String, password: String, profileImg: File?) = viewModelScope.launch(Dispatchers.IO) {
-        val response = loginRepository.requestSignupEmail(email, nickname, password, profileImg)
-        if (response.isSuccessful) {
-            _signupSuccess.postValue(Event(true))
-        } else {
-            _signupSuccess.postValue(Event(false))
+    fun requestSignupEmail(email: String, nickname: String, password: String, profileImg: File?) =
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = loginRepository.requestSignupEmail(email, nickname, password, profileImg)
+            if (response.isSuccessful) {
+                _signupSuccess.postValue(Event(true))
+            } else {
+                _signupSuccess.postValue(Event(false))
+            }
         }
-    }
 
     fun requestCheckEmailDuplicate(email: String) = viewModelScope.launch(Dispatchers.IO) {
         val response = loginRepository.requestCheckEmailDuplicate(email)
@@ -101,7 +107,19 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
         }
     }
 
-    suspend fun requestDeviceToken(fcmDeviceToken : String) = coroutineScope {
+    suspend fun requestDeviceToken(fcmDeviceToken: String) = coroutineScope {
         val response = loginRepository.requestDeviceToken(RequestDeviceToken(fcmDeviceToken))
+    }
+
+    fun requestChangePassword(email: String, newPassword: String) = viewModelScope.launch {
+        loginRepository.requestChangeLostPassword(
+            email = email, password = newPassword
+        ).let {
+            if (it.isSuccessful) {
+                _changePasswordSuccess.postValue(Event(true))
+            } else {
+                _changePasswordSuccess.postValue(Event(false))
+            }
+        }
     }
 }

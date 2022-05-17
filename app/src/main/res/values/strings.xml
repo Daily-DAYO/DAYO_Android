@@ -33,7 +33,7 @@
     <string name="hint_login_email_address">이메일을 입력해주세요.</string>
     <string name="hint_login_email_password">비밀번호를 입력해주세요.</string>
     <string name="login_email_alert_message_fail">이메일 주소 또는 비밀번호를 잘못 입력했어요.</string>
-    <string name="login_email_forget_guide_message">이메일 / 비밀번호 찾기</string>
+    <string name="login_email_forget_guide_message"><b><u>비밀번호</u>를 잊어버렸어요</b></string>
 
     <!-- Home -->
     <string name="DayoPick">DAYO PICK</string>

@@ -11,12 +11,13 @@ class SettingRepository @Inject constructor(
     private val sharedManager: SharedManager,
 ) {
     suspend fun requestCheckCurrentPassword(inputPassword: String) =
-        settingApiHelper.requestCheckCurrentPassword(RequestCheckCurrentPassword(
-            inputPassword
-        ))
+        settingApiHelper.requestCheckCurrentPassword(
+            RequestCheckCurrentPassword(
+                inputPassword
+            )
+        )
 
-    suspend fun requestChangePassword(newPassword: String) =
-        settingApiHelper.requestChangePassword(RequestChangePassword(
-            sharedManager.getCurrentUser().email.toString(), newPassword
-        ))
+    suspend fun requestChangePassword(
+        email: String = sharedManager.getCurrentUser().email.toString(), newPassword: String,
+    ) = settingApiHelper.requestChangePassword(RequestChangePassword(email, newPassword))
 }

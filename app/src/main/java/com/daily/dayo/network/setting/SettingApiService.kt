@@ -8,7 +8,8 @@ import retrofit2.http.POST
 
 interface SettingApiService {
     @POST("/api/v1/members/checkPassword")
-    suspend fun requestCheckCurrentPassword(@Body body : RequestCheckCurrentPassword) : Response<Void>
-    @POST("/api/v1/members/changePassword")
-    suspend fun requestChangePassword(@Body body : RequestChangePassword) : Response<Void>
+    suspend fun requestCheckCurrentPassword(@Body body: RequestCheckCurrentPassword): Response<Void>
+
+    @POST("/api/v1/members/setting/changePassword")
+    suspend fun requestChangePassword(@Body body: RequestChangePassword): Response<Void>
 }

@@ -9,10 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentFindAccountPasswordNewPasswordConfirmationBinding
+import com.daily.dayo.login.LoginViewModel
 import com.daily.dayo.util.ButtonActivation
 import com.daily.dayo.util.HideKeyBoardUtil
 import com.daily.dayo.util.SetTextInputLayout
@@ -24,6 +28,8 @@ import java.util.regex.Pattern
 class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
     private var binding by autoCleared<FragmentFindAccountPasswordNewPasswordConfirmationBinding>()
     private val args by navArgs<FindAccountPasswordNewPasswordConfirmationFragmentArgs>()
+    private val loginViewModel by activityViewModels<LoginViewModel>()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,6 +47,7 @@ class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
         setTextEditorActionListener()
         verifyPassword()
         setUserPasswordEditText()
+        observeChangeStateCallback()
         return binding.root
     }
 
@@ -188,9 +195,23 @@ class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
     }
 
     private fun setNextClickListener() {
-        // TODO: 서버에 비밀번호 변경 요청
         binding.btnFindAccountPasswordNewPasswordConfirmationNext.setOnClickListener {
-            findNavController().navigate(R.id.action_findAccountPasswordNewPasswordConfirmationFragment_to_findAccountPasswordCompleteFragment)
+            loginViewModel.requestChangePassword(args.email, args.password)
         }
+    }
+
+    private fun observeChangeStateCallback() {
+        loginViewModel.changePasswordSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
+            if (isSuccess.peekContent()) {
+                findNavController().navigate(R.id.action_findAccountPasswordNewPasswordConfirmationFragment_to_findAccountPasswordCompleteFragment)
+                Toast.makeText(
+                    requireContext(),
+                    R.string.change_password_complete,
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                // TODO : 비밀번호 변경 실패 시 메시지 작성
+            }
+        })
     }
 }
