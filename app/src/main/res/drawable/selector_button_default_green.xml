@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_selected="true">
-        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="true">
+        <shape>
             <solid
                 android:color="@color/primary_green_23C882"/>
             <stroke
@@ -12,8 +12,8 @@
                 android:radius="10dp"/>
         </shape>
     </item>
-    <item android:state_selected="false">
-        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false">
+        <shape>
             <solid
                 android:color="@color/gray_5_EDEDED"/>
             <stroke
