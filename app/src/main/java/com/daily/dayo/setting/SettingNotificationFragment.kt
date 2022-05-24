@@ -1,5 +1,6 @@
 package com.daily.dayo.setting
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,6 +14,8 @@ import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.FragmentSettingNotificationBinding
 import com.daily.dayo.util.FirebaseMessagingServiceUtil
 import com.daily.dayo.util.autoCleared
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -36,7 +39,6 @@ class SettingNotificationFragment: Fragment() {
     }
 
     private fun setInitSwitchState(){
-        Log.e("SettingNoti.kt", SharedManager(DayoApplication.applicationContext()).notificationPermit.toString())
         if(SharedManager(DayoApplication.applicationContext()).notificationPermit != "OFF") {
             binding.switchSettingNotificationDevice.isChecked = true
             binding.switchSettingNotificationNotice.isEnabled = true
@@ -73,14 +75,46 @@ class SettingNotificationFragment: Fragment() {
     }
 
     private fun setNoticeNotification(){
-        binding.switchSettingNotificationNotice.setOnCheckedChangeListener { _, _ ->
+        binding.switchSettingNotificationNotice.setOnCheckedChangeListener { _, isChecked ->
             setNotificationOnState()
+            if(isChecked){
+                Firebase.messaging.subscribeToTopic("NOTICE")
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) Log.d(TAG, "NOTICE 수신")
+                    }
+            }
+            else{
+                Firebase.messaging.unsubscribeFromTopic("NOTICE")
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) Log.d(TAG, "NOTICE 수신 거부")
+                    }
+            }
         }
     }
 
     private fun setReactionNotification(){
-        binding.switchSettingNotificationReaction.setOnCheckedChangeListener { _, _ ->
+        binding.switchSettingNotificationReaction.setOnCheckedChangeListener { _, isChecked ->
             setNotificationOnState()
+            if(isChecked){
+                Firebase.messaging.subscribeToTopic("HEART")
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) Log.d(TAG, "HEART 수신")
+                    }
+                Firebase.messaging.subscribeToTopic("COMMENT")
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) Log.d(TAG, "COMMENT 수신")
+                    }
+            }
+            else{
+                Firebase.messaging.unsubscribeFromTopic("HEART")
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) Log.d(TAG, "HEART 수신 거부")
+                    }
+                Firebase.messaging.unsubscribeFromTopic("COMMENT")
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) Log.d(TAG, "COMMENT 수신 거부")
+                    }
+            }
         }
     }
 
