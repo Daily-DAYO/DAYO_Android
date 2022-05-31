@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="isMine"
+            type="Boolean" />
+        <variable
+            name="profile"
+            type="com.daily.dayo.domain.model.Profile" />
+    </data>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray_6_F6F6F6"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:contentScrim="@android:color/transparent"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_profile_action_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?actionBarSize"
+                    android:background="@color/white_FFFFFF"
+                    app:layout_collapseMode="parallax">
+
+                    <ImageButton
+                        android:id="@+id/btn_profile_back"
+                        android:layout_width="9dp"
+                        android:layout_height="18dp"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/ic_back_sign"
+                        android:visibility="@{isMine ? View.GONE : View.VISIBLE}"
+                        app:layout_constraintTop_toTopOf="@+id/layout_profile_action_bar"
+                        app:layout_constraintBottom_toBottomOf="@+id/layout_profile_action_bar"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginStart="18dp"
+                        tools:visibility="visible"/>
+
+                    <ImageButton
+                        android:id="@+id/btn_profile_option"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="5dp"
+                        android:background="@android:color/transparent"
+                        android:paddingHorizontal="13dp"
+                        android:visibility="@{isMine ? View.VISIBLE : View.GONE}"
+                        android:src="@drawable/ic_option_horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:visibility="gone"/>
+
+                    <ImageButton
+                        android:id="@+id/btn_profile_home"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="5dp"
+                        android:background="@android:color/transparent"
+                        android:paddingHorizontal="13dp"
+                        android:visibility="@{isMine ? View.GONE : View.VISIBLE}"
+                        android:src="@drawable/ic_home_gray_1"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:visibility="visible"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="?attr/actionBarSize"
+                    android:layout_marginBottom="13dp"
+                    android:background="@drawable/background_profile_round_bottom_corner"
+                    android:paddingBottom="37dp"
+                    app:layout_collapseMode="parallax">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/img_profile_user_profile"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_profile_default_user_profile"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:shapeAppearanceOverlay="@style/roundedImageViewRounded" />
+
+                    <TextView
+                        android:id="@+id/tv_profile_user_nickname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="11dp"
+                        android:text="@{profile.nickname}"
+                        android:textColor="@color/gray_1_313131"
+                        android:textSize="20dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/img_profile_user_profile"
+                        tools:text="Nickname" />
+
+                    <LinearLayout
+                        android:id="@+id/layout_profile_count"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="90dp"
+                        android:layout_marginTop="26dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_profile_user_nickname">
+
+                        <LinearLayout
+                            android:id="@+id/layout_profile_post_count"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tv_profile_post_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginBottom="9dp"
+                                android:text="@{Integer.toString(profile.postCount)}"
+                                android:textColor="#5A5A5A"
+                                android:textSize="15dp"
+                                android:textStyle="bold"
+                                tools:text="0" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="게시글"
+                                android:textColor="@color/gray_3_9C9C9C"
+                                android:textSize="11dp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <View
+                            android:id="@+id/view_profile_count_post_vertical_line"
+                            android:layout_width="0.6dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/gray_4_D3D2D2" />
+
+                        <LinearLayout
+                            android:id="@+id/layout_profile_follower_count"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tv_profile_follower_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginBottom="9dp"
+                                android:text="@{Integer.toString(profile.followerCount)}"
+                                android:textColor="#5A5A5A"
+                                android:textSize="15dp"
+                                android:textStyle="bold"
+                                tools:text="0" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="팔로워"
+                                android:textColor="@color/gray_3_9C9C9C"
+                                android:textSize="11dp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:id="@+id/view_profile_count_follower_vertical_line"
+                            android:layout_width="0.6dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/gray_4_D3D2D2" />
+
+                        <LinearLayout
+                            android:id="@+id/layout_profile_following_count"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tv_profile_following_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginBottom="9dp"
+                                android:text="@{Integer.toString(profile.followingCount)}"
+                                android:textColor="#5A5A5A"
+                                android:textSize="15dp"
+                                android:textStyle="bold"
+                                tools:text="0" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="팔로잉"
+                                android:textColor="@color/gray_3_9C9C9C"
+                                android:textSize="11dp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <CheckBox
+                        android:id="@+id/btn_profile_follow"
+                        android:layout_width="93dp"
+                        android:layout_height="33dp"
+                        android:layout_marginTop="32dp"
+                        android:button="@android:color/transparent"
+                        android:visibility="@{isMine ? View.GONE : View.VISIBLE}"
+                        android:checked="@{profile.follow}"
+                        android:text="@{profile.follow ? `팔로잉`: `팔로우`}"
+                        android:textSize="12dp"
+                        android:textAlignment="center"
+                        android:textColor="@drawable/selector_button_follow_text"
+                        android:background="@drawable/selector_button_follow"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/layout_profile_count"
+                        tools:text="팔로우" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabs_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{isMine ? View.VISIBLE : View.GONE}"
+                    app:tabGravity="center"
+                    app:tabIndicator="@drawable/tab_indicator"
+                    app:tabIndicatorColor="@color/gray_1_313131"
+                    app:tabIndicatorFullWidth="false"
+                    app:tabIndicatorGravity="bottom"
+                    app:tabMode="fixed"
+                    app:tabPaddingEnd="30dp"
+                    app:tabPaddingStart="30dp"
+                    app:tabSelectedTextColor="@color/gray_1_313131"
+                    app:tabTextAppearance="@style/tab_profile"
+                    app:tabTextColor="@color/gray_3_9C9C9C"
+                    tools:visibility="gone">
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="작성한 글" />
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="좋아요" />
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="북마크" />
+                </com.google.android.material.tabs.TabLayout>
+
+                <View
+                    android:id="@+id/view_tabs_horizontal_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray_6_F6F6F6"
+                    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </com.google.android.material.appbar.AppBarLayout>
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/pager_profile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white_FFFFFF"
+            android:visibility="@{isMine ? View.VISIBLE : View.GONE}"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            tools:visibility="visible"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_profile_folder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:paddingTop="25dp"
+            android:overScrollMode="never"
+            android:clipToPadding="false"
+            android:visibility="@{isMine ? View.GONE : View.VISIBLE}"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_profile_folder"
+            tools:visibility="visible" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

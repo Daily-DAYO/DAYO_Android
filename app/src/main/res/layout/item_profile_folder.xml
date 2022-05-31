@@ -1,65 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="11dp">
+<layout>
+    <data>
+        <variable
+            name="folder"
+            type="com.daily.dayo.domain.model.Folder" />
+    </data>
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/btn_profile_folder_item"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="163dp"
-        android:scaleType="centerCrop"
-        app:shapeAppearanceOverlay="@style/roundedImageViewRoundedCorner"
-        android:background="@drawable/button_profile_folder_default_gray"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <ImageView
-        android:id="@+id/img_profile_folder_post_count"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="34dp"
-        android:src="@drawable/ic_profile_folder_post_count"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_marginBottom="11dp">
 
-    <TextView
-        android:id="@+id/tv_profile_folder_post_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="13dp"
-        android:textColor="@color/white_FFFFFF"
-        android:layout_marginStart="4dp"
-        app:layout_constraintStart_toEndOf="@+id/img_profile_folder_post_count"
-        app:layout_constraintTop_toTopOf="@+id/img_profile_folder_post_count"
-        app:layout_constraintBottom_toBottomOf="@+id/img_profile_folder_post_count"
-        tools:text="12"/>
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/btn_profile_folder_item"
+            android:layout_width="match_parent"
+            android:layout_height="163dp"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/roundedImageViewRoundedCorner"
+            android:background="@drawable/button_profile_folder_default_gray"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-    <TextView
-        android:id="@+id/tv_profile_folder_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="15dp"
-        android:textColor="@color/white_FFFFFF"
-        android:layout_marginBottom="40dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_profile_folder_item"
-        tools:text="오늘의 일기"/>
+        <ImageView
+            android:id="@+id/img_profile_folder_post_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="34dp"
+            android:src="@drawable/ic_profile_folder_post_count"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_profile_folder_subheading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="11dp"
-        android:textColor="@color/white_FFFFFF"
-        android:layout_marginTop="6dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_profile_folder_name"
-        tools:text="우당탕탕 빙글빙글 오늘 하루"/>
+        <TextView
+            android:id="@+id/tv_profile_folder_post_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{Integer.toString(folder.postCount)}"
+            android:textSize="13dp"
+            android:textColor="@color/white_FFFFFF"
+            android:layout_marginStart="4dp"
+            app:layout_constraintStart_toEndOf="@+id/img_profile_folder_post_count"
+            app:layout_constraintTop_toTopOf="@+id/img_profile_folder_post_count"
+            app:layout_constraintBottom_toBottomOf="@+id/img_profile_folder_post_count"
+            tools:text="12"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/tv_profile_folder_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{folder.name}"
+            android:textSize="15dp"
+            android:textColor="@color/white_FFFFFF"
+            android:layout_marginBottom="40dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_profile_folder_item"
+            tools:text="오늘의 일기"/>
+
+        <TextView
+            android:id="@+id/tv_profile_folder_subheading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{folder.subheading}"
+            android:textSize="11dp"
+            android:textColor="@color/white_FFFFFF"
+            android:layout_marginTop="6dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_profile_folder_name"
+            tools:text="우당탕탕 빙글빙글 오늘 하루"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

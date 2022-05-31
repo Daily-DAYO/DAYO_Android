@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".write.WriteFolderFragment">
+    tools:context=".presentation.fragment.write.WriteFolderFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_write_folder_action_bar"
@@ -74,5 +74,4 @@
                 android:layout_marginHorizontal="19dp"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

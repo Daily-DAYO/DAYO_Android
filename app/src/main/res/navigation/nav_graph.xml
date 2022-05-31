@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/HomeFragment"
-        android:name="com.daily.dayo.home.HomeFragment"
+        android:name="com.daily.dayo.presentation.fragment.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
         <action
@@ -17,32 +17,16 @@
             android:id="@+id/action_homeFragment_to_writeFragment"
             app:destination="@id/WriteFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_otherProfileFragment"
-            app:destination="@+id/OtherProfileFragment"/>
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@+id/ProfileFragment"/>
         <action
             android:id="@+id/action_homeFragment_to_searchFragment"
             app:destination="@+id/SearchFragment"/>
     </fragment>
 
     <fragment
-        android:id="@+id/OtherProfileFragment"
-        android:name="com.daily.dayo.profile.OtherProfileFragment"
-        android:label="fragment_other_profile"
-        tools:layout="@layout/fragment_other_profile">
-        <argument
-            android:name="memberId"
-            app:argType="string"/>
-        <action
-            android:id="@+id/action_otherProfileFragment_to_FolderFragment"
-            app:destination="@+id/FolderFragment"/>
-        <action
-            android:id="@+id/action_otherProfileFragment_to_followFragment"
-            app:destination="@id/FollowFragment" />
-    </fragment>
-
-    <fragment
         android:id="@+id/SearchFragment"
-        android:name="com.daily.dayo.search.SearchFragment"
+        android:name="com.daily.dayo.presentation.fragment.search.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search">
         <action
@@ -53,7 +37,7 @@
 
     <fragment
         android:id="@+id/SearchResultFragment"
-        android:name="com.daily.dayo.search.SearchResultFragment"
+        android:name="com.daily.dayo.presentation.fragment.search.SearchResultFragment"
         android:label="fragment_search_result"
         tools:layout="@layout/fragment_search_result">
         <argument
@@ -66,7 +50,7 @@
 
     <fragment
         android:id="@+id/FeedFragment"
-        android:name="com.daily.dayo.feed.FeedFragment"
+        android:name="com.daily.dayo.presentation.fragment.feed.FeedFragment"
         android:label="fragment_feed"
         tools:layout="@layout/fragment_feed">
         <action
@@ -76,19 +60,22 @@
             android:id="@+id/action_feedFragment_to_writeFragment"
             app:destination="@id/WriteFragment" />
         <action
-            android:id="@+id/action_feedFragment_to_otherProfileFragment"
-            app:destination="@+id/OtherProfileFragment"/>
-        <action
-            android:id="@+id/action_feedFragment_to_myProfileFragment"
-            app:destination="@+id/MyProfileFragment"/>
+            android:id="@+id/action_feedFragment_to_profileFragment"
+            app:destination="@+id/ProfileFragment"/>
         <action
             android:id="@+id/action_feedFragment_to_postFragment"
             app:destination="@+id/PostFragment"/>
+        <action
+            android:id="@+id/action_feedFragment_to_postOptionFragment"
+            app:destination="@id/PostOptionFragment"/>
+        <action
+            android:id="@+id/action_FeedFragment_to_postOptionMineFragment"
+            app:destination="@id/PostOptionMineFragment"/>
     </fragment>
 
     <fragment
         android:id="@+id/WriteFragment"
-        android:name="com.daily.dayo.write.WriteFragment"
+        android:name="com.daily.dayo.presentation.fragment.write.WriteFragment"
         android:label="fragment_write"
         tools:layout="@layout/fragment_write">
         <argument
@@ -109,14 +96,14 @@
     </fragment>
     <dialog
         android:id="@+id/WriteImageOptionFragment"
-        android:name="com.daily.dayo.write.WriteImageOptionFragment"
+        android:name="com.daily.dayo.presentation.fragment.write.WriteImageOptionFragment"
         android:label="fragment_write_image_option"
         tools:layout="@layout/fragment_write_image_option">
     </dialog>
 
     <dialog
         android:id="@+id/WriteOptionFragment"
-        android:name="com.daily.dayo.write.WriteOptionFragment"
+        android:name="com.daily.dayo.presentation.fragment.write.WriteOptionFragment"
         android:label="fragment_write_option"
         tools:layout="@layout/fragment_write_option">
         <action
@@ -129,14 +116,14 @@
 
     <fragment
         android:id="@+id/WriteTagFragment"
-        android:name="com.daily.dayo.write.WriteTagFragment"
+        android:name="com.daily.dayo.presentation.fragment.write.WriteTagFragment"
         android:label="fragment_write_tag"
         tools:layout="@layout/fragment_write_tag">
     </fragment>
 
     <fragment
         android:id="@+id/WriteFolderFragment"
-        android:name="com.daily.dayo.write.WriteFolderFragment"
+        android:name="com.daily.dayo.presentation.fragment.write.WriteFolderFragment"
         android:label="fragment_write_folder"
         tools:layout="@layout/fragment_write_folder">
         <action
@@ -146,22 +133,19 @@
 
     <fragment
         android:id="@+id/FolderAddFragment"
-        android:name="com.daily.dayo.write.WriteFolderAddFragment"
+        android:name="com.daily.dayo.presentation.fragment.write.WriteFolderAddFragment"
         android:label="fragment_write_add"
         tools:layout="@layout/fragment_write_folder_add">
     </fragment>
 
     <fragment
         android:id="@+id/PostFragment"
-        android:name="com.daily.dayo.post.PostFragment"
+        android:name="com.daily.dayo.presentation.fragment.post.PostFragment"
         android:label="fragment_post"
         tools:layout="@layout/fragment_post">
         <argument
-            android:name="id"
+            android:name="postId"
             app:argType="integer" />
-        <argument
-            android:name="nickname"
-            app:argType="string" />
         <action
             android:id="@+id/action_postFragment_to_postOptionFragment"
             app:destination="@id/PostOptionFragment"/>
@@ -171,14 +155,17 @@
         <action
             android:id="@+id/action_postFragment_to_searchResultFragment"
             app:destination="@id/SearchResultFragment"/>
+        <action
+            android:id="@+id/action_postFragment_to_profileFragment"
+            app:destination="@+id/ProfileFragment"/>
     </fragment>
     <dialog
         android:id="@+id/PostOptionFragment"
-        android:name="com.daily.dayo.post.PostOptionFragment"
+        android:name="com.daily.dayo.presentation.fragment.post.PostOptionFragment"
         android:label="fragment_post_option"
         tools:layout="@layout/fragment_post_option">
         <argument
-            android:name="id"
+            android:name="postId"
             app:argType="integer" />
         <action
             android:id="@+id/action_postOptionFragment_to_postReportFragment"
@@ -187,21 +174,21 @@
 
     <fragment
         android:id="@+id/PostReportFragment"
-        android:name="com.daily.dayo.post.PostReportFragment"
+        android:name="com.daily.dayo.presentation.fragment.post.PostReportFragment"
         android:label="fragment_post_report"
         tools:layout="@layout/fragment_post_report">
         <argument
-            android:name="id"
+            android:name="postId"
             app:argType="integer" />
     </fragment>
 
     <dialog
         android:id="@+id/PostOptionMineFragment"
-        android:name="com.daily.dayo.post.PostOptionMineFragment"
+        android:name="com.daily.dayo.presentation.fragment.post.PostOptionMineFragment"
         android:label="fragment_post_option_mine"
         tools:layout="@layout/fragment_post_option_mine">
         <argument
-            android:name="id"
+            android:name="postId"
             app:argType="integer" />
         <action
             android:id="@+id/action_postOptionMineFragment_to_HomeFragment"
@@ -216,33 +203,41 @@
     </dialog>
 
     <fragment
-        android:id="@+id/MyProfileFragment"
-        android:name="com.daily.dayo.profile.MyProfileFragment"
-        android:label="fragment_my_profile"
-        tools:layout="@layout/fragment_my_profile">
+        android:id="@+id/ProfileFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.profile.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile">
+        <argument
+            android:name="memberId"
+            app:argType="string"
+            android:defaultValue="@null"
+            app:nullable="true"/>
         <action
-            android:id="@+id/action_myProfileFragment_to_writeFragment"
+            android:id="@+id/action_profileFragment_to_writeFragment"
             app:destination="@id/WriteFragment" />
         <action
-            android:id="@+id/action_myProfileFragment_to_followFragment"
+            android:id="@+id/action_profileFragment_to_followFragment"
             app:destination="@id/FollowFragment" />
         <action
-            android:id="@+id/action_myProfileFragment_to_myProfileEditFragment"
-            app:destination="@id/MyProfileEditFragment" />
+            android:id="@+id/action_profileFragment_to_profileEditFragment"
+            app:destination="@id/ProfileEditFragment" />
         <action
-            android:id="@+id/action_myProfileFragment_to_myProfileOptionFragment"
-            app:destination="@id/MyProfileOptionFragment"/>
+            android:id="@+id/action_profileFragment_to_profileOptionFragment"
+            app:destination="@id/ProfileOptionFragment"/>
         <action
-            android:id="@+id/action_myProfileFragment_to_folderFragment"
+            android:id="@+id/action_profileFragment_to_folderFragment"
             app:destination="@+id/FolderFragment"/>
         <action
-            android:id="@+id/action_myProfileFragment_to_postFragment"
+            android:id="@+id/action_profileFragment_to_homeFragment"
+            app:destination="@+id/HomeFragment"/>
+        <action
+            android:id="@+id/action_profileFragment_to_postFragment"
             app:destination="@+id/PostFragment"/>
     </fragment>
 
     <fragment
         android:id="@+id/FolderFragment"
-        android:name="com.daily.dayo.profile.FolderFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.folder.FolderFragment"
         android:label="fragment_folder"
         tools:layout="@layout/fragment_folder">
 
@@ -260,7 +255,7 @@
 
     <fragment
         android:id="@+id/FolderEditFragment"
-        android:name="com.daily.dayo.profile.FolderEditFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.folder.FolderEditFragment"
         android:label="fragment_folder_edit"
         tools:layout="@layout/fragment_folder_setting_add">
         <argument
@@ -273,47 +268,47 @@
 
     <dialog
         android:id="@+id/FolderOptionFragment"
-        android:name="com.daily.dayo.profile.FolderOptionFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.folder.FolderOptionFragment"
         android:label="fragment_folder_option"
         tools:layout="@layout/fragment_folder_option">
         <argument
             android:name="folderId"
             app:argType="integer" />
         <action
-            android:id="@+id/action_folderOptionFragment_to_myProfileFragment"
-            app:destination="@+id/MyProfileFragment" />
+            android:id="@+id/action_folderOptionFragment_to_profileFragment"
+            app:destination="@+id/ProfileFragment" />
         <action
             android:id="@+id/action_folderOptionFragment_to_folderEditFragment"
             app:destination="@+id/FolderEditFragment"/>
     </dialog>
 
     <dialog
-        android:id="@+id/MyProfileOptionFragment"
-        android:name="com.daily.dayo.profile.MyProfileOptionFragment"
-        android:label="fragment_my_profile_option"
-        tools:layout="@layout/fragment_my_profile_option">
+        android:id="@+id/ProfileOptionFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.profile.ProfileOptionFragment"
+        android:label="fragment_profile_option"
+        tools:layout="@layout/fragment_profile_option">
 
         <action
-            android:id="@+id/action_myProfileOptionFragment_to_folderSettingFragment"
+            android:id="@+id/action_profileOptionFragment_to_folderSettingFragment"
             app:destination="@id/FolderSettingFragment" />
         <action
-            android:id="@+id/action_myProfileOptionFragment_to_myProfileEditFragment"
-            app:destination="@+id/MyProfileEditFragment"/>
+            android:id="@+id/action_profileOptionFragment_to_profileEditFragment"
+            app:destination="@+id/ProfileEditFragment"/>
         <action
-            android:id="@+id/action_myProfileOptionFragment_to_myProfileSettingFragment"
+            android:id="@+id/action_profileOptionFragment_to_settingFragment"
             app:destination="@+id/SettingFragment"/>
     </dialog>
 
     <fragment
         android:id="@+id/SettingFragment"
-        android:name="com.daily.dayo.setting.SettingFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.SettingFragment"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting">
     </fragment>
 
     <fragment
         android:id="@+id/FolderSettingFragment"
-        android:name="com.daily.dayo.profile.FolderSettingFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.folder.FolderSettingFragment"
         android:label="fragment_folder_setting"
         tools:layout="@layout/fragment_folder_setting">
         <action android:id="@+id/action_folderSettingFragment_to_folderSettingAddFragment"
@@ -322,7 +317,7 @@
 
     <fragment
         android:id="@+id/FolderSettingAddFragment"
-        android:name="com.daily.dayo.profile.FolderSettingAddFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.folder.FolderSettingAddFragment"
         tools:layout="@layout/fragment_folder_setting_add">
 
         <action android:id="@+id/action_folderSettingAddFragment_to_folderSettingAddImageOptionFragment"
@@ -332,30 +327,30 @@
 
     <dialog
         android:id="@+id/FolderSettingEditImageOptionFragment"
-        android:name="com.daily.dayo.profile.FolderSettingEditImageOptionFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.folder.FolderSettingEditImageOptionFragment"
         android:label="fragment_folder_setting_edit_image_option"
         tools:layout="@layout/fragment_folder_setting_edit_image_option">
     </dialog>
 
     <fragment
-        android:id="@+id/MyProfileEditFragment"
-        android:name="com.daily.dayo.profile.MyProfileEditFragment"
-        android:label="fragment_my_profile_edit"
-        tools:layout="@layout/fragment_my_profile_edit">
+        android:id="@+id/ProfileEditFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.profile.ProfileEditFragment"
+        android:label="fragment_profile_edit"
+        tools:layout="@layout/fragment_profile_edit">
         <action
-            android:id="@+id/action_myProfileEditFragment_to_myProfileEditImageOptionFragment"
-            app:destination="@id/MyProfileEditImageOptionFragment"/>
+            android:id="@+id/action_profileEditFragment_to_profileEditImageOptionFragment"
+            app:destination="@id/ProfileEditImageOptionFragment"/>
     </fragment>
     <dialog
-        android:id="@+id/MyProfileEditImageOptionFragment"
-        android:name="com.daily.dayo.profile.MyProfileEditImageOptionFragment"
+        android:id="@+id/ProfileEditImageOptionFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.profile.ProfileEditImageOptionFragment"
         android:label="fragment_my_profile_edit_image_option"
-        tools:layout="@layout/fragment_my_profile_edit_image_option">
+        tools:layout="@layout/fragment_profile_edit_image_option">
     </dialog>
 
     <fragment
         android:id="@+id/FollowFragment"
-        android:name="com.daily.dayo.follow.FollowFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.follow.FollowFragment"
         android:label="fragment_follow"
         tools:layout="@layout/fragment_follow">
         <argument
@@ -365,20 +360,20 @@
             android:name="nickname"
             app:argType="string"/>
         <action
-            android:id="@+id/action_followFragment_to_otherProfileFragment"
-            app:destination="@+id/OtherProfileFragment"/>
-        <action
-            android:id="@+id/action_followFragment_to_myProfileFragment"
-            app:destination="@+id/MyProfileFragment"/>
+            android:id="@+id/action_followFragment_to_profileFragment"
+            app:destination="@+id/ProfileFragment"/>
     </fragment>
 
     <fragment
         android:id="@+id/NotificationFragment"
-        android:name="com.daily.dayo.notification.NotificationFragment"
+        android:name="com.daily.dayo.presentation.fragment.notification.NotificationFragment"
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification">
-    <action
-        android:id="@+id/action_notificationFragment_to_writeFragment"
-        app:destination="@id/WriteFragment" />
+        <action
+            android:id="@+id/action_notificationFragment_to_writeFragment"
+            app:destination="@id/WriteFragment" />
+        <action
+            android:id="@+id/action_notificationFragment_to_profileFragment"
+            app:destination="@id/ProfileFragment" />
     </fragment>
 </navigation>

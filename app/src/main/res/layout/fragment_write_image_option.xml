@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".write.WriteImageOptionFragment"
+    tools:context=".presentation.fragment.write.WriteImageOptionFragment"
     android:paddingBottom="18dp">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_write_image_option_select_gallery"

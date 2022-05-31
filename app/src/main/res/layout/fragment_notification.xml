@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".notification.NotificationFragment">
+    tools:context=".presentation.fragment.notification.NotificationFragment">
     <androidx.core.widget.NestedScrollView
         android:id="@+id/layout_scroll_notification"
         android:layout_width="match_parent"

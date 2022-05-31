@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".presentation.fragment.home.HomeDayoPickPostListFragment">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/layout_scroll_dayo_pick_post_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <HorizontalScrollView
+                    android:id="@+id/layout_dayo_pick_post_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="19dp"
+                    android:scrollbars="none"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <RadioGroup
+                        android:id="@+id/radiogroup_dayopick_post_category"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="20dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <RadioButton
+                            android:id="@+id/radiobutton_dayopick_post_category_all"
+                            android:layout_width="83dp"
+                            android:layout_height="26dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/selector_button_home_post_category"
+                            android:button="@null"
+                            android:checked="true"
+                            android:text="@string/all"
+                            android:textAlignment="center"
+                            android:textColor="@drawable/selector_button_home_post_category_text"
+                            android:textSize="12dp" />
+
+                        <RadioButton
+                            android:id="@+id/radiobutton_dayopick_post_category_scheduler"
+                            android:layout_width="83dp"
+                            android:layout_height="26dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/selector_button_home_post_category"
+                            android:button="@null"
+                            android:text="@string/scheduler"
+                            android:textAlignment="center"
+                            android:textColor="@drawable/selector_button_home_post_category_text"
+                            android:textSize="12dp" />
+
+                        <RadioButton
+                            android:id="@+id/radiobutton_dayopick_post_category_studyplanner"
+                            android:layout_width="83dp"
+                            android:layout_height="26dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/selector_button_home_post_category"
+                            android:button="@null"
+                            android:text="@string/studyplanner"
+                            android:textAlignment="center"
+                            android:textColor="@drawable/selector_button_home_post_category_text"
+                            android:textSize="12dp" />
+
+                        <RadioButton
+                            android:id="@+id/radiobutton_dayopick_post_category_pocketbook"
+                            android:layout_width="83dp"
+                            android:layout_height="26dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/selector_button_home_post_category"
+                            android:button="@null"
+                            android:text="@string/pocketbook"
+                            android:textAlignment="center"
+                            android:textColor="@drawable/selector_button_home_post_category_text"
+                            android:textSize="12dp" />
+
+                        <RadioButton
+                            android:id="@+id/radiobutton_dayopick_post_category_6holediary"
+                            android:layout_width="83dp"
+                            android:layout_height="26dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/selector_button_home_post_category"
+                            android:button="@null"
+                            android:text="@string/sixHoleDiary"
+                            android:textAlignment="center"
+                            android:textColor="@drawable/selector_button_home_post_category_text"
+                            android:textSize="12dp" />
+
+                        <RadioButton
+                            android:id="@+id/radiobutton_dayopick_post_category_digital"
+                            android:layout_width="83dp"
+                            android:layout_height="26dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/selector_button_home_post_category"
+                            android:button="@null"
+                            android:text="@string/digital"
+                            android:textAlignment="center"
+                            android:textColor="@drawable/selector_button_home_post_category_text"
+                            android:textSize="12dp" />
+
+                        <RadioButton
+                            android:id="@+id/radiobutton_dayopick_post_category_etc"
+                            android:layout_width="83dp"
+                            android:layout_height="26dp"
+                            android:background="@drawable/selector_button_home_post_category"
+                            android:button="@null"
+                            android:text="@string/etc"
+                            android:textAlignment="center"
+                            android:textColor="@drawable/selector_button_home_post_category_text"
+                            android:textSize="12dp" />
+                    </RadioGroup>
+                </HorizontalScrollView>
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_dayopick_contents_start"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.039" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_dayopick_contents_end"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.961" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_dayopick_post"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:overScrollMode="never"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:layout_constraintEnd_toEndOf="@id/guideline_dayopick_contents_end"
+                    app:layout_constraintStart_toStartOf="@id/guideline_dayopick_contents_start"
+                    app:layout_constraintTop_toBottomOf="@id/layout_dayo_pick_post_category"
+                    app:spanCount="2"
+                    tools:listitem="@layout/item_main_post" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
