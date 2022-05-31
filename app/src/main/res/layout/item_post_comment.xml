@@ -5,7 +5,7 @@
     <data>
         <variable
             name="comment"
-            type="com.daily.dayo.post.model.PostCommentContent" />
+            type="com.daily.dayo.domain.model.Comment" />
         <variable
             name="commentCreateTime"
             type="String" />

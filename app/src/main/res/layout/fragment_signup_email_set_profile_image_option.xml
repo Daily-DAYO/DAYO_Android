@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".signup.email.SignupEmailSetProfileImageOptionFragment"
+    tools:context=".presentation.fragment.account.signup.SignupEmailSetProfileImageOptionFragment"
     android:paddingBottom="18dp">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_signup_email_set_profile_image_option_select_gallery"

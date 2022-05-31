@@ -10,7 +10,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".write.WriteTagFragment">
+    tools:context=".presentation.fragment.write.WriteTagFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_write_tag_action_bar"

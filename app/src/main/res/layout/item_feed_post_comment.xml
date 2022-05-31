@@ -5,20 +5,20 @@
 
     <data>
         <variable
-            name="feedComment"
-            type="com.daily.dayo.post.model.PostCommentContent" />
+            name="comment"
+            type="com.daily.dayo.domain.model.Comment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp">
+        android:paddingBottom="10dp">
 
         <TextView
             android:id="@+id/tv_feed_post_comment_user_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{feedComment.nickname}"
+            android:text="@{comment.nickname}"
             android:textSize="13dp"
             android:textStyle="bold"
             android:textColor="@color/gray_1_313131"
@@ -30,7 +30,7 @@
             android:id="@+id/tv_feed_post_comment_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@{feedComment.contents}"
+            android:text="@{comment.contents}"
             android:textColor="@color/gray_1_313131"
             android:textSize="13dp"
             android:layout_marginStart="10dp"

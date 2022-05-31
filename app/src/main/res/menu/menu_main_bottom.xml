@@ -21,7 +21,7 @@
         android:icon="@drawable/selector_menu_icon_notification"
         android:title="@string/notification" />
     <item
-        android:id="@+id/MyProfileFragment"
+        android:id="@+id/ProfileFragment"
         android:enabled="true"
         android:icon="@drawable/selector_menu_icon_my_profile"
         android:title="@string/my_page" />
