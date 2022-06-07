@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".follow.FollowerListFragment">
+    tools:context=".presentation.fragment.mypage.follow.FollowerListFragment">
 
     <EditText
         android:id="@+id/et_follower_search"
@@ -42,6 +42,5 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@id/et_follower_search"
         tools:listitem="@layout/item_follow" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,8 +2,9 @@ package com.daily.dayo
 
 import android.app.Application
 import android.content.Context
-import dagger.hilt.android.HiltAndroidApp
+import com.daily.dayo.data.datasource.local.SharedManager
 import com.kakao.sdk.common.KakaoSdk
+import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class DayoApplication : Application(){
@@ -14,6 +15,7 @@ class DayoApplication : Application(){
 
     companion object {
         lateinit var instance: DayoApplication
+        lateinit var preferences : SharedManager
         fun applicationContext(): Context {
             return instance.applicationContext
         }
@@ -22,8 +24,7 @@ class DayoApplication : Application(){
     override fun onCreate() {
         super.onCreate()
 
-        // Kakao SDK 초기화
         KakaoSdk.init(this, BuildConfig.NATIVE_APP_KEY)
+        preferences = SharedManager(applicationContext)
     }
-
 }

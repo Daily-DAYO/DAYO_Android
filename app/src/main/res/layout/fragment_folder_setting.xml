@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".profile.FolderSettingFragment">
+    tools:context=".presentation.fragment.mypage.folder.FolderSettingFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_write_folder_action_bar"

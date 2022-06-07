@@ -13,7 +13,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".signup.email.SignupEmailSetProfileFragment">
+    tools:context=".presentation.fragment.account.signup.SignupEmailSetProfileFragment">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_signup_email_set_profile_action_bar"
         android:layout_width="match_parent"
