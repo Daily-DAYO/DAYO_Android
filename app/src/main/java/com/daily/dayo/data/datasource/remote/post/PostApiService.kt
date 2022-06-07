@@ -10,8 +10,10 @@ interface PostApiService {
     @Multipart
     @POST("/api/v1/posts")
     suspend fun requestUploadPost(
-        @Part("category") category: Category, @Part("contents") contents: String,
-        @Part files: List<MultipartBody.Part>, @Part("folderId") folderId: Int,
+        @Part("category") category: String,
+        @Part("contents") contents: String,
+        @Part files: List<MultipartBody.Part>,
+        @Part("folderId") folderId: Int,
         @Part("tags") tags: Array<String>
     ): Response<CreatePostResponse>
 

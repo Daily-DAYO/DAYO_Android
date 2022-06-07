@@ -5,23 +5,23 @@ import android.os.CountDownTimer
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.daily.dayo.R
-import com.daily.dayo.databinding.FragmentSignupEmailSetEmailAddressCertificateBinding
-import com.daily.dayo.presentation.viewmodel.AccountViewModel
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.databinding.FragmentSignupEmailSetEmailAddressCertificateBinding
+import com.daily.dayo.presentation.viewmodel.AccountViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.regex.Pattern
 
@@ -77,10 +77,10 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
             with(binding.layoutSignupEmailSetEmailAddressCertificateUserInput) {
                 if(hasFocus){
                     hint = getString(R.string.email_address_certification)
-                    com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, false)
+                    SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, false)
                 } else {
                     hint = getString(R.string.email_address_certificate_title)
-                    com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, true)
+                    SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, true)
                 }
             }
         }

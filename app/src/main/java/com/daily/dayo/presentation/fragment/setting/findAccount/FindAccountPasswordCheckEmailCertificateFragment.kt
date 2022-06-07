@@ -105,7 +105,7 @@ class FindAccountPasswordCheckEmailCertificateFragment : Fragment() {
             with(binding.layoutLoginEmailFindPasswordCertificateUserInput) {
                 if (hasFocus) {
                     hint = getString(R.string.email_address_certification)
-                    com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(
+                    SetTextInputLayout.setEditTextTheme(
                         requireContext(),
                         binding.layoutLoginEmailFindPasswordCertificateUserInput,
                         binding.etLoginEmailFindPasswordCertificateUserInput,
@@ -113,7 +113,7 @@ class FindAccountPasswordCheckEmailCertificateFragment : Fragment() {
                     )
                 } else {
                     hint = getString(R.string.email_address_certificate_title)
-                    com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(
+                    SetTextInputLayout.setEditTextTheme(
                         requireContext(),
                         binding.layoutLoginEmailFindPasswordCertificateUserInput,
                         binding.etLoginEmailFindPasswordCertificateUserInput,
