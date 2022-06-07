@@ -5,7 +5,7 @@
     android:background="@drawable/dialog_bottom_sheet_default"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".write.WriteOptionFragment">
+    tools:context=".presentation.fragment.write.WriteOptionFragment">
 
     <ImageView
         android:id="@+id/img_write_option_swipe_top_bar"

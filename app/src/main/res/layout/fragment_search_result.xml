@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
-            name="resultPost"
-            type="com.daily.dayo.search.model.ResponseSearchTag" />
+            name="resultCount"
+            type="Integer" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".search.SearchResultFragment">
+        tools:context=".presentation.fragment.search.SearchResultFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_search_result_action_bar"
@@ -110,7 +110,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:text="@{Integer.toString(resultPost.count)}"
+                android:text="@{Integer.toString(resultCount)}"
                 android:textColor="@color/primary_green_23C882"
                 android:textSize="13dp"
                 app:layout_constraintEnd_toEndOf="parent"

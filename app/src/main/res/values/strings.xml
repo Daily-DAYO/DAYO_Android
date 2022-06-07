@@ -117,6 +117,7 @@
 
     <!-- Folder -->
     <string name="post_folder_add_title">폴더 추가</string>
+    <string name="folder_edit_title">폴더 편집</string>
     <string name="post_folder_add_set_title">폴더 이름</string>
     <string name="folder_setting_add_set_title">폴더 이름</string>
     <string name="folder_setting_add_set_subheading">폴더 소개</string>

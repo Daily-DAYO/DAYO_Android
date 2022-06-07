@@ -4,14 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View"/>
         <variable
-            name="feedContent"
-            type="com.daily.dayo.feed.model.FeedContent" />
+            name="post"
+            type="com.daily.dayo.domain.model.Post" />
         <variable
-            name="feedContentCategory"
-            type="String" />
-        <variable
-            name="feedContentCreateTime"
+            name="categoryKR"
             type="String" />
     </data>
 
@@ -45,7 +43,7 @@
             android:textSize="14dp"
             android:textStyle="bold"
             android:textColor="@color/gray_1_313131"
-            android:text="@{feedContent.nickname}"
+            android:text="@{post.nickname}"
             app:layout_constraintTop_toTopOf="@+id/img_feed_post_user_profile"
             app:layout_constraintStart_toEndOf="@id/img_feed_post_user_profile"
             android:layout_marginStart="7dp"
@@ -55,7 +53,7 @@
             android:id="@+id/tv_feed_post_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{feedContentCategory+`  |  `}"
+            android:text="@{categoryKR +`  |  `}"
             android:textSize="10dp"
             android:textColor="@color/gray_3_9C9C9C"
             android:layout_marginTop="5dp"
@@ -68,7 +66,7 @@
             android:id="@+id/tv_feed_post_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{feedContentCreateTime}"
+            android:text="@{post.createDateTime}"
             android:textSize="10dp"
             android:textColor="@color/gray_3_9C9C9C"
             app:layout_constraintTop_toTopOf="@id/tv_feed_post_category"
@@ -110,11 +108,11 @@
 
     <ImageButton
         android:id="@+id/btn_feed_post_like"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="@android:color/transparent"
-        android:src="@{feedContent.heart == true ? @drawable/ic_post_like_checked : @drawable/ic_post_like_default}"
-        android:layout_marginStart="19dp"
+        android:src="@{post.heart == true ? @drawable/ic_post_like_checked : @drawable/ic_post_like_default}"
+        android:layout_marginStart="9dp"
         android:layout_marginTop="15dp"
         app:layout_constraintTop_toBottomOf="@+id/img_feed_post"
         app:layout_constraintStart_toStartOf="parent"
@@ -122,22 +120,22 @@
 
     <ImageButton
         android:id="@+id/btn_feed_post_share"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="@android:color/transparent"
         android:src="@drawable/ic_share"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
         app:layout_constraintTop_toBottomOf="@+id/img_feed_post"
-        app:layout_constraintStart_toEndOf="@+id/btn_feed_post_like"/>
+        app:layout_constraintStart_toEndOf="@+id/btn_feed_post_like"
+        android:visibility="invisible" />
 
     <ImageButton
         android:id="@+id/btn_feed_post_bookmark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="@android:color/transparent"
-        android:src="@{feedContent.bookmark == true ? @drawable/ic_bookmark_checked : @drawable/ic_bookmark_default}"
+        android:src="@{post.bookmark == true ? @drawable/ic_bookmark_checked : @drawable/ic_bookmark_default}"
         android:layout_marginStart="16dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="17dp"
@@ -149,14 +147,14 @@
         android:id="@+id/tv_feed_post_content_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@{`좋아요 `+ Integer.toString(feedContent.heartCount)+`개   |   댓글 `+ Integer.toString(feedContent.commentCount)+`개`}"
+        android:text="@{`좋아요 `+ Integer.toString(post.heartCount)+`개   |   댓글 `+ Integer.toString(post.commentCount)+`개`}"
         android:textSize="13dp"
         android:textStyle="bold"
         android:textColor="@color/gray_1_313131"
         android:layout_marginTop="12dp"
+        android:layout_marginHorizontal="18dp"
         app:layout_constraintTop_toBottomOf="@id/btn_feed_post_like"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginHorizontal="18dp"
         tools:text="좋아요 135개   |   댓글 12개"/>
 
     <View
@@ -165,6 +163,7 @@
         android:layout_height="1dp"
         android:layout_marginTop="14dp"
         android:layout_marginBottom="10dp"
+        android:background="@color/gray_5_EDEDED"
         app:layout_constraintTop_toBottomOf="@id/tv_feed_post_content_count"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -175,12 +174,11 @@
         android:layout_height="wrap_content"
         android:maxLines="2"
         android:ellipsize="end"
-        android:textSize="12dp"
-        android:text="@{feedContent.contents}"
+        android:textSize="13dp"
+        android:text="@{post.contents}"
         android:textColor="@color/gray_1_313131"
-        android:layout_marginStart="18dp"
-        android:layout_marginTop="11dp"
-        android:layout_marginEnd="21dp"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/view_feed_post_horizontal_line"
@@ -195,41 +193,46 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_feed_post_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:overScrollMode="never"
+        android:visibility="@{post.commentCount >= 2 ? View.VISIBLE : View.GONE}"
         tools:itemCount="2"
-        tools:listitem="@layout/item_feed_post_comment"/>
+        tools:listitem="@layout/item_feed_post_comment"
+        tools:visibility="visible"/>
 
     <TextView
         android:id="@+id/tv_feed_post_more_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="12dp"
+        android:textSize="13dp"
         android:textColor="@color/gray_3_9C9C9C"
         android:layout_marginTop="4dp"
-        android:layout_marginBottom="18dp"
         android:layout_marginStart="19dp"
-        android:text="@{`댓글 `+ Integer.toString(feedContent.commentCount - 2) +`개 더보기`}"
+        android:text="@{`댓글 `+ Integer.toString(post.commentCount - 2) +`개 더보기`}"
         app:layout_constraintTop_toBottomOf="@id/rv_feed_post_comment"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="댓글 11개 더보기"/>
+        android:visibility="@{post.commentCount > 2 ? View.VISIBLE : View.GONE}"
+        tools:text="댓글 11개 더보기"
+        tools:visibility="visible"/>
 
 
     <com.google.android.flexbox.FlexboxLayout
         android:id="@+id/layout_feed_post_tag_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="20dp"
         android:layout_marginHorizontal="18dp"
+        android:paddingTop="10dp"
+        android:visibility="@{post.hashtags.size() > 0 ? View.VISIBLE : View.GONE}"
         app:alignContent="stretch"
         app:alignItems="stretch"
         app:flexWrap="wrap"
         app:layout_constraintBottom_toTopOf="@id/view_feed_post_content_comment_divider"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_feed_post_more_comment">
+        app:layout_constraintTop_toBottomOf="@id/tv_feed_post_more_comment"
+        tools:visibility="visible">
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipgroup_feed_post_tag_list"
@@ -241,7 +244,7 @@
         android:id="@+id/view_feed_post_content_comment_divider"
         android:layout_width="match_parent"
         android:layout_height="10dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintTop_toBottomOf="@id/layout_feed_post_tag_list"
         android:background="@color/gray_6_F6F6F6" />
 

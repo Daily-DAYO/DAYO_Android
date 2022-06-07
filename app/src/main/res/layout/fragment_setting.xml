@@ -102,7 +102,7 @@
             android:id="@+id/img_setting_notification"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_notification"
+            android:src="@drawable/ic_notification_gray_1"
             android:layout_marginStart="18dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

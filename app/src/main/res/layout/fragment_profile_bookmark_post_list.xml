@@ -5,7 +5,7 @@
     android:paddingHorizontal="12dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".profile.ProfileBookmarkPostListFragment">
+    tools:context=".presentation.fragment.mypage.profile.ProfileBookmarkPostListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_profile_bookmark_post"
