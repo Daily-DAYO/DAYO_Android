@@ -69,10 +69,10 @@ class SignupEmailSetPasswordFragment : Fragment() {
                 with(binding.layoutSignupEmailSetPasswordUserPassword) {
                     if(hasFocus){
                         hint = getString(R.string.password)
-                        com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, false)
+                        SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, false)
                     } else {
                         hint = getString(R.string.signup_email_set_password_message_length_fail_min)
-                        com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, true)
+                        SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, true)
                     }
                 }
             }

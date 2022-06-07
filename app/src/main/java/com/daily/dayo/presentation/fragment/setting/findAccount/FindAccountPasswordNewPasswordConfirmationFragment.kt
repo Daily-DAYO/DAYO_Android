@@ -95,8 +95,8 @@ class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
         binding.etFindAccountPasswordNewPasswordConfirmationUserInput.setOnFocusChangeListener { _, hasFocus ->
             with(binding.layoutFindAccountPasswordNewPasswordConfirmationUserInput) {
                 if (hasFocus) {
-                    hint = getString(com.daily.dayo.R.string.password_confirmation)
-                    com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(
+                    hint = getString(R.string.password_confirmation)
+                    SetTextInputLayout.setEditTextTheme(
                         requireContext(),
                         binding.layoutFindAccountPasswordNewPasswordConfirmationUserInput,
                         binding.etFindAccountPasswordNewPasswordConfirmationUserInput,
@@ -104,8 +104,8 @@ class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
                     )
                 } else {
                     hint =
-                        getString(com.daily.dayo.R.string.signup_email_set_password_confirmation_edittext_hint)
-                    com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(
+                        getString(R.string.signup_email_set_password_confirmation_edittext_hint)
+                    SetTextInputLayout.setEditTextTheme(
                         requireContext(),
                         binding.layoutFindAccountPasswordNewPasswordConfirmationUserInput,
                         binding.etFindAccountPasswordNewPasswordConfirmationUserInput,
@@ -120,9 +120,9 @@ class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
         with(binding.layoutFindAccountPasswordNewPasswordConfirmationUserInput) {
             if (binding.etFindAccountPasswordNewPasswordConfirmationUserInput.text.isNullOrEmpty()) {
                 hint =
-                    getString(com.daily.dayo.R.string.signup_email_set_password_confirmation_edittext_hint)
+                    getString(R.string.signup_email_set_password_confirmation_edittext_hint)
             } else {
-                hint = getString(com.daily.dayo.R.string.password_confirmation)
+                hint = getString(R.string.password_confirmation)
             }
         }
     }

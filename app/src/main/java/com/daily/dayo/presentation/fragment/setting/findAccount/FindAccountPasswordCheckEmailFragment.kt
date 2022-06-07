@@ -87,7 +87,7 @@ class FindAccountPasswordCheckEmailFragment : Fragment() {
                 with(binding.layoutFindAccountPasswordCheckEmailUserInput) {
                     if (hasFocus) {
                         hint = getString(R.string.email)
-                        com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(
+                        SetTextInputLayout.setEditTextTheme(
                             requireContext(),
                             binding.layoutFindAccountPasswordCheckEmailUserInput,
                             binding.etFindAccountPasswordCheckEmailUserInput,
@@ -95,7 +95,7 @@ class FindAccountPasswordCheckEmailFragment : Fragment() {
                         )
                     } else {
                         hint = getString(R.string.email_address_example)
-                        com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(
+                        SetTextInputLayout.setEditTextTheme(
                             requireContext(),
                             binding.layoutFindAccountPasswordCheckEmailUserInput,
                             binding.etFindAccountPasswordCheckEmailUserInput,
@@ -117,7 +117,7 @@ class FindAccountPasswordCheckEmailFragment : Fragment() {
                 override fun afterTextChanged(s: Editable?) {
                     with(binding.layoutFindAccountPasswordCheckEmailUserInput) {
                         isErrorEnabled = false
-                        com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(
+                        SetTextInputLayout.setEditTextTheme(
                             requireContext(),
                             binding.layoutFindAccountPasswordCheckEmailUserInput,
                             binding.etFindAccountPasswordCheckEmailUserInput,

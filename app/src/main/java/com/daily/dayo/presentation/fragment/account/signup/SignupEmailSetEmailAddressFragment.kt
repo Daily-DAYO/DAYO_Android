@@ -73,10 +73,10 @@ class SignupEmailSetEmailAddressFragment : Fragment() {
                 with(binding.layoutSignupEmailSetEmailAddressUserInput) {
                     if(hasFocus){
                         hint = getString(R.string.email)
-                        com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressUserInput, binding.etSignupEmailSetEmailAddressUserInput, false)
+                        SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressUserInput, binding.etSignupEmailSetEmailAddressUserInput, false)
                     } else {
                         hint = getString(R.string.email_address_example)
-                        com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressUserInput, binding.etSignupEmailSetEmailAddressUserInput, true)
+                        SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressUserInput, binding.etSignupEmailSetEmailAddressUserInput, true)
                     }
                 }
             }
@@ -86,7 +86,7 @@ class SignupEmailSetEmailAddressFragment : Fragment() {
                 override fun afterTextChanged(s: Editable?) {
                     with(binding.layoutSignupEmailSetEmailAddressUserInput) {
                         isErrorEnabled = false
-                        com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressUserInput, binding.etSignupEmailSetEmailAddressUserInput, false)
+                        SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressUserInput, binding.etSignupEmailSetEmailAddressUserInput, false)
                     }
                 }
             })

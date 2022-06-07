@@ -92,7 +92,7 @@ class FindAccountPasswordNewPasswordFragment : Fragment() {
                 with(binding.layoutFindAccountPasswordNewPasswordUserPassword) {
                     if (hasFocus) {
                         hint = getString(R.string.password)
-                        com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(
+                        SetTextInputLayout.setEditTextTheme(
                             requireContext(),
                             binding.layoutFindAccountPasswordNewPasswordUserPassword,
                             binding.etFindAccountPasswordNewPasswordUserPassword,
@@ -101,7 +101,7 @@ class FindAccountPasswordNewPasswordFragment : Fragment() {
                     } else {
                         hint =
                             getString(R.string.signup_email_set_password_message_length_fail_min)
-                        com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(
+                        SetTextInputLayout.setEditTextTheme(
                             requireContext(),
                             binding.layoutFindAccountPasswordNewPasswordUserPassword,
                             binding.etFindAccountPasswordNewPasswordUserPassword,

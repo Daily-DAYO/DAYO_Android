@@ -17,7 +17,7 @@ class FolderRepositoryImpl @Inject constructor(
         subheading: String?,
         thumbnailImage: MultipartBody.Part?
     ): Response<CreateFolderResponse> =
-        folderApiService.requestCreateFolder(name, privacy, subheading, thumbnailImage)
+        folderApiService.requestCreateFolder(name, privacy.name, subheading, thumbnailImage)
 
     override suspend fun requestEditFolder(
         folderId: Int,
@@ -30,7 +30,7 @@ class FolderRepositoryImpl @Inject constructor(
         folderApiService.requestEditFolder(
             folderId,
             name,
-            privacy,
+            privacy.name,
             subheading,
             isFileChange,
             thumbnailImage

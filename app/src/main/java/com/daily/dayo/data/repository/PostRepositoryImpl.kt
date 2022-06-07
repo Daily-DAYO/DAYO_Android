@@ -18,7 +18,7 @@ class PostRepositoryImpl @Inject constructor(
         folderId: Int,
         tags: Array<String>
     ): Response<CreatePostResponse> =
-        postApiService.requestUploadPost(category, contents, files, folderId, tags)
+        postApiService.requestUploadPost(category.name, contents, files, folderId, tags)
 
     override suspend fun requestEditPost(
         postId: Int,

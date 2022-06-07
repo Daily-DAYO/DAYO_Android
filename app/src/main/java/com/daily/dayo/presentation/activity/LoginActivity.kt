@@ -58,7 +58,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun loginSuccess(){
         loginViewModel.loginSuccess.observe(this, Observer { isSuccess ->
-            if (isSuccess.getContentIfNotHandled() == true) {
+            if (isSuccess.peekContent()) {
                 isReady = false // 로그인이 성공한 경우에는 Splash 화면을 없애지 않고 바로 넘어가게 하기 위해 false 설정
                 val intent = Intent(this, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP

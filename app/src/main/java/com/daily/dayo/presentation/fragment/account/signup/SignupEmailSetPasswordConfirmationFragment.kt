@@ -69,10 +69,10 @@ class SignupEmailSetPasswordConfirmationFragment : Fragment() {
             with(binding.layoutSignupEmailSetPasswordConfirmationUserInput) {
                 if(hasFocus){
                     hint = getString(R.string.password_confirmation)
-                    com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordConfirmationUserInput, binding.etSignupEmailSetPasswordConfirmationUserInput, false)
+                    SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordConfirmationUserInput, binding.etSignupEmailSetPasswordConfirmationUserInput, false)
                 } else {
                     hint = getString(R.string.signup_email_set_password_confirmation_edittext_hint)
-                    com.daily.dayo.common.SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordConfirmationUserInput, binding.etSignupEmailSetPasswordConfirmationUserInput, true)
+                    SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordConfirmationUserInput, binding.etSignupEmailSetPasswordConfirmationUserInput, true)
                 }
             }
         }

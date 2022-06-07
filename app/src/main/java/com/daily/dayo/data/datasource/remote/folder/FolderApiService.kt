@@ -1,6 +1,5 @@
 package com.daily.dayo.data.datasource.remote.folder
 
-import com.daily.dayo.domain.model.Privacy
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -11,7 +10,7 @@ interface FolderApiService {
     @POST("/api/v1/folders")
     suspend fun requestCreateFolder(
         @Part("name") name: String,
-        @Part("privacy") privacy: Privacy,
+        @Part("privacy") privacy: String,
         @Part("subheading") subheading: String?,
         @Part thumbnailImage: MultipartBody.Part?
     ): Response<CreateFolderResponse>
@@ -21,7 +20,7 @@ interface FolderApiService {
     suspend fun requestEditFolder(
         @Part("folderId") folderId: Int,
         @Part("name") name: String,
-        @Part("privacy") privacy: Privacy,
+        @Part("privacy") privacy: String,
         @Part("subheading") subheading: String?,
         @Part("isFileChange") isFileChange: Boolean,
         @Part thumbnailImage: MultipartBody.Part?
