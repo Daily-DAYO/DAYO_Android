@@ -1,4 +1,4 @@
-package com.daily.dayo.setting
+package com.daily.dayo.presentation.fragment.setting.withdraw
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,26 +7,31 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
-import com.daily.dayo.SharedManager
+import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentWithdrawBinding
-import com.daily.dayo.login.LoginActivity
-import com.daily.dayo.login.LoginViewModel
-import com.daily.dayo.util.autoCleared
+import com.daily.dayo.presentation.activity.LoginActivity
+import com.daily.dayo.presentation.viewmodel.AccountViewModel
 
 class WithdrawFragment : Fragment() {
     private var binding by autoCleared<FragmentWithdrawBinding>()
-    private val loginViewModel by activityViewModels<LoginViewModel>()
+    private val accountViewModel by activityViewModels<AccountViewModel>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentWithdrawBinding.inflate(inflater, container, false)
         setFinalMessageTextSpan()
         setOnClickWithdrawOtherReason()
@@ -68,10 +73,10 @@ class WithdrawFragment : Fragment() {
                 R.id.radiobutton_withdraw_reason_5 -> binding.radiobuttonWithdrawReason5.text.toString()
                 else -> binding.radiobuttonWithdrawReasonOther.text.toString()
             }
-            loginViewModel.requestWithdraw(reason)
-            loginViewModel.withdrawSuccess.observe(viewLifecycleOwner){
-                if(it) {
-                    SharedManager(DayoApplication.applicationContext()).clearPreferences()
+            accountViewModel.requestWithdraw(content = reason)
+            accountViewModel.withdrawSuccess.observe(viewLifecycleOwner){
+                if(it.getContentIfNotHandled() == true) {
+                    DayoApplication.preferences.clearPreferences()
                     val intent = Intent(this.activity, LoginActivity::class.java)
                     startActivity(intent)
                     this.requireActivity().finish()

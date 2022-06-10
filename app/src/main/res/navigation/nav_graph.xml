@@ -311,7 +311,7 @@
 
     <fragment
         android:id="@+id/WithdrawFragment"
-        android:name="com.daily.dayo.setting.WithdrawFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.withdraw.WithdrawFragment"
         android:label="fragment_withdraw"
         tools:layout="@layout/fragment_withdraw">
     </fragment>
