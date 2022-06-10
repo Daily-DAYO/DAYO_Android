@@ -4,6 +4,7 @@ import com.daily.dayo.data.datasource.remote.member.*
 import com.daily.dayo.domain.repository.MemberRepository
 import okhttp3.MultipartBody
 import retrofit2.Response
+import retrofit2.http.Query
 import javax.inject.Inject
 
 class MemberRepositoryImpl @Inject constructor(
@@ -50,4 +51,7 @@ class MemberRepositoryImpl @Inject constructor(
 
     override suspend fun requestOtherProfile(memberId: String): Response<MemberOtherProfileResponse> =
         memberApiService.requestOtherProfile(memberId)
+
+    override suspend fun requestResign(content: String): Response<Void> =
+        memberApiService.requestResign(content)
 }
