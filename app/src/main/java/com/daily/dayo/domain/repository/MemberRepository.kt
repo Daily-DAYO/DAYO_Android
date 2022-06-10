@@ -3,6 +3,7 @@ package com.daily.dayo.domain.repository
 import com.daily.dayo.data.datasource.remote.member.*
 import okhttp3.MultipartBody
 import retrofit2.Response
+import retrofit2.http.Query
 
 interface MemberRepository {
 
@@ -27,5 +28,5 @@ interface MemberRepository {
     suspend fun requestDeviceToken(body: DeviceTokenRequest): Response<Void>
     suspend fun requestMyProfile(): Response<MemberMyProfileResponse>
     suspend fun requestOtherProfile(memberId: String): Response<MemberOtherProfileResponse>
-
+    suspend fun requestResign(content: String): Response<Void>
 }
