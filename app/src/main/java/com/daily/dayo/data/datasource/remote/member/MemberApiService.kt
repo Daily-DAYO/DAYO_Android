@@ -48,4 +48,7 @@ interface MemberApiService {
 
     @GET("/api/v1/members/profile/other/{memberId}")
     suspend fun requestOtherProfile(@Path("memberId") memberId: String): Response<MemberOtherProfileResponse>
+
+    @POST("/api/v1/members/resign")
+    suspend fun requestResign(@Query("content") content: String): Response<Void>
 }

@@ -15,10 +15,6 @@ import com.daily.dayo.common.DefaultDialogExplanationConfirm
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentSettingBinding
 import com.daily.dayo.presentation.activity.LoginActivity
-import com.daily.dayo.util.DefaultDialogConfigure
-import com.daily.dayo.util.DefaultDialogConfirm
-import com.daily.dayo.util.DefaultDialogExplanationConfirm
-import com.daily.dayo.util.autoCleared
 
 class SettingFragment: Fragment() {
     private var binding by autoCleared<FragmentSettingBinding>()

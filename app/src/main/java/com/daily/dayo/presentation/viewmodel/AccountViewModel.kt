@@ -25,7 +25,8 @@ class AccountViewModel @Inject constructor(
     private val requestSignUpEmailUseCase: RequestSignUpEmailUseCase,
     private val requestCheckEmailDuplicateUseCase: RequestCheckEmailDuplicateUseCase,
     private val requestCertificateEmailUseCase: RequestCertificateEmailUseCase,
-    private val requestDeviceTokenUseCase: RequestDeviceTokenUseCase
+    private val requestDeviceTokenUseCase: RequestDeviceTokenUseCase,
+    private val requestResignUseCase: RequestResignUseCase
 ) : ViewModel() {
 
     private val _signupSuccess = MutableLiveData<Event<Boolean>>()
@@ -42,6 +43,9 @@ class AccountViewModel @Inject constructor(
 
     private val _certificateEmailAuthCode = MutableLiveData<String>()
     val certificateEmailAuthCode: MutableLiveData<String> get() = _certificateEmailAuthCode
+
+    private val _withdrawSuccess = MutableLiveData<Event<Boolean>>()
+    val withdrawSuccess: LiveData<Event<Boolean>> get() = _withdrawSuccess
 
     fun requestLoginKakao(accessToken: String) = viewModelScope.launch {
         val response = requestLoginKakaoUseCase(MemberOAuthRequest(accessToken = accessToken))
@@ -117,5 +121,14 @@ class AccountViewModel @Inject constructor(
 
     fun requestDeviceToken(deviceToken: String) = viewModelScope.launch(Dispatchers.IO) {
         val response = requestDeviceTokenUseCase(DeviceTokenRequest(deviceToken = deviceToken))
+    }
+
+    fun requestWithdraw(content: String) = viewModelScope.launch(Dispatchers.IO) {
+        val response = requestResignUseCase(content)
+        if(response.isSuccessful) {
+            _withdrawSuccess.postValue(Event(true))
+        } else {
+            _withdrawSuccess.postValue(Event(false))
+        }
     }
 }
