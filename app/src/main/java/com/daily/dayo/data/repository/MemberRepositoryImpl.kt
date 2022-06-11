@@ -62,6 +62,9 @@ class MemberRepositoryImpl @Inject constructor(
     override suspend fun requestChangeReceiveAlarm(body: ChangeReceiveAlarmRequest): Response<Void> =
         memberApiService.requestChangeReceiveAlarm(body)
 
+    override suspend fun requestLogout(): Response<Void> =
+        memberApiService.requestLogout()
+
     // Firebase Messaging Service
     override suspend fun getCurrentFcmToken(): String =
         FirebaseMessagingService().getCurrentToken()

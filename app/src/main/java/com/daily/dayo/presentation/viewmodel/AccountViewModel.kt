@@ -12,6 +12,7 @@ import com.daily.dayo.data.datasource.remote.member.MemberSignInRequest
 import com.daily.dayo.domain.usecase.member.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -27,7 +28,8 @@ class AccountViewModel @Inject constructor(
     private val requestCertificateEmailUseCase: RequestCertificateEmailUseCase,
     private val requestDeviceTokenUseCase: RequestDeviceTokenUseCase,
     private val registerFcmTokenUseCase: RegisterFcmTokenUseCase,
-    private val requestResignUseCase: RequestResignUseCase
+    private val requestResignUseCase: RequestResignUseCase,
+    private val requestLogoutUseCase: RequestLogoutUseCase
 ) : ViewModel() {
 
     private val _signupSuccess = MutableLiveData<Event<Boolean>>()
@@ -47,6 +49,9 @@ class AccountViewModel @Inject constructor(
 
     private val _withdrawSuccess = MutableLiveData<Event<Boolean>>()
     val withdrawSuccess: LiveData<Event<Boolean>> get() = _withdrawSuccess
+
+    private val _logoutSuccess = MutableLiveData<Event<Boolean>>()
+    val logoutSuccess: LiveData<Event<Boolean>> get() = _logoutSuccess
 
     fun requestLoginKakao(accessToken: String) = viewModelScope.launch {
         val response = requestLoginKakaoUseCase(MemberOAuthRequest(accessToken = accessToken))
@@ -120,20 +125,30 @@ class AccountViewModel @Inject constructor(
         }
     }
 
-    fun requestDeviceToken(deviceToken: String) = viewModelScope.launch(Dispatchers.IO) {
-        val response = requestDeviceTokenUseCase(DeviceTokenRequest(deviceToken = deviceToken))
+    suspend fun requestDeviceToken(deviceToken: String) = coroutineScope {
+        requestDeviceTokenUseCase(DeviceTokenRequest(deviceToken = deviceToken))
     }
 
-    fun registerFcmToken() = viewModelScope.launch {
+    suspend fun registerFcmToken() = coroutineScope {
         registerFcmTokenUseCase()
     }
 
     fun requestWithdraw(content: String) = viewModelScope.launch(Dispatchers.IO) {
         val response = requestResignUseCase(content)
-        if(response.isSuccessful) {
+        if (response.isSuccessful) {
             _withdrawSuccess.postValue(Event(true))
         } else {
             _withdrawSuccess.postValue(Event(false))
+        }
+    }
+
+    fun requestLogout() = viewModelScope.launch {
+        requestLogoutUseCase().let {
+            if (it.isSuccessful) {
+                _logoutSuccess.postValue(Event(true))
+            } else {
+                _logoutSuccess.postValue(Event(false))
+            }
         }
     }
 }

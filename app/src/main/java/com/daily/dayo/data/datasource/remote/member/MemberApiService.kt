@@ -57,4 +57,7 @@ interface MemberApiService {
 
     @POST("/api/v1/members/changeReceiveAlarm")
     suspend fun requestChangeReceiveAlarm(@Body body: ChangeReceiveAlarmRequest): Response<Void>
+
+    @POST("/api/v1/members/logout")
+    suspend fun requestLogout(): Response<Void>
 }
