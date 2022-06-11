@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
@@ -15,9 +16,11 @@ import com.daily.dayo.common.DefaultDialogExplanationConfirm
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentSettingBinding
 import com.daily.dayo.presentation.activity.LoginActivity
+import com.daily.dayo.presentation.viewmodel.AccountViewModel
 
 class SettingFragment: Fragment() {
     private var binding by autoCleared<FragmentSettingBinding>()
+    private val accountViewModel by activityViewModels<AccountViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,12 +31,19 @@ class SettingFragment: Fragment() {
         setBackButtonClickListener()
         setLogoutButtonClickListener()
         setWithdrawButtonClickListener()
+        setNotificationButtonClickListener()
         return binding.root
     }
 
     private fun setBackButtonClickListener(){
         binding.btnSettingBack.setOnClickListener {
             findNavController().navigateUp()
+        }
+    }
+
+    private fun setNotificationButtonClickListener(){
+        binding.layoutSettingNotification.setOnClickListener{
+            findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToSettingNotificationFragment())
         }
     }
 
@@ -70,10 +80,15 @@ class SettingFragment: Fragment() {
     }
 
     private fun doLogout(){
-        DayoApplication.preferences.clearPreferences()
-        val intent = Intent(this.activity, LoginActivity::class.java)
-        startActivity(intent)
-        this.requireActivity().finish()
+        accountViewModel.requestLogout()
+        accountViewModel.logoutSuccess.observe(viewLifecycleOwner){
+            if(it.getContentIfNotHandled() == true){
+                DayoApplication.preferences.clearPreferences()
+                val intent = Intent(this.activity, LoginActivity::class.java)
+                startActivity(intent)
+                this.requireActivity().finish()
+            }
+        }
     }
 }
 

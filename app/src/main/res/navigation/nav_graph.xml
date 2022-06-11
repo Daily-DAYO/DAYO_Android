@@ -240,7 +240,6 @@
         android:name="com.daily.dayo.presentation.fragment.mypage.folder.FolderFragment"
         android:label="fragment_folder"
         tools:layout="@layout/fragment_folder">
-
         <argument
             android:name="folderId"
             app:argType="integer" />
@@ -250,7 +249,6 @@
         <action
             android:id="@+id/action_folderFragment_to_postFragment"
             app:destination="@id/PostFragment" />
-
     </fragment>
 
     <fragment
@@ -287,7 +285,6 @@
         android:name="com.daily.dayo.presentation.fragment.mypage.profile.ProfileOptionFragment"
         android:label="fragment_profile_option"
         tools:layout="@layout/fragment_profile_option">
-
         <action
             android:id="@+id/action_profileOptionFragment_to_folderSettingFragment"
             app:destination="@id/FolderSettingFragment" />
@@ -307,6 +304,16 @@
         <action
             android:id="@+id/action_settingFragment_to_withdrawFragment"
             app:destination="@id/WithdrawFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_settingNotificationFragment"
+            app:destination="@id/SettingNotificationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/SettingNotificationFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.notification.SettingNotificationFragment"
+        android:label="fragment_withdraw"
+        tools:layout="@layout/fragment_setting_notification">
     </fragment>
 
     <fragment
@@ -329,7 +336,6 @@
         android:id="@+id/FolderSettingAddFragment"
         android:name="com.daily.dayo.presentation.fragment.mypage.folder.FolderSettingAddFragment"
         tools:layout="@layout/fragment_folder_setting_add">
-
         <action android:id="@+id/action_folderSettingAddFragment_to_folderSettingAddImageOptionFragment"
             app:destination="@id/FolderSettingEditImageOptionFragment" />
 
@@ -351,6 +357,7 @@
             android:id="@+id/action_profileEditFragment_to_profileEditImageOptionFragment"
             app:destination="@id/ProfileEditImageOptionFragment"/>
     </fragment>
+
     <dialog
         android:id="@+id/ProfileEditImageOptionFragment"
         android:name="com.daily.dayo.presentation.fragment.mypage.profile.ProfileEditImageOptionFragment"

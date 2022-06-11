@@ -51,4 +51,13 @@ interface MemberApiService {
 
     @POST("/api/v1/members/resign")
     suspend fun requestResign(@Query("content") content: String): Response<Void>
+
+    @GET("/api/v1/members/receiveAlarm")
+    suspend fun requestReceiveAlarm(): Response<ReceiveAlarmResponse>
+
+    @POST("/api/v1/members/changeReceiveAlarm")
+    suspend fun requestChangeReceiveAlarm(@Body body: ChangeReceiveAlarmRequest): Response<Void>
+
+    @POST("/api/v1/members/logout")
+    suspend fun requestLogout(): Response<Void>
 }
