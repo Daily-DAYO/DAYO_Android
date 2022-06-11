@@ -26,6 +26,7 @@ class AccountViewModel @Inject constructor(
     private val requestCheckEmailDuplicateUseCase: RequestCheckEmailDuplicateUseCase,
     private val requestCertificateEmailUseCase: RequestCertificateEmailUseCase,
     private val requestDeviceTokenUseCase: RequestDeviceTokenUseCase,
+    private val registerFcmTokenUseCase: RegisterFcmTokenUseCase,
     private val requestResignUseCase: RequestResignUseCase
 ) : ViewModel() {
 
@@ -121,6 +122,10 @@ class AccountViewModel @Inject constructor(
 
     fun requestDeviceToken(deviceToken: String) = viewModelScope.launch(Dispatchers.IO) {
         val response = requestDeviceTokenUseCase(DeviceTokenRequest(deviceToken = deviceToken))
+    }
+
+    fun registerFcmToken() = viewModelScope.launch {
+        registerFcmTokenUseCase()
     }
 
     fun requestWithdraw(content: String) = viewModelScope.launch(Dispatchers.IO) {

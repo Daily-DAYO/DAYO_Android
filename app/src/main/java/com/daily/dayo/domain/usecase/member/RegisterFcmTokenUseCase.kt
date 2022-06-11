@@ -1,4 +1,11 @@
 package com.daily.dayo.domain.usecase.member
 
-class RegisterFcmTokenUseCase {
+import com.daily.dayo.domain.repository.MemberRepository
+import javax.inject.Inject
+
+class RegisterFcmTokenUseCase @Inject constructor(
+    private val memberRepository: MemberRepository
+) {
+    suspend operator fun invoke() =
+        memberRepository.registerFcmToken()
 }

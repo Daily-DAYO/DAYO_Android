@@ -47,8 +47,8 @@ class FirebaseMessagingService: FirebaseMessagingService() {
         val pendingIntent = PendingIntent.getActivity(this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         // notification channel 생성
-        val CHANNEL_ID = "Channel"
-        val CHANNEL_NAME = "서비스 알림"
+        val CHANNEL_ID = getString(R.string.notification_channel_id)
+        val CHANNEL_NAME = getString(R.string.notification_channel_name)
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -70,7 +70,7 @@ class FirebaseMessagingService: FirebaseMessagingService() {
         notificationManager.notify(id, notificationBuilder.build())
     }
 
-    private suspend fun getCurrentToken() = suspendCoroutine<String> { continuation ->
+    suspend fun getCurrentToken() = suspendCoroutine<String> { continuation ->
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if(task.isSuccessful){
                 val token = task.result

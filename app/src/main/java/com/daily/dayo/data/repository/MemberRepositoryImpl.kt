@@ -1,5 +1,6 @@
 package com.daily.dayo.data.repository
 
+import com.daily.dayo.data.datasource.remote.firebase.FirebaseMessagingService
 import com.daily.dayo.data.datasource.remote.member.*
 import com.daily.dayo.domain.repository.MemberRepository
 import okhttp3.MultipartBody
@@ -54,4 +55,20 @@ class MemberRepositoryImpl @Inject constructor(
 
     override suspend fun requestResign(content: String): Response<Void> =
         memberApiService.requestResign(content)
+
+    override suspend fun requestReceiveAlarm(): Response<ReceiveAlarmResponse> =
+        memberApiService.requestReceiveAlarm()
+
+    override suspend fun requestChangeReceiveAlarm(body: ChangeReceiveAlarmRequest): Response<Void> =
+        memberApiService.requestChangeReceiveAlarm(body)
+
+    // Firebase Messaging Service
+    override suspend fun getCurrentFcmToken(): String =
+        FirebaseMessagingService().getCurrentToken()
+
+    override suspend fun registerFcmToken() =
+        FirebaseMessagingService().registerFcmToken()
+
+    override fun unregisterFcmToken() =
+        FirebaseMessagingService().unregisterFcmToken()
 }
