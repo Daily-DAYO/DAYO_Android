@@ -9,16 +9,42 @@
         android:id= "@+id/img_login_dayo_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_dayo_logo_text_vertical"
+        android:src="@drawable/ic_dayo_logo_onbording"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="18dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/layout_login_select_method"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vp_login_onboarding"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="45dp"
+        android:overScrollMode="never"
+        app:layout_constraintTop_toBottomOf="@id/img_login_dayo_logo"
+        app:layout_constraintBottom_toTopOf="@id/view_login_onboarding_indicators"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/view_login_onboarding_indicators"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="38dp"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintTop_toBottomOf="@id/vp_login_onboarding"
+        app:layout_constraintBottom_toTopOf="@id/layout_login_select_method"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingBottom="8dp"/>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_login_select_method"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/tv_login_signup_email_guide_message"
+        app:layout_constraintBottom_toTopOf="@id/layout_login_use_guide_message"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginHorizontal="19dp"
@@ -73,16 +99,69 @@
             app:layout_constraintEnd_toEndOf="@id/btn_login_email"
             android:layout_marginStart="15dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-    <TextView
-        android:id="@+id/tv_login_signup_email_guide_message"
+
+    <LinearLayout
+        android:id="@+id/layout_login_use_guide_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/signup_guide_message_email"
-        android:textSize="12dp"
-        android:textColor="@color/gray_3_9C9C9C"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="18dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="18dp" />
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/tv_login_use_guide_message_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="가입 시 DAYO의 "
+            android:textSize="12dp"
+            android:textColor="@color/gray_3_9C9C9C"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_login_use_guide_message_2_terms_of_service"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="이용약관"
+            android:textSize="12dp"
+            android:textColor="@color/gray_3_9C9C9C"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_login_use_guide_message_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" 및 "
+            android:textSize="12dp"
+            android:textColor="@color/gray_3_9C9C9C"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_login_use_guide_message_4_privacy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="개인정보"
+            android:textSize="12dp"
+            android:textColor="@color/gray_3_9C9C9C"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/tv_login_use_guide_message_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" 취급방침에 동의하게 됩니다."
+            android:textSize="12dp"
+            android:textColor="@color/gray_3_9C9C9C"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
