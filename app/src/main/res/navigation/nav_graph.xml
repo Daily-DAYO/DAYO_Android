@@ -311,7 +311,7 @@
 
     <fragment
         android:id="@+id/SettingNotificationFragment"
-        android:name="com.daily.dayo.setting.SettingNotificationFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.notification.SettingNotificationFragment"
         android:label="fragment_withdraw"
         tools:layout="@layout/fragment_setting_notification">
     </fragment>
