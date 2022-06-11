@@ -1,6 +1,9 @@
 package com.daily.dayo.setting
 
+<<<<<<< HEAD
 import android.content.ContentValues.TAG
+=======
+>>>>>>> origin/feature/issue-252
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,8 +17,11 @@ import com.daily.dayo.SharedManager
 import com.daily.dayo.databinding.FragmentSettingNotificationBinding
 import com.daily.dayo.util.FirebaseMessagingServiceUtil
 import com.daily.dayo.util.autoCleared
+<<<<<<< HEAD
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
+=======
+>>>>>>> origin/feature/issue-252
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -39,6 +45,10 @@ class SettingNotificationFragment: Fragment() {
     }
 
     private fun setInitSwitchState(){
+<<<<<<< HEAD
+=======
+        Log.e("SettingNoti.kt", SharedManager(DayoApplication.applicationContext()).notificationPermit.toString())
+>>>>>>> origin/feature/issue-252
         if(SharedManager(DayoApplication.applicationContext()).notificationPermit != "OFF") {
             binding.switchSettingNotificationDevice.isChecked = true
             binding.switchSettingNotificationNotice.isEnabled = true
@@ -75,6 +85,7 @@ class SettingNotificationFragment: Fragment() {
     }
 
     private fun setNoticeNotification(){
+<<<<<<< HEAD
         binding.switchSettingNotificationNotice.setOnCheckedChangeListener { _, isChecked ->
             setNotificationOnState()
             if(isChecked){
@@ -89,10 +100,15 @@ class SettingNotificationFragment: Fragment() {
                         if (task.isSuccessful) Log.d(TAG, "NOTICE 수신 거부")
                     }
             }
+=======
+        binding.switchSettingNotificationNotice.setOnCheckedChangeListener { _, _ ->
+            setNotificationOnState()
+>>>>>>> origin/feature/issue-252
         }
     }
 
     private fun setReactionNotification(){
+<<<<<<< HEAD
         binding.switchSettingNotificationReaction.setOnCheckedChangeListener { _, isChecked ->
             setNotificationOnState()
             if(isChecked){
@@ -115,6 +131,10 @@ class SettingNotificationFragment: Fragment() {
                         if (task.isSuccessful) Log.d(TAG, "COMMENT 수신 거부")
                     }
             }
+=======
+        binding.switchSettingNotificationReaction.setOnCheckedChangeListener { _, _ ->
+            setNotificationOnState()
+>>>>>>> origin/feature/issue-252
         }
     }
 
