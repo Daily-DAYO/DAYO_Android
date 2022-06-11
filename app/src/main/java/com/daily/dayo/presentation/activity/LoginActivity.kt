@@ -12,6 +12,9 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.databinding.ActivityLoginBinding
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
@@ -32,16 +35,16 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        loginViewModel.loginSuccess.observe(this) {
-            if (it.getContentIfNotHandled() == true) {
-                setFCM()
-            }
+        if (loginViewModel.loginSuccess.value?.peekContent() == true) {
+            setFCM()
         }
     }
 
     private fun setFCM() {
-        loginViewModel.registerFcmToken()
-        loginViewModel.requestDeviceToken(DayoApplication.preferences.fcmDeviceToken)
+        GlobalScope.launch(Dispatchers.IO) {
+            loginViewModel.registerFcmToken()
+            loginViewModel.requestDeviceToken(deviceToken = DayoApplication.preferences.fcmDeviceToken)
+        }
     }
 
     private fun autoLogin() {
