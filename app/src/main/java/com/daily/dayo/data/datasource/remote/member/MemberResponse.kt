@@ -73,3 +73,8 @@ data class MemberOtherProfileResponse(
     @SerializedName("profileImg")
     val profileImg: String
 )
+
+data class ReceiveAlarmResponse(
+    @SerializedName("onReceiveAlarm")
+    val onReceiveAlarm: Boolean
+)
