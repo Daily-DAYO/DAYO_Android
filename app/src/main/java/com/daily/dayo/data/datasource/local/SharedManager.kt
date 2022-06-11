@@ -1,4 +1,5 @@
 package com.daily.dayo.data.datasource.local
+
 import android.content.Context
 import android.content.SharedPreferences
 import com.daily.dayo.common.PreferenceHelper
@@ -35,28 +36,42 @@ class SharedManager @Inject constructor(context: Context) {
         else -> {}
     }
 
-    fun getCurrentUser() : User {
+    fun getCurrentUser(): User {
         return User().apply {
-            accessToken = prefs["accessToken",""]
-            refreshToken = prefs["refreshToken",""]
-            email = prefs["email",""]
-            memberId= prefs["memberId",""]
-            nickname = prefs["nickname",""]
-            profileImg = prefs["profileImg",""]
+            accessToken = prefs["accessToken", ""]
+            refreshToken = prefs["refreshToken", ""]
+            email = prefs["email", ""]
+            memberId = prefs["memberId", ""]
+            nickname = prefs["nickname", ""]
+            profileImg = prefs["profileImg", ""]
         }
     }
 
-    fun setAccessToken(accessToken:String) {
+    fun setAccessToken(accessToken: String) {
         prefs["accessToken"] = accessToken
     }
 
+    var notiDevicePermit: Boolean
+        get() = prefs["notiDevicePermit", true]
+        set(value) {
+            prefs["notiDevicePermit"] = value
+        }
+
+    var notiNoticePermit: Boolean
+        get() = prefs["notiNoticePermit", true]
+        set(value) {
+            prefs["notiNoticePermit"] = value
+        }
+
     var fcmDeviceToken: String
         get() = prefs["deviceToken"]
-        set(value) { prefs["deviceToken"] = value }
+        set(value) {
+            prefs["deviceToken"] = value
+        }
 
-    fun setSearchKeywordRecent(searchKeywordRecent:ArrayList<String>) {
+    fun setSearchKeywordRecent(searchKeywordRecent: ArrayList<String>) {
         val jsonArr = JsonArray()
-        for(i in searchKeywordRecent) {
+        for (i in searchKeywordRecent) {
             jsonArr.add(i)
         }
 
@@ -67,21 +82,21 @@ class SharedManager @Inject constructor(context: Context) {
     fun getSearchKeywordRecent(): ArrayList<String> {
         val result = prefs["recentSearchKeyword", ""]
         val resultArr = ArrayList<String>()
-        val jsonArr : JSONArray = if(result.isEmpty()) {
+        val jsonArr: JSONArray = if (result.isEmpty()) {
             JSONArray()
         } else {
             JSONArray(result)
         }
 
-        if(jsonArr.length() != 0) {
-            for(i in 0 until jsonArr.length()){
+        if (jsonArr.length() != 0) {
+            for (i in 0 until jsonArr.length()) {
                 resultArr.add(jsonArr.optString(i))
             }
         }
         return resultArr
     }
 
-    fun clearPreferences(){
+    fun clearPreferences() {
         prefs.edit().clear().apply()
     }
 }

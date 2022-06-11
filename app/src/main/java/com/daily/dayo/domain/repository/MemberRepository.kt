@@ -3,6 +3,7 @@ package com.daily.dayo.domain.repository
 import com.daily.dayo.data.datasource.remote.member.*
 import okhttp3.MultipartBody
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.Query
 
 interface MemberRepository {
@@ -29,4 +30,12 @@ interface MemberRepository {
     suspend fun requestMyProfile(): Response<MemberMyProfileResponse>
     suspend fun requestOtherProfile(memberId: String): Response<MemberOtherProfileResponse>
     suspend fun requestResign(content: String): Response<Void>
+    suspend fun requestReceiveAlarm(): Response<ReceiveAlarmResponse>
+    suspend fun requestChangeReceiveAlarm(body: ChangeReceiveAlarmRequest): Response<Void>
+    suspend fun requestLogout(): Response<Void>
+
+    // Firebase Messaging Service
+    suspend fun getCurrentFcmToken(): String
+    suspend fun registerFcmToken()
+    fun unregisterFcmToken()
 }

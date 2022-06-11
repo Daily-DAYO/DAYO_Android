@@ -17,7 +17,7 @@ data class MemberSignInRequest(
 
 data class DeviceTokenRequest(
     @SerializedName("deviceToken")
-    val deviceToken: String
+    val deviceToken: String?
 )
 
 data class ChangePasswordRequest(
@@ -40,4 +40,9 @@ data class SignupEmailRequest(
     @SerializedName("password")
     val password: String,
     val profileImg: MultipartBody.Part
+)
+
+data class ChangeReceiveAlarmRequest(
+    @SerializedName("onReceiveAlarm")
+    val onReceiveAlarm: Boolean
 )
