@@ -1,12 +1,14 @@
 package com.daily.dayo.domain.model
 
+import android.graphics.Bitmap
+
 data class Post(
     val postId: Int?,
     val memberId: String?,
     val nickname: String,
     val userProfileImage: String,
     val category: Category?,
-    val thumbnailImage: String?,
+    var thumbnailImage: String?,
     val postImages: List<String>?,
     val contents: String?,
     val createDateTime: String?,
@@ -17,5 +19,7 @@ data class Post(
     val heart: Boolean,
     val heartCount: Int,
     val folderId: Int?,
-    val folderName: String?
+    val folderName: String?,
+    var preLoadThumbnail: Bitmap?=null,
+    var preLoadUserImg: Bitmap?=null
 )

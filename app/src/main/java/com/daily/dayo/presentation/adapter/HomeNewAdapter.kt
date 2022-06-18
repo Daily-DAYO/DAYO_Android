@@ -23,8 +23,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class HomeDayoPickAdapter(val rankingShowing: Boolean, private val requestManager: RequestManager) :
-    ListAdapter<Post, HomeDayoPickAdapter.HomeDayoPickViewHolder>(diffCallback) {
+class HomeNewAdapter(val rankingShowing: Boolean, private val requestManager: RequestManager) :
+    ListAdapter<Post, HomeNewAdapter.HomeNewViewHolder>(diffCallback) {
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Post>() {
             override fun areItemsTheSame(oldItem: Post, newItem: Post) =
@@ -44,8 +44,8 @@ class HomeDayoPickAdapter(val rankingShowing: Boolean, private val requestManage
         this.clickListener = listener
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeDayoPickViewHolder {
-        return HomeDayoPickViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeNewViewHolder {
+        return HomeNewViewHolder(
             ItemMainPostBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
@@ -54,7 +54,7 @@ class HomeDayoPickAdapter(val rankingShowing: Boolean, private val requestManage
         )
     }
 
-    override fun onBindViewHolder(holder: HomeDayoPickViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: HomeNewViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item, position)
 
@@ -72,16 +72,11 @@ class HomeDayoPickAdapter(val rankingShowing: Boolean, private val requestManage
         }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        // ViewHolder Pattern의 이점을 잃었지만, 카테고리 간 이동하면서 랭킹 숫자가 잘못 표시되는 점을 해결
-        return position
-    }
-
     override fun submitList(list: MutableList<Post>?) {
         super.submitList(list?.let { ArrayList(it) })
     }
 
-    inner class HomeDayoPickViewHolder(private val binding: ItemMainPostBinding) :
+    inner class HomeNewViewHolder(private val binding: ItemMainPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         var postImg = binding.imgMainPost
@@ -89,7 +84,6 @@ class HomeDayoPickAdapter(val rankingShowing: Boolean, private val requestManage
         var userThumbnailImg = binding.imgMainPostUserProfile
 
         fun bind(postContent: Post, currentPosition: Int) {
-            Log.e("DAYO ADAPTER", "current Position: $currentPosition")
             binding.layoutContentsShimmer.startShimmer()
             binding.layoutContentsShimmer.visibility = View.VISIBLE
             binding.layoutContents.visibility = View.INVISIBLE
