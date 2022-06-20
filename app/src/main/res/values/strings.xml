@@ -26,6 +26,13 @@
     <string name="time_day_ago">일 전</string>
     <string name="time_year_ago">년 전</string>
 
+    <!-- OnBoarding -->
+    <string name="onboarding_first_message">인기가 많은 다꾸들을 구경할 수 있어요</string>
+    <string name="onboarding_second_message">내 취향의 다꾸러들을 팔로우하고 모아볼 수 있어요</string>
+    <string name="onboarding_third_message">내 다꾸들을 폴더를 만들어 분류할 수 있어요</string>
+    <string name="onboarding_fourth_message_1">내가 열심히 꾸민 다이어리,</string>
+    <string name="onboarding_fourth_message_2">에 공유하러 가볼까요?</string>
+
     <!-- Login -->
     <string name="signup_guide_message_email">아직 계정이 없으신가요? <u>회원가입</u>하기</string>
     <string name="login_select_method_kakao">카카오톡으로 시작하기</string>
