@@ -1,5 +1,6 @@
 package com.daily.dayo.data.di
 
+import com.daily.dayo.data.datasource.remote.alarm.AlarmApiService
 import com.daily.dayo.data.datasource.remote.bookmark.BookmarkApiService
 import com.daily.dayo.data.datasource.remote.comment.CommentApiService
 import com.daily.dayo.data.datasource.remote.folder.FolderApiService
@@ -104,4 +105,13 @@ object ServiceModule {
     @Provides
     fun provideImageRepository(imageApiService: ImageApiService): ImageRepository =
         ImageRepositoryImpl(imageApiService)
+
+    @Singleton
+    @Provides
+    fun provideAlarmApiService(retrofit: Retrofit) = retrofit.create(AlarmApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideAlarmRepository(alarmApiService: AlarmApiService): AlarmRepository =
+        AlarmRepositoryImpl(alarmApiService)
 }

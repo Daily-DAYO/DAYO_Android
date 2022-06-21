@@ -392,5 +392,8 @@
         <action
             android:id="@+id/action_notificationFragment_to_profileFragment"
             app:destination="@id/ProfileFragment" />
+        <action
+            android:id="@+id/action_notificationFragment_to_postFragment"
+            app:destination="@id/PostFragment" />
     </fragment>
 </navigation>
