@@ -29,7 +29,7 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -86,14 +86,14 @@ class HomeFragment : Fragment() {
 
     private fun initPostContents() {
         if(!homeViewModel.isInitLoadingDAYOPICK) {
+            homeViewModel.currentDayoPickCategory = Category.ALL
             homeViewModel.requestDayoPickPostList()
             homeViewModel.isInitLoadingDAYOPICK = true
-            homeViewModel.currentDayoPickCategory = Category.ALL
         }
         if(!homeViewModel.isInitLoadingNew) {
+            homeViewModel.currentNewCategory = Category.ALL
             homeViewModel.requestNewPostList()
             homeViewModel.isInitLoadingNew = true
-            homeViewModel.currentNewCategory = Category.ALL
         }
     }
 }
