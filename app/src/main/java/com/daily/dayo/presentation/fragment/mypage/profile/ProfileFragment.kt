@@ -14,9 +14,9 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
-import com.bumptech.glide.Glide
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
+import com.daily.dayo.common.GlideApp
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentProfileBinding
@@ -89,7 +89,7 @@ class ProfileFragment : Fragment() {
                 Status.SUCCESS -> {
                     it.data?.let { profile ->
                         binding.profile = profile
-                        Glide.with(requireContext())
+                        GlideApp.with(requireContext())
                             .load("http://117.17.198.45:8080/images/" + profile.profileImg)
                             .into(binding.imgProfileUserProfile)
 

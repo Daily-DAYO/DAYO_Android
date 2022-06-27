@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.daily.dayo.common.GlideApp
 import com.daily.dayo.databinding.ItemProfileLikePostBinding
 import com.daily.dayo.domain.model.LikePost
 
@@ -51,7 +51,7 @@ class ProfileLikePostListAdapter : RecyclerView.Adapter<ProfileLikePostListAdapt
     inner class ProfileLikePostListViewHolder(private val binding: ItemProfileLikePostBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(likePost : LikePost) {
-            Glide.with(binding.imgProfileLikePost.context)
+            GlideApp.with(binding.imgProfileLikePost.context)
                 .load("http://117.17.198.45:8080/images/" + likePost.thumbnailImage)
                 .into(binding.imgProfileLikePost)
 

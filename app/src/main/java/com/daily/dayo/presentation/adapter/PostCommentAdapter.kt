@@ -7,12 +7,11 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.daily.dayo.BR
 import com.daily.dayo.DayoApplication
+import com.daily.dayo.common.GlideApp
 import com.daily.dayo.databinding.ItemPostCommentBinding
 import com.daily.dayo.domain.model.Comment
-import com.daily.dayo.presentation.fragment.feed.FeedFragmentDirections
 import com.daily.dayo.presentation.fragment.post.PostFragmentDirections
 import com.google.android.material.snackbar.Snackbar
 
@@ -71,7 +70,7 @@ class PostCommentAdapter : ListAdapter<Comment, PostCommentAdapter.PostCommentVi
                 layoutPostCommentDelete.setOnClickListener {
                     Snackbar.make(it, "삭제버튼 클릭", Snackbar.LENGTH_SHORT).show()
                 }
-                Glide.with(imgPostCommentUserProfile.context)
+                GlideApp.with(imgPostCommentUserProfile.context)
                     .load("http://117.17.198.45:8080/images/" + comment.profileImg)
                     .into(imgPostCommentUserProfile)
             }

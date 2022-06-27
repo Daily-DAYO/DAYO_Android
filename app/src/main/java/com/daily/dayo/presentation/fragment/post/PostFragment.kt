@@ -25,7 +25,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import com.bumptech.glide.Glide
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.*
@@ -132,7 +131,7 @@ class PostFragment : Fragment() {
                                 binding.categoryKR = post.category?.let { it1 -> categoryKR(it1) }
                                 binding.executePendingBindings()
                                 postImageSliderAdapter.submitList(post.postImages)
-                                Glide.with(requireContext())
+                                GlideApp.with(requireContext())
                                     .load("http://117.17.198.45:8080/images/" + post.userProfileImage)
                                     .into(binding.imgPostUserProfile)
 
@@ -366,7 +365,7 @@ class PostFragment : Fragment() {
     }
 
     private fun setCreatePostComment() {
-        Glide.with(requireContext())
+        GlideApp.with(requireContext())
             .load("http://117.17.198.45:8080/images/" + DayoApplication.preferences.getCurrentUser().profileImg)
             .into(binding.imgPostCommentMyProfile)
 
