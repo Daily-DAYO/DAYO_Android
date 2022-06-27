@@ -16,10 +16,10 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentFolderSettingAddBinding
 import com.daily.dayo.common.ButtonActivation
+import com.daily.dayo.common.GlideApp
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.domain.model.Privacy
 import com.daily.dayo.presentation.viewmodel.FolderSettingViewModel
@@ -91,7 +91,7 @@ class FolderSettingAddFragment  : Fragment() {
             imageUri = it
             if(this::imageUri.isInitialized){
                 if(imageUri == "") {
-                    Glide.with(requireContext())
+                    GlideApp.with(requireContext())
                         .load(R.drawable.ic_folder_thumbnail_empty)
                         .centerCrop()
                         .into(binding.ivFolderSettingThumbnail)
@@ -102,7 +102,7 @@ class FolderSettingAddFragment  : Fragment() {
                     } else {
                         MediaStore.Images.Media.getBitmap(requireContext().contentResolver, imageUri.toUri())
                     }
-                    Glide.with(this)
+                    GlideApp.with(this)
                         .load(imageUri)
                         .into(binding.ivFolderSettingThumbnail)
                 }

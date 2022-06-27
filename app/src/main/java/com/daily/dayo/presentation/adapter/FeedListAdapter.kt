@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
+import com.daily.dayo.common.GlideApp
 import com.daily.dayo.databinding.ItemFeedPostBinding
 import com.daily.dayo.domain.model.Comment
 import com.daily.dayo.domain.model.Post
@@ -63,11 +64,11 @@ class FeedListAdapter : ListAdapter<Post, FeedListAdapter.FeedListViewHolder>(di
             binding.post = post
             binding.categoryKR = post.category?.let { categoryKR(it) }
 
-            Glide.with(binding.imgFeedPostUserProfile.context)
+            GlideApp.with(binding.imgFeedPostUserProfile.context)
                 .load("http://117.17.198.45:8080/images/" + post.userProfileImage)
                 .centerCrop()
                 .into(binding.imgFeedPostUserProfile)
-            Glide.with(binding.imgFeedPost.context)
+            GlideApp.with(binding.imgFeedPost.context)
                 .load("http://117.17.198.45:8080/images/" + post.thumbnailImage)
                 .centerCrop()
                 .into(binding.imgFeedPost)

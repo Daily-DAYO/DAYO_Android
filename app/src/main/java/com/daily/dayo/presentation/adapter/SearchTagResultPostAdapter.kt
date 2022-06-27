@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.daily.dayo.common.GlideApp
 import com.daily.dayo.databinding.ItemSearchResultPostBinding
 import com.daily.dayo.domain.model.Search
 
@@ -53,7 +53,7 @@ class SearchTagResultPostAdapter :
     inner class SearchTagResultPostViewHolder(private val binding: ItemSearchResultPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(postContent: Search) {
-            Glide.with(binding.imgSearchResultPost.context)
+            GlideApp.with(binding.imgSearchResultPost.context)
                 .load("http://117.17.198.45:8080/images/" + postContent.thumbnailImage)
                 .into(binding.imgSearchResultPost)
 

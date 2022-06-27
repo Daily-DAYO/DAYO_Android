@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.daily.dayo.common.GlideApp
 import com.daily.dayo.databinding.ItemPostImageSliderBinding
 
 class PostImageSliderAdapter : ListAdapter<String, PostImageSliderAdapter.PostImageViewHolder>(
@@ -42,7 +42,7 @@ class PostImageSliderAdapter : ListAdapter<String, PostImageSliderAdapter.PostIm
     inner class PostImageViewHolder(private val binding: ItemPostImageSliderBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindSliderImage(imageURL: String?) {
-            Glide.with(binding.imgSlider.context)
+            GlideApp.with(binding.imgSlider.context)
                 .load("http://117.17.198.45:8080/images/" + imageURL)
                 .into(binding.imgSlider)
         }
