@@ -31,20 +31,26 @@ class FirebaseMessagingService: FirebaseMessagingService() {
         super.onMessageReceived(remoteMessage)
         if(remoteMessage.data.isNotEmpty()) {
             val body = remoteMessage.data["body"]
-            sendNotification(body)
+            val postId = remoteMessage.data["postId"]
+            val memberId = remoteMessage.data["memberId"]
+            sendNotification(body = body, postId = postId, memberId = memberId)
         }else if (remoteMessage.notification != null) {
             val body = remoteMessage.notification!!.body
-            sendNotification(body)
+            sendNotification(body = body, postId = null, memberId = null)
         }
     }
 
-    private fun sendNotification(body: String?){
+    private fun sendNotification(body: String?, postId: String?, memberId: String?){
         val id = System.currentTimeMillis().toInt()
 
         // notification 클릭 시 이동하는 액티비티
-        var intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val notiIntent = Intent(this, MainActivity::class.java)
+        notiIntent.putExtra("ExtraFragment", "Notification")
+        notiIntent.putExtra("PostId", postId)
+        notiIntent.putExtra("MemberId", memberId)
+
+        notiIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent = PendingIntent.getActivity(this, id, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         // notification channel 생성
         val CHANNEL_ID = getString(R.string.notification_channel_id)

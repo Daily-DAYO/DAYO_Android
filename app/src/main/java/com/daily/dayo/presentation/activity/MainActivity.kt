@@ -2,19 +2,15 @@ package com.daily.dayo.presentation.activity
 
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.forEach
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.databinding.ActivityMainBinding
-import com.daily.dayo.presentation.fragment.feed.FeedFragmentDirections
 import com.daily.dayo.presentation.fragment.home.HomeFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,6 +25,18 @@ class MainActivity : AppCompatActivity() {
         initBottomNavigation()
         setBottomNaviVisibility()
         disableBottomNaviTooltip()
+        getNotificationData()
+    }
+
+    private fun getNotificationData(){
+        val extraFragment = intent.getStringExtra("ExtraFragment")
+        if(extraFragment!=null && extraFragment == "Notification"){
+            val postId = intent.getStringExtra("PostId")?.toInt()
+            val memberId = intent.getStringExtra("MemberId")
+            if(postId!=null) findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToPostFragment(postId = postId))
+            else if(memberId!=null) findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToProfileFragment(memberId = memberId))
+            else findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToNotificationFragment())
+        }
     }
 
     private fun initBottomNavigation() {
