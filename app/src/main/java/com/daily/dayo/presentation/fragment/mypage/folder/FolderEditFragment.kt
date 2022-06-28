@@ -22,10 +22,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.bumptech.glide.Glide
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentFolderSettingAddBinding
 import com.daily.dayo.common.ButtonActivation
+import com.daily.dayo.common.GlideApp
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.domain.model.Category
@@ -84,7 +84,7 @@ class FolderEditFragment  : Fragment() {
                                     Privacy.ONLY_ME -> binding.radiobuttonFolderSettingAddSetPrivateOnlyMe.isChecked = true
                                 }
                                 initThumbnailImg = "http://117.17.198.45:8080/images/" + folder.thumbnailImage
-                                Glide.with(binding.ivFolderSettingThumbnail.context)
+                                GlideApp.with(binding.ivFolderSettingThumbnail.context)
                                     .load(initThumbnailImg)
                                     .into(binding.ivFolderSettingThumbnail)
                             }
@@ -138,7 +138,7 @@ class FolderEditFragment  : Fragment() {
             imageUri = it
             if(this::imageUri.isInitialized){
                 if(imageUri == "") {
-                    Glide.with(requireContext())
+                    GlideApp.with(requireContext())
                         .load(R.drawable.ic_folder_thumbnail_empty)
                         .centerCrop()
                         .into(binding.ivFolderSettingThumbnail)
@@ -149,7 +149,7 @@ class FolderEditFragment  : Fragment() {
                     } else {
                         MediaStore.Images.Media.getBitmap(requireContext().contentResolver, imageUri.toUri())
                     }
-                    Glide.with(this)
+                    GlideApp.with(this)
                         .load(imageUri)
                         .into(binding.ivFolderSettingThumbnail)
                 }

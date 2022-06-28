@@ -21,10 +21,10 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.ButtonActivation
+import com.daily.dayo.common.GlideApp
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
@@ -94,7 +94,7 @@ class ProfileEditFragment : Fragment() {
             when(it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { profile ->
-                        Glide.with(requireContext())
+                        GlideApp.with(requireContext())
                             .load("http://117.17.198.45:8080/images/" + profile.profileImg)
                             .centerCrop()
                             .into(binding.imgProfileEditUserImage)
@@ -181,13 +181,13 @@ class ProfileEditFragment : Fragment() {
             userProfileImageString = it
             if(this::userProfileImageString.isInitialized){
                 if(userProfileImageString == "resetMyProfileImage") {
-                    Glide.with(requireContext())
+                    GlideApp.with(requireContext())
                         .load(R.drawable.ic_user_profile_image_empty)
                         .centerCrop()
                         .into(binding.imgProfileEditUserImage)
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        Glide.with(requireContext())
+                        GlideApp.with(requireContext())
                             .load(userProfileImageString.toUri())
                             .centerCrop()
                             .into(binding.imgProfileEditUserImage)

@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.daily.dayo.common.GlideApp
 import com.daily.dayo.databinding.ItemProfileFolderBinding
 import com.daily.dayo.domain.model.Folder
 
@@ -55,7 +55,7 @@ class ProfileFolderListAdapter :
 
         fun bind(folder: Folder) {
             binding.folder = folder
-            Glide.with(binding.btnProfileFolderItem.context)
+            GlideApp.with(binding.btnProfileFolderItem.context)
                 .load("http://117.17.198.45:8080/images/" + folder.thumbnailImage)
                 .into(binding.btnProfileFolderItem)
 
