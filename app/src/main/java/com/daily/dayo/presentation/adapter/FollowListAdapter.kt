@@ -8,8 +8,8 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.daily.dayo.DayoApplication
+import com.daily.dayo.common.GlideApp
 import com.daily.dayo.databinding.ItemFollowBinding
 import com.daily.dayo.domain.model.Follow
 import com.daily.dayo.presentation.fragment.mypage.follow.FollowFragmentDirections
@@ -60,7 +60,7 @@ class FollowListAdapter : RecyclerView.Adapter<FollowListAdapter.FollowListViewH
             binding.follow = follow
             binding.isMine = follow.memberId == DayoApplication.preferences.getCurrentUser().memberId
 
-            Glide.with(binding.imgFollowUserProfile.context)
+            GlideApp.with(binding.imgFollowUserProfile.context)
                 .load("http://117.17.198.45:8080/images/" + follow.profileImg)
                 .into(binding.imgFollowUserProfile)
 

@@ -6,7 +6,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.daily.dayo.common.GlideApp
 import com.daily.dayo.databinding.ItemFolderPostBinding
 import com.daily.dayo.domain.model.FolderPost
 import com.daily.dayo.presentation.fragment.mypage.folder.FolderFragmentDirections
@@ -44,7 +44,7 @@ class FolderPostListAdapter: RecyclerView.Adapter<FolderPostListAdapter.FolderPo
     inner class FolderPostListViewHolder(private val binding: ItemFolderPostBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(folderPost: FolderPost) {
-            Glide.with(binding.imgFolderPost.context)
+            GlideApp.with(binding.imgFolderPost.context)
                 .load("http://117.17.198.45:8080/images/" + folderPost.thumbnailImage)
                 .into(binding.imgFolderPost)
 
