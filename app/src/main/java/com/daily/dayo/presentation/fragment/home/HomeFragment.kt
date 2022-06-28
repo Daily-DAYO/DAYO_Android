@@ -12,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.daily.dayo.R
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentHomeBinding
+import com.daily.dayo.domain.model.Category
 import com.daily.dayo.presentation.adapter.HomeFragmentPagerStateAdapter
 import com.daily.dayo.presentation.viewmodel.HomeViewModel
 import com.google.android.material.tabs.TabLayout
@@ -28,22 +29,33 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-        viewPager = binding.pagerHomePost
-        tabLayout = binding.tabsActionbarHomeCategory
-
-        setSearchClickListener()
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initViewPager()
+        initPostContents()
+        setSearchClickListener()
+    }
+
+    private fun setSearchClickListener() {
+        binding.btnPostSearch.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_searchFragment)
+        }
+    }
+
+    private fun initViewPager() {
+        viewPager = binding.pagerHomePost
+        tabLayout = binding.tabsActionbarHomeCategory
+
+        viewPager.isUserInputEnabled = false // DISABLE SWIPE
 
         val pagerAdapter = HomeFragmentPagerStateAdapter(requireActivity())
         pagerAdapter.addFragment(HomeDayoPickPostListFragment())
         pagerAdapter.addFragment(HomeNewPostListFragment())
-        homeViewModel.requestDayoPickPostList()
         for (i in 0 until pagerAdapter.itemCount) {
             pagerAdapter.refreshFragment(i,pagerAdapter.fragments[i])
             Log.e("Refresh Fragment", "Page ${i+1}")
@@ -54,13 +66,14 @@ class HomeFragment : Fragment() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 Log.e("ViewPagerFragment", "Page ${position+1}")
-                when (position){
-                    0 -> homeViewModel.requestDayoPickPostList()
-                    1 -> homeViewModel.requestHomeNewPostList()
-                }
+                pagerAdapter.refreshFragment(position,pagerAdapter.fragments[position])
             }
         })
 
+        initTabLayout()
+    }
+
+    private fun initTabLayout() {
         TabLayoutMediator(tabLayout, viewPager){ tab, position ->
             when (position){
                 0 ->
@@ -71,9 +84,16 @@ class HomeFragment : Fragment() {
         }.attach()
     }
 
-    private fun setSearchClickListener() {
-        binding.btnPostSearch.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_searchFragment)
+    private fun initPostContents() {
+        if(!homeViewModel.isInitLoadingDAYOPICK) {
+            homeViewModel.currentDayoPickCategory = Category.ALL
+            homeViewModel.requestDayoPickPostList()
+            homeViewModel.isInitLoadingDAYOPICK = true
+        }
+        if(!homeViewModel.isInitLoadingNew) {
+            homeViewModel.currentNewCategory = Category.ALL
+            homeViewModel.requestNewPostList()
+            homeViewModel.isInitLoadingNew = true
         }
     }
 }
