@@ -226,7 +226,7 @@
     <string name="setting_notification_notice">공지 알림</string>
     <string name="setting_notification_notice_explanation">앱에서 보내는 공지사항 알림을 받아요.</string>
     <string name="setting_notification_reaction">반응 알림</string>
-    <string name="notification_channel_id">Reaction</string>
+    <string name="notification_channel_id">REACTION</string>
     <string name="notification_channel_name">반응 알림</string>
     <string name="notification_topic_notice">NOTICE</string>
 

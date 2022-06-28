@@ -18,10 +18,13 @@
             app:destination="@id/WriteFragment" />
         <action
             android:id="@+id/action_homeFragment_to_profileFragment"
-            app:destination="@+id/ProfileFragment"/>
+            app:destination="@+id/ProfileFragment" />
         <action
             android:id="@+id/action_homeFragment_to_searchFragment"
-            app:destination="@+id/SearchFragment"/>
+            app:destination="@+id/SearchFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_notificationFragment"
+            app:destination="@+id/NotificationFragment" />
     </fragment>
 
     <fragment
@@ -42,7 +45,7 @@
         tools:layout="@layout/fragment_search_result">
         <argument
             android:name="searchKeyword"
-            app:argType="string"/>
+            app:argType="string" />
         <action
             android:id="@+id/action_searchResultFragment_to_postFragment"
             app:destination="@+id/PostFragment" />
@@ -61,16 +64,16 @@
             app:destination="@id/WriteFragment" />
         <action
             android:id="@+id/action_feedFragment_to_profileFragment"
-            app:destination="@+id/ProfileFragment"/>
+            app:destination="@+id/ProfileFragment" />
         <action
             android:id="@+id/action_feedFragment_to_postFragment"
-            app:destination="@+id/PostFragment"/>
+            app:destination="@+id/PostFragment" />
         <action
             android:id="@+id/action_feedFragment_to_postOptionFragment"
-            app:destination="@id/PostOptionFragment"/>
+            app:destination="@id/PostOptionFragment" />
         <action
             android:id="@+id/action_FeedFragment_to_postOptionMineFragment"
-            app:destination="@id/PostOptionMineFragment"/>
+            app:destination="@id/PostOptionMineFragment" />
     </fragment>
 
     <fragment
@@ -80,26 +83,25 @@
         tools:layout="@layout/fragment_write">
         <argument
             android:name="postId"
-            app:argType="integer"
-            android:defaultValue="0"/>
+            android:defaultValue="0"
+            app:argType="integer" />
         <action
             android:id="@+id/action_writeFragment_to_writeOptionFragment"
-            app:destination="@id/WriteOptionFragment"/>
+            app:destination="@id/WriteOptionFragment" />
         <action
             android:id="@+id/action_writeFragment_to_postFragment"
             app:destination="@id/PostFragment"
             app:popUpTo="@id/WriteFragment"
-            app:popUpToInclusive="true"/>
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_writeFragment_to_writeImageOptionFragment"
-            app:destination="@id/WriteImageOptionFragment"/>
+            app:destination="@id/WriteImageOptionFragment" />
     </fragment>
     <dialog
         android:id="@+id/WriteImageOptionFragment"
         android:name="com.daily.dayo.presentation.fragment.write.WriteImageOptionFragment"
         android:label="fragment_write_image_option"
-        tools:layout="@layout/fragment_write_image_option">
-    </dialog>
+        tools:layout="@layout/fragment_write_image_option"></dialog>
 
     <dialog
         android:id="@+id/WriteOptionFragment"
@@ -118,8 +120,7 @@
         android:id="@+id/WriteTagFragment"
         android:name="com.daily.dayo.presentation.fragment.write.WriteTagFragment"
         android:label="fragment_write_tag"
-        tools:layout="@layout/fragment_write_tag">
-    </fragment>
+        tools:layout="@layout/fragment_write_tag"></fragment>
 
     <fragment
         android:id="@+id/WriteFolderFragment"
@@ -135,8 +136,7 @@
         android:id="@+id/FolderAddFragment"
         android:name="com.daily.dayo.presentation.fragment.write.WriteFolderAddFragment"
         android:label="fragment_write_add"
-        tools:layout="@layout/fragment_write_folder_add">
-    </fragment>
+        tools:layout="@layout/fragment_write_folder_add"></fragment>
 
     <fragment
         android:id="@+id/PostFragment"
@@ -148,16 +148,16 @@
             app:argType="integer" />
         <action
             android:id="@+id/action_postFragment_to_postOptionFragment"
-            app:destination="@id/PostOptionFragment"/>
+            app:destination="@id/PostOptionFragment" />
         <action
             android:id="@+id/action_postFragment_to_postOptionMineFragment"
-            app:destination="@id/PostOptionMineFragment"/>
+            app:destination="@id/PostOptionMineFragment" />
         <action
             android:id="@+id/action_postFragment_to_searchResultFragment"
-            app:destination="@id/SearchResultFragment"/>
+            app:destination="@id/SearchResultFragment" />
         <action
             android:id="@+id/action_postFragment_to_profileFragment"
-            app:destination="@+id/ProfileFragment"/>
+            app:destination="@+id/ProfileFragment" />
     </fragment>
     <dialog
         android:id="@+id/PostOptionFragment"
@@ -169,7 +169,7 @@
             app:argType="integer" />
         <action
             android:id="@+id/action_postOptionFragment_to_postReportFragment"
-            app:destination="@id/PostReportFragment"/>
+            app:destination="@id/PostReportFragment" />
     </dialog>
 
     <fragment
@@ -194,7 +194,7 @@
             android:id="@+id/action_postOptionMineFragment_to_HomeFragment"
             app:destination="@+id/HomeFragment"
             app:popUpTo="@id/PostFragment"
-            app:popUpToInclusive="true"/>
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_postOptionMineFragment_to_writeFragment"
             app:destination="@id/WriteFragment"
@@ -209,9 +209,9 @@
         tools:layout="@layout/fragment_profile">
         <argument
             android:name="memberId"
-            app:argType="string"
             android:defaultValue="@null"
-            app:nullable="true"/>
+            app:argType="string"
+            app:nullable="true" />
         <action
             android:id="@+id/action_profileFragment_to_writeFragment"
             app:destination="@id/WriteFragment" />
@@ -223,16 +223,16 @@
             app:destination="@id/ProfileEditFragment" />
         <action
             android:id="@+id/action_profileFragment_to_profileOptionFragment"
-            app:destination="@id/ProfileOptionFragment"/>
+            app:destination="@id/ProfileOptionFragment" />
         <action
             android:id="@+id/action_profileFragment_to_folderFragment"
-            app:destination="@+id/FolderFragment"/>
+            app:destination="@+id/FolderFragment" />
         <action
             android:id="@+id/action_profileFragment_to_homeFragment"
-            app:destination="@+id/HomeFragment"/>
+            app:destination="@+id/HomeFragment" />
         <action
             android:id="@+id/action_profileFragment_to_postFragment"
-            app:destination="@+id/PostFragment"/>
+            app:destination="@+id/PostFragment" />
     </fragment>
 
     <fragment
@@ -261,7 +261,7 @@
             app:argType="integer" />
         <action
             android:id="@+id/action_folderEditFragment_to_folderSettingAddImageOptionFragment"
-            app:destination="@id/FolderSettingEditImageOptionFragment"/>
+            app:destination="@id/FolderSettingEditImageOptionFragment" />
     </fragment>
 
     <dialog
@@ -277,7 +277,7 @@
             app:destination="@+id/ProfileFragment" />
         <action
             android:id="@+id/action_folderOptionFragment_to_folderEditFragment"
-            app:destination="@+id/FolderEditFragment"/>
+            app:destination="@+id/FolderEditFragment" />
     </dialog>
 
     <dialog
@@ -290,10 +290,10 @@
             app:destination="@id/FolderSettingFragment" />
         <action
             android:id="@+id/action_profileOptionFragment_to_profileEditFragment"
-            app:destination="@+id/ProfileEditFragment"/>
+            app:destination="@+id/ProfileEditFragment" />
         <action
             android:id="@+id/action_profileOptionFragment_to_settingFragment"
-            app:destination="@+id/SettingFragment"/>
+            app:destination="@+id/SettingFragment" />
     </dialog>
 
     <fragment
@@ -313,22 +313,21 @@
         android:id="@+id/SettingNotificationFragment"
         android:name="com.daily.dayo.presentation.fragment.setting.notification.SettingNotificationFragment"
         android:label="fragment_withdraw"
-        tools:layout="@layout/fragment_setting_notification">
-    </fragment>
+        tools:layout="@layout/fragment_setting_notification"></fragment>
 
     <fragment
         android:id="@+id/WithdrawFragment"
         android:name="com.daily.dayo.presentation.fragment.setting.withdraw.WithdrawFragment"
         android:label="fragment_withdraw"
-        tools:layout="@layout/fragment_withdraw">
-    </fragment>
+        tools:layout="@layout/fragment_withdraw"></fragment>
 
     <fragment
         android:id="@+id/FolderSettingFragment"
         android:name="com.daily.dayo.presentation.fragment.mypage.folder.FolderSettingFragment"
         android:label="fragment_folder_setting"
         tools:layout="@layout/fragment_folder_setting">
-        <action android:id="@+id/action_folderSettingFragment_to_folderSettingAddFragment"
+        <action
+            android:id="@+id/action_folderSettingFragment_to_folderSettingAddFragment"
             app:destination="@id/FolderSettingAddFragment" />
     </fragment>
 
@@ -336,7 +335,8 @@
         android:id="@+id/FolderSettingAddFragment"
         android:name="com.daily.dayo.presentation.fragment.mypage.folder.FolderSettingAddFragment"
         tools:layout="@layout/fragment_folder_setting_add">
-        <action android:id="@+id/action_folderSettingAddFragment_to_folderSettingAddImageOptionFragment"
+        <action
+            android:id="@+id/action_folderSettingAddFragment_to_folderSettingAddImageOptionFragment"
             app:destination="@id/FolderSettingEditImageOptionFragment" />
 
     </fragment>
@@ -345,8 +345,7 @@
         android:id="@+id/FolderSettingEditImageOptionFragment"
         android:name="com.daily.dayo.presentation.fragment.mypage.folder.FolderSettingEditImageOptionFragment"
         android:label="fragment_folder_setting_edit_image_option"
-        tools:layout="@layout/fragment_folder_setting_edit_image_option">
-    </dialog>
+        tools:layout="@layout/fragment_folder_setting_edit_image_option"></dialog>
 
     <fragment
         android:id="@+id/ProfileEditFragment"
@@ -355,15 +354,14 @@
         tools:layout="@layout/fragment_profile_edit">
         <action
             android:id="@+id/action_profileEditFragment_to_profileEditImageOptionFragment"
-            app:destination="@id/ProfileEditImageOptionFragment"/>
+            app:destination="@id/ProfileEditImageOptionFragment" />
     </fragment>
 
     <dialog
         android:id="@+id/ProfileEditImageOptionFragment"
         android:name="com.daily.dayo.presentation.fragment.mypage.profile.ProfileEditImageOptionFragment"
         android:label="fragment_my_profile_edit_image_option"
-        tools:layout="@layout/fragment_profile_edit_image_option">
-    </dialog>
+        tools:layout="@layout/fragment_profile_edit_image_option"></dialog>
 
     <fragment
         android:id="@+id/FollowFragment"
@@ -372,13 +370,13 @@
         tools:layout="@layout/fragment_follow">
         <argument
             android:name="memberId"
-            app:argType="string"/>
+            app:argType="string" />
         <argument
             android:name="nickname"
-            app:argType="string"/>
+            app:argType="string" />
         <action
             android:id="@+id/action_followFragment_to_profileFragment"
-            app:destination="@+id/ProfileFragment"/>
+            app:destination="@+id/ProfileFragment" />
     </fragment>
 
     <fragment
@@ -392,5 +390,8 @@
         <action
             android:id="@+id/action_notificationFragment_to_profileFragment"
             app:destination="@id/ProfileFragment" />
+        <action
+            android:id="@+id/action_notificationFragment_to_postFragment"
+            app:destination="@id/PostFragment" />
     </fragment>
 </navigation>
