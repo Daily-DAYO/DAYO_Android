@@ -74,6 +74,9 @@
         <action
             android:id="@+id/action_FeedFragment_to_postOptionMineFragment"
             app:destination="@id/PostOptionMineFragment" />
+        <action
+            android:id="@+id/action_feedFragment_to_searchResultFragment"
+            app:destination="@id/SearchResultFragment"/>
     </fragment>
 
     <fragment
