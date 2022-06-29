@@ -10,12 +10,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentFeedBinding
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.presentation.adapter.FeedListAdapter
 import com.daily.dayo.presentation.viewmodel.FeedViewModel
+import com.google.android.material.chip.Chip
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
@@ -72,6 +74,14 @@ class FeedFragment : Fragment() {
 
             override fun bookmarkPostClick(button: ImageButton, post: Post, position: Int) {
                 setFeedPostBookmarkClickListener(button, post, position)
+            }
+
+            override fun tagPostClick(chip: Chip) {
+                findNavController().navigate(
+                    FeedFragmentDirections.actionFeedFragmentToSearchResultFragment(
+                        chip.text.toString().substringAfter("#").trim()
+                    )
+                )
             }
         })
     }
