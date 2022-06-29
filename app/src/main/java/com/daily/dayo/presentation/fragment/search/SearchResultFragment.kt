@@ -68,7 +68,7 @@ class SearchResultFragment : Fragment() {
                     visibility = if (!s.isNullOrBlank()) {
                         View.VISIBLE
                     } else {
-                        View.INVISIBLE
+                        View.GONE
                     }
                 }
             }
@@ -93,7 +93,7 @@ class SearchResultFragment : Fragment() {
     private fun setSearchKeywordInputDone() {
         binding.tvSearchResultKeywordInput.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
-                EditorInfo.IME_ACTION_DONE -> {
+                EditorInfo.IME_ACTION_SEARCH -> {
                     HideKeyBoardUtil.hide(requireContext(), binding.tvSearchResultKeywordInput)
                     if (!binding.tvSearchResultKeywordInput.text.toString().trim()
                             .isNullOrBlank()
