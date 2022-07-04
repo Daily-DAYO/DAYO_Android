@@ -13,8 +13,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
-import com.bumptech.glide.Priority
 import com.bumptech.glide.RequestManager
+import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentHomeDayoPickPostListBinding
@@ -176,21 +176,20 @@ class HomeDayoPickPostListFragment : Fragment() {
         CoroutineScope(Dispatchers.Main).launch {
             for (i in 0 until (if (postList.size >= 6) 6 else postList.size)) {
                 thumbnailImgList.add(withContext(Dispatchers.IO) {
-                    Glide.with(requireContext())
-                        .asBitmap()
-                        .override(158, 158)
-                        .load("http://117.17.198.45:8080/images/" + postList[i].thumbnailImage)
-                        .priority(Priority.HIGH)
-                        .submit()
-                        .get()
+                    loadImageBackground(
+                        context = requireContext(),
+                        height = 158,
+                        width = 158,
+                        imgName = postList[i].thumbnailImage ?: ""
+                    )
                 })
                 userImgList.add(withContext(Dispatchers.IO) {
-                    Glide.with(requireContext())
-                        .asBitmap()
-                        .override(17, 17)
-                        .load("http://117.17.198.45:8080/images/" + postList[i].userProfileImage)
-                        .submit()
-                        .get()
+                    loadImageBackground(
+                        context = requireContext(),
+                        height = 17,
+                        width = 17,
+                        imgName = postList[i].userProfileImage ?: ""
+                    )
                 })
             }
         }.invokeOnCompletion { throwable ->

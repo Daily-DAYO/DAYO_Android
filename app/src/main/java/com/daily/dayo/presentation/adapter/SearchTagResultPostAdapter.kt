@@ -6,11 +6,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.daily.dayo.common.GlideApp
+import com.bumptech.glide.RequestManager
+import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
+import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.databinding.ItemSearchResultPostBinding
 import com.daily.dayo.domain.model.Search
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class SearchTagResultPostAdapter :
+class SearchTagResultPostAdapter(private val requestManager: RequestManager) :
     ListAdapter<Search, SearchTagResultPostAdapter.SearchTagResultPostViewHolder>(
         diffCallback
     ) {
@@ -37,7 +43,8 @@ class SearchTagResultPostAdapter :
         parent: ViewGroup,
         viewType: Int,
     ): SearchTagResultPostViewHolder = SearchTagResultPostViewHolder(
-        ItemSearchResultPostBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        ItemSearchResultPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+    )
 
     override fun onBindViewHolder(
         holder: SearchTagResultPostViewHolder,
@@ -53,9 +60,23 @@ class SearchTagResultPostAdapter :
     inner class SearchTagResultPostViewHolder(private val binding: ItemSearchResultPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(postContent: Search) {
-            GlideApp.with(binding.imgSearchResultPost.context)
-                .load("http://117.17.198.45:8080/images/" + postContent.thumbnailImage)
-                .into(binding.imgSearchResultPost)
+            CoroutineScope(Dispatchers.Main).launch {
+                val postImage = withContext(Dispatchers.IO) {
+                    loadImageBackground(
+                        requestManager = requestManager,
+                        width = 158,
+                        height = 158,
+                        imgName = postContent.thumbnailImage
+                    )
+                }
+                loadImageView(
+                    requestManager = requestManager,
+                    width = 158,
+                    height = 158,
+                    img = postImage,
+                    imgView = binding.imgSearchResultPost
+                )
+            }
 
             val pos = adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
