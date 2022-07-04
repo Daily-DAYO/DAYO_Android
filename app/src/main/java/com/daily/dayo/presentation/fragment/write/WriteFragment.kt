@@ -25,11 +25,14 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.daily.dayo.R
 import com.daily.dayo.common.Event
 import com.daily.dayo.common.GlideApp
+import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.RadioGridGroup
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentWriteBinding
@@ -38,6 +41,9 @@ import com.daily.dayo.presentation.adapter.WriteUploadImageListAdapter
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.util.*
 
@@ -48,6 +54,7 @@ class WriteFragment : Fragment() {
     private val args by navArgs<WriteFragmentArgs>()
     private var postImageBitmapToStringList = ArrayList<String>() // Bitmap을 String으로 변환
     private lateinit var uploadImageListAdapter: WriteUploadImageListAdapter
+    private lateinit var glideRequestManager: RequestManager
 
     private var isCategorySelected: Boolean = false
     private var isContentsFilled: Boolean = false
@@ -76,6 +83,7 @@ class WriteFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        glideRequestManager = Glide.with(this)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         val onBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -182,24 +190,20 @@ class WriteFragment : Fragment() {
                                                         .toString()
                                                 )
                                                 lateinit var imageBitmap: Bitmap
-                                                GlideApp.with(requireContext())
-                                                    .asBitmap()
-                                                    .load("http://117.17.198.45:8080/images/$element")
-                                                    .into(object : CustomTarget<Bitmap>() {
-                                                        override fun onResourceReady(
-                                                            resource: Bitmap,
-                                                            transition: Transition<in Bitmap>?
-                                                        ) {
-                                                            imageBitmap = resizeBitmap(resource)
-                                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                                                postImageBitmapToStringList.add(
-                                                                    imageBitmap.toBase64String()
-                                                                )
-                                                            }
-                                                        }
-
-                                                        override fun onLoadCleared(placeholder: Drawable?) {}
-                                                    })
+                                                CoroutineScope(Dispatchers.IO).launch {
+                                                    val uploadImage = loadImageBackground(
+                                                        requestManager = glideRequestManager,
+                                                        width = 480,
+                                                        height = 480,
+                                                        imgName = element
+                                                    )
+                                                    imageBitmap = resizeBitmap(uploadImage)
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                        postImageBitmapToStringList.add(
+                                                            imageBitmap.toBase64String()
+                                                        )
+                                                    }
+                                                }
                                             }
                                             uploadImageListAdapter.notifyDataSetChanged()
 
@@ -254,7 +258,8 @@ class WriteFragment : Fragment() {
 
     private fun setPostImageListAdapter() {
         writeViewModel.postImageUriList.observe(viewLifecycleOwner) {
-            uploadImageListAdapter = WriteUploadImageListAdapter(it, requireContext(), args.postId)
+            uploadImageListAdapter =
+                WriteUploadImageListAdapter(it, requestManager = glideRequestManager, args.postId)
             val rvUploadImageList = binding.rvImgUploadList
             val layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
