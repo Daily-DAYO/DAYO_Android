@@ -32,6 +32,11 @@ class FollowingListFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        requestFollowingList()
+    }
+
     private fun setRvFollowingListAdapter(){
         followingListAdapter = FollowListAdapter()
         binding.rvFollowing.adapter = followingListAdapter
@@ -61,7 +66,7 @@ class FollowingListFragment : Fragment() {
         followViewModel.requestCreateFollow(memberId)
         followViewModel.followSuccess.observe(viewLifecycleOwner) {
             if(it.getContentIfNotHandled() == true) {
-                setFollowingList()
+                requestFollowingList()
             }
         }
     }
@@ -70,21 +75,23 @@ class FollowingListFragment : Fragment() {
         followViewModel.requestDeleteFollow(memberId)
         followViewModel.unfollowSuccess.observe(viewLifecycleOwner) {
             if(it.getContentIfNotHandled() == true) {
-                setFollowingList()
+                requestFollowingList()
             }
         }
     }
 
+    private fun requestFollowingList(){
+        followViewModel.memberId.observe(viewLifecycleOwner) { memberId ->
+            followViewModel.requestListAllFollowing(memberId)
+        }
+    }
 
     private fun setFollowingList(){
-        followViewModel.memberId.observe(viewLifecycleOwner) {
-            followViewModel.requestListAllFollowing(it)
-        }
-
         followViewModel.followingList.observe(viewLifecycleOwner) {
             when(it.status){
                 Status.SUCCESS -> {
                     it.data?.let { followingList ->
+                        binding.followingCount = followingList.size
                         followingListAdapter.submitList(followingList)
                     }
                 }

@@ -145,7 +145,11 @@
 
 
     <!-- Follow -->
+    <string name="follower">팔로워</string>
+    <string name="following">팔로잉</string>
     <string name="follow_delete_description_message">팔로우를 취소할까요?</string>
+    <string name="follower_empty_description">아직 회원님을\n팔로우하는 사람이 없어요</string>
+    <string name="following_empty_description">관심이 가는 사람들을 팔로우해보세요</string>
 
     <!-- My Profile -->
     <string name="my_profile_edit_title">프로필 수정</string>
