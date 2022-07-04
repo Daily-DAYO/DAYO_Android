@@ -1,47 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".presentation.fragment.mypage.follow.FollowingListFragment">
+<layout>
 
-    <EditText
-        android:id="@+id/et_following_search"
-        android:layout_width="0dp"
-        android:layout_height="33dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginStart="22dp"
-        android:paddingStart="17dp"
-        android:paddingEnd="17dp"
-        android:inputType="text"
-        android:background="@drawable/edittext_background_follow_search"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_following_search" />
+    <data>
 
-    <ImageButton
-        android:id="@+id/btn_following_search"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_search"
-        android:layout_marginStart="7dp"
-        android:layout_marginEnd="17dp"
-        app:layout_constraintStart_toEndOf="@+id/et_following_search"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/et_following_search"
-        app:layout_constraintBottom_toBottomOf="@+id/et_following_search"/>
+        <import type="android.view.View" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_following"
+        <variable
+            name="followingCount"
+            type="Integer" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:overScrollMode="never"
-        android:layout_marginTop="17dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@id/et_following_search"
-        tools:listitem="@layout/item_follow"/>
+        tools:context=".presentation.fragment.mypage.follow.FollowingListFragment">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_following"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:overScrollMode="never"
+            android:visibility="@{followingCount == 0 ? View.GONE : View.VISIBLE}"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:listitem="@layout/item_follow"
+            tools:visibility="visible" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="76dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="@{followingCount == 0 ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_follow_empty" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:gravity="center"
+                android:text="@string/following_empty_description"
+                android:textColor="@color/gray_3_9C9C9C"
+                android:textSize="15dp" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

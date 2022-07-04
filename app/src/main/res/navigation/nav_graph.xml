@@ -76,7 +76,7 @@
             app:destination="@id/PostOptionMineFragment" />
         <action
             android:id="@+id/action_feedFragment_to_searchResultFragment"
-            app:destination="@id/SearchResultFragment"/>
+            app:destination="@id/SearchResultFragment" />
     </fragment>
 
     <fragment
@@ -377,6 +377,10 @@
         <argument
             android:name="nickname"
             app:argType="string" />
+        <argument
+            android:name="initPosition"
+            android:defaultValue="0"
+            app:argType="integer" />
         <action
             android:id="@+id/action_followFragment_to_profileFragment"
             app:destination="@+id/ProfileFragment" />

@@ -1,6 +1,7 @@
 package com.daily.dayo.presentation.fragment.mypage.follow
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +33,11 @@ class FollowerListFragment : Fragment(){
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        requestFollowerList()
+    }
+
     private fun setRvFollowerListAdapter(){
         followerListAdapter = FollowListAdapter()
         binding.rvFollower.adapter = followerListAdapter
@@ -61,7 +67,7 @@ class FollowerListFragment : Fragment(){
         followViewModel.requestCreateFollow(memberId)
         followViewModel.followSuccess.observe(viewLifecycleOwner) {
             if(it.getContentIfNotHandled() == true) {
-                setFollowerList()
+                requestFollowerList()
             }
         }
     }
@@ -70,20 +76,23 @@ class FollowerListFragment : Fragment(){
         followViewModel.requestDeleteFollow(memberId)
         followViewModel.unfollowSuccess.observe(viewLifecycleOwner) {
             if(it.getContentIfNotHandled() == true) {
-                setFollowerList()
+                requestFollowerList()
             }
         }
     }
 
-    private fun setFollowerList(){
-        followViewModel.memberId.observe(viewLifecycleOwner) {
-            followViewModel.requestListAllFollower(it)
+    private fun requestFollowerList(){
+        followViewModel.memberId.observe(viewLifecycleOwner) { memberId ->
+            followViewModel.requestListAllFollower(memberId)
         }
+    }
 
+    private fun setFollowerList(){
         followViewModel.followerList.observe(viewLifecycleOwner) {
             when(it.status){
                 Status.SUCCESS -> {
                     it.data?.let { followerList ->
+                        binding.followerCount = followerList.size
                         followerListAdapter.submitList(followerList)
                     }
                 }
