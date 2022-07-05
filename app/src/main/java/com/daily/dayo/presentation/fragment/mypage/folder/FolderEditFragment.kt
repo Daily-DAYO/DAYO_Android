@@ -77,7 +77,7 @@ class FolderEditFragment  : Fragment() {
                         Status.SUCCESS -> {
                             it.data?.let { folder ->
                                 binding.tvFolderSettingAddTitle.text = getString(R.string.folder_edit_title)
-                                binding.etFolderSettingAddSetTitle.text = SpannableStringBuilder(folder.name)
+                                binding.etFolderSettingAddSetTitle.text = SpannableStringBuilder(folder.title)
                                 folder.subheading?.let{subheading -> binding.etFolderSettingAddSetSubheading.text = SpannableStringBuilder(subheading)}
                                 when(folder.privacy){
                                     Privacy.ALL -> binding.radiobuttonFolderSettingAddSetPrivateAll.isChecked = true

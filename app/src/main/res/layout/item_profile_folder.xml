@@ -18,8 +18,10 @@
             android:layout_width="match_parent"
             android:layout_height="163dp"
             android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/roundedImageViewRoundedCorner"
+            android:tintMode="src_atop"
             android:background="@drawable/button_profile_folder_default_gray"
+            app:tint="@color/gray_2_5D5D5D_alpha_40"
+            app:shapeAppearanceOverlay="@style/roundedImageViewRoundedCorner"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
@@ -50,7 +52,7 @@
             android:id="@+id/tv_profile_folder_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{folder.name}"
+            android:text="@{folder.title}"
             android:textSize="15dp"
             android:textColor="@color/white_FFFFFF"
             android:layout_marginBottom="40dp"
