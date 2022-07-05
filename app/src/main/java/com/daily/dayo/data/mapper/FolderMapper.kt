@@ -12,7 +12,7 @@ fun FolderDto.toFolder() : Folder {
     if (subheading == null) subheading = ""
     return Folder(
         folderId = folderId,
-        name = name,
+        title = name,
         memberId = null,
         privacy = privacy,
         subheading = subheading,
@@ -26,7 +26,7 @@ fun DetailFolderResponse.toFolder() : Folder {
     val posts = posts.map { it.toFolderPost() }
     return Folder(
         folderId = null,
-        name = name,
+        title = name,
         memberId = memberId,
         privacy = privacy,
         subheading = subheading,
