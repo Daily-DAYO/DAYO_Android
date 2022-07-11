@@ -11,9 +11,11 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Priority
 import com.bumptech.glide.RequestManager
-import com.daily.dayo.R
+import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
+import com.daily.dayo.common.GlideLoadUtil.loadImagePreload
+import com.daily.dayo.common.GlideLoadUtil.loadImageView
+import com.daily.dayo.common.GlideLoadUtil.loadImageViewProfile
 import com.daily.dayo.databinding.ItemMainPostBinding
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.presentation.fragment.home.HomeFragmentDirections
@@ -66,8 +68,12 @@ class HomeDayoPickAdapter(val rankingShowing: Boolean, private val requestManage
                 position + 6
             }
             for (i in position until endPosition) {
-                requestManager.load("http://117.17.198.45:8080/images/" + getItem(i).thumbnailImage)
-                    .preload(158, 158)
+                loadImagePreload(
+                    requestManager = requestManager,
+                    width = 158,
+                    height = 158,
+                    imgName = getItem(i).thumbnailImage ?: ""
+                )
             }
         }
     }
@@ -105,21 +111,20 @@ class HomeDayoPickAdapter(val rankingShowing: Boolean, private val requestManage
                 val userThumbnailImgBitmap: Bitmap?
                 if (postContent.preLoadThumbnail == null) {
                     postImgBitmap = withContext(Dispatchers.IO) {
-                        requestManager.asBitmap()
-                            .override(158, 158)
-                            .placeholder(R.color.gray_3_9C9C9C_alpha_30)
-                            .error(R.drawable.ic_dayo_circle_grayscale)
-                            .load("http://117.17.198.45:8080/images/" + postContent.thumbnailImage)
-                            .priority(Priority.HIGH)
-                            .submit()
-                            .get()
+                        loadImageBackground(
+                            requestManager = requestManager,
+                            width = 158,
+                            height = 158,
+                            imgName = postContent.thumbnailImage ?: ""
+                        )
                     }
                     userThumbnailImgBitmap = withContext(Dispatchers.IO) {
-                        requestManager.asBitmap()
-                            .override(17, 17)
-                            .load("http://117.17.198.45:8080/images/" + postContent.userProfileImage)
-                            .submit()
-                            .get()
+                        loadImageBackground(
+                            requestManager = requestManager,
+                            width = 17,
+                            height = 17,
+                            imgName = postContent.userProfileImage ?: ""
+                        )
                     }
                 } else {
                     postImgBitmap = postContent.preLoadThumbnail
@@ -127,18 +132,20 @@ class HomeDayoPickAdapter(val rankingShowing: Boolean, private val requestManage
                     postContent.preLoadThumbnail = null
                     postContent.preLoadUserImg = null
                 }
-                requestManager.load(postImgBitmap)
-                    .override(158, 158)
-                    .thumbnail(0.1f)
-                    .placeholder(R.color.gray_3_9C9C9C_alpha_30)
-                    .error(R.drawable.ic_dayo_circle_grayscale)
-                    .priority(Priority.HIGH)
-                    .centerCrop()
-                    .into(postImg)
-                requestManager.load(userThumbnailImgBitmap)
-                    .override(17, 17)
-                    .centerCrop()
-                    .into(userThumbnailImg)
+                loadImageView(
+                    requestManager = requestManager,
+                    width = 158,
+                    height = 158,
+                    img = postImgBitmap!!,
+                    imgView = postImg
+                )
+                loadImageViewProfile(
+                    requestManager = requestManager,
+                    width = 17,
+                    height = 17,
+                    img = userThumbnailImgBitmap!!,
+                    imgView = userThumbnailImg
+                )
             }.invokeOnCompletion { throwable ->
                 when (throwable) {
                     is CancellationException -> Log.e("Image Loading", "CANCELLED")

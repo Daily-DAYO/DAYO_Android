@@ -11,7 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.daily.dayo.DayoApplication
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
@@ -27,6 +28,12 @@ class SearchResultFragment : Fragment() {
     private val searchViewModel by activityViewModels<SearchViewModel>()
     private val args by navArgs<SearchResultFragmentArgs>()
     private lateinit var searchTagResultPostAdapter: SearchTagResultPostAdapter
+    private lateinit var glideRequestManager: RequestManager
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        glideRequestManager = Glide.with(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,7 +83,7 @@ class SearchResultFragment : Fragment() {
     }
 
     private fun setSearchTagResultPostAdapter() {
-        searchTagResultPostAdapter = SearchTagResultPostAdapter()
+        searchTagResultPostAdapter = SearchTagResultPostAdapter(requestManager = glideRequestManager)
         binding.rvSearchResultContentsPostList.adapter = searchTagResultPostAdapter
     }
 
