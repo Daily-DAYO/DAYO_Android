@@ -229,7 +229,7 @@
                     <CheckBox
                         android:id="@+id/btn_profile_follow"
                         android:layout_width="93dp"
-                        android:layout_height="33dp"
+                        android:layout_height="32dp"
                         android:layout_marginTop="32dp"
                         android:button="@android:color/transparent"
                         android:visibility="@{isMine ? View.GONE : View.VISIBLE}"
