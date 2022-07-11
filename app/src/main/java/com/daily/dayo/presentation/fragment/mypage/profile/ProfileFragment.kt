@@ -244,7 +244,8 @@ class ProfileFragment : Fragment() {
             Navigation.findNavController(v).navigate(
                 ProfileFragmentDirections.actionProfileFragmentToFollowFragment(
                     memberId = memberId,
-                    nickname = nickname
+                    nickname = nickname,
+                    initPosition = 0
                 )
             )
         }
@@ -255,7 +256,8 @@ class ProfileFragment : Fragment() {
             Navigation.findNavController(v).navigate(
                 ProfileFragmentDirections.actionProfileFragmentToFollowFragment(
                     memberId = memberId,
-                    nickname = nickname
+                    nickname = nickname,
+                    initPosition = 1
                 )
             )
         }
