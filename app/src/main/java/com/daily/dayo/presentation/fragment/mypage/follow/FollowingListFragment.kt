@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
 import com.daily.dayo.common.DefaultDialogConfigure
 import com.daily.dayo.common.DefaultDialogConfirm
@@ -21,6 +23,12 @@ class FollowingListFragment : Fragment() {
     private var binding by autoCleared<FragmentFollowingListBinding>()
     private val followViewModel by activityViewModels<FollowViewModel>()
     private lateinit var followingListAdapter: FollowListAdapter
+    private lateinit var glideRequestManager: RequestManager
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        glideRequestManager = Glide.with(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +41,7 @@ class FollowingListFragment : Fragment() {
     }
 
     private fun setRvFollowingListAdapter(){
-        followingListAdapter = FollowListAdapter()
+        followingListAdapter = FollowListAdapter(requestManager = glideRequestManager)
         binding.rvFollowing.adapter = followingListAdapter
         followingListAdapter.setOnItemClickListener(object : FollowListAdapter.OnItemClickListener{
             override fun onItemClick(checkbox: CheckBox, follow: Follow, position: Int) {
