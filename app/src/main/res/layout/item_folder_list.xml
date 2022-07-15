@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="18dp"
             android:paddingVertical="20dp"
-            android:text="@{folder.name}"
+            android:text="@{folder.title}"
             android:textColor="@color/gray_1_313131"
             android:textSize="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
