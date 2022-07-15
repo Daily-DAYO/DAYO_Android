@@ -75,7 +75,7 @@ class WriteFolderFragment : Fragment() {
 
     private fun onFolderClicked(folder: Folder) {
         writeViewModel.postFolderId.value = folder.folderId.toString()
-        writeViewModel.postFolderName.value = folder.name
+        writeViewModel.postFolderName.value = folder.title
         writeViewModel.showWriteOptionDialog.value = Event(true)
         findNavController().navigateUp()
     }

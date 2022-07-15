@@ -7,9 +7,7 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -60,7 +58,15 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setProfile()
+    }
 
+    override fun onResume() {
+        super.onResume()
+        setProfile()
+    }
+
+    private fun setProfile(){
         if (args.memberId == null) {
             profileViewModel.profileMemberId =
                 DayoApplication.preferences.getCurrentUser().memberId.toString()
@@ -219,13 +225,11 @@ class ProfileFragment : Fragment() {
             isMine = false
         )
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                profileViewModel.folderList.observe(viewLifecycleOwner) {
-                    when (it.status) {
-                        Status.SUCCESS -> {
-                            it.data?.let { folderList ->
-                                profileFolderListAdapter.submitList(folderList)
-                            }
+            profileViewModel.folderList.observe(viewLifecycleOwner) {
+                when(it.status){
+                    Status.SUCCESS -> {
+                        it.data?.let { folderList ->
+                            profileFolderListAdapter.submitList(folderList)
                         }
                     }
                 }
