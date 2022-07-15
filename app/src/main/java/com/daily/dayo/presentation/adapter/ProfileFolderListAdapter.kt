@@ -6,11 +6,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.daily.dayo.common.GlideApp
+import com.bumptech.glide.RequestManager
+import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
+import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.databinding.ItemProfileFolderBinding
 import com.daily.dayo.domain.model.Folder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class ProfileFolderListAdapter :
+class ProfileFolderListAdapter(private val requestManager: RequestManager) :
     RecyclerView.Adapter<ProfileFolderListAdapter.ProfileFolderListViewHolder>() {
 
     companion object {
@@ -54,11 +60,29 @@ class ProfileFolderListAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(folder: Folder) {
-            binding.folder = folder
-            GlideApp.with(binding.btnProfileFolderItem.context)
-                .load("http://117.17.198.45:8080/images/" + folder.thumbnailImage)
-                .into(binding.btnProfileFolderItem)
+            val layoutParams = ViewGroup.MarginLayoutParams(
+                ViewGroup.MarginLayoutParams.WRAP_CONTENT,
+                ViewGroup.MarginLayoutParams.WRAP_CONTENT
+            )
 
+            binding.folder = folder
+            CoroutineScope(Dispatchers.Main).launch {
+                val profileFolderThumbnailImage = withContext(Dispatchers.IO) {
+                    loadImageBackground(
+                        requestManager = requestManager,
+                        width = layoutParams.width,
+                        height = 163,
+                        imgName = folder.thumbnailImage
+                    )
+                }
+                loadImageView(
+                    requestManager = requestManager,
+                    width = layoutParams.width,
+                    163,
+                    img = profileFolderThumbnailImage,
+                    imgView = binding.btnProfileFolderItem
+                )
+            }
             val pos = adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
                 itemView.setOnClickListener {

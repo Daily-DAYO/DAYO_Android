@@ -1,6 +1,5 @@
 package com.daily.dayo.presentation.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.CheckBox
@@ -8,13 +7,20 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
-import com.daily.dayo.common.GlideApp
+import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
+import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.databinding.ItemFollowBinding
 import com.daily.dayo.domain.model.Follow
 import com.daily.dayo.presentation.fragment.mypage.follow.FollowFragmentDirections
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class FollowListAdapter : RecyclerView.Adapter<FollowListAdapter.FollowListViewHolder>() {
+class FollowListAdapter(private val requestManager: RequestManager) :
+    RecyclerView.Adapter<FollowListAdapter.FollowListViewHolder>() {
 
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Follow>() {
@@ -58,11 +64,25 @@ class FollowListAdapter : RecyclerView.Adapter<FollowListAdapter.FollowListViewH
 
         fun bind(follow: Follow) {
             binding.follow = follow
-            binding.isMine = follow.memberId == DayoApplication.preferences.getCurrentUser().memberId
-
-            GlideApp.with(binding.imgFollowUserProfile.context)
-                .load("http://117.17.198.45:8080/images/" + follow.profileImg)
-                .into(binding.imgFollowUserProfile)
+            binding.isMine =
+                follow.memberId == DayoApplication.preferences.getCurrentUser().memberId
+            CoroutineScope(Dispatchers.Main).launch {
+                val userThumbnailImgBitmap = withContext(Dispatchers.IO) {
+                    loadImageBackground(
+                        requestManager = requestManager,
+                        width = 40,
+                        height = 40,
+                        imgName = follow.profileImg ?: ""
+                    )
+                }
+                loadImageView(
+                    requestManager = requestManager,
+                    width = 40,
+                    height = 40,
+                    img = userThumbnailImgBitmap,
+                    imgView = binding.imgFollowUserProfile
+                )
+            }
 
             setRootClickListener(follow.memberId)
             setFollowButtonClickListener(follow)
@@ -70,7 +90,9 @@ class FollowListAdapter : RecyclerView.Adapter<FollowListAdapter.FollowListViewH
 
         private fun setRootClickListener(memberId: String) {
             binding.root.setOnClickListener {
-                Navigation.findNavController(it).navigate(FollowFragmentDirections.actionFollowFragmentToProfileFragment(memberId = memberId))
+                Navigation.findNavController(it).navigate(
+                    FollowFragmentDirections.actionFollowFragmentToProfileFragment(memberId = memberId)
+                )
             }
         }
 

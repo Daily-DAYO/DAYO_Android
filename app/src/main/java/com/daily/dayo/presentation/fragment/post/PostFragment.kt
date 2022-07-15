@@ -25,6 +25,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.*
@@ -37,7 +39,10 @@ import com.daily.dayo.presentation.viewmodel.PostViewModel
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class PostFragment : Fragment() {
@@ -45,6 +50,7 @@ class PostFragment : Fragment() {
     private val postViewModel by activityViewModels<PostViewModel>()
     private val args by navArgs<PostFragmentArgs>()
     private lateinit var mAlertDialog: AlertDialog
+    private lateinit var glideRequestManager: RequestManager
 
     private lateinit var postCommentAdapter: PostCommentAdapter
     private lateinit var postImageSliderAdapter: PostImageSliderAdapter
@@ -53,6 +59,7 @@ class PostFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        glideRequestManager = Glide.with(this)
 
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         keyboardVisibilityUtils = KeyboardVisibilityUtils(requireActivity().window,
@@ -92,17 +99,19 @@ class PostFragment : Fragment() {
         }
     }
 
-    private fun setOnUserProfileClickListener(memberId: String){
+    private fun setOnUserProfileClickListener(memberId: String) {
         binding.imgPostUserProfile.setOnClickListener {
-            Navigation.findNavController(it).navigate(PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = memberId))
+            Navigation.findNavController(it)
+                .navigate(PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = memberId))
         }
         binding.tvPostUserNickname.setOnClickListener {
-            Navigation.findNavController(it).navigate(PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = memberId))
+            Navigation.findNavController(it)
+                .navigate(PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = memberId))
         }
     }
 
     private fun setCommentListAdapter() {
-        postCommentAdapter = PostCommentAdapter()
+        postCommentAdapter = PostCommentAdapter(requestManager = glideRequestManager)
         binding.rvPostCommentList.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPostCommentList.adapter = postCommentAdapter
     }
@@ -111,7 +120,11 @@ class PostFragment : Fragment() {
         binding.btnPostOption.setOnClickListener {
             if (isMine) {
                 Navigation.findNavController(it)
-                    .navigate(PostFragmentDirections.actionPostFragmentToPostOptionMineFragment(postId = args.postId))
+                    .navigate(
+                        PostFragmentDirections.actionPostFragmentToPostOptionMineFragment(
+                            postId = args.postId
+                        )
+                    )
             } else {
                 Navigation.findNavController(it)
                     .navigate(PostFragmentDirections.actionPostFragmentToPostOptionFragment(postId = args.postId))
@@ -131,11 +144,26 @@ class PostFragment : Fragment() {
                                 binding.categoryKR = post.category?.let { it1 -> categoryKR(it1) }
                                 binding.executePendingBindings()
                                 postImageSliderAdapter.submitList(post.postImages)
-                                GlideApp.with(requireContext())
-                                    .load("http://117.17.198.45:8080/images/" + post.userProfileImage)
-                                    .into(binding.imgPostUserProfile)
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    val userThumbnailImgBitmap = withContext(Dispatchers.IO) {
+                                        GlideLoadUtil.loadImageBackground(
+                                            requestManager = glideRequestManager,
+                                            width = 40,
+                                            height = 40,
+                                            imgName = post.userProfileImage
+                                        )
+                                    }
+                                    GlideLoadUtil.loadImageViewProfile(
+                                        requestManager = glideRequestManager,
+                                        width = 40,
+                                        height = 40,
+                                        img = userThumbnailImgBitmap,
+                                        imgView = binding.imgPostUserProfile
+                                    )
+                                }
 
-                                val isMine = (post.memberId == DayoApplication.preferences.getCurrentUser().memberId)
+                                val isMine =
+                                    (post.memberId == DayoApplication.preferences.getCurrentUser().memberId)
                                 setPostOptionClickListener(isMine = isMine)
                                 setPostLikeClickListener(isChecked = post.heart)
                                 post.memberId?.let { it1 -> setOnUserProfileClickListener(it1) }
@@ -268,7 +296,7 @@ class PostFragment : Fragment() {
     }
 
     private fun setImageSlider() {
-        postImageSliderAdapter = PostImageSliderAdapter()
+        postImageSliderAdapter = PostImageSliderAdapter(requestManager = glideRequestManager)
         with(binding.vpPostImage) {
             adapter = postImageSliderAdapter
             offscreenPageLimit = 1
@@ -365,20 +393,37 @@ class PostFragment : Fragment() {
     }
 
     private fun setCreatePostComment() {
-        GlideApp.with(requireContext())
-            .load("http://117.17.198.45:8080/images/" + DayoApplication.preferences.getCurrentUser().profileImg)
-            .into(binding.imgPostCommentMyProfile)
+        CoroutineScope(Dispatchers.Main).launch {
+            val userThumbnailImgBitmap = withContext(Dispatchers.IO) {
+                GlideLoadUtil.loadImageBackground(
+                    requestManager = glideRequestManager,
+                    width = 40,
+                    height = 40,
+                    imgName = DayoApplication.preferences.getCurrentUser().profileImg ?: ""
+                )
+            }
+            GlideLoadUtil.loadImageViewProfile(
+                requestManager = glideRequestManager,
+                width = 40,
+                height = 40,
+                img = userThumbnailImgBitmap,
+                imgView = binding.imgPostCommentMyProfile
+            )
+        }
 
         binding.tvPostCommentUpload.setOnClickListener {
             if (binding.etPostCommentDescription.text.toString().trim().isNotEmpty()) {
-                postViewModel.requestCreatePostComment(contents = binding.etPostCommentDescription.text.toString(), postId = args.postId)
+                postViewModel.requestCreatePostComment(
+                    contents = binding.etPostCommentDescription.text.toString(),
+                    postId = args.postId
+                )
                 with(binding.etPostCommentDescription) {
                     setText("")
                     clearFocus()
                     HideKeyBoardUtil.hide(requireContext(), this)
                 }
-                postViewModel.postCommentCreateSuccess.observe(viewLifecycleOwner){
-                    if(it.getContentIfNotHandled() == true) refreshPostComment()
+                postViewModel.postCommentCreateSuccess.observe(viewLifecycleOwner) {
+                    if (it.getContentIfNotHandled() == true) refreshPostComment()
                 }
             }
         }

@@ -10,14 +10,6 @@ data class CreateFollowResponse(
     @SerializedName("memberId")
     val memberId: String
 )
-
-data class ListAllMyFollowerResponse(
-    @SerializedName("count")
-    val count: Int,
-    @SerializedName("data")
-    val data: List<MyFollowerDto>
-)
-
 data class ListAllFollowerResponse(
     @SerializedName("count")
     val count: Int,
@@ -26,13 +18,6 @@ data class ListAllFollowerResponse(
 )
 
 data class ListAllFollowingResponse(
-    @SerializedName("count")
-    val count: Int,
-    @SerializedName("data")
-    val data: List<MyFollowerDto>
-)
-
-data class ListAllMyFollowingResponse(
     @SerializedName("count")
     val count: Int,
     @SerializedName("data")

@@ -7,17 +7,24 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.RequestManager
 import com.daily.dayo.BR
 import com.daily.dayo.DayoApplication
-import com.daily.dayo.common.GlideApp
+import com.daily.dayo.common.GlideLoadUtil
+import com.daily.dayo.common.GlideLoadUtil.loadImageViewProfile
 import com.daily.dayo.databinding.ItemPostCommentBinding
 import com.daily.dayo.domain.model.Comment
 import com.daily.dayo.presentation.fragment.post.PostFragmentDirections
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class PostCommentAdapter : ListAdapter<Comment, PostCommentAdapter.PostCommentViewHolder>(
-    diffCallback
-) {
+class PostCommentAdapter(private val requestManager: RequestManager) :
+    ListAdapter<Comment, PostCommentAdapter.PostCommentViewHolder>(
+        diffCallback
+    ) {
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Comment>() {
             override fun areItemsTheSame(oldItem: Comment, newItem: Comment) =
@@ -70,9 +77,23 @@ class PostCommentAdapter : ListAdapter<Comment, PostCommentAdapter.PostCommentVi
                 layoutPostCommentDelete.setOnClickListener {
                     Snackbar.make(it, "삭제버튼 클릭", Snackbar.LENGTH_SHORT).show()
                 }
-                GlideApp.with(imgPostCommentUserProfile.context)
-                    .load("http://117.17.198.45:8080/images/" + comment.profileImg)
-                    .into(imgPostCommentUserProfile)
+                CoroutineScope(Dispatchers.Main).launch {
+                    val userThumbnailImgBitmap = withContext(Dispatchers.IO) {
+                        GlideLoadUtil.loadImageBackground(
+                            requestManager = requestManager,
+                            width = 40,
+                            height = 40,
+                            imgName = comment.profileImg
+                        )
+                    }
+                    loadImageViewProfile(
+                        requestManager = requestManager,
+                        width = 40,
+                        height = 40,
+                        img = userThumbnailImgBitmap,
+                        imgView = imgPostCommentUserProfile
+                    )
+                }
             }
 
             val pos = adapterPosition
@@ -89,12 +110,14 @@ class PostCommentAdapter : ListAdapter<Comment, PostCommentAdapter.PostCommentVi
             setBindingSetVariable(comment)
         }
 
-        private fun setOnProfileClickListener(commentMemberId: String){
+        private fun setOnProfileClickListener(commentMemberId: String) {
             binding.imgPostCommentUserProfile.setOnClickListener {
-                Navigation.findNavController(it).navigate(PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = commentMemberId))
+                Navigation.findNavController(it)
+                    .navigate(PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = commentMemberId))
             }
             binding.tvPostCommentUserNickname.setOnClickListener {
-                Navigation.findNavController(it).navigate(PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = commentMemberId))
+                Navigation.findNavController(it)
+                    .navigate(PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = commentMemberId))
             }
         }
 

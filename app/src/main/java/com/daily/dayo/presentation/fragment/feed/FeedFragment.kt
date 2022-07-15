@@ -11,6 +11,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentFeedBinding
@@ -25,6 +27,12 @@ class FeedFragment : Fragment() {
     private var binding by autoCleared<FragmentFeedBinding>()
     private val feedViewModel by activityViewModels<FeedViewModel>()
     private lateinit var feedListAdapter: FeedListAdapter
+    private lateinit var glideRequestManager: RequestManager
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        glideRequestManager = Glide.with(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +51,7 @@ class FeedFragment : Fragment() {
     }
 
     private fun setRvFeedListAdapter() {
-        feedListAdapter = FeedListAdapter()
+        feedListAdapter = FeedListAdapter(requestManager = glideRequestManager)
         binding.rvFeedPost.adapter = feedListAdapter
     }
 

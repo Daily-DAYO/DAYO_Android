@@ -5,12 +5,19 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.daily.dayo.common.GlideApp
+import com.bumptech.glide.RequestManager
+import com.daily.dayo.common.GlideLoadUtil
+import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.databinding.ItemPostImageSliderBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class PostImageSliderAdapter : ListAdapter<String, PostImageSliderAdapter.PostImageViewHolder>(
-    diffCallback
-) {
+class PostImageSliderAdapter(private val requestManager: RequestManager) :
+    ListAdapter<String, PostImageSliderAdapter.PostImageViewHolder>(
+        diffCallback
+    ) {
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<String>() {
             override fun areItemsTheSame(oldItem: String, newItem: String) =
@@ -42,9 +49,27 @@ class PostImageSliderAdapter : ListAdapter<String, PostImageSliderAdapter.PostIm
     inner class PostImageViewHolder(private val binding: ItemPostImageSliderBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindSliderImage(imageURL: String?) {
-            GlideApp.with(binding.imgSlider.context)
-                .load("http://117.17.198.45:8080/images/" + imageURL)
-                .into(binding.imgSlider)
+            val layoutParams = ViewGroup.MarginLayoutParams(
+                ViewGroup.MarginLayoutParams.MATCH_PARENT,
+                ViewGroup.MarginLayoutParams.MATCH_PARENT
+            )
+            CoroutineScope(Dispatchers.Main).launch {
+                val postImage = withContext(Dispatchers.IO) {
+                    GlideLoadUtil.loadImageBackground(
+                        requestManager = requestManager,
+                        width = 40,
+                        height = 40,
+                        imgName = imageURL ?: ""
+                    )
+                }
+                loadImageView(
+                    requestManager = requestManager,
+                    width = layoutParams.width,
+                    height = layoutParams.width,
+                    img = postImage,
+                    imgView = binding.imgSlider
+                )
+            }
         }
     }
 }
