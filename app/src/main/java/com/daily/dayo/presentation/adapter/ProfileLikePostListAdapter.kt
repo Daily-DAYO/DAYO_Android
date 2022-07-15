@@ -6,13 +6,20 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.daily.dayo.common.GlideApp
+import com.bumptech.glide.RequestManager
+import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
+import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.databinding.ItemProfileLikePostBinding
 import com.daily.dayo.domain.model.LikePost
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class ProfileLikePostListAdapter : RecyclerView.Adapter<ProfileLikePostListAdapter.ProfileLikePostListViewHolder>(){
+class ProfileLikePostListAdapter(private val requestManager: RequestManager) :
+    RecyclerView.Adapter<ProfileLikePostListAdapter.ProfileLikePostListViewHolder>() {
 
-    companion object{
+    companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<LikePost>() {
             override fun areItemsTheSame(oldItem: LikePost, newItem: LikePost) =
                 oldItem === newItem
@@ -25,9 +32,12 @@ class ProfileLikePostListAdapter : RecyclerView.Adapter<ProfileLikePostListAdapt
     private val differ = AsyncListDiffer(this, diffCallback)
     fun submitList(list: List<LikePost>) = differ.submitList(list)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : ProfileLikePostListViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ProfileLikePostListViewHolder {
         return ProfileLikePostListViewHolder(
-            ItemProfileLikePostBinding.inflate(LayoutInflater.from(parent.context), parent,false)
+            ItemProfileLikePostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -40,26 +50,46 @@ class ProfileLikePostListAdapter : RecyclerView.Adapter<ProfileLikePostListAdapt
         return differ.currentList.size
     }
 
-    interface OnItemClickListener{
-        fun onItemClick(v: View, likePost: LikePost, pos : Int)
+    interface OnItemClickListener {
+        fun onItemClick(v: View, likePost: LikePost, pos: Int)
     }
-    private var listener : OnItemClickListener? = null
-    fun setOnItemClickListener(listener : OnItemClickListener) {
+
+    private var listener: OnItemClickListener? = null
+    fun setOnItemClickListener(listener: OnItemClickListener) {
         this.listener = listener
     }
 
-    inner class ProfileLikePostListViewHolder(private val binding: ItemProfileLikePostBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class ProfileLikePostListViewHolder(private val binding: ItemProfileLikePostBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(likePost : LikePost) {
-            GlideApp.with(binding.imgProfileLikePost.context)
-                .load("http://117.17.198.45:8080/images/" + likePost.thumbnailImage)
-                .into(binding.imgProfileLikePost)
+        fun bind(likePost: LikePost) {
+            val layoutParams = ViewGroup.MarginLayoutParams(
+                ViewGroup.MarginLayoutParams.MATCH_PARENT,
+                ViewGroup.MarginLayoutParams.MATCH_PARENT
+            )
+
+            CoroutineScope(Dispatchers.Main).launch {
+                val profileListPostImage = withContext(Dispatchers.IO) {
+                    loadImageBackground(
+                        requestManager = requestManager,
+                        width = layoutParams.width,
+                        height = layoutParams.width,
+                        imgName = likePost.thumbnailImage
+                    )
+                }
+                loadImageView(
+                    requestManager = requestManager,
+                    width = layoutParams.width,
+                    height = layoutParams.width,
+                    img = profileListPostImage,
+                    imgView = binding.imgProfileLikePost
+                )
+            }
 
             val pos = adapterPosition
-            if(pos!= RecyclerView.NO_POSITION)
-            {
+            if (pos != RecyclerView.NO_POSITION) {
                 itemView.setOnClickListener {
-                    listener?.onItemClick(itemView,likePost,pos)
+                    listener?.onItemClick(itemView, likePost, pos)
                 }
             }
         }

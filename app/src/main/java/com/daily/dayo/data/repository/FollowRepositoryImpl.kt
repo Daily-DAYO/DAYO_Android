@@ -18,14 +18,8 @@ class FollowRepositoryImpl @Inject constructor(
     override suspend fun requestListAllFollower(memberId: String): Response<ListAllFollowerResponse> =
         followApiService.requestListAllFollower(memberId)
 
-    override suspend fun requestListAllMyFollower(): Response<ListAllMyFollowerResponse> =
-        followApiService.requestListAllMyFollower()
-
     override suspend fun requestListAllFollowing(memberId: String): Response<ListAllFollowingResponse> =
         followApiService.requestListAllFollowing(memberId)
-
-    override suspend fun requestListAllMyFollowing(): Response<ListAllMyFollowingResponse> =
-        followApiService.requestListAllMyFollowing()
 
     override suspend fun requestCreateFollowUp(body: CreateFollowUpRequest): Response<CreateFollowUpResponse> =
         followApiService.requestCreateFollowUp(body)

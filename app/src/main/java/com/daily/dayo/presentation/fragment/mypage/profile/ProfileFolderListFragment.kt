@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
@@ -19,6 +21,12 @@ class ProfileFolderListFragment : Fragment() {
     private var binding by autoCleared<FragmentProfileFolderListBinding>()
     private val profileViewModel by activityViewModels<ProfileViewModel>()
     private lateinit var profileFolderListAdapter: ProfileFolderListAdapter
+    private lateinit var glideRequestManager: RequestManager
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        glideRequestManager = Glide.with(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,7 +39,7 @@ class ProfileFolderListFragment : Fragment() {
     }
 
     private fun setRvProfileFolderListAdapter() {
-        profileFolderListAdapter = ProfileFolderListAdapter()
+        profileFolderListAdapter = ProfileFolderListAdapter(requestManager = glideRequestManager)
         binding.rvProfileFolder.adapter = profileFolderListAdapter
         profileFolderListAdapter.setOnItemClickListener(object : ProfileFolderListAdapter.OnItemClickListener{
             override fun onItemClick(v: View, folder: Folder, pos: Int) {

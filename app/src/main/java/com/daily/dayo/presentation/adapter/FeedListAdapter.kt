@@ -1,6 +1,7 @@
 package com.daily.dayo.presentation.adapter
 
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -10,17 +11,24 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
-import com.daily.dayo.common.GlideApp
+import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
+import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.databinding.ItemFeedPostBinding
 import com.daily.dayo.domain.model.Comment
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.domain.model.categoryKR
 import com.daily.dayo.presentation.fragment.feed.FeedFragmentDirections
 import com.google.android.material.chip.Chip
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class FeedListAdapter : ListAdapter<Post, FeedListAdapter.FeedListViewHolder>(diffCallback) {
+class FeedListAdapter(private val requestManager: RequestManager) :
+    ListAdapter<Post, FeedListAdapter.FeedListViewHolder>(diffCallback) {
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Post>() {
             override fun areItemsTheSame(oldItem: Post, newItem: Post) =
@@ -63,15 +71,44 @@ class FeedListAdapter : ListAdapter<Post, FeedListAdapter.FeedListViewHolder>(di
         fun bind(post: Post) {
             binding.post = post
             binding.categoryKR = post.category?.let { categoryKR(it) }
-
-            GlideApp.with(binding.imgFeedPostUserProfile.context)
-                .load("http://117.17.198.45:8080/images/" + post.userProfileImage)
-                .centerCrop()
-                .into(binding.imgFeedPostUserProfile)
-            GlideApp.with(binding.imgFeedPost.context)
-                .load("http://117.17.198.45:8080/images/" + post.thumbnailImage)
-                .centerCrop()
-                .into(binding.imgFeedPost)
+            val layoutParams = ViewGroup.MarginLayoutParams(
+                ViewGroup.MarginLayoutParams.MATCH_PARENT,
+                ViewGroup.MarginLayoutParams.MATCH_PARENT
+            )
+            CoroutineScope(Dispatchers.Main).launch {
+                val postImgBitmap: Bitmap?
+                val userThumbnailImgBitmap: Bitmap?
+                postImgBitmap = withContext(Dispatchers.IO) {
+                    loadImageBackground(
+                        requestManager = requestManager,
+                        width = 158,
+                        height = 158,
+                        imgName = post.thumbnailImage ?: ""
+                    )
+                }
+                userThumbnailImgBitmap = withContext(Dispatchers.IO) {
+                    loadImageBackground(
+                        requestManager = requestManager,
+                        width = 17,
+                        height = 17,
+                        imgName = post.userProfileImage ?: ""
+                    )
+                }
+                loadImageView(
+                    requestManager = requestManager,
+                    width = layoutParams.width,
+                    height = layoutParams.width,
+                    img = userThumbnailImgBitmap,
+                    imgView = binding.imgFeedPostUserProfile
+                )
+                loadImageView(
+                    requestManager = requestManager,
+                    width = layoutParams.width,
+                    height = layoutParams.width,
+                    img = postImgBitmap,
+                    imgView = binding.imgFeedPost
+                )
+            }
 
             val isMine = (post.memberId == DayoApplication.preferences.getCurrentUser().memberId)
             setPostOptionClickListener(isMine = isMine, postId = post.postId!!)
