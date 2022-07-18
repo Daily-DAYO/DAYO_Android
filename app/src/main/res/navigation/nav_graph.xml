@@ -305,11 +305,36 @@
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting">
         <action
+            android:id="@+id/action_settingFragment_to_settingChangePasswordCurrentFragment"
+            app:destination="@id/SettingChangePasswordCurrentFragment" />
+        <action
             android:id="@+id/action_settingFragment_to_withdrawFragment"
             app:destination="@id/WithdrawFragment" />
         <action
             android:id="@+id/action_settingFragment_to_settingNotificationFragment"
             app:destination="@id/SettingNotificationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/SettingChangePasswordCurrentFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.changePassword.SettingChangePasswordCurrentFragment"
+        android:label="fragment_setting_change_password_current"
+        tools:layout="@layout/fragment_setting_change_password_current">
+        <action
+            android:id="@+id/action_settingChangePasswordCurrentFragment_to_settingChangePasswordNewFragment"
+            app:destination="@id/SettingChangePasswordNewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/SettingChangePasswordNewFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.changePassword.SettingChangePasswordNewFragment"
+        android:label="fragment_setting_change_password_new"
+        tools:layout="@layout/fragment_setting_change_password_new">
+        <action
+            android:id="@+id/action_settingChangePasswordNewFragment_to_settingFragment"
+            app:destination="@id/SettingFragment"
+            app:popUpTo="@id/SettingFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment

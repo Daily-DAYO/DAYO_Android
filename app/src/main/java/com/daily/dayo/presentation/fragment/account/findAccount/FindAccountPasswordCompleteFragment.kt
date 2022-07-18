@@ -1,4 +1,4 @@
-package com.daily.dayo.presentation.fragment.setting.findAccount
+package com.daily.dayo.presentation.fragment.account.findAccount
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

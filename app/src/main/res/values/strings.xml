@@ -40,7 +40,8 @@
     <string name="hint_login_email_address">이메일을 입력해주세요.</string>
     <string name="hint_login_email_password">비밀번호를 입력해주세요.</string>
     <string name="login_email_alert_message_fail">이메일 주소 또는 비밀번호를 잘못 입력했어요.</string>
-    <string name="login_email_forget_guide_message">이메일 / 비밀번호 찾기</string>
+    <string name="login_email_forget"><u>비밀번호</u>를 잊어버렸어요</string>
+    <string name="login_email_signup">아직 계정이 없으신가요? <u>회원가입</u>하기</string>
 
     <!-- Home -->
     <string name="DayoPick">DAYO PICK</string>
@@ -222,6 +223,13 @@
     <string name="setting_logout_message">계정을 로그아웃 할까요?</string>
     <string name="setting_withdraw_message">계정을 삭제할까요?</string>
     <string name="setting_withdraw_explanation_message">모든 정보가 삭제되며, 복구가 불가능합니다.</string>
+
+    <!-- Change Password -->
+    <string name="setting_change_password_current_fail_message">비밀번호를 정확히 입력해주세요.</string>
+    <string name="setting_change_password_current_title">현재 비밀번호를\n입력해주세요.</string>
+    <string name="setting_change_password_new_title">새로운 비밀번호를\n입력해주세요.</string>
+    <string name="change_password">비밀번호 변경</string>
+    <string name="change_password_success_message">비밀번호가 변경되었습니다.</string>
 
     <!-- Notification Setting -->
     <string name="setting_notification_title">알림 설정</string>

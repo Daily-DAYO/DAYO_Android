@@ -30,7 +30,7 @@
 
     <fragment
         android:id="@+id/FindAccountPasswordCheckEmail"
-        android:name="com.daily.dayo.presentation.fragment.setting.findAccount.FindAccountPasswordCheckEmailFragment"
+        android:name="com.daily.dayo.presentation.fragment.account.findAccount.FindAccountPasswordCheckEmailFragment"
         android:label="fragment_find_account_password_check_email"
         tools:layout="@layout/fragment_find_account_password_check_email">
         <action
@@ -40,7 +40,7 @@
 
     <fragment
         android:id="@+id/FindAccountPasswordCheckEmailCertificateFragment"
-        android:name="com.daily.dayo.presentation.fragment.setting.findAccount.FindAccountPasswordCheckEmailCertificateFragment"
+        android:name="com.daily.dayo.presentation.fragment.account.findAccount.FindAccountPasswordCheckEmailCertificateFragment"
         android:label="fragment_find_account_password_check_email_certificate"
         tools:layout="@layout/fragment_find_account_password_check_email_certificate">
         <argument
@@ -54,7 +54,7 @@
 
     <fragment
         android:id="@+id/FindAccountPasswordNewPasswordFragment"
-        android:name="com.daily.dayo.presentation.fragment.setting.findAccount.FindAccountPasswordNewPasswordFragment"
+        android:name="com.daily.dayo.presentation.fragment.account.findAccount.FindAccountPasswordNewPasswordFragment"
         android:label="fragment_find_account_password_new_password"
         tools:layout="@layout/fragment_find_account_password_new_password">
         <argument
@@ -68,7 +68,7 @@
 
     <fragment
         android:id="@+id/FindAccountPasswordNewPasswordConfirmationFragment"
-        android:name="com.daily.dayo.presentation.fragment.setting.findAccount.FindAccountPasswordNewPasswordConfirmationFragment"
+        android:name="com.daily.dayo.presentation.fragment.account.findAccount.FindAccountPasswordNewPasswordConfirmationFragment"
         android:label="fragment_find_account_password_new_password_confirmation"
         tools:layout="@layout/fragment_find_account_password_new_password_confirmation">
         <argument
@@ -85,7 +85,7 @@
 
     <fragment
         android:id="@+id/FindAccountPasswordCompleteFragment"
-        android:name="com.daily.dayo.presentation.fragment.setting.findAccount.FindAccountPasswordCompleteFragment"
+        android:name="com.daily.dayo.presentation.fragment.account.findAccount.FindAccountPasswordCompleteFragment"
         android:label="fragment_find_account_password_complete"
         tools:layout="@layout/fragment_find_account_password_complete">
         <action
