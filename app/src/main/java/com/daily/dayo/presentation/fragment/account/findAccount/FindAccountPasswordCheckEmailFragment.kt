@@ -1,4 +1,4 @@
-package com.daily.dayo.presentation.fragment.setting.findAccount
+package com.daily.dayo.presentation.fragment.account.findAccount
 
 import android.os.Bundle
 import android.text.Editable
@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
@@ -144,11 +143,11 @@ class FindAccountPasswordCheckEmailFragment : Fragment() {
                 binding.etFindAccountPasswordCheckEmailUserInput.text.toString().trim()
             ).matches()
         ) { // 이메일 주소 양식 검사
-            loginViewModel.requestCheckEmailDuplicate(
-                binding.etFindAccountPasswordCheckEmailUserInput.text.toString().trim()
+            loginViewModel.requestCheckEmail(
+                inputEmail = binding.etFindAccountPasswordCheckEmailUserInput.text.toString().trim()
             )
-            loginViewModel.isEmailDuplicate.observe(viewLifecycleOwner, Observer { isDuplicate ->
-                if (!isDuplicate) { // 이메일 가입과 달리 중복검사해서 false 경우에는 있는 이메일 이므로 성공 처리
+            loginViewModel.checkEmailSuccess.observe(viewLifecycleOwner) { isSuccess ->
+                if (isSuccess) { // 이메일 가입과 달리 중복검사해서 false 경우에는 있는 이메일 이므로 성공 처리
                     SetTextInputLayout.setEditTextErrorThemeWithIcon(
                         requireContext(),
                         binding.layoutFindAccountPasswordCheckEmailUserInput,
@@ -173,7 +172,7 @@ class FindAccountPasswordCheckEmailFragment : Fragment() {
                         binding.btnFindAccountPasswordCheckEmailNext
                     )
                 }
-            })
+            }
         } else {
             SetTextInputLayout.setEditTextErrorThemeWithIcon(
                 requireContext(),

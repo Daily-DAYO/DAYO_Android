@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -41,6 +42,7 @@ class LoginEmailFragment : Fragment() {
         setTextEditorActionListener()
         activationNextButton()
         setForgetAccountClickListener()
+        setSignupClickListener()
         return binding.root
     }
 
@@ -83,24 +85,20 @@ class LoginEmailFragment : Fragment() {
     }
 
     private fun loginSuccess() {
-        binding.tvLoginEmailGuideMessage.visibility = View.INVISIBLE
-        loginViewModel.loginSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
+        loginViewModel.loginSuccess.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess.peekContent()) {
                 val intent = Intent(requireContext(), MainActivity::class.java)
                 intent.flags =
                     Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 startActivity(intent)
                 requireActivity().finish()
-                binding.tvLoginEmailGuideMessage.visibility = View.INVISIBLE
             } else {
                 if (isLoginButtonClick) {
                     Log.e(ContentValues.TAG, "로그인 실패")
-                    binding.tvLoginEmailGuideMessage.visibility = View.VISIBLE
-                } else {
-                    binding.tvLoginEmailGuideMessage.visibility = View.INVISIBLE
+                    Toast.makeText(requireContext(), getString(R.string.login_email_alert_message_fail), Toast.LENGTH_SHORT).show()
                 }
             }
-        })
+        }
     }
 
     private fun initEditText() {
@@ -238,8 +236,14 @@ class LoginEmailFragment : Fragment() {
     }
 
     private fun setForgetAccountClickListener() {
-        binding.tvLoginEmailForget.setOnClickListener {
+        binding.tvLoginEmailForgotPassword.setOnClickListener {
             findNavController().navigate(R.id.action_loginEmailFragment_to_findAccountPasswordCheckEmail)
+        }
+    }
+
+    private fun setSignupClickListener() {
+        binding.tvLoginEmailSignup.setOnClickListener {
+            findNavController().navigate(R.id.action_loginEmailFragment_to_signupEmailSetEmailAddressFragment)
         }
     }
 }
