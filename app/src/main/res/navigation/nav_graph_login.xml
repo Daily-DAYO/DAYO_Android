@@ -13,9 +13,6 @@
         <action
             android:id="@+id/action_loginFragment_to_loginEmailFragment"
             app:destination="@+id/LoginEmailFragment"/>
-        <action
-            android:id="@+id/action_loginFragment_to_signupEmailSetEmailAddressFragment"
-            app:destination="@+id/SignupEmailSetEmailAddressFragment"/>
     </fragment>
 
     <fragment
@@ -26,6 +23,9 @@
         <action
             android:id="@+id/action_loginEmailFragment_to_findAccountPasswordCheckEmail"
             app:destination="@+id/FindAccountPasswordCheckEmail"/>
+        <action
+            android:id="@+id/action_loginEmailFragment_to_signupEmailSetEmailAddressFragment"
+            app:destination="@+id/SignupEmailSetEmailAddressFragment"/>
     </fragment>
 
     <fragment

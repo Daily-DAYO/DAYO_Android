@@ -1,18 +1,21 @@
 package com.daily.dayo.presentation.adapter
 
+import android.graphics.Bitmap
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
-import com.daily.dayo.common.GlideApp
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.databinding.ItemFolderPostBinding
 import com.daily.dayo.domain.model.FolderPost
 import com.daily.dayo.presentation.fragment.mypage.folder.FolderFragmentDirections
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,14 +61,24 @@ class FolderPostListAdapter(private val requestManager: RequestManager) :
                 ViewGroup.MarginLayoutParams.MATCH_PARENT
             )
 
+            binding.layoutFolderPostContentsShimmer.startShimmer()
+            binding.layoutFolderPostContentsShimmer.visibility = View.VISIBLE
+            binding.imgFolderPost.visibility = View.INVISIBLE
+
             CoroutineScope(Dispatchers.Main).launch {
-                val folderPostImage = withContext(Dispatchers.IO) {
-                    loadImageBackground(
-                        requestManager = requestManager,
-                        width = layoutParams.width,
-                        height = layoutParams.width,
-                        imgName = folderPost.thumbnailImage
-                    )
+                val folderPostImage: Bitmap?
+                if(folderPost.preLoadThumbnail == null) {
+                    folderPostImage = withContext(Dispatchers.IO) {
+                        loadImageBackground(
+                            requestManager = requestManager,
+                            width = layoutParams.width,
+                            height = layoutParams.width,
+                            imgName = folderPost.thumbnailImage
+                        )
+                    }
+                } else {
+                    folderPostImage = folderPost.preLoadThumbnail!!
+                    folderPost.preLoadThumbnail = null
                 }
                 loadImageView(
                     requestManager = requestManager,
@@ -74,6 +87,15 @@ class FolderPostListAdapter(private val requestManager: RequestManager) :
                     img = folderPostImage,
                     imgView = binding.imgFolderPost
                 )
+            }.invokeOnCompletion { throwable ->
+                when (throwable) {
+                    is CancellationException -> Log.e("Image Loading", "CANCELLED")
+                    null -> {
+                        binding.layoutFolderPostContentsShimmer.stopShimmer()
+                        binding.layoutFolderPostContentsShimmer.visibility = View.GONE
+                        binding.imgFolderPost.visibility = View.VISIBLE
+                    }
+                }
             }
 
             binding.root.setOnClickListener {
@@ -82,6 +104,4 @@ class FolderPostListAdapter(private val requestManager: RequestManager) :
             }
         }
     }
-
-
 }
