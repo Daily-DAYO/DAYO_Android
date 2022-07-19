@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -51,10 +50,14 @@ class FolderFragment : Fragment() {
         binding = FragmentFolderBinding.inflate(inflater, container, false)
         setBackButtonClickListener()
         setFolderOptionClickListener()
-        setFolderDetail()
         setRvFolderPostListAdapter()
         loadingPost()
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setFolderDetail()
     }
 
     private fun setBackButtonClickListener() {
@@ -89,9 +92,8 @@ class FolderFragment : Fragment() {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { folder ->
-                        binding.tvFolderName.text = folder.name
-                        binding.tvFolderSubheading.text = folder.subheading
-                        binding.tvFolderPostCount.text = folder.postCount.toString()
+                        binding.folder = folder
+                        binding.isMine = folder.memberId == DayoApplication.preferences.getCurrentUser().memberId
                         CoroutineScope(Dispatchers.Main).launch {
                             val folderThumbnailImage = withContext(Dispatchers.IO) {
                                 loadImageBackground(

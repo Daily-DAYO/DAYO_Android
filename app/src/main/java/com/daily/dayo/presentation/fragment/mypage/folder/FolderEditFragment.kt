@@ -92,7 +92,7 @@ class FolderEditFragment : Fragment() {
                                 binding.tvFolderSettingAddTitle.text =
                                     getString(R.string.folder_edit_title)
                                 binding.etFolderSettingAddSetTitle.text =
-                                    SpannableStringBuilder(folder.name)
+                                    SpannableStringBuilder(folder.title)
                                 folder.subheading?.let { subheading ->
                                     binding.etFolderSettingAddSetSubheading.text =
                                         SpannableStringBuilder(subheading)

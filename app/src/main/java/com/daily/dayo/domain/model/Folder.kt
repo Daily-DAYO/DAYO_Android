@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 
 data class Folder(
     val folderId: Int?,
-    val name: String,
+    val title: String,
     val memberId: String?,
     val privacy: Privacy,
     val subheading: String?,
