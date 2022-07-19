@@ -1,5 +1,7 @@
 package com.daily.dayo.presentation.adapter
 
+import android.graphics.Bitmap
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
-import com.daily.dayo.databinding.ItemProfileLikePostBinding
+import com.daily.dayo.databinding.ItemProfilePostBinding
 import com.daily.dayo.domain.model.LikePost
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,7 +40,7 @@ class ProfileLikePostListAdapter(private val requestManager: RequestManager) :
         viewType: Int
     ): ProfileLikePostListViewHolder {
         return ProfileLikePostListViewHolder(
-            ItemProfileLikePostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ItemProfilePostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -59,7 +62,7 @@ class ProfileLikePostListAdapter(private val requestManager: RequestManager) :
         this.listener = listener
     }
 
-    inner class ProfileLikePostListViewHolder(private val binding: ItemProfileLikePostBinding) :
+    inner class ProfileLikePostListViewHolder(private val binding: ItemProfilePostBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(likePost: LikePost) {
@@ -68,22 +71,41 @@ class ProfileLikePostListAdapter(private val requestManager: RequestManager) :
                 ViewGroup.MarginLayoutParams.MATCH_PARENT
             )
 
+            binding.layoutProfilePostShimmer.startShimmer()
+            binding.layoutProfilePostShimmer.visibility = View.VISIBLE
+            binding.imgProfilePost.visibility = View.INVISIBLE
+
             CoroutineScope(Dispatchers.Main).launch {
-                val profileListPostImage = withContext(Dispatchers.IO) {
-                    loadImageBackground(
-                        requestManager = requestManager,
-                        width = layoutParams.width,
-                        height = layoutParams.width,
-                        imgName = likePost.thumbnailImage
-                    )
+                val profileListPostImage: Bitmap?
+                if(likePost.preLoadThumbnail == null) {
+                    profileListPostImage = withContext(Dispatchers.IO) {
+                        loadImageBackground(
+                            requestManager = requestManager,
+                            width = layoutParams.width,
+                            height = layoutParams.width,
+                            imgName = likePost.thumbnailImage
+                        )
+                    }
+                } else {
+                    profileListPostImage = likePost.preLoadThumbnail
+                    likePost.preLoadThumbnail = null
                 }
                 loadImageView(
                     requestManager = requestManager,
                     width = layoutParams.width,
                     height = layoutParams.width,
-                    img = profileListPostImage,
-                    imgView = binding.imgProfileLikePost
+                    img = profileListPostImage!!,
+                    imgView = binding.imgProfilePost
                 )
+            }.invokeOnCompletion { throwable ->
+                when (throwable) {
+                    is CancellationException -> Log.e("Image Loading", "CANCELLED")
+                    null -> {
+                        binding.layoutProfilePostShimmer.stopShimmer()
+                        binding.layoutProfilePostShimmer.visibility = View.GONE
+                        binding.imgProfilePost.visibility = View.VISIBLE
+                    }
+                }
             }
 
             val pos = adapterPosition
@@ -94,6 +116,4 @@ class ProfileLikePostListAdapter(private val requestManager: RequestManager) :
             }
         }
     }
-
-
 }

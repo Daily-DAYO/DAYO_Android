@@ -1,5 +1,7 @@
 package com.daily.dayo.presentation.adapter
 
+import android.graphics.Bitmap
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +13,7 @@ import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.databinding.ItemSearchResultPostBinding
 import com.daily.dayo.domain.model.Search
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,22 +63,41 @@ class SearchTagResultPostAdapter(private val requestManager: RequestManager) :
     inner class SearchTagResultPostViewHolder(private val binding: ItemSearchResultPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(postContent: Search) {
+            binding.layoutSearchResultPostContentsShimmer.startShimmer()
+            binding.layoutSearchResultPostContentsShimmer.visibility = View.VISIBLE
+            binding.imgSearchResultPost.visibility = View.INVISIBLE
+
             CoroutineScope(Dispatchers.Main).launch {
-                val postImage = withContext(Dispatchers.IO) {
-                    loadImageBackground(
-                        requestManager = requestManager,
-                        width = 158,
-                        height = 158,
-                        imgName = postContent.thumbnailImage
-                    )
+                val postImage: Bitmap?
+                if (postContent.preLoadThumbnail == null) {
+                    postImage = withContext(Dispatchers.IO) {
+                        loadImageBackground(
+                            requestManager = requestManager,
+                            width = 158,
+                            height = 158,
+                            imgName = postContent.thumbnailImage
+                        )
+                    }
+                } else {
+                    postImage = postContent.preLoadThumbnail
+                    postContent.preLoadThumbnail = null
                 }
                 loadImageView(
                     requestManager = requestManager,
                     width = 158,
                     height = 158,
-                    img = postImage,
+                    img = postImage!!,
                     imgView = binding.imgSearchResultPost
                 )
+            }.invokeOnCompletion { throwable ->
+                when (throwable) {
+                    is CancellationException -> Log.e("Image Loading", "CANCELLED")
+                    null -> {
+                        binding.layoutSearchResultPostContentsShimmer.stopShimmer()
+                        binding.layoutSearchResultPostContentsShimmer.visibility = View.GONE
+                        binding.imgSearchResultPost.visibility = View.VISIBLE
+                    }
+                }
             }
 
             val pos = adapterPosition

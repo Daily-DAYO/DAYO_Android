@@ -1,5 +1,7 @@
 package com.daily.dayo.presentation.adapter
 
+import android.graphics.Bitmap
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,8 +10,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.GlideLoadUtil
-import com.daily.dayo.databinding.ItemProfileLikePostBinding
+import com.daily.dayo.databinding.ItemProfilePostBinding
 import com.daily.dayo.domain.model.BookmarkPost
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,7 +39,7 @@ class ProfileBookmarkPostListAdapter(private val requestManager: RequestManager)
         viewType: Int
     ): ProfileBookmarkPostListViewHolder {
         return ProfileBookmarkPostListViewHolder(
-            ItemProfileLikePostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ItemProfilePostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -58,7 +61,7 @@ class ProfileBookmarkPostListAdapter(private val requestManager: RequestManager)
         this.listener = listener
     }
 
-    inner class ProfileBookmarkPostListViewHolder(private val binding: ItemProfileLikePostBinding) :
+    inner class ProfileBookmarkPostListViewHolder(private val binding: ItemProfilePostBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(bookmarkPost: BookmarkPost) {
@@ -67,22 +70,43 @@ class ProfileBookmarkPostListAdapter(private val requestManager: RequestManager)
                 ViewGroup.MarginLayoutParams.WRAP_CONTENT
             )
 
+            with(binding.layoutProfilePostShimmer) {
+                startShimmer()
+                visibility = View.VISIBLE
+            }
+            binding.imgProfilePost.visibility = View.INVISIBLE
+
             CoroutineScope(Dispatchers.Main).launch {
-                val userThumbnailImgBitmap = withContext(Dispatchers.IO) {
-                    GlideLoadUtil.loadImageBackground(
-                        requestManager = requestManager,
-                        width = layoutParams.width,
-                        height = layoutParams.width,
-                        imgName = bookmarkPost.thumbnailImage
-                    )
+                val userThumbnailImgBitmap: Bitmap?
+                if(bookmarkPost.preLoadThumbnail == null) {
+                    userThumbnailImgBitmap = withContext(Dispatchers.IO) {
+                        GlideLoadUtil.loadImageBackground(
+                            requestManager = requestManager,
+                            width = layoutParams.width,
+                            height = layoutParams.width,
+                            imgName = bookmarkPost.thumbnailImage
+                        )
+                    }
+                } else {
+                    userThumbnailImgBitmap = bookmarkPost.preLoadThumbnail
+                    bookmarkPost.preLoadThumbnail = null
                 }
                 GlideLoadUtil.loadImageView(
                     requestManager = requestManager,
                     width = layoutParams.width,
                     height = layoutParams.width,
-                    img = userThumbnailImgBitmap,
-                    imgView = binding.imgProfileLikePost
+                    img = userThumbnailImgBitmap!!,
+                    imgView = binding.imgProfilePost
                 )
+            }.invokeOnCompletion { throwable ->
+                when (throwable) {
+                    is CancellationException -> Log.e("Image Loading", "CANCELLED")
+                    null -> {
+                        binding.layoutProfilePostShimmer.stopShimmer()
+                        binding.layoutProfilePostShimmer.visibility = View.GONE
+                        binding.imgProfilePost.visibility = View.VISIBLE
+                    }
+                }
             }
 
             val pos = adapterPosition

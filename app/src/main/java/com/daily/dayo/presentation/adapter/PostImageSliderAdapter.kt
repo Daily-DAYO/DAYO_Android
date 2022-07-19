@@ -57,8 +57,8 @@ class PostImageSliderAdapter(private val requestManager: RequestManager) :
                 val postImage = withContext(Dispatchers.IO) {
                     GlideLoadUtil.loadImageBackground(
                         requestManager = requestManager,
-                        width = 40,
-                        height = 40,
+                        width = layoutParams.width,
+                        height = layoutParams.width,
                         imgName = imageURL ?: ""
                     )
                 }

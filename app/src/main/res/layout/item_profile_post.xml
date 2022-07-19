@@ -2,15 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:paddingHorizontal="4dp"
-    android:paddingBottom="8dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingHorizontal="4dp"
     android:paddingBottom="7dp">
 
     <ImageView
-        android:id="@+id/img_folder_post"
+        android:id="@+id/img_profile_post"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scaleType="centerCrop"
@@ -21,15 +19,15 @@
         tools:src="@drawable/ic_dayo_circle_grayscale" />
 
     <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/layout_folder_post_contents_shimmer"
+        android:id="@+id/layout_profile_post_shimmer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="4dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         app:shimmer_base_color="@color/gray_3_9C9C9C"
         app:shimmer_colored="true"
         app:shimmer_highlight_color="@color/gray_6_F6F6F6">
@@ -39,7 +37,7 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/img_folder_post_shimmer"
+                android:id="@+id/img_profile_post_shimmer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"

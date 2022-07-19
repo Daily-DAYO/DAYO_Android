@@ -71,40 +71,36 @@ class FeedListAdapter(private val requestManager: RequestManager) :
         fun bind(post: Post) {
             binding.post = post
             binding.categoryKR = post.category?.let { categoryKR(it) }
-            val layoutParams = ViewGroup.MarginLayoutParams(
-                ViewGroup.MarginLayoutParams.MATCH_PARENT,
-                ViewGroup.MarginLayoutParams.MATCH_PARENT
-            )
             CoroutineScope(Dispatchers.Main).launch {
                 val postImgBitmap: Bitmap?
                 val userThumbnailImgBitmap: Bitmap?
                 postImgBitmap = withContext(Dispatchers.IO) {
                     loadImageBackground(
                         requestManager = requestManager,
-                        width = 158,
-                        height = 158,
+                        width = binding.imgFeedPost.width,
+                        height = binding.imgFeedPost.width,
                         imgName = post.thumbnailImage ?: ""
                     )
                 }
                 userThumbnailImgBitmap = withContext(Dispatchers.IO) {
                     loadImageBackground(
                         requestManager = requestManager,
-                        width = 17,
-                        height = 17,
+                        width = binding.imgFeedPostUserProfile.width,
+                        height = binding.imgFeedPostUserProfile.height,
                         imgName = post.userProfileImage ?: ""
                     )
                 }
                 loadImageView(
                     requestManager = requestManager,
-                    width = layoutParams.width,
-                    height = layoutParams.width,
+                    width = binding.imgFeedPostUserProfile.width,
+                    height = binding.imgFeedPostUserProfile.height,
                     img = userThumbnailImgBitmap,
                     imgView = binding.imgFeedPostUserProfile
                 )
                 loadImageView(
                     requestManager = requestManager,
-                    width = layoutParams.width,
-                    height = layoutParams.width,
+                    width = binding.imgFeedPost.width,
+                    height = binding.imgFeedPost.width,
                     img = postImgBitmap,
                     imgView = binding.imgFeedPost
                 )
