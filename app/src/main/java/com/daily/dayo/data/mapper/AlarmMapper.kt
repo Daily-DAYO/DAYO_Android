@@ -19,6 +19,7 @@ fun AlarmDto.toNotification(): Notification {
         check = check,
         content = content,
         createdTime = textCreatedTime,
+        image = image,
         nickname = nickname,
         memberId = memberId,
         postId = postId
