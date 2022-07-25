@@ -14,13 +14,19 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
+import com.daily.dayo.common.GlideLoadUtil
 import com.daily.dayo.databinding.ItemNotificationBinding
 import com.daily.dayo.domain.model.Notification
 import com.daily.dayo.domain.model.Topic
 import com.daily.dayo.presentation.fragment.notification.NotificationFragmentDirections
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class NotificationListAdapter :
+class NotificationListAdapter(private val requestManager: RequestManager) :
     ListAdapter<Notification, NotificationListAdapter.NotificationListViewHolder>(
         diffCallback
     ) {
@@ -69,6 +75,30 @@ class NotificationListAdapter :
                     notification.alarmId?.let { alarmId ->
                         listener?.notificationItemClick(alarmId = alarmId, alarmCheck = notification.check!!)
                     }
+                }
+            }
+
+            if(notification.image != null) {
+                val layoutParams = ViewGroup.MarginLayoutParams(
+                    ViewGroup.MarginLayoutParams.MATCH_PARENT,
+                    ViewGroup.MarginLayoutParams.MATCH_PARENT
+                )
+                CoroutineScope(Dispatchers.Main).launch {
+                    val thumbnailImage = withContext(Dispatchers.IO) {
+                        GlideLoadUtil.loadImageBackground(
+                            requestManager = requestManager,
+                            width = 56,
+                            height = 56,
+                            imgName = notification.image ?: ""
+                        )
+                    }
+                    GlideLoadUtil.loadImageView(
+                        requestManager = requestManager,
+                        width = layoutParams.width,
+                        height = layoutParams.width,
+                        img = thumbnailImage,
+                        imgView = binding.ivNotificationThumbnail
+                    )
                 }
             }
 

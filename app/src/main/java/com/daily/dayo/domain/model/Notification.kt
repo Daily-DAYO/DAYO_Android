@@ -6,6 +6,7 @@ data class Notification(
     val check: Boolean?,
     val content: String?,
     val createdTime: String?,
+    val image: String?,
     val nickname: String?,
     val memberId: String?,
     val postId: Int?
