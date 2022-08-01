@@ -193,41 +193,50 @@
         android:textColor="@color/gray_1_313131"
         android:layout_marginHorizontal="19dp"
         android:layout_marginTop="11dp"
-        app:layout_goneMarginBottom="25dp"
+        app:layout_goneMarginBottom="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/view_feed_post_horizontal_line"
-        app:layout_constraintBottom_toTopOf="@id/layout_feed_post_tag_list"
+        app:layout_constraintBottom_toTopOf="@id/layout_scroll_feed_post_tag_list"
         tools:text="다이어리를 꾸며봤어요~! 블랙 앤 화이트로 꾸며봤습니다:) 일기를 써보았어요. 이러쿵 저러쿵" />
 
-    <com.google.android.flexbox.FlexboxLayout
-        android:id="@+id/layout_feed_post_tag_list"
+    <HorizontalScrollView
+        android:id="@+id/layout_scroll_feed_post_tag_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="18dp"
-        android:layout_marginTop="10dp"
         android:visibility="@{post.hashtags.size() > 0 ? View.VISIBLE : View.GONE}"
-        app:alignContent="stretch"
-        app:alignItems="stretch"
-        app:flexWrap="wrap"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="18dp"
         app:layout_constraintTop_toBottomOf="@id/tv_feed_post_content"
         app:layout_constraintBottom_toTopOf="@id/view_feed_post_content_comment_divider"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:visibility="visible">
 
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/layout_feed_post_tag_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:alignContent="stretch"
+        app:alignItems="stretch"
+        app:flexDirection="column"
+        app:flexWrap="nowrap">
+
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipgroup_feed_post_tag_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"/>
+            android:layout_height="wrap_content" />
     </com.google.android.flexbox.FlexboxLayout>
+    </HorizontalScrollView>
 
     <View
         android:id="@+id/view_feed_post_content_comment_divider"
         android:layout_width="match_parent"
         android:layout_height="9dp"
-        app:layout_constraintTop_toBottomOf="@id/layout_feed_post_tag_list"
+        android:layout_marginTop="15dp"
+        app:layout_constraintTop_toBottomOf="@id/layout_scroll_feed_post_tag_list"
         android:background="@color/gray_6_F6F6F6" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
