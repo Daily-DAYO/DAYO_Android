@@ -122,10 +122,10 @@ data class FeedDto(
     val category: Category,
     @SerializedName("commentCount")
     val commentCount: Int,
-    @SerializedName("comments")
-    val comments: List<CommentDto>,
     @SerializedName("contents")
     val contents: String,
+    @SerializedName("createTime")
+    val createTime: String,
     @SerializedName("hashtags")
     val hashtags: List<String>,
     @SerializedName("heart")
@@ -134,12 +134,10 @@ data class FeedDto(
     val heartCount: Int,
     @SerializedName("id")
     val postId: Int,
-    @SerializedName("localDateTime")
-    val localDateTime: String,
     @SerializedName("memberId")
     val memberId: String,
     @SerializedName("nickname")
-    val nickname: String,
+    val nickname: String?,
     @SerializedName("thumbnailImage")
     val thumbnailImage: String,
     @SerializedName("userProfileImage")
