@@ -115,27 +115,6 @@ class FeedListAdapter(private val requestManager: RequestManager) :
             setOnUserProfileClickListener(postMemberId = post.memberId!!)
             setOnPostClickListener(postId = post.postId, nickname = post.nickname)
 
-            // 댓글
-            if (post.commentCount!! > 2) {
-                post.comments?.let {
-                    setCommentList(
-                        comments = it.subList(0, 2),
-                        postId = post.postId!!,
-                        nickname = post.nickname
-                    )
-                }
-                binding.tvFeedPostMoreComment.visibility = View.VISIBLE
-            } else {
-                post.comments?.let {
-                    setCommentList(
-                        comments = it,
-                        postId = post.postId!!,
-                        nickname = post.nickname
-                    )
-                }
-                binding.tvFeedPostMoreComment.visibility = View.GONE
-            }
-
             // 해시태그
             if (post.hashtags?.isNotEmpty() == true) {
                 binding.layoutFeedPostTagList.visibility = View.VISIBLE
@@ -219,22 +198,6 @@ class FeedListAdapter(private val requestManager: RequestManager) :
             }
         }
 
-        private fun setCommentList(comments: List<Comment>, postId: Int, nickname: String) {
-            val feedCommentAdapter = FeedCommentAdapter()
-            binding.rvFeedPostComment.adapter = feedCommentAdapter
-            feedCommentAdapter.submitList(comments.toMutableList())
-            feedCommentAdapter.setOnItemClickListener(object :
-                FeedCommentAdapter.OnItemClickListener {
-                override fun onItemClick(v: View, comment: Comment, position: Int) {
-                    Navigation.findNavController(v).navigate(
-                        FeedFragmentDirections.actionFeedFragmentToPostFragment(
-                            postId = postId
-                        )
-                    )
-                }
-            })
-        }
-
         private fun setOnUserProfileClickListener(postMemberId: String) {
             binding.imgFeedPostUserProfile.setOnClickListener {
                 Navigation.findNavController(it)
@@ -251,7 +214,7 @@ class FeedListAdapter(private val requestManager: RequestManager) :
                 Navigation.findNavController(it)
                     .navigate(FeedFragmentDirections.actionFeedFragmentToPostFragment(postId = postId))
             }
-            binding.tvFeedPostMoreComment.setOnClickListener {
+            binding.btnFeedPostComment.setOnClickListener {
                 Navigation.findNavController(it)
                     .navigate(FeedFragmentDirections.actionFeedFragmentToPostFragment(postId = postId))
             }
