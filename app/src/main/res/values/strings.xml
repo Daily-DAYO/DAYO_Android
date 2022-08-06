@@ -101,7 +101,8 @@
     <!-- Post -->
     <string name="hint_post_comment_write_description">댓글을 남겨주세요</string>
     <string name="post_comment_write_upload">게시</string>
-    <string name="post_option_report">게시물 신고</string>
+    <string name="post_option_report_user">사용자 신고</string>
+    <string name="post_option_report_post">게시물 신고</string>
     <string name="post_option_hide">이 게시물 숨기기</string>
     <string name="post_comment_delete_alert_message">댓글을 삭제할까요?</string>
     <string name="post_comment_delete_alert_message_success">댓글이 삭제되었습니다.</string>
@@ -115,7 +116,7 @@
 
     <!-- Report -->
     <string name="post_report_title">신고하기</string>
-    <string name="post_report_button">신고</string>
+    <string name="post_report_button">신고하기</string>
     <string name="post_report_reason_1">성적인 내용이 포함돼있어요.</string>
     <string name="post_report_reason_2">폭력적이거나 심한 욕설을 사용해요.</string>
     <string name="post_report_reason_3">잘못된 정보를 제공해요.</string>
