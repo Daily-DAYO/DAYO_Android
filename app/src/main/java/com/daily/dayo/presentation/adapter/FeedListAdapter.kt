@@ -16,6 +16,7 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
+import com.daily.dayo.common.convertCountPlace
 import com.daily.dayo.databinding.ItemFeedPostBinding
 import com.daily.dayo.domain.model.Comment
 import com.daily.dayo.domain.model.Post
@@ -70,6 +71,8 @@ class FeedListAdapter(private val requestManager: RequestManager) :
 
         fun bind(post: Post) {
             binding.post = post
+            binding.heartCountStr = if(post.heartCount != null) convertCountPlace(post.heartCount) else "0"
+            binding.commentCountStr = if(post.commentCount != null) convertCountPlace(post.commentCount) else "0"
             binding.categoryKR = post.category?.let { categoryKR(it) }
             val layoutParams = ViewGroup.MarginLayoutParams(
                 ViewGroup.MarginLayoutParams.MATCH_PARENT,
