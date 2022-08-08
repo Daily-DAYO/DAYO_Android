@@ -1,26 +1,35 @@
 package com.daily.dayo.presentation.fragment.search
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import com.daily.dayo.common.GlideLoadUtil
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentSearchResultBinding
+import com.daily.dayo.domain.model.FolderPost
 import com.daily.dayo.domain.model.Search
 import com.daily.dayo.presentation.adapter.SearchTagResultPostAdapter
 import com.daily.dayo.presentation.viewmodel.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class SearchResultFragment : Fragment() {
@@ -62,6 +71,7 @@ class SearchResultFragment : Fragment() {
     }
 
     private fun initUI() {
+        loadingPost()
         binding.tvSearchResultKeywordInput.setText(args.searchKeyword)
         searchTagList(args.searchKeyword)
     }
@@ -83,7 +93,8 @@ class SearchResultFragment : Fragment() {
     }
 
     private fun setSearchTagResultPostAdapter() {
-        searchTagResultPostAdapter = SearchTagResultPostAdapter(requestManager = glideRequestManager)
+        searchTagResultPostAdapter =
+            SearchTagResultPostAdapter(requestManager = glideRequestManager)
         binding.rvSearchResultContentsPostList.adapter = searchTagResultPostAdapter
     }
 
@@ -91,8 +102,11 @@ class SearchResultFragment : Fragment() {
         searchTagResultPostAdapter.setOnItemClickListener(object :
             SearchTagResultPostAdapter.OnItemClickListener {
             override fun onItemClick(v: View, search: Search, position: Int) {
-                findNavController().navigate(SearchResultFragmentDirections.actionSearchResultFragmentToPostFragment(
-                    search.postId))
+                findNavController().navigate(
+                    SearchResultFragmentDirections.actionSearchResultFragmentToPostFragment(
+                        search.postId
+                    )
+                )
             }
         })
     }
@@ -132,8 +146,8 @@ class SearchResultFragment : Fragment() {
                         } else {
                             binding.layoutSearchResultContents.visibility = View.VISIBLE
                             binding.imgSearchResultEmpty.visibility = View.INVISIBLE
-                            searchTagResultPostAdapter.submitList(postList.toMutableList())
                             binding.resultCount = postList.size
+                            loadPostThumbnail(postList)
                         }
                     }
                 }
@@ -143,5 +157,50 @@ class SearchResultFragment : Fragment() {
                 }
             }
         }
+    }
+
+
+    private fun loadPostThumbnail(postList: List<Search>) {
+        val thumbnailImgList = emptyList<Bitmap>().toMutableList()
+        viewLifecycleOwner.lifecycleScope.launch {
+            for (i in 0 until (if (postList.size >= 6) 6 else postList.size)) {
+                thumbnailImgList.add(withContext(Dispatchers.IO) {
+                    GlideLoadUtil.loadImageBackground(
+                        context = requireContext(),
+                        height = 158,
+                        width = 158,
+                        imgName = postList[i].thumbnailImage
+                    )
+                })
+            }
+        }.invokeOnCompletion { throwable ->
+            when (throwable) {
+                is CancellationException -> {
+                    Log.e("Image Loading", "CANCELLED")
+                    thumbnailImgList.clear()
+                }
+                null -> {
+                    var loadedPostList = postList.toMutableList()
+                    for (i in 0 until (if (postList.size >= 6) 6 else postList.size)) {
+                        loadedPostList[i].preLoadThumbnail = thumbnailImgList[i]
+                    }
+                    searchTagResultPostAdapter.submitList(postList.toMutableList())
+                    completeLoadPost()
+                    thumbnailImgList.clear()
+                }
+            }
+        }
+    }
+
+    private fun loadingPost() {
+        binding.layoutSearchResultPostShimmer.startShimmer()
+        binding.layoutSearchResultPostShimmer.visibility = View.VISIBLE
+        binding.rvSearchResultContentsPostList.visibility = View.INVISIBLE
+    }
+
+    private fun completeLoadPost() {
+        binding.layoutSearchResultPostShimmer.stopShimmer()
+        binding.layoutSearchResultPostShimmer.visibility = View.GONE
+        binding.rvSearchResultContentsPostList.visibility = View.VISIBLE
     }
 }
