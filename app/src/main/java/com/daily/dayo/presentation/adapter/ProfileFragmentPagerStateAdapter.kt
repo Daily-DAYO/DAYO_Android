@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.adapter
 
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -27,6 +28,10 @@ class ProfileFragmentPagerStateAdapter(fragmentActivity: FragmentActivity) : Fra
 
     fun refreshFragment(index: Int, fragment: Fragment) {
         fragments[index] = fragment
-        notifyItemChanged(index)
+        Handler().post(object: Runnable {
+            override fun run() {
+                notifyDataSetChanged()
+            }
+        })
     }
 }
