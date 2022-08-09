@@ -6,69 +6,79 @@
     <data>
 
         <import type="android.view.View" />
+        <import type="com.daily.dayo.domain.model.Topic" />
         <variable
             name="notification"
             type="com.daily.dayo.domain.model.Notification" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_notification"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="18dp"
             android:paddingTop="22dp"
             android:paddingBottom="21dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <ImageView
+                android:id="@+id/iv_notification_thumbnail"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="17dp"
+                android:src="@color/gray_3_9C9C9C"
+                android:visibility="@{notification.topic == Topic.HEART || notification.topic == Topic.COMMENT ? View.VISIBLE : View.GONE}"
+                app:layout_constraintTop_toTopOf="@id/layout_notification_contents"
+                app:layout_constraintBottom_toBottomOf="@id/layout_notification_contents"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:visibility="visible"/>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_notification_contents"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="15dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_height="56dp"
+                android:layout_marginStart="10dp"
+                app:layout_goneMarginStart="17dp"
+                app:layout_constraintTop_toTopOf="@id/iv_notification_thumbnail"
                 app:layout_constraintEnd_toStartOf="@id/img_notification_unread"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintStart_toEndOf="@id/iv_notification_thumbnail" >
 
                 <TextView
                     android:id="@+id/tv_notification_title"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="15dp"
                     android:textColor="@color/gray_1_313131"
                     android:textSize="14dp"
                     android:bufferType="spannable"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="조재영님이 회원님의 게시글을 좋아해요." />
+                    tools:text="조재영님이 회원님의 게시글을을 좋아해요." />
 
                 <TextView
                     android:id="@+id/tv_notification_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="9dp"
                     android:textColor="@color/gray_2_5D5D5D"
                     android:textSize="13dp"
                     android:visibility="gone"
                     app:layout_constraintStart_toStartOf="@id/tv_notification_title"
                     app:layout_constraintTop_toBottomOf="@id/tv_notification_title"
-                    tools:text="어떤 부분들이 업데이트 됐을까용!" />
+                    tools:text="어떤 부분들이 업데이트 됐을까용!"
+                    tools:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/tv_notification_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
                     android:text="@{notification.createdTime}"
                     android:textColor="@color/gray_3_9C9C9C"
                     android:textSize="12dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_notification_description"
+                    app:layout_constraintStart_toStartOf="@id/tv_notification_title"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     tools:text="2일 전" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -77,9 +87,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/ic_unread"
-                android:visibility="@{notification.check? View.GONE : View.VISIBLE}"
+                android:visibility="@{notification.check? View.INVISIBLE : View.VISIBLE}"
+                android:layout_marginStart="9dp"
+                android:layout_marginEnd="18dp"
+                app:layout_constraintStart_toEndOf="@id/layout_notification_contents"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@id/layout_notification_contents"
+                tools:visibility="invisible"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
@@ -90,5 +104,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_notification" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>
