@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentNotificationBinding
@@ -19,6 +21,12 @@ class NotificationFragment : Fragment() {
     private var binding by autoCleared<FragmentNotificationBinding>()
     private val notificationViewModel by viewModels<NotificationViewModel>()
     private lateinit var notificationAdapter: NotificationListAdapter
+    private lateinit var glideRequestManager: RequestManager
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        glideRequestManager = Glide.with(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,7 +47,7 @@ class NotificationFragment : Fragment() {
     }
 
     private fun setNotificationListAdapter() {
-        notificationAdapter = NotificationListAdapter()
+        notificationAdapter = NotificationListAdapter(requestManager = glideRequestManager)
         binding.rvNotificationList.layoutManager = LinearLayoutManager(requireContext())
         binding.rvNotificationList.adapter = notificationAdapter
         notificationAdapter.setOnItemClickListener(object :
@@ -58,6 +66,7 @@ class NotificationFragment : Fragment() {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { alarmList ->
+                        binding.notificationCount = alarmList.size
                         notificationAdapter.submitList(alarmList.toMutableList())
                         for (alarm in alarmList) {
                             if (alarm.check == true) break
