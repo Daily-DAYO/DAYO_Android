@@ -27,7 +27,9 @@ class PostOptionFragment : DialogFragment() {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
         dialog?.window?.setGravity(Gravity.BOTTOM)
+        setReportUserClickListener()
         setReportPostClickListener()
+
         return binding.root
     }
 
@@ -43,8 +45,14 @@ class PostOptionFragment : DialogFragment() {
         dialog?.window?.attributes = params as WindowManager.LayoutParams
     }
 
+    private fun setReportUserClickListener() {
+        binding.layoutPostOptionReportUser.setOnClickListener {
+
+        }
+    }
+
     private fun setReportPostClickListener() {
-        binding.layoutPostOptionReport.setOnClickListener {
+        binding.layoutPostOptionReportPost.setOnClickListener {
             findNavController().navigate(PostOptionFragmentDirections.actionPostOptionFragmentToPostReportFragment(postId = args.postId))
         }
    }
