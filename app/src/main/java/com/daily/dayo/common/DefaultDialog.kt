@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import com.daily.dayo.R
 import com.daily.dayo.databinding.DialogDefaltExplanationConfirmBinding
 import com.daily.dayo.databinding.DialogDefaultAlertBinding
 import com.daily.dayo.databinding.DialogDefaultConfirmBinding
@@ -106,6 +107,7 @@ object DefaultDialogExplanationConfirm {
                 tvDefaultDialogExplanationCancel.visibility = View.VISIBLE
                 cancelButtonTextResId?.let { tvDefaultDialogExplanationCancel.setText(it) }
             } else {
+                tvDefaultDialogExplanationConfirm.setBackgroundResource(R.drawable.selector_dialog_confirm_default_button)
                 tvDefaultDialogExplanationCancel.visibility = View.GONE
             }
 
