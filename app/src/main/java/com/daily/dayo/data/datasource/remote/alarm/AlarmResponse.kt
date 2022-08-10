@@ -21,6 +21,8 @@ data class AlarmDto(
     val content: String?,
     @SerializedName("createdTime")
     val createdTime: String?,
+    @SerializedName("image")
+    val image: String?,
     @SerializedName("nickname")
     val nickname: String?,
     @SerializedName("memberId")

@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import com.daily.dayo.R
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentFeedBinding
@@ -42,6 +43,7 @@ class FeedFragment : Fragment() {
         setRvFeedListAdapter()
         setFeedPostList()
         setFeedPostClickListener()
+        setFeedEmptyButtonClickListener()
         return binding.root
     }
 
@@ -61,6 +63,7 @@ class FeedFragment : Fragment() {
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { feedList ->
+                            binding.feedCount = feedList.size
                             feedListAdapter.submitList(feedList.toMutableList())
                         }
                     }
@@ -71,6 +74,12 @@ class FeedFragment : Fragment() {
                     }
                 }
             })
+        }
+    }
+
+    private fun setFeedEmptyButtonClickListener(){
+        binding.btnFeedEmpty.setOnClickListener {
+            findNavController().navigate(R.id.action_feedFragment_to_homeFragment)
         }
     }
 

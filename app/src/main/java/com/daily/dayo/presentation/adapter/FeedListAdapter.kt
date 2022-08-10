@@ -16,6 +16,7 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
+import com.daily.dayo.common.convertCountPlace
 import com.daily.dayo.databinding.ItemFeedPostBinding
 import com.daily.dayo.domain.model.Comment
 import com.daily.dayo.domain.model.Post
@@ -70,6 +71,8 @@ class FeedListAdapter(private val requestManager: RequestManager) :
 
         fun bind(post: Post) {
             binding.post = post
+            binding.heartCountStr = if(post.heartCount != null) convertCountPlace(post.heartCount) else "0"
+            binding.commentCountStr = if(post.commentCount != null) convertCountPlace(post.commentCount) else "0"
             binding.categoryKR = post.category?.let { categoryKR(it) }
             CoroutineScope(Dispatchers.Main).launch {
                 val postImgBitmap: Bitmap?
@@ -110,27 +113,6 @@ class FeedListAdapter(private val requestManager: RequestManager) :
             setPostOptionClickListener(isMine = isMine, postId = post.postId!!)
             setOnUserProfileClickListener(postMemberId = post.memberId!!)
             setOnPostClickListener(postId = post.postId, nickname = post.nickname)
-
-            // 댓글
-            if (post.commentCount!! > 2) {
-                post.comments?.let {
-                    setCommentList(
-                        comments = it.subList(0, 2),
-                        postId = post.postId!!,
-                        nickname = post.nickname
-                    )
-                }
-                binding.tvFeedPostMoreComment.visibility = View.VISIBLE
-            } else {
-                post.comments?.let {
-                    setCommentList(
-                        comments = it,
-                        postId = post.postId!!,
-                        nickname = post.nickname
-                    )
-                }
-                binding.tvFeedPostMoreComment.visibility = View.GONE
-            }
 
             // 해시태그
             if (post.hashtags?.isNotEmpty() == true) {
@@ -215,22 +197,6 @@ class FeedListAdapter(private val requestManager: RequestManager) :
             }
         }
 
-        private fun setCommentList(comments: List<Comment>, postId: Int, nickname: String) {
-            val feedCommentAdapter = FeedCommentAdapter()
-            binding.rvFeedPostComment.adapter = feedCommentAdapter
-            feedCommentAdapter.submitList(comments.toMutableList())
-            feedCommentAdapter.setOnItemClickListener(object :
-                FeedCommentAdapter.OnItemClickListener {
-                override fun onItemClick(v: View, comment: Comment, position: Int) {
-                    Navigation.findNavController(v).navigate(
-                        FeedFragmentDirections.actionFeedFragmentToPostFragment(
-                            postId = postId
-                        )
-                    )
-                }
-            })
-        }
-
         private fun setOnUserProfileClickListener(postMemberId: String) {
             binding.imgFeedPostUserProfile.setOnClickListener {
                 Navigation.findNavController(it)
@@ -247,7 +213,7 @@ class FeedListAdapter(private val requestManager: RequestManager) :
                 Navigation.findNavController(it)
                     .navigate(FeedFragmentDirections.actionFeedFragmentToPostFragment(postId = postId))
             }
-            binding.tvFeedPostMoreComment.setOnClickListener {
+            binding.btnFeedPostComment.setOnClickListener {
                 Navigation.findNavController(it)
                     .navigate(FeedFragmentDirections.actionFeedFragmentToPostFragment(postId = postId))
             }
