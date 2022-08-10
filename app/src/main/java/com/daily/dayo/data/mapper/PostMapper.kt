@@ -52,14 +52,13 @@ fun DayoPick.toPost(): Post =
 fun FeedDto.toPost(): Post {
     val createDateTime = TimeChangerUtil.timeChange(
         context = DayoApplication.applicationContext(),
-        time = localDateTime
+        time = createTime
     )
-    val comments = comments.map { it.toComment() }
 
     return Post(
         postId = postId,
         memberId = memberId,
-        nickname = nickname,
+        nickname = nickname?:"null",
         userProfileImage = userProfileImage,
         category = category,
         thumbnailImage = thumbnailImage,
@@ -67,7 +66,7 @@ fun FeedDto.toPost(): Post {
         contents = contents,
         createDateTime = createDateTime,
         commentCount = commentCount,
-        comments = comments,
+        comments = null,
         hashtags = hashtags,
         bookmark = bookmark,
         heart = heart,

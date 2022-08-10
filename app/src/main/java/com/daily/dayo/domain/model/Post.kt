@@ -17,7 +17,7 @@ data class Post(
     val hashtags: List<String>?,
     val bookmark: Boolean?,
     val heart: Boolean,
-    val heartCount: Int,
+    val heartCount: Int?,
     val folderId: Int?,
     val folderName: String?,
     var preLoadThumbnail: Bitmap?=null,

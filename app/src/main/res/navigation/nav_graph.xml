@@ -57,7 +57,10 @@
         android:label="fragment_feed"
         tools:layout="@layout/fragment_feed">
         <action
-            android:id="@+id/action_FeedFragment_to_SearchFragment"
+            android:id="@+id/action_feedFragment_to_homeFragment"
+            app:destination="@id/HomeFragment" />
+        <action
+            android:id="@+id/action_feedFragment_to_searchFragment"
             app:destination="@id/SearchFragment" />
         <action
             android:id="@+id/action_feedFragment_to_writeFragment"
@@ -72,7 +75,7 @@
             android:id="@+id/action_feedFragment_to_postOptionFragment"
             app:destination="@id/PostOptionFragment" />
         <action
-            android:id="@+id/action_FeedFragment_to_postOptionMineFragment"
+            android:id="@+id/action_feedFragment_to_postOptionMineFragment"
             app:destination="@id/PostOptionMineFragment" />
         <action
             android:id="@+id/action_feedFragment_to_searchResultFragment"

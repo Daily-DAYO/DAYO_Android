@@ -1,5 +1,8 @@
 package com.daily.dayo.presentation.fragment.setting
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,7 +21,8 @@ import com.daily.dayo.databinding.FragmentSettingBinding
 import com.daily.dayo.presentation.activity.LoginActivity
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
 
-class SettingFragment: Fragment() {
+
+class SettingFragment : Fragment() {
     private var binding by autoCleared<FragmentSettingBinding>()
     private val accountViewModel by activityViewModels<AccountViewModel>()
 
@@ -31,6 +35,7 @@ class SettingFragment: Fragment() {
         setChangePasswordClickListener()
         setBackButtonClickListener()
         setLogoutButtonClickListener()
+        setContactButtonClickListener()
         setWithdrawButtonClickListener()
         setNotificationButtonClickListener()
         return binding.root
@@ -42,25 +47,60 @@ class SettingFragment: Fragment() {
         }
     }
 
-    private fun setBackButtonClickListener(){
+    private fun setBackButtonClickListener() {
         binding.btnSettingBack.setOnClickListener {
             findNavController().navigateUp()
         }
     }
 
-    private fun setNotificationButtonClickListener(){
-        binding.layoutSettingNotification.setOnClickListener{
+    private fun setNotificationButtonClickListener() {
+        binding.layoutSettingNotification.setOnClickListener {
             findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToSettingNotificationFragment())
         }
     }
 
-    private fun setLogoutButtonClickListener(){
+    private fun setContactButtonClickListener() {
+        binding.layoutSettingContact.setOnClickListener {
+            val contactAlertDialog = DefaultDialogExplanationConfirm.createDialog(requireContext(),
+                R.string.setting_contact_message,
+                R.string.setting_contact_explanation_message,
+                true,
+                false,
+                R.string.confirm,
+                R.string.cancel,
+                { doContact() },
+                {})
+            if (!contactAlertDialog.isShowing) {
+                contactAlertDialog.show()
+                DefaultDialogConfigure.dialogResize(
+                    requireContext(),
+                    contactAlertDialog,
+                    0.7f,
+                    0.23f
+                )
+            }
+        }
+    }
+
+    private fun doContact() {
+        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip: ClipData = ClipData.newPlainText("Contact E-Mail", "gemij.dev@gmail.com")
+        clipboard.setPrimaryClip(clip)
+    }
+
+    private fun setLogoutButtonClickListener() {
         binding.layoutSettingLogout.setOnClickListener {
-            val logoutAlertDialog = DefaultDialogConfirm.createDialog(requireContext(), R.string.setting_logout_message,
-                true, true, R.string.confirm, R.string.cancel, {doLogout()}, {})
-            if(!logoutAlertDialog.isShowing) {
+            val logoutAlertDialog =
+                 DefaultDialogConfirm.createDialog(requireContext(), R.string.setting_logout_message,
+                    true, true, R.string.confirm, R.string.cancel, { doLogout() }, {})
+            if (!logoutAlertDialog.isShowing) {
                 logoutAlertDialog.show()
-                DefaultDialogConfigure.dialogResize(requireContext(), logoutAlertDialog, 0.7f, 0.23f)
+                DefaultDialogConfigure.dialogResize(
+                    requireContext(),
+                    logoutAlertDialog,
+                    0.7f,
+                    0.23f
+                )
             }
             logoutAlertDialog.setOnCancelListener {
                 logoutAlertDialog.dismiss()
@@ -68,13 +108,25 @@ class SettingFragment: Fragment() {
         }
     }
 
-    private fun setWithdrawButtonClickListener(){
+    private fun setWithdrawButtonClickListener() {
         binding.layoutSettingWithdraw.setOnClickListener {
-            val withdrawAlertDialog = DefaultDialogExplanationConfirm.createDialog(requireContext(), R.string.setting_withdraw_message,
-                R.string.setting_withdraw_explanation_message,true, true, R.string.confirm, R.string.cancel, {doWithdraw()}, {})
-            if(!withdrawAlertDialog.isShowing) {
+            val withdrawAlertDialog = DefaultDialogExplanationConfirm.createDialog(requireContext(),
+                R.string.setting_withdraw_message,
+                R.string.setting_withdraw_explanation_message,
+                true,
+                true,
+                R.string.confirm,
+                R.string.cancel,
+                { doWithdraw() },
+                {})
+            if (!withdrawAlertDialog.isShowing) {
                 withdrawAlertDialog.show()
-                DefaultDialogConfigure.dialogResize(requireContext(), withdrawAlertDialog, 0.7f, 0.23f)
+                DefaultDialogConfigure.dialogResize(
+                    requireContext(),
+                    withdrawAlertDialog,
+                    0.7f,
+                    0.23f
+                )
             }
             withdrawAlertDialog.setOnCancelListener {
                 withdrawAlertDialog.dismiss()
@@ -82,14 +134,14 @@ class SettingFragment: Fragment() {
         }
     }
 
-    private fun doWithdraw(){
+    private fun doWithdraw() {
         findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToWithdrawFragment())
     }
 
-    private fun doLogout(){
+    private fun doLogout() {
         accountViewModel.requestLogout()
-        accountViewModel.logoutSuccess.observe(viewLifecycleOwner){
-            if(it.getContentIfNotHandled() == true){
+        accountViewModel.logoutSuccess.observe(viewLifecycleOwner) {
+            if (it.getContentIfNotHandled() == true) {
                 DayoApplication.preferences.clearPreferences()
                 val intent = Intent(this.activity, LoginActivity::class.java)
                 startActivity(intent)
