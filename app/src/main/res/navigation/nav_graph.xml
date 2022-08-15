@@ -291,6 +291,9 @@
         android:name="com.daily.dayo.presentation.fragment.mypage.profile.ProfileOptionFragment"
         android:label="fragment_profile_option"
         tools:layout="@layout/fragment_profile_option">
+        <argument
+            android:name="isMine"
+            app:argType="boolean" />
         <action
             android:id="@+id/action_profileOptionFragment_to_folderSettingFragment"
             app:destination="@id/FolderSettingFragment" />

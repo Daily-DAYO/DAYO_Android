@@ -6,6 +6,7 @@ import com.daily.dayo.domain.model.Profile
 fun MemberOtherProfileResponse.toProfile() : Profile =
     Profile(
         memberId = memberId,
+        email = email?:"null",
         nickname = nickname,
         profileImg = profileImg,
         postCount = postCount,

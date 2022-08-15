@@ -66,7 +66,7 @@ class ProfileFragment : Fragment() {
         setProfile()
     }
 
-    private fun setProfile(){
+    private fun setProfile() {
         if (args.memberId == null) {
             profileViewModel.profileMemberId =
                 DayoApplication.preferences.getCurrentUser().memberId.toString()
@@ -97,7 +97,7 @@ class ProfileFragment : Fragment() {
         setRvProfileFolderListAdapter()
         setProfileFolderList()
         setBackButtonClickListener()
-        setHomeButtonClickListener()
+        setOtherProfileOptionClickListener()
     }
 
     private fun setProfileDescription() {
@@ -150,12 +150,6 @@ class ProfileFragment : Fragment() {
     private fun setBackButtonClickListener() {
         binding.btnProfileBack.setOnClickListener {
             findNavController().navigateUp()
-        }
-    }
-
-    private fun setHomeButtonClickListener() {
-        binding.btnProfileHome.setOnClickListener {
-            findNavController().navigate(R.id.action_profileFragment_to_homeFragment)
         }
     }
 
@@ -226,7 +220,7 @@ class ProfileFragment : Fragment() {
         )
         viewLifecycleOwner.lifecycleScope.launch {
             profileViewModel.folderList.observe(viewLifecycleOwner) {
-                when(it.status){
+                when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { folderList ->
                             profileFolderListAdapter.submitList(folderList)
@@ -239,7 +233,13 @@ class ProfileFragment : Fragment() {
 
     private fun setMyProfileOptionClickListener() {
         binding.btnProfileOption.setOnClickListener {
-            findNavController().navigate(R.id.action_profileFragment_to_profileOptionFragment)
+            findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToProfileOptionFragment(isMine = true))
+        }
+    }
+
+    private fun setOtherProfileOptionClickListener() {
+        binding.btnProfileOption.setOnClickListener {
+            findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToProfileOptionFragment(isMine = false))
         }
     }
 

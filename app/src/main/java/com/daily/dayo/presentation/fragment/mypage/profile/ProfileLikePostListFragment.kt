@@ -96,6 +96,7 @@ class ProfileLikePostListFragment : Fragment() {
                     for (i in 0 until (if (postList.size >= 6) 6 else postList.size)) {
                         loadedPostList[i].preLoadThumbnail = thumbnailImgList[i]
                     }
+                    binding.likeCount = postList.size
                     profileLikePostListAdapter.submitList(postList.toMutableList())
                     completeLoadPost()
                     thumbnailImgList.clear()
