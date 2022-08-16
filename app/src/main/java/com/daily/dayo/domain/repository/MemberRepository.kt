@@ -33,6 +33,10 @@ interface MemberRepository {
     suspend fun requestReceiveAlarm(): Response<ReceiveAlarmResponse>
     suspend fun requestChangeReceiveAlarm(body: ChangeReceiveAlarmRequest): Response<Void>
     suspend fun requestLogout(): Response<Void>
+    suspend fun requestCheckEmail(email: String): Response<Void>
+    suspend fun requestCheckCurrentPassword(body: CheckPasswordRequest): Response<Void>
+    suspend fun requestChangePassword(body: ChangePasswordRequest): Response<Void>
+    suspend fun requestSettingChangePassword(body: ChangePasswordRequest): Response<Void>
 
     // Firebase Messaging Service
     suspend fun getCurrentFcmToken(): String

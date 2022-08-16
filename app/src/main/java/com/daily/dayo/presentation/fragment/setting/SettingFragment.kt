@@ -32,12 +32,19 @@ class SettingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
+        setChangePasswordClickListener()
         setBackButtonClickListener()
         setLogoutButtonClickListener()
         setContactButtonClickListener()
         setWithdrawButtonClickListener()
         setNotificationButtonClickListener()
         return binding.root
+    }
+
+    private fun setChangePasswordClickListener() {
+        binding.layoutSettingPasswordChange.setOnClickListener {
+            findNavController().navigate(R.id.action_settingFragment_to_settingChangePasswordCurrentFragment)
+        }
     }
 
     private fun setBackButtonClickListener() {

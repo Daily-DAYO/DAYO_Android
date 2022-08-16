@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.common.Event
+import com.daily.dayo.data.datasource.remote.member.ChangePasswordRequest
+import com.daily.dayo.data.datasource.remote.member.CheckPasswordRequest
 import com.daily.dayo.data.datasource.remote.member.DeviceTokenRequest
 import com.daily.dayo.data.datasource.remote.member.MemberOAuthRequest
 import com.daily.dayo.data.datasource.remote.member.MemberSignInRequest
@@ -29,7 +31,11 @@ class AccountViewModel @Inject constructor(
     private val requestDeviceTokenUseCase: RequestDeviceTokenUseCase,
     private val registerFcmTokenUseCase: RegisterFcmTokenUseCase,
     private val requestResignUseCase: RequestResignUseCase,
-    private val requestLogoutUseCase: RequestLogoutUseCase
+    private val requestLogoutUseCase: RequestLogoutUseCase,
+    private val requestCheckEmailUseCase: RequestCheckEmailUseCase,
+    private val requestCheckCurrentPasswordUseCase: RequestCheckCurrentPasswordUseCase,
+    private val requestChangePasswordUseCase: RequestChangePasswordUseCase,
+    private val requestSettingChangePasswordUseCase: RequestSettingChangePasswordUseCase,
 ) : ViewModel() {
 
     private val _signupSuccess = MutableLiveData<Event<Boolean>>()
@@ -52,6 +58,15 @@ class AccountViewModel @Inject constructor(
 
     private val _logoutSuccess = MutableLiveData<Event<Boolean>>()
     val logoutSuccess: LiveData<Event<Boolean>> get() = _logoutSuccess
+
+    private val _checkEmailSuccess = MutableLiveData<Boolean>()
+    val checkEmailSuccess get() = _checkEmailSuccess
+
+    private val _checkCurrentPasswordSuccess = MutableLiveData<Boolean>()
+    val checkCurrentPasswordSuccess get() = _checkCurrentPasswordSuccess
+
+    private val _changePasswordSuccess = MutableLiveData<Boolean>()
+    val changePasswordSuccess get() = _changePasswordSuccess
 
     fun requestLoginKakao(accessToken: String) = viewModelScope.launch {
         val response = requestLoginKakaoUseCase(MemberOAuthRequest(accessToken = accessToken))
@@ -148,6 +163,56 @@ class AccountViewModel @Inject constructor(
                 _logoutSuccess.postValue(Event(true))
             } else {
                 _logoutSuccess.postValue(Event(false))
+            }
+        }
+    }
+
+    fun requestCheckEmail(inputEmail: String) = viewModelScope.launch {
+        requestCheckEmailUseCase(email = inputEmail).let {
+            if (it.isSuccessful) {
+                _checkEmailSuccess.postValue(true)
+            } else {
+                _checkEmailSuccess.postValue(false)
+            }
+        }
+    }
+
+    fun requestCheckCurrentPassword(inputPassword: String) = viewModelScope.launch {
+        requestCheckCurrentPasswordUseCase(CheckPasswordRequest(password = inputPassword)).let {
+            if (it.isSuccessful) {
+                _checkCurrentPasswordSuccess.postValue(true)
+            } else {
+                _checkCurrentPasswordSuccess.postValue(false)
+            }
+        }
+    }
+
+    fun requestChangePassword(email: String, newPassword: String) = viewModelScope.launch {
+        requestChangePasswordUseCase(
+            ChangePasswordRequest(
+                email = email,
+                password = newPassword
+            )
+        ).let {
+            if (it.isSuccessful) {
+                _changePasswordSuccess.postValue(true)
+            } else {
+                _changePasswordSuccess.postValue(false)
+            }
+        }
+    }
+
+    fun requestChangePassword(newPassword: String) = viewModelScope.launch {
+        requestSettingChangePasswordUseCase(
+            ChangePasswordRequest(
+                email = DayoApplication.preferences.getCurrentUser().email!!,
+                password = newPassword
+            )
+        ).let {
+            if (it.isSuccessful) {
+                _changePasswordSuccess.postValue(true)
+            } else {
+                _changePasswordSuccess.postValue(false)
             }
         }
     }

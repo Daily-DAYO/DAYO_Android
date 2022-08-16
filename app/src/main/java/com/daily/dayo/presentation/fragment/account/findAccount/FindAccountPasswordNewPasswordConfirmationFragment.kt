@@ -1,4 +1,4 @@
-package com.daily.dayo.presentation.fragment.setting.findAccount
+package com.daily.dayo.presentation.fragment.account.findAccount
 
 import android.os.Bundle
 import android.text.Editable
@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.daily.dayo.R
@@ -17,6 +18,7 @@ import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.presentation.viewmodel.AccountViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.regex.Pattern
 
@@ -24,6 +26,7 @@ import java.util.regex.Pattern
 class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
     private var binding by autoCleared<FragmentFindAccountPasswordNewPasswordConfirmationBinding>()
     private val args by navArgs<FindAccountPasswordNewPasswordConfirmationFragmentArgs>()
+    private val loginViewModel by activityViewModels<AccountViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,6 +44,7 @@ class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
         setTextEditorActionListener()
         verifyPassword()
         setUserPasswordEditText()
+        observeChangePasswordSuccess()
         return binding.root
     }
 
@@ -61,7 +65,6 @@ class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
             true
         }
     }
-
 
     private fun setTextEditorActionListener() {
         binding.etFindAccountPasswordNewPasswordConfirmationUserInput.setOnEditorActionListener { _, actionId, _ ->
@@ -188,9 +191,16 @@ class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
     }
 
     private fun setNextClickListener() {
-        // TODO: 서버에 비밀번호 변경 요청
         binding.btnFindAccountPasswordNewPasswordConfirmationNext.setOnClickListener {
-            findNavController().navigate(R.id.action_findAccountPasswordNewPasswordConfirmationFragment_to_findAccountPasswordCompleteFragment)
+            loginViewModel.requestChangePassword(email = args.email, newPassword = args.password)
+        }
+    }
+
+    private fun observeChangePasswordSuccess() {
+        loginViewModel.changePasswordSuccess.observe(viewLifecycleOwner) { isChangeSuccess ->
+            if(isChangeSuccess) {
+                findNavController().navigate(R.id.action_findAccountPasswordNewPasswordConfirmationFragment_to_findAccountPasswordCompleteFragment)
+            }
         }
     }
 }
