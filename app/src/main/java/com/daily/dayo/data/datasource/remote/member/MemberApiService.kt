@@ -60,4 +60,16 @@ interface MemberApiService {
 
     @POST("/api/v1/members/logout")
     suspend fun requestLogout(): Response<Void>
+
+    @GET("/api/v1/members/search/{email}")
+    suspend fun requestCheckEmail(@Path("email") email: String): Response<Void>
+
+    @POST("/api/v1/members/checkPassword")
+    suspend fun requestCheckCurrentPassword(@Body body: CheckPasswordRequest): Response<Void>
+
+    @POST("/api/v1/members/changePassword")
+    suspend fun requestChangePassword(@Body body: ChangePasswordRequest): Response<Void>
+
+    @POST("/api/v1/members/setting/changePassword")
+    suspend fun requestSettingChangePassword(@Body body: ChangePasswordRequest): Response<Void>
 }
