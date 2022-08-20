@@ -66,6 +66,8 @@ data class MemberOtherProfileResponse(
     val followingCount: Int,
     @SerializedName("memberId")
     val memberId: String,
+    @SerializedName("email")
+    val email: String?,
     @SerializedName("nickname")
     val nickname: String,
     @SerializedName("postCount")

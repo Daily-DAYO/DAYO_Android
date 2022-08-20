@@ -54,6 +54,7 @@ class ProfileFolderListFragment : Fragment() {
             when(it.status){
                 Status.SUCCESS -> {
                     it.data?.let { folderList ->
+                        binding.folderCount = folderList.size
                         profileFolderListAdapter.submitList(folderList)
                     }
                 }

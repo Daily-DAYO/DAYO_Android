@@ -56,26 +56,10 @@
                         android:layout_marginEnd="5dp"
                         android:background="@android:color/transparent"
                         android:paddingHorizontal="13dp"
-                        android:visibility="@{isMine ? View.VISIBLE : View.GONE}"
                         android:src="@drawable/ic_option_horizontal"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:visibility="gone"/>
-
-                    <ImageButton
-                        android:id="@+id/btn_profile_home"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
-                        android:background="@android:color/transparent"
-                        android:paddingHorizontal="13dp"
-                        android:visibility="@{isMine ? View.GONE : View.VISIBLE}"
-                        android:src="@drawable/ic_home_gray_1"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:visibility="visible"/>
+                        app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -104,26 +88,41 @@
                         android:id="@+id/tv_profile_user_nickname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="11dp"
+                        android:layout_marginTop="14dp"
                         android:text="@{profile.nickname}"
                         android:textColor="@color/gray_1_313131"
-                        android:textSize="20dp"
+                        android:textSize="19dp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/img_profile_user_profile"
                         tools:text="Nickname" />
 
+                    <TextView
+                        android:id="@+id/tv_profile_user_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:text="@{profile.email}"
+                        android:textColor="@color/gray_3_9C9C9C"
+                        android:textSize="12dp"
+                        android:visibility="@{isMine ? View.VISIBLE : View.GONE}"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_profile_user_nickname"
+                        tools:text="ovo123098@naver.com" />
+
                     <LinearLayout
                         android:id="@+id/layout_profile_count"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="90dp"
-                        android:layout_marginTop="26dp"
                         android:orientation="horizontal"
+                        android:layout_marginTop="32dp"
+                        app:layout_goneMarginTop="26dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_profile_user_nickname">
+                        app:layout_constraintTop_toBottomOf="@+id/tv_profile_user_email">
 
                         <LinearLayout
                             android:id="@+id/layout_profile_post_count"
@@ -262,7 +261,7 @@
                     app:tabSelectedTextColor="@color/gray_1_313131"
                     app:tabTextAppearance="@style/tab_profile"
                     app:tabTextColor="@color/gray_3_9C9C9C"
-                    tools:visibility="gone">
+                    tools:visibility="visible">
 
                     <com.google.android.material.tabs.TabItem
                         android:layout_width="wrap_content"

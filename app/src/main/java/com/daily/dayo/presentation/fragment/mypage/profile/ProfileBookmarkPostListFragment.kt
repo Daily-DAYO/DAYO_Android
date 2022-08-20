@@ -93,6 +93,7 @@ class ProfileBookmarkPostListFragment : Fragment() {
                     for (i in 0 until (if (postList.size >= 8) 8 else postList.size)) {
                         loadedPostList[i].preLoadThumbnail = thumbnailImgList[i]
                     }
+                    binding.bookmarkCount = postList.size
                     profileBookmarkPostListAdapter.submitList(postList.toMutableList())
                     completeLoadPost()
                     thumbnailImgList.clear()
