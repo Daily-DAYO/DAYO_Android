@@ -6,11 +6,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -24,11 +23,7 @@ import com.daily.dayo.databinding.FragmentFolderBinding
 import com.daily.dayo.domain.model.FolderPost
 import com.daily.dayo.presentation.adapter.FolderPostListAdapter
 import com.daily.dayo.presentation.viewmodel.FolderViewModel
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class FolderFragment : Fragment() {
     private var binding by autoCleared<FragmentFolderBinding>()

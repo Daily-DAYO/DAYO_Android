@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.daily.dayo.R
 import com.daily.dayo.common.DefaultDialogConfigure
 import com.daily.dayo.common.autoCleared
@@ -13,6 +14,7 @@ import com.daily.dayo.databinding.FragmentProfileOptionBinding
 
 class ProfileOptionFragment : DialogFragment() {
     private var binding by autoCleared<FragmentProfileOptionBinding>()
+    private val args by navArgs<ProfileOptionFragmentArgs>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         isCancelable = true
@@ -28,9 +30,16 @@ class ProfileOptionFragment : DialogFragment() {
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
         dialog?.window?.setGravity(Gravity.BOTTOM)
 
+        binding.isMine = args.isMine
+
+        // My Profile
         setOptionFolderSettingClickListener()
         setOptionProfileEditClickListener()
         setOptionSettingClickListener()
+
+        // Other Profile
+
+
         return binding.root
     }
 
