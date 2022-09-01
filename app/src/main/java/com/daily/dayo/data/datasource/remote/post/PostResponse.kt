@@ -12,14 +12,8 @@ data class ListFeedResponse(
 )
 
 data class EditPostResponse(
-    @SerializedName("category")
-    val category: Category,
-    @SerializedName("contents")
-    val contents : String,
-    @SerializedName("folderId")
-    val folderId : Int,
-    @SerializedName("hashtags")
-    val hashtags : List<String>
+    @SerializedName("postId")
+    val postId: Int
 )
 
 data class CreatePostResponse (

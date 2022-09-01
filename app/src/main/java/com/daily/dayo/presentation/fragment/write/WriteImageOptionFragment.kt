@@ -28,6 +28,7 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.min
 
 @AndroidEntryPoint
 class WriteImageOptionFragment : DialogFragment() {
@@ -102,27 +103,35 @@ class WriteImageOptionFragment : DialogFragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
             if (activityResult.resultCode == Activity.RESULT_OK) {
                 val data: Intent? = activityResult.data
-
+                val remainingNum = 5 - writeViewModel.postImageUriList.size()
                 if (data?.clipData != null) { //사진 여러 개 선택 시
                     val count = data.clipData!!.itemCount
-                    if (count > 5) {
+                    if (count > remainingNum) {
                         Toast.makeText(
                             requireContext(),
                             getString(R.string.write_post_upload_alert_message_image_fail_max),
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                    for (i in 0 until count) {
+                    for (i in 0 until min(count, remainingNum)) { // 이전 선택 사진을 포함해 선택 사진의 총 갯수가 5개 이하면 count를, 초과하면 remainingNumber을 선택
                         val imageUri = data.clipData!!.getItemAt(i).uri
                         writeViewModel.postImageUriList.add(imageUri.toString())
                     }
                     findNavController().popBackStack()
                 } else { // 단일 선택
                     data?.data?.let { uri ->
-                        val imageUri: Uri? = data.data
-                        if (imageUri != null) {
-                            writeViewModel.postImageUriList.add(imageUri.toString())
-                            findNavController().popBackStack()
+                        if (remainingNum <= 0) {
+                            Toast.makeText(
+                                requireContext(),
+                                getString(R.string.write_post_upload_alert_message_image_fail_max),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            val imageUri: Uri? = data.data
+                            if (imageUri != null) {
+                                writeViewModel.postImageUriList.add(imageUri.toString())
+                                findNavController().popBackStack()
+                            }
                         }
                     }
                 }
