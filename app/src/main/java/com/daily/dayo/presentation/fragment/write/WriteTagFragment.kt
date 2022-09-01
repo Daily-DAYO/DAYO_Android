@@ -13,6 +13,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.common.Event
+import com.daily.dayo.common.HideKeyBoardUtil
+import com.daily.dayo.common.ListLiveData
+import com.daily.dayo.common.ReplaceUnicode
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentWriteTagBinding
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
@@ -22,6 +25,7 @@ import com.google.android.material.chip.ChipGroup
 class WriteTagFragment : Fragment() {
     private var binding by autoCleared<FragmentWriteTagBinding>()
     private val writeViewModel by activityViewModels<WriteViewModel>()
+    private var originalTagList: MutableList<String> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,6 +51,11 @@ class WriteTagFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        HideKeyBoardUtil.hideTouchDisplay(requireActivity(), requireView())
+    }
+
     private fun setBackButtonClickListener() {
         binding.btnWriteTagBack.setOnClickListener {
             writeViewModel.showWriteOptionDialog.value = Event(true)
@@ -56,6 +65,7 @@ class WriteTagFragment : Fragment() {
 
     private fun setSubmitButtonClickListener() {
         binding.btnWritePostTagSubmit.setOnClickListener {
+            writeViewModel.postTagList = ListLiveData<String>()
             writeViewModel.postTagList.replaceAll(binding.chipgroupWriteTagListSaved.getAllChipsTagText())
             writeViewModel.showWriteOptionDialog.value = Event(true)
             findNavController().navigateUp()
@@ -66,27 +76,38 @@ class WriteTagFragment : Fragment() {
         binding.etWriteTagAdd.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-                    val chip = LayoutInflater.from(context)
-                        .inflate(R.layout.item_write_post_tag_chip, null) as Chip
-                    val layoutParams = ViewGroup.MarginLayoutParams(
-                        ViewGroup.MarginLayoutParams.WRAP_CONTENT,
-                        ViewGroup.MarginLayoutParams.WRAP_CONTENT
-                    )
-                    with(chip) {
-                        setTextAppearance(R.style.WritePostTagTextStyle)
-                        setOnCloseIconClickListener {
-                            binding.chipgroupWriteTagListSaved.removeView(chip as View)
-                            setTagCountLimit()
+                    val originalTag = binding.etWriteTagAdd.text.toString().trim()
+                    val removeBlankTag = ReplaceUnicode.replaceBlankText(originalTag)
+
+                    if (removeBlankTag.isEmpty()
+                        || binding.chipgroupWriteTagListSaved.getAllChipsTagText()
+                            .contains(removeBlankTag)
+                    ) {
+                        binding.etWriteTagAdd.setText("")
+                    } else {
+                        val chip = LayoutInflater.from(context)
+                            .inflate(R.layout.item_write_post_tag_chip, null) as Chip
+                        val layoutParams = ViewGroup.MarginLayoutParams(
+                            ViewGroup.MarginLayoutParams.WRAP_CONTENT,
+                            ViewGroup.MarginLayoutParams.WRAP_CONTENT
+                        )
+                        with(chip) {
+                            setTextAppearance(R.style.WritePostTagTextStyle)
+                            setOnCloseIconClickListener {
+                                binding.chipgroupWriteTagListSaved.removeView(chip as View)
+                                setTagCountLimit()
+                                setTagSubmitClickListener(binding.chipgroupWriteTagListSaved.getAllChipsTagText())
+                            }
+                            ensureAccessibleTouchTarget(42.toPx())
+                            text = "# $removeBlankTag"
                         }
-                        ensureAccessibleTouchTarget(42.toPx())
-                        text = "# ${binding.etWriteTagAdd.text.toString().trim()}"
+                        if (binding.chipgroupWriteTagListSaved.size < 8) {
+                            binding.chipgroupWriteTagListSaved.addView(chip, layoutParams)
+                        }
+                        binding.etWriteTagAdd.setText("")
                     }
-                    if (binding.chipgroupWriteTagListSaved.size < 8) {
-                        binding.chipgroupWriteTagListSaved.addView(chip, layoutParams)
-                        setTagCountLimit()
-                    }
-                    binding.etWriteTagAdd.setText("")
-                    binding.etWriteTagAdd.clearFocus()
+                    setTagCountLimit()
+                    setTagSubmitClickListener(binding.chipgroupWriteTagListSaved.getAllChipsTagText())
                     true
                 }
                 else -> false
@@ -108,12 +129,15 @@ class WriteTagFragment : Fragment() {
                     setOnCloseIconClickListener {
                         binding.chipgroupWriteTagListSaved.removeView(chip as View)
                         setTagCountLimit()
+                        setTagSubmitClickListener(binding.chipgroupWriteTagListSaved.getAllChipsTagText())
                     }
                     text = "# ${it[index].trim()}"
                 }
                 binding.chipgroupWriteTagListSaved.addView(chip, layoutParams)
+                originalTagList.add(it[index])
             }
             setTagCountLimit()
+            setTagSubmitClickListener(binding.chipgroupWriteTagListSaved.getAllChipsTagText())
         }
     }
 
@@ -134,13 +158,6 @@ class WriteTagFragment : Fragment() {
                         context?.theme
                     )
                 )
-                btnWritePostTagSubmit.setTextColor(
-                    resources.getColor(
-                        R.color.gray_1_313131,
-                        context?.theme
-                    )
-                )
-                btnWritePostTagSubmit.isEnabled = true
                 imgWriteTagListEmpty.visibility = View.INVISIBLE
             } else {
                 tvWriteTagListCountSaved.setTextColor(
@@ -149,15 +166,28 @@ class WriteTagFragment : Fragment() {
                         context?.theme
                     )
                 )
-                btnWritePostTagSubmit.setTextColor(
-                    resources.getColor(
-                        R.color.gray_4_D3D2D2,
-                        context?.theme
-                    )
-                )
-                btnWritePostTagSubmit.isEnabled = false
                 imgWriteTagListEmpty.visibility = View.VISIBLE
             }
+        }
+    }
+
+    private fun setTagSubmitClickListener(currentTagList: List<String>) {
+        if(originalTagList == currentTagList) {
+            binding.btnWritePostTagSubmit.setTextColor(
+                resources.getColor(
+                    R.color.gray_4_D3D2D2,
+                    context?.theme
+                )
+            )
+            binding.btnWritePostTagSubmit.isEnabled = false
+        } else {
+            binding.btnWritePostTagSubmit.setTextColor(
+                resources.getColor(
+                    R.color.gray_1_313131,
+                    context?.theme
+                )
+            )
+            binding.btnWritePostTagSubmit.isEnabled = true
         }
     }
 
