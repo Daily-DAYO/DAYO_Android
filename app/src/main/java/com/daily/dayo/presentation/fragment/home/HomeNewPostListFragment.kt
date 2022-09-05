@@ -24,7 +24,6 @@ import com.daily.dayo.presentation.adapter.HomeNewAdapter
 import com.daily.dayo.presentation.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -80,19 +79,17 @@ class HomeNewPostListFragment : Fragment() {
 
     private fun setNewPostListCollect() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                homeViewModel.newPostList.observe(viewLifecycleOwner) {
-                    when (it.status) {
-                        Status.SUCCESS -> {
-                            it.data?.let { postList ->
-                                loadPostThumbnail(postList)
-                            }
+            homeViewModel.newPostList.observe(viewLifecycleOwner) {
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        it.data?.let { postList ->
+                            loadPostThumbnail(postList)
                         }
-                        Status.LOADING -> {
-                        }
-                        Status.ERROR -> {
+                    }
+                    Status.LOADING -> {
+                    }
+                    Status.ERROR -> {
 
-                        }
                     }
                 }
             }
@@ -153,8 +150,12 @@ class HomeNewPostListFragment : Fragment() {
                         when (throwable) {
                             is CancellationException -> Log.e("Post Like Click", "CANCELLED")
                             null -> {
-                                if (currentCategory != Category.ALL) {
-                                    homeViewModel.requestHomeNewPostListCategory(currentCategory)
+                                if (this@HomeNewPostListFragment::currentCategory.isInitialized) {
+                                    if (currentCategory != Category.ALL) {
+                                        homeViewModel.requestHomeNewPostListCategory(currentCategory)
+                                    } else {
+                                        homeViewModel.requestHomeNewPostList()
+                                    }
                                 } else {
                                     homeViewModel.requestHomeNewPostList()
                                 }
@@ -170,7 +171,7 @@ class HomeNewPostListFragment : Fragment() {
         val thumbnailImgList = emptyList<Bitmap>().toMutableList()
         val userImgList = emptyList<Bitmap>().toMutableList()
 
-        CoroutineScope(Dispatchers.Main).launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             for (i in 0 until (if (postList.size >= 6) 6 else postList.size)) {
                 thumbnailImgList.add(withContext(Dispatchers.IO) {
                     GlideLoadUtil.loadImageBackground(
@@ -210,14 +211,12 @@ class HomeNewPostListFragment : Fragment() {
     private fun loadingPost() {
         binding.layoutNewPostShimmer.startShimmer()
         binding.layoutNewPostShimmer.visibility = View.VISIBLE
-        binding.radiogroupNewPostCategory.visibility = View.INVISIBLE
         binding.rvNewPost.visibility = View.INVISIBLE
     }
 
     private fun completeLoadPost() {
         binding.layoutNewPostShimmer.stopShimmer()
         binding.layoutNewPostShimmer.visibility = View.GONE
-        binding.radiogroupNewPostCategory.visibility = View.VISIBLE
         binding.rvNewPost.visibility = View.VISIBLE
     }
 }

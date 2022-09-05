@@ -24,7 +24,6 @@ import com.daily.dayo.presentation.adapter.HomeDayoPickAdapter
 import com.daily.dayo.presentation.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -79,21 +78,19 @@ class HomeDayoPickPostListFragment : Fragment() {
 
     private fun setDayoPickPostListCollect() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                homeViewModel.dayoPickPostList.observe(viewLifecycleOwner) {
-                    // TODO : 하단 BottomNavigation을 통해 Fragment를 이동하고 나서 돌아오고나서 카테고리를 선택하면 observe가 중복해서 생겨난다
-                    //  해당 LiveData 객체가 1개 더 생성되는듯 하다
-                    when (it.status) {
-                        Status.SUCCESS -> {
-                            it.data?.let { postList ->
-                                loadPostThumbnail(postList)
-                            }
+            homeViewModel.dayoPickPostList.observe(viewLifecycleOwner) {
+                // TODO : 하단 BottomNavigation을 통해 Fragment를 이동하고 나서 돌아오고나서 카테고리를 선택하면 observe가 중복해서 생겨난다
+                //  해당 LiveData 객체가 1개 더 생성되는듯 하다
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        it.data?.let { postList ->
+                            loadPostThumbnail(postList)
                         }
-                        Status.LOADING -> {
-                        }
-                        Status.ERROR -> {
+                    }
+                    Status.LOADING -> {
+                    }
+                    Status.ERROR -> {
 
-                        }
                     }
                 }
             }
@@ -154,10 +151,14 @@ class HomeDayoPickPostListFragment : Fragment() {
                         when (throwable) {
                             is CancellationException -> Log.e("Post Like Click", "CANCELLED")
                             null -> {
-                                if (currentCategory != Category.ALL) {
-                                    homeViewModel.requestHomeDayoPickPostListCategory(
-                                        currentCategory
-                                    )
+                                if (this@HomeDayoPickPostListFragment::currentCategory.isInitialized) {
+                                    if (currentCategory != Category.ALL) {
+                                        homeViewModel.requestHomeDayoPickPostListCategory(
+                                            currentCategory
+                                        )
+                                    } else {
+                                        homeViewModel.requestHomeDayoPickPostList()
+                                    }
                                 } else {
                                     homeViewModel.requestHomeDayoPickPostList()
                                 }
@@ -173,7 +174,7 @@ class HomeDayoPickPostListFragment : Fragment() {
         val thumbnailImgList = emptyList<Bitmap>().toMutableList()
         val userImgList = emptyList<Bitmap>().toMutableList()
 
-        CoroutineScope(Dispatchers.Main).launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             for (i in 0 until (if (postList.size >= 6) 6 else postList.size)) {
                 thumbnailImgList.add(withContext(Dispatchers.IO) {
                     loadImageBackground(
@@ -213,14 +214,12 @@ class HomeDayoPickPostListFragment : Fragment() {
     private fun loadingPost() {
         binding.layoutDayopickPostShimmer.startShimmer()
         binding.layoutDayopickPostShimmer.visibility = View.VISIBLE
-        binding.radiogroupDayopickPostCategory.visibility = View.INVISIBLE
         binding.rvDayopickPost.visibility = View.INVISIBLE
     }
 
     private fun completeLoadPost() {
         binding.layoutDayopickPostShimmer.stopShimmer()
         binding.layoutDayopickPostShimmer.visibility = View.GONE
-        binding.radiogroupDayopickPostCategory.visibility = View.VISIBLE
         binding.rvDayopickPost.visibility = View.VISIBLE
     }
 }
