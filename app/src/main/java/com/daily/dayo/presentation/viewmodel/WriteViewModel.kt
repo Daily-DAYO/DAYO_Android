@@ -72,6 +72,7 @@ class WriteViewModel @Inject constructor(
         postFolderId: Int,
         postTags: Array<String>
     ) = viewModelScope.launch {
+        _writeSuccess.postValue(Event(false))
         val response = requestUploadPostUseCase(
             category = postCategory,
             contents = postContents,
@@ -94,6 +95,7 @@ class WriteViewModel @Inject constructor(
         postFolderId: Int,
         postTags: Array<String>
     ) = viewModelScope.launch {
+        _writeEditSuccess.postValue(Event(false))
         val response = requestEditPostUseCase(
             postId = postId,
             EditPostRequest(
@@ -104,7 +106,7 @@ class WriteViewModel @Inject constructor(
             )
         )
         if (response.isSuccessful) {
-            _writePostId.postValue(response.body()?.let { Event(it.folderId) } as Event<Int>)
+            _writePostId.postValue(response.body()?.let { Event(it.postId) })
             _writeEditSuccess.postValue(Event(true))
         } else {
             _writeEditSuccess.postValue(Event(false))
