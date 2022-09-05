@@ -34,6 +34,7 @@ import com.daily.dayo.common.Event
 import com.daily.dayo.common.GlideApp
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.RadioGridGroup
+import com.daily.dayo.common.ReplaceUnicode
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentWriteBinding
 import com.daily.dayo.domain.model.Category
@@ -57,7 +58,6 @@ class WriteFragment : Fragment() {
     private lateinit var glideRequestManager: RequestManager
 
     private var isCategorySelected: Boolean = false
-    private var isContentsFilled: Boolean = false
     private var isImageUploaded: Boolean = false
     private var isLoadedEditPost: Boolean = false
 
@@ -132,11 +132,7 @@ class WriteFragment : Fragment() {
                             R.string.write_post_upload_alert_message_edittext_length_fail_max,
                             Toast.LENGTH_SHORT
                         ).show()
-                    } else if (s.toString().isEmpty()) {
-                        isContentsFilled = false
-                        setUploadButtonActivation()
                     } else {
-                        isContentsFilled = true
                         setUploadButtonActivation()
                     }
                 }
@@ -162,7 +158,6 @@ class WriteFragment : Fragment() {
                             Observer { isSuccess ->
                                 if (isSuccess.getContentIfNotHandled() == true) {
                                     isCategorySelected = true
-                                    isContentsFilled = true
                                     isImageUploaded = true
 
                                     writeViewModel.writeCurrentPostDetail.value?.getContentIfNotHandled()
@@ -322,15 +317,6 @@ class WriteFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        } else if (!isContentsFilled) {
-            binding.btnWritePostUpload.isSelected = false
-            binding.btnWritePostUpload.setOnClickListener {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.write_post_upload_alert_message_empty_content,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
         } else if (!isImageUploaded) {
             binding.btnWritePostUpload.isSelected = false
             binding.btnWritePostUpload.setOnClickListener {
@@ -346,10 +332,9 @@ class WriteFragment : Fragment() {
             binding.btnWritePostUpload.setOnClickListener {
                 writeViewModel.postId.value = args.postId
                 writeViewModel.postCategory.value = selectedCategoryName
-                writeViewModel.postContents.value = binding.etWriteDetail.text.toString()
-                writeViewModel.postImageUriList.observe(viewLifecycleOwner) {
-                    Log.e("dayo", "write upload:${it}")
-                }
+                writeViewModel.postContents.value =
+                    ReplaceUnicode.trimBlankText(binding.etWriteDetail.text.toString())
+                        .ifEmpty { "" }
                 findNavController().navigate(WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment())
             }
         }

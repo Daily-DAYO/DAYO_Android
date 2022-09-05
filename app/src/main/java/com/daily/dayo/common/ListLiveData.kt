@@ -27,6 +27,10 @@ class ListLiveData<T> : MutableLiveData<ArrayList<T>>() {
         }
     }
 
+    fun size(): Int {
+        return value?.size ?: 0
+    }
+
     fun replaceAll(list: List<T>) {
         val items: ArrayList<T> = arrayListOf()
         items.addAll(list)
