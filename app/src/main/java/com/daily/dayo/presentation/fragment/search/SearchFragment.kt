@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.common.HideKeyBoardUtil
+import com.daily.dayo.common.ReplaceUnicode
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentSearchBinding
 import com.daily.dayo.presentation.adapter.SearchKeywordRecentAdapter
@@ -76,8 +77,9 @@ class SearchFragment : Fragment() {
             when (actionId) {
                 EditorInfo.IME_ACTION_SEARCH -> {
                     HideKeyBoardUtil.hide(requireContext(), binding.tvSearchKeywordInput)
-                    if (!binding.tvSearchKeywordInput.text.toString().trim().isNullOrBlank()) {
-                        searchKeyword(binding.tvSearchKeywordInput.text.toString())
+                    binding.tvSearchKeywordInput.setText(ReplaceUnicode.replaceBlankText(binding.tvSearchKeywordInput.text.toString()))
+                    if (ReplaceUnicode.replaceBlankText(binding.tvSearchKeywordInput.text.toString()).isNotBlank()) {
+                        searchKeyword(ReplaceUnicode.replaceBlankText(binding.tvSearchKeywordInput.text.toString()))
                     }
                     true
                 }
@@ -106,12 +108,14 @@ class SearchFragment : Fragment() {
 
             override fun deleteSearchKeywordRecentClick(keyword: String, pos: Int) {
                 searchViewModel.deleteSearchKeywordRecent(keyword)
+                searchKeywordRecentList = searchViewModel.getSearchKeywordRecent()
                 searchKeywordRecentAdapter.submitList(searchKeywordRecentList)
             }
         })
 
         binding.tvSearchAllDelete.setOnClickListener {
             searchViewModel.clearSearchKeywordRecent()
+            searchKeywordRecentList = searchViewModel.getSearchKeywordRecent()
             searchKeywordRecentAdapter.submitList(searchKeywordRecentList)
         }
     }
