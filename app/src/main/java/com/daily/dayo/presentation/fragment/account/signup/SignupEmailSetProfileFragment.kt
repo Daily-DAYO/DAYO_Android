@@ -1,7 +1,9 @@
 package com.daily.dayo.presentation.fragment.account.signup
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.ImageDecoder
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -9,18 +11,27 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
-import com.daily.dayo.databinding.FragmentSignupEmailSetProfileBinding
+import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.databinding.FragmentSignupEmailSetProfileBinding
+import com.daily.dayo.presentation.viewmodel.AccountViewModel
+import com.daily.dayo.presentation.viewmodel.ProfileSettingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.FileOutputStream
@@ -28,20 +39,12 @@ import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
-import android.graphics.Canvas
-import android.graphics.drawable.Drawable
-import android.widget.Toast
-import androidx.fragment.app.activityViewModels
-import androidx.navigation.Navigation
-import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager
-import com.daily.dayo.common.ButtonActivation
-import com.daily.dayo.presentation.viewmodel.AccountViewModel
 
 @AndroidEntryPoint
 class SignupEmailSetProfileFragment : Fragment() {
     private var binding by autoCleared<FragmentSignupEmailSetProfileBinding>()
     private val loginViewModel by activityViewModels<AccountViewModel>()
+    private val profileSettingViewModel by viewModels<ProfileSettingViewModel>()
     private val args by navArgs<SignupEmailSetProfileFragmentArgs>()
     private lateinit var glideRequestManager: RequestManager
     private lateinit var userProfileImageString: String
@@ -66,6 +69,7 @@ class SignupEmailSetProfileFragment : Fragment() {
         verifyNickname()
         setProfilePhotoClickListener()
         observeNavigationMyProfileImageCallBack()
+        observeKakaoSignupCallback()
         observeSignupCallback()
         return binding.root
     }
@@ -288,12 +292,19 @@ class SignupEmailSetProfileFragment : Fragment() {
                 setUploadImagePath("png")
                 profileImgFile = bitmapToFile(profileEmptyBitmap, imagePath)
             }
-            loginViewModel.requestSignupEmail(
-                args.email,
-                binding.etSignupEmailSetProfileNickname.text.toString().trim(),
-                args.password,
-                profileImgFile
-            )
+            if (args.password != null) {
+                loginViewModel.requestSignupEmail(
+                    args.email,
+                    binding.etSignupEmailSetProfileNickname.text.toString().trim(),
+                    args.password!!,
+                    profileImgFile
+                )
+            } else {
+                // 카카오 계정 회원가입 시 비밀번호가 null
+                profileSettingViewModel.requestUpdateMyProfile(
+                    binding.etSignupEmailSetProfileNickname.text.toString().trim(), profileImgFile
+                )
+            }
             Toast.makeText(
                 requireContext(),
                 R.string.signup_email_alert_message_loading,
@@ -303,22 +314,38 @@ class SignupEmailSetProfileFragment : Fragment() {
     }
 
     private fun observeSignupCallback() {
-        loginViewModel.signupSuccess.observe(
-            viewLifecycleOwner,
-            androidx.lifecycle.Observer { isSuccess ->
-                if (isSuccess.getContentIfNotHandled() == true) {
-                    Navigation.findNavController(requireView()).navigate(
-                        SignupEmailSetProfileFragmentDirections.actionSignupEmailSetProfileFragmentToSignupEmailCompleteFragment(
-                            binding.etSignupEmailSetProfileNickname.text.toString().trim()
-                        )
+        loginViewModel.signupSuccess.observe(viewLifecycleOwner) { isSuccess ->
+            if (isSuccess.getContentIfNotHandled() == true) {
+                Navigation.findNavController(requireView()).navigate(
+                    SignupEmailSetProfileFragmentDirections.actionSignupEmailSetProfileFragmentToSignupEmailCompleteFragment(
+                        binding.etSignupEmailSetProfileNickname.text.toString().trim()
                     )
-                } else if (isSuccess.getContentIfNotHandled() == false) {
-                    Toast.makeText(
-                        requireContext(),
-                        R.string.signup_email_alert_message_fail_network,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
+                )
+            } else if (isSuccess.getContentIfNotHandled() == false) {
+                Toast.makeText(
+                    requireContext(),
+                    R.string.signup_email_alert_message_fail_network,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private fun observeKakaoSignupCallback() {
+        profileSettingViewModel.updateSuccess.observe(viewLifecycleOwner) { isSuccess ->
+            if (isSuccess.getContentIfNotHandled() == true) {
+                Navigation.findNavController(requireView()).navigate(
+                    SignupEmailSetProfileFragmentDirections.actionSignupEmailSetProfileFragmentToSignupEmailCompleteFragment(
+                        binding.etSignupEmailSetProfileNickname.text.toString().trim()
+                    )
+                )
+            } else if (isSuccess.getContentIfNotHandled() == false) {
+                Toast.makeText(
+                    requireContext(),
+                    R.string.signup_email_alert_message_fail_network,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 }

@@ -6,11 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.common.Event
-import com.daily.dayo.data.datasource.remote.member.ChangePasswordRequest
-import com.daily.dayo.data.datasource.remote.member.CheckPasswordRequest
-import com.daily.dayo.data.datasource.remote.member.DeviceTokenRequest
-import com.daily.dayo.data.datasource.remote.member.MemberOAuthRequest
-import com.daily.dayo.data.datasource.remote.member.MemberSignInRequest
+import com.daily.dayo.data.datasource.remote.member.*
 import com.daily.dayo.domain.usecase.member.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +31,7 @@ class AccountViewModel @Inject constructor(
     private val requestCheckEmailUseCase: RequestCheckEmailUseCase,
     private val requestCheckCurrentPasswordUseCase: RequestCheckCurrentPasswordUseCase,
     private val requestChangePasswordUseCase: RequestChangePasswordUseCase,
-    private val requestSettingChangePasswordUseCase: RequestSettingChangePasswordUseCase,
+    private val requestSettingChangePasswordUseCase: RequestSettingChangePasswordUseCase
 ) : ViewModel() {
 
     private val _signupSuccess = MutableLiveData<Event<Boolean>>()
@@ -43,6 +39,9 @@ class AccountViewModel @Inject constructor(
 
     private val _loginSuccess = MutableLiveData<Event<Boolean>>()
     val loginSuccess: LiveData<Event<Boolean>> get() = _loginSuccess
+
+    private val _memberInfoSuccess = MutableLiveData<Boolean>()
+    val memberInfoSuccess get() = _memberInfoSuccess
 
     private val _isEmailDuplicate = MutableLiveData<Boolean>()
     val isEmailDuplicate: LiveData<Boolean> get() = _isEmailDuplicate
@@ -72,8 +71,10 @@ class AccountViewModel @Inject constructor(
         val response = requestLoginKakaoUseCase(MemberOAuthRequest(accessToken = accessToken))
         if (response.isSuccessful) {
             DayoApplication.preferences.saveCurrentUser(response.body())
-            requestMemberInfo()
-            _loginSuccess.postValue(Event(true))
+            coroutineScope {
+                requestMemberInfo()
+                _loginSuccess.postValue(Event(true))
+            }
         } else {
             _loginSuccess.postValue(Event(false))
         }
@@ -104,7 +105,7 @@ class AccountViewModel @Inject constructor(
         }
     }
 
-    private fun requestMemberInfo() = viewModelScope.launch {
+    private suspend fun requestMemberInfo() {
         val response = requestMemberInfoUseCase()
         if (response.isSuccessful) {
             DayoApplication.preferences.saveCurrentUser(response.body())
