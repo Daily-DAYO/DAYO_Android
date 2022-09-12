@@ -183,6 +183,7 @@
     <string name="hint_search_keyword_input">검색어를 입력해주세요.</string>
     <string name="search_recent">최근 검색어</string>
     <string name="search_recommend">추천 검색어</string>
+    <string name="search_result_empty">앗! 찾으시는 검색 결과가 없어요.</string>
 
     <!-- Certificate-->
     <string name="get_certificate_code">인증번호 받기</string>

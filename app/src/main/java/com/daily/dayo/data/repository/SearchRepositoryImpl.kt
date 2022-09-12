@@ -18,22 +18,22 @@ class SearchRepositoryImpl @Inject constructor(
         searchApiService.requestSearchTag(tag)
 
     override suspend fun requestSearchKeyword(keyword: String): Response<SearchResultResponse> {
-        if (requestSearchKeywordRecentList().contains(keyword)) { // 검색한 적 있는 경우 최신화를 위하여 삭제하고 추가
-            requestSearchKeywordRecentList().remove(keyword)
+        val initialSearchTagList = requestSearchKeywordRecentList()
+        if (initialSearchTagList.contains(keyword)) { // 검색한 적 있는 경우 최신화를 위하여 삭제하고 추가
+            initialSearchTagList.remove(keyword)
         }
-        requestSearchKeywordRecentList().add(keyword)
-        DayoApplication.preferences.setSearchKeywordRecent(requestSearchKeywordRecentList())
-
+        initialSearchTagList.add(keyword)
+        DayoApplication.preferences.setSearchKeywordRecent(initialSearchTagList)
         return requestSearchTag(tag = keyword)
     }
 
     override fun deleteSearchKeywordRecent(keyword: String) {
-        requestSearchKeywordRecentList().remove(keyword)
-        DayoApplication.preferences.setSearchKeywordRecent(requestSearchKeywordRecentList())
+        val initialSearchTagList = requestSearchKeywordRecentList()
+        initialSearchTagList.remove(keyword)
+        DayoApplication.preferences.setSearchKeywordRecent(initialSearchTagList)
     }
 
     override fun clearSearchKeywordRecent() {
-        requestSearchKeywordRecentList().clear()
-        DayoApplication.preferences.setSearchKeywordRecent(requestSearchKeywordRecentList())
+        DayoApplication.preferences.setSearchKeywordRecent(ArrayList<String>())
     }
 }
