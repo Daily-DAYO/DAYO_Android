@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.GlideLoadUtil
 import com.daily.dayo.common.HideKeyBoardUtil
+import com.daily.dayo.common.ReplaceUnicode
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentSearchResultBinding
@@ -116,10 +117,9 @@ class SearchResultFragment : Fragment() {
             when (actionId) {
                 EditorInfo.IME_ACTION_SEARCH -> {
                     HideKeyBoardUtil.hide(requireContext(), binding.tvSearchResultKeywordInput)
-                    if (!binding.tvSearchResultKeywordInput.text.toString().trim()
-                            .isNullOrBlank()
-                    ) {
-                        searchTagList(binding.tvSearchResultKeywordInput.text.toString())
+                    binding.tvSearchResultKeywordInput.setText(ReplaceUnicode.replaceBlankText(binding.tvSearchResultKeywordInput.text.toString()))
+                    if (ReplaceUnicode.replaceBlankText(binding.tvSearchResultKeywordInput.text.toString()).isNotBlank()) {
+                        searchTagList(ReplaceUnicode.replaceBlankText(binding.tvSearchResultKeywordInput.text.toString()))
                     }
                     true
                 }
@@ -142,10 +142,10 @@ class SearchResultFragment : Fragment() {
                     it.data?.let { postList ->
                         if (postList.isEmpty()) {
                             binding.layoutSearchResultContents.visibility = View.INVISIBLE
-                            binding.imgSearchResultEmpty.visibility = View.VISIBLE
+                            binding.layoutSearchResultEmpty.visibility = View.VISIBLE
                         } else {
                             binding.layoutSearchResultContents.visibility = View.VISIBLE
-                            binding.imgSearchResultEmpty.visibility = View.INVISIBLE
+                            binding.layoutSearchResultEmpty.visibility = View.INVISIBLE
                             binding.resultCount = postList.size
                             loadPostThumbnail(postList)
                         }
