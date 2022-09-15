@@ -32,7 +32,13 @@ object NetworkModule {
                     request.url.encodedPath.startsWith("/api/v1/members/signUp", true)
                 ) {
                     chain.proceed(request)
-                } else {
+                }
+                else if(request.url.encodedPath.equals("/api/v1/members/refresh", true)){
+                    chain.proceed(request.newBuilder().apply {
+                        addHeader("Authorization", "Bearer ${DayoApplication.preferences.getCurrentUser().refreshToken.toString()}")
+                    }.build())
+                }
+                else {
                     chain.proceed(request.newBuilder().apply {
                         addHeader("Authorization", "Bearer ${DayoApplication.preferences.getCurrentUser().accessToken.toString()}")
                     }.build())
