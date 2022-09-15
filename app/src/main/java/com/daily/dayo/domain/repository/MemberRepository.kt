@@ -34,6 +34,7 @@ interface MemberRepository {
     suspend fun requestChangeReceiveAlarm(body: ChangeReceiveAlarmRequest): Response<Void>
     suspend fun requestLogout(): Response<Void>
     suspend fun requestCheckEmail(email: String): Response<Void>
+    suspend fun requestCheckEmailAuth(email: String): Response<MemberAuthCodeResponse>
     suspend fun requestCheckCurrentPassword(body: CheckPasswordRequest): Response<Void>
     suspend fun requestChangePassword(body: ChangePasswordRequest): Response<Void>
     suspend fun requestSettingChangePassword(body: ChangePasswordRequest): Response<Void>
