@@ -68,6 +68,9 @@ class MemberRepositoryImpl @Inject constructor(
     override suspend fun requestCheckEmail(email: String): Response<Void> =
         memberApiService.requestCheckEmail(email)
 
+    override suspend fun requestCheckEmailAuth(email: String): Response<MemberAuthCodeResponse> =
+        memberApiService.requestCheckEmailAuth(email)
+
     override suspend fun requestCheckCurrentPassword(body: CheckPasswordRequest): Response<Void> =
         memberApiService.requestCheckCurrentPassword(body)
 

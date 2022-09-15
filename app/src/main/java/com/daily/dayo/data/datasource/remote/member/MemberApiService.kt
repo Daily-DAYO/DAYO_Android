@@ -64,6 +64,9 @@ interface MemberApiService {
     @GET("/api/v1/members/search/{email}")
     suspend fun requestCheckEmail(@Path("email") email: String): Response<Void>
 
+    @GET("/api/v1/members/search/code/{email}")
+    suspend fun requestCheckEmailAuth(@Path("email") email: String): Response<MemberAuthCodeResponse>
+
     @POST("/api/v1/members/checkPassword")
     suspend fun requestCheckCurrentPassword(@Body body: CheckPasswordRequest): Response<Void>
 
