@@ -24,7 +24,6 @@ import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.GlideApp
 import com.daily.dayo.common.ImageResizeUtil
 import com.daily.dayo.common.autoCleared
-import com.daily.dayo.common.dp
 import com.daily.dayo.domain.model.Privacy
 import com.daily.dayo.presentation.viewmodel.FolderSettingViewModel
 import java.io.File
@@ -79,8 +78,8 @@ class FolderSettingAddFragment : Fragment() {
             val thumbnailImg = thumbnailImgBitmap?.let {
                 val resizedThumbnailImg = ImageResizeUtil.resizeBitmap(
                     originalBitmap = it,
-                    resizedWidth = 480.dp,
-                    resizedHeight = 240.dp
+                    resizedWidth = 480,
+                    resizedHeight = 240
                 )
                 bitmapToFile(resizedThumbnailImg)
             }

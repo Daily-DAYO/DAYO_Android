@@ -31,7 +31,6 @@ import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.ImageResizeUtil
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
-import com.daily.dayo.common.dp
 import com.daily.dayo.databinding.FragmentProfileEditBinding
 import com.daily.dayo.presentation.viewmodel.ProfileSettingViewModel
 import kotlinx.coroutines.CancellationException
@@ -316,8 +315,8 @@ class ProfileEditFragment : Fragment() {
             var resizedEmptyBitmap = profileEmptyBitmap?.let {
                 ImageResizeUtil.resizeBitmap(
                     originalBitmap = it,
-                    resizedWidth = 100.dp,
-                    resizedHeight = 100.dp
+                    resizedWidth = 100,
+                    resizedHeight = 100
                 )
             }
             if(resizedEmptyBitmap == null) {
@@ -331,8 +330,8 @@ class ProfileEditFragment : Fragment() {
             val originalBitmap = userProfileImageString.toUri().toBitmap()
             val resizedBitmap = ImageResizeUtil.resizeBitmap(
                 originalBitmap = originalBitmap,
-                resizedWidth = 100.dp,
-                resizedHeight = 100.dp
+                resizedWidth = 100,
+                resizedHeight = 100
             )
             return bitmapToFile(resizedBitmap, imagePath)
         }
