@@ -22,7 +22,9 @@ import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentFolderSettingAddBinding
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.GlideApp
+import com.daily.dayo.common.ImageResizeUtil
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dp
 import com.daily.dayo.domain.model.Privacy
 import com.daily.dayo.presentation.viewmodel.FolderSettingViewModel
 import java.io.File
@@ -74,7 +76,14 @@ class FolderSettingAddFragment : Fragment() {
                     binding.radiobuttonFolderSettingAddSetPrivateOnlyMe.id -> Privacy.ONLY_ME
                     else -> Privacy.ALL
                 }
-            val thumbnailImg = thumbnailImgBitmap?.let { bitmapToFile(it) }
+            val thumbnailImg = thumbnailImgBitmap?.let {
+                val resizedThumbnailImg = ImageResizeUtil.resizeBitmap(
+                    originalBitmap = it,
+                    resizedWidth = 480.dp,
+                    resizedHeight = 240.dp
+                )
+                bitmapToFile(resizedThumbnailImg)
+            }
 
             folderSettingViewModel.requestCreateFolder(name, privacy, subheading, thumbnailImg)
             folderSettingViewModel.folderAddAccess.observe(viewLifecycleOwner) {

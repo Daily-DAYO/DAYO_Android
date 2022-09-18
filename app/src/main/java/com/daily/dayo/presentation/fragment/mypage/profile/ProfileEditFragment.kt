@@ -28,8 +28,10 @@ import com.daily.dayo.R
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.GlideLoadUtil
 import com.daily.dayo.common.HideKeyBoardUtil
+import com.daily.dayo.common.ImageResizeUtil
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dp
 import com.daily.dayo.databinding.FragmentProfileEditBinding
 import com.daily.dayo.presentation.viewmodel.ProfileSettingViewModel
 import kotlinx.coroutines.CancellationException
@@ -311,12 +313,28 @@ class ProfileEditFragment : Fragment() {
             val profileEmptyDrawable =
                 resources.getDrawable(R.drawable.ic_user_profile_image_empty, context?.theme)
             val profileEmptyBitmap = vectorDrawableToBitmapDrawable(profileEmptyDrawable)
+            var resizedEmptyBitmap = profileEmptyBitmap?.let {
+                ImageResizeUtil.resizeBitmap(
+                    originalBitmap = it,
+                    resizedWidth = 100.dp,
+                    resizedHeight = 100.dp
+                )
+            }
+            if(resizedEmptyBitmap == null) {
+                resizedEmptyBitmap = profileEmptyBitmap
+            }
 
             setUploadImagePath("png")
-            return bitmapToFile(profileEmptyBitmap, imagePath)
+            return bitmapToFile(resizedEmptyBitmap, imagePath)
         } else { // 2. 프로필 사진을 다른 사진으로 변경 한 경우
             setUploadImagePath(userProfileImageExtension)
-            return bitmapToFile(userProfileImageString.toUri().toBitmap(), imagePath)
+            val originalBitmap = userProfileImageString.toUri().toBitmap()
+            val resizedBitmap = ImageResizeUtil.resizeBitmap(
+                originalBitmap = originalBitmap,
+                resizedWidth = 100.dp,
+                resizedHeight = 100.dp
+            )
+            return bitmapToFile(resizedBitmap, imagePath)
         }
     }
 
