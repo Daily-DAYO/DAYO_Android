@@ -29,6 +29,7 @@ class AccountViewModel @Inject constructor(
     private val requestResignUseCase: RequestResignUseCase,
     private val requestLogoutUseCase: RequestLogoutUseCase,
     private val requestCheckEmailUseCase: RequestCheckEmailUseCase,
+    private val requestCheckEmailAuthUseCase: RequestCheckEmailAuthUseCase,
     private val requestCheckCurrentPasswordUseCase: RequestCheckCurrentPasswordUseCase,
     private val requestChangePasswordUseCase: RequestChangePasswordUseCase,
     private val requestSettingChangePasswordUseCase: RequestSettingChangePasswordUseCase
@@ -175,6 +176,16 @@ class AccountViewModel @Inject constructor(
             } else {
                 _checkEmailSuccess.postValue(false)
             }
+        }
+    }
+
+    fun requestCheckEmailAuth(inputEmail: String) = viewModelScope.launch {
+        val response = requestCheckEmailAuthUseCase(inputEmail)
+        if (response.isSuccessful) {
+            _isCertificateEmailSend.postValue(true)
+            certificateEmailAuthCode.postValue(response.body()?.authCode)
+        } else {
+            _isCertificateEmailSend.postValue(false)
         }
     }
 
