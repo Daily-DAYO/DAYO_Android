@@ -116,7 +116,7 @@ class PostFragment : Fragment() {
         binding.rvPostCommentList.adapter = postCommentAdapter
     }
 
-    private fun setPostOptionClickListener(isMine: Boolean) {
+    private fun setPostOptionClickListener(isMine: Boolean, memberId: String) {
         binding.btnPostOption.setOnClickListener {
             if (isMine) {
                 Navigation.findNavController(it)
@@ -127,7 +127,7 @@ class PostFragment : Fragment() {
                     )
             } else {
                 Navigation.findNavController(it)
-                    .navigate(PostFragmentDirections.actionPostFragmentToPostOptionFragment(postId = args.postId))
+                    .navigate(PostFragmentDirections.actionPostFragmentToPostOptionFragment(postId = args.postId, memberId = memberId))
             }
         }
     }
@@ -164,9 +164,12 @@ class PostFragment : Fragment() {
 
                                 val isMine =
                                     (post.memberId == DayoApplication.preferences.getCurrentUser().memberId)
-                                setPostOptionClickListener(isMine = isMine)
+
                                 setPostLikeClickListener(isChecked = post.heart)
-                                post.memberId?.let { it1 -> setOnUserProfileClickListener(it1) }
+                                post.memberId?.let { memberId ->
+                                    setOnUserProfileClickListener(memberId)
+                                    setPostOptionClickListener(isMine = isMine, memberId = memberId)
+                                }
                                 post.postImages?.let { it1 -> setupIndicators(it1.size) }
                                 post.bookmark?.let { it1 -> setPostBookmarkClickListener(it1) }
                                 post.hashtags?.let { it1 -> setTagList(it1) }

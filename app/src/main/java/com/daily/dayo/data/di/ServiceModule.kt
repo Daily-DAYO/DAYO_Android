@@ -9,6 +9,7 @@ import com.daily.dayo.data.datasource.remote.heart.HeartApiService
 import com.daily.dayo.data.datasource.remote.image.ImageApiService
 import com.daily.dayo.data.datasource.remote.member.MemberApiService
 import com.daily.dayo.data.datasource.remote.post.PostApiService
+import com.daily.dayo.data.datasource.remote.report.ReportApiService
 import com.daily.dayo.data.datasource.remote.search.SearchApiService
 import com.daily.dayo.data.repository.*
 import com.daily.dayo.domain.repository.*
@@ -114,4 +115,14 @@ object ServiceModule {
     @Provides
     fun provideAlarmRepository(alarmApiService: AlarmApiService): AlarmRepository =
         AlarmRepositoryImpl(alarmApiService)
+
+    @Singleton
+    @Provides
+    fun provideReportApiService(retrofit: Retrofit) =
+        retrofit.create(ReportApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideReportRepository(reportApiService: ReportApiService): ReportRepository =
+        ReportRepositoryImpl(reportApiService)
 }
