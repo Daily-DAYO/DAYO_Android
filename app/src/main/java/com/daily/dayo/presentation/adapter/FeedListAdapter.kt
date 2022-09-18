@@ -18,7 +18,6 @@ import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.convertCountPlace
 import com.daily.dayo.databinding.ItemFeedPostBinding
-import com.daily.dayo.domain.model.Comment
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.domain.model.categoryKR
 import com.daily.dayo.presentation.fragment.feed.FeedFragmentDirections
@@ -71,8 +70,10 @@ class FeedListAdapter(private val requestManager: RequestManager) :
 
         fun bind(post: Post) {
             binding.post = post
-            binding.heartCountStr = if(post.heartCount != null) convertCountPlace(post.heartCount) else "0"
-            binding.commentCountStr = if(post.commentCount != null) convertCountPlace(post.commentCount) else "0"
+            binding.heartCountStr =
+                if (post.heartCount != null) convertCountPlace(post.heartCount) else "0"
+            binding.commentCountStr =
+                if (post.commentCount != null) convertCountPlace(post.commentCount) else "0"
             binding.categoryKR = post.category?.let { categoryKR(it) }
             CoroutineScope(Dispatchers.Main).launch {
                 val postImgBitmap: Bitmap?
@@ -110,8 +111,12 @@ class FeedListAdapter(private val requestManager: RequestManager) :
             }
 
             val isMine = (post.memberId == DayoApplication.preferences.getCurrentUser().memberId)
-            setPostOptionClickListener(isMine = isMine, postId = post.postId!!)
-            setOnUserProfileClickListener(postMemberId = post.memberId!!)
+            setPostOptionClickListener(
+                isMine = isMine,
+                postId = post.postId!!,
+                memberId = post.memberId!!
+            )
+            setOnUserProfileClickListener(postMemberId = post.memberId)
             setOnPostClickListener(postId = post.postId, nickname = post.nickname)
 
             // 해시태그
@@ -219,7 +224,7 @@ class FeedListAdapter(private val requestManager: RequestManager) :
             }
         }
 
-        private fun setPostOptionClickListener(isMine: Boolean, postId: Int) {
+        private fun setPostOptionClickListener(isMine: Boolean, postId: Int, memberId: String) {
             binding.btnFeedPostOption.setOnClickListener {
                 if (isMine) {
                     Navigation.findNavController(it)
@@ -232,7 +237,7 @@ class FeedListAdapter(private val requestManager: RequestManager) :
                     Navigation.findNavController(it)
                         .navigate(
                             FeedFragmentDirections.actionFeedFragmentToPostOptionFragment(
-                                postId = postId
+                                postId = postId, memberId = memberId
                             )
                         )
                 }

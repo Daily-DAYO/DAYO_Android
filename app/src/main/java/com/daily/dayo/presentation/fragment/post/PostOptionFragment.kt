@@ -47,13 +47,13 @@ class PostOptionFragment : DialogFragment() {
 
     private fun setReportUserClickListener() {
         binding.layoutPostOptionReportUser.setOnClickListener {
-
+            findNavController().navigate(PostOptionFragmentDirections.actionPostOptionFragmentToReportUserFragment(memberId = args.memberId))
         }
     }
 
     private fun setReportPostClickListener() {
         binding.layoutPostOptionReportPost.setOnClickListener {
-            findNavController().navigate(PostOptionFragmentDirections.actionPostOptionFragmentToPostReportFragment(postId = args.postId))
+            findNavController().navigate(PostOptionFragmentDirections.actionPostOptionFragmentToReportPostFragment(postId = args.postId))
         }
    }
 }
