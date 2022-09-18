@@ -38,7 +38,7 @@ class ProfileOptionFragment : DialogFragment() {
         setOptionSettingClickListener()
 
         // Other Profile
-
+        setOptionReportUserClickListener()
 
         return binding.root
     }
@@ -61,17 +61,25 @@ class ProfileOptionFragment : DialogFragment() {
         }
     }
 
-    private fun setOptionProfileEditClickListener(){
+    private fun setOptionProfileEditClickListener() {
         binding.layoutProfileOptionEditProfile.setOnClickListener {
             findNavController().navigate(R.id.action_profileOptionFragment_to_profileEditFragment)
         }
     }
 
-    private fun setOptionSettingClickListener(){
+    private fun setOptionSettingClickListener() {
         binding.layoutProfileOptionSetting.setOnClickListener {
             findNavController().navigate(R.id.action_profileOptionFragment_to_settingFragment)
         }
     }
+
+    private fun setOptionReportUserClickListener() {
+        binding.layoutOtherProfileOptionReportUser.setOnClickListener {
+            findNavController().navigate(
+                ProfileOptionFragmentDirections.actionProfileOptionFragmentToReportUserFragment(
+                    memberId = args.memberId
+                )
+            )
+        }
+    }
 }
-
-

@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_loginFragment_to_loginEmailFragment"
             app:destination="@+id/LoginEmailFragment"/>
+        <action
+            android:id="@+id/action_loginFragment_to_signupEmailSetProfileFragment"
+            app:destination="@id/SignupEmailSetProfileFragment"/>
     </fragment>
 
     <fragment
@@ -157,7 +160,8 @@
             app:argType="string"/>
         <argument
             android:name="password"
-            app:argType="string"/>
+            app:argType="string"
+            app:nullable="true"/>
         <action
             android:id="@+id/action_signupEmailSetProfileFragment_to_signupEmailSetProfileImageOptionFragment"
             app:destination="@id/SignupEmailSetProfileImageOptionFragment"/>
