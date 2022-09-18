@@ -14,6 +14,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
+import com.daily.dayo.common.ImageResizeUtil
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentWriteOptionBinding
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
@@ -52,7 +53,12 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
             postImageFileList.clear()
             it.forEach { item ->
                 val postImageBitmap = item.toBitmap()
-                postImageFileList.add(bitmapToFile(postImageBitmap, setUploadImagePath()))
+                val resizedImageBitmap = ImageResizeUtil.resizeBitmap(
+                    originalBitmap = postImageBitmap,
+                    resizedWidth = 480,
+                    resizedHeight = 480
+                )
+                postImageFileList.add(bitmapToFile(resizedImageBitmap, setUploadImagePath()))
             }
         }
     }

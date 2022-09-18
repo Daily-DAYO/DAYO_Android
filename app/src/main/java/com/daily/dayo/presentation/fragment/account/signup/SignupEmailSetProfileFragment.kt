@@ -37,7 +37,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.ImageResizeUtil
-import com.daily.dayo.common.dp
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
 
 @AndroidEntryPoint
@@ -283,8 +282,8 @@ class SignupEmailSetProfileFragment : Fragment() {
                 setUploadImagePath(userProfileImageExtension)
                 val resizedBitmap = ImageResizeUtil.resizeBitmap(
                     originalBitmap = userProfileImageString.toUri().toBitmap(),
-                    resizedWidth = 100.dp,
-                    resizedHeight = 100.dp
+                    resizedWidth = 100,
+                    resizedHeight = 100
                 )
                 profileImgFile = bitmapToFile(resizedBitmap, imagePath)
             } else { // 기본 프로필 사진으로 설정
@@ -295,8 +294,8 @@ class SignupEmailSetProfileFragment : Fragment() {
                 resizedEmptyBitmap = resizedEmptyBitmap?.let { emptyBitmap ->
                     ImageResizeUtil.resizeBitmap(
                         originalBitmap = emptyBitmap,
-                        resizedWidth = 100.dp,
-                        resizedHeight = 100.dp
+                        resizedWidth = 100,
+                        resizedHeight = 100
                     )
                 }
 
