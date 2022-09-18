@@ -33,6 +33,7 @@ import com.daily.dayo.R
 import com.daily.dayo.common.Event
 import com.daily.dayo.common.GlideApp
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
+import com.daily.dayo.common.ImageResizeUtil.resizeBitmap
 import com.daily.dayo.common.RadioGridGroup
 import com.daily.dayo.common.ReplaceUnicode
 import com.daily.dayo.common.autoCleared
@@ -265,9 +266,7 @@ class WriteFragment : Fragment() {
                 postImageBitmapToStringList.clear()
                 for (element in it) {
                     var imageBitmap = element.toBitmap()
-//                    Log.e("ORIGINAL IMAGE SIZE", "${imageBitmap.allocationByteCount}")
                     imageBitmap = resizeBitmap(imageBitmap)
-//                    Log.e("RESIZED IMAGE SIZE", "${imageBitmap.allocationByteCount}")
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         postImageBitmapToStringList.add(imageBitmap.toBase64String())
                     }
@@ -394,29 +393,5 @@ class WriteFragment : Fragment() {
         } else {
             MediaStore.Images.Media.getBitmap(requireContext().contentResolver, this.toUri())
         }
-    }
-
-    private fun resizeBitmap(originalBitmap: Bitmap): Bitmap {
-        val width = 480 // 축소시킬 너비
-        val height = 480 // 축소시킬 높이
-        var bmpWidth = originalBitmap.width.toFloat()
-        var bmpHeight = originalBitmap.height.toFloat()
-
-        if (bmpWidth > width) {
-            // 원하는 너비보다 클 경우의 설정
-            val mWidth = bmpWidth / 100
-            val scale = width / mWidth
-            bmpWidth *= scale / 100
-            bmpHeight *= scale / 100
-        } else if (bmpHeight > height) {
-            // 원하는 높이보다 클 경우의 설정
-            val mHeight = bmpHeight / 100
-            val scale = height / mHeight
-            bmpWidth *= scale / 100
-            bmpHeight *= scale / 100
-        }
-        val resizedBitmap =
-            Bitmap.createScaledBitmap(originalBitmap, bmpWidth.toInt(), bmpHeight.toInt(), true)
-        return resizedBitmap
     }
 }
