@@ -138,7 +138,7 @@ class FindAccountPasswordCheckEmailCertificateFragment : Fragment() {
 
     private fun certificateEmail() {
         // 인증번호가 담긴 이메일 최초 발송
-        loginViewModel.requestCertificateEmail(args.email)
+        loginViewModel.requestCheckEmailAuth(args.email)
 
         binding.etLoginEmailFindPasswordCertificateUserInput.addTextChangedListener(object :
             TextWatcher {
