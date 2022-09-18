@@ -117,18 +117,35 @@
     <string name="post_option_mine_delete_alert_message">게시물을 삭제할까요?</string>
 
     <!-- Report -->
-    <string name="post_report_title">신고하기</string>
-    <string name="post_report_button">신고하기</string>
-    <string name="post_report_reason_1">성적인 내용이 포함돼있어요.</string>
-    <string name="post_report_reason_2">폭력적이거나 심한 욕설을 사용해요.</string>
-    <string name="post_report_reason_3">잘못된 정보를 제공해요.</string>
-    <string name="post_report_reason_4">유해하거나 위험한 내용이에요.</string>
-    <string name="post_report_reason_5">불법적인 내용이 포함돼있어요.</string>
-    <string name="post_report_reason_6">너무 많은 광고를 해요.</string>
-    <string name="post_report_reason_7">같은 내용으로 도배가 돼있어요.</string>
-    <string name="post_report_reason_other">기타</string>
-    <string name="post_report_reason_other_hint">신고 사유를 작성해주세요. (100자 이내)</string>
-    <string name="post_report_alert_message">신고가 접수되었어요.</string>
+    <string name="report_post_title">신고하기</string>
+    <string name="report_post_button">신고하기</string>
+    <string name="report_post_subtitle">게시글을 신고하시겠어요?</string>
+    <string name="report_post_description">게시글을 신고하는 이유에 대해 알려주세요.</string>
+    <string name="report_post_reason_1">성적인 내용이 포함돼있어요.</string>
+    <string name="report_post_reason_2">폭력적이거나 심한 욕설을 사용해요.</string>
+    <string name="report_post_reason_3">잘못된 정보를 제공해요.</string>
+    <string name="report_post_reason_4">유해하거나 위험한 내용이에요.</string>
+    <string name="report_post_reason_5">불법적인 내용이 포함돼있어요.</string>
+    <string name="report_post_reason_6">너무 많은 광고를 해요.</string>
+    <string name="report_post_reason_7">같은 내용으로 도배가 돼있어요.</string>
+    <string name="report_post_reason_other">기타</string>
+    <string name="report_post_reason_other_hint">신고 사유를 작성해주세요. (100자 이내)</string>
+    <string name="report_post_alert_message">신고가 접수되었어요.</string>
+
+    <string name="report_user_title">신고하기</string>
+    <string name="report_user_button">신고하기</string>
+    <string name="report_user_subtitle">사용자를 신고하시겠어요?</string>
+    <string name="report_user_description">사용자를 신고하는 이유에 대해 알려주세요.</string>
+    <string name="report_user_reason_1">성적인 내용을 게시해요.</string>
+    <string name="report_user_reason_2">폭력적이거나 심한 욕설을 사용해요.</string>
+    <string name="report_user_reason_3">잘못된 정보를 제공해요.</string>
+    <string name="report_user_reason_4">유해하거나 위험한 내용을 게시해요.</string>
+    <string name="report_user_reason_5">불법적인 내용을 게시해요.</string>
+    <string name="report_user_reason_6">너무 많은 광고를 해요.</string>
+    <string name="report_user_reason_7">같은 내용으로 도배가 돼있어요.</string>
+    <string name="report_user_reason_other">기타</string>
+    <string name="report_user_reason_other_hint">신고 사유를 작성해주세요. (100자 이내)</string>
+    <string name="report_user_alert_message">신고가 접수되었어요.</string>
 
     <!-- Folder -->
     <string name="post_folder_add_title">폴더 추가</string>

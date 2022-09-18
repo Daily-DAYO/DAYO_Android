@@ -173,19 +173,35 @@
         <argument
             android:name="postId"
             app:argType="integer" />
+        <argument
+            android:name="memberId"
+            app:argType="string" />
         <action
-            android:id="@+id/action_postOptionFragment_to_postReportFragment"
-            app:destination="@id/PostReportFragment" />
+            android:id="@+id/action_postOptionFragment_to_reportPostFragment"
+            app:destination="@id/ReportPostFragment" />
+        <action
+            android:id="@+id/action_postOptionFragment_to_reportUserFragment"
+            app:destination="@id/ReportUserFragment" />
     </dialog>
 
     <fragment
-        android:id="@+id/PostReportFragment"
-        android:name="com.daily.dayo.presentation.fragment.post.PostReportFragment"
-        android:label="fragment_post_report"
-        tools:layout="@layout/fragment_post_report">
+        android:id="@+id/ReportPostFragment"
+        android:name="com.daily.dayo.presentation.fragment.report.ReportPostFragment"
+        android:label="fragment_report_post"
+        tools:layout="@layout/fragment_report_post">
         <argument
             android:name="postId"
             app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ReportUserFragment"
+        android:name="com.daily.dayo.presentation.fragment.report.ReportUserFragment"
+        android:label="fragment_report_user"
+        tools:layout="@layout/fragment_report_user">
+        <argument
+            android:name="memberId"
+            app:argType="string" />
     </fragment>
 
     <dialog
@@ -294,6 +310,9 @@
         <argument
             android:name="isMine"
             app:argType="boolean" />
+        <argument
+            android:name="memberId"
+            app:argType="string" />
         <action
             android:id="@+id/action_profileOptionFragment_to_folderSettingFragment"
             app:destination="@id/FolderSettingFragment" />
@@ -303,6 +322,9 @@
         <action
             android:id="@+id/action_profileOptionFragment_to_settingFragment"
             app:destination="@+id/SettingFragment" />
+        <action
+            android:id="@+id/action_profileOptionFragment_to_reportUserFragment"
+            app:destination="@id/ReportUserFragment" />
     </dialog>
 
     <fragment
