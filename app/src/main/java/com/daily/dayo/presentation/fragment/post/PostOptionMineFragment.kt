@@ -21,7 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class PostOptionMineFragment : DialogFragment() {
     private var binding by autoCleared<FragmentPostOptionMineBinding>()
     private val postViewModel by activityViewModels<PostViewModel>()
-    private val args by navArgs<PostOptionFragmentArgs>()
+    private val args by navArgs<PostOptionMineFragmentArgs>()
     private lateinit var mAlertDialog: AlertDialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
