@@ -52,9 +52,12 @@ class NotificationFragment : Fragment() {
         binding.rvNotificationList.adapter = notificationAdapter
         notificationAdapter.setOnItemClickListener(object :
             NotificationListAdapter.OnItemClickListener {
-            override fun notificationItemClick(alarmId: Int, alarmCheck: Boolean) {
+            override fun notificationItemClick(alarmId: Int, alarmCheck: Boolean, position: Int) {
                 if (!alarmCheck) {
                     notificationViewModel.requestIsCheckAlarm(alarmId = alarmId)
+                    notificationViewModel.checkAlarmSuccess.observe(viewLifecycleOwner){
+                        if(it == true) notificationAdapter.notifyItemChanged(position)
+                    }
                 }
             }
         })
@@ -67,13 +70,7 @@ class NotificationFragment : Fragment() {
                 Status.SUCCESS -> {
                     it.data?.let { alarmList ->
                         binding.notificationCount = alarmList.size
-                        notificationAdapter.submitList(alarmList.toMutableList())
-                        for (alarm in alarmList) {
-                            if (alarm.check == true) break
-                            alarm.alarmId?.let { alarmId ->
-                                notificationViewModel.requestIsCheckAlarm(alarmId = alarmId)
-                            }
-                        }
+                        notificationAdapter.submitList(alarmList)
                     }
                 }
                 Status.LOADING -> {
