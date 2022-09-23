@@ -41,7 +41,7 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
     }
 
     interface OnItemClickListener{
-        fun notificationItemClick(alarmId: Int, alarmCheck: Boolean)
+        fun notificationItemClick(alarmId: Int, alarmCheck: Boolean, position: Int)
     }
 
     private var listener: OnItemClickListener?= null
@@ -60,7 +60,7 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
         holder.bind(item, position)
     }
 
-    override fun submitList(list: MutableList<Notification>?) {
+    override fun submitList(list: List<Notification>?) {
         super.submitList(list?.let { ArrayList(it) })
     }
 
@@ -68,15 +68,6 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(notification: Notification, position: Int) {
             binding.notification = notification
-
-            val pos = adapterPosition
-            if (pos != RecyclerView.NO_POSITION) {
-                itemView.setOnClickListener {
-                    notification.alarmId?.let { alarmId ->
-                        listener?.notificationItemClick(alarmId = alarmId, alarmCheck = notification.check!!)
-                    }
-                }
-            }
 
             if(notification.image != null) {
                 val layoutParams = ViewGroup.MarginLayoutParams(
@@ -125,8 +116,18 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
             binding.tvNotificationTitle.text = spanContent
 
             binding.root.setOnClickListener {
+                // alarm check
+                notification.alarmId?.let { alarmId ->
+                    listener?.notificationItemClick(
+                        alarmId = alarmId,
+                        alarmCheck = notification.check!!,
+                        position = position
+                    )
+                }
+
+                // move to alarm content
                 when (notification.topic) {
-                    Topic.COMMENT, Topic.HEART ->
+                    Topic.COMMENT, Topic.HEART -> {
                         notification.postId?.let { postId ->
                             Navigation.findNavController(it).navigate(
                                 NotificationFragmentDirections.actionNotificationFragmentToPostFragment(
@@ -134,6 +135,7 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
                                 )
                             )
                         }
+                    }
                     Topic.FOLLOW ->
                         Navigation.findNavController(it).navigate(
                             NotificationFragmentDirections.actionNotificationFragmentToProfileFragment(
