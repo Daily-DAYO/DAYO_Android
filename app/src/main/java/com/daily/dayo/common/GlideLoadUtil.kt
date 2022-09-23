@@ -19,10 +19,34 @@ object GlideLoadUtil {
         img: Bitmap,
         imgView: ImageView,
         placeholderImg: Int? = null,
-        errorImg: Int? = null
+        errorImg: Int? = null,
+        placeholderLottie: LottieAnimationView?= null
     ) {
         requestManager.load(img)
             .override(width, height)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    placeholderLottie?.let { lottieView ->
+                        lottieView.visibility = View.GONE
+                    }
+                    return false
+                }
+            })
             .thumbnail(0.1f)
             .placeholder(placeholderImg ?: R.color.gray_3_9C9C9C_alpha_30)
             .error(errorImg ?: R.drawable.ic_dayo_circle_grayscale)
