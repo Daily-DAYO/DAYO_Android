@@ -67,7 +67,8 @@ class PostImageSliderAdapter(private val requestManager: RequestManager) :
                     width = layoutParams.width,
                     height = layoutParams.width,
                     img = postImage,
-                    imgView = binding.imgSlider
+                    imgView = binding.imgSlider,
+                    placeholderLottie = binding.lottiePostImage
                 )
             }
         }

@@ -1,7 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/img_slider"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:contentDescription="@string/app_name"
-    android:scaleType="centerCrop" />
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/img_slider"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerCrop" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_post_image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:lottie_rawRes="@raw/dayo_loading"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:layout_constraintStart_toStartOf="@id/img_slider"
+            app:layout_constraintEnd_toEndOf="@id/img_slider"
+            app:layout_constraintTop_toTopOf="@id/img_slider"
+            app:layout_constraintBottom_toBottomOf="@id/img_slider"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
