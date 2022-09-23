@@ -22,6 +22,9 @@ class NotificationViewModel @Inject constructor(
     private val _alarmList = MutableLiveData<Resource<List<Notification>>>()
     val alarmList: LiveData<Resource<List<Notification>>> get() = _alarmList
 
+    private val _checkAlarmSuccess = MutableLiveData<Boolean>()
+    val checkAlarmSuccess: LiveData<Boolean> get() = _checkAlarmSuccess
+
     fun requestAllAlarmList() = viewModelScope.launch {
         _alarmList.postValue(Resource.loading(null))
         val response = requestAllAlarmListUseCase()
@@ -33,6 +36,9 @@ class NotificationViewModel @Inject constructor(
     }
 
     fun requestIsCheckAlarm(alarmId: Int) = viewModelScope.launch {
-        requestIsCheckAlarmUseCase(alarmId)
+        if (requestIsCheckAlarmUseCase(alarmId).isSuccessful)
+            _checkAlarmSuccess.postValue(true)
+        else
+            _checkAlarmSuccess.postValue(false)
     }
 }
