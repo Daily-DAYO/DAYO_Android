@@ -233,27 +233,23 @@ class ProfileFragment : Fragment() {
 
     private fun setMyProfileOptionClickListener() {
         binding.btnProfileOption.setOnClickListener {
-            if (args.memberId != null) {
-                findNavController().navigate(
-                    ProfileFragmentDirections.actionProfileFragmentToProfileOptionFragment(
-                        isMine = true,
-                        memberId = args.memberId!!
-                    )
+            findNavController().navigate(
+                ProfileFragmentDirections.actionProfileFragmentToProfileOptionFragment(
+                    isMine = true,
+                    memberId = profileViewModel.profileMemberId
                 )
-            }
+            )
         }
     }
 
     private fun setOtherProfileOptionClickListener() {
         binding.btnProfileOption.setOnClickListener {
-            if (args.memberId != null) {
-                findNavController().navigate(
-                    ProfileFragmentDirections.actionProfileFragmentToProfileOptionFragment(
-                        isMine = false,
-                        memberId = args.memberId!!
-                    )
+            findNavController().navigate(
+                ProfileFragmentDirections.actionProfileFragmentToProfileOptionFragment(
+                    isMine = false,
+                    memberId = profileViewModel.profileMemberId
                 )
-            }
+            )
         }
     }
 
