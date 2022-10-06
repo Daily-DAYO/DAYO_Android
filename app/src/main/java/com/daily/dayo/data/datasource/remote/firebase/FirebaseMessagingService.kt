@@ -50,7 +50,7 @@ class FirebaseMessagingService: FirebaseMessagingService() {
         notiIntent.putExtra("MemberId", memberId)
 
         notiIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(this, id, notiIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getActivity(this, id, notiIntent, PendingIntent.FLAG_IMMUTABLE)
 
         // notification channel 생성
         val CHANNEL_ID = getString(R.string.notification_channel_id)
