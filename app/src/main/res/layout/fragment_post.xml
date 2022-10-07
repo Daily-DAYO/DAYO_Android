@@ -20,6 +20,10 @@
             type="Boolean" />
 
         <variable
+            name="commentCount"
+            type="Integer"/>
+
+        <variable
             name="commentCountStr"
             type="String" />
     </data>
@@ -318,10 +322,24 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:overScrollMode="never"
+                        android:visibility="@{commentCount == 0 ? View.GONE : View.VISIBLE}"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/view_post_content_comment_divider"
                         tools:listitem="@layout/item_post_comment" />
+
+                    <TextView
+                        android:id="@+id/tv_post_comment_empty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingVertical="17dp"
+                        android:text="@string/post_comment_empty"
+                        android:textColor="@color/gray_4_D3D2D2"
+                        android:visibility="@{commentCount == 0 ? View.VISIBLE : View.GONE}"
+                        android:gravity="center"
+                        app:layout_constraintTop_toBottomOf="@id/view_post_content_comment_divider"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        tools:visibility="gone"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.core.widget.NestedScrollView>
         </androidx.constraintlayout.widget.ConstraintLayout>
