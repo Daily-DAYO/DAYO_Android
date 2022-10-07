@@ -192,7 +192,8 @@ class PostFragment : Fragment() {
                         Status.SUCCESS -> {
                             it.data?.let { postComment ->
                                 postCommentAdapter.submitList(postComment.toMutableList())
-                                binding.postCommentCount = postComment.size
+                                binding.commentCount = postComment.size
+                                binding.commentCountStr = postComment.size.toString()
                             }
                         }
                         Status.LOADING -> {}
