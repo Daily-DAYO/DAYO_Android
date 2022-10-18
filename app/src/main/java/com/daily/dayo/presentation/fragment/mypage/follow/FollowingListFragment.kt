@@ -36,13 +36,13 @@ class FollowingListFragment : Fragment() {
     ): View? {
         binding = FragmentFollowingListBinding.inflate(inflater, container, false)
         setRvFollowingListAdapter()
-        setFollowingList()
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
         requestFollowingList()
+        setFollowingList()
     }
 
     private fun setRvFollowingListAdapter(){
@@ -89,9 +89,7 @@ class FollowingListFragment : Fragment() {
     }
 
     private fun requestFollowingList(){
-        followViewModel.memberId.observe(viewLifecycleOwner) { memberId ->
-            followViewModel.requestListAllFollowing(memberId)
-        }
+        followViewModel.requestListAllFollowing(followViewModel.memberId)
     }
 
     private fun setFollowingList(){
