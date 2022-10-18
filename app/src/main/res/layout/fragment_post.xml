@@ -377,8 +377,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-                app:strokeColor="@color/gray_4_D3D2D2"
-                app:strokeWidth="1dp"
                 tools:src="@drawable/ic_dayo_circle_grayscale" />
 
             <EditText
