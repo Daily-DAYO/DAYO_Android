@@ -16,6 +16,7 @@ import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentSettingChangePasswordCurrentBinding
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -63,13 +64,13 @@ class SettingChangePasswordCurrentFragment : Fragment() {
     }
 
     private fun setBackClickListener() {
-        binding.btnSettingChangePasswordCurrentBack.setOnClickListener {
+        binding.btnSettingChangePasswordCurrentBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setNextClickListener() {
-        binding.btnSettingChangePasswordCurrentNext.setOnClickListener {
+        binding.btnSettingChangePasswordCurrentNext.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_settingChangePasswordCurrentFragment_to_settingChangePasswordNewFragment)
         }
     }

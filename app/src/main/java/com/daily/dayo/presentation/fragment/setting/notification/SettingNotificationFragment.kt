@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentSettingNotificationBinding
 import com.daily.dayo.presentation.viewmodel.SettingNotificationViewModel
 import com.google.firebase.ktx.Firebase
@@ -115,7 +116,7 @@ class SettingNotificationFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
-        binding.btnSettingNotificationBack.setOnClickListener {
+        binding.btnSettingNotificationBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }

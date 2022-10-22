@@ -17,7 +17,6 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
@@ -25,13 +24,13 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
-import com.daily.dayo.databinding.FragmentFolderSettingAddBinding
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
-import com.daily.dayo.domain.model.Category
+import com.daily.dayo.common.setOnDebounceClickListener
+import com.daily.dayo.databinding.FragmentFolderSettingAddBinding
 import com.daily.dayo.domain.model.Privacy
 import com.daily.dayo.presentation.viewmodel.FolderSettingViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -129,13 +128,13 @@ class FolderEditFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
-        binding.btnFolderSettingAddBack.setOnClickListener {
+        binding.btnFolderSettingAddBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setConfirmButtonClickListener() {
-        binding.tvFolderSettingAddConfirm.setOnClickListener { it ->
+        binding.tvFolderSettingAddConfirm.setOnDebounceClickListener { it ->
             val name: String = binding.etFolderSettingAddSetTitle.text.toString()
             val subheading: String = binding.etFolderSettingAddSetSubheading.text.toString()
             val privacy: Privacy =
@@ -177,7 +176,7 @@ class FolderEditFragment : Fragment() {
     }
 
     private fun setFolderSettingThumbnailOptionClickListener() {
-        binding.ivFolderSettingThumbnail.setOnClickListener {
+        binding.ivFolderSettingThumbnail.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_folderEditFragment_to_folderSettingAddImageOptionFragment)
         }
     }

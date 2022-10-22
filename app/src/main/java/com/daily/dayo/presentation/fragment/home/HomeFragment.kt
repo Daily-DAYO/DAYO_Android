@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.daily.dayo.R
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentHomeBinding
 import com.daily.dayo.domain.model.Category
 import com.daily.dayo.presentation.adapter.HomeFragmentPagerStateAdapter
@@ -42,7 +43,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setSearchClickListener() {
-        binding.btnPostSearch.setOnClickListener {
+        binding.btnPostSearch.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_searchFragment)
         }
     }

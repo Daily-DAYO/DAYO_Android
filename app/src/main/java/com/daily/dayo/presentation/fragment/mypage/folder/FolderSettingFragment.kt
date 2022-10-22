@@ -18,6 +18,7 @@ import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.ItemTouchHelperCallback
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFolderSettingBinding
 import com.daily.dayo.domain.model.FolderOrder
 import com.daily.dayo.presentation.adapter.FolderSettingAdapter
@@ -47,13 +48,13 @@ class FolderSettingFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
-        binding.btnFolderSettingBack.setOnClickListener {
+        binding.btnFolderSettingBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setFolderAddButtonClickListener() {
-        binding.tvFolderSettingAdd.setOnClickListener {
+        binding.tvFolderSettingAdd.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_folderSettingFragment_to_folderSettingAddFragment)
         }
     }
@@ -104,7 +105,7 @@ class FolderSettingFragment : Fragment() {
     }
 
     private fun setChangeOrderButtonClickListener(){
-        binding.btnFolderSettingChangeOrderOption.setOnClickListener {
+        binding.btnFolderSettingChangeOrderOption.setOnDebounceClickListener {
             binding.btnFolderSettingSave.visibility = View.VISIBLE
             folderSettingAdapter = FolderSettingAdapter(true)
             setProfileOrderFolderList()
@@ -113,7 +114,7 @@ class FolderSettingFragment : Fragment() {
     }
 
     private fun setSaveButtonClickListener(){
-        binding.btnFolderSettingSave.setOnClickListener {
+        binding.btnFolderSettingSave.setOnDebounceClickListener {
             //변경된 순서 저장
             folderSettingViewModel.requestOrderFolder(folderOrderList)
 

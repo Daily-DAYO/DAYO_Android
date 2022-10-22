@@ -20,6 +20,7 @@ import com.daily.dayo.common.GlideLoadUtil.loadImageBackgroundProfile
 import com.daily.dayo.common.GlideLoadUtil.loadImageViewProfile
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentProfileBinding
 import com.daily.dayo.domain.model.Folder
 import com.daily.dayo.presentation.adapter.ProfileFolderListAdapter
@@ -148,7 +149,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
-        binding.btnProfileBack.setOnClickListener {
+        binding.btnProfileBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
@@ -172,7 +173,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setFollowButtonClickListener(follow: Boolean) {
-        binding.btnProfileFollow.setOnClickListener {
+        binding.btnProfileFollow.setOnDebounceClickListener {
             when (follow) {
                 false -> setFollow()
                 true -> setUnfollow()
@@ -232,7 +233,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setMyProfileOptionClickListener() {
-        binding.btnProfileOption.setOnClickListener {
+        binding.btnProfileOption.setOnDebounceClickListener {
             findNavController().navigate(
                 ProfileFragmentDirections.actionProfileFragmentToProfileOptionFragment(
                     isMine = true,
@@ -243,7 +244,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setOtherProfileOptionClickListener() {
-        binding.btnProfileOption.setOnClickListener {
+        binding.btnProfileOption.setOnDebounceClickListener {
             findNavController().navigate(
                 ProfileFragmentDirections.actionProfileFragmentToProfileOptionFragment(
                     isMine = false,
@@ -254,7 +255,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setFollowerCountButtonClickListener(memberId: String, nickname: String) {
-        binding.layoutProfileFollowerCount.setOnClickListener { v ->
+        binding.layoutProfileFollowerCount.setOnDebounceClickListener { v ->
             Navigation.findNavController(v).navigate(
                 ProfileFragmentDirections.actionProfileFragmentToFollowFragment(
                     memberId = memberId,
@@ -266,7 +267,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setFollowingCountButtonClickListener(memberId: String, nickname: String) {
-        binding.layoutProfileFollowingCount.setOnClickListener { v ->
+        binding.layoutProfileFollowingCount.setOnDebounceClickListener { v ->
             Navigation.findNavController(v).navigate(
                 ProfileFragmentDirections.actionProfileFragmentToFollowFragment(
                     memberId = memberId,

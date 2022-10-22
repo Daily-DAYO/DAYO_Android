@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.GlideLoadUtil
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemProfilePostBinding
 import com.daily.dayo.domain.model.BookmarkPost
 import kotlinx.coroutines.CancellationException
@@ -111,7 +112,7 @@ class ProfileBookmarkPostListAdapter(private val requestManager: RequestManager)
 
             val pos = adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
-                itemView.setOnClickListener {
+                itemView.setOnDebounceClickListener {
                     listener?.onItemClick(itemView, bookmarkPost, pos)
                 }
             }

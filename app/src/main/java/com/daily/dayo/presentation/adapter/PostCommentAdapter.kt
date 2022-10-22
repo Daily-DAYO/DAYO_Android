@@ -12,6 +12,7 @@ import com.daily.dayo.BR
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.common.GlideLoadUtil
 import com.daily.dayo.common.GlideLoadUtil.loadImageViewProfile
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemPostCommentBinding
 import com.daily.dayo.domain.model.Comment
 import com.daily.dayo.presentation.fragment.post.PostFragmentDirections
@@ -74,7 +75,7 @@ class PostCommentAdapter(private val requestManager: RequestManager) :
             }
 
             with(binding) {
-                layoutPostCommentDelete.setOnClickListener {
+                layoutPostCommentDelete.setOnDebounceClickListener {
                     Snackbar.make(it, "삭제버튼 클릭", Snackbar.LENGTH_SHORT).show()
                 }
                 CoroutineScope(Dispatchers.Main).launch {
@@ -98,10 +99,10 @@ class PostCommentAdapter(private val requestManager: RequestManager) :
 
             val pos = adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
-                itemView.setOnClickListener {
+                itemView.setOnDebounceClickListener {
                     listener?.onItemClick(itemView, comment, pos)
                 }
-                binding.layoutPostCommentDelete.setOnClickListener {
+                binding.layoutPostCommentDelete.setOnDebounceClickListener {
                     listener?.DeletePostCommentClick(comment, pos)
                 }
             }
@@ -111,11 +112,11 @@ class PostCommentAdapter(private val requestManager: RequestManager) :
         }
 
         private fun setOnProfileClickListener(commentMemberId: String) {
-            binding.imgPostCommentUserProfile.setOnClickListener {
+            binding.imgPostCommentUserProfile.setOnDebounceClickListener {
                 Navigation.findNavController(it)
                     .navigate(PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = commentMemberId))
             }
-            binding.tvPostCommentUserNickname.setOnClickListener {
+            binding.tvPostCommentUserNickname.setOnDebounceClickListener {
                 Navigation.findNavController(it)
                     .navigate(PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = commentMemberId))
             }

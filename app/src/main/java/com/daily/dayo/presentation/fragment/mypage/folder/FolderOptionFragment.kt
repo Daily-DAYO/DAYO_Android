@@ -13,6 +13,7 @@ import com.daily.dayo.R
 import com.daily.dayo.common.DefaultDialogConfigure
 import com.daily.dayo.common.DefaultDialogExplanationConfirm
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFolderOptionBinding
 import com.daily.dayo.presentation.viewmodel.FolderSettingViewModel
 
@@ -54,13 +55,13 @@ class FolderOptionFragment : DialogFragment()  {
     }
 
     private fun setEditClickListenter(){
-        binding.layoutFolderOptionEdit.setOnClickListener {
+        binding.layoutFolderOptionEdit.setOnDebounceClickListener {
             findNavController().navigate(FolderOptionFragmentDirections.actionFolderOptionFragmentToFolderEditFragment(args.folderId))
         }
     }
 
     private fun setDeleteClickListener(){
-        binding.layoutFolderOptionDelete.setOnClickListener {
+        binding.layoutFolderOptionDelete.setOnDebounceClickListener {
             val mAlertDialog = DefaultDialogExplanationConfirm.createDialog(requireContext(), R.string.folder_delete_description_message, R.string.folder_delete_explanation_message,true, true, R.string.confirm,  R.string.cancel,
                 { folderDelete() }, {findNavController().popBackStack()})
             if(!mAlertDialog.isShowing) {

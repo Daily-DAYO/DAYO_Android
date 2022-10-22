@@ -21,8 +21,8 @@ import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.ReplaceUnicode
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentSearchResultBinding
-import com.daily.dayo.domain.model.FolderPost
 import com.daily.dayo.domain.model.Search
 import com.daily.dayo.presentation.adapter.SearchTagResultPostAdapter
 import com.daily.dayo.presentation.viewmodel.SearchViewModel
@@ -66,7 +66,7 @@ class SearchResultFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
-        binding.btnSearchResultBack.setOnClickListener {
+        binding.btnSearchResultBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
@@ -129,7 +129,7 @@ class SearchResultFragment : Fragment() {
     }
 
     private fun setSearchKeywordInputRemoveClickListener() {
-        binding.btnSearchResultRemoveEtInput.setOnClickListener {
+        binding.btnSearchResultRemoveEtInput.setOnDebounceClickListener {
             binding.tvSearchResultKeywordInput.setText("")
         }
     }
