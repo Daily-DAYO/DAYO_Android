@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemFolderPostBinding
 import com.daily.dayo.domain.model.FolderPost
 import com.daily.dayo.presentation.fragment.mypage.folder.FolderFragmentDirections
@@ -98,7 +99,7 @@ class FolderPostListAdapter(private val requestManager: RequestManager) :
                 }
             }
 
-            binding.root.setOnClickListener {
+            binding.root.setOnDebounceClickListener {
                 Navigation.findNavController(it)
                     .navigate(FolderFragmentDirections.actionFolderFragmentToPostFragment(folderPost.postId))
             }

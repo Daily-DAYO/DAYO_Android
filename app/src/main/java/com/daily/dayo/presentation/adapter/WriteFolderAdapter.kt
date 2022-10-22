@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemFolderListBinding
 import com.daily.dayo.domain.model.Folder
 
@@ -50,7 +51,7 @@ class WriteFolderAdapter(
                 binding.tvFolderName.setTypeface(null, Typeface.BOLD)
             else binding.tvFolderName.setTypeface(null, Typeface.NORMAL)
 
-            binding.root.setOnClickListener {
+            binding.root.setOnDebounceClickListener {
                 onFolderClicked(folder)
             }
        }

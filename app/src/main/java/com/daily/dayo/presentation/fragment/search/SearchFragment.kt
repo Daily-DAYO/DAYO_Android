@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.ReplaceUnicode
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentSearchBinding
 import com.daily.dayo.presentation.adapter.SearchKeywordRecentAdapter
 import com.daily.dayo.presentation.viewmodel.SearchViewModel
@@ -46,7 +47,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
-        binding.btnSearchBack.setOnClickListener {
+        binding.btnSearchBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
@@ -89,7 +90,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun setSearchKeywordInputRemoveClickListener() {
-        binding.btnSearchRemoveEtInput.setOnClickListener {
+        binding.btnSearchRemoveEtInput.setOnDebounceClickListener {
             binding.tvSearchKeywordInput.setText("")
         }
     }
@@ -113,7 +114,7 @@ class SearchFragment : Fragment() {
             }
         })
 
-        binding.tvSearchAllDelete.setOnClickListener {
+        binding.tvSearchAllDelete.setOnDebounceClickListener {
             searchViewModel.clearSearchKeywordRecent()
             searchKeywordRecentList = searchViewModel.getSearchKeywordRecent()
             searchKeywordRecentAdapter.submitList(searchKeywordRecentList)

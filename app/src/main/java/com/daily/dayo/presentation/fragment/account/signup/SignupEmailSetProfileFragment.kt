@@ -26,9 +26,7 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
-import com.daily.dayo.common.ButtonActivation
-import com.daily.dayo.common.HideKeyBoardUtil
-import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.*
 import com.daily.dayo.databinding.FragmentSignupEmailSetProfileBinding
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
 import com.daily.dayo.presentation.viewmodel.ProfileSettingViewModel
@@ -39,16 +37,6 @@ import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
-import android.graphics.Canvas
-import android.graphics.drawable.Drawable
-import android.widget.Toast
-import androidx.fragment.app.activityViewModels
-import androidx.navigation.Navigation
-import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager
-import com.daily.dayo.common.ButtonActivation
-import com.daily.dayo.common.ImageResizeUtil
-import com.daily.dayo.presentation.viewmodel.AccountViewModel
 
 @AndroidEntryPoint
 class SignupEmailSetProfileFragment : Fragment() {
@@ -200,7 +188,7 @@ class SignupEmailSetProfileFragment : Fragment() {
     }
 
     private fun setProfilePhotoClickListener() {
-        binding.layoutSignupEmailSetProfileUserImg.setOnClickListener {
+        binding.layoutSignupEmailSetProfileUserImg.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_signupEmailSetProfileFragment_to_signupEmailSetProfileImageOptionFragment)
         }
     }
@@ -283,13 +271,13 @@ class SignupEmailSetProfileFragment : Fragment() {
     }
 
     private fun setBackClickListener() {
-        binding.btnSignupEmailSetProfileBack.setOnClickListener {
+        binding.btnSignupEmailSetProfileBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setNextClickListener() {
-        binding.btnSignupEmailSetProfileNext.setOnClickListener {
+        binding.btnSignupEmailSetProfileNext.setOnDebounceClickListener {
             var profileImgFile: File? = null
             if (this::userProfileImageString.isInitialized) {
                 setUploadImagePath(userProfileImageExtension)

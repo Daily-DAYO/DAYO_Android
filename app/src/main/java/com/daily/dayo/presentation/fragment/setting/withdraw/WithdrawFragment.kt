@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentWithdrawBinding
 import com.daily.dayo.presentation.activity.LoginActivity
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
@@ -42,7 +43,7 @@ class WithdrawFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
-        binding.btnWithdrawBack.setOnClickListener {
+        binding.btnWithdrawBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
@@ -64,7 +65,7 @@ class WithdrawFragment : Fragment() {
     }
 
     private fun setWithdrawButtonClickListener(){
-        binding.btnWithdraw.setOnClickListener {
+        binding.btnWithdraw.setOnDebounceClickListener {
             val reason = when(binding.radiogroupWithdrawReason.checkedRadioButtonId){
                 R.id.radiobutton_withdraw_reason_1 -> binding.radiobuttonWithdrawReason1.text.toString()
                 R.id.radiobutton_withdraw_reason_2 -> binding.radiobuttonWithdrawReason2.text.toString()

@@ -13,6 +13,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.daily.dayo.R
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFollowBinding
 import com.daily.dayo.presentation.adapter.FollowFragmentPagerStateAdapter
 import com.daily.dayo.presentation.viewmodel.FollowViewModel
@@ -103,7 +104,7 @@ class FollowFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener(){
-        binding.btnFollowBack.setOnClickListener {
+        binding.btnFollowBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }

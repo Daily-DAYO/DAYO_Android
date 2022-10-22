@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemSearchKeywordRecentBinding
 
 class SearchKeywordRecentAdapter : ListAdapter<String, SearchKeywordRecentAdapter.SearchKeywordRecentViewHolder> (
@@ -48,12 +49,12 @@ class SearchKeywordRecentAdapter : ListAdapter<String, SearchKeywordRecentAdapte
 
             val pos = adapterPosition
             if(pos!= RecyclerView.NO_POSITION) {
-                itemView.setOnClickListener {
+                itemView.setOnDebounceClickListener {
                     if (keyword != null) {
                         listener?.onItemClick(itemView, keyword, pos)
                     }
                 }
-                binding.btnSearchRecentKeywordItemDelete.setOnClickListener{
+                binding.btnSearchRecentKeywordItemDelete.setOnDebounceClickListener{
                     if (keyword != null) {
                         listener?.deleteSearchKeywordRecentClick(keyword, pos)
                     }
