@@ -13,7 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
-import com.daily.dayo.common.DefaultDialogConfigure
+import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentProfileEditImageOptionBinding
 

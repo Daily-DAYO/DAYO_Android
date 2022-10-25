@@ -13,9 +13,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
-import com.daily.dayo.common.DefaultDialogConfigure
-import com.daily.dayo.common.DefaultDialogConfirm
-import com.daily.dayo.common.DefaultDialogExplanationConfirm
+import com.daily.dayo.common.dialog.DefaultDialogConfigure
+import com.daily.dayo.common.dialog.DefaultDialogConfirm
+import com.daily.dayo.common.dialog.DefaultDialogExplanationConfirm
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentSettingBinding
 import com.daily.dayo.presentation.activity.LoginActivity
