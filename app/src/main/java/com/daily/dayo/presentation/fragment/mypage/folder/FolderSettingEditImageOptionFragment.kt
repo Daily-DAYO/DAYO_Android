@@ -12,7 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.databinding.FragmentFolderSettingEditImageOptionBinding
-import com.daily.dayo.common.DefaultDialogConfigure
+import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.autoCleared
 
 class FolderSettingEditImageOptionFragment  : DialogFragment() {

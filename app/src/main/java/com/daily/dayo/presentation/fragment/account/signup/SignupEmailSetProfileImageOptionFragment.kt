@@ -17,7 +17,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.BuildConfig
 import com.daily.dayo.databinding.FragmentSignupEmailSetProfileImageOptionBinding
-import com.daily.dayo.common.DefaultDialogConfigure
+import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.autoCleared
 import java.io.File
 import java.io.IOException
