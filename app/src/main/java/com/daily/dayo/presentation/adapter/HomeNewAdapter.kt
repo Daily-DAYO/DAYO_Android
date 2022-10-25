@@ -17,6 +17,7 @@ import com.daily.dayo.common.GlideLoadUtil.loadImageBackgroundProfile
 import com.daily.dayo.common.GlideLoadUtil.loadImagePreload
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.GlideLoadUtil.loadImageViewProfile
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemMainPostBinding
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.presentation.fragment.home.HomeFragmentDirections
@@ -158,7 +159,7 @@ class HomeNewAdapter(val rankingShowing: Boolean, private val requestManager: Re
 
             val pos = adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
-                binding.btnMainPostLike.setOnClickListener {
+                binding.btnMainPostLike.setOnDebounceClickListener {
                     clickListener?.likePostClick(binding.btnMainPostLike, postContent, pos)
                 }
             }
@@ -172,14 +173,14 @@ class HomeNewAdapter(val rankingShowing: Boolean, private val requestManager: Re
         }
 
         private fun setRootClickListener(postId: Int, nickname: String) {
-            binding.root.setOnClickListener {
+            binding.root.setOnDebounceClickListener {
                 Navigation.findNavController(it)
                     .navigate(HomeFragmentDirections.actionHomeFragmentToPostFragment(postId))
             }
         }
 
         private fun setNicknameClickListener(memberId: String) {
-            binding.tvMainPostUserNickname.setOnClickListener {
+            binding.tvMainPostUserNickname.setOnDebounceClickListener {
                 Navigation.findNavController(it)
                     .navigate(HomeFragmentDirections.actionHomeFragmentToProfileFragment(memberId = memberId))
             }

@@ -22,6 +22,7 @@ import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.regex.Pattern
 
@@ -158,7 +159,7 @@ class FindAccountPasswordCheckEmailCertificateFragment : Fragment() {
                 }
             }
         })
-        binding.btnLoginEmailFindPasswordCertificateNext.setOnClickListener {
+        binding.btnLoginEmailFindPasswordCertificateNext.setOnDebounceClickListener {
             if (binding.etLoginEmailFindPasswordCertificateUserInput.text.toString() == loginViewModel.certificateEmailAuthCode.value) {
                 ButtonActivation.setSignupButtonActive(
                     requireContext(),
@@ -238,7 +239,7 @@ class FindAccountPasswordCheckEmailCertificateFragment : Fragment() {
     }
 
     private fun setEmailResendClickListener() {
-        binding.tvLoginEmailFindPasswordCertificateResend.setOnClickListener {
+        binding.tvLoginEmailFindPasswordCertificateResend.setOnDebounceClickListener {
             HideKeyBoardUtil.hide(
                 requireContext(),
                 binding.etLoginEmailFindPasswordCertificateUserInput
@@ -269,13 +270,13 @@ class FindAccountPasswordCheckEmailCertificateFragment : Fragment() {
     }
 
     private fun setBackClickListener() {
-        binding.btnLoginEmailFindPasswordCertificateBack.setOnClickListener {
+        binding.btnLoginEmailFindPasswordCertificateBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setNextClickListener() {
-        binding.btnLoginEmailFindPasswordCertificateNext.setOnClickListener {
+        binding.btnLoginEmailFindPasswordCertificateNext.setOnDebounceClickListener {
             Navigation.findNavController(it).navigate(
                 FindAccountPasswordCheckEmailCertificateFragmentDirections.actionFindAccountPasswordCheckEmailCertificateFragmentToFindAccountPasswordNewPasswordFragment(
                     binding.etLoginEmailFindPasswordCertificateUserInput.text.toString().trim()

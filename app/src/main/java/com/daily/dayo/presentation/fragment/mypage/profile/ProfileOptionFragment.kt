@@ -10,6 +10,7 @@ import androidx.navigation.fragment.navArgs
 import com.daily.dayo.R
 import com.daily.dayo.common.DefaultDialogConfigure
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentProfileOptionBinding
 
 class ProfileOptionFragment : DialogFragment() {
@@ -56,25 +57,25 @@ class ProfileOptionFragment : DialogFragment() {
     }
 
     private fun setOptionFolderSettingClickListener() {
-        binding.layoutProfileOptionFolderSetting.setOnClickListener {
+        binding.layoutProfileOptionFolderSetting.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_profileOptionFragment_to_folderSettingFragment)
         }
     }
 
     private fun setOptionProfileEditClickListener() {
-        binding.layoutProfileOptionEditProfile.setOnClickListener {
+        binding.layoutProfileOptionEditProfile.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_profileOptionFragment_to_profileEditFragment)
         }
     }
 
     private fun setOptionSettingClickListener() {
-        binding.layoutProfileOptionSetting.setOnClickListener {
+        binding.layoutProfileOptionSetting.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_profileOptionFragment_to_settingFragment)
         }
     }
 
     private fun setOptionReportUserClickListener() {
-        binding.layoutOtherProfileOptionReportUser.setOnClickListener {
+        binding.layoutOtherProfileOptionReportUser.setOnDebounceClickListener {
             findNavController().navigate(
                 ProfileOptionFragmentDirections.actionProfileOptionFragmentToReportUserFragment(
                     memberId = args.memberId

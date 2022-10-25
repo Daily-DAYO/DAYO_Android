@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentSignupEmailCompleteBinding
 import com.daily.dayo.presentation.activity.MainActivity
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
@@ -36,7 +37,7 @@ class SignupEmailCompleteFragment : Fragment() {
     }
 
     private fun setCloseClickListener() {
-        binding.btnSignupEmailCompleteClose.setOnClickListener {
+        binding.btnSignupEmailCompleteClose.setOnDebounceClickListener {
             if (loginViewModel.loginSuccess.value?.peekContent() == true) {
                 val intent = Intent(activity, MainActivity::class.java)
                 intent.flags =

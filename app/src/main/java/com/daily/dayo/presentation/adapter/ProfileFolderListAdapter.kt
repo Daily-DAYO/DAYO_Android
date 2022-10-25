@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemProfileFolderBinding
 import com.daily.dayo.domain.model.Folder
 import kotlinx.coroutines.CoroutineScope
@@ -85,7 +86,7 @@ class ProfileFolderListAdapter(private val requestManager: RequestManager) :
             }
             val pos = adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
-                itemView.setOnClickListener {
+                itemView.setOnDebounceClickListener {
                     listener?.onItemClick(itemView, folder, pos)
                 }
             }

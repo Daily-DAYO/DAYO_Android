@@ -17,6 +17,7 @@ import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.ListLiveData
 import com.daily.dayo.common.ReplaceUnicode
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentWriteTagBinding
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
 import com.google.android.material.chip.Chip
@@ -57,14 +58,14 @@ class WriteTagFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
-        binding.btnWriteTagBack.setOnClickListener {
+        binding.btnWriteTagBack.setOnDebounceClickListener {
             writeViewModel.showWriteOptionDialog.value = Event(true)
             findNavController().navigateUp()
         }
     }
 
     private fun setSubmitButtonClickListener() {
-        binding.btnWritePostTagSubmit.setOnClickListener {
+        binding.btnWritePostTagSubmit.setOnDebounceClickListener {
             writeViewModel.postTagList = ListLiveData<String>()
             writeViewModel.postTagList.replaceAll(binding.chipgroupWriteTagListSaved.getAllChipsTagText())
             writeViewModel.showWriteOptionDialog.value = Event(true)

@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemWritePostUploadImageBinding
 
 class WriteUploadImageListAdapter(
@@ -46,7 +47,7 @@ class WriteUploadImageListAdapter(
 
             val pos = adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
-                binding.btnImgUploadDelete.setOnClickListener {
+                binding.btnImgUploadDelete.setOnDebounceClickListener {
                     listener?.deleteUploadImageClick(pos)
                 }
             }

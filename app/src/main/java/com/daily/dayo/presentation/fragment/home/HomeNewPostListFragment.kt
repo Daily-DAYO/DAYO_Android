@@ -9,14 +9,13 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.GlideLoadUtil
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentHomeNewPostListBinding
 import com.daily.dayo.domain.model.Category
 import com.daily.dayo.domain.model.Post
@@ -95,31 +94,31 @@ class HomeNewPostListFragment : Fragment() {
             }
         }
         with(binding) {
-            radiobuttonNewPostCategoryAll.setOnClickListener {
+            radiobuttonNewPostCategoryAll.setOnDebounceClickListener {
                 setCategoryPostList(Category.ALL)
                 loadingPost()
             }
-            radiobuttonNewPostCategoryScheduler.setOnClickListener {
+            radiobuttonNewPostCategoryScheduler.setOnDebounceClickListener {
                 setCategoryPostList(Category.SCHEDULER)
                 loadingPost()
             }
-            radiobuttonNewPostCategoryStudyplanner.setOnClickListener {
+            radiobuttonNewPostCategoryStudyplanner.setOnDebounceClickListener {
                 setCategoryPostList(Category.STUDY_PLANNER)
                 loadingPost()
             }
-            radiobuttonNewPostCategoryPocketbook.setOnClickListener {
+            radiobuttonNewPostCategoryPocketbook.setOnDebounceClickListener {
                 setCategoryPostList(Category.POCKET_BOOK)
                 loadingPost()
             }
-            radiobuttonNewPostCategory6holediary.setOnClickListener {
+            radiobuttonNewPostCategory6holediary.setOnDebounceClickListener {
                 setCategoryPostList(Category.SIX_DIARY)
                 loadingPost()
             }
-            radiobuttonNewPostCategoryDigital.setOnClickListener {
+            radiobuttonNewPostCategoryDigital.setOnDebounceClickListener {
                 setCategoryPostList(Category.GOOD_NOTE)
                 loadingPost()
             }
-            radiobuttonNewPostCategoryEtc.setOnClickListener {
+            radiobuttonNewPostCategoryEtc.setOnDebounceClickListener {
                 setCategoryPostList(Category.ETC)
                 loadingPost()
             }

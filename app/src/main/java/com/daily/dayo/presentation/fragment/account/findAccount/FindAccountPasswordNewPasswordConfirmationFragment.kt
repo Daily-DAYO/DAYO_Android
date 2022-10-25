@@ -18,6 +18,7 @@ import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.regex.Pattern
@@ -185,13 +186,13 @@ class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
     }
 
     private fun setBackClickListener() {
-        binding.btnFindAccountPasswordNewPasswordConfirmationBack.setOnClickListener {
+        binding.btnFindAccountPasswordNewPasswordConfirmationBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setNextClickListener() {
-        binding.btnFindAccountPasswordNewPasswordConfirmationNext.setOnClickListener {
+        binding.btnFindAccountPasswordNewPasswordConfirmationNext.setOnDebounceClickListener {
             loginViewModel.requestChangePassword(email = args.email, newPassword = args.password)
         }
     }

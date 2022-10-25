@@ -11,6 +11,7 @@ import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemFollowBinding
 import com.daily.dayo.domain.model.Follow
 import com.daily.dayo.presentation.fragment.mypage.follow.FollowFragmentDirections
@@ -89,7 +90,7 @@ class FollowListAdapter(private val requestManager: RequestManager) :
         }
 
         private fun setRootClickListener(memberId: String) {
-            binding.root.setOnClickListener {
+            binding.root.setOnDebounceClickListener {
                 Navigation.findNavController(it).navigate(
                     FollowFragmentDirections.actionFollowFragmentToProfileFragment(memberId = memberId)
                 )
@@ -99,7 +100,7 @@ class FollowListAdapter(private val requestManager: RequestManager) :
         private fun setFollowButtonClickListener(follow: Follow) {
             val pos = adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
-                binding.btnFollowUserFollow.setOnClickListener {
+                binding.btnFollowUserFollow.setOnDebounceClickListener {
                     listener?.onItemClick(binding.btnFollowUserFollow, follow, pos)
                 }
             }

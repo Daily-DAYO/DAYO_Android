@@ -94,17 +94,17 @@ class PostFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
-        binding.btnPostBack.setOnClickListener {
+        binding.btnPostBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setOnUserProfileClickListener(memberId: String) {
-        binding.imgPostUserProfile.setOnClickListener {
+        binding.imgPostUserProfile.setOnDebounceClickListener {
             Navigation.findNavController(it)
                 .navigate(PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = memberId))
         }
-        binding.tvPostUserNickname.setOnClickListener {
+        binding.tvPostUserNickname.setOnDebounceClickListener {
             Navigation.findNavController(it)
                 .navigate(PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = memberId))
         }
@@ -117,7 +117,7 @@ class PostFragment : Fragment() {
     }
 
     private fun setPostOptionClickListener(isMine: Boolean, memberId: String) {
-        binding.btnPostOption.setOnClickListener {
+        binding.btnPostOption.setOnDebounceClickListener {
             if (isMine) {
                 Navigation.findNavController(it)
                     .navigate(
@@ -287,7 +287,7 @@ class PostFragment : Fragment() {
                     )
                     ensureAccessibleTouchTarget(42.toPx())
                     text = "# ${tagList[index].trim()}"
-                    setOnClickListener {
+                    setOnDebounceClickListener {
                         keyboardVisibilityUtils.detachKeyboardListeners() // TODO : 임시 처리, 화면을 벗어나므로 detach 처리 필요
                         Navigation.findNavController(it).navigate(
                             PostFragmentDirections.actionPostFragmentToSearchResultFragment(tagList[index].trim())
@@ -356,7 +356,7 @@ class PostFragment : Fragment() {
 
     private fun setPostLikeClickListener(isChecked: Boolean) {
         with(binding.btnPostLike) {
-            setOnClickListener {
+            setOnDebounceClickListener {
                 if (!isChecked) {
                     postViewModel.requestLikePost(postId = args.postId)
                 } else {
@@ -377,7 +377,7 @@ class PostFragment : Fragment() {
 
     private fun setPostBookmarkClickListener(isChecked: Boolean) {
         with(binding.btnPostBookmark) {
-            setOnClickListener {
+            setOnDebounceClickListener {
                 if (!isChecked) {
                     postViewModel.requestBookmarkPost(postId = args.postId)
                 } else {
@@ -415,7 +415,7 @@ class PostFragment : Fragment() {
             )
         }
 
-        binding.tvPostCommentUpload.setOnClickListener {
+        binding.tvPostCommentUpload.setOnDebounceClickListener {
             if (binding.etPostCommentDescription.text.toString().trim().isNotEmpty()) {
                 postViewModel.requestCreatePostComment(
                     contents = binding.etPostCommentDescription.text.toString(),
