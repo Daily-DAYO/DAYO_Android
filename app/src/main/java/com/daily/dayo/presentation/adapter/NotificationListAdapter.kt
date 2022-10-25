@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
 import com.daily.dayo.common.GlideLoadUtil
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemNotificationBinding
 import com.daily.dayo.domain.model.Notification
 import com.daily.dayo.domain.model.Topic
@@ -115,7 +116,7 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
             binding.tvNotificationTitle.movementMethod = LinkMovementMethod.getInstance()
             binding.tvNotificationTitle.text = spanContent
 
-            binding.root.setOnClickListener {
+            binding.root.setOnDebounceClickListener {
                 // alarm check
                 notification.alarmId?.let { alarmId ->
                     listener?.notificationItemClick(

@@ -19,6 +19,7 @@ import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFolderBinding
 import com.daily.dayo.domain.model.FolderPost
 import com.daily.dayo.presentation.adapter.FolderPostListAdapter
@@ -56,13 +57,13 @@ class FolderFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
-        binding.btnFolderBack.setOnClickListener {
+        binding.btnFolderBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setFolderOptionClickListener() {
-        binding.btnFolderOption.setOnClickListener {
+        binding.btnFolderOption.setOnDebounceClickListener {
             findNavController().navigate(
                 FolderFragmentDirections.actionFolderFragmentToFolderOptionFragment(
                     args.folderId

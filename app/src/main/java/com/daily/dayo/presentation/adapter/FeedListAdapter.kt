@@ -17,6 +17,7 @@ import com.daily.dayo.R
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.convertCountPlace
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemFeedPostBinding
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.domain.model.categoryKR
@@ -130,7 +131,7 @@ class FeedListAdapter(private val requestManager: RequestManager) :
             // 좋아요
             val pos = adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
-                binding.btnFeedPostLike.setOnClickListener {
+                binding.btnFeedPostLike.setOnDebounceClickListener {
                     listener?.likePostClick(
                         button = binding.btnFeedPostLike,
                         post = post,
@@ -141,7 +142,7 @@ class FeedListAdapter(private val requestManager: RequestManager) :
 
             // 북마크
             if (pos != RecyclerView.NO_POSITION) {
-                binding.btnFeedPostBookmark.setOnClickListener {
+                binding.btnFeedPostBookmark.setOnDebounceClickListener {
                     listener?.bookmarkPostClick(
                         button = binding.btnFeedPostBookmark,
                         post = post,
@@ -193,7 +194,7 @@ class FeedListAdapter(private val requestManager: RequestManager) :
                         setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12F)
                         text = "# ${tagList[index].trim()}"
 
-                        setOnClickListener {
+                        setOnDebounceClickListener {
                             listener?.tagPostClick(chip = this)
                         }
                     }
@@ -203,29 +204,29 @@ class FeedListAdapter(private val requestManager: RequestManager) :
         }
 
         private fun setOnUserProfileClickListener(postMemberId: String) {
-            binding.imgFeedPostUserProfile.setOnClickListener {
+            binding.imgFeedPostUserProfile.setOnDebounceClickListener {
                 Navigation.findNavController(it)
                     .navigate(FeedFragmentDirections.actionFeedFragmentToProfileFragment(memberId = postMemberId))
             }
-            binding.tvFeedPostUserNickname.setOnClickListener {
+            binding.tvFeedPostUserNickname.setOnDebounceClickListener {
                 Navigation.findNavController(it)
                     .navigate(FeedFragmentDirections.actionFeedFragmentToProfileFragment(memberId = postMemberId))
             }
         }
 
         private fun setOnPostClickListener(postId: Int, nickname: String) {
-            binding.tvFeedPostContent.setOnClickListener {
+            binding.tvFeedPostContent.setOnDebounceClickListener {
                 Navigation.findNavController(it)
                     .navigate(FeedFragmentDirections.actionFeedFragmentToPostFragment(postId = postId))
             }
-            binding.btnFeedPostComment.setOnClickListener {
+            binding.btnFeedPostComment.setOnDebounceClickListener {
                 Navigation.findNavController(it)
                     .navigate(FeedFragmentDirections.actionFeedFragmentToPostFragment(postId = postId))
             }
         }
 
         private fun setPostOptionClickListener(isMine: Boolean, postId: Int, memberId: String) {
-            binding.btnFeedPostOption.setOnClickListener {
+            binding.btnFeedPostOption.setOnDebounceClickListener {
                 if (isMine) {
                     Navigation.findNavController(it)
                         .navigate(

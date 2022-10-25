@@ -19,11 +19,11 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
-import com.daily.dayo.databinding.FragmentFolderSettingAddBinding
 import com.daily.dayo.common.ButtonActivation
-import com.daily.dayo.common.GlideApp
 import com.daily.dayo.common.ImageResizeUtil
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
+import com.daily.dayo.databinding.FragmentFolderSettingAddBinding
 import com.daily.dayo.domain.model.Privacy
 import com.daily.dayo.presentation.viewmodel.FolderSettingViewModel
 import java.io.File
@@ -60,13 +60,13 @@ class FolderSettingAddFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
-        binding.btnFolderSettingAddBack.setOnClickListener {
+        binding.btnFolderSettingAddBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setConfirmButtonClickListener() {
-        binding.tvFolderSettingAddConfirm.setOnClickListener {
+        binding.tvFolderSettingAddConfirm.setOnDebounceClickListener {
             val name: String = binding.etFolderSettingAddSetTitle.text.toString()
             val subheading: String = binding.etFolderSettingAddSetSubheading.text.toString()
             val privacy: Privacy =
@@ -100,7 +100,7 @@ class FolderSettingAddFragment : Fragment() {
     }
 
     private fun setFolderSettingThumbnailOptionClickListener() {
-        binding.ivFolderSettingThumbnail.setOnClickListener {
+        binding.ivFolderSettingThumbnail.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_folderSettingAddFragment_to_folderSettingAddImageOptionFragment)
         }
     }

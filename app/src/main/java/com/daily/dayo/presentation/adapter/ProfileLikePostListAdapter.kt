@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemProfilePostBinding
 import com.daily.dayo.domain.model.LikePost
 import kotlinx.coroutines.CancellationException
@@ -110,7 +111,7 @@ class ProfileLikePostListAdapter(private val requestManager: RequestManager) :
 
             val pos = adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
-                itemView.setOnClickListener {
+                itemView.setOnDebounceClickListener {
                     listener?.onItemClick(itemView, likePost, pos)
                 }
             }

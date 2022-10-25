@@ -19,6 +19,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentLoginBinding
 import com.daily.dayo.presentation.activity.MainActivity
 import com.daily.dayo.presentation.adapter.OnBoardingPagerStateAdapter
@@ -55,7 +56,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun setKakaoLoginButtonClickListener() {
-        binding.btnLoginKakao.setOnClickListener {
+        binding.btnLoginKakao.setOnDebounceClickListener {
             if (UserApiClient.instance.isKakaoTalkLoginAvailable(requireContext())) {
                 UserApiClient.instance.loginWithKakaoTalk(requireContext(), callback = callback)
             } else {
@@ -98,7 +99,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun setEmailLoginButtonClickListener() {
-        binding.btnLoginEmail.setOnClickListener {
+        binding.btnLoginEmail.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_loginEmailFragment)
         }
     }

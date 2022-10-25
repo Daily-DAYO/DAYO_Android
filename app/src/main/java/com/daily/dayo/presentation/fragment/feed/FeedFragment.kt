@@ -16,6 +16,7 @@ import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFeedBinding
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.presentation.adapter.FeedListAdapter
@@ -78,7 +79,7 @@ class FeedFragment : Fragment() {
     }
 
     private fun setFeedEmptyButtonClickListener(){
-        binding.btnFeedEmpty.setOnClickListener {
+        binding.btnFeedEmpty.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_homeFragment)
         }
     }

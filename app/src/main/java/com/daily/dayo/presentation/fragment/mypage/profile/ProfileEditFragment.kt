@@ -31,6 +31,7 @@ import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.ImageResizeUtil
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentProfileEditBinding
 import com.daily.dayo.presentation.viewmodel.ProfileSettingViewModel
 import kotlinx.coroutines.CancellationException
@@ -100,7 +101,7 @@ class ProfileEditFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
-        binding.btnProfileEditBack.setOnClickListener {
+        binding.btnProfileEditBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
@@ -240,7 +241,7 @@ class ProfileEditFragment : Fragment() {
     }
 
     private fun setProfileImageOptionClickListener() {
-        binding.layoutProfileEditUserImg.setOnClickListener {
+        binding.layoutProfileEditUserImg.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_profileEditFragment_to_profileEditImageOptionFragment)
         }
     }
@@ -269,7 +270,7 @@ class ProfileEditFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setProfileUpdateClickListener() {
-        binding.btnProfileEditComplete.setOnClickListener {
+        binding.btnProfileEditComplete.setOnDebounceClickListener {
             val nickname: String? = binding.etProfileEditNickname.text.toString().trim()
             var profileImgFile: File?
 

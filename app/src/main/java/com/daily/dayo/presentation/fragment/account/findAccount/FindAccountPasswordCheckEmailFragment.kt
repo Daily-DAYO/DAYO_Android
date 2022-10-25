@@ -19,6 +19,7 @@ import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.regex.Pattern
 
@@ -200,13 +201,13 @@ class FindAccountPasswordCheckEmailFragment : Fragment() {
     }
 
     private fun setBackClickListener() {
-        binding.btnFindAccountPasswordCheckEmailBack.setOnClickListener {
+        binding.btnFindAccountPasswordCheckEmailBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setNextClickListener() {
-        binding.btnFindAccountPasswordCheckEmailNext.setOnClickListener {
+        binding.btnFindAccountPasswordCheckEmailNext.setOnDebounceClickListener {
             Navigation.findNavController(it).navigate(
                 FindAccountPasswordCheckEmailFragmentDirections.actionFindAccountPasswordCheckEmailFragmentToFindAccountPasswordCheckEmailCertificateFragment(
                     binding.etFindAccountPasswordCheckEmailUserInput.text.toString().trim()

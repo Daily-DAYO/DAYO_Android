@@ -13,6 +13,7 @@ import com.daily.dayo.R
 import com.daily.dayo.common.DefaultDialogConfigure
 import com.daily.dayo.common.DefaultDialogConfirm
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentPostOptionMineBinding
 import com.daily.dayo.presentation.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -76,7 +77,7 @@ class PostOptionMineFragment : DialogFragment() {
         }
         mAlertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        binding.layoutPostOptionMineDelete.setOnClickListener {
+        binding.layoutPostOptionMineDelete.setOnDebounceClickListener {
             if (!mAlertDialog.isShowing) {
                 binding.layoutPostOptionMine.visibility = View.INVISIBLE
                 mAlertDialog.show()
@@ -86,7 +87,7 @@ class PostOptionMineFragment : DialogFragment() {
     }
 
     private fun setModifyPostClickListener() {
-        binding.layoutPostOptionMineModify.setOnClickListener {
+        binding.layoutPostOptionMineModify.setOnDebounceClickListener {
             val navigateWithDataPassAction =
                 PostOptionMineFragmentDirections.actionPostOptionMineFragmentToWriteFragment(postId = args.postId)
             findNavController().navigate(navigateWithDataPassAction)
