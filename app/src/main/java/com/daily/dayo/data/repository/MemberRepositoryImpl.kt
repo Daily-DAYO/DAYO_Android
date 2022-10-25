@@ -5,7 +5,6 @@ import com.daily.dayo.data.datasource.remote.member.*
 import com.daily.dayo.domain.repository.MemberRepository
 import okhttp3.MultipartBody
 import retrofit2.Response
-import retrofit2.http.Query
 import javax.inject.Inject
 
 class MemberRepositoryImpl @Inject constructor(
@@ -22,9 +21,10 @@ class MemberRepositoryImpl @Inject constructor(
 
     override suspend fun requestUpdateMyProfile(
         nickname: String?,
-        profileImg: MultipartBody.Part?
+        profileImg: MultipartBody.Part?,
+        onBasicProfileImg: Boolean
     ): Response<Void> =
-        memberApiService.requestUpdateMyProfile(nickname, profileImg)
+        memberApiService.requestUpdateMyProfile(nickname, profileImg, onBasicProfileImg)
 
     override suspend fun requestLoginKakao(body: MemberOAuthRequest): Response<MemberOAuthResponse> =
         memberApiService.requestLoginKakao(body)

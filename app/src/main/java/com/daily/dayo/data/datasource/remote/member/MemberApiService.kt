@@ -19,7 +19,8 @@ interface MemberApiService {
     @POST("/api/v1/members/update/profile")
     suspend fun requestUpdateMyProfile(
         @Part("nickname") nickname: String?,
-        @Part profileImg: MultipartBody.Part?
+        @Part profileImg: MultipartBody.Part?,
+        @Part("onBasicProfileImg") onBasicProfileImg: Boolean
     ): Response<Void>
 
     @POST("/api/v1/members/kakaoOAuth")
