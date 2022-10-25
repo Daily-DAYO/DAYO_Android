@@ -62,9 +62,7 @@ class FollowFragment : Fragment() {
                 0 -> {
                     tvFollow?.text = getText(R.string.follower)
                     tvFollowCount?.text = followViewModel.followerCount.value.toString()
-                    followViewModel.memberId.observe(viewLifecycleOwner) { memberId ->
-                        followViewModel.requestListAllFollower(memberId)
-                    }
+                    followViewModel.requestListAllFollower(followViewModel.memberId)
                     followViewModel.followerCount.observe(viewLifecycleOwner) {
                         when(it.status){
                             Status.SUCCESS -> {
@@ -79,9 +77,7 @@ class FollowFragment : Fragment() {
                 }
                 1 -> {
                     tvFollow?.text = getText(R.string.following)
-                    followViewModel.memberId.observe(viewLifecycleOwner) {
-                        followViewModel.requestListAllFollowing(it)
-                    }
+                    followViewModel.requestListAllFollowing(followViewModel.memberId)
                     followViewModel.followingCount.observe(viewLifecycleOwner) {
                         when(it.status){
                             Status.SUCCESS -> {
@@ -110,6 +106,6 @@ class FollowFragment : Fragment() {
 
     private fun setFollowFragmentDescription(){
         binding.tvFollowUserNickname.text = args.nickname
-        followViewModel.setMemberId(args.memberId)
+        followViewModel.memberId = args.memberId
     }
 }

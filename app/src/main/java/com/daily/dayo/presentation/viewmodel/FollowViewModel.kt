@@ -26,14 +26,13 @@ class FollowViewModel @Inject constructor(
     private val requestDeleteFollowUseCase: RequestDeleteFollowUseCase
 ) : ViewModel() {
 
+    var memberId: String = ""
+
     private val _followSuccess = MutableLiveData<Event<Boolean>>()
     val followSuccess: LiveData<Event<Boolean>> get() = _followSuccess
 
     private val _unfollowSuccess = MutableLiveData<Event<Boolean>>()
     val unfollowSuccess: LiveData<Event<Boolean>> get() = _unfollowSuccess
-
-    private val _memberId = MutableLiveData<String>()
-    val memberId: LiveData<String> get() = _memberId
 
     private val _followerList = MutableLiveData<Resource<List<Follow>>>()
     val followerList: LiveData<Resource<List<Follow>>> get() = _followerList
@@ -46,10 +45,6 @@ class FollowViewModel @Inject constructor(
 
     private val _followingCount = MutableLiveData<Resource<Int>>()
     val followingCount: LiveData<Resource<Int>> get() = _followingCount
-
-    fun setMemberId(id: String) {
-        _memberId.value = id
-    }
 
     fun requestListAllFollower(memberId: String) = viewModelScope.launch {
         val response = requestListAllFollowerUseCase(memberId = memberId)
