@@ -3,8 +3,6 @@ package com.daily.dayo.domain.repository
 import com.daily.dayo.data.datasource.remote.member.*
 import okhttp3.MultipartBody
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.Query
 
 interface MemberRepository {
 
@@ -17,7 +15,8 @@ interface MemberRepository {
 
     suspend fun requestUpdateMyProfile(
         nickname: String?,
-        profileImg: MultipartBody.Part?
+        profileImg: MultipartBody.Part?,
+        onBasicProfileImg: Boolean
     ): Response<Void>
 
     suspend fun requestLoginKakao(body: MemberOAuthRequest): Response<MemberOAuthResponse>
