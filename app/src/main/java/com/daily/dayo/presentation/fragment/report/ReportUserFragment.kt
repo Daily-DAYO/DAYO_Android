@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.daily.dayo.R
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentReportUserBinding
 import com.daily.dayo.presentation.viewmodel.ReportViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,7 +50,7 @@ class ReportUserFragment : Fragment() {
     }
     
     private fun setBackButtonClickListener() {
-        binding.btnReportUserBack.setOnClickListener {
+        binding.btnReportUserBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
@@ -72,7 +73,7 @@ class ReportUserFragment : Fragment() {
     }
 
     private fun setReportUserButtonClickListener() {
-        binding.btnReportUser.setOnClickListener {
+        binding.btnReportUser.setOnDebounceClickListener {
             if (isOtherOption()) {
                 reportViewModel.requestSaveMemberReport(
                     comment = binding.etReportUserReasonOther.text.toString(),

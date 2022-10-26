@@ -26,9 +26,7 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
-import com.daily.dayo.common.ButtonActivation
-import com.daily.dayo.common.HideKeyBoardUtil
-import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.*
 import com.daily.dayo.databinding.FragmentSignupEmailSetProfileBinding
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
 import com.daily.dayo.presentation.viewmodel.ProfileSettingViewModel
@@ -39,16 +37,6 @@ import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
-import android.graphics.Canvas
-import android.graphics.drawable.Drawable
-import android.widget.Toast
-import androidx.fragment.app.activityViewModels
-import androidx.navigation.Navigation
-import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager
-import com.daily.dayo.common.ButtonActivation
-import com.daily.dayo.common.ImageResizeUtil
-import com.daily.dayo.presentation.viewmodel.AccountViewModel
 
 @AndroidEntryPoint
 class SignupEmailSetProfileFragment : Fragment() {
@@ -200,7 +188,7 @@ class SignupEmailSetProfileFragment : Fragment() {
     }
 
     private fun setProfilePhotoClickListener() {
-        binding.layoutSignupEmailSetProfileUserImg.setOnClickListener {
+        binding.layoutSignupEmailSetProfileUserImg.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_signupEmailSetProfileFragment_to_signupEmailSetProfileImageOptionFragment)
         }
     }
@@ -283,37 +271,24 @@ class SignupEmailSetProfileFragment : Fragment() {
     }
 
     private fun setBackClickListener() {
-        binding.btnSignupEmailSetProfileBack.setOnClickListener {
+        binding.btnSignupEmailSetProfileBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setNextClickListener() {
-        binding.btnSignupEmailSetProfileNext.setOnClickListener {
+        binding.btnSignupEmailSetProfileNext.setOnDebounceClickListener {
             var profileImgFile: File? = null
-            if (this::userProfileImageString.isInitialized) {
+            profileImgFile = if (this::userProfileImageString.isInitialized) {
                 setUploadImagePath(userProfileImageExtension)
                 val resizedBitmap = ImageResizeUtil.resizeBitmap(
                     originalBitmap = userProfileImageString.toUri().toBitmap(),
                     resizedWidth = 100,
                     resizedHeight = 100
                 )
-                profileImgFile = bitmapToFile(resizedBitmap, imagePath)
+                bitmapToFile(resizedBitmap, imagePath)
             } else { // 기본 프로필 사진으로 설정
-                val profileEmptyDrawable =
-                    resources.getDrawable(R.drawable.ic_user_profile_image_empty, context?.theme)
-                val profileEmptyBitmap = vectorDrawableToBitmapDrawable(profileEmptyDrawable)
-                var resizedEmptyBitmap = profileEmptyBitmap
-                resizedEmptyBitmap = resizedEmptyBitmap?.let { emptyBitmap ->
-                    ImageResizeUtil.resizeBitmap(
-                        originalBitmap = emptyBitmap,
-                        resizedWidth = 100,
-                        resizedHeight = 100
-                    )
-                }
-
-                setUploadImagePath("png")
-                profileImgFile = bitmapToFile(resizedEmptyBitmap, imagePath)
+                null
             }
             if (args.password != null) {
                 loginViewModel.requestSignupEmail(
@@ -325,8 +300,7 @@ class SignupEmailSetProfileFragment : Fragment() {
             } else {
                 // 카카오 계정 회원가입 시 비밀번호가 null
                 profileSettingViewModel.requestUpdateMyProfile(
-                    binding.etSignupEmailSetProfileNickname.text.toString().trim(), profileImgFile
-                )
+                    binding.etSignupEmailSetProfileNickname.text.toString().trim(), profileImgFile, profileImgFile == null)
             }
             Toast.makeText(
                 requireContext(),

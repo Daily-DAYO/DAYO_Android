@@ -13,7 +13,8 @@ class RequestUpdateMyProfileUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         nickname: String?,
-        profileImg: File?
+        profileImg: File?,
+        onBasicProfileImg: Boolean
     ): Response<Void> {
         val requestProfileImage: MultipartBody.Part? = if (profileImg != null)
             MultipartBody.Part.createFormData(
@@ -24,7 +25,8 @@ class RequestUpdateMyProfileUseCase @Inject constructor(
         else null
         return memberRepository.requestUpdateMyProfile(
             nickname = nickname,
-            profileImg = requestProfileImage
+            profileImg = requestProfileImage,
+            onBasicProfileImg = onBasicProfileImg
         )
     }
 }

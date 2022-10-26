@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.common.ImageResizeUtil
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentWriteOptionBinding
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -64,7 +65,7 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
     }
 
     private fun setUploadButtonClickListener() {
-        binding.btnWriteOptionConfirm.setOnClickListener {
+        binding.btnWriteOptionConfirm.setOnDebounceClickListener {
             when {
                 writeViewModel.postFolderId.value == "" -> { // 폴더 미선택시 글 업로드 불가
                     Toast.makeText(requireContext(), "폴더를 선택해 주세요", Toast.LENGTH_SHORT)
@@ -144,7 +145,7 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
     }
 
     private fun setOptionTagClickListener() {
-        binding.layoutWriteOptionTag.setOnClickListener {
+        binding.layoutWriteOptionTag.setOnDebounceClickListener {
             if (writeViewModel.postTagList.value.isNullOrEmpty()) {
                 val navigateWithDataPassAction =
                     WriteOptionFragmentDirections.actionWriteOptionFragmentToWriteTagFragment()
@@ -158,7 +159,7 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
     }
 
     private fun setOptionFolderClickListener() {
-        binding.layoutWriteOptionFolder.setOnClickListener {
+        binding.layoutWriteOptionFolder.setOnDebounceClickListener {
             findNavController().navigate(WriteOptionFragmentDirections.actionWriteOptionFragmentToWriteFolderFragment())
         }
     }

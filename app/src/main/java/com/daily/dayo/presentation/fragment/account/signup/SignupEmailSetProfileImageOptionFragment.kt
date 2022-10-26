@@ -19,6 +19,7 @@ import com.daily.dayo.BuildConfig
 import com.daily.dayo.databinding.FragmentSignupEmailSetProfileImageOptionBinding
 import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -64,7 +65,7 @@ class SignupEmailSetProfileImageOptionFragment : DialogFragment() {
     }
 
     private fun setImageSelectGalleryClickListener(){
-        binding.layoutSignupEmailSetProfileImageOptionSelectGallery.setOnClickListener {
+        binding.layoutSignupEmailSetProfileImageOptionSelectGallery.setOnDebounceClickListener {
             requestOpenGallery.launch(
                 arrayOf(
                     Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -99,7 +100,7 @@ class SignupEmailSetProfileImageOptionFragment : DialogFragment() {
     }
 
     private fun setImageTakePhotoClickListener() {
-        binding.layoutSignupEmailSetProfileImageOptionTakePhoto.setOnClickListener {
+        binding.layoutSignupEmailSetProfileImageOptionTakePhoto.setOnDebounceClickListener {
             requestOpenCamera.launch(
                 arrayOf(
                     Manifest.permission.CAMERA,

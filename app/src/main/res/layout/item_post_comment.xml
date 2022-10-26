@@ -21,8 +21,6 @@
             android:layout_width="39dp"
             android:layout_height="39dp"
             app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-            app:strokeWidth="1dp"
-            app:strokeColor="@color/gray_4_D3D2D2"
             android:src="@drawable/ic_user_profile_image_empty"
             android:scaleType="centerCrop"
             app:layout_constraintTop_toTopOf="parent"

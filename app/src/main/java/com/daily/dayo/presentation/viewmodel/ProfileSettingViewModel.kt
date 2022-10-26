@@ -36,8 +36,8 @@ class ProfileSettingViewModel@Inject constructor(
         }
     }
 
-    fun requestUpdateMyProfile(nickname: String?, profileImg: File?) = viewModelScope.launch {
-        requestUpdateMyProfileUseCase(nickname = nickname, profileImg = profileImg).let {
+    fun requestUpdateMyProfile(nickname: String?, profileImg: File?, isReset: Boolean) = viewModelScope.launch {
+        requestUpdateMyProfileUseCase(nickname = nickname, profileImg = profileImg, onBasicProfileImg = isReset).let {
             if(it.isSuccessful){
                 _updateSuccess.postValue(Event(true))
             }

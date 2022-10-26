@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentFindAccountPasswordCompleteBinding
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 
 class FindAccountPasswordCompleteFragment : Fragment() {
     private var binding by autoCleared<FragmentFindAccountPasswordCompleteBinding>()
@@ -23,13 +24,13 @@ class FindAccountPasswordCompleteFragment : Fragment() {
     }
 
     private fun setBackClickListener() {
-        binding.btnFindAccountPasswordCompleteBack.setOnClickListener {
+        binding.btnFindAccountPasswordCompleteBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setNextClickListener() {
-        binding.btnFindAccountPasswordCompleteNext.setOnClickListener {
+        binding.btnFindAccountPasswordCompleteNext.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_findAccountPasswordCompleteFragment_to_loginEmailFragment)
         }
     }

@@ -9,14 +9,13 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentHomeDayoPickPostListBinding
 import com.daily.dayo.domain.model.Category
 import com.daily.dayo.domain.model.Post
@@ -96,31 +95,31 @@ class HomeDayoPickPostListFragment : Fragment() {
             }
         }
         with(binding) {
-            radiobuttonDayopickPostCategoryAll.setOnClickListener {
+            radiobuttonDayopickPostCategoryAll.setOnDebounceClickListener {
                 setCategoryPostList(Category.ALL)
                 loadingPost()
             }
-            radiobuttonDayopickPostCategoryScheduler.setOnClickListener {
+            radiobuttonDayopickPostCategoryScheduler.setOnDebounceClickListener {
                 setCategoryPostList(Category.SCHEDULER)
                 loadingPost()
             }
-            radiobuttonDayopickPostCategoryStudyplanner.setOnClickListener {
+            radiobuttonDayopickPostCategoryStudyplanner.setOnDebounceClickListener {
                 setCategoryPostList(Category.STUDY_PLANNER)
                 loadingPost()
             }
-            radiobuttonDayopickPostCategoryPocketbook.setOnClickListener {
+            radiobuttonDayopickPostCategoryPocketbook.setOnDebounceClickListener {
                 setCategoryPostList(Category.POCKET_BOOK)
                 loadingPost()
             }
-            radiobuttonDayopickPostCategory6holediary.setOnClickListener {
+            radiobuttonDayopickPostCategory6holediary.setOnDebounceClickListener {
                 setCategoryPostList(Category.SIX_DIARY)
                 loadingPost()
             }
-            radiobuttonDayopickPostCategoryDigital.setOnClickListener {
+            radiobuttonDayopickPostCategoryDigital.setOnDebounceClickListener {
                 setCategoryPostList(Category.GOOD_NOTE)
                 loadingPost()
             }
-            radiobuttonDayopickPostCategoryEtc.setOnClickListener {
+            radiobuttonDayopickPostCategoryEtc.setOnDebounceClickListener {
                 setCategoryPostList(Category.ETC)
                 loadingPost()
             }

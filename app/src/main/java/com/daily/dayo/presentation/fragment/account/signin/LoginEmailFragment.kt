@@ -13,7 +13,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
+import com.daily.dayo.common.setOnDebounceClickListener
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.common.ButtonActivation
@@ -69,13 +69,13 @@ class LoginEmailFragment : Fragment() {
     }
 
     private fun setBackClickListener() {
-        binding.btnLoginEmailBack.setOnClickListener {
+        binding.btnLoginEmailBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setNextClickListener() {
-        binding.btnLoginEmailNext.setOnClickListener {
+        binding.btnLoginEmailNext.setOnDebounceClickListener {
             isLoginButtonClick = true
             loginViewModel.requestLoginEmail(
                 email = binding.etLoginEmailAddress.text.toString().trim(),
@@ -236,13 +236,13 @@ class LoginEmailFragment : Fragment() {
     }
 
     private fun setForgetAccountClickListener() {
-        binding.tvLoginEmailForgotPassword.setOnClickListener {
+        binding.tvLoginEmailForgotPassword.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_loginEmailFragment_to_findAccountPasswordCheckEmail)
         }
     }
 
     private fun setSignupClickListener() {
-        binding.tvLoginEmailSignup.setOnClickListener {
+        binding.tvLoginEmailSignup.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_loginEmailFragment_to_signupEmailSetEmailAddressFragment)
         }
     }

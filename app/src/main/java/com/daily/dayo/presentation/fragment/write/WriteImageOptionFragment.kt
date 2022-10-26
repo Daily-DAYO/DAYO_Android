@@ -21,6 +21,7 @@ import com.daily.dayo.BuildConfig
 import com.daily.dayo.R
 import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentWriteImageOptionBinding
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -70,7 +71,7 @@ class WriteImageOptionFragment : DialogFragment() {
     }
 
     private fun setImageSelectGalleryClickListener() {
-        binding.layoutWriteImageOptionSelectGallery.setOnClickListener {
+        binding.layoutWriteImageOptionSelectGallery.setOnDebounceClickListener {
             requestOpenGallery.launch(
                 arrayOf(
                     Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -139,7 +140,7 @@ class WriteImageOptionFragment : DialogFragment() {
         }
 
     private fun setImageTakePhotoClickListener() {
-        binding.layoutWriteImageOptionTakePhoto.setOnClickListener {
+        binding.layoutWriteImageOptionTakePhoto.setOnDebounceClickListener {
             requestOpenCamera.launch(
                 arrayOf(
                     Manifest.permission.CAMERA,

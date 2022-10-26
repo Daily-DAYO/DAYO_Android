@@ -17,6 +17,7 @@ import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.dialog.DefaultDialogConfirm
 import com.daily.dayo.common.dialog.DefaultDialogExplanationConfirm
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentSettingBinding
 import com.daily.dayo.presentation.activity.LoginActivity
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
@@ -42,25 +43,25 @@ class SettingFragment : Fragment() {
     }
 
     private fun setChangePasswordClickListener() {
-        binding.layoutSettingPasswordChange.setOnClickListener {
+        binding.layoutSettingPasswordChange.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_settingFragment_to_settingChangePasswordCurrentFragment)
         }
     }
 
     private fun setBackButtonClickListener() {
-        binding.btnSettingBack.setOnClickListener {
+        binding.btnSettingBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setNotificationButtonClickListener() {
-        binding.layoutSettingNotification.setOnClickListener {
+        binding.layoutSettingNotification.setOnDebounceClickListener {
             findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToSettingNotificationFragment())
         }
     }
 
     private fun setContactButtonClickListener() {
-        binding.layoutSettingContact.setOnClickListener {
+        binding.layoutSettingContact.setOnDebounceClickListener {
             val contactAlertDialog = DefaultDialogExplanationConfirm.createDialog(requireContext(),
                 R.string.setting_contact_message,
                 R.string.setting_contact_explanation_message,
@@ -89,7 +90,7 @@ class SettingFragment : Fragment() {
     }
 
     private fun setLogoutButtonClickListener() {
-        binding.layoutSettingLogout.setOnClickListener {
+        binding.layoutSettingLogout.setOnDebounceClickListener {
             val logoutAlertDialog =
                  DefaultDialogConfirm.createDialog(requireContext(), R.string.setting_logout_message,
                     true, true, R.string.confirm, R.string.cancel, { doLogout() }, {})
@@ -109,7 +110,7 @@ class SettingFragment : Fragment() {
     }
 
     private fun setWithdrawButtonClickListener() {
-        binding.layoutSettingWithdraw.setOnClickListener {
+        binding.layoutSettingWithdraw.setOnDebounceClickListener {
             val withdrawAlertDialog = DefaultDialogExplanationConfirm.createDialog(requireContext(),
                 R.string.setting_withdraw_message,
                 R.string.setting_withdraw_explanation_message,

@@ -11,12 +11,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.daily.dayo.R
-import com.daily.dayo.common.ButtonActivation
-import com.daily.dayo.common.Event
-import com.daily.dayo.common.Status
-import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.*
 import com.daily.dayo.databinding.FragmentWriteFolderBinding
 import com.daily.dayo.domain.model.Folder
 import com.daily.dayo.presentation.adapter.WriteFolderAdapter
@@ -57,14 +53,14 @@ class WriteFolderFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
-        binding.btnWriteFolderBack.setOnClickListener {
+        binding.btnWriteFolderBack.setOnDebounceClickListener {
             writeViewModel.showWriteOptionDialog.value = Event(true)
             findNavController().navigateUp()
         }
     }
 
     private fun setFolderAddButtonClickListener() {
-        binding.tvWriteFolderAdd.setOnClickListener {
+        binding.tvWriteFolderAdd.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_writeFolderFragment_to_folderAddFragment)
         }
     }
