@@ -1,4 +1,4 @@
-package com.daily.dayo.common
+package com.daily.dayo.common.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog
