@@ -10,6 +10,7 @@ import androidx.navigation.fragment.navArgs
 import com.daily.dayo.databinding.FragmentPostOptionBinding
 import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 
 class PostOptionFragment : DialogFragment() {
     private var binding by autoCleared<FragmentPostOptionBinding>()
@@ -46,13 +47,13 @@ class PostOptionFragment : DialogFragment() {
     }
 
     private fun setReportUserClickListener() {
-        binding.layoutPostOptionReportUser.setOnClickListener {
+        binding.layoutPostOptionReportUser.setOnDebounceClickListener {
             findNavController().navigate(PostOptionFragmentDirections.actionPostOptionFragmentToReportUserFragment(memberId = args.memberId))
         }
     }
 
     private fun setReportPostClickListener() {
-        binding.layoutPostOptionReportPost.setOnClickListener {
+        binding.layoutPostOptionReportPost.setOnDebounceClickListener {
             findNavController().navigate(PostOptionFragmentDirections.actionPostOptionFragmentToReportPostFragment(postId = args.postId))
         }
    }

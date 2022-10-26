@@ -20,6 +20,7 @@ import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentSignupEmailSetEmailAddressCertificateBinding
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -113,7 +114,7 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
                 }
             }
         })
-        binding.btnSignupEmailSetEmailAddressCertificateNext.setOnClickListener {
+        binding.btnSignupEmailSetEmailAddressCertificateNext.setOnDebounceClickListener {
             if(binding.etSignupEmailSetEmailAddressCertificateUserInput.text.toString() == loginViewModel.certificateEmailAuthCode.value) {
                 ButtonActivation.setSignupButtonActive(requireContext(), binding.btnSignupEmailSetEmailAddressCertificateNext)
                 SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, null, true)
@@ -156,7 +157,7 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
     }
 
     private fun setEmailResendClickListener() {
-        binding.tvSignupEmailSetEmailAddressCertificateResend.setOnClickListener {
+        binding.tvSignupEmailSetEmailAddressCertificateResend.setOnDebounceClickListener {
             HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetEmailAddressCertificateUserInput) // 1. 키보드가 올라와 있는 경우 키보드가 내려감
             binding.etSignupEmailSetEmailAddressCertificateUserInput.setText("") // 2. 인증번호 입력창 초기화
             currentCountDownTimer?.start() // 3. 제한시간 초기화
@@ -175,13 +176,13 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
     }
 
     private fun setBackClickListener(){
-        binding.btnSignupEmailSetEmailAddressCertificateBack.setOnClickListener {
+        binding.btnSignupEmailSetEmailAddressCertificateBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setNextClickListener() {
-        binding.btnSignupEmailSetEmailAddressCertificateNext.setOnClickListener {
+        binding.btnSignupEmailSetEmailAddressCertificateNext.setOnDebounceClickListener {
             Navigation.findNavController(it).navigate(SignupEmailSetEmailAddressCertificateFragmentDirections.actionSignupEmailSetEmailAddressCertificateFragmentToSignupEmailSetPasswordFragment(args.email))
         }
     }

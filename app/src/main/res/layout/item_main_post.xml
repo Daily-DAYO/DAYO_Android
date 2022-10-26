@@ -105,8 +105,6 @@
                 app:layout_constraintTop_toBottomOf="@id/img_main_post"
                 app:layout_constraintVertical_bias="0.0"
                 app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-                app:strokeColor="@color/gray_4_D3D2D2"
-                app:strokeWidth="1dp"
                 tools:src="@drawable/ic_dayo_circle_grayscale" />
 
             <TextView

@@ -28,7 +28,7 @@ object DefaultDialogAlert {
 
         with(binding) {
             tvDefaultDialogDescription.setText(dialogDescriptionResId)
-            tvDefaultDialogConfirm.setOnClickListener {
+            tvDefaultDialogConfirm.setOnDebounceClickListener {
                 mAlertDialog.dismiss()
             }
         }
@@ -63,13 +63,13 @@ object DefaultDialogConfirm {
                 tvDefaultDialogCancel.visibility = View.GONE
             }
 
-            tvDefaultDialogConfirm.setOnClickListener {
+            tvDefaultDialogConfirm.setOnDebounceClickListener {
                 if (confirmButtonFunction != null) {
                     confirmButtonFunction()
                 }
                 mAlertDialog.dismiss()
             }
-            tvDefaultDialogCancel.setOnClickListener {
+            tvDefaultDialogCancel.setOnDebounceClickListener {
                 if(cancelButtonFunction != null) {
                     cancelButtonFunction()
                 }
@@ -111,13 +111,13 @@ object DefaultDialogExplanationConfirm {
                 tvDefaultDialogExplanationCancel.visibility = View.GONE
             }
 
-            tvDefaultDialogExplanationConfirm.setOnClickListener {
+            tvDefaultDialogExplanationConfirm.setOnDebounceClickListener {
                 if (confirmButtonFunction != null) {
                     confirmButtonFunction()
                 }
                 mAlertDialog.dismiss()
             }
-            tvDefaultDialogExplanationCancel.setOnClickListener {
+            tvDefaultDialogExplanationCancel.setOnDebounceClickListener {
                 if(cancelButtonFunction != null) {
                     cancelButtonFunction()
                 }

@@ -31,6 +31,7 @@ import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.ImageResizeUtil
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentProfileEditBinding
 import com.daily.dayo.presentation.viewmodel.ProfileSettingViewModel
 import kotlinx.coroutines.CancellationException
@@ -100,7 +101,7 @@ class ProfileEditFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
-        binding.btnProfileEditBack.setOnClickListener {
+        binding.btnProfileEditBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
@@ -240,7 +241,7 @@ class ProfileEditFragment : Fragment() {
     }
 
     private fun setProfileImageOptionClickListener() {
-        binding.layoutProfileEditUserImg.setOnClickListener {
+        binding.layoutProfileEditUserImg.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_profileEditFragment_to_profileEditImageOptionFragment)
         }
     }
@@ -269,7 +270,7 @@ class ProfileEditFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setProfileUpdateClickListener() {
-        binding.btnProfileEditComplete.setOnClickListener {
+        binding.btnProfileEditComplete.setOnDebounceClickListener {
             val nickname: String? = binding.etProfileEditNickname.text.toString().trim()
             var profileImgFile: File?
 
@@ -277,10 +278,17 @@ class ProfileEditFragment : Fragment() {
                 if (this@ProfileEditFragment::userProfileImageString.isInitialized) {
                     // 프로필 사진을 변경하는 경우
                     profileImgFile = changeMyProfileImage()
-                    profileSettingViewModel.requestUpdateMyProfile(nickname, profileImgFile)
+                    profileSettingViewModel.requestUpdateMyProfile(
+                        nickname = nickname,
+                        profileImg = profileImgFile,
+                        isReset = profileImgFile == null
+                    )
                         .invokeOnCompletion { throwable ->
                             when (throwable) {
-                                is CancellationException -> Log.e("My Profile Update", "CANCELLED")
+                                is CancellationException -> Log.e(
+                                    "My Profile Update",
+                                    "CANCELLED"
+                                )
                                 null -> {
                                     profileSettingViewModel.requestProfile(memberId = DayoApplication.preferences.getCurrentUser().memberId!!)
                                     // TODO : 변경하는 중임을 알리는 Dialog 필요
@@ -290,7 +298,11 @@ class ProfileEditFragment : Fragment() {
                         }
                 } else {
                     // 프로필 사진을 변경하지 않는 경우
-                    profileSettingViewModel.requestUpdateMyProfile(nickname, null)
+                    profileSettingViewModel.requestUpdateMyProfile(
+                        nickname = nickname,
+                        profileImg = null,
+                        isReset = false
+                    )
                         .invokeOnCompletion { throwable ->
                             when (throwable) {
                                 is CancellationException -> Log.e("My Profile Update", "CANCELLED")
@@ -307,24 +319,8 @@ class ProfileEditFragment : Fragment() {
     }
 
     private fun changeMyProfileImage(): File? {
-        // 1. 프로필 사진 초기화를 한 경우
-        if (userProfileImageString == "resetMyProfileImage") {
-            val profileEmptyDrawable =
-                resources.getDrawable(R.drawable.ic_user_profile_image_empty, context?.theme)
-            val profileEmptyBitmap = vectorDrawableToBitmapDrawable(profileEmptyDrawable)
-            var resizedEmptyBitmap = profileEmptyBitmap?.let {
-                ImageResizeUtil.resizeBitmap(
-                    originalBitmap = it,
-                    resizedWidth = 100,
-                    resizedHeight = 100
-                )
-            }
-            if(resizedEmptyBitmap == null) {
-                resizedEmptyBitmap = profileEmptyBitmap
-            }
-
-            setUploadImagePath("png")
-            return bitmapToFile(resizedEmptyBitmap, imagePath)
+        return if (userProfileImageString == "resetMyProfileImage") { // 1. 프로필 사진 초기화를 한 경우
+            null
         } else { // 2. 프로필 사진을 다른 사진으로 변경 한 경우
             setUploadImagePath(userProfileImageExtension)
             val originalBitmap = userProfileImageString.toUri().toBitmap()
@@ -333,7 +329,7 @@ class ProfileEditFragment : Fragment() {
                 resizedWidth = 100,
                 resizedHeight = 100
             )
-            return bitmapToFile(resizedBitmap, imagePath)
+            bitmapToFile(resizedBitmap, imagePath)
         }
     }
 

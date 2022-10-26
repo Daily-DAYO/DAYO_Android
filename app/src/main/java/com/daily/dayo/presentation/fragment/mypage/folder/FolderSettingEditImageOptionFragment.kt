@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.databinding.FragmentFolderSettingEditImageOptionBinding
 import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 
 class FolderSettingEditImageOptionFragment  : DialogFragment() {
     private var binding by autoCleared<FragmentFolderSettingEditImageOptionBinding>()
@@ -50,7 +51,7 @@ class FolderSettingEditImageOptionFragment  : DialogFragment() {
     }
 
     private fun setImageSelectGalleryClickListener(){
-        binding.layoutFolderSettingEditImageOptionSelectGallery.setOnClickListener {
+        binding.layoutFolderSettingEditImageOptionSelectGallery.setOnDebounceClickListener {
             val intent = Intent(Intent.ACTION_PICK)
             intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             intent.type = "image/*"
@@ -59,7 +60,7 @@ class FolderSettingEditImageOptionFragment  : DialogFragment() {
     }
 
     private fun setImageResetClickListener() {
-        binding.layoutFolderSettingEditImageOptionReset.setOnClickListener {
+        binding.layoutFolderSettingEditImageOptionReset.setOnDebounceClickListener {
             setFolderCoverImage("")
         }
     }

@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentWriteFolderAddBinding
 import com.daily.dayo.domain.model.Privacy
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
@@ -34,13 +35,13 @@ class WriteFolderAddFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
-        binding.btnPostFolderAddBack.setOnClickListener {
+        binding.btnPostFolderAddBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setConfirmButtonClickListener() {
-        binding.tvPostFolderAddConfirm.setOnClickListener {
+        binding.tvPostFolderAddConfirm.setOnDebounceClickListener {
             createFolder()
             writeViewModel.folderAddAccess.observe(viewLifecycleOwner) {
                 if (it.getContentIfNotHandled() == true) {

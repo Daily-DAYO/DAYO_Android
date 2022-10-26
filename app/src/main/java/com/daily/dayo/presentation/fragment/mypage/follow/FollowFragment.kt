@@ -13,6 +13,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.daily.dayo.R
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFollowBinding
 import com.daily.dayo.presentation.adapter.FollowFragmentPagerStateAdapter
 import com.daily.dayo.presentation.viewmodel.FollowViewModel
@@ -62,9 +63,7 @@ class FollowFragment : Fragment() {
                 0 -> {
                     tvFollow?.text = getText(R.string.follower)
                     tvFollowCount?.text = followViewModel.followerCount.value.toString()
-                    followViewModel.memberId.observe(viewLifecycleOwner) { memberId ->
-                        followViewModel.requestListAllFollower(memberId)
-                    }
+                    followViewModel.requestListAllFollower(followViewModel.memberId)
                     followViewModel.followerCount.observe(viewLifecycleOwner) {
                         when(it.status){
                             Status.SUCCESS -> {
@@ -79,9 +78,7 @@ class FollowFragment : Fragment() {
                 }
                 1 -> {
                     tvFollow?.text = getText(R.string.following)
-                    followViewModel.memberId.observe(viewLifecycleOwner) {
-                        followViewModel.requestListAllFollowing(it)
-                    }
+                    followViewModel.requestListAllFollowing(followViewModel.memberId)
                     followViewModel.followingCount.observe(viewLifecycleOwner) {
                         when(it.status){
                             Status.SUCCESS -> {
@@ -103,13 +100,13 @@ class FollowFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener(){
-        binding.btnFollowBack.setOnClickListener {
+        binding.btnFollowBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setFollowFragmentDescription(){
         binding.tvFollowUserNickname.text = args.nickname
-        followViewModel.setMemberId(args.memberId)
+        followViewModel.memberId = args.memberId
     }
 }

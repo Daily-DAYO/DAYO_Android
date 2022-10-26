@@ -7,6 +7,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemFeedPostCommentBinding
 import com.daily.dayo.domain.model.Comment
 import com.daily.dayo.presentation.fragment.feed.FeedFragmentDirections
@@ -51,13 +52,13 @@ class FeedCommentAdapter : ListAdapter<Comment, FeedCommentAdapter.FeedCommentVi
 
             val pos = adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
-                itemView.setOnClickListener {
+                itemView.setOnDebounceClickListener {
                     listener?.onItemClick(itemView, comment, pos)
                 }
             }
         }
         private fun setOnNicknameClickListener(commentMemberId: String){
-            binding.tvFeedPostCommentUserNickname.setOnClickListener {
+            binding.tvFeedPostCommentUserNickname.setOnDebounceClickListener {
                 Navigation.findNavController(it).navigate(FeedFragmentDirections.actionFeedFragmentToProfileFragment(memberId = commentMemberId))
             }
         }

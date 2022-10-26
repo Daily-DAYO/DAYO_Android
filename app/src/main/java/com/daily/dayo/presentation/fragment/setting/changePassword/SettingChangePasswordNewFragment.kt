@@ -19,6 +19,7 @@ import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentSettingChangePasswordNewBinding
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
 import com.google.android.material.textfield.TextInputEditText
@@ -86,7 +87,7 @@ class SettingChangePasswordNewFragment : Fragment() {
     }
 
     private fun setBackClickListener() {
-        binding.btnSettingChangePasswordNewBack.setOnClickListener {
+        binding.btnSettingChangePasswordNewBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
@@ -98,7 +99,7 @@ class SettingChangePasswordNewFragment : Fragment() {
                 checkNewPassword()
                 with(binding.btnSettingChangePasswordNewNext) {
                     text = getString(R.string.change_password)
-                    setOnClickListener {
+                    setOnDebounceClickListener {
                         accountViewModel.requestChangePassword(
                             newPassword = binding.etSettingChangePasswordNewUserInput.text.toString()
                                 .trim()
@@ -117,7 +118,7 @@ class SettingChangePasswordNewFragment : Fragment() {
                 verifyPassword()
                 with((binding.btnSettingChangePasswordNewNext)) {
                     text = getString(R.string.next)
-                    setOnClickListener {
+                    setOnDebounceClickListener {
                         binding.etSettingChangePasswordNewUserInput.removeTextChangedListener(
                             verifyPasswordTextWatcher
                         )

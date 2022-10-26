@@ -15,6 +15,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentProfileEditImageOptionBinding
 
 class ProfileEditImageOptionFragment : DialogFragment() {
@@ -56,13 +57,13 @@ class ProfileEditImageOptionFragment : DialogFragment() {
     }
 
     private fun setImageResetClickListener() {
-        binding.layoutMyProfileEditImageOptionReset.setOnClickListener {
+        binding.layoutMyProfileEditImageOptionReset.setOnDebounceClickListener {
             setMyProfileImage("resetMyProfileImage", "")
         }
     }
 
     private fun setImageSelectGalleryClickListener(){
-        binding.layoutMyProfileEditImageOptionSelectGallery.setOnClickListener {
+        binding.layoutMyProfileEditImageOptionSelectGallery.setOnDebounceClickListener {
             requestOpenGallery.launch(
                 arrayOf(
                     Manifest.permission.READ_EXTERNAL_STORAGE,

@@ -20,6 +20,7 @@ import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.regex.Pattern
 
@@ -134,13 +135,13 @@ class SignupEmailSetEmailAddressFragment : Fragment() {
     }
 
     private fun setBackClickListener(){
-        binding.btnSignupEmailSetEmailAddressBack.setOnClickListener {
+        binding.btnSignupEmailSetEmailAddressBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
     private fun setNextClickListener() {
-        binding.btnSignupEmailSetEmailAddressNext.setOnClickListener {
+        binding.btnSignupEmailSetEmailAddressNext.setOnDebounceClickListener {
             Navigation.findNavController(it).navigate(SignupEmailSetEmailAddressFragmentDirections.actionSignupEmailSetEmailAddressFragmentToSignupEmailSetEmailAddressCertificateFragment(binding.etSignupEmailSetEmailAddressUserInput.text.toString().trim()))
         }
     }

@@ -2,7 +2,6 @@ package com.daily.dayo.presentation.fragment.write
 
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -27,16 +26,10 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.daily.dayo.R
-import com.daily.dayo.common.Event
-import com.daily.dayo.common.GlideApp
+import com.daily.dayo.common.*
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.ImageResizeUtil.resizeBitmap
-import com.daily.dayo.common.RadioGridGroup
-import com.daily.dayo.common.ReplaceUnicode
-import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentWriteBinding
 import com.daily.dayo.domain.model.Category
 import com.daily.dayo.presentation.adapter.WriteUploadImageListAdapter
@@ -96,7 +89,7 @@ class WriteFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
-        binding.btnWritePostBack.setOnClickListener {
+        binding.btnWritePostBack.setOnDebounceClickListener {
             writeViewModel.setInitWriteInfoValue()
             findNavController().navigateUp()
         }
@@ -247,7 +240,7 @@ class WriteFragment : Fragment() {
 
     private fun setImageUploadButtonClickListener() {
         val btnUploadImage = binding.btnUploadImage
-        btnUploadImage.setOnClickListener {
+        btnUploadImage.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_writeFragment_to_writeImageOptionFragment)
         }
     }
@@ -309,7 +302,7 @@ class WriteFragment : Fragment() {
     private fun setUploadButtonActivation() {
         if (!isCategorySelected) {
             binding.btnWritePostUpload.isSelected = false
-            binding.btnWritePostUpload.setOnClickListener {
+            binding.btnWritePostUpload.setOnDebounceClickListener {
                 Toast.makeText(
                     requireContext(),
                     R.string.write_post_upload_alert_message_empty_category,
@@ -318,7 +311,7 @@ class WriteFragment : Fragment() {
             }
         } else if (!isImageUploaded) {
             binding.btnWritePostUpload.isSelected = false
-            binding.btnWritePostUpload.setOnClickListener {
+            binding.btnWritePostUpload.setOnDebounceClickListener {
                 Toast.makeText(
                     requireContext(),
                     R.string.write_post_upload_alert_message_empty_image,
@@ -328,7 +321,7 @@ class WriteFragment : Fragment() {
         } else {
             val selectedCategoryName = writeViewModel.postCategory.value
             binding.btnWritePostUpload.isSelected = true
-            binding.btnWritePostUpload.setOnClickListener {
+            binding.btnWritePostUpload.setOnDebounceClickListener {
                 writeViewModel.postId.value = args.postId
                 writeViewModel.postCategory.value = selectedCategoryName
                 writeViewModel.postContents.value =
