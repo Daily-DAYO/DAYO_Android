@@ -30,6 +30,8 @@ import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.*
+import com.daily.dayo.common.dialog.DefaultDialogConfigure
+import com.daily.dayo.common.dialog.DefaultDialogConfirm
 import com.daily.dayo.databinding.FragmentPostBinding
 import com.daily.dayo.domain.model.Comment
 import com.daily.dayo.domain.model.categoryKR

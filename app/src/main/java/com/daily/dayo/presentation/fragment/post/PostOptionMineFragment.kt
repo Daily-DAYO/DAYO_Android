@@ -10,8 +10,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.daily.dayo.R
-import com.daily.dayo.common.DefaultDialogConfigure
-import com.daily.dayo.common.DefaultDialogConfirm
+import com.daily.dayo.common.dialog.DefaultDialogConfigure
+import com.daily.dayo.common.dialog.DefaultDialogConfirm
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentPostOptionMineBinding
