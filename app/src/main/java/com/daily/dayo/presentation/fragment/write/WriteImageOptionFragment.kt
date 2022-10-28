@@ -2,6 +2,7 @@ package com.daily.dayo.presentation.fragment.write
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -21,6 +22,7 @@ import com.daily.dayo.BuildConfig
 import com.daily.dayo.R
 import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentWriteImageOptionBinding
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
@@ -36,6 +38,8 @@ class WriteImageOptionFragment : DialogFragment() {
     private var binding by autoCleared<FragmentWriteImageOptionBinding>()
     private val writeViewModel by activityViewModels<WriteViewModel>()
     private lateinit var currentTakenPhotoPath: String
+    private lateinit var loadingAlertDialog: AlertDialog
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         isCancelable = true
@@ -46,6 +50,7 @@ class WriteImageOptionFragment : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentWriteImageOptionBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
         dialog?.window?.setGravity(Gravity.BOTTOM)
@@ -61,6 +66,11 @@ class WriteImageOptionFragment : DialogFragment() {
     override fun onResume() {
         super.onResume()
         resizeImageOptionDialogFragment()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun resizeImageOptionDialogFragment() {
@@ -118,6 +128,8 @@ class WriteImageOptionFragment : DialogFragment() {
                         val imageUri = data.clipData!!.getItemAt(i).uri
                         writeViewModel.postImageUriList.add(imageUri.toString())
                     }
+                    LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
+                    LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
                     findNavController().popBackStack()
                 } else { // 단일 선택
                     data?.data?.let { uri ->
@@ -131,6 +143,8 @@ class WriteImageOptionFragment : DialogFragment() {
                             val imageUri: Uri? = data.data
                             if (imageUri != null) {
                                 writeViewModel.postImageUriList.add(imageUri.toString())
+                                LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
+                                LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
                                 findNavController().popBackStack()
                             }
                         }
@@ -194,6 +208,8 @@ class WriteImageOptionFragment : DialogFragment() {
             if (activityResult.resultCode == Activity.RESULT_OK) {
                 val photoFile = File(currentTakenPhotoPath)
                 writeViewModel.postImageUriList.add(Uri.fromFile(photoFile).toString())
+                LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
+                LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
                 findNavController().popBackStack()
             }
         }

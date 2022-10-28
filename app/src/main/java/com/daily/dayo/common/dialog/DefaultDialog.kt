@@ -12,6 +12,7 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import com.daily.dayo.R
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.DialogDefaltExplanationConfirmBinding
 import com.daily.dayo.databinding.DialogDefaultAlertBinding
 import com.daily.dayo.databinding.DialogDefaultConfirmBinding
