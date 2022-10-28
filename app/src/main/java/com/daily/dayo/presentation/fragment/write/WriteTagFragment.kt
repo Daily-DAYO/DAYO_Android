@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.fragment.write
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.ListLiveData
 import com.daily.dayo.common.ReplaceUnicode
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentWriteTagBinding
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
@@ -27,12 +29,14 @@ class WriteTagFragment : Fragment() {
     private var binding by autoCleared<FragmentWriteTagBinding>()
     private val writeViewModel by activityViewModels<WriteViewModel>()
     private var originalTagList: MutableList<String> = mutableListOf()
+    private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentWriteTagBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
         setBackButtonClickListener()
         setSubmitButtonClickListener()
         setEditTextAddTagKeyClickListener()
@@ -46,6 +50,8 @@ class WriteTagFragment : Fragment() {
         val onBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 writeViewModel.showWriteOptionDialog.value = Event(true)
+                LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
+                LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
                 findNavController().navigateUp()
             }
         }
@@ -57,9 +63,16 @@ class WriteTagFragment : Fragment() {
         HideKeyBoardUtil.hideTouchDisplay(requireActivity(), requireView())
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
+
     private fun setBackButtonClickListener() {
         binding.btnWriteTagBack.setOnDebounceClickListener {
             writeViewModel.showWriteOptionDialog.value = Event(true)
+            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
+            LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
             findNavController().navigateUp()
         }
     }
@@ -69,6 +82,8 @@ class WriteTagFragment : Fragment() {
             writeViewModel.postTagList = ListLiveData<String>()
             writeViewModel.postTagList.replaceAll(binding.chipgroupWriteTagListSaved.getAllChipsTagText())
             writeViewModel.showWriteOptionDialog.value = Event(true)
+            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
+            LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
             findNavController().navigateUp()
         }
     }
