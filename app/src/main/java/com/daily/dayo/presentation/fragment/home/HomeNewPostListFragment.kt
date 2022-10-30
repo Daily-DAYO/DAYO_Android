@@ -50,9 +50,16 @@ class HomeNewPostListFragment : Fragment() {
         setRvNewPostAdapter()
         setNewPostListCollect()
         setPostLikeClickListener()
+        setNewPostListRefreshListener()
 
         binding.layoutNewPostShimmer.startShimmer()
         return binding.root
+    }
+
+    private fun setNewPostListRefreshListener() {
+        binding.swipeRefreshLayoutNewPost.setOnRefreshListener {
+            setCategoryPostList(homeViewModel.currentNewCategory)
+        }
     }
 
     private fun setInitialCategory() {
@@ -82,6 +89,7 @@ class HomeNewPostListFragment : Fragment() {
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { postList ->
+                            binding.swipeRefreshLayoutNewPost.isRefreshing = false
                             loadPostThumbnail(postList)
                         }
                     }
