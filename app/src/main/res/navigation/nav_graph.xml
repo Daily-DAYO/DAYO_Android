@@ -15,6 +15,8 @@
             app:destination="@id/PostFragment" />
         <action
             android:id="@+id/action_homeFragment_to_writeFragment"
+            app:enterAnim="@anim/translate_bottom_up"
+            app:popExitAnim="@anim/translate_top_down"
             app:destination="@id/WriteFragment" />
         <action
             android:id="@+id/action_homeFragment_to_profileFragment"
@@ -64,6 +66,8 @@
             app:destination="@id/SearchFragment" />
         <action
             android:id="@+id/action_feedFragment_to_writeFragment"
+            app:enterAnim="@anim/translate_bottom_up"
+            app:popExitAnim="@anim/translate_top_down"
             app:destination="@id/WriteFragment" />
         <action
             android:id="@+id/action_feedFragment_to_profileFragment"
@@ -236,6 +240,8 @@
             app:nullable="true" />
         <action
             android:id="@+id/action_profileFragment_to_writeFragment"
+            app:enterAnim="@anim/translate_bottom_up"
+            app:popExitAnim="@anim/translate_top_down"
             app:destination="@id/WriteFragment" />
         <action
             android:id="@+id/action_profileFragment_to_followFragment"
@@ -446,6 +452,8 @@
         tools:layout="@layout/fragment_notification">
         <action
             android:id="@+id/action_notificationFragment_to_writeFragment"
+            app:enterAnim="@anim/translate_bottom_up"
+            app:popExitAnim="@anim/translate_top_down"
             app:destination="@id/WriteFragment" />
         <action
             android:id="@+id/action_notificationFragment_to_profileFragment"
