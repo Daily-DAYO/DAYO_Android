@@ -259,11 +259,10 @@
                             app:layout_constraintStart_toStartOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <LinearLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/layout_post_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
                         android:visibility="@{(post.hashtags.size() > 0) || (post.contents.length() > 0)  ? View.VISIBLE : View.GONE}"
                         app:layout_constraintTop_toBottomOf="@id/layout_post_reaction">
 
@@ -278,6 +277,9 @@
                             android:textColor="@color/gray_1_313131"
                             android:textSize="13dp"
                             android:visibility="@{post.contents.length() == 0 ? View.GONE : View.VISIBLE}"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toTopOf="@id/layout_scroll_post_tag_list"
+                            app:layout_goneMarginBottom="25dp"
                             tools:text="다이어리를 꾸며봤어요~! 블랙 앤 화이트로 꾸며봤습니다:) 일기를 써보았어요. 이러쿵 저러쿵 이러쿵 저러쿵 이러쿵 저러쿵 팔로잉 피드 게시글 내용입니다." />
 
                         <HorizontalScrollView
@@ -290,6 +292,8 @@
                             android:overScrollMode="never"
                             android:scrollbars="none"
                             android:visibility="@{post.hashtags.size() > 0 ? View.VISIBLE : View.GONE}"
+                            app:layout_constraintTop_toBottomOf="@id/tv_post_description"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             tools:visibility="visible">
 
                             <com.google.android.flexbox.FlexboxLayout
@@ -307,7 +311,7 @@
                                     android:layout_height="wrap_content" />
                             </com.google.android.flexbox.FlexboxLayout>
                         </HorizontalScrollView>
-                    </LinearLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <View
                         android:id="@+id/view_post_content_comment_divider"
