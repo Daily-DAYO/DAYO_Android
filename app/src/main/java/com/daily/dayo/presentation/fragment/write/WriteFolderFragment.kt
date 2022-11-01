@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.fragment.write
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.common.*
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.databinding.FragmentWriteFolderBinding
 import com.daily.dayo.domain.model.Folder
 import com.daily.dayo.presentation.adapter.WriteFolderAdapter
@@ -28,12 +30,14 @@ class WriteFolderFragment : Fragment() {
             writeViewModel.postFolderId.value!!
         )
     }
+    private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentWriteFolderBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
         setBackButtonClickListener()
         setFolderAddButtonClickListener()
         setRvWriteFolderListAdapter()
@@ -46,15 +50,24 @@ class WriteFolderFragment : Fragment() {
         val onBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 writeViewModel.showWriteOptionDialog.value = Event(true)
+                LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
+                LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
                 findNavController().navigateUp()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
+
     private fun setBackButtonClickListener() {
         binding.btnWriteFolderBack.setOnDebounceClickListener {
             writeViewModel.showWriteOptionDialog.value = Event(true)
+            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
+            LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
             findNavController().navigateUp()
         }
     }
@@ -73,6 +86,8 @@ class WriteFolderFragment : Fragment() {
         writeViewModel.postFolderId.value = folder.folderId.toString()
         writeViewModel.postFolderName.value = folder.title
         writeViewModel.showWriteOptionDialog.value = Event(true)
+        LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
+        LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
         findNavController().navigateUp()
     }
 
