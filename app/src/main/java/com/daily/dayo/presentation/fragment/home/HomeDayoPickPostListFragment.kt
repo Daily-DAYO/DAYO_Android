@@ -49,9 +49,16 @@ class HomeDayoPickPostListFragment : Fragment() {
         setRvDayoPickPostAdapter()
         setDayoPickPostListCollect()
         setPostLikeClickListener()
+        setDayoPickPostListRefreshListener()
 
         binding.layoutDayopickPostShimmer.startShimmer()
         return binding.root
+    }
+
+    private fun setDayoPickPostListRefreshListener() {
+        binding.swipeRefreshLayoutDayoPickPost.setOnRefreshListener {
+            setCategoryPostList(homeViewModel.currentDayoPickCategory)
+        }
     }
 
     private fun setInitialCategory() {
@@ -83,6 +90,7 @@ class HomeDayoPickPostListFragment : Fragment() {
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { postList ->
+                            binding.swipeRefreshLayoutDayoPickPost.isRefreshing = false
                             loadPostThumbnail(postList)
                         }
                     }

@@ -45,12 +45,20 @@ class FeedFragment : Fragment() {
         setFeedPostList()
         setFeedPostClickListener()
         setFeedEmptyButtonClickListener()
+        setFeedRefreshListener()
+
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
         feedViewModel.requestFeedList()
+    }
+
+    private fun setFeedRefreshListener() {
+        binding.swipeRefreshLayoutFeed.setOnRefreshListener {
+            feedViewModel.requestFeedList()
+        }
     }
 
     private fun setRvFeedListAdapter() {
@@ -64,6 +72,7 @@ class FeedFragment : Fragment() {
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { feedList ->
+                            binding.swipeRefreshLayoutFeed.isRefreshing = false
                             binding.feedCount = feedList.size
                             feedListAdapter.submitList(feedList.toMutableList())
                         }
