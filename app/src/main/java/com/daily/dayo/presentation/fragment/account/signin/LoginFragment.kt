@@ -2,8 +2,15 @@ package com.daily.dayo.presentation.fragment.account.signin
 
 import android.content.ContentValues
 import android.content.Intent
-import android.graphics.Paint
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
+import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -47,7 +54,7 @@ class LoginFragment : Fragment() {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
 
         loginSuccess()
-        setTextUnderline()
+        setPolicy()
         setKakaoLoginButtonClickListener()
         setEmailLoginButtonClickListener()
         setViewPager()
@@ -102,11 +109,6 @@ class LoginFragment : Fragment() {
         binding.btnLoginEmail.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_loginEmailFragment)
         }
-    }
-
-    private fun setTextUnderline() {
-        binding.tvLoginUseGuideMessage2TermsOfService.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        binding.tvLoginUseGuideMessage4Privacy.paintFlags = Paint.UNDERLINE_TEXT_FLAG
     }
 
     private fun setViewPager() {
@@ -165,5 +167,58 @@ class LoginFragment : Fragment() {
                 )
             }
         }
+    }
+
+    private fun setPolicy() {
+        var span = SpannableString(getString(R.string.login_policy_guide_message))
+        setPolicyMessage(span = span, type = "terms", text = getString(R.string.policy_terms))
+        setPolicyMessage(span = span, type = "privacy", text = getString(R.string.policy_privacy))
+        span.setSpan(
+            ForegroundColorSpan(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.gray_4_D3D2D2
+                )
+            ),
+            0,
+            span.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        binding.tvLoginUseGuideMessage.movementMethod = LinkMovementMethod.getInstance()
+        binding.tvLoginUseGuideMessage.text = span
+    }
+
+    private fun setPolicyMessage(span: SpannableString, type: String, text: String) {
+        span.setSpan(
+            object : ClickableSpan() {
+                override fun onClick(widget: View) {
+                    with(findNavController()) {
+                        if (currentDestination?.id == R.id.LoginFragment) {
+                            currentDestination?.getAction(R.id.action_loginFragment_to_policyFragment)
+                                ?.let {
+                                    navigate(
+                                        LoginFragmentDirections.actionLoginFragmentToPolicyFragment(
+                                            informationType = type
+                                        )
+                                    )
+                                }
+                        }
+                    }
+                }
+            },
+            span.indexOf(text), span.indexOf(text) + text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        span.setSpan(
+            StyleSpan(Typeface.BOLD),
+            span.indexOf(text),
+            span.indexOf(text) + text.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        span.setSpan(
+            UnderlineSpan(),
+            span.indexOf(text),
+            span.indexOf(text) + text.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
     }
 }
