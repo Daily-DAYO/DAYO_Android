@@ -111,53 +111,10 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
-            android:id="@+id/tv_login_use_guide_message_1"
+            android:id="@+id/tv_login_use_guide_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="가입 시 DAYO의 "
-            android:textSize="12dp"
-            android:textColor="@color/gray_3_9C9C9C"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_login_use_guide_message_2_terms_of_service"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="이용약관"
-            android:textSize="12dp"
-            android:textColor="@color/gray_3_9C9C9C"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_login_use_guide_message_3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" 및 "
-            android:textSize="12dp"
-            android:textColor="@color/gray_3_9C9C9C"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_login_use_guide_message_4_privacy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="개인정보"
-            android:textSize="12dp"
-            android:textColor="@color/gray_3_9C9C9C"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-        <TextView
-            android:id="@+id/tv_login_use_guide_message_5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" 취급방침에 동의하게 됩니다."
+            android:text="@string/login_policy_guide_message"
             android:textSize="12dp"
             android:textColor="@color/gray_3_9C9C9C"
             app:layout_constraintBottom_toBottomOf="parent"
