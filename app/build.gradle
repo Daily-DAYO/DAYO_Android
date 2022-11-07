@@ -5,11 +5,21 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id 'androidx.navigation.safeargs.kotlin'
     id 'com.google.gms.google-services'
+    id 'io.sentry.android.gradle'
 }
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 def NATIVE_APP_KEY = properties.getProperty('NATIVE_APP_KEY')
+
+sentry {
+    setIncludeProguardMapping(true)
+    setAutoUploadProguardMapping(true)
+    setExperimentalGuardsquareSupport(false)
+    setUploadNativeSymbols(false)
+    setIncludeNativeSources(false)
+    setAutoUpload(true)
+}
 
 android {
     compileSdkVersion 31
@@ -139,6 +149,10 @@ dependencies {
 
     // Shimmer
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
+    // Sentry
+    implementation 'io.sentry:sentry-android:6.6.0'
+    implementation 'org.slf4j:slf4j-nop:1.7.25'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.7.0'
