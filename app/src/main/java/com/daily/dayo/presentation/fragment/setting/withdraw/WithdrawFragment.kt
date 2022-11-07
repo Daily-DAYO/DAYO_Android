@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.fragment.setting.withdraw
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Spannable
@@ -15,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentWithdrawBinding
 import com.daily.dayo.presentation.activity.LoginActivity
@@ -23,6 +25,7 @@ import com.daily.dayo.presentation.viewmodel.AccountViewModel
 class WithdrawFragment : Fragment() {
     private var binding by autoCleared<FragmentWithdrawBinding>()
     private val accountViewModel by activityViewModels<AccountViewModel>()
+    private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,12 +37,18 @@ class WithdrawFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentWithdrawBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
         setFinalMessageTextSpan()
         setOnClickWithdrawOtherReason()
         setBackButtonClickListener()
         setWithdrawButtonActivation()
         setWithdrawButtonClickListener()
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun setBackButtonClickListener() {
@@ -66,6 +75,7 @@ class WithdrawFragment : Fragment() {
 
     private fun setWithdrawButtonClickListener(){
         binding.btnWithdraw.setOnDebounceClickListener {
+            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
             val reason = when(binding.radiogroupWithdrawReason.checkedRadioButtonId){
                 R.id.radiobutton_withdraw_reason_1 -> binding.radiobuttonWithdrawReason1.text.toString()
                 R.id.radiobutton_withdraw_reason_2 -> binding.radiobuttonWithdrawReason2.text.toString()

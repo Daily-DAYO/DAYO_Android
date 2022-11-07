@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.fragment.setting
 
+import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -17,15 +18,16 @@ import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.dialog.DefaultDialogConfirm
 import com.daily.dayo.common.dialog.DefaultDialogExplanationConfirm
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentSettingBinding
 import com.daily.dayo.presentation.activity.LoginActivity
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
 
-
 class SettingFragment : Fragment() {
     private var binding by autoCleared<FragmentSettingBinding>()
     private val accountViewModel by activityViewModels<AccountViewModel>()
+    private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,6 +35,7 @@ class SettingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
         setChangePasswordClickListener()
         setBackButtonClickListener()
         setLogoutButtonClickListener()
@@ -40,6 +43,11 @@ class SettingFragment : Fragment() {
         setWithdrawButtonClickListener()
         setNotificationButtonClickListener()
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun setChangePasswordClickListener() {
@@ -140,6 +148,7 @@ class SettingFragment : Fragment() {
     }
 
     private fun doLogout() {
+        LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
         accountViewModel.requestLogout()
         accountViewModel.logoutSuccess.observe(viewLifecycleOwner) {
             if (it.getContentIfNotHandled() == true) {

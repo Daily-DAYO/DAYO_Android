@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.fragment.mypage.profile
 
+import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.ImageDecoder
@@ -31,6 +32,7 @@ import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.ImageResizeUtil
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentProfileEditBinding
 import com.daily.dayo.presentation.viewmodel.ProfileSettingViewModel
@@ -55,6 +57,7 @@ class ProfileEditFragment : Fragment() {
     private var imagePath: String? = null
     private val imageFileTimeFormat = SimpleDateFormat("yyyy-MM-d-HH-mm-ss", Locale.KOREA)
     private lateinit var userProfileImageExtension: String
+    private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +69,7 @@ class ProfileEditFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentProfileEditBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
         setBackButtonClickListener()
         setLimitEditTextInputType()
         setTextEditorActionListener()
@@ -86,6 +90,11 @@ class ProfileEditFragment : Fragment() {
             HideKeyBoardUtil.hide(requireContext(), binding.etProfileEditNickname)
             true
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun setTextEditorActionListener() {
@@ -271,6 +280,7 @@ class ProfileEditFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setProfileUpdateClickListener() {
         binding.btnProfileEditComplete.setOnDebounceClickListener {
+            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
             val nickname: String? = binding.etProfileEditNickname.text.toString().trim()
             var profileImgFile: File?
 
@@ -291,7 +301,6 @@ class ProfileEditFragment : Fragment() {
                                 )
                                 null -> {
                                     profileSettingViewModel.requestProfile(memberId = DayoApplication.preferences.getCurrentUser().memberId!!)
-                                    // TODO : 변경하는 중임을 알리는 Dialog 필요
                                     findNavController().navigateUp()
                                 }
                             }
@@ -308,7 +317,6 @@ class ProfileEditFragment : Fragment() {
                                 is CancellationException -> Log.e("My Profile Update", "CANCELLED")
                                 null -> {
                                     profileSettingViewModel.requestProfile(memberId = DayoApplication.preferences.getCurrentUser().memberId!!)
-                                    // TODO : 변경하는 중임을 알리는 Dialog 필요
                                     findNavController().navigateUp()
                                 }
                             }

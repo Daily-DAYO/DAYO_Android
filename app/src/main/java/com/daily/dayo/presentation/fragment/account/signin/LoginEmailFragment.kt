@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.fragment.account.signin
 
+import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
@@ -19,6 +20,7 @@ import com.daily.dayo.R
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.databinding.FragmentLoginEmailBinding
 import com.daily.dayo.presentation.activity.MainActivity
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
@@ -29,12 +31,14 @@ class LoginEmailFragment : Fragment() {
     private var binding by autoCleared<FragmentLoginEmailBinding>()
     private val loginViewModel by activityViewModels<AccountViewModel>()
     private var isLoginButtonClick = false // TODO : 첫 화면에서 로그인 실패 메시지 등장으로 인한 임시 해결
+    private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         binding = FragmentLoginEmailBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
         setBackClickListener()
         setNextClickListener()
         loginSuccess()
@@ -53,6 +57,11 @@ class LoginEmailFragment : Fragment() {
             HideKeyBoardUtil.hide(requireContext(), binding.etLoginEmailPassword)
             true
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun setTextEditorActionListener() {
@@ -76,6 +85,7 @@ class LoginEmailFragment : Fragment() {
 
     private fun setNextClickListener() {
         binding.btnLoginEmailNext.setOnDebounceClickListener {
+            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
             isLoginButtonClick = true
             loginViewModel.requestLoginEmail(
                 email = binding.etLoginEmailAddress.text.toString().trim(),
@@ -95,6 +105,7 @@ class LoginEmailFragment : Fragment() {
             } else {
                 if (isLoginButtonClick) {
                     Log.e(ContentValues.TAG, "로그인 실패")
+                    LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
                     Toast.makeText(requireContext(), getString(R.string.login_email_alert_message_fail), Toast.LENGTH_SHORT).show()
                 }
             }
