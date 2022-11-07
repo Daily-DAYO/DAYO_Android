@@ -144,5 +144,6 @@ fabric.properties
 
 # Sentry Properties
 sentry.properties
+/*/sentry.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/androidstudio
