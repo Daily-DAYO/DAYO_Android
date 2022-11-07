@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.fragment.account.signin
 
+import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Paint
@@ -19,6 +20,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentLoginBinding
 import com.daily.dayo.presentation.activity.MainActivity
@@ -39,12 +41,14 @@ class LoginFragment : Fragment() {
     private lateinit var indicators: Array<ImageView?>
     private lateinit var pagerAdapter: OnBoardingPagerStateAdapter
     private lateinit var viewPager: ViewPager2
+    private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
 
         loginSuccess()
         setTextUnderline()
@@ -55,8 +59,15 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
+
     private fun setKakaoLoginButtonClickListener() {
         binding.btnLoginKakao.setOnDebounceClickListener {
+            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
+
             if (UserApiClient.instance.isKakaoTalkLoginAvailable(requireContext())) {
                 UserApiClient.instance.loginWithKakaoTalk(requireContext(), callback = callback)
             } else {
@@ -66,7 +77,9 @@ class LoginFragment : Fragment() {
     }
 
     val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+        LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
         if (error != null) {
+            LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
             Log.e(ContentValues.TAG, "카카오 로그인 실패", error)
         } else if (token != null) {
             Log.i(ContentValues.TAG, "카카오 로그인 성공 ${token.accessToken}")

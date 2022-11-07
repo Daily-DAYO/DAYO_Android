@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.fragment.setting.changePassword
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -19,6 +20,7 @@ import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentSettingChangePasswordNewBinding
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
@@ -33,12 +35,14 @@ class SettingChangePasswordNewFragment : Fragment() {
     private val accountViewModel by activityViewModels<AccountViewModel>()
     private var isNewConfirmation = MutableLiveData<Boolean>(false)
     private lateinit var verifyPasswordTextWatcher: TextWatcher
+    private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSettingChangePasswordNewBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
         return binding.root
     }
 
@@ -86,6 +90,11 @@ class SettingChangePasswordNewFragment : Fragment() {
         observePasswordChange()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
+
     private fun setBackClickListener() {
         binding.btnSettingChangePasswordNewBack.setOnDebounceClickListener {
             findNavController().navigateUp()
@@ -100,6 +109,7 @@ class SettingChangePasswordNewFragment : Fragment() {
                 with(binding.btnSettingChangePasswordNewNext) {
                     text = getString(R.string.change_password)
                     setOnDebounceClickListener {
+                        LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
                         accountViewModel.requestChangePassword(
                             newPassword = binding.etSettingChangePasswordNewUserInput.text.toString()
                                 .trim()

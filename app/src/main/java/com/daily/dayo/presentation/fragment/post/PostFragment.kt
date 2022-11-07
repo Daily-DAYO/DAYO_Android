@@ -32,6 +32,7 @@ import com.daily.dayo.R
 import com.daily.dayo.common.*
 import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.dialog.DefaultDialogConfirm
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.databinding.FragmentPostBinding
 import com.daily.dayo.domain.model.Comment
 import com.daily.dayo.domain.model.categoryKR
@@ -58,6 +59,7 @@ class PostFragment : Fragment() {
     private lateinit var postImageSliderAdapter: PostImageSliderAdapter
     private lateinit var indicators: Array<ImageView?>
     private lateinit var keyboardVisibilityUtils: KeyboardVisibilityUtils
+    private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,8 +78,8 @@ class PostFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         binding = FragmentPostBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
 
         setBackButtonClickListener()
         setCommentListAdapter()
@@ -92,6 +94,7 @@ class PostFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
         keyboardVisibilityUtils.detachKeyboardListeners()
     }
 
@@ -419,6 +422,7 @@ class PostFragment : Fragment() {
 
         binding.tvPostCommentUpload.setOnDebounceClickListener {
             if (binding.etPostCommentDescription.text.toString().trim().isNotEmpty()) {
+                LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
                 postViewModel.requestCreatePostComment(
                     contents = binding.etPostCommentDescription.text.toString(),
                     postId = args.postId
@@ -429,7 +433,10 @@ class PostFragment : Fragment() {
                     HideKeyBoardUtil.hide(requireContext(), this)
                 }
                 postViewModel.postCommentCreateSuccess.observe(viewLifecycleOwner) {
-                    if (it.getContentIfNotHandled() == true) refreshPostComment()
+                    if (it.getContentIfNotHandled() == true) {
+                        refreshPostComment()
+                        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+                    }
                 }
             }
         }

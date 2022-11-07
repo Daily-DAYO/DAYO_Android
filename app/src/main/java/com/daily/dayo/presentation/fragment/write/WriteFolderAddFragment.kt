@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.fragment.write
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentWriteFolderAddBinding
 import com.daily.dayo.domain.model.Privacy
@@ -22,16 +24,23 @@ import java.util.regex.Pattern
 class WriteFolderAddFragment : Fragment() {
     private var binding by autoCleared<FragmentWriteFolderAddBinding>()
     private val writeViewModel by activityViewModels<WriteViewModel>()
+    private lateinit var loadingAlertDialog: AlertDialog
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentWriteFolderAddBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
         setBackButtonClickListener()
         setConfirmButtonClickListener()
         verifyFolderName()
 
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun setBackButtonClickListener() {
@@ -42,11 +51,13 @@ class WriteFolderAddFragment : Fragment() {
 
     private fun setConfirmButtonClickListener() {
         binding.tvPostFolderAddConfirm.setOnDebounceClickListener {
+            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
             createFolder()
             writeViewModel.folderAddAccess.observe(viewLifecycleOwner) {
                 if (it.getContentIfNotHandled() == true) {
                     findNavController().popBackStack()
                 } else if (it.getContentIfNotHandled() == false) {
+                    LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
                     Toast.makeText(
                         requireContext(),
                         R.string.folder_add_message_fail,

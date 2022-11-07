@@ -59,14 +59,12 @@ class HomeFragment : Fragment() {
         pagerAdapter.addFragment(HomeNewPostListFragment())
         for (i in 0 until pagerAdapter.itemCount) {
             pagerAdapter.refreshFragment(i,pagerAdapter.fragments[i])
-            Log.e("Refresh Fragment", "Page ${i+1}")
         }
 
         viewPager.adapter = pagerAdapter
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                Log.e("ViewPagerFragment", "Page ${position+1}")
                 pagerAdapter.refreshFragment(position,pagerAdapter.fragments[position])
             }
         })

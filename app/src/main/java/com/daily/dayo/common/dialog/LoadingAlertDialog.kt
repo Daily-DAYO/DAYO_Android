@@ -35,7 +35,7 @@ object LoadingAlertDialog {
 
     fun showLoadingDialog(dialog: AlertDialog) {
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) // Radius 적용을 위해 필요
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.show()
     }
 

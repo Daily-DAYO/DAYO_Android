@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.fragment.report
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.daily.dayo.R
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentReportPostBinding
 import com.daily.dayo.presentation.viewmodel.ReportViewModel
@@ -22,12 +24,14 @@ class ReportPostFragment : Fragment() {
     private val reportViewModel by activityViewModels<ReportViewModel>()
     private val args by navArgs<ReportPostFragmentArgs>()
     private lateinit var reportPostOptionMap: Map<Int, String>
+    private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentReportPostBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
 
         initReportPostOption()
         setOnClickReportPostOtherReason()
@@ -35,6 +39,11 @@ class ReportPostFragment : Fragment() {
         setReportPostButtonActivation()
         setReportPostButtonClickListener()
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun initReportPostOption() {
@@ -74,6 +83,7 @@ class ReportPostFragment : Fragment() {
 
     private fun setReportPostButtonClickListener() {
         binding.btnReportPost.setOnDebounceClickListener {
+            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
             if (isOtherOption()) {
                 reportViewModel.requestSavePostReport(
                     comment = binding.etReportPostReasonOther.text.toString(),
