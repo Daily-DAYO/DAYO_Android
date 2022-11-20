@@ -6,16 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.daily.dayo.R
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentHomeBinding
-import com.daily.dayo.domain.model.Category
 import com.daily.dayo.presentation.adapter.HomeFragmentPagerStateAdapter
-import com.daily.dayo.presentation.viewmodel.HomeViewModel
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,7 +20,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
     private var binding by autoCleared<FragmentHomeBinding>()
-    private val homeViewModel by activityViewModels<HomeViewModel>()
     private lateinit var viewPager : ViewPager2
     private lateinit var tabLayout: TabLayout
 
@@ -38,7 +34,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewPager()
-        initPostContents()
         setSearchClickListener()
     }
 
@@ -83,18 +78,5 @@ class HomeFragment : Fragment() {
                     tab.text = "NEW"
             }
         }.attach()
-    }
-
-    private fun initPostContents() {
-        if(!homeViewModel.isInitLoadingDAYOPICK) {
-            homeViewModel.currentDayoPickCategory = Category.ALL
-            homeViewModel.requestDayoPickPostList()
-            homeViewModel.isInitLoadingDAYOPICK = true
-        }
-        if(!homeViewModel.isInitLoadingNew) {
-            homeViewModel.currentNewCategory = Category.ALL
-            homeViewModel.requestNewPostList()
-            homeViewModel.isInitLoadingNew = true
-        }
     }
 }
