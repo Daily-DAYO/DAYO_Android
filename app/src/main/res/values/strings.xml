@@ -43,6 +43,11 @@
     <string name="login_email_alert_message_fail">이메일 주소 또는 비밀번호를 잘못 입력했어요.</string>
     <string name="login_email_forget"><u>비밀번호</u>를 잊어버렸어요</string>
     <string name="login_email_signup">아직 계정이 없으신가요? <u>회원가입</u>하기</string>
+    <string name="login_policy_guide_message">가입 시 DAYO의 이용약관 및 개인정보 취급방침에 동의하게 됩니다.</string>
+
+    <!-- Policy -->
+    <string name="policy_terms">이용약관</string>
+    <string name="policy_privacy">개인정보 취급방침</string>
 
     <!-- Home -->
     <string name="DayoPick">DAYO PICK</string>

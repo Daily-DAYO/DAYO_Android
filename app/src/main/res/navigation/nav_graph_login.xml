@@ -11,11 +11,25 @@
         android:label="fragment_login"
         tools:layout="@layout/fragment_login">
         <action
+            android:id="@+id/action_loginFragment_to_policyFragment"
+            app:destination="@+id/PolicyFragment"/>
+        <action
             android:id="@+id/action_loginFragment_to_loginEmailFragment"
             app:destination="@+id/LoginEmailFragment"/>
         <action
             android:id="@+id/action_loginFragment_to_signupEmailSetProfileFragment"
             app:destination="@id/SignupEmailSetProfileFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/PolicyFragment"
+        android:name="com.daily.dayo.presentation.fragment.policy.PolicyFragment"
+        android:label="fragment_policy"
+        tools:layout="@layout/fragment_policy">
+        <argument
+            android:name="informationType"
+            android:defaultValue="privacy"
+            app:argType="string" />
     </fragment>
 
     <fragment
