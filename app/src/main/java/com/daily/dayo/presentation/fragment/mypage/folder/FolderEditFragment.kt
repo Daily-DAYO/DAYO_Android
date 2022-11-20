@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.fragment.mypage.folder
 
+import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Build
@@ -29,6 +30,7 @@ import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFolderSettingAddBinding
 import com.daily.dayo.domain.model.Privacy
@@ -52,6 +54,7 @@ class FolderEditFragment : Fragment() {
     private lateinit var initThumbnailImg: String
     lateinit var imageUri: String
     var thumbnailImgBitmap: Bitmap? = null
+    private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +67,7 @@ class FolderEditFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFolderSettingAddBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
 
         setFolderInfoDescription()
         setBackButtonClickListener()
@@ -73,6 +77,11 @@ class FolderEditFragment : Fragment() {
         verifyFolderName()
 
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun setFolderInfoDescription() {
@@ -135,6 +144,7 @@ class FolderEditFragment : Fragment() {
 
     private fun setConfirmButtonClickListener() {
         binding.tvFolderSettingAddConfirm.setOnDebounceClickListener { it ->
+            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
             val name: String = binding.etFolderSettingAddSetTitle.text.toString()
             val subheading: String = binding.etFolderSettingAddSetSubheading.text.toString()
             val privacy: Privacy =
@@ -170,6 +180,8 @@ class FolderEditFragment : Fragment() {
             folderSettingViewModel.editSuccess.observe(viewLifecycleOwner) {
                 if (it.getContentIfNotHandled() == true) {
                     findNavController().navigateUp()
+                } else {
+                    LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
                 }
             }
         }

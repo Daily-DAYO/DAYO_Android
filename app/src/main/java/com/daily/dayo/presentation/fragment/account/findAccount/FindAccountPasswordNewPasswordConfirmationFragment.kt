@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.fragment.account.findAccount
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -18,6 +19,7 @@ import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,6 +30,7 @@ class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
     private var binding by autoCleared<FragmentFindAccountPasswordNewPasswordConfirmationBinding>()
     private val args by navArgs<FindAccountPasswordNewPasswordConfirmationFragmentArgs>()
     private val loginViewModel by activityViewModels<AccountViewModel>()
+    private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,6 +41,7 @@ class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
             container,
             false
         )
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
         setBackClickListener()
         setNextClickListener()
         initEditText()
@@ -65,6 +69,11 @@ class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
             )
             true
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun setTextEditorActionListener() {
@@ -193,6 +202,7 @@ class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
 
     private fun setNextClickListener() {
         binding.btnFindAccountPasswordNewPasswordConfirmationNext.setOnDebounceClickListener {
+            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
             loginViewModel.requestChangePassword(email = args.email, newPassword = args.password)
         }
     }

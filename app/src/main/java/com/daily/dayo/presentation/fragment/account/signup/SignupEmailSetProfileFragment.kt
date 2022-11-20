@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.fragment.account.signup
 
+import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.ImageDecoder
@@ -49,6 +50,7 @@ class SignupEmailSetProfileFragment : Fragment() {
     private var imagePath: String? = null
     private val imageFileTimeFormat = SimpleDateFormat("yyyy-MM-d-HH-mm-ss", Locale.KOREA)
     private lateinit var userProfileImageExtension: String
+    private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +80,11 @@ class SignupEmailSetProfileFragment : Fragment() {
             HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetProfileNickname)
             true
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun setTextEditorActionListener() {
@@ -278,6 +285,7 @@ class SignupEmailSetProfileFragment : Fragment() {
 
     private fun setNextClickListener() {
         binding.btnSignupEmailSetProfileNext.setOnDebounceClickListener {
+            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
             var profileImgFile: File? = null
             profileImgFile = if (this::userProfileImageString.isInitialized) {
                 setUploadImagePath(userProfileImageExtension)
@@ -319,6 +327,7 @@ class SignupEmailSetProfileFragment : Fragment() {
                     )
                 )
             } else if (isSuccess.getContentIfNotHandled() == false) {
+                LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
                 Toast.makeText(
                     requireContext(),
                     R.string.signup_email_alert_message_fail_network,
@@ -337,6 +346,7 @@ class SignupEmailSetProfileFragment : Fragment() {
                     )
                 )
             } else if (isSuccess.getContentIfNotHandled() == false) {
+                LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
                 Toast.makeText(
                     requireContext(),
                     R.string.signup_email_alert_message_fail_network,

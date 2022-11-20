@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.fragment.mypage.folder
 
+import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Build
@@ -22,6 +23,7 @@ import com.daily.dayo.R
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.ImageResizeUtil
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFolderSettingAddBinding
 import com.daily.dayo.domain.model.Privacy
@@ -39,6 +41,7 @@ class FolderSettingAddFragment : Fragment() {
     private lateinit var glideRequestManager: RequestManager
     lateinit var imageUri: String
     var thumbnailImgBitmap: Bitmap? = null
+    private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,12 +54,18 @@ class FolderSettingAddFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFolderSettingAddBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
         setBackButtonClickListener()
         setConfirmButtonClickListener()
         setFolderSettingThumbnailOptionClickListener()
         observeNavigationFolderSettingImageCallBack()
         verifyFolderName()
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun setBackButtonClickListener() {
@@ -67,6 +76,7 @@ class FolderSettingAddFragment : Fragment() {
 
     private fun setConfirmButtonClickListener() {
         binding.tvFolderSettingAddConfirm.setOnDebounceClickListener {
+            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
             val name: String = binding.etFolderSettingAddSetTitle.text.toString()
             val subheading: String = binding.etFolderSettingAddSetSubheading.text.toString()
             val privacy: Privacy =
@@ -89,6 +99,7 @@ class FolderSettingAddFragment : Fragment() {
                 if (it.getContentIfNotHandled() == true) {
                     findNavController().popBackStack()
                 } else if (it.getContentIfNotHandled() == false) {
+                    LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
                     Toast.makeText(
                         requireContext(),
                         R.string.folder_add_message_fail,
