@@ -1,6 +1,5 @@
 package com.daily.dayo.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -95,7 +94,6 @@ class WriteViewModel @Inject constructor(
         postFolderId: Int,
         postTags: Array<String>
     ) = viewModelScope.launch {
-        _writeEditSuccess.postValue(Event(false))
         val response = requestEditPostUseCase(
             postId = postId,
             EditPostRequest(
