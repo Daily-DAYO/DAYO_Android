@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.fragment.write
 
+import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Build
@@ -16,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.common.ImageResizeUtil
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentWriteOptionBinding
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
@@ -34,18 +36,25 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
     private val writeViewModel by activityViewModels<WriteViewModel>()
     private val postImageFileList = ArrayList<File>()
     private val imageFileTimeFormat = SimpleDateFormat("yyyy-MM-d-HH-mm-ss-SSS", Locale.KOREA)
+    private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentWriteOptionBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
         setUploadButtonClickListener()
         setOptionTagListOriginalValue()
         setOptionTagClickListener()
         setOptionFolderClickListener()
         setFolderDescription()
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -72,6 +81,7 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
                         .show()
                 }
                 writeViewModel.postId.value != 0 -> { // 기존 게시글을 수정하는 경우
+                    LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
                     writeViewModel.requestEditPost(
                         writeViewModel.postId.value!!,
                         writeViewModel.postCategory.value!!,
@@ -88,6 +98,7 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
                     findNavController().navigateUp()
                 }
                 else -> { // 새로 글을 작성하는 경우
+                    LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         setUploadImageFileList()
                     }

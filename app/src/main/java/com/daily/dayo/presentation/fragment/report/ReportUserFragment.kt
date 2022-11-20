@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.fragment.report
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.daily.dayo.R
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentReportUserBinding
 import com.daily.dayo.presentation.viewmodel.ReportViewModel
@@ -22,12 +24,14 @@ class ReportUserFragment : Fragment() {
     private val reportViewModel by activityViewModels<ReportViewModel>()
     private val args by navArgs<ReportUserFragmentArgs>()
     private lateinit var reportUserOptionMap: Map<Int, String>
+    private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentReportUserBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
 
         initReportUserOption()
         setOnClickReportUserOtherReason()
@@ -36,7 +40,12 @@ class ReportUserFragment : Fragment() {
         setReportUserButtonClickListener()
         return binding.root
     }
-    
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
+
     private fun initReportUserOption() {
         reportUserOptionMap = mapOf(
             binding.radiobuttonReportUserReason1.id to binding.radiobuttonReportUserReason1.text.toString(),
@@ -74,6 +83,7 @@ class ReportUserFragment : Fragment() {
 
     private fun setReportUserButtonClickListener() {
         binding.btnReportUser.setOnDebounceClickListener {
+            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
             if (isOtherOption()) {
                 reportViewModel.requestSaveMemberReport(
                     comment = binding.etReportUserReasonOther.text.toString(),

@@ -13,6 +13,7 @@ import com.daily.dayo.R
 import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.dialog.DefaultDialogConfirm
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentPostOptionMineBinding
 import com.daily.dayo.presentation.viewmodel.PostViewModel
@@ -24,6 +25,7 @@ class PostOptionMineFragment : DialogFragment() {
     private val postViewModel by activityViewModels<PostViewModel>()
     private val args by navArgs<PostOptionMineFragmentArgs>()
     private lateinit var mAlertDialog: AlertDialog
+    private lateinit var loadingAlertDialog: AlertDialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         isCancelable = true
@@ -34,6 +36,7 @@ class PostOptionMineFragment : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentPostOptionMineBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
         dialog?.window?.setGravity(Gravity.BOTTOM)
@@ -51,6 +54,11 @@ class PostOptionMineFragment : DialogFragment() {
         resizePostOptionMineDialogFragment()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
+
     private fun resizePostOptionMineDialogFragment() {
         val params: ViewGroup.LayoutParams? = dialog?.window?.attributes
         val deviceWidth = DefaultDialogConfigure.getDeviceWidthSize(requireContext())
@@ -60,6 +68,7 @@ class PostOptionMineFragment : DialogFragment() {
 
     private fun setDeletePostClickListener() {
         val deletePost = {
+            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
             postViewModel.requestDeletePost(postId = args.postId)
             findNavController().navigate(R.id.action_postOptionMineFragment_to_HomeFragment)
         }

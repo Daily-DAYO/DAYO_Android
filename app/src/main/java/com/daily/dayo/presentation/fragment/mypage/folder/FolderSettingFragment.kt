@@ -1,5 +1,6 @@
 package com.daily.dayo.presentation.fragment.mypage.folder
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +19,7 @@ import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.ItemTouchHelperCallback
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFolderSettingBinding
 import com.daily.dayo.domain.model.FolderOrder
@@ -30,12 +32,14 @@ class FolderSettingFragment : Fragment() {
     private val folderSettingViewModel by activityViewModels<FolderSettingViewModel>()
     private lateinit var folderSettingAdapter: FolderSettingAdapter
     private var folderOrderList : MutableList<FolderOrder> = mutableListOf()
+    private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFolderSettingBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
 
         setBackButtonClickListener()
         setFolderAddButtonClickListener()
@@ -45,6 +49,11 @@ class FolderSettingFragment : Fragment() {
         setSaveButtonClickListener()
 
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun setBackButtonClickListener() {
