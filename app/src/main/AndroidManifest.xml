@@ -17,6 +17,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DAYO">
+        <meta-data android:name="io.sentry.dsn" android:value="https://7f03a2b5d1c24582bfca11c28231a45f@o4504230448136192.ingest.sentry.io/4504230448988160" />
+        <!-- Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+           We recommend adjusting this value in production. -->
+        <meta-data android:name="io.sentry.traces.sample-rate" android:value="1.0" />
+        <!-- Enable user interaction tracing to capture transactions for various UI events (such as clicks or scrolls). -->
+        <meta-data android:name="io.sentry.traces.user-interaction.enable" android:value="true" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
