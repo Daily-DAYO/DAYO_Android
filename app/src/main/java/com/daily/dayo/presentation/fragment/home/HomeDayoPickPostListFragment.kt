@@ -55,6 +55,11 @@ class HomeDayoPickPostListFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        homeViewModel.requestDayoPickPostList()
+    }
+
     private fun setDayoPickPostListRefreshListener() {
         binding.swipeRefreshLayoutDayoPickPost.setOnRefreshListener {
             setCategoryPostList(homeViewModel.currentDayoPickCategory)

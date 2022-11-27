@@ -56,6 +56,11 @@ class HomeNewPostListFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        homeViewModel.requestNewPostList()
+    }
+
     private fun setNewPostListRefreshListener() {
         binding.swipeRefreshLayoutNewPost.setOnRefreshListener {
             setCategoryPostList(homeViewModel.currentNewCategory)
