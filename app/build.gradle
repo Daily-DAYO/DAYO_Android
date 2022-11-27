@@ -63,6 +63,7 @@ dependencies {
     def lifecycle_version = "2.4.0"
     def splashscreen_version = "1.0.0-beta01"
     def lottie_version = "5.0.3"
+    def sentry_version = "6.8.0"
 
     // Java language implementation Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
@@ -151,7 +152,7 @@ dependencies {
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
     // Sentry
-    implementation 'io.sentry:sentry-android:6.6.0'
+    implementation "io.sentry:sentry-android:$sentry_version"
     implementation 'org.slf4j:slf4j-nop:1.7.25'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
