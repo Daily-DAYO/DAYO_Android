@@ -220,14 +220,14 @@ class WriteFragment : Fragment() {
             override fun onCheckedChanged(group: RadioGridGroup?, checkedId: Int) {
                 isCategorySelected = true
                 setUploadButtonActivation()
-                setCheckedCategoryName()
+                setCheckedCategoryName(checkedId)
             }
         })
     }
 
-    private fun setCheckedCategoryName() {
+    private fun setCheckedCategoryName(checkedId : Int) {
         writeViewModel.postCategory.value =
-            when (binding.radiogroupWritePostCategory.checkedCheckableImageButtonId) {
+            when (checkedId) {
                 R.id.radiobutton_write_post_category_scheduler -> Category.SCHEDULER
                 R.id.radiobutton_write_post_category_studyplanner -> Category.STUDY_PLANNER
                 R.id.radiobutton_write_post_category_goodnote -> Category.GOOD_NOTE
@@ -319,11 +319,9 @@ class WriteFragment : Fragment() {
                 ).show()
             }
         } else {
-            val selectedCategoryName = writeViewModel.postCategory.value
             binding.btnWritePostUpload.isSelected = true
             binding.btnWritePostUpload.setOnDebounceClickListener {
                 writeViewModel.postId.value = args.postId
-                writeViewModel.postCategory.value = selectedCategoryName
                 writeViewModel.postContents.value =
                     ReplaceUnicode.trimBlankText(binding.etWriteDetail.text.toString())
                         .ifEmpty { "" }

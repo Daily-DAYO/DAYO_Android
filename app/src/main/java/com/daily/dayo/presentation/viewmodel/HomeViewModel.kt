@@ -32,8 +32,8 @@ class HomeViewModel @Inject constructor(
     var isInitLoadingDAYOPICK = false
     var isInitLoadingNew = false
 
-    lateinit var currentDayoPickCategory : Category
-    lateinit var currentNewCategory : Category
+    var currentDayoPickCategory = Category.ALL
+    var currentNewCategory = Category.ALL
 
     private val _dayoPickPostList = MutableLiveData<Resource<List<Post>>>()
     val dayoPickPostList: LiveData<Resource<List<Post>>> get() = _dayoPickPostList
