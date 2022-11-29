@@ -21,6 +21,7 @@
                 android:id="@+id/btn_write_post_tag"
                 android:layout_width="wrap_content"
                 android:layout_height="28dp"
+                android:stateListAnimator="@null"
                 android:background="@drawable/button_write_post_tag"
                 android:textSize="11dp"
                 android:textColor="@color/primary_green_23C882"
