@@ -22,6 +22,14 @@ sentry {
 }
 
 android {
+    signingConfigs {
+        release {
+            storePassword SIGNED_STORE_PASSWORD
+            keyAlias SIGNED_KEY_ALIAS
+            keyPassword SIGNED_KEY_PASSWORD
+            storeFile file(SIGNED_STORE_FILE)
+        }
+    }
     compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
@@ -42,6 +50,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
