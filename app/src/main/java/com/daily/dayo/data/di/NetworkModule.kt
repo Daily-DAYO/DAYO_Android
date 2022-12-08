@@ -20,11 +20,11 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideOkHttpClient() = if(BuildConfig.DEBUG){
-        val loggingInterceptor =HttpLoggingInterceptor()
+    fun provideOkHttpClient(): OkHttpClient {
+        val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-        OkHttpClient.Builder()
-            .addInterceptor{ chain: Interceptor.Chain ->
+        return OkHttpClient.Builder()
+            .addInterceptor { chain: Interceptor.Chain ->
                 val request = chain.request()
                 // Header에 AccessToken을 삽입하지 않는 대상
                 if (request.url.encodedPath.equals("/api/v1/members/kakaoOAuth", true) ||
@@ -32,24 +32,25 @@ object NetworkModule {
                     request.url.encodedPath.startsWith("/api/v1/members/signUp", true)
                 ) {
                     chain.proceed(request)
-                }
-                else if(request.url.encodedPath.equals("/api/v1/members/refresh", true)){
+                } else if (request.url.encodedPath.equals("/api/v1/members/refresh", true)) {
                     chain.proceed(request.newBuilder().apply {
-                        addHeader("Authorization", "Bearer ${DayoApplication.preferences.getCurrentUser().refreshToken.toString()}")
+                        addHeader(
+                            "Authorization",
+                            "Bearer ${DayoApplication.preferences.getCurrentUser().refreshToken.toString()}"
+                        )
                     }.build())
-                }
-                else {
+                } else {
                     chain.proceed(request.newBuilder().apply {
-                        addHeader("Authorization", "Bearer ${DayoApplication.preferences.getCurrentUser().accessToken.toString()}")
+                        addHeader(
+                            "Authorization",
+                            "Bearer ${DayoApplication.preferences.getCurrentUser().accessToken.toString()}"
+                        )
                     }.build())
                 }
             }
             .addInterceptor(loggingInterceptor)
             .readTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
             .connectTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
-            .build()
-    }else{
-        OkHttpClient.Builder()
             .build()
     }
 
@@ -60,7 +61,10 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient, gsonConverterFactory: GsonConverterFactory) : Retrofit {
+    fun provideRetrofit(
+        okHttpClient: OkHttpClient,
+        gsonConverterFactory: GsonConverterFactory
+    ): Retrofit {
         return Retrofit.Builder()
             .baseUrl("http://117.17.198.45:8080")
             .addConverterFactory(ScalarsConverterFactory.create())
