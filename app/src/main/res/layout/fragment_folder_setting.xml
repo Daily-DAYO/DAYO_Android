@@ -90,6 +90,7 @@
         android:id="@+id/btn_folder_setting_save"
         android:layout_width="match_parent"
         android:layout_height="53dp"
+        android:stateListAnimator="@null"
         android:text="저장"
         android:textSize="16dp"
         android:textColor="@color/white_FFFFFF"

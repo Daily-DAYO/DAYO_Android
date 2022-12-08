@@ -189,6 +189,7 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_report_post"
         android:layout_width="match_parent"
+        android:stateListAnimator="@null"
         android:layout_height="54dp"
         android:layout_margin="18dp"
         android:background="@drawable/selector_button_default_green"
