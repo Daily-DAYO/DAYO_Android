@@ -11,6 +11,7 @@
         android:id="@+id/btn_search_recommend_keyword_item"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
+        android:stateListAnimator="@null"
         android:textSize="12dp"
         android:textColor="@color/gray_2_5D5D5D"
         android:textAlignment="center"

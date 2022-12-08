@@ -191,6 +191,7 @@
         android:id="@+id/btn_report_user"
         android:layout_width="match_parent"
         android:layout_height="54dp"
+        android:stateListAnimator="@null"
         android:layout_margin="18dp"
         android:background="@drawable/selector_button_default_green"
         android:text="@string/report_user_button"
