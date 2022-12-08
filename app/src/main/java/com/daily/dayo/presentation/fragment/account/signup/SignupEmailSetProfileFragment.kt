@@ -28,6 +28,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
 import com.daily.dayo.common.*
+import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.databinding.FragmentSignupEmailSetProfileBinding
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
 import com.daily.dayo.presentation.viewmodel.ProfileSettingViewModel
