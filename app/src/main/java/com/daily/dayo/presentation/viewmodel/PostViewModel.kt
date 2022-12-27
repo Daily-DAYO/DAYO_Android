@@ -15,6 +15,7 @@ import com.daily.dayo.data.mapper.toComment
 import com.daily.dayo.data.mapper.toPost
 import com.daily.dayo.domain.model.Comment
 import com.daily.dayo.domain.model.Post
+import com.daily.dayo.domain.usecase.block.RequestBlockMemberUseCase
 import com.daily.dayo.domain.usecase.bookmark.RequestBookmarkPostUseCase
 import com.daily.dayo.domain.usecase.bookmark.RequestDeleteBookmarkPostUseCase
 import com.daily.dayo.domain.usecase.comment.RequestCreatePostCommentUseCase
@@ -39,6 +40,7 @@ class PostViewModel @Inject constructor(
     private val requestPostCommentUseCase: RequestPostCommentUseCase,
     private val requestCreatePostCommentUseCase: RequestCreatePostCommentUseCase,
     private val requestDeletePostCommentUseCase: RequestDeletePostCommentUseCase,
+    private val requestBlockMemberUseCase: RequestBlockMemberUseCase
 ): ViewModel() {
 
     private val _postDetail = MutableLiveData<Resource<Post>>()
@@ -58,6 +60,9 @@ class PostViewModel @Inject constructor(
 
     private val _postComment = MutableLiveData<Resource<List<Comment>>>()
     val postComment: LiveData<Resource<List<Comment>>> get() = _postComment
+
+    private val _blockSuccess = MutableLiveData<Event<Boolean>>()
+    val blockSuccess: LiveData<Event<Boolean>> get() = _blockSuccess
 
     fun requestPostDetail(postId: Int) = viewModelScope.launch {
         _postDetail.postValue(Resource.loading(null))
@@ -129,6 +134,14 @@ class PostViewModel @Inject constructor(
             } else {
                 _postCommentDeleteSuccess.postValue(Event(false))
             }
+        }
+    }
+
+    fun requestBlockMember(memberId: String) = viewModelScope.launch {
+        if (requestBlockMemberUseCase(memberId).isSuccessful) {
+            _blockSuccess.postValue(Event(true))
+        } else {
+            _blockSuccess.postValue(Event(false))
         }
     }
 }

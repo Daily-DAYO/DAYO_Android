@@ -1,6 +1,7 @@
 package com.daily.dayo.data.di
 
 import com.daily.dayo.data.datasource.remote.alarm.AlarmApiService
+import com.daily.dayo.data.datasource.remote.block.BlockApiService
 import com.daily.dayo.data.datasource.remote.bookmark.BookmarkApiService
 import com.daily.dayo.data.datasource.remote.comment.CommentApiService
 import com.daily.dayo.data.datasource.remote.folder.FolderApiService
@@ -23,6 +24,16 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ServiceModule {
+
+    @Singleton
+    @Provides
+    fun provideBlockApiService(retrofit: Retrofit) =
+        retrofit.create(BlockApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideBlockRepository(blockApiService: BlockApiService): BlockRepository =
+        BlockRepositoryImpl(blockApiService)
 
     @Singleton
     @Provides

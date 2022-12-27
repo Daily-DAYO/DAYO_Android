@@ -4,16 +4,23 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.daily.dayo.R
-import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.DefaultDialogConfigure
+import com.daily.dayo.common.dialog.DefaultDialogExplanationConfirm
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentProfileOptionBinding
+import com.daily.dayo.presentation.viewmodel.ProfileViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProfileOptionFragment : DialogFragment() {
+    private val profileViewModel by viewModels<ProfileViewModel>()
     private var binding by autoCleared<FragmentProfileOptionBinding>()
     private val args by navArgs<ProfileOptionFragmentArgs>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +47,7 @@ class ProfileOptionFragment : DialogFragment() {
 
         // Other Profile
         setOptionReportUserClickListener()
+        setBlockUserClickListener()
 
         return binding.root
     }
@@ -71,6 +79,44 @@ class ProfileOptionFragment : DialogFragment() {
     private fun setOptionSettingClickListener() {
         binding.layoutProfileOptionSetting.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_profileOptionFragment_to_settingFragment)
+        }
+    }
+
+    private fun setBlockUserClickListener() {
+        binding.layoutOtherProfileOptionBlockUser.setOnDebounceClickListener {
+            val blockAlertDialog = DefaultDialogExplanationConfirm.createDialog(requireContext(),
+                R.string.other_profile_block_message,
+                R.string.other_profile_block_explanation_message,
+                true,
+                true,
+                R.string.confirm,
+                R.string.cancel,
+                { blockUser() },
+                { dismiss() })
+
+            if (!blockAlertDialog.isShowing) {
+                blockAlertDialog.show()
+                DefaultDialogConfigure.dialogResize(
+                    requireContext(),
+                    blockAlertDialog,
+                    0.7f,
+                    0.23f
+                )
+            }
+        }
+    }
+
+    private fun blockUser() {
+        profileViewModel.requestBlockMember(args.memberId)
+        profileViewModel.blockSuccess.observe(viewLifecycleOwner) {
+            if (it.getContentIfNotHandled() == true) {
+                Toast.makeText(
+                    requireContext(),
+                    R.string.other_profile_block_success_message,
+                    Toast.LENGTH_SHORT
+                ).show()
+                findNavController().navigateUp()
+            }
         }
     }
 
