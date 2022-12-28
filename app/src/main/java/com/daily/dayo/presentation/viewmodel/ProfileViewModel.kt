@@ -12,6 +12,7 @@ import com.daily.dayo.data.mapper.toFolder
 import com.daily.dayo.data.mapper.toLikePost
 import com.daily.dayo.data.mapper.toProfile
 import com.daily.dayo.domain.model.*
+import com.daily.dayo.domain.usecase.block.RequestBlockMemberUseCase
 import com.daily.dayo.domain.usecase.bookmark.RequestAllMyBookmarkPostListUseCase
 import com.daily.dayo.domain.usecase.folder.RequestAllFolderListUseCase
 import com.daily.dayo.domain.usecase.folder.RequestAllMyFolderListUseCase
@@ -31,7 +32,8 @@ class ProfileViewModel @Inject constructor(
     private val requestCreateFollowUseCase: RequestCreateFollowUseCase,
     private val requestDeleteFollowUseCase: RequestDeleteFollowUseCase,
     private val requestAllMyLikePostListUseCase: RequestAllMyLikePostListUseCase,
-    private val requestAllMyBookmarkPostListUseCase: RequestAllMyBookmarkPostListUseCase
+    private val requestAllMyBookmarkPostListUseCase: RequestAllMyBookmarkPostListUseCase,
+    private val requestBlockMemberUseCase: RequestBlockMemberUseCase
 ) : ViewModel() {
 
     lateinit var profileMemberId: String
@@ -49,53 +51,53 @@ class ProfileViewModel @Inject constructor(
     val folderList: LiveData<Resource<List<Folder>>> get() = _folderList
 
     private val _likePostList = MutableLiveData<Resource<List<LikePost>>>()
-    val likePostList : LiveData<Resource<List<LikePost>>> get() = _likePostList
+    val likePostList: LiveData<Resource<List<LikePost>>> get() = _likePostList
 
     private val _bookmarkPostList = MutableLiveData<Resource<List<BookmarkPost>>>()
-    val bookmarkPostList : LiveData<Resource<List<BookmarkPost>>> get() = _bookmarkPostList
+    val bookmarkPostList: LiveData<Resource<List<BookmarkPost>>> get() = _bookmarkPostList
+
+    private val _blockSuccess = MutableLiveData<Event<Boolean>>()
+    val blockSuccess: LiveData<Event<Boolean>> get() = _blockSuccess
 
     fun requestProfile(memberId: String) = viewModelScope.launch {
         val response = requestOtherProfileUseCase(memberId = memberId)
-        if(response.isSuccessful){
+        if (response.isSuccessful) {
             _profileInfo.postValue(Resource.success(response.body()?.toProfile()))
-        }else{
-            _profileInfo.postValue(Resource.error(response.errorBody().toString(),null))
+        } else {
+            _profileInfo.postValue(Resource.error(response.errorBody().toString(), null))
         }
     }
 
-    fun requestCreateFollow(followerId:String) = viewModelScope.launch {
+    fun requestCreateFollow(followerId: String) = viewModelScope.launch {
         requestCreateFollowUseCase(CreateFollowRequest(followerId = followerId)).let {
-            if(it.isSuccessful){
+            if (it.isSuccessful) {
                 _followSuccess.postValue(Event(true))
-            }
-            else{
+            } else {
                 _followSuccess.postValue(Event(false))
             }
         }
     }
 
-    fun requestDeleteFollow(followerId:String) = viewModelScope.launch {
+    fun requestDeleteFollow(followerId: String) = viewModelScope.launch {
         requestDeleteFollowUseCase(followerId = followerId).let {
-            if(it.isSuccessful){
+            if (it.isSuccessful) {
                 _unfollowSuccess.postValue(Event(true))
-            }
-            else{
+            } else {
                 _unfollowSuccess.postValue(Event(false))
             }
         }
     }
 
-    fun requestFolderList(memberId:String, isMine:Boolean) = viewModelScope.launch {
+    fun requestFolderList(memberId: String, isMine: Boolean) = viewModelScope.launch {
         _folderList.postValue(Resource.loading(null))
-        if(isMine){
+        if (isMine) {
             val response = requestAllMyFolderListUseCase()
             if (response.isSuccessful) {
                 _folderList.postValue(Resource.success(response.body()?.data?.map { it.toFolder() }))
             } else {
                 _folderList.postValue(Resource.error(response.errorBody().toString(), null))
             }
-        }
-        else {
+        } else {
             val response = requestAllFolderListUseCase(memberId = memberId)
             if (response.isSuccessful) {
                 _folderList.postValue(Resource.success(response.body()?.data?.map { it.toFolder() }))
@@ -107,19 +109,27 @@ class ProfileViewModel @Inject constructor(
 
     fun requestAllMyLikePostList() = viewModelScope.launch {
         val response = requestAllMyLikePostListUseCase()
-        if(response.isSuccessful){
+        if (response.isSuccessful) {
             _likePostList.postValue(Resource.success(response.body()?.data?.map { it.toLikePost() }))
-        } else{
+        } else {
             _likePostList.postValue(Resource.error(response.errorBody().toString(), null))
         }
     }
 
     fun requestAllMyBookmarkPostList() = viewModelScope.launch {
         val response = requestAllMyBookmarkPostListUseCase()
-        if(response.isSuccessful){
+        if (response.isSuccessful) {
             _bookmarkPostList.postValue(Resource.success(response.body()?.data?.map { it.toBookmarkPost() }))
-        } else{
+        } else {
             _bookmarkPostList.postValue(Resource.error(response.errorBody().toString(), null))
+        }
+    }
+
+    fun requestBlockMember(memberId: String) = viewModelScope.launch {
+        if (requestBlockMemberUseCase(memberId).isSuccessful) {
+            _blockSuccess.postValue(Event(true))
+        } else {
+            _blockSuccess.postValue(Event(false))
         }
     }
 }
