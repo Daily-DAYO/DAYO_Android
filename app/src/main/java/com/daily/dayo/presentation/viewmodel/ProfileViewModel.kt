@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.common.Event
 import com.daily.dayo.common.Resource
+import com.daily.dayo.common.Status
 import com.daily.dayo.data.datasource.remote.follow.CreateFollowRequest
 import com.daily.dayo.data.mapper.toBookmarkPost
 import com.daily.dayo.data.mapper.toFolder
@@ -60,11 +61,18 @@ class ProfileViewModel @Inject constructor(
     val blockSuccess: LiveData<Event<Boolean>> get() = _blockSuccess
 
     fun requestProfile(memberId: String) = viewModelScope.launch {
-        val response = requestOtherProfileUseCase(memberId = memberId)
-        if (response.isSuccessful) {
-            _profileInfo.postValue(Resource.success(response.body()?.toProfile()))
-        } else {
-            _profileInfo.postValue(Resource.error(response.errorBody().toString(), null))
+        requestOtherProfileUseCase(memberId = memberId).let { ApiResponse ->
+            when (ApiResponse.status) {
+                Status.SUCCESS -> {
+                    _profileInfo.postValue(Resource.success(ApiResponse.data?.toProfile()))
+                }
+                Status.ERROR -> {
+                    _profileInfo.postValue(Resource.error(ApiResponse.exception))
+                }
+                Status.API_ERROR -> {
+                    _profileInfo.postValue(Resource(Status.API_ERROR, ApiResponse.data?.toProfile(), ApiResponse.message, null))
+                }
+            }
         }
     }
 

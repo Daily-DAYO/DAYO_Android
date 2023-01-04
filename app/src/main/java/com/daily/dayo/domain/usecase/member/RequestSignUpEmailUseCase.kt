@@ -1,11 +1,11 @@
 package com.daily.dayo.domain.usecase.member
 
+import com.daily.dayo.common.Resource
 import com.daily.dayo.data.datasource.remote.member.MemberSignupResponse
 import com.daily.dayo.domain.repository.MemberRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.Response
 import java.io.File
 import javax.inject.Inject
 
@@ -17,7 +17,7 @@ class RequestSignUpEmailUseCase @Inject constructor(
         nickname: String,
         password: String,
         profileImg: File?
-    ): Response<MemberSignupResponse> {
+    ): Resource<MemberSignupResponse> {
         val uploadFile: MultipartBody.Part
         val fileNameDivideList: List<String> = profileImg.toString().split("/")
         val requestBodyFile: RequestBody =
