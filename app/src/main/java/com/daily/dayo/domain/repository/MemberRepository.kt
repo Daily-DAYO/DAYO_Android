@@ -1,5 +1,6 @@
 package com.daily.dayo.domain.repository
 
+import com.daily.dayo.common.Resource
 import com.daily.dayo.data.datasource.remote.member.*
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -11,32 +12,32 @@ interface MemberRepository {
         nickname: String,
         password: String,
         profileImg: MultipartBody.Part
-    ): Response<MemberSignupResponse>
+    ): Resource<MemberSignupResponse>
 
     suspend fun requestUpdateMyProfile(
         nickname: String?,
         profileImg: MultipartBody.Part?,
         onBasicProfileImg: Boolean
-    ): Response<Void>
+    ): Resource<Void>
 
-    suspend fun requestLoginKakao(body: MemberOAuthRequest): Response<MemberOAuthResponse>
-    suspend fun requestLoginEmail(body: MemberSignInRequest): Response<MemberSignInResponse>
-    suspend fun requestMemberInfo(): Response<MemberInfoResponse>
-    suspend fun requestCheckEmailDuplicate(email: String): Response<Void>
-    suspend fun requestCertificateEmail(email: String): Response<MemberAuthCodeResponse>
-    suspend fun requestRefreshToken(): Response<RefreshTokenResponse>
-    suspend fun requestDeviceToken(body: DeviceTokenRequest): Response<Void>
-    suspend fun requestMyProfile(): Response<MemberMyProfileResponse>
-    suspend fun requestOtherProfile(memberId: String): Response<MemberOtherProfileResponse>
-    suspend fun requestResign(content: String): Response<Void>
-    suspend fun requestReceiveAlarm(): Response<ReceiveAlarmResponse>
-    suspend fun requestChangeReceiveAlarm(body: ChangeReceiveAlarmRequest): Response<Void>
-    suspend fun requestLogout(): Response<Void>
-    suspend fun requestCheckEmail(email: String): Response<Void>
-    suspend fun requestCheckEmailAuth(email: String): Response<MemberAuthCodeResponse>
-    suspend fun requestCheckCurrentPassword(body: CheckPasswordRequest): Response<Void>
-    suspend fun requestChangePassword(body: ChangePasswordRequest): Response<Void>
-    suspend fun requestSettingChangePassword(body: ChangePasswordRequest): Response<Void>
+    suspend fun requestLoginKakao(body: MemberOAuthRequest): Resource<MemberOAuthResponse>
+    suspend fun requestLoginEmail(body: MemberSignInRequest): Resource<MemberSignInResponse>
+    suspend fun requestMemberInfo(): Resource<MemberInfoResponse>
+    suspend fun requestCheckEmailDuplicate(email: String): Resource<Void>
+    suspend fun requestCertificateEmail(email: String): Resource<MemberAuthCodeResponse>
+    suspend fun requestRefreshToken(): Resource<RefreshTokenResponse>
+    suspend fun requestDeviceToken(body: DeviceTokenRequest): Resource<Void>
+    suspend fun requestMyProfile(): Resource<MemberMyProfileResponse>
+    suspend fun requestOtherProfile(memberId: String): Resource<MemberOtherProfileResponse>
+    suspend fun requestResign(content: String): Resource<Void>
+    suspend fun requestReceiveAlarm(): Resource<ReceiveAlarmResponse>
+    suspend fun requestChangeReceiveAlarm(body: ChangeReceiveAlarmRequest): Resource<Void>
+    suspend fun requestLogout(): Resource<Void>
+    suspend fun requestCheckEmail(email: String): Resource<Void>
+    suspend fun requestCheckEmailAuth(email: String): Resource<MemberAuthCodeResponse>
+    suspend fun requestCheckCurrentPassword(body: CheckPasswordRequest): Resource<Void>
+    suspend fun requestChangePassword(body: ChangePasswordRequest): Resource<Void>
+    suspend fun requestSettingChangePassword(body: ChangePasswordRequest): Resource<Void>
 
     // Firebase Messaging Service
     suspend fun getCurrentFcmToken(): String
