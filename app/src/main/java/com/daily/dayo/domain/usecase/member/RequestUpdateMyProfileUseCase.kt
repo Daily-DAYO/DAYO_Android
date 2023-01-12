@@ -1,6 +1,6 @@
 package com.daily.dayo.domain.usecase.member
 
-import com.daily.dayo.common.Resource
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.repository.MemberRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -15,7 +15,7 @@ class RequestUpdateMyProfileUseCase @Inject constructor(
         nickname: String?,
         profileImg: File?,
         onBasicProfileImg: Boolean
-    ): Resource<Void> {
+    ): NetworkResponse<Void> {
         val requestProfileImage: MultipartBody.Part? = if (profileImg != null)
             MultipartBody.Part.createFormData(
                 "profileImg",

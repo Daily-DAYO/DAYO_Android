@@ -6,12 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.common.Event
-import com.daily.dayo.common.Status
 import com.daily.dayo.data.datasource.remote.member.*
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.usecase.member.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.sentry.Sentry
-import io.sentry.SentryLevel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -79,20 +77,20 @@ class AccountViewModel @Inject constructor(
 
     fun requestLoginKakao(accessToken: String) = viewModelScope.launch {
         requestLoginKakaoUseCase(MemberOAuthRequest(accessToken = accessToken)).let { ApiResponse ->
-            when (ApiResponse.status) {
-                Status.SUCCESS -> {
-                    DayoApplication.preferences.saveCurrentUser(ApiResponse.data)
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    DayoApplication.preferences.saveCurrentUser(ApiResponse.body)
                     coroutineScope {
                         requestMemberInfo()
                         _loginSuccess.postValue(Event(true))
                     }
                 }
-                Status.ERROR -> {
-                    _isErrorExceptionOccurred.postValue(Event(true))
+                is NetworkResponse.ApiError -> {
+                    _isApiErrorExceptionOccurred.postValue(Event(true))
                     _loginSuccess.postValue(Event(false))
                 }
-                Status.API_ERROR -> {
-                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                is NetworkResponse.NetworkError -> {
+                    _isErrorExceptionOccurred.postValue(Event(true))
                     _loginSuccess.postValue(Event(false))
                 }
             }
@@ -101,17 +99,17 @@ class AccountViewModel @Inject constructor(
 
     fun requestLoginEmail(email: String, password: String) = viewModelScope.launch {
         requestLoginEmailUseCase(MemberSignInRequest(email = email, password = password)).let { ApiResponse ->
-            when (ApiResponse.status) {
-                Status.SUCCESS -> {
-                    DayoApplication.preferences.saveCurrentUser(ApiResponse.data)
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    DayoApplication.preferences.saveCurrentUser(ApiResponse.body)
                     requestMemberInfo()
                     _loginSuccess.postValue(Event(true))
                 }
-                Status.ERROR -> {
+                is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
                     _loginSuccess.postValue(Event(false))
                 }
-                Status.API_ERROR -> {
+                is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
                     _loginSuccess.postValue(Event(false))
                 }
@@ -121,19 +119,19 @@ class AccountViewModel @Inject constructor(
 
     fun requestRefreshToken() = viewModelScope.launch {
         requestRefreshTokenUseCase().let { ApiResponse ->
-            when (ApiResponse.status) {
-                Status.SUCCESS -> {
-                    ApiResponse.data?.let { response ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    ApiResponse.body?.let { response ->
                         DayoApplication.preferences.setAccessToken(response.accessToken)
                     }
                     requestMemberInfo()
                     _loginSuccess.postValue(Event(true))
                 }
-                Status.ERROR -> {
+                is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
                     _loginSuccess.postValue(Event(false))
                 }
-                Status.API_ERROR -> {
+                is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
                     _loginSuccess.postValue(Event(false))
                 }
@@ -143,14 +141,14 @@ class AccountViewModel @Inject constructor(
 
     private suspend fun requestMemberInfo() {
         requestMemberInfoUseCase().let { ApiResponse ->
-            when (ApiResponse.status) {
-                Status.SUCCESS -> {
-                    DayoApplication.preferences.saveCurrentUser(ApiResponse.data)
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    DayoApplication.preferences.saveCurrentUser(ApiResponse.body)
                 }
-                Status.ERROR -> {
+                is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
                 }
-                Status.API_ERROR -> {
+                is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
                 }
                 else -> { }
@@ -161,15 +159,15 @@ class AccountViewModel @Inject constructor(
     fun requestSignupEmail(email: String, nickname: String, password: String, profileImg: File?) =
         viewModelScope.launch(Dispatchers.IO) {
             requestSignUpEmailUseCase(email, nickname, password, profileImg).let {  ApiResponse ->
-                when (ApiResponse.status) {
-                    Status.SUCCESS -> {
+                when (ApiResponse) {
+                    is NetworkResponse.Success -> {
                         _signupSuccess.postValue(Event(true))
                     }
-                    Status.ERROR -> {
+                    is NetworkResponse.NetworkError -> {
                         _isErrorExceptionOccurred.postValue(Event(true))
                         _signupSuccess.postValue(Event(false))
                     }
-                    Status.API_ERROR -> {
+                    is NetworkResponse.ApiError -> {
                         _isApiErrorExceptionOccurred.postValue(Event(true))
                         _signupSuccess.postValue(Event(false))
                     }
@@ -180,15 +178,15 @@ class AccountViewModel @Inject constructor(
 
     fun requestCheckEmailDuplicate(email: String) = viewModelScope.launch(Dispatchers.IO) {
         requestCheckEmailDuplicateUseCase(email).let { ApiResponse ->
-            when (ApiResponse.status) {
-                Status.SUCCESS -> {
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
                     _isEmailDuplicate.postValue(true)
                 }
-                Status.ERROR -> {
+                is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
                     _isEmailDuplicate.postValue(false)
                 }
-                Status.API_ERROR -> {
+                is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
                     _isEmailDuplicate.postValue(false)
                 }
@@ -199,16 +197,16 @@ class AccountViewModel @Inject constructor(
 
     fun requestCertificateEmail(email: String) = viewModelScope.launch(Dispatchers.IO) {
         requestCertificateEmailUseCase(email).let { ApiResponse ->
-            when (ApiResponse.status) {
-                Status.SUCCESS -> {
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
                     _isCertificateEmailSend.postValue(true)
-                    certificateEmailAuthCode.postValue(ApiResponse.data?.authCode)
+                    certificateEmailAuthCode.postValue(ApiResponse.body?.authCode)
                 }
-                Status.ERROR -> {
+                is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
                     _isCertificateEmailSend.postValue(false)
                 }
-                Status.API_ERROR -> {
+                is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
                     _isCertificateEmailSend.postValue(false)
                 }
@@ -227,15 +225,15 @@ class AccountViewModel @Inject constructor(
 
     fun requestWithdraw(content: String) = viewModelScope.launch(Dispatchers.IO) {
         requestResignUseCase(content).let { ApiResponse ->
-            when (ApiResponse.status) {
-                Status.SUCCESS -> {
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
                     _withdrawSuccess.postValue(Event(true))
                 }
-                Status.ERROR -> {
+                is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
                     _withdrawSuccess.postValue(Event(false))
                 }
-                Status.API_ERROR -> {
+                is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
                     _withdrawSuccess.postValue(Event(false))
                 }
@@ -246,15 +244,15 @@ class AccountViewModel @Inject constructor(
 
     fun requestLogout() = viewModelScope.launch {
         requestLogoutUseCase().let { ApiResponse ->
-            when (ApiResponse.status) {
-                Status.SUCCESS -> {
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
                     _logoutSuccess.postValue(Event(true))
                 }
-                Status.ERROR -> {
+                is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
                     _logoutSuccess.postValue(Event(false))
                 }
-                Status.API_ERROR -> {
+                is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
                     _logoutSuccess.postValue(Event(false))
                 }
@@ -265,15 +263,15 @@ class AccountViewModel @Inject constructor(
 
     fun requestCheckEmail(inputEmail: String) = viewModelScope.launch {
         requestCheckEmailUseCase(email = inputEmail).let { ApiResponse ->
-            when (ApiResponse.status) {
-                Status.SUCCESS -> {
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
                     _checkEmailSuccess.postValue(true)
                 }
-                Status.ERROR -> {
+                is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
                     _checkEmailSuccess.postValue(false)
                 }
-                Status.API_ERROR -> {
+                is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
                     _checkEmailSuccess.postValue(false)
                 }
@@ -284,16 +282,16 @@ class AccountViewModel @Inject constructor(
 
     fun requestCheckEmailAuth(inputEmail: String) = viewModelScope.launch {
         requestCheckEmailAuthUseCase(inputEmail).let { ApiResponse ->
-            when (ApiResponse.status) {
-                Status.SUCCESS -> {
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
                     _isCertificateEmailSend.postValue(true)
-                    certificateEmailAuthCode.postValue(ApiResponse.data?.authCode)
+                    certificateEmailAuthCode.postValue(ApiResponse.body?.authCode)
                 }
-                Status.ERROR -> {
+                is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
                     _isCertificateEmailSend.postValue(false)
                 }
-                Status.API_ERROR -> {
+                is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
                     _isCertificateEmailSend.postValue(false)
                 }
@@ -304,15 +302,15 @@ class AccountViewModel @Inject constructor(
 
     fun requestCheckCurrentPassword(inputPassword: String) = viewModelScope.launch {
         requestCheckCurrentPasswordUseCase(CheckPasswordRequest(password = inputPassword)).let { ApiResponse ->
-            when (ApiResponse.status) {
-                Status.SUCCESS -> {
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
                     _checkCurrentPasswordSuccess.postValue(true)
                 }
-                Status.ERROR -> {
+                is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
                     _checkCurrentPasswordSuccess.postValue(false)
                 }
-                Status.API_ERROR -> {
+                is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
                     _checkCurrentPasswordSuccess.postValue(false)
                 }
@@ -328,15 +326,15 @@ class AccountViewModel @Inject constructor(
                 password = newPassword
             )
         ).let { ApiResponse ->
-            when (ApiResponse.status) {
-                Status.SUCCESS -> {
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
                     _changePasswordSuccess.postValue(true)
                 }
-                Status.ERROR -> {
+                is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
                     _changePasswordSuccess.postValue(false)
                 }
-                Status.API_ERROR -> {
+                is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
                     _changePasswordSuccess.postValue(false)
                 }
@@ -352,15 +350,15 @@ class AccountViewModel @Inject constructor(
                 password = newPassword
             )
         ).let { ApiResponse ->
-            when (ApiResponse.status) {
-                Status.SUCCESS -> {
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
                     _changePasswordSuccess.postValue(true)
                 }
-                Status.ERROR -> {
+                is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
                     _changePasswordSuccess.postValue(false)
                 }
-                Status.API_ERROR -> {
+                is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
                     _changePasswordSuccess.postValue(false)
                 }

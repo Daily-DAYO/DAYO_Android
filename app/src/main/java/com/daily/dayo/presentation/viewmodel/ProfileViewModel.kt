@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.common.Event
 import com.daily.dayo.common.Resource
-import com.daily.dayo.common.Status
 import com.daily.dayo.data.datasource.remote.follow.CreateFollowRequest
 import com.daily.dayo.data.mapper.toBookmarkPost
 import com.daily.dayo.data.mapper.toFolder
@@ -39,8 +38,8 @@ class ProfileViewModel @Inject constructor(
 
     lateinit var profileMemberId: String
 
-    private val _profileInfo = MutableLiveData<Resource<Profile>>()
-    val profileInfo: LiveData<Resource<Profile>> get() = _profileInfo
+    private val _profileInfo = MutableLiveData<Profile>()
+    val profileInfo: LiveData<Profile> get() = _profileInfo
 
     private val _followSuccess = MutableLiveData<Event<Boolean>>()
     val followSuccess: LiveData<Event<Boolean>> get() = _followSuccess
@@ -62,15 +61,14 @@ class ProfileViewModel @Inject constructor(
 
     fun requestProfile(memberId: String) = viewModelScope.launch {
         requestOtherProfileUseCase(memberId = memberId).let { ApiResponse ->
-            when (ApiResponse.status) {
-                Status.SUCCESS -> {
-                    _profileInfo.postValue(Resource.success(ApiResponse.data?.toProfile()))
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _profileInfo.postValue(ApiResponse.body?.toProfile())
                 }
-                Status.ERROR -> {
-                    _profileInfo.postValue(Resource.error(ApiResponse.exception))
+                is NetworkResponse.NetworkError  -> {
                 }
-                Status.API_ERROR -> {
-                    _profileInfo.postValue(Resource(Status.API_ERROR, ApiResponse.data?.toProfile(), ApiResponse.message, null))
+                is NetworkResponse.ApiError  -> {
+
                 }
             }
         }
