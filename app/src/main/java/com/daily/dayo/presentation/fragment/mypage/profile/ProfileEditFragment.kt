@@ -118,29 +118,25 @@ class ProfileEditFragment : Fragment() {
     private fun initMyProfile() {
         profileSettingViewModel.requestProfile(memberId = DayoApplication.preferences.getCurrentUser().memberId!!)
         profileSettingViewModel.profileInfo.observe(viewLifecycleOwner) {
-            when (it.status) {
-                Status.SUCCESS -> {
-                    it.data?.let { profile ->
-                        CoroutineScope(Dispatchers.Main).launch {
-                            val userProfileThumbnailImage = withContext(Dispatchers.IO) {
-                                GlideLoadUtil.loadImageBackgroundProfile(
-                                    requestManager = glideRequestManager,
-                                    width = 100,
-                                    height = 100,
-                                    imgName = profile.profileImg
-                                )
-                            }
-                            GlideLoadUtil.loadImageViewProfile(
-                                requestManager = glideRequestManager,
-                                width = 100,
-                                height = 100,
-                                img = userProfileThumbnailImage,
-                                imgView = binding.imgProfileEditUserImage
-                            )
-                        }
-                        binding.etProfileEditNickname.setText(profile.nickname)
+            it?.let { profile ->
+                CoroutineScope(Dispatchers.Main).launch {
+                    val userProfileThumbnailImage = withContext(Dispatchers.IO) {
+                        GlideLoadUtil.loadImageBackgroundProfile(
+                            requestManager = glideRequestManager,
+                            width = 100,
+                            height = 100,
+                            imgName = profile.profileImg
+                        )
                     }
+                    GlideLoadUtil.loadImageViewProfile(
+                        requestManager = glideRequestManager,
+                        width = 100,
+                        height = 100,
+                        img = userProfileThumbnailImage,
+                        imgView = binding.imgProfileEditUserImage
+                    )
                 }
+                binding.etProfileEditNickname.setText(profile.nickname)
             }
         }
     }
