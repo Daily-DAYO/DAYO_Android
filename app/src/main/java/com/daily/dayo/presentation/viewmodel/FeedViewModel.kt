@@ -10,6 +10,7 @@ import com.daily.dayo.data.datasource.remote.bookmark.CreateBookmarkResponse
 import com.daily.dayo.data.datasource.remote.heart.CreateHeartRequest
 import com.daily.dayo.data.datasource.remote.heart.CreateHeartResponse
 import com.daily.dayo.data.mapper.toPost
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.domain.usecase.bookmark.RequestBookmarkPostUseCase
 import com.daily.dayo.domain.usecase.bookmark.RequestDeleteBookmarkPostUseCase
@@ -40,20 +41,23 @@ class FeedViewModel @Inject constructor(
 
     fun requestFeedList() = viewModelScope.launch {
         _feedList.postValue(Resource.loading(null))
-        val response = requestFeedListUseCase()
-        if (response.isSuccessful) {
-            _feedList.postValue(Resource.success(response.body()?.data?.map { it.toPost() }))
-        } else {
-            _feedList.postValue(Resource.error(response.errorBody().toString(), null))
+        requestFeedListUseCase()?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _feedList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
+                is NetworkResponse.NetworkError -> { _feedList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                is NetworkResponse.ApiError -> { _feedList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                is NetworkResponse.UnknownError -> { _feedList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+            }
         }
     }
 
     fun requestLikePost(postId: Int) = viewModelScope.launch {
-        requestLikePostUseCase(CreateHeartRequest(postId = postId)).let {
-            if (it.isSuccessful) {
-                _postLiked.postValue(Resource.success(it.body()))
-            } else {
-                _postLiked.postValue(Resource.error(it.errorBody().toString(), null))
+        requestLikePostUseCase(CreateHeartRequest(postId = postId))?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _postLiked.postValue(Resource.success(ApiResponse.body)) }
+                is NetworkResponse.NetworkError -> { _postLiked.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                is NetworkResponse.ApiError -> { _postLiked.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                is NetworkResponse.UnknownError -> { _postLiked.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
             }
         }
     }
@@ -63,11 +67,12 @@ class FeedViewModel @Inject constructor(
     }
 
     fun requestBookmarkPost(postId: Int) = viewModelScope.launch {
-        requestBookmarkPostUseCase(CreateBookmarkRequest(postId = postId)).let {
-            if (it.isSuccessful) {
-                _postBookmarked.postValue(Resource.success(it.body()))
-            } else {
-                _postBookmarked.postValue(Resource.error(it.errorBody().toString(), null))
+        requestBookmarkPostUseCase(CreateBookmarkRequest(postId = postId)).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _postBookmarked.postValue(Resource.success(ApiResponse.body)) }
+                is NetworkResponse.NetworkError -> { _postBookmarked.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                is NetworkResponse.ApiError -> { _postBookmarked.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                is NetworkResponse.UnknownError -> { _postBookmarked.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
             }
         }
     }

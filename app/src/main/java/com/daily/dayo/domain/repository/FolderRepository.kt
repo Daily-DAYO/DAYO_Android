@@ -1,9 +1,9 @@
 package com.daily.dayo.domain.repository
 
 import com.daily.dayo.data.datasource.remote.folder.*
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Privacy
 import okhttp3.MultipartBody
-import retrofit2.Response
 
 interface FolderRepository {
 
@@ -12,7 +12,7 @@ interface FolderRepository {
         privacy: Privacy,
         subheading: String?,
         thumbnailImage: MultipartBody.Part?
-    ): Response<CreateFolderResponse>
+    ): NetworkResponse<CreateFolderResponse>
 
     suspend fun requestEditFolder(
         folderId: Int,
@@ -21,12 +21,12 @@ interface FolderRepository {
         subheading: String?,
         isFileChange: Boolean,
         thumbnailImage: MultipartBody.Part?
-    ): Response<EditFolderResponse>
+    ): NetworkResponse<EditFolderResponse>
 
-    suspend fun requestAllMyFolderList(): Response<ListAllMyFolderResponse>
-    suspend fun requestAllFolderList(memberId: String): Response<ListAllFolderResponse>
-    suspend fun requestCreateFolderInPost(body: CreateFolderInPostRequest): Response<CreateFolderInPostResponse>
-    suspend fun requestDeleteFolder(folderId: Int): Response<Void>
-    suspend fun requestDetailListFolder(folderId: Int): Response<DetailFolderResponse>
-    suspend fun requestOrderFolder(body: List<EditOrderDto>): Response<Void>
+    suspend fun requestAllMyFolderList(): NetworkResponse<ListAllMyFolderResponse>
+    suspend fun requestAllFolderList(memberId: String): NetworkResponse<ListAllFolderResponse>
+    suspend fun requestCreateFolderInPost(body: CreateFolderInPostRequest): NetworkResponse<CreateFolderInPostResponse>
+    suspend fun requestDeleteFolder(folderId: Int): NetworkResponse<Void>
+    suspend fun requestDetailListFolder(folderId: Int): NetworkResponse<DetailFolderResponse>
+    suspend fun requestOrderFolder(body: List<EditOrderDto>): NetworkResponse<Void>
 }

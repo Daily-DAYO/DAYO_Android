@@ -8,6 +8,7 @@ import com.daily.dayo.common.Resource
 import com.daily.dayo.data.datasource.remote.heart.CreateHeartRequest
 import com.daily.dayo.data.mapper.toPost
 import com.daily.dayo.domain.model.Category
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.domain.usecase.like.RequestLikePostUseCase
 import com.daily.dayo.domain.usecase.like.RequestUnlikePostUseCase
@@ -57,39 +58,47 @@ class HomeViewModel @Inject constructor(
     }
 
     fun requestHomeNewPostList() = viewModelScope.launch(Dispatchers.IO) {
-        val response = requestNewPostListUseCase()
-        if(response.isSuccessful){
-            _newPostList.postValue(Resource.success(response.body()?.data?.map { it.toPost() }))
-        } else {
-            _newPostList.postValue(Resource.error(response.errorBody().toString(), null))
+        requestNewPostListUseCase()?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _newPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
+                is NetworkResponse.NetworkError -> { _newPostList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                is NetworkResponse.ApiError -> { _newPostList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                is NetworkResponse.UnknownError -> { _newPostList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+            }
         }
     }
 
     fun requestHomeNewPostListCategory(category: Category) = viewModelScope.launch(Dispatchers.IO) {
-        val response = requestNewPostListCategoryUseCase(category = category)
-        if(response.isSuccessful) {
-            _newPostList.postValue(Resource.success(response.body()?.data?.map { it.toPost() }))
-        } else {
-            _newPostList.postValue(Resource.error(response.errorBody().toString(), null))
+        requestNewPostListCategoryUseCase(category = category)?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _newPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
+                is NetworkResponse.NetworkError -> { _newPostList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                is NetworkResponse.ApiError -> { _newPostList.postValue(Resource.error(ApiResponse.error.toString(), null))  }
+                is NetworkResponse.UnknownError -> { _newPostList.postValue(Resource.error(ApiResponse.throwable.toString(), null))  }
+            }
         }
     }
 
     fun requestHomeDayoPickPostList() = viewModelScope.launch(Dispatchers.IO) {
         _dayoPickPostList.postValue(Resource.loading(null))
-        val response = requestHomeDayoPickPostListUseCase()
-        if(response.isSuccessful){
-            _dayoPickPostList.postValue(Resource.success(response.body()?.data?.map { it.toPost() }))
-        } else {
-            _dayoPickPostList.postValue(Resource.error(response.errorBody().toString(), null))
+        requestHomeDayoPickPostListUseCase()?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _dayoPickPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
+                is NetworkResponse.NetworkError -> { _dayoPickPostList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                is NetworkResponse.ApiError -> { _dayoPickPostList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                is NetworkResponse.UnknownError -> { _dayoPickPostList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+            }
         }
     }
 
     fun requestHomeDayoPickPostListCategory(category: Category) = viewModelScope.launch(Dispatchers.IO) {
-        val response = requestDayoPickPostListCategoryUseCase(category = category)
-        if(response.isSuccessful) {
-            _dayoPickPostList.postValue(Resource.success(response.body()?.data?.map { it.toPost() }))
-        } else {
-            _dayoPickPostList.postValue(Resource.error(response.errorBody().toString(), null))
+        requestDayoPickPostListCategoryUseCase(category = category)?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _dayoPickPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
+                is NetworkResponse.NetworkError -> { _dayoPickPostList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                is NetworkResponse.ApiError -> { _dayoPickPostList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                is NetworkResponse.UnknownError -> { _dayoPickPostList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+            }
         }
     }
 

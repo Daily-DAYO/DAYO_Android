@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.data.datasource.remote.report.CreateReportMemberRequest
 import com.daily.dayo.data.datasource.remote.report.CreateReportPostRequest
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.usecase.report.RequestSaveMemberReportUseCase
 import com.daily.dayo.domain.usecase.report.RequestSavePostReportUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,11 +31,10 @@ class ReportViewModel @Inject constructor(
                 comment = comment,
                 memberId = memberId
             )
-        ).let {
-            if (it.isSuccessful) {
-                _reportMemberSuccess.postValue(true)
-            } else {
-                _reportMemberSuccess.postValue(false)
+        )?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _reportMemberSuccess.postValue(true) }
+                else -> { _reportMemberSuccess.postValue(false) }
             }
         }
     }
@@ -45,11 +45,10 @@ class ReportViewModel @Inject constructor(
                 comment = comment,
                 postId = postId
             )
-        ).let {
-            if (it.isSuccessful) {
-                _reportPostSuccess.postValue(true)
-            } else {
-                _reportPostSuccess.postValue(false)
+        )?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _reportPostSuccess.postValue(true) }
+                else -> { _reportPostSuccess.postValue(false) }
             }
         }
     }
