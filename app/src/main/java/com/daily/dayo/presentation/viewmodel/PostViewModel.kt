@@ -14,6 +14,7 @@ import com.daily.dayo.data.datasource.remote.heart.CreateHeartResponse
 import com.daily.dayo.data.mapper.toComment
 import com.daily.dayo.data.mapper.toPost
 import com.daily.dayo.domain.model.Comment
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.domain.usecase.block.RequestBlockMemberUseCase
 import com.daily.dayo.domain.usecase.bookmark.RequestBookmarkPostUseCase
@@ -66,11 +67,12 @@ class PostViewModel @Inject constructor(
 
     fun requestPostDetail(postId: Int) = viewModelScope.launch {
         _postDetail.postValue(Resource.loading(null))
-        requestPostDetailUseCase(postId).let {
-            if (it.isSuccessful){
-                _postDetail.postValue(Resource.success(it.body()?.toPost()))
-            } else {
-                _postDetail.postValue(Resource.error(it.errorBody().toString(), null))
+        requestPostDetailUseCase(postId)?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _postDetail.postValue(Resource.success(ApiResponse.body?.toPost())) }
+                is NetworkResponse.NetworkError -> { _postDetail.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                is NetworkResponse.ApiError -> { _postDetail.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                is NetworkResponse.UnknownError -> { _postDetail.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
             }
         }
     }
@@ -80,11 +82,12 @@ class PostViewModel @Inject constructor(
     }
 
     fun requestLikePost(postId: Int) = viewModelScope.launch {
-        requestLikePostUseCase(CreateHeartRequest(postId = postId)).let {
-            if(it.isSuccessful) {
-                _postLiked.postValue(Resource.success(it.body()))
-            } else {
-                _postLiked.postValue(Resource.error(it.errorBody().toString(), null))
+        requestLikePostUseCase(CreateHeartRequest(postId = postId))?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _postLiked.postValue(Resource.success(ApiResponse.body)) }
+                is NetworkResponse.NetworkError -> { _postLiked.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                is NetworkResponse.ApiError -> { _postLiked.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                is NetworkResponse.UnknownError -> { _postLiked.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
             }
         }
     }
@@ -94,11 +97,12 @@ class PostViewModel @Inject constructor(
     }
 
     fun requestBookmarkPost(postId: Int) = viewModelScope.launch {
-        requestBookmarkPostUseCase(CreateBookmarkRequest(postId = postId)).let {
-            if(it.isSuccessful) {
-                _postBookmarked.postValue(Resource.success(it.body()))
-            } else {
-                _postBookmarked.postValue(Resource.error(it.errorBody().toString(), null))
+        requestBookmarkPostUseCase(CreateBookmarkRequest(postId = postId)).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _postBookmarked.postValue(Resource.success(ApiResponse.body)) }
+                is NetworkResponse.NetworkError -> { _postBookmarked.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                is NetworkResponse.ApiError -> { _postBookmarked.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                is NetworkResponse.UnknownError -> { _postBookmarked.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
             }
         }
     }
@@ -109,39 +113,40 @@ class PostViewModel @Inject constructor(
 
     fun requestPostComment(postId: Int) = viewModelScope.launch {
         _postComment.postValue(Resource.loading(null))
-        val response = requestPostCommentUseCase(postId)
-        if (response.isSuccessful){
-            _postComment.postValue(Resource.success(response.body()?.data?.map { it.toComment() }))
-        } else {
-            _postComment.postValue(Resource.error(response.errorBody().toString(), null))
+        requestPostCommentUseCase(postId)?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _postComment.postValue(Resource.success(ApiResponse.body?.data?.map { it.toComment() })) }
+                is NetworkResponse.NetworkError -> { _postComment.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                is NetworkResponse.ApiError -> { _postComment.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                is NetworkResponse.UnknownError -> { _postComment.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+            }
         }
     }
 
     fun requestCreatePostComment(contents: String, postId: Int) = viewModelScope.launch {
-        requestCreatePostCommentUseCase(CreateCommentRequest(contents = contents, postId = postId)).let {
-            if(it.isSuccessful){
-                _postCommentCreateSuccess.postValue(Event(true))
-            } else {
-                _postCommentCreateSuccess.postValue(Event(false))
+        requestCreatePostCommentUseCase(CreateCommentRequest(contents = contents, postId = postId))?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _postCommentCreateSuccess.postValue(Event(true)) }
+                else -> { _postCommentCreateSuccess.postValue(Event(false)) }
             }
         }
     }
 
     fun requestDeletePostComment(commentId: Int) = viewModelScope.launch {
-        requestDeletePostCommentUseCase(commentId).let {
-            if(it.isSuccessful) {
-                _postCommentDeleteSuccess.postValue(Event(true))
-            } else {
-                _postCommentDeleteSuccess.postValue(Event(false))
+        requestDeletePostCommentUseCase(commentId)?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _postCommentDeleteSuccess.postValue(Event(true)) }
+                else -> { _postCommentDeleteSuccess.postValue(Event(false)) }
             }
         }
     }
 
     fun requestBlockMember(memberId: String) = viewModelScope.launch {
-        if (requestBlockMemberUseCase(memberId).isSuccessful) {
-            _blockSuccess.postValue(Event(true))
-        } else {
-            _blockSuccess.postValue(Event(false))
+        requestBlockMemberUseCase(memberId)?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _blockSuccess.postValue(Event(true)) }
+                else -> { _blockSuccess.postValue(Event(false)) }
+            }
         }
     }
 }

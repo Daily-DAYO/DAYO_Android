@@ -1,8 +1,8 @@
 package com.daily.dayo.domain.repository
 
-import retrofit2.Response
+import com.daily.dayo.domain.model.NetworkResponse
 
 interface ImageRepository {
 
-    suspend fun requestDownloadImage(filename: String): Response<Void>
+    suspend fun requestDownloadImage(filename: String): NetworkResponse<Void>
 }

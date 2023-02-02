@@ -2,11 +2,11 @@ package com.daily.dayo.domain.usecase.post
 
 import com.daily.dayo.data.datasource.remote.post.CreatePostResponse
 import com.daily.dayo.domain.model.Category
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.repository.PostRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.Response
 import java.io.File
 import javax.inject.Inject
 
@@ -19,7 +19,7 @@ class RequestUploadPostUseCase @Inject constructor(
         files: Array<File>,
         folderId: Int,
         tags: Array<String>
-    ): Response<CreatePostResponse> {
+    ): NetworkResponse<CreatePostResponse> {
         val uploadFiles: ArrayList<MultipartBody.Part> = ArrayList()
         for (i in files.indices) {
             val imageFile = files.get(i)
