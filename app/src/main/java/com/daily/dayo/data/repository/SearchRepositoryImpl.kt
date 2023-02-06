@@ -3,8 +3,8 @@ package com.daily.dayo.data.repository
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.data.datasource.remote.search.SearchApiService
 import com.daily.dayo.data.datasource.remote.search.SearchResultResponse
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.repository.SearchRepository
-import retrofit2.Response
 import javax.inject.Inject
 
 class SearchRepositoryImpl @Inject constructor(
@@ -14,10 +14,10 @@ class SearchRepositoryImpl @Inject constructor(
     override fun requestSearchKeywordRecentList(): ArrayList<String> =
         DayoApplication.preferences.getSearchKeywordRecent()
 
-    override suspend fun requestSearchTag(tag: String): Response<SearchResultResponse> =
+    override suspend fun requestSearchTag(tag: String): NetworkResponse<SearchResultResponse> =
         searchApiService.requestSearchTag(tag)
 
-    override suspend fun requestSearchKeyword(keyword: String): Response<SearchResultResponse> {
+    override suspend fun requestSearchKeyword(keyword: String): NetworkResponse<SearchResultResponse> {
         val initialSearchTagList = requestSearchKeywordRecentList()
         if (initialSearchTagList.contains(keyword)) { // 검색한 적 있는 경우 최신화를 위하여 삭제하고 추가
             initialSearchTagList.remove(keyword)

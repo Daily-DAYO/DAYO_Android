@@ -38,8 +38,8 @@ class ProfileViewModel @Inject constructor(
 
     lateinit var profileMemberId: String
 
-    private val _profileInfo = MutableLiveData<Resource<Profile>>()
-    val profileInfo: LiveData<Resource<Profile>> get() = _profileInfo
+    private val _profileInfo = MutableLiveData<Profile>()
+    val profileInfo: LiveData<Profile> get() = _profileInfo
 
     private val _followSuccess = MutableLiveData<Event<Boolean>>()
     val followSuccess: LiveData<Event<Boolean>> get() = _followSuccess
@@ -60,30 +60,34 @@ class ProfileViewModel @Inject constructor(
     val blockSuccess: LiveData<Event<Boolean>> get() = _blockSuccess
 
     fun requestProfile(memberId: String) = viewModelScope.launch {
-        val response = requestOtherProfileUseCase(memberId = memberId)
-        if (response.isSuccessful) {
-            _profileInfo.postValue(Resource.success(response.body()?.toProfile()))
-        } else {
-            _profileInfo.postValue(Resource.error(response.errorBody().toString(), null))
+        requestOtherProfileUseCase(memberId = memberId).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _profileInfo.postValue(ApiResponse.body?.toProfile())
+                }
+                is NetworkResponse.NetworkError  -> {
+                }
+                is NetworkResponse.ApiError  -> {
+
+                }
+            }
         }
     }
 
     fun requestCreateFollow(followerId: String) = viewModelScope.launch {
-        requestCreateFollowUseCase(CreateFollowRequest(followerId = followerId)).let {
-            if (it.isSuccessful) {
-                _followSuccess.postValue(Event(true))
-            } else {
-                _followSuccess.postValue(Event(false))
+        requestCreateFollowUseCase(CreateFollowRequest(followerId = followerId))?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _followSuccess.postValue(Event(true)) }
+                else -> { _followSuccess.postValue(Event(false)) }
             }
         }
     }
 
     fun requestDeleteFollow(followerId: String) = viewModelScope.launch {
-        requestDeleteFollowUseCase(followerId = followerId).let {
-            if (it.isSuccessful) {
-                _unfollowSuccess.postValue(Event(true))
-            } else {
-                _unfollowSuccess.postValue(Event(false))
+        requestDeleteFollowUseCase(followerId = followerId)?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _unfollowSuccess.postValue(Event(true)) }
+                else -> { _unfollowSuccess.postValue(Event(false)) }
             }
         }
     }
@@ -91,45 +95,56 @@ class ProfileViewModel @Inject constructor(
     fun requestFolderList(memberId: String, isMine: Boolean) = viewModelScope.launch {
         _folderList.postValue(Resource.loading(null))
         if (isMine) {
-            val response = requestAllMyFolderListUseCase()
-            if (response.isSuccessful) {
-                _folderList.postValue(Resource.success(response.body()?.data?.map { it.toFolder() }))
-            } else {
-                _folderList.postValue(Resource.error(response.errorBody().toString(), null))
+            requestAllMyFolderListUseCase()?.let { ApiResponse ->
+                when (ApiResponse) {
+                    is NetworkResponse.Success -> { _folderList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toFolder() })) }
+                    is NetworkResponse.NetworkError -> { _folderList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                    is NetworkResponse.ApiError -> { _folderList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                    is NetworkResponse.UnknownError -> { _folderList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+                }
             }
         } else {
-            val response = requestAllFolderListUseCase(memberId = memberId)
-            if (response.isSuccessful) {
-                _folderList.postValue(Resource.success(response.body()?.data?.map { it.toFolder() }))
-            } else {
-                _folderList.postValue(Resource.error(response.errorBody().toString(), null))
+            requestAllFolderListUseCase(memberId = memberId)?.let { ApiResponse ->
+                when (ApiResponse) {
+                    is NetworkResponse.Success -> { _folderList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toFolder() })) }
+                    is NetworkResponse.NetworkError -> { _folderList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                    is NetworkResponse.ApiError -> { _folderList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                    is NetworkResponse.UnknownError -> { _folderList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+                }
             }
         }
     }
 
     fun requestAllMyLikePostList() = viewModelScope.launch {
-        val response = requestAllMyLikePostListUseCase()
-        if (response.isSuccessful) {
-            _likePostList.postValue(Resource.success(response.body()?.data?.map { it.toLikePost() }))
-        } else {
-            _likePostList.postValue(Resource.error(response.errorBody().toString(), null))
+        requestAllMyLikePostListUseCase()?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _likePostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toLikePost() })) }
+                is NetworkResponse.NetworkError -> { _likePostList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                is NetworkResponse.ApiError -> { _likePostList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                is NetworkResponse.UnknownError -> { _likePostList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+            }
         }
     }
 
     fun requestAllMyBookmarkPostList() = viewModelScope.launch {
-        val response = requestAllMyBookmarkPostListUseCase()
-        if (response.isSuccessful) {
-            _bookmarkPostList.postValue(Resource.success(response.body()?.data?.map { it.toBookmarkPost() }))
-        } else {
-            _bookmarkPostList.postValue(Resource.error(response.errorBody().toString(), null))
+        requestAllMyBookmarkPostListUseCase()?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _bookmarkPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toBookmarkPost() })) }
+                is NetworkResponse.NetworkError -> { _bookmarkPostList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                is NetworkResponse.ApiError -> { _bookmarkPostList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                is NetworkResponse.UnknownError -> { _bookmarkPostList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+            }
         }
     }
 
     fun requestBlockMember(memberId: String) = viewModelScope.launch {
-        if (requestBlockMemberUseCase(memberId).isSuccessful) {
-            _blockSuccess.postValue(Event(true))
-        } else {
-            _blockSuccess.postValue(Event(false))
+        requestBlockMemberUseCase(memberId)?.let {  ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _blockSuccess.postValue(Event(true)) }
+                is NetworkResponse.NetworkError -> { _blockSuccess.postValue(Event(false)) }
+                is NetworkResponse.ApiError -> { _blockSuccess.postValue(Event(false)) }
+                is NetworkResponse.UnknownError -> { _blockSuccess.postValue(Event(false)) }
+            }
         }
     }
 }

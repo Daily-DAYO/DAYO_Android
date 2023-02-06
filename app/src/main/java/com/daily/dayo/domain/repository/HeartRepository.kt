@@ -3,11 +3,11 @@ package com.daily.dayo.domain.repository
 import com.daily.dayo.data.datasource.remote.heart.CreateHeartRequest
 import com.daily.dayo.data.datasource.remote.heart.CreateHeartResponse
 import com.daily.dayo.data.datasource.remote.heart.ListAllMyHeartPostResponse
-import retrofit2.Response
+import com.daily.dayo.domain.model.NetworkResponse
 
 interface HeartRepository {
 
-    suspend fun requestLikePost(body: CreateHeartRequest): Response<CreateHeartResponse>
-    suspend fun requestUnlikePost(postId: Int): Response<Void>
-    suspend fun requestAllMyLikePostList(): Response<ListAllMyHeartPostResponse>
+    suspend fun requestLikePost(body: CreateHeartRequest): NetworkResponse<CreateHeartResponse>
+    suspend fun requestUnlikePost(postId: Int): NetworkResponse<Void>
+    suspend fun requestAllMyLikePostList(): NetworkResponse<ListAllMyHeartPostResponse>
 }

@@ -2,9 +2,9 @@ package com.daily.dayo.data.repository
 
 import com.daily.dayo.data.datasource.remote.firebase.FirebaseMessagingService
 import com.daily.dayo.data.datasource.remote.member.*
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.repository.MemberRepository
 import okhttp3.MultipartBody
-import retrofit2.Response
 import javax.inject.Inject
 
 class MemberRepositoryImpl @Inject constructor(
@@ -16,68 +16,73 @@ class MemberRepositoryImpl @Inject constructor(
         nickname: String,
         password: String,
         profileImg: MultipartBody.Part
-    ): Response<MemberSignupResponse> =
-        memberApiService.requestSignupEmail(email, nickname, password, profileImg)
+    ): NetworkResponse<MemberSignupResponse> =
+        memberApiService.requestSignupEmail(
+            email,
+            nickname,
+            password,
+            profileImg
+        )
 
     override suspend fun requestUpdateMyProfile(
         nickname: String?,
         profileImg: MultipartBody.Part?,
         onBasicProfileImg: Boolean
-    ): Response<Void> =
+    ): NetworkResponse<Void> =
         memberApiService.requestUpdateMyProfile(nickname, profileImg, onBasicProfileImg)
 
-    override suspend fun requestLoginKakao(body: MemberOAuthRequest): Response<MemberOAuthResponse> =
+    override suspend fun requestLoginKakao(body: MemberOAuthRequest): NetworkResponse<MemberOAuthResponse> =
         memberApiService.requestLoginKakao(body)
 
-    override suspend fun requestLoginEmail(body: MemberSignInRequest): Response<MemberSignInResponse> =
+    override suspend fun requestLoginEmail(body: MemberSignInRequest): NetworkResponse<MemberSignInResponse> =
         memberApiService.requestLoginEmail(body)
 
-    override suspend fun requestMemberInfo(): Response<MemberInfoResponse> =
+    override suspend fun requestMemberInfo(): NetworkResponse<MemberInfoResponse> =
         memberApiService.requestMemberInfo()
 
-    override suspend fun requestCheckEmailDuplicate(email: String): Response<Void> =
+    override suspend fun requestCheckEmailDuplicate(email: String): NetworkResponse<Void> =
         memberApiService.requestCheckEmailDuplicate(email)
 
-    override suspend fun requestCertificateEmail(email: String): Response<MemberAuthCodeResponse> =
+    override suspend fun requestCertificateEmail(email: String): NetworkResponse<MemberAuthCodeResponse> =
         memberApiService.requestCertificateEmail(email)
 
-    override suspend fun requestRefreshToken(): Response<RefreshTokenResponse> =
+    override suspend fun requestRefreshToken(): NetworkResponse<RefreshTokenResponse> =
         memberApiService.requestRefreshToken()
 
-    override suspend fun requestDeviceToken(body: DeviceTokenRequest): Response<Void> =
+    override suspend fun requestDeviceToken(body: DeviceTokenRequest): NetworkResponse<Void> =
         memberApiService.requestDeviceToken(body)
 
-    override suspend fun requestMyProfile(): Response<MemberMyProfileResponse> =
+    override suspend fun requestMyProfile(): NetworkResponse<MemberMyProfileResponse> =
         memberApiService.requestMyProfile()
 
-    override suspend fun requestOtherProfile(memberId: String): Response<MemberOtherProfileResponse> =
+    override suspend fun requestOtherProfile(memberId: String): NetworkResponse<MemberOtherProfileResponse> =
         memberApiService.requestOtherProfile(memberId)
 
-    override suspend fun requestResign(content: String): Response<Void> =
+    override suspend fun requestResign(content: String): NetworkResponse<Void> =
         memberApiService.requestResign(content)
 
-    override suspend fun requestReceiveAlarm(): Response<ReceiveAlarmResponse> =
+    override suspend fun requestReceiveAlarm(): NetworkResponse<ReceiveAlarmResponse> =
         memberApiService.requestReceiveAlarm()
 
-    override suspend fun requestChangeReceiveAlarm(body: ChangeReceiveAlarmRequest): Response<Void> =
+    override suspend fun requestChangeReceiveAlarm(body: ChangeReceiveAlarmRequest): NetworkResponse<Void> =
         memberApiService.requestChangeReceiveAlarm(body)
 
-    override suspend fun requestLogout(): Response<Void> =
+    override suspend fun requestLogout(): NetworkResponse<Void> =
         memberApiService.requestLogout()
 
-    override suspend fun requestCheckEmail(email: String): Response<Void> =
+    override suspend fun requestCheckEmail(email: String): NetworkResponse<Void> =
         memberApiService.requestCheckEmail(email)
 
-    override suspend fun requestCheckEmailAuth(email: String): Response<MemberAuthCodeResponse> =
+    override suspend fun requestCheckEmailAuth(email: String): NetworkResponse<MemberAuthCodeResponse> =
         memberApiService.requestCheckEmailAuth(email)
 
-    override suspend fun requestCheckCurrentPassword(body: CheckPasswordRequest): Response<Void> =
+    override suspend fun requestCheckCurrentPassword(body: CheckPasswordRequest): NetworkResponse<Void> =
         memberApiService.requestCheckCurrentPassword(body)
 
-    override suspend fun requestChangePassword(body: ChangePasswordRequest): Response<Void> =
+    override suspend fun requestChangePassword(body: ChangePasswordRequest): NetworkResponse<Void> =
         memberApiService.requestChangePassword(body)
 
-    override suspend fun requestSettingChangePassword(body: ChangePasswordRequest): Response<Void> =
+    override suspend fun requestSettingChangePassword(body: ChangePasswordRequest): NetworkResponse<Void> =
         memberApiService.requestSettingChangePassword(body)
 
     // Firebase Messaging Service

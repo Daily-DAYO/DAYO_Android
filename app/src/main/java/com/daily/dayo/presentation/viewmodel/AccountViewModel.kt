@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.common.Event
 import com.daily.dayo.data.datasource.remote.member.*
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.usecase.member.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -68,77 +69,149 @@ class AccountViewModel @Inject constructor(
     private val _changePasswordSuccess = MutableLiveData<Boolean>()
     val changePasswordSuccess get() = _changePasswordSuccess
 
+    private val _isErrorExceptionOccurred = MutableLiveData<Event<Boolean>>()
+    val isErrorExceptionOccurred get() = _isErrorExceptionOccurred
+
+    private val _isApiErrorExceptionOccurred = MutableLiveData<Event<Boolean>>()
+    val isApiErrorExceptionOccurred get() = _isApiErrorExceptionOccurred
+
     fun requestLoginKakao(accessToken: String) = viewModelScope.launch {
-        val response = requestLoginKakaoUseCase(MemberOAuthRequest(accessToken = accessToken))
-        if (response.isSuccessful) {
-            DayoApplication.preferences.saveCurrentUser(response.body())
-            coroutineScope {
-                requestMemberInfo()
-                _loginSuccess.postValue(Event(true))
+        requestLoginKakaoUseCase(MemberOAuthRequest(accessToken = accessToken)).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    DayoApplication.preferences.saveCurrentUser(ApiResponse.body)
+                    coroutineScope {
+                        requestMemberInfo()
+                        _loginSuccess.postValue(Event(true))
+                    }
+                }
+                is NetworkResponse.ApiError -> {
+                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                    _loginSuccess.postValue(Event(false))
+                }
+                is NetworkResponse.NetworkError -> {
+                    _isErrorExceptionOccurred.postValue(Event(true))
+                    _loginSuccess.postValue(Event(false))
+                }
             }
-        } else {
-            _loginSuccess.postValue(Event(false))
         }
     }
 
     fun requestLoginEmail(email: String, password: String) = viewModelScope.launch {
-        requestLoginEmailUseCase(MemberSignInRequest(email = email, password = password)).let {
-            if (it.isSuccessful) {
-                DayoApplication.preferences.saveCurrentUser(it.body())
-                requestMemberInfo()
-                _loginSuccess.postValue(Event(true))
-            } else {
-                _loginSuccess.postValue(Event(false))
+        requestLoginEmailUseCase(MemberSignInRequest(email = email, password = password)).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    DayoApplication.preferences.saveCurrentUser(ApiResponse.body)
+                    requestMemberInfo()
+                    _loginSuccess.postValue(Event(true))
+                }
+                is NetworkResponse.NetworkError -> {
+                    _isErrorExceptionOccurred.postValue(Event(true))
+                    _loginSuccess.postValue(Event(false))
+                }
+                is NetworkResponse.ApiError -> {
+                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                    _loginSuccess.postValue(Event(false))
+                }
             }
         }
     }
 
     fun requestRefreshToken() = viewModelScope.launch {
-        requestRefreshTokenUseCase().let {
-            if (it.isSuccessful) {
-                it.body()?.let { response ->
-                    DayoApplication.preferences.setAccessToken(response.accessToken)
+        requestRefreshTokenUseCase().let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    ApiResponse.body?.let { response ->
+                        DayoApplication.preferences.setAccessToken(response.accessToken)
+                    }
+                    requestMemberInfo()
+                    _loginSuccess.postValue(Event(true))
                 }
-                requestMemberInfo()
-                _loginSuccess.postValue(Event(true))
-            } else
-                _loginSuccess.postValue(Event(false))
+                is NetworkResponse.NetworkError -> {
+                    _isErrorExceptionOccurred.postValue(Event(true))
+                    _loginSuccess.postValue(Event(false))
+                }
+                is NetworkResponse.ApiError -> {
+                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                    _loginSuccess.postValue(Event(false))
+                }
+            }
         }
     }
 
     private suspend fun requestMemberInfo() {
-        val response = requestMemberInfoUseCase()
-        if (response.isSuccessful) {
-            DayoApplication.preferences.saveCurrentUser(response.body())
+        requestMemberInfoUseCase().let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    DayoApplication.preferences.saveCurrentUser(ApiResponse.body)
+                }
+                is NetworkResponse.NetworkError -> {
+                    _isErrorExceptionOccurred.postValue(Event(true))
+                }
+                is NetworkResponse.ApiError -> {
+                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                }
+                else -> { }
+            }
         }
     }
 
     fun requestSignupEmail(email: String, nickname: String, password: String, profileImg: File?) =
         viewModelScope.launch(Dispatchers.IO) {
-            val response = requestSignUpEmailUseCase(email, nickname, password, profileImg)
-            if (response.isSuccessful) {
-                _signupSuccess.postValue(Event(true))
-            } else {
-                _signupSuccess.postValue(Event(false))
+            requestSignUpEmailUseCase(email, nickname, password, profileImg).let {  ApiResponse ->
+                when (ApiResponse) {
+                    is NetworkResponse.Success -> {
+                        _signupSuccess.postValue(Event(true))
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        _isErrorExceptionOccurred.postValue(Event(true))
+                        _signupSuccess.postValue(Event(false))
+                    }
+                    is NetworkResponse.ApiError -> {
+                        _isApiErrorExceptionOccurred.postValue(Event(true))
+                        _signupSuccess.postValue(Event(false))
+                    }
+                    else -> {}
+                }
             }
         }
 
     fun requestCheckEmailDuplicate(email: String) = viewModelScope.launch(Dispatchers.IO) {
-        val response = requestCheckEmailDuplicateUseCase(email)
-        if (response.isSuccessful) {
-            _isEmailDuplicate.postValue(true)
-        } else {
-            _isEmailDuplicate.postValue(false)
+        requestCheckEmailDuplicateUseCase(email).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _isEmailDuplicate.postValue(true)
+                }
+                is NetworkResponse.NetworkError -> {
+                    _isErrorExceptionOccurred.postValue(Event(true))
+                    _isEmailDuplicate.postValue(false)
+                }
+                is NetworkResponse.ApiError -> {
+                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                    _isEmailDuplicate.postValue(false)
+                }
+                else -> {}
+            }
         }
     }
 
     fun requestCertificateEmail(email: String) = viewModelScope.launch(Dispatchers.IO) {
-        val response = requestCertificateEmailUseCase(email)
-        if (response.isSuccessful) {
-            _isCertificateEmailSend.postValue(true)
-            certificateEmailAuthCode.postValue(response.body()?.authCode)
-        } else {
-            _isCertificateEmailSend.postValue(false)
+        requestCertificateEmailUseCase(email).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _isCertificateEmailSend.postValue(true)
+                    certificateEmailAuthCode.postValue(ApiResponse.body?.authCode)
+                }
+                is NetworkResponse.NetworkError -> {
+                    _isErrorExceptionOccurred.postValue(Event(true))
+                    _isCertificateEmailSend.postValue(false)
+                }
+                is NetworkResponse.ApiError -> {
+                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                    _isCertificateEmailSend.postValue(false)
+                }
+                else -> {}
+            }
         }
     }
 
@@ -151,50 +224,97 @@ class AccountViewModel @Inject constructor(
     }
 
     fun requestWithdraw(content: String) = viewModelScope.launch(Dispatchers.IO) {
-        val response = requestResignUseCase(content)
-        if (response.isSuccessful) {
-            _withdrawSuccess.postValue(Event(true))
-        } else {
-            _withdrawSuccess.postValue(Event(false))
+        requestResignUseCase(content).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _withdrawSuccess.postValue(Event(true))
+                }
+                is NetworkResponse.NetworkError -> {
+                    _isErrorExceptionOccurred.postValue(Event(true))
+                    _withdrawSuccess.postValue(Event(false))
+                }
+                is NetworkResponse.ApiError -> {
+                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                    _withdrawSuccess.postValue(Event(false))
+                }
+                else -> {}
+            }
         }
     }
 
     fun requestLogout() = viewModelScope.launch {
-        requestLogoutUseCase().let {
-            if (it.isSuccessful) {
-                _logoutSuccess.postValue(Event(true))
-            } else {
-                _logoutSuccess.postValue(Event(false))
+        requestLogoutUseCase().let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _logoutSuccess.postValue(Event(true))
+                }
+                is NetworkResponse.NetworkError -> {
+                    _isErrorExceptionOccurred.postValue(Event(true))
+                    _logoutSuccess.postValue(Event(false))
+                }
+                is NetworkResponse.ApiError -> {
+                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                    _logoutSuccess.postValue(Event(false))
+                }
+                else -> {}
             }
         }
     }
 
     fun requestCheckEmail(inputEmail: String) = viewModelScope.launch {
-        requestCheckEmailUseCase(email = inputEmail).let {
-            if (it.isSuccessful) {
-                _checkEmailSuccess.postValue(true)
-            } else {
-                _checkEmailSuccess.postValue(false)
+        requestCheckEmailUseCase(email = inputEmail).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _checkEmailSuccess.postValue(true)
+                }
+                is NetworkResponse.NetworkError -> {
+                    _isErrorExceptionOccurred.postValue(Event(true))
+                    _checkEmailSuccess.postValue(false)
+                }
+                is NetworkResponse.ApiError -> {
+                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                    _checkEmailSuccess.postValue(false)
+                }
+                else -> {}
             }
         }
     }
 
     fun requestCheckEmailAuth(inputEmail: String) = viewModelScope.launch {
-        val response = requestCheckEmailAuthUseCase(inputEmail)
-        if (response.isSuccessful) {
-            _isCertificateEmailSend.postValue(true)
-            certificateEmailAuthCode.postValue(response.body()?.authCode)
-        } else {
-            _isCertificateEmailSend.postValue(false)
+        requestCheckEmailAuthUseCase(inputEmail).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _isCertificateEmailSend.postValue(true)
+                    certificateEmailAuthCode.postValue(ApiResponse.body?.authCode)
+                }
+                is NetworkResponse.NetworkError -> {
+                    _isErrorExceptionOccurred.postValue(Event(true))
+                    _isCertificateEmailSend.postValue(false)
+                }
+                is NetworkResponse.ApiError -> {
+                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                    _isCertificateEmailSend.postValue(false)
+                }
+                else -> {}
+            }
         }
     }
 
     fun requestCheckCurrentPassword(inputPassword: String) = viewModelScope.launch {
-        requestCheckCurrentPasswordUseCase(CheckPasswordRequest(password = inputPassword)).let {
-            if (it.isSuccessful) {
-                _checkCurrentPasswordSuccess.postValue(true)
-            } else {
-                _checkCurrentPasswordSuccess.postValue(false)
+        requestCheckCurrentPasswordUseCase(CheckPasswordRequest(password = inputPassword)).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _checkCurrentPasswordSuccess.postValue(true)
+                }
+                is NetworkResponse.NetworkError -> {
+                    _isErrorExceptionOccurred.postValue(Event(true))
+                    _checkCurrentPasswordSuccess.postValue(false)
+                }
+                is NetworkResponse.ApiError -> {
+                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                    _checkCurrentPasswordSuccess.postValue(false)
+                }
+                else -> {}
             }
         }
     }
@@ -205,11 +325,20 @@ class AccountViewModel @Inject constructor(
                 email = email,
                 password = newPassword
             )
-        ).let {
-            if (it.isSuccessful) {
-                _changePasswordSuccess.postValue(true)
-            } else {
-                _changePasswordSuccess.postValue(false)
+        ).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _changePasswordSuccess.postValue(true)
+                }
+                is NetworkResponse.NetworkError -> {
+                    _isErrorExceptionOccurred.postValue(Event(true))
+                    _changePasswordSuccess.postValue(false)
+                }
+                is NetworkResponse.ApiError -> {
+                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                    _changePasswordSuccess.postValue(false)
+                }
+                else -> {}
             }
         }
     }
@@ -220,11 +349,20 @@ class AccountViewModel @Inject constructor(
                 email = DayoApplication.preferences.getCurrentUser().email!!,
                 password = newPassword
             )
-        ).let {
-            if (it.isSuccessful) {
-                _changePasswordSuccess.postValue(true)
-            } else {
-                _changePasswordSuccess.postValue(false)
+        ).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _changePasswordSuccess.postValue(true)
+                }
+                is NetworkResponse.NetworkError -> {
+                    _isErrorExceptionOccurred.postValue(Event(true))
+                    _changePasswordSuccess.postValue(false)
+                }
+                is NetworkResponse.ApiError -> {
+                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                    _changePasswordSuccess.postValue(false)
+                }
+                else -> {}
             }
         }
     }

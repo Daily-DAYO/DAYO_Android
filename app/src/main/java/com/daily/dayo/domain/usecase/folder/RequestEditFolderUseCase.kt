@@ -1,12 +1,12 @@
 package com.daily.dayo.domain.usecase.folder
 
 import com.daily.dayo.data.datasource.remote.folder.EditFolderResponse
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Privacy
 import com.daily.dayo.domain.repository.FolderRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.Response
 import java.io.File
 import javax.inject.Inject
 
@@ -20,7 +20,7 @@ class RequestEditFolderUseCase @Inject constructor(
         subheading: String?,
         isFileChange: Boolean,
         thumbnailImg: File?
-    ): Response<EditFolderResponse> {
+    ): NetworkResponse<EditFolderResponse> {
         val requestThumbnailImage: MultipartBody.Part? = if (thumbnailImg != null)
             MultipartBody.Part.createFormData(
                 "thumbnailImage",

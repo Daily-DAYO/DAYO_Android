@@ -104,37 +104,33 @@ class ProfileFragment : Fragment() {
     private fun setProfileDescription() {
         profileViewModel.requestProfile(memberId = profileViewModel.profileMemberId)
         profileViewModel.profileInfo.observe(viewLifecycleOwner) {
-            when (it.status) {
-                Status.SUCCESS -> {
-                    it.data?.let { profile ->
-                        binding.profile = profile
-                        CoroutineScope(Dispatchers.Main).launch {
-                            val userProfileThumbnailImage = withContext(Dispatchers.IO) {
-                                loadImageBackgroundProfile(
-                                    requestManager = glideRequestManager,
-                                    width = 70, height = 70, imgName = profile.profileImg
-                                )
-                            }
-                            loadImageViewProfile(
-                                requestManager = glideRequestManager,
-                                width = 70,
-                                height = 70,
-                                img = userProfileThumbnailImage,
-                                imgView = binding.imgProfileUserProfile
-                            )
-                        }
-
-                        setFollowButtonClickListener(follow = profile.follow)
-                        setFollowerCountButtonClickListener(
-                            memberId = profile.memberId,
-                            nickname = profile.nickname
-                        )
-                        setFollowingCountButtonClickListener(
-                            memberId = profile.memberId,
-                            nickname = profile.nickname
+            it?.let { profile ->
+                binding.profile = profile
+                CoroutineScope(Dispatchers.Main).launch {
+                    val userProfileThumbnailImage = withContext(Dispatchers.IO) {
+                        loadImageBackgroundProfile(
+                            requestManager = glideRequestManager,
+                            width = 70, height = 70, imgName = profile.profileImg
                         )
                     }
+                    loadImageViewProfile(
+                        requestManager = glideRequestManager,
+                        width = 70,
+                        height = 70,
+                        img = userProfileThumbnailImage,
+                        imgView = binding.imgProfileUserProfile
+                    )
                 }
+
+                setFollowButtonClickListener(follow = profile.follow)
+                setFollowerCountButtonClickListener(
+                    memberId = profile.memberId,
+                    nickname = profile.nickname
+                )
+                setFollowingCountButtonClickListener(
+                    memberId = profile.memberId,
+                    nickname = profile.nickname
+                )
             }
         }
     }

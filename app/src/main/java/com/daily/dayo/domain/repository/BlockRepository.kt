@@ -1,7 +1,7 @@
 package com.daily.dayo.domain.repository
 
-import retrofit2.Response
+import com.daily.dayo.domain.model.NetworkResponse
 
 interface BlockRepository {
-    suspend fun requestBlockMember(memberId: String): Response<Void>
+    suspend fun requestBlockMember(memberId: String): NetworkResponse<Void>
 }

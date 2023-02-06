@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.common.Event
-import com.daily.dayo.common.Resource
 import com.daily.dayo.data.datasource.remote.member.ChangeReceiveAlarmRequest
 import com.daily.dayo.data.datasource.remote.member.DeviceTokenRequest
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.usecase.member.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -32,9 +32,11 @@ class SettingNotificationViewModel @Inject constructor(
     }
 
     fun requestReceiveAlarm() = viewModelScope.launch {
-        val response = requestReceiveAlarmUseCase().let {
-            if (it.isSuccessful) {
-                _notiReactionPermit.postValue(it.body()?.onReceiveAlarm)
+        requestReceiveAlarmUseCase().let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success  -> {
+                    _notiReactionPermit.postValue(ApiResponse.body?.onReceiveAlarm)
+                }
             }
         }
     }
