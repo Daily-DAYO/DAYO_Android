@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.ViewTreeObserver
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -27,7 +28,8 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        observeNetworkException()
+        observeApiException()
         autoLogin()
         loginSuccess()
         setSplash()
@@ -89,5 +91,20 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         )
+    }
+
+    private fun observeNetworkException() {
+        loginViewModel.isErrorExceptionOccurred.observe(this) { isOccurred ->
+            if (isOccurred.getContentIfNotHandled() == true) {
+                Toast.makeText(this, "네트워크 연결 상태가 불안정합니다", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun observeApiException() {
+        loginViewModel.isApiErrorExceptionOccurred.observe(this) { isOccurred ->
+            if (isOccurred.getContentIfNotHandled() == true)
+                Toast.makeText(this, "서버와의 연결상태가 좋지 않습니다", Toast.LENGTH_SHORT).show()
+        }
     }
 }

@@ -1,10 +1,10 @@
 package com.daily.dayo.data.repository
 
 import com.daily.dayo.data.datasource.remote.folder.*
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Privacy
 import com.daily.dayo.domain.repository.FolderRepository
 import okhttp3.MultipartBody
-import retrofit2.Response
 import javax.inject.Inject
 
 class FolderRepositoryImpl @Inject constructor(
@@ -16,7 +16,7 @@ class FolderRepositoryImpl @Inject constructor(
         privacy: Privacy,
         subheading: String?,
         thumbnailImage: MultipartBody.Part?
-    ): Response<CreateFolderResponse> =
+    ): NetworkResponse<CreateFolderResponse> =
         folderApiService.requestCreateFolder(name, privacy.name, subheading, thumbnailImage)
 
     override suspend fun requestEditFolder(
@@ -26,7 +26,7 @@ class FolderRepositoryImpl @Inject constructor(
         subheading: String?,
         isFileChange: Boolean,
         thumbnailImage: MultipartBody.Part?
-    ): Response<EditFolderResponse> =
+    ): NetworkResponse<EditFolderResponse> =
         folderApiService.requestEditFolder(
             folderId,
             name,
@@ -36,21 +36,21 @@ class FolderRepositoryImpl @Inject constructor(
             thumbnailImage
         )
 
-    override suspend fun requestAllMyFolderList(): Response<ListAllMyFolderResponse> =
+    override suspend fun requestAllMyFolderList(): NetworkResponse<ListAllMyFolderResponse> =
         folderApiService.requestAllMyFolderList()
 
-    override suspend fun requestAllFolderList(memberId: String): Response<ListAllFolderResponse> =
+    override suspend fun requestAllFolderList(memberId: String): NetworkResponse<ListAllFolderResponse> =
         folderApiService.requestAllFolderList(memberId)
 
-    override suspend fun requestCreateFolderInPost(body: CreateFolderInPostRequest): Response<CreateFolderInPostResponse> =
+    override suspend fun requestCreateFolderInPost(body: CreateFolderInPostRequest): NetworkResponse<CreateFolderInPostResponse> =
         folderApiService.requestCreateFolderInPost(body)
 
-    override suspend fun requestDeleteFolder(folderId: Int): Response<Void> =
+    override suspend fun requestDeleteFolder(folderId: Int): NetworkResponse<Void> =
         folderApiService.requestDeleteFolder(folderId)
 
-    override suspend fun requestDetailListFolder(folderId: Int): Response<DetailFolderResponse> =
+    override suspend fun requestDetailListFolder(folderId: Int): NetworkResponse<DetailFolderResponse> =
         folderApiService.requestDetailListFolder(folderId)
 
-    override suspend fun requestOrderFolder(body: List<EditOrderDto>): Response<Void> =
+    override suspend fun requestOrderFolder(body: List<EditOrderDto>): NetworkResponse<Void> =
         folderApiService.requestOrderFolder(body)
 }

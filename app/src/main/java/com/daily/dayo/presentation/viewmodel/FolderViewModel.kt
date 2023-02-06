@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.daily.dayo.common.Resource
 import com.daily.dayo.data.mapper.toFolder
 import com.daily.dayo.domain.model.Folder
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.usecase.folder.RequestDetailListFolderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -22,11 +23,12 @@ class FolderViewModel @Inject constructor(
 
     fun requestDetailListFolder(folderId:Int) = viewModelScope.launch {
         _detailFolderList.postValue(Resource.loading(null))
-        requestDetailListFolderUseCase(folderId = folderId).let {
-            if(it.isSuccessful){
-                _detailFolderList.postValue(Resource.success(it.body()?.toFolder()))
-            } else{
-                _detailFolderList.postValue(Resource.error(it.errorBody().toString(), null))
+        requestDetailListFolderUseCase(folderId = folderId)?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _detailFolderList.postValue(Resource.success(ApiResponse.body?.toFolder())) }
+                is NetworkResponse.NetworkError -> { _detailFolderList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                is NetworkResponse.ApiError -> { _detailFolderList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                is NetworkResponse.UnknownError -> { _detailFolderList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
             }
         }
     }

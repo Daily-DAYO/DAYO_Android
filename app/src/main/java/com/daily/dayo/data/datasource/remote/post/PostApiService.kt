@@ -1,8 +1,8 @@
 package com.daily.dayo.data.datasource.remote.post
 
 import com.daily.dayo.domain.model.Category
+import com.daily.dayo.domain.model.NetworkResponse
 import okhttp3.MultipartBody
-import retrofit2.Response
 import retrofit2.http.*
 
 interface PostApiService {
@@ -15,32 +15,32 @@ interface PostApiService {
         @Part files: List<MultipartBody.Part>,
         @Part("folderId") folderId: Int,
         @Part("tags") tags: Array<String>
-    ): Response<CreatePostResponse>
+    ): NetworkResponse<CreatePostResponse>
 
     @POST("/api/v1/posts/{postId}/edit")
     suspend fun requestEditPost(
         @Path("postId") postId: Int,
         @Body body: EditPostRequest
-    ): Response<EditPostResponse>
+    ): NetworkResponse<EditPostResponse>
 
     @GET("/api/v1/posts")
-    suspend fun requestNewPostList(): Response<ListAllPostResponse>
+    suspend fun requestNewPostList(): NetworkResponse<ListAllPostResponse>
 
     @GET("/api/v1/posts/category/{category}")
-    suspend fun requestNewPostListCategory(@Path("category") category: Category): Response<ListCategoryPostResponse>
+    suspend fun requestNewPostListCategory(@Path("category") category: Category): NetworkResponse<ListCategoryPostResponse>
 
     @GET("/api/v1/posts/dayopick/all")
-    suspend fun requestDayoPickPostList(): Response<DayoPickPostListResponse>
+    suspend fun requestDayoPickPostList(): NetworkResponse<DayoPickPostListResponse>
 
     @GET("/api/v1/posts/dayopick/{category}")
-    suspend fun requestDayoPickPostListCategory(@Path("category") category: Category): Response<DayoPickPostListResponse>
+    suspend fun requestDayoPickPostListCategory(@Path("category") category: Category): NetworkResponse<DayoPickPostListResponse>
 
     @GET("/api/v1/posts/{postId}")
-    suspend fun requestPostDetail(@Path("postId") postId: Int): Response<DetailPostResponse>
+    suspend fun requestPostDetail(@Path("postId") postId: Int): NetworkResponse<DetailPostResponse>
 
     @POST("/api/v1/posts/delete/{postId}")
-    suspend fun requestDeletePost(@Path("postId") postId: Int): Response<Void>
+    suspend fun requestDeletePost(@Path("postId") postId: Int): NetworkResponse<Void>
 
     @GET("/api/v1/posts/feed/list")
-    suspend fun requestFeedList(): Response<ListFeedResponse>
+    suspend fun requestFeedList(): NetworkResponse<ListFeedResponse>
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.common.Resource
 import com.daily.dayo.data.mapper.toNotification
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Notification
 import com.daily.dayo.domain.usecase.notification.RequestAllAlarmListUseCase
 import com.daily.dayo.domain.usecase.notification.RequestIsCheckAlarmUseCase
@@ -27,18 +28,27 @@ class NotificationViewModel @Inject constructor(
 
     fun requestAllAlarmList() = viewModelScope.launch {
         _alarmList.postValue(Resource.loading(null))
-        val response = requestAllAlarmListUseCase()
-        if (response.isSuccessful) {
-            _alarmList.postValue(Resource.success(response.body()?.data?.map { it.toNotification() }))
-        } else {
-            _alarmList.postValue(Resource.error(response.errorBody().toString(), null))
+        requestAllAlarmListUseCase()?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _alarmList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toNotification() }))
+                }
+                is NetworkResponse.NetworkError -> {
+                    _alarmList.postValue(Resource.error(ApiResponse.exception.toString(), null))
+                }
+                is NetworkResponse.ApiError -> {
+                    _alarmList.postValue(Resource.error(ApiResponse.error.toString(), null))
+                }
+            }
         }
     }
 
     fun requestIsCheckAlarm(alarmId: Int) = viewModelScope.launch {
-        if (requestIsCheckAlarmUseCase(alarmId).isSuccessful)
-            _checkAlarmSuccess.postValue(true)
-        else
-            _checkAlarmSuccess.postValue(false)
+        requestIsCheckAlarmUseCase(alarmId)?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> _checkAlarmSuccess.postValue(true)
+                else -> _checkAlarmSuccess.postValue(false)
+            }
+        }
     }
 }

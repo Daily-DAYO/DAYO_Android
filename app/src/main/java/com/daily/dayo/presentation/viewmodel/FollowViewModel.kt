@@ -10,6 +10,7 @@ import com.daily.dayo.common.Resource
 import com.daily.dayo.data.datasource.remote.follow.CreateFollowRequest
 import com.daily.dayo.data.mapper.toFollow
 import com.daily.dayo.domain.model.Follow
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.usecase.follow.RequestCreateFollowUseCase
 import com.daily.dayo.domain.usecase.follow.RequestDeleteFollowUseCase
 import com.daily.dayo.domain.usecase.follow.RequestListAllFollowerUseCase
@@ -47,57 +48,63 @@ class FollowViewModel @Inject constructor(
     val followingCount: LiveData<Resource<Int>> get() = _followingCount
 
     fun requestListAllFollower(memberId: String) = viewModelScope.launch {
-        val response = requestListAllFollowerUseCase(memberId = memberId)
-        if (response.isSuccessful) {
-            _followerCount.postValue(Resource.success(response.body()?.count))
-            val myInfo = response.body()
-                ?.data
-                ?.find { it.memberId == DayoApplication.preferences.getCurrentUser().memberId }
-                ?.toFollow()
-            val tmpFollowerList = response.body()?.data?.map { it.toFollow() }
-                ?.filterNot { it.memberId == DayoApplication.preferences.getCurrentUser().memberId }
-                ?.toMutableList()
-            if (myInfo != null) tmpFollowerList?.add(0, myInfo)
-            _followerList.postValue(Resource.success(tmpFollowerList))
-        } else {
-            _followerList.postValue(Resource.error(response.errorBody().toString(), null))
+        requestListAllFollowerUseCase(memberId = memberId)?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _followerCount.postValue(Resource.success(ApiResponse.body?.count))
+                    val myInfo = ApiResponse.body
+                        ?.data
+                        ?.find { it.memberId == DayoApplication.preferences.getCurrentUser().memberId }
+                        ?.toFollow()
+                    val tmpFollowerList = ApiResponse.body?.data?.map { it.toFollow() }
+                        ?.filterNot { it.memberId == DayoApplication.preferences.getCurrentUser().memberId }
+                        ?.toMutableList()
+                    if (myInfo != null) tmpFollowerList?.add(0, myInfo)
+                    _followerList.postValue(Resource.success(tmpFollowerList))
+                }
+                is NetworkResponse.NetworkError -> { _followerList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                is NetworkResponse.ApiError -> { _followerList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                is NetworkResponse.UnknownError -> { _followerList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+            }
         }
     }
 
     fun requestListAllFollowing(memberId: String) = viewModelScope.launch {
-        val response = requestListAllFollowingUseCase(memberId = memberId)
-        if (response.isSuccessful) {
-            _followingCount.postValue(Resource.success(response.body()?.count))
-            val myInfo = response.body()
-                ?.data
-                ?.find { it.memberId == DayoApplication.preferences.getCurrentUser().memberId }
-                ?.toFollow()
-            val tmpFollowingList = response.body()?.data?.map { it.toFollow() }
-                ?.filterNot { it.memberId == DayoApplication.preferences.getCurrentUser().memberId }
-                ?.toMutableList()
-            if (myInfo != null) tmpFollowingList?.add(0, myInfo)
-            _followingList.postValue(Resource.success(tmpFollowingList))
-        } else {
-            _followingList.postValue(Resource.error(response.errorBody().toString(), null))
+        requestListAllFollowingUseCase(memberId = memberId)?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _followingCount.postValue(Resource.success(ApiResponse.body?.count))
+                    val myInfo = ApiResponse.body
+                        ?.data
+                        ?.find { it.memberId == DayoApplication.preferences.getCurrentUser().memberId }
+                        ?.toFollow()
+                    val tmpFollowingList = ApiResponse.body?.data?.map { it.toFollow() }
+                        ?.filterNot { it.memberId == DayoApplication.preferences.getCurrentUser().memberId }
+                        ?.toMutableList()
+                    if (myInfo != null) tmpFollowingList?.add(0, myInfo)
+                    _followingList.postValue(Resource.success(tmpFollowingList))
+                }
+                is NetworkResponse.NetworkError -> { _followingList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                is NetworkResponse.ApiError -> { _followingList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                is NetworkResponse.UnknownError -> { _followingList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+            }
         }
     }
 
     fun requestCreateFollow(followerId: String) = viewModelScope.launch {
-        requestCreateFollowUseCase(CreateFollowRequest(followerId = followerId)).let {
-            if (it.isSuccessful) {
-                _followSuccess.postValue(Event(true))
-            } else {
-                _followSuccess.postValue(Event(false))
+        requestCreateFollowUseCase(CreateFollowRequest(followerId = followerId))?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _followSuccess.postValue(Event(true)) }
+                else -> { _followSuccess.postValue(Event(false)) }
             }
         }
     }
 
     fun requestDeleteFollow(followerId: String) = viewModelScope.launch {
-        requestDeleteFollowUseCase(followerId).let {
-            if (it.isSuccessful) {
-                _unfollowSuccess.postValue(Event(true))
-            } else {
-                _unfollowSuccess.postValue(Event(false))
+        requestDeleteFollowUseCase(followerId)?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _unfollowSuccess.postValue(Event(true)) }
+                else -> { _unfollowSuccess.postValue(Event(false)) }
             }
         }
     }

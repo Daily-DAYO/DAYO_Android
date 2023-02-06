@@ -2,6 +2,7 @@ package com.daily.dayo.data.di
 
 import com.daily.dayo.BuildConfig
 import com.daily.dayo.DayoApplication
+import com.daily.dayo.data.datasource.remote.retrofit.factory.NetworkResponseAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -67,6 +68,7 @@ object NetworkModule {
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl("http://117.17.198.45:8080")
+            .addCallAdapterFactory(NetworkResponseAdapterFactory())
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(gsonConverterFactory)
             .client(okHttpClient)

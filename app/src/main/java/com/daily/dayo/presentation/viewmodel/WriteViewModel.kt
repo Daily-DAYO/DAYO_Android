@@ -13,6 +13,7 @@ import com.daily.dayo.data.mapper.toFolder
 import com.daily.dayo.data.mapper.toPost
 import com.daily.dayo.domain.model.Category
 import com.daily.dayo.domain.model.Folder
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.domain.model.Privacy
 import com.daily.dayo.domain.usecase.folder.RequestAllMyFolderListUseCase
@@ -72,18 +73,20 @@ class WriteViewModel @Inject constructor(
         postTags: Array<String>
     ) = viewModelScope.launch {
         _writeSuccess.postValue(Event(false))
-        val response = requestUploadPostUseCase(
+        requestUploadPostUseCase(
             category = postCategory,
             contents = postContents,
             files = files,
             folderId = postFolderId,
             tags = postTags
-        )
-        if (response.isSuccessful) {
-            _writePostId.postValue(response.body()?.let { Event(it.id) })
-            _writeSuccess.postValue(Event(true))
-        } else {
-            _writeSuccess.postValue(Event(false))
+        )?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _writePostId.postValue(ApiResponse.body?.let { Event(it.id) })
+                    _writeSuccess.postValue(Event(true))
+                }
+                else -> { _writeSuccess.postValue(Event(false)) }
+            }
         }
     }
 
@@ -94,7 +97,7 @@ class WriteViewModel @Inject constructor(
         postFolderId: Int,
         postTags: Array<String>
     ) = viewModelScope.launch {
-        val response = requestEditPostUseCase(
+        requestEditPostUseCase(
             postId = postId,
             EditPostRequest(
                 category = postCategory,
@@ -102,36 +105,38 @@ class WriteViewModel @Inject constructor(
                 folderId = postFolderId,
                 hashtags = postTags.toList()
             )
-        )
-        if (response.isSuccessful) {
-            _writePostId.postValue(response.body()?.let { Event(it.postId) })
-            _writeEditSuccess.postValue(Event(true))
-        } else {
-            _writeEditSuccess.postValue(Event(false))
+        )?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _writePostId.postValue(ApiResponse.body?.let { Event(it.postId) })
+                    _writeEditSuccess.postValue(Event(true))
+                }
+                else -> { _writeEditSuccess.postValue(Event(false)) }
+            }
         }
     }
 
     fun requestPostDetail(postId: Int) = viewModelScope.launch {
-        val response = requestPostDetailUseCase(postId = postId)
-        if (response.isSuccessful) {
-            _writeCurrentPostDetail.postValue(
-                Event(
-                    response.body()?.toPost()
-                ) as Event<Post>?
-            )
-            _getCurrentPostSuccess.postValue(Event(true))
-        } else {
-            _getCurrentPostSuccess.postValue(Event(false))
+        requestPostDetailUseCase(postId = postId)?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _writeCurrentPostDetail.postValue(Event(ApiResponse.body?.toPost()) as Event<Post>?)
+                    _getCurrentPostSuccess.postValue(Event(true))
+                }
+                else -> { _getCurrentPostSuccess.postValue(Event(false)) }
+            }
         }
     }
 
     fun requestAllMyFolderList() = viewModelScope.launch {
         _folderList.postValue(Resource.loading(null))
-        val response = requestAllMyFolderListUseCase()
-        if (response.isSuccessful) {
-            _folderList.postValue(Resource.success(response.body()?.data?.map { it.toFolder() }))
-        } else {
-            _folderList.postValue(Resource.error(response.errorBody().toString(), null))
+        requestAllMyFolderListUseCase()?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _folderList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toFolder() })) }
+                is NetworkResponse.NetworkError -> { _folderList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
+                is NetworkResponse.ApiError -> { _folderList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
+                is NetworkResponse.UnknownError -> { _folderList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+            }
         }
     }
 
@@ -141,11 +146,10 @@ class WriteViewModel @Inject constructor(
                 name = name,
                 privacy = privacy
             )
-        ).let {
-            if (it.isSuccessful) {
-                _folderAddSuccess.postValue(Event(true))
-            } else {
-                _folderAddSuccess.postValue(Event(false))
+        )?.let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _folderAddSuccess.postValue(Event(true)) }
+                else -> { _folderAddSuccess.postValue(Event(false)) }
             }
         }
     }

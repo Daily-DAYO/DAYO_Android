@@ -2,8 +2,8 @@ package com.daily.dayo.domain.repository
 
 import com.daily.dayo.data.datasource.remote.post.*
 import com.daily.dayo.domain.model.Category
+import com.daily.dayo.domain.model.NetworkResponse
 import okhttp3.MultipartBody
-import retrofit2.Response
 
 interface PostRepository {
 
@@ -13,14 +13,14 @@ interface PostRepository {
         files: List<MultipartBody.Part>,
         folderId: Int,
         tags: Array<String>
-    ): Response<CreatePostResponse>
+    ): NetworkResponse<CreatePostResponse>
 
-    suspend fun requestNewPostList(): Response<ListAllPostResponse>
-    suspend fun requestNewPostListCategory(category: Category): Response<ListCategoryPostResponse>
-    suspend fun requestDayoPickPostList(): Response<DayoPickPostListResponse>
-    suspend fun requestDayoPickPostListCategory(category: Category): Response<DayoPickPostListResponse>
-    suspend fun requestFeedList(): Response<ListFeedResponse>
-    suspend fun requestPostDetail(postId: Int): Response<DetailPostResponse>
-    suspend fun requestDeletePost(postId: Int): Response<Void>
-    suspend fun requestEditPost(postId: Int, request: EditPostRequest): Response<EditPostResponse>
+    suspend fun requestNewPostList(): NetworkResponse<ListAllPostResponse>
+    suspend fun requestNewPostListCategory(category: Category): NetworkResponse<ListCategoryPostResponse>
+    suspend fun requestDayoPickPostList(): NetworkResponse<DayoPickPostListResponse>
+    suspend fun requestDayoPickPostListCategory(category: Category): NetworkResponse<DayoPickPostListResponse>
+    suspend fun requestFeedList(): NetworkResponse<ListFeedResponse>
+    suspend fun requestPostDetail(postId: Int): NetworkResponse<DetailPostResponse>
+    suspend fun requestDeletePost(postId: Int): NetworkResponse<Void>
+    suspend fun requestEditPost(postId: Int, request: EditPostRequest): NetworkResponse<EditPostResponse>
 }
