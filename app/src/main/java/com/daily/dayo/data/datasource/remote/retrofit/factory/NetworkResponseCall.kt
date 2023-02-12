@@ -28,7 +28,7 @@ internal class NetworkResponseCall<T>(
                     } else {
                         callback.onResponse(
                             this@NetworkResponseCall,
-                            Response.success(NetworkResponse.UnknownError(null))
+                            Response.success(NetworkResponse.Success(null))
                         )
                     }
                 } else {

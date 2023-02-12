@@ -393,7 +393,16 @@
         <action
             android:id="@+id/action_settingFragment_to_settingNotificationFragment"
             app:destination="@id/SettingNotificationFragment" />
+        <action
+            android:id="@+id/action_settingFragment_to_settingBlockFragment"
+            app:destination="@+id/SettingBlockFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/SettingBlockFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.block.SettingBlockFragment"
+        android:label="fragment_setting_block"
+        tools:layout="@layout/fragment_setting_block" />
 
     <fragment
         android:id="@+id/SettingChangePasswordCurrentFragment"

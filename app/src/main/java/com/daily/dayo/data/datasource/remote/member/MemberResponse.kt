@@ -80,3 +80,19 @@ data class ReceiveAlarmResponse(
     @SerializedName("onReceiveAlarm")
     val onReceiveAlarm: Boolean
 )
+
+data class MemberBlockResponse(
+    @SerializedName("count")
+    val count: Int,
+    @SerializedName("data")
+    val data: List<BlockDto>
+)
+
+data class BlockDto(
+    @SerializedName("memberId")
+    val memberId: String,
+    @SerializedName("profileImage")
+    val profileImg: String,
+    @SerializedName("name")
+    val nickname:String?
+)

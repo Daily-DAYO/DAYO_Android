@@ -13,6 +13,7 @@ import com.daily.dayo.data.mapper.toLikePost
 import com.daily.dayo.data.mapper.toProfile
 import com.daily.dayo.domain.model.*
 import com.daily.dayo.domain.usecase.block.RequestBlockMemberUseCase
+import com.daily.dayo.domain.usecase.block.RequestUnblockMemberUseCase
 import com.daily.dayo.domain.usecase.bookmark.RequestAllMyBookmarkPostListUseCase
 import com.daily.dayo.domain.usecase.folder.RequestAllFolderListUseCase
 import com.daily.dayo.domain.usecase.folder.RequestAllMyFolderListUseCase
@@ -33,7 +34,8 @@ class ProfileViewModel @Inject constructor(
     private val requestDeleteFollowUseCase: RequestDeleteFollowUseCase,
     private val requestAllMyLikePostListUseCase: RequestAllMyLikePostListUseCase,
     private val requestAllMyBookmarkPostListUseCase: RequestAllMyBookmarkPostListUseCase,
-    private val requestBlockMemberUseCase: RequestBlockMemberUseCase
+    private val requestBlockMemberUseCase: RequestBlockMemberUseCase,
+    private val requestUnblockMemberUseCase: RequestUnblockMemberUseCase
 ) : ViewModel() {
 
     lateinit var profileMemberId: String
@@ -58,6 +60,9 @@ class ProfileViewModel @Inject constructor(
 
     private val _blockSuccess = MutableLiveData<Event<Boolean>>()
     val blockSuccess: LiveData<Event<Boolean>> get() = _blockSuccess
+
+    private val _unblockSuccess = MutableLiveData<Event<Boolean>>()
+    val unblockSuccess: LiveData<Event<Boolean>> get() = _unblockSuccess
 
     fun requestProfile(memberId: String) = viewModelScope.launch {
         requestOtherProfileUseCase(memberId = memberId).let { ApiResponse ->
@@ -144,6 +149,17 @@ class ProfileViewModel @Inject constructor(
                 is NetworkResponse.NetworkError -> { _blockSuccess.postValue(Event(false)) }
                 is NetworkResponse.ApiError -> { _blockSuccess.postValue(Event(false)) }
                 is NetworkResponse.UnknownError -> { _blockSuccess.postValue(Event(false)) }
+            }
+        }
+    }
+
+    fun requestUnblockMember(memberId: String) = viewModelScope.launch {
+        requestUnblockMemberUseCase(memberId).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> { _unblockSuccess.postValue(Event(true)) }
+                is NetworkResponse.NetworkError -> { _unblockSuccess.postValue(Event(false)) }
+                is NetworkResponse.ApiError -> { _unblockSuccess.postValue(Event(false)) }
+                is NetworkResponse.UnknownError -> { _unblockSuccess.postValue(Event(false)) }
             }
         }
     }

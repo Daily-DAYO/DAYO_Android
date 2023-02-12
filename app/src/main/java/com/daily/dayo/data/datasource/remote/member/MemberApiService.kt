@@ -76,4 +76,7 @@ interface MemberApiService {
 
     @POST("/api/v1/members/setting/changePassword")
     suspend fun requestSettingChangePassword(@Body body: ChangePasswordRequest): NetworkResponse<Void>
+
+    @GET("/api/v1/members/block")
+    suspend fun requestBlockList(): NetworkResponse<MemberBlockResponse>
 }

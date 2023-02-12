@@ -2,6 +2,7 @@ package com.daily.dayo.data.repository
 
 import com.daily.dayo.data.datasource.remote.block.BlockApiService
 import com.daily.dayo.data.datasource.remote.block.BlockRequest
+import com.daily.dayo.data.datasource.remote.block.UnblockRequest
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.repository.BlockRepository
 import javax.inject.Inject
@@ -12,4 +13,7 @@ class BlockRepositoryImpl @Inject constructor(
 
     override suspend fun requestBlockMember(memberId: String): NetworkResponse<Void> =
         blockApiService.requestBlockMember(BlockRequest(memberId = memberId))
+
+    override suspend fun requestUnblockMember(memberId: String): NetworkResponse<Void> =
+        blockApiService.requestUnblockMember(UnblockRequest(memberId = memberId))
 }
