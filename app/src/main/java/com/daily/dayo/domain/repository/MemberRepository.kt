@@ -37,6 +37,7 @@ interface MemberRepository {
     suspend fun requestCheckCurrentPassword(body: CheckPasswordRequest): NetworkResponse<Void>
     suspend fun requestChangePassword(body: ChangePasswordRequest): NetworkResponse<Void>
     suspend fun requestSettingChangePassword(body: ChangePasswordRequest): NetworkResponse<Void>
+    suspend fun requestBlockList(): NetworkResponse<MemberBlockResponse>
 
     // Firebase Messaging Service
     suspend fun getCurrentFcmToken(): String

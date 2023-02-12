@@ -8,4 +8,7 @@ interface BlockApiService {
 
     @POST("/api/v1/block")
     suspend fun requestBlockMember(@Body body: BlockRequest): NetworkResponse<Void>
+
+    @POST("/api/v1/block/cancel")
+    suspend fun requestUnblockMember(@Body body: UnblockRequest): NetworkResponse<Void>
 }
