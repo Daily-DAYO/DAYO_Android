@@ -4,7 +4,7 @@
     <translate
         android:fromXDelta="100%p"
         android:toXDelta="0%p"
-        android:duration="300"
+        android:duration="@android:integer/config_mediumAnimTime"
         android:repeatCount="0"
         android:fillAfter="true"/>
 </set>
