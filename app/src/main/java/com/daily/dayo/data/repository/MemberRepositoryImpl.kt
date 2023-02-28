@@ -85,6 +85,9 @@ class MemberRepositoryImpl @Inject constructor(
     override suspend fun requestSettingChangePassword(body: ChangePasswordRequest): NetworkResponse<Void> =
         memberApiService.requestSettingChangePassword(body)
 
+    override suspend fun requestBlockList(): NetworkResponse<MemberBlockResponse> =
+        memberApiService.requestBlockList()
+
     // Firebase Messaging Service
     override suspend fun getCurrentFcmToken(): String =
         FirebaseMessagingService().getCurrentToken()

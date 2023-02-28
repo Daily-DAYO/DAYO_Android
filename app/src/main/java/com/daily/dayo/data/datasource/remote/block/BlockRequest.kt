@@ -6,3 +6,8 @@ data class BlockRequest(
     @SerializedName("memberId")
     val memberId: String
 )
+
+data class UnblockRequest(
+    @SerializedName("memberId")
+    val memberId: String
+)

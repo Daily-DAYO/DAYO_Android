@@ -42,6 +42,7 @@ class SettingFragment : Fragment() {
         setContactButtonClickListener()
         setWithdrawButtonClickListener()
         setNotificationButtonClickListener()
+        setBlockButtonClickListener()
         return binding.root
     }
 
@@ -65,6 +66,12 @@ class SettingFragment : Fragment() {
     private fun setNotificationButtonClickListener() {
         binding.layoutSettingNotification.setOnDebounceClickListener {
             findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToSettingNotificationFragment())
+        }
+    }
+
+    private fun setBlockButtonClickListener() {
+        binding.layoutSettingBlock.setOnDebounceClickListener {
+            findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToSettingBlockFragment())
         }
     }
 
