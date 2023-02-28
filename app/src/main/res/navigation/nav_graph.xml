@@ -29,7 +29,11 @@
             app:destination="@+id/ProfileFragment" />
         <action
             android:id="@+id/action_homeFragment_to_searchFragment"
-            app:destination="@+id/SearchFragment" />
+            app:destination="@+id/SearchFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
         <action
             android:id="@+id/action_homeFragment_to_notificationFragment"
             app:destination="@+id/NotificationFragment" />
@@ -43,7 +47,11 @@
         <action
             android:id="@+id/action_searchFragment_to_searchResultFragment"
             app:destination="@id/SearchResultFragment"
-            app:popUpTo="@id/HomeFragment" />
+            app:popUpTo="@id/HomeFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
     </fragment>
 
     <fragment
@@ -72,9 +80,6 @@
             android:id="@+id/action_feedFragment_to_homeFragment"
             app:destination="@id/HomeFragment" />
         <action
-            android:id="@+id/action_feedFragment_to_searchFragment"
-            app:destination="@id/SearchFragment" />
-        <action
             android:id="@+id/action_feedFragment_to_writeFragment"
             app:destination="@id/WriteFragment"
             app:enterAnim="@anim/translate_bottom_up"
@@ -99,7 +104,11 @@
             app:destination="@id/PostOptionMineFragment" />
         <action
             android:id="@+id/action_feedFragment_to_searchResultFragment"
-            app:destination="@id/SearchResultFragment" />
+            app:destination="@id/SearchResultFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
     </fragment>
 
     <fragment
@@ -140,10 +149,18 @@
         tools:layout="@layout/fragment_write_option">
         <action
             android:id="@+id/action_writeOptionFragment_to_writeTagFragment"
-            app:destination="@id/WriteTagFragment" />
+            app:destination="@id/WriteTagFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
         <action
             android:id="@+id/action_writeOptionFragment_to_writeFolderFragment"
-            app:destination="@id/WriteFolderFragment" />
+            app:destination="@id/WriteFolderFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
     </dialog>
 
     <fragment
@@ -159,7 +176,11 @@
         tools:layout="@layout/fragment_write_folder">
         <action
             android:id="@+id/action_writeFolderFragment_to_folderAddFragment"
-            app:destination="@id/FolderAddFragment" />
+            app:destination="@id/FolderAddFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
     </fragment>
 
     <fragment
@@ -184,10 +205,18 @@
             app:destination="@id/PostOptionMineFragment" />
         <action
             android:id="@+id/action_postFragment_to_searchResultFragment"
-            app:destination="@id/SearchResultFragment" />
+            app:destination="@id/SearchResultFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
         <action
             android:id="@+id/action_postFragment_to_profileFragment"
-            app:destination="@+id/ProfileFragment" />
+            app:destination="@+id/ProfileFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
     </fragment>
     <dialog
         android:id="@+id/PostOptionFragment"
@@ -202,10 +231,18 @@
             app:argType="string" />
         <action
             android:id="@+id/action_postOptionFragment_to_reportPostFragment"
-            app:destination="@id/ReportPostFragment" />
+            app:destination="@id/ReportPostFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
         <action
             android:id="@+id/action_postOptionFragment_to_reportUserFragment"
-            app:destination="@id/ReportUserFragment" />
+            app:destination="@id/ReportUserFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
     </dialog>
 
     <fragment
@@ -240,12 +277,18 @@
             android:id="@+id/action_postOptionMineFragment_to_HomeFragment"
             app:destination="@+id/HomeFragment"
             app:popUpTo="@id/PostFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/translate_nothing"
+            app:exitAnim="@anim/translate_to_right_out" />
         <action
             android:id="@+id/action_postOptionMineFragment_to_writeFragment"
             app:destination="@id/WriteFragment"
             app:popUpTo="@id/PostFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
     </dialog>
 
     <fragment
@@ -267,19 +310,28 @@
             app:popExitAnim="@anim/translate_top_down" />
         <action
             android:id="@+id/action_profileFragment_to_followFragment"
-            app:destination="@id/FollowFragment" />
+            app:destination="@id/FollowFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
         <action
             android:id="@+id/action_profileFragment_to_profileEditFragment"
-            app:destination="@id/ProfileEditFragment" />
+            app:destination="@id/ProfileEditFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
         <action
             android:id="@+id/action_profileFragment_to_profileOptionFragment"
             app:destination="@id/ProfileOptionFragment" />
         <action
             android:id="@+id/action_profileFragment_to_folderFragment"
-            app:destination="@+id/FolderFragment" />
-        <action
-            android:id="@+id/action_profileFragment_to_homeFragment"
-            app:destination="@+id/HomeFragment" />
+            app:destination="@+id/FolderFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
         <action
             android:id="@+id/action_profileFragment_to_postFragment"
             app:destination="@id/PostFragment"
@@ -332,10 +384,17 @@
             app:argType="integer" />
         <action
             android:id="@+id/action_folderOptionFragment_to_profileFragment"
-            app:destination="@+id/ProfileFragment" />
+            app:destination="@+id/ProfileFragment"
+            app:popUpTo="@id/ProfileFragment"
+            app:enterAnim="@anim/translate_nothing"
+            app:exitAnim="@anim/translate_to_right_out" />
         <action
             android:id="@+id/action_folderOptionFragment_to_folderEditFragment"
-            app:destination="@+id/FolderEditFragment" />
+            app:destination="@+id/FolderEditFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
     </dialog>
 
     <dialog
@@ -386,13 +445,26 @@
         tools:layout="@layout/fragment_setting">
         <action
             android:id="@+id/action_settingFragment_to_settingChangePasswordCurrentFragment"
-            app:destination="@id/SettingChangePasswordCurrentFragment" />
+            app:destination="@id/SettingChangePasswordCurrentFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
         <action
             android:id="@+id/action_settingFragment_to_withdrawFragment"
-            app:destination="@id/WithdrawFragment" />
+            app:destination="@id/WithdrawFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
         <action
             android:id="@+id/action_settingFragment_to_settingNotificationFragment"
-            app:destination="@id/SettingNotificationFragment" />
+            app:destination="@id/SettingNotificationFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+
         <action
             android:id="@+id/action_settingFragment_to_settingBlockFragment"
             app:destination="@+id/SettingBlockFragment" />
@@ -411,7 +483,11 @@
         tools:layout="@layout/fragment_setting_change_password_current">
         <action
             android:id="@+id/action_settingChangePasswordCurrentFragment_to_settingChangePasswordNewFragment"
-            app:destination="@id/SettingChangePasswordNewFragment" />
+            app:destination="@id/SettingChangePasswordNewFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
     </fragment>
 
     <fragment
@@ -423,7 +499,11 @@
             android:id="@+id/action_settingChangePasswordNewFragment_to_settingFragment"
             app:destination="@id/SettingFragment"
             app:popUpTo="@id/SettingFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
     </fragment>
 
     <fragment
@@ -501,7 +581,11 @@
             app:argType="integer" />
         <action
             android:id="@+id/action_followFragment_to_profileFragment"
-            app:destination="@+id/ProfileFragment" />
+            app:destination="@+id/ProfileFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
     </fragment>
 
     <fragment
@@ -518,7 +602,11 @@
             app:popExitAnim="@anim/translate_top_down" />
         <action
             android:id="@+id/action_notificationFragment_to_profileFragment"
-            app:destination="@id/ProfileFragment" />
+            app:destination="@id/ProfileFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
         <action
             android:id="@+id/action_notificationFragment_to_postFragment"
             app:destination="@id/PostFragment"
