@@ -3,7 +3,9 @@ package com.daily.dayo.presentation.fragment.account.signup
 import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.ImageDecoder
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
@@ -39,6 +41,7 @@ import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
+import com.daily.dayo.common.ImageResizeUtil
 
 @AndroidEntryPoint
 class SignupEmailSetProfileFragment : Fragment() {
@@ -63,6 +66,7 @@ class SignupEmailSetProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSignupEmailSetProfileBinding.inflate(inflater, container, false)
+        initAlertDialog()
         setBackClickListener()
         setNextClickListener()
         setLimitEditTextInputType()
@@ -86,6 +90,11 @@ class SignupEmailSetProfileFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
+
+    private fun initAlertDialog() {
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
+        loadingAlertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
     private fun setTextEditorActionListener() {
@@ -286,7 +295,7 @@ class SignupEmailSetProfileFragment : Fragment() {
 
     private fun setNextClickListener() {
         binding.btnSignupEmailSetProfileNext.setOnDebounceClickListener {
-            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
+            showLoadingDialog()
             var profileImgFile: File? = null
             profileImgFile = if (this::userProfileImageString.isInitialized) {
                 setUploadImagePath(userProfileImageExtension)
@@ -355,5 +364,10 @@ class SignupEmailSetProfileFragment : Fragment() {
                 ).show()
             }
         }
+    }
+
+    private fun showLoadingDialog() {
+        LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
+        LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog)
     }
 }

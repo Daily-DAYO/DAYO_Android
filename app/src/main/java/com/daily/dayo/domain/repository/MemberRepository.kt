@@ -10,7 +10,7 @@ interface MemberRepository {
         email: String,
         nickname: String,
         password: String,
-        profileImg: MultipartBody.Part
+        profileImg: MultipartBody.Part?
     ): NetworkResponse<MemberSignupResponse>
 
     suspend fun requestUpdateMyProfile(

@@ -12,7 +12,7 @@ interface MemberApiService {
         @Part("email") email: String,
         @Part("nickname") nickname: String,
         @Part("password") password: String,
-        @Part profileImg: MultipartBody.Part
+        @Part profileImg: MultipartBody.Part?
     ): NetworkResponse<MemberSignupResponse>
 
     @Multipart

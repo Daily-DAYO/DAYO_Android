@@ -15,7 +15,7 @@ class MemberRepositoryImpl @Inject constructor(
         email: String,
         nickname: String,
         password: String,
-        profileImg: MultipartBody.Part
+        profileImg: MultipartBody.Part?
     ): NetworkResponse<MemberSignupResponse> =
         memberApiService.requestSignupEmail(
             email,
