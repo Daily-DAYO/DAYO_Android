@@ -278,8 +278,8 @@
                             android:textColor="@color/gray_1_313131"
                             android:textSize="13dp"
                             android:visibility="@{post.contents.length() == 0 ? View.GONE : View.VISIBLE}"
-                            app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintBottom_toTopOf="@id/layout_scroll_post_tag_list"
+                            app:layout_constraintTop_toTopOf="parent"
                             app:layout_goneMarginBottom="25dp"
                             tools:text="다이어리를 꾸며봤어요~! 블랙 앤 화이트로 꾸며봤습니다:) 일기를 써보았어요. 이러쿵 저러쿵 이러쿵 저러쿵 이러쿵 저러쿵 팔로잉 피드 게시글 내용입니다." />
 
@@ -293,8 +293,8 @@
                             android:overScrollMode="never"
                             android:scrollbars="none"
                             android:visibility="@{post.hashtags.size() > 0 ? View.VISIBLE : View.GONE}"
-                            app:layout_constraintTop_toBottomOf="@id/tv_post_description"
                             app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/tv_post_description"
                             tools:visibility="visible">
 
                             <com.google.android.flexbox.FlexboxLayout
@@ -337,14 +337,14 @@
                         android:id="@+id/tv_post_comment_empty"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:paddingVertical="17dp"
                         android:text="@string/post_comment_empty"
                         android:textColor="@color/gray_4_D3D2D2"
                         android:visibility="@{commentCount == 0 ? View.VISIBLE : View.GONE}"
-                        android:gravity="center"
-                        app:layout_constraintTop_toBottomOf="@id/view_post_content_comment_divider"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        tools:visibility="gone"/>
+                        app:layout_constraintTop_toBottomOf="@id/view_post_content_comment_divider"
+                        tools:visibility="gone" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.core.widget.NestedScrollView>
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -366,15 +366,14 @@
                 app:layout_constraintBottom_toTopOf="@id/img_post_comment_my_profile"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/img_post_comment_my_profile"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="18dp"
-                android:layout_marginTop="11dp"
-                android:layout_marginBottom="12dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_user_profile_image_empty"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -388,6 +387,7 @@
                 android:id="@+id/et_post_comment_description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginVertical="12dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="18dp"
                 android:background="@drawable/edittext_background_post_comment_write"
