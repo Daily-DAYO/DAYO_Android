@@ -43,6 +43,9 @@ class MemberRepositoryImpl @Inject constructor(
     override suspend fun requestCheckEmailDuplicate(email: String): NetworkResponse<Void> =
         memberApiService.requestCheckEmailDuplicate(email)
 
+    override suspend fun requestCheckNicknameDuplicate(nickname: String): NetworkResponse<Void> =
+        memberApiService.requestCheckNicknameDuplicate(nickname)
+
     override suspend fun requestCertificateEmail(email: String): NetworkResponse<MemberAuthCodeResponse> =
         memberApiService.requestCertificateEmail(email)
 
