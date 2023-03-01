@@ -35,6 +35,9 @@ interface MemberApiService {
     @GET("/api/v1/members/duplicate/email/{email}")
     suspend fun requestCheckEmailDuplicate(@Path("email") email: String): NetworkResponse<Void>
 
+    @GET("/api/v1/members/check")
+    suspend fun requestCheckNicknameDuplicate(@Query("nickname") content: String): NetworkResponse<Void>
+
     @GET("/api/v1/members/signUp/{email}")
     suspend fun requestCertificateEmail(@Path("email") email: String): NetworkResponse<MemberAuthCodeResponse>
 

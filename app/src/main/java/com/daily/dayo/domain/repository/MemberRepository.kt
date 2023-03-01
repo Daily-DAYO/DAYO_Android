@@ -23,6 +23,7 @@ interface MemberRepository {
     suspend fun requestLoginEmail(body: MemberSignInRequest): NetworkResponse<MemberSignInResponse>
     suspend fun requestMemberInfo(): NetworkResponse<MemberInfoResponse>
     suspend fun requestCheckEmailDuplicate(email: String): NetworkResponse<Void>
+    suspend fun requestCheckNicknameDuplicate(nickname: String): NetworkResponse<Void>
     suspend fun requestCertificateEmail(email: String): NetworkResponse<MemberAuthCodeResponse>
     suspend fun requestRefreshToken(): NetworkResponse<RefreshTokenResponse>
     suspend fun requestDeviceToken(body: DeviceTokenRequest): NetworkResponse<Void>

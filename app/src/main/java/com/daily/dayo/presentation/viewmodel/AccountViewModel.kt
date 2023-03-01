@@ -24,6 +24,7 @@ class AccountViewModel @Inject constructor(
     private val requestMemberInfoUseCase: RequestMemberInfoUseCase,
     private val requestSignUpEmailUseCase: RequestSignUpEmailUseCase,
     private val requestCheckEmailDuplicateUseCase: RequestCheckEmailDuplicateUseCase,
+    private val requestCheckNicknameDuplicateUseCase: RequestCheckNicknameDuplicateUseCase,
     private val requestCertificateEmailUseCase: RequestCertificateEmailUseCase,
     private val requestDeviceTokenUseCase: RequestDeviceTokenUseCase,
     private val registerFcmTokenUseCase: RegisterFcmTokenUseCase,
@@ -47,6 +48,9 @@ class AccountViewModel @Inject constructor(
 
     private val _isEmailDuplicate = MutableLiveData<Boolean>()
     val isEmailDuplicate: LiveData<Boolean> get() = _isEmailDuplicate
+
+    private val _isNicknameDuplicate = MutableLiveData<Boolean>()
+    val isNicknameDuplicate: LiveData<Boolean> get() = _isNicknameDuplicate
 
     private val _isCertificateEmailSend = MutableLiveData<Boolean>()
     val isCertificateEmailSend: LiveData<Boolean> get() = _isCertificateEmailSend
@@ -189,6 +193,25 @@ class AccountViewModel @Inject constructor(
                 is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
                     _isEmailDuplicate.postValue(false)
+                }
+                else -> {}
+            }
+        }
+    }
+
+    fun requestCheckNicknameDuplicate(nickname: String) = viewModelScope.launch(Dispatchers.IO) {
+        requestCheckNicknameDuplicateUseCase(nickname).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _isNicknameDuplicate.postValue(true)
+                }
+                is NetworkResponse.NetworkError -> {
+                    _isErrorExceptionOccurred.postValue(Event(true))
+                    _isNicknameDuplicate.postValue(false)
+                }
+                is NetworkResponse.ApiError -> {
+                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                    _isNicknameDuplicate.postValue(false)
                 }
                 else -> {}
             }

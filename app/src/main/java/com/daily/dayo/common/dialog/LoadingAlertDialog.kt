@@ -21,7 +21,7 @@ object LoadingAlertDialog {
             )
         val alertDialog = AlertDialog.Builder(context)
             .setView(dialogView)
-            .setCancelable(true)
+            .setCancelable(false)
             .create()
         return alertDialog
     }
