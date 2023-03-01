@@ -18,15 +18,18 @@ class RequestSignUpEmailUseCase @Inject constructor(
         password: String,
         profileImg: File?
     ): NetworkResponse<MemberSignupResponse> {
-        val uploadFile: MultipartBody.Part
+        val uploadFile: MultipartBody.Part?
         val fileNameDivideList: List<String> = profileImg.toString().split("/")
-        val requestBodyFile: RequestBody =
+        val requestBodyFile: RequestBody? = if (profileImg != null) {
             RequestBody.create("image/*".toMediaTypeOrNull(), profileImg!!)
-        uploadFile = MultipartBody.Part.createFormData(
-            "profileImg",
-            fileNameDivideList[fileNameDivideList.size - 1],
-            requestBodyFile
-        )
+        } else null
+        uploadFile = if (requestBodyFile!= null) {
+            MultipartBody.Part.createFormData(
+                "profileImg",
+                fileNameDivideList[fileNameDivideList.size - 1],
+                requestBodyFile
+            )
+        } else null
         return memberRepository.requestSignupEmail(
             email = email,
             nickname = nickname,

@@ -3,7 +3,9 @@ package com.daily.dayo.presentation.fragment.account.signup
 import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.ImageDecoder
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
@@ -39,6 +41,7 @@ import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
+import com.daily.dayo.common.ImageResizeUtil
 
 @AndroidEntryPoint
 class SignupEmailSetProfileFragment : Fragment() {
@@ -63,6 +66,7 @@ class SignupEmailSetProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSignupEmailSetProfileBinding.inflate(inflater, container, false)
+        initAlertDialog()
         setBackClickListener()
         setNextClickListener()
         setLimitEditTextInputType()
@@ -86,6 +90,11 @@ class SignupEmailSetProfileFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
+
+    private fun initAlertDialog() {
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
+        loadingAlertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
     private fun setTextEditorActionListener() {
@@ -130,24 +139,27 @@ class SignupEmailSetProfileFragment : Fragment() {
                                 s.toString().trim()
                             )
                         ) { // 닉네임 양식 검사
-                            if (true) { // TODO : 닉네임 중복검사 통과 코드 작성
-                                setEditTextTheme(
-                                    getString(R.string.my_profile_edit_nickname_message_success),
-                                    true
-                                )
-                                ButtonActivation.setSignupButtonActive(
-                                    requireContext(),
-                                    binding.btnSignupEmailSetProfileNext
-                                )
-                            } else {
-                                setEditTextTheme(
-                                    getString(R.string.my_profile_edit_nickname_message_duplicate_fail),
-                                    false
-                                )
-                                ButtonActivation.setSignupButtonInactive(
-                                    requireContext(),
-                                    binding.btnSignupEmailSetProfileNext
-                                )
+                            loginViewModel.requestCheckNicknameDuplicate(binding.etSignupEmailSetProfileNickname.text.toString().trim())
+                            loginViewModel.isNicknameDuplicate.observe(viewLifecycleOwner) { isDuplicate ->
+                                if(isDuplicate) {
+                                    setEditTextTheme(
+                                        getString(R.string.my_profile_edit_nickname_message_success),
+                                        true
+                                    )
+                                    ButtonActivation.setSignupButtonActive(
+                                        requireContext(),
+                                        binding.btnSignupEmailSetProfileNext
+                                    )
+                                } else {
+                                    setEditTextTheme(
+                                        getString(R.string.my_profile_edit_nickname_message_duplicate_fail),
+                                        false
+                                    )
+                                    ButtonActivation.setSignupButtonInactive(
+                                        requireContext(),
+                                        binding.btnSignupEmailSetProfileNext
+                                    )
+                                }
                             }
                         } else {
                             setEditTextTheme(
@@ -286,7 +298,7 @@ class SignupEmailSetProfileFragment : Fragment() {
 
     private fun setNextClickListener() {
         binding.btnSignupEmailSetProfileNext.setOnDebounceClickListener {
-            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
+            showLoadingDialog()
             var profileImgFile: File? = null
             profileImgFile = if (this::userProfileImageString.isInitialized) {
                 setUploadImagePath(userProfileImageExtension)
@@ -355,5 +367,10 @@ class SignupEmailSetProfileFragment : Fragment() {
                 ).show()
             }
         }
+    }
+
+    private fun showLoadingDialog() {
+        LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
+        LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog)
     }
 }
