@@ -38,6 +38,11 @@ import com.daily.dayo.presentation.fragment.onboarding.OnBoardingSecondFragment
 import com.daily.dayo.presentation.fragment.onboarding.OnBoardingThirdFragment
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
 import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.KakaoSdk
+import com.kakao.sdk.common.model.AuthError
+import com.kakao.sdk.common.model.AuthErrorCause
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -74,9 +79,25 @@ class LoginFragment : Fragment() {
     private fun setKakaoLoginButtonClickListener() {
         binding.btnLoginKakao.setOnDebounceClickListener {
             LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
-
             if (UserApiClient.instance.isKakaoTalkLoginAvailable(requireContext())) {
-                UserApiClient.instance.loginWithKakaoTalk(requireContext(), callback = callback)
+                UserApiClient.instance.loginWithKakaoTalk(requireContext()) { token, error ->
+                    if (error != null) {
+                        Log.e("kakao login", "카카오톡으로 로그인 실패", error)
+                        if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                            LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+                            return@loginWithKakaoTalk
+                        }
+
+                        UserApiClient.instance.loginWithKakaoAccount(
+                            requireContext(),
+                            callback = callback
+                        )
+                    } else if (token != null) {
+                        Log.i("kakao login", "카카오톡으로 로그인 성공 ${token.accessToken}")
+                        loginViewModel.requestLoginKakao(accessToken = token.accessToken)
+                        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+                    }
+                }
             } else {
                 UserApiClient.instance.loginWithKakaoAccount(requireContext(), callback = callback)
             }
@@ -84,14 +105,38 @@ class LoginFragment : Fragment() {
     }
 
     val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
-        LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
         if (error != null) {
-            LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
-            Log.e(ContentValues.TAG, "카카오 로그인 실패", error)
+            when (error) {
+                is ClientError ->
+                    when (error.reason) {
+                        ClientErrorCause.Cancelled ->
+                            Log.d("kakao login", "취소됨 (back button)", error)
+                        ClientErrorCause.NotSupported ->
+                            Log.e("kakao login", "지원되지 않음 (카톡 미설치)", error)
+                        else ->
+                            Log.e("kakao login", "기타 클라이언트 에러", error)
+                    }
+                is AuthError ->
+                    when (error.reason) {
+                        AuthErrorCause.AccessDenied ->
+                            Log.d("kakao login", "취소됨 (동의 취소)", error)
+                        AuthErrorCause.Misconfigured ->
+                            Log.e(
+                                "kakao login",
+                                "개발자사이트 앱 설정에 키해시를 등록하세요. 현재 값: ${KakaoSdk.keyHash}",
+                                error
+                            )
+                        else ->
+                            Log.e("kakao login", "기타 인증 에러", error)
+                    }
+                else ->
+                    Log.e("kakao login", "기타 에러 (네트워크 장애 등..)", error)
+            }
         } else if (token != null) {
-            Log.i(ContentValues.TAG, "카카오 로그인 성공 ${token.accessToken}")
+            Log.i("kakao login", "로그인 성공 ${token.accessToken}")
             loginViewModel.requestLoginKakao(accessToken = token.accessToken)
         }
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun loginSuccess() {
