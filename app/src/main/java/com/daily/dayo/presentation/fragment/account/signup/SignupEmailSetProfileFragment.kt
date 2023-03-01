@@ -138,25 +138,28 @@ class SignupEmailSetProfileFragment : Fragment() {
                                 "^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9|]+\$",
                                 s.toString().trim()
                             )
-                        ) { // 닉네임 양식 검사
-                            if (true) { // TODO : 닉네임 중복검사 통과 코드 작성
-                                setEditTextTheme(
-                                    getString(R.string.my_profile_edit_nickname_message_success),
-                                    true
-                                )
-                                ButtonActivation.setSignupButtonActive(
-                                    requireContext(),
-                                    binding.btnSignupEmailSetProfileNext
-                                )
-                            } else {
-                                setEditTextTheme(
-                                    getString(R.string.my_profile_edit_nickname_message_duplicate_fail),
-                                    false
-                                )
-                                ButtonActivation.setSignupButtonInactive(
-                                    requireContext(),
-                                    binding.btnSignupEmailSetProfileNext
-                                )
+                        ) {
+                            loginViewModel.requestCheckNicknameDuplicate(binding.etSignupEmailSetProfileNickname.text.toString().trim())
+                            loginViewModel.isNicknameDuplicate.observe(viewLifecycleOwner) { isDuplicate ->
+                                if(isDuplicate) {
+                                    setEditTextTheme(
+                                        getString(R.string.my_profile_edit_nickname_message_success),
+                                        true
+                                    )
+                                    ButtonActivation.setSignupButtonActive(
+                                        requireContext(),
+                                        binding.btnSignupEmailSetProfileNext
+                                    )
+                                } else {
+                                    setEditTextTheme(
+                                        getString(R.string.my_profile_edit_nickname_message_duplicate_fail),
+                                        false
+                                    )
+                                    ButtonActivation.setSignupButtonInactive(
+                                        requireContext(),
+                                        binding.btnSignupEmailSetProfileNext
+                                    )
+                                }
                             }
                         } else {
                             setEditTextTheme(
