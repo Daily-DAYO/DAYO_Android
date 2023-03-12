@@ -22,7 +22,7 @@
 ## Installation
 Clone this repository and import into **Android Studio**
 ```bash
-git clone git@github.com:BaedalMate/BaedalMate_Android.git
+git clone git@github.com:Daily-DAYO/DAYO_Android.git
 ```
 
 ## Application Version
