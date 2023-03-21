@@ -1,5 +1,7 @@
 package com.daily.dayo.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import com.daily.dayo.data.datasource.remote.post.*
 import com.daily.dayo.domain.model.Category
 import com.daily.dayo.domain.model.NetworkResponse
@@ -37,12 +39,17 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun requestDayoPickPostListCategory(category: Category): NetworkResponse<DayoPickPostListResponse> =
         postApiService.requestDayoPickPostListCategory(category)
 
-    override suspend fun requestFeedList(): NetworkResponse<ListFeedResponse> =
-        postApiService.requestFeedList()
-
     override suspend fun requestPostDetail(postId: Int): NetworkResponse<DetailPostResponse> =
         postApiService.requestPostDetail(postId)
 
     override suspend fun requestDeletePost(postId: Int): NetworkResponse<Void> =
         postApiService.requestDeletePost(postId)
+
+    override fun requestFeedList() = Pager(PagingConfig(pageSize = FEED_PAGE_SIZE)) {
+        FeedPagingSource(postApiService, FEED_PAGE_SIZE)
+    }.flow
+
+    companion object {
+        private const val FEED_PAGE_SIZE = 10
+    }
 }

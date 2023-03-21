@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.daily.dayo.common.Resource
 import com.daily.dayo.data.mapper.toSearch
 import com.daily.dayo.domain.model.NetworkResponse
@@ -27,16 +28,7 @@ class SearchViewModel @Inject constructor(
 
     fun getSearchKeywordRecent() = requestSearchKeywordRecentUseCase()
 
-    fun searchKeyword(keyword: String) = viewModelScope.launch {
-        requestSearchKeywordUseCase(keyword = keyword)?.let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> { _searchTagList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toSearch() })) }
-                is NetworkResponse.NetworkError -> { _searchTagList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                is NetworkResponse.ApiError -> { _searchTagList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
-                is NetworkResponse.UnknownError -> { _searchTagList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
-            }
-        }
-    }
+    fun searchKeyword(keyword: String) = requestSearchKeywordUseCase(keyword = keyword).cachedIn(viewModelScope)
 
     fun deleteSearchKeywordRecent(keyword: String) =
         deleteSearchKeywordRecentUseCase(keyword)

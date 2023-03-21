@@ -5,7 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
@@ -13,14 +13,10 @@ import com.daily.dayo.common.GlideLoadUtil
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemProfilePostBinding
 import com.daily.dayo.domain.model.BookmarkPost
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class ProfileBookmarkPostListAdapter(private val requestManager: RequestManager) :
-    RecyclerView.Adapter<ProfileBookmarkPostListAdapter.ProfileBookmarkPostListViewHolder>() {
+    PagingDataAdapter<BookmarkPost, ProfileBookmarkPostListAdapter.ProfileBookmarkPostListViewHolder>(diffCallback) {
 
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<BookmarkPost>() {
@@ -32,9 +28,6 @@ class ProfileBookmarkPostListAdapter(private val requestManager: RequestManager)
         }
     }
 
-    private val differ = AsyncListDiffer(this, diffCallback)
-    fun submitList(list: List<BookmarkPost>) = differ.submitList(list)
-
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -45,12 +38,7 @@ class ProfileBookmarkPostListAdapter(private val requestManager: RequestManager)
     }
 
     override fun onBindViewHolder(holder: ProfileBookmarkPostListViewHolder, position: Int) {
-        val item = differ.currentList[position]
-        holder.bind(item)
-    }
-
-    override fun getItemCount(): Int {
-        return differ.currentList.size
+        holder.bind(getItem(position))
     }
 
     interface OnItemClickListener {
@@ -65,7 +53,7 @@ class ProfileBookmarkPostListAdapter(private val requestManager: RequestManager)
     inner class ProfileBookmarkPostListViewHolder(private val binding: ItemProfilePostBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(bookmarkPost: BookmarkPost) {
+        fun bind(bookmarkPost: BookmarkPost?) {
             val layoutParams = ViewGroup.MarginLayoutParams(
                 ViewGroup.MarginLayoutParams.WRAP_CONTENT,
                 ViewGroup.MarginLayoutParams.WRAP_CONTENT
@@ -79,13 +67,13 @@ class ProfileBookmarkPostListAdapter(private val requestManager: RequestManager)
 
             CoroutineScope(Dispatchers.Main).launch {
                 val userThumbnailImgBitmap: Bitmap?
-                if(bookmarkPost.preLoadThumbnail == null) {
+                if (bookmarkPost?.preLoadThumbnail == null) {
                     userThumbnailImgBitmap = withContext(Dispatchers.IO) {
                         GlideLoadUtil.loadImageBackground(
                             requestManager = requestManager,
                             width = layoutParams.width,
                             height = layoutParams.width,
-                            imgName = bookmarkPost.thumbnailImage
+                            imgName = bookmarkPost?.thumbnailImage ?: ""
                         )
                     }
                 } else {
@@ -113,7 +101,9 @@ class ProfileBookmarkPostListAdapter(private val requestManager: RequestManager)
             val pos = adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
                 itemView.setOnDebounceClickListener {
-                    listener?.onItemClick(itemView, bookmarkPost, pos)
+                    if (bookmarkPost != null) {
+                        listener?.onItemClick(itemView, bookmarkPost, pos)
+                    }
                 }
             }
         }

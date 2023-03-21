@@ -8,8 +8,8 @@
         <import type="android.view.View" />
 
         <variable
-            name="bookmarkCount"
-            type="Integer" />
+            name="isEmpty"
+            type="boolean" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -27,7 +27,7 @@
                 android:layout_marginTop="69dp"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:visibility="@{bookmarkCount == 0 ? View.VISIBLE : View.GONE}"
+                android:visibility="@{isEmpty ? View.VISIBLE : View.GONE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -56,7 +56,7 @@
                 android:clipToPadding="false"
                 android:overScrollMode="never"
                 android:paddingTop="30dp"
-                android:visibility="@{bookmarkCount == 0 ? View.GONE : View.VISIBLE}"
+                android:visibility="@{isEmpty ? View.GONE : View.VISIBLE}"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

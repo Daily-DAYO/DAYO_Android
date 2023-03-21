@@ -1,10 +1,7 @@
 package com.daily.dayo.data.datasource.remote.bookmark
 
 import com.daily.dayo.domain.model.NetworkResponse
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface BookmarkApiService {
 
@@ -15,5 +12,5 @@ interface BookmarkApiService {
     suspend fun requestDeleteBookmarkPost(@Path("postId") postId: Int): NetworkResponse<Void>
 
     @GET("/api/v1/bookmark/list")
-    suspend fun requestAllMyBookmarkPostList(): NetworkResponse<ListAllMyBookmarkPostResponse>
+    suspend fun requestAllMyBookmarkPostList(@Query("end") end: Int): NetworkResponse<ListAllMyBookmarkPostResponse>
 }

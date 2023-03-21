@@ -1,10 +1,7 @@
 package com.daily.dayo.data.datasource.remote.heart
 
 import com.daily.dayo.domain.model.NetworkResponse
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface HeartApiService {
 
@@ -15,5 +12,5 @@ interface HeartApiService {
     suspend fun requestUnlikePost(@Path("postId") postId: Int): NetworkResponse<Void>
 
     @GET("/api/v1/heart/list")
-    suspend fun requestAllMyLikePostList(): NetworkResponse<ListAllMyHeartPostResponse>
+    suspend fun requestAllMyLikePostList(@Query("end") end: Int): NetworkResponse<ListAllMyHeartPostResponse>
 }
