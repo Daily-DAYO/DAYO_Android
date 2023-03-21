@@ -8,8 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.navigation.Navigation
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class FeedListAdapter(private val requestManager: RequestManager) :
-    ListAdapter<Post, FeedListAdapter.FeedListViewHolder>(diffCallback) {
+    PagingDataAdapter<Post, FeedListAdapter.FeedListViewHolder>(diffCallback) {
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Post>() {
             override fun areItemsTheSame(oldItem: Post, newItem: Post) =
@@ -51,6 +51,11 @@ class FeedListAdapter(private val requestManager: RequestManager) :
         this.listener = listener
     }
 
+    fun updateItemAtPosition(position: Int, newPost: Post) {
+        getItem(position).run { newPost }
+        notifyItemChanged(position)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedListViewHolder {
         return FeedListViewHolder(
             ItemFeedPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -58,24 +63,19 @@ class FeedListAdapter(private val requestManager: RequestManager) :
     }
 
     override fun onBindViewHolder(holder: FeedListViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.bind(item)
-    }
-
-    override fun submitList(list: MutableList<Post>?) {
-        super.submitList(list?.let { ArrayList(it) })
+        holder.bind(getItem(position))
     }
 
     inner class FeedListViewHolder(private val binding: ItemFeedPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(post: Post) {
+        fun bind(post: Post?) {
             binding.post = post
             binding.heartCountStr =
-                if (post.heartCount != null) convertCountPlace(post.heartCount) else "0"
+                if (post?.heartCount != null) convertCountPlace(post.heartCount ?: 0) else "0"
             binding.commentCountStr =
-                if (post.commentCount != null) convertCountPlace(post.commentCount) else "0"
-            binding.categoryKR = post.category?.let { categoryKR(it) }
+                if (post?.commentCount != null) convertCountPlace(post.commentCount) else "0"
+            binding.categoryKR = post?.category?.let { categoryKR(it) }
             CoroutineScope(Dispatchers.Main).launch {
                 val postImgBitmap: Bitmap?
                 val userThumbnailImgBitmap: Bitmap?
@@ -84,7 +84,7 @@ class FeedListAdapter(private val requestManager: RequestManager) :
                         requestManager = requestManager,
                         width = binding.imgFeedPost.width,
                         height = binding.imgFeedPost.width,
-                        imgName = post.thumbnailImage ?: ""
+                        imgName = post?.thumbnailImage ?: ""
                     )
                 }
                 userThumbnailImgBitmap = withContext(Dispatchers.IO) {
@@ -92,7 +92,7 @@ class FeedListAdapter(private val requestManager: RequestManager) :
                         requestManager = requestManager,
                         width = binding.imgFeedPostUserProfile.width,
                         height = binding.imgFeedPostUserProfile.height,
-                        imgName = post.userProfileImage ?: ""
+                        imgName = post?.userProfileImage ?: ""
                     )
                 }
                 loadImageView(
@@ -111,10 +111,10 @@ class FeedListAdapter(private val requestManager: RequestManager) :
                 )
             }
 
-            val isMine = (post.memberId == DayoApplication.preferences.getCurrentUser().memberId)
+            val isMine = (post?.memberId == DayoApplication.preferences.getCurrentUser().memberId)
             setPostOptionClickListener(
                 isMine = isMine,
-                postId = post.postId!!,
+                postId = post?.postId!!,
                 memberId = post.memberId!!
             )
             setOnUserProfileClickListener(postMemberId = post.memberId)

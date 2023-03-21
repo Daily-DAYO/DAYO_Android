@@ -1,28 +1,21 @@
 package com.daily.dayo.presentation.fragment.mypage.profile
 
-import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
-import com.daily.dayo.common.GlideLoadUtil
-import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentProfileBookmarkPostListBinding
 import com.daily.dayo.domain.model.BookmarkPost
 import com.daily.dayo.presentation.adapter.ProfileBookmarkPostListAdapter
 import com.daily.dayo.presentation.viewmodel.ProfileViewModel
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ProfileBookmarkPostListFragment : Fragment() {
     private var binding by autoCleared<FragmentProfileBookmarkPostListBinding>()
@@ -42,70 +35,44 @@ class ProfileBookmarkPostListFragment : Fragment() {
         binding = FragmentProfileBookmarkPostListBinding.inflate(inflater, container, false)
         setRvProfileLikePostListAdapter()
         setProfileLikePostList()
-        loadingPost()
+        setAdapterLoadStateListener()
         return binding.root
     }
 
     private fun setRvProfileLikePostListAdapter() {
         profileBookmarkPostListAdapter = ProfileBookmarkPostListAdapter(requestManager = glideRequestManager)
         binding.rvProfileBookmarkPost.adapter = profileBookmarkPostListAdapter
-        profileBookmarkPostListAdapter.setOnItemClickListener(object : ProfileBookmarkPostListAdapter.OnItemClickListener{
+        profileBookmarkPostListAdapter.setOnItemClickListener(object : ProfileBookmarkPostListAdapter.OnItemClickListener {
             override fun onItemClick(v: View, bookmarkPost: BookmarkPost, pos: Int) {
-                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToPostFragment(
-                    bookmarkPost.postId))
+                findNavController().navigate(
+                    ProfileFragmentDirections.actionProfileFragmentToPostFragment(
+                        bookmarkPost.postId
+                    )
+                )
             }
         })
     }
 
-    private fun setProfileLikePostList(){
-        profileViewModel.requestAllMyBookmarkPostList()
-        profileViewModel.bookmarkPostList.observe(viewLifecycleOwner) {
-            when(it.status){
-                Status.SUCCESS -> {
-                    it.data?.let { bookmarkPostList ->
-                        loadPostThumbnail(bookmarkPostList)
-                    }
-                }
+    private fun setProfileLikePostList() {
+        lifecycleScope.launchWhenResumed {
+            profileViewModel.requestAllMyBookmarkPostList().collect {
+                profileBookmarkPostListAdapter.submitData(it)
             }
         }
     }
 
-
-    private fun loadPostThumbnail(postList: List<BookmarkPost>) {
-        val thumbnailImgList = emptyList<Bitmap>().toMutableList()
-
-        CoroutineScope(Dispatchers.Main).launch {
-            for (i in 0 until (if (postList.size >= 6) 6 else postList.size)) {
-                thumbnailImgList.add(withContext(Dispatchers.IO) {
-                    GlideLoadUtil.loadImageBackground(
-                        context = requireContext(),
-                        height = 158,
-                        width = 158,
-                        imgName = postList[i].thumbnailImage
-                    )
-                })
-            }
-        }.invokeOnCompletion { throwable ->
-            when (throwable) {
-                is CancellationException -> Log.e("Image Loading", "CANCELLED")
-                null -> {
-                    var loadedPostList = postList.toMutableList()
-                    for (i in 0 until (if (postList.size >= 8) 8 else postList.size)) {
-                        loadedPostList[i].preLoadThumbnail = thumbnailImgList[i]
-                    }
-                    binding.bookmarkCount = postList.size
-                    profileBookmarkPostListAdapter.submitList(postList.toMutableList())
+    private fun setAdapterLoadStateListener() {
+        var isInitialLoad = false
+        profileBookmarkPostListAdapter.addLoadStateListener { loadState ->
+            if (loadState.refresh is LoadState.NotLoading && !isInitialLoad) {
+                val isListEmpty = profileBookmarkPostListAdapter.itemCount == 0
+                binding.isEmpty = isListEmpty
+                if (isListEmpty || loadState.append is LoadState.NotLoading) {
                     completeLoadPost()
-                    thumbnailImgList.clear()
+                    isInitialLoad = true
                 }
             }
         }
-    }
-
-    private fun loadingPost() {
-        binding.layoutProfileBookmarkPostShimmer.startShimmer()
-        binding.layoutProfileBookmarkPostShimmer.visibility = View.VISIBLE
-        binding.rvProfileBookmarkPost.visibility = View.INVISIBLE
     }
 
     private fun completeLoadPost() {

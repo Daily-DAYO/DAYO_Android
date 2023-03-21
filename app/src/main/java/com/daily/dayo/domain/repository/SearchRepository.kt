@@ -1,12 +1,12 @@
 package com.daily.dayo.domain.repository
 
-import com.daily.dayo.data.datasource.remote.search.SearchResultResponse
-import com.daily.dayo.domain.model.NetworkResponse
+import androidx.paging.PagingData
+import com.daily.dayo.domain.model.Search
+import kotlinx.coroutines.flow.Flow
 
 interface SearchRepository {
-
-    suspend fun requestSearchTag(tag: String): NetworkResponse<SearchResultResponse>
-    suspend fun requestSearchKeyword(keyword: String): NetworkResponse<SearchResultResponse>
+    fun requestSearchKeyword(keyword: String): Flow<PagingData<Search>>
+    fun requestSearchTag(tag: String): Flow<PagingData<Search>>
     fun requestSearchKeywordRecentList(): ArrayList<String>
     fun clearSearchKeywordRecent()
     fun deleteSearchKeywordRecent(keyword: String)

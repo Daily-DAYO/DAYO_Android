@@ -8,13 +8,12 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
-import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFeedBinding
@@ -23,7 +22,6 @@ import com.daily.dayo.presentation.adapter.FeedListAdapter
 import com.daily.dayo.presentation.viewmodel.FeedViewModel
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.launch
 
 class FeedFragment : Fragment() {
     private var binding by autoCleared<FragmentFeedBinding>()
@@ -43,6 +41,7 @@ class FeedFragment : Fragment() {
         binding = FragmentFeedBinding.inflate(inflater, container, false)
         setRvFeedListAdapter()
         setFeedPostList()
+        setAdapterLoadStateListener()
         setFeedPostClickListener()
         setFeedEmptyButtonClickListener()
         setFeedRefreshListener()
@@ -50,14 +49,9 @@ class FeedFragment : Fragment() {
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        feedViewModel.requestFeedList()
-    }
-
     private fun setFeedRefreshListener() {
         binding.swipeRefreshLayoutFeed.setOnRefreshListener {
-            feedViewModel.requestFeedList()
+            feedListAdapter.refresh()
         }
     }
 
@@ -67,27 +61,24 @@ class FeedFragment : Fragment() {
     }
 
     private fun setFeedPostList() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            feedViewModel.feedList.observe(viewLifecycleOwner, Observer {
-                when (it.status) {
-                    Status.SUCCESS -> {
-                        it.data?.let { feedList ->
-                            binding.swipeRefreshLayoutFeed.isRefreshing = false
-                            binding.feedCount = feedList.size
-                            feedListAdapter.submitList(feedList.toMutableList())
-                        }
-                    }
-                    Status.LOADING -> {
-                    }
-                    Status.ERROR -> {
-
-                    }
-                }
-            })
+        lifecycleScope.launchWhenResumed {
+            feedViewModel.requestFeedList().collect {
+                binding.swipeRefreshLayoutFeed.isRefreshing = false
+                feedListAdapter.submitData(it)
+            }
         }
     }
 
-    private fun setFeedEmptyButtonClickListener(){
+    private fun setAdapterLoadStateListener() {
+        feedListAdapter.addLoadStateListener { loadState ->
+            if (loadState.refresh is LoadState.NotLoading) {
+                val isListEmpty = feedListAdapter.itemCount == 0
+                binding.isEmpty = isListEmpty
+            }
+        }
+    }
+
+    private fun setFeedEmptyButtonClickListener() {
         binding.btnFeedEmpty.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_homeFragment)
         }
@@ -123,7 +114,12 @@ class FeedFragment : Fragment() {
                 when (throwable) {
                     is CancellationException -> Log.e("Post Like Click", "CANCELLED")
                     null -> {
-                        feedViewModel.requestFeedList()
+                        val heartUpdate = post.heart.not()
+                        val heartCountUpdate = if (heartUpdate) post.heartCount.plus(1) else post.heartCount.minus(1)
+                        feedListAdapter.updateItemAtPosition(position, post.apply {
+                            heart = heartUpdate
+                            heartCount = heartCountUpdate
+                        })
                     }
                 }
             }
@@ -131,6 +127,7 @@ class FeedFragment : Fragment() {
     }
 
     private fun setFeedPostBookmarkClickListener(button: ImageButton, post: Post, position: Int) {
+        if (post.bookmark == null) return
         if (!post.bookmark!!) {
             feedViewModel.requestBookmarkPost(postId = post.postId!!)
         } else {
@@ -140,7 +137,10 @@ class FeedFragment : Fragment() {
                 when (throwable) {
                     is CancellationException -> Log.e("Post Bookmark Click", "CANCELLED")
                     null -> {
-                        feedViewModel.requestFeedList()
+                        val bookmarkUpdate = post.bookmark?.not()
+                        feedListAdapter.updateItemAtPosition(position, post.apply {
+                            bookmark = bookmarkUpdate
+                        })
                     }
                 }
             }

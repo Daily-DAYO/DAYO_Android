@@ -12,8 +12,8 @@ import com.daily.dayo.domain.model.Folder
 
 class WriteFolderAdapter(
     private val onFolderClicked: (Folder) -> Unit,
-    private val selectedFolderId:String
-): ListAdapter<Folder, WriteFolderAdapter.WriteFolderViewHolder>(diffCallback) {
+    private val selectedFolderId: String
+) : ListAdapter<Folder, WriteFolderAdapter.WriteFolderViewHolder>(diffCallback) {
 
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Folder>() {
@@ -31,7 +31,7 @@ class WriteFolderAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WriteFolderViewHolder {
         return WriteFolderViewHolder(
-            ItemFolderListBinding.inflate(LayoutInflater.from(parent.context),parent, false),
+            ItemFolderListBinding.inflate(LayoutInflater.from(parent.context), parent, false),
             onFolderClicked
         )
     }
@@ -47,13 +47,13 @@ class WriteFolderAdapter(
         fun bind(folder: Folder) {
             binding.folder = folder
             binding.isChangeEnable = false
-            if(selectedFolderId!="" && selectedFolderId.toInt() == folder.folderId)
+            if (selectedFolderId != "" && selectedFolderId.toInt() == folder.folderId)
                 binding.tvFolderName.setTypeface(null, Typeface.BOLD)
             else binding.tvFolderName.setTypeface(null, Typeface.NORMAL)
 
             binding.root.setOnDebounceClickListener {
                 onFolderClicked(folder)
             }
-       }
+        }
     }
 }

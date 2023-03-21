@@ -4,12 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.daily.dayo.common.Event
 import com.daily.dayo.common.Resource
 import com.daily.dayo.data.datasource.remote.follow.CreateFollowRequest
-import com.daily.dayo.data.mapper.toBookmarkPost
 import com.daily.dayo.data.mapper.toFolder
-import com.daily.dayo.data.mapper.toLikePost
 import com.daily.dayo.data.mapper.toProfile
 import com.daily.dayo.domain.model.*
 import com.daily.dayo.domain.usecase.block.RequestBlockMemberUseCase
@@ -120,27 +119,9 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun requestAllMyLikePostList() = viewModelScope.launch {
-        requestAllMyLikePostListUseCase()?.let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> { _likePostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toLikePost() })) }
-                is NetworkResponse.NetworkError -> { _likePostList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                is NetworkResponse.ApiError -> { _likePostList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
-                is NetworkResponse.UnknownError -> { _likePostList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
-            }
-        }
-    }
+    fun requestAllMyLikePostList() = requestAllMyLikePostListUseCase().cachedIn(viewModelScope)
 
-    fun requestAllMyBookmarkPostList() = viewModelScope.launch {
-        requestAllMyBookmarkPostListUseCase()?.let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> { _bookmarkPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toBookmarkPost() })) }
-                is NetworkResponse.NetworkError -> { _bookmarkPostList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                is NetworkResponse.ApiError -> { _bookmarkPostList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
-                is NetworkResponse.UnknownError -> { _bookmarkPostList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
-            }
-        }
-    }
+    fun requestAllMyBookmarkPostList() = requestAllMyBookmarkPostListUseCase().cachedIn(viewModelScope)
 
     fun requestBlockMember(memberId: String) = viewModelScope.launch {
         requestBlockMemberUseCase(memberId)?.let {  ApiResponse ->

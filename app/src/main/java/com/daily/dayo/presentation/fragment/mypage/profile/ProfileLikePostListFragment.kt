@@ -1,28 +1,21 @@
 package com.daily.dayo.presentation.fragment.mypage.profile
 
-import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
-import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
-import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentProfileLikePostListBinding
 import com.daily.dayo.domain.model.LikePost
 import com.daily.dayo.presentation.adapter.ProfileLikePostListAdapter
 import com.daily.dayo.presentation.viewmodel.ProfileViewModel
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ProfileLikePostListFragment : Fragment() {
     private var binding by autoCleared<FragmentProfileLikePostListBinding>()
@@ -42,7 +35,7 @@ class ProfileLikePostListFragment : Fragment() {
         binding = FragmentProfileLikePostListBinding.inflate(inflater, container, false)
         setRvProfileLikePostListAdapter()
         setProfileLikePostList()
-        loadingPost()
+        setAdapterLoadStateListener()
         return binding.root
     }
 
@@ -62,53 +55,25 @@ class ProfileLikePostListFragment : Fragment() {
     }
 
     private fun setProfileLikePostList() {
-        profileViewModel.requestAllMyLikePostList()
-        profileViewModel.likePostList.observe(viewLifecycleOwner) {
-            when (it.status) {
-                Status.SUCCESS -> {
-                    it.data?.let { likePostList ->
-                        loadPostThumbnail(likePostList)
-                    }
-                }
+        lifecycleScope.launchWhenResumed {
+            profileViewModel.requestAllMyLikePostList().collect {
+                profileLikePostListAdapter.submitData(it)
             }
         }
     }
 
-    private fun loadPostThumbnail(postList: List<LikePost>) {
-        val thumbnailImgList = emptyList<Bitmap>().toMutableList()
-
-        CoroutineScope(Dispatchers.Main).launch {
-            for (i in 0 until (if (postList.size >= 8) 8 else postList.size)) {
-                thumbnailImgList.add(withContext(Dispatchers.IO) {
-                    loadImageBackground(
-                        context = requireContext(),
-                        height = 158,
-                        width = 158,
-                        imgName = postList[i].thumbnailImage
-                    )
-                })
-            }
-        }.invokeOnCompletion { throwable ->
-            when (throwable) {
-                is CancellationException -> Log.e("Image Loading", "CANCELLED")
-                null -> {
-                    var loadedPostList = postList.toMutableList()
-                    for (i in 0 until (if (postList.size >= 6) 6 else postList.size)) {
-                        loadedPostList[i].preLoadThumbnail = thumbnailImgList[i]
-                    }
-                    binding.likeCount = postList.size
-                    profileLikePostListAdapter.submitList(postList.toMutableList())
+    private fun setAdapterLoadStateListener() {
+        var isInitialLoad = false
+        profileLikePostListAdapter.addLoadStateListener { loadState ->
+            if (loadState.refresh is LoadState.NotLoading && !isInitialLoad) {
+                val isListEmpty = profileLikePostListAdapter.itemCount == 0
+                binding.isEmpty = isListEmpty
+                if (isListEmpty || loadState.append is LoadState.NotLoading) {
                     completeLoadPost()
-                    thumbnailImgList.clear()
+                    isInitialLoad = true
                 }
             }
         }
-    }
-
-    private fun loadingPost() {
-        binding.layoutProfileLikePostShimmer.startShimmer()
-        binding.layoutProfileLikePostShimmer.visibility = View.VISIBLE
-        binding.rvProfileLikePost.visibility = View.INVISIBLE
     }
 
     private fun completeLoadPost() {

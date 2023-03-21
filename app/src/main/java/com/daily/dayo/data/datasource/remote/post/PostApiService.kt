@@ -42,5 +42,5 @@ interface PostApiService {
     suspend fun requestDeletePost(@Path("postId") postId: Int): NetworkResponse<Void>
 
     @GET("/api/v1/posts/feed/list")
-    suspend fun requestFeedList(): NetworkResponse<ListFeedResponse>
+    suspend fun requestFeedList(@Query("end") end: Int): NetworkResponse<ListFeedResponse>
 }

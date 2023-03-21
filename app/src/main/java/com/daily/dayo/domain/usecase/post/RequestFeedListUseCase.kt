@@ -6,6 +6,6 @@ import javax.inject.Inject
 class RequestFeedListUseCase @Inject constructor(
     private val postRepository: PostRepository
 ) {
-    suspend operator fun invoke() =
+    operator fun invoke() =
         postRepository.requestFeedList()
 }

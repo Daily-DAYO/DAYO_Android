@@ -1,10 +1,14 @@
 package com.daily.dayo.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.data.datasource.remote.search.SearchApiService
-import com.daily.dayo.data.datasource.remote.search.SearchResultResponse
-import com.daily.dayo.domain.model.NetworkResponse
+import com.daily.dayo.data.datasource.remote.search.SearchPagingSource
+import com.daily.dayo.domain.model.Search
 import com.daily.dayo.domain.repository.SearchRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class SearchRepositoryImpl @Inject constructor(
@@ -14,10 +18,17 @@ class SearchRepositoryImpl @Inject constructor(
     override fun requestSearchKeywordRecentList(): ArrayList<String> =
         DayoApplication.preferences.getSearchKeywordRecent()
 
-    override suspend fun requestSearchTag(tag: String): NetworkResponse<SearchResultResponse> =
-        searchApiService.requestSearchTag(tag)
+    override fun deleteSearchKeywordRecent(keyword: String) {
+        val initialSearchTagList = requestSearchKeywordRecentList()
+        initialSearchTagList.remove(keyword)
+        DayoApplication.preferences.setSearchKeywordRecent(initialSearchTagList)
+    }
 
-    override suspend fun requestSearchKeyword(keyword: String): NetworkResponse<SearchResultResponse> {
+    override fun clearSearchKeywordRecent() {
+        DayoApplication.preferences.setSearchKeywordRecent(ArrayList())
+    }
+
+    override fun requestSearchKeyword(keyword: String): Flow<PagingData<Search>> {
         val initialSearchTagList = requestSearchKeywordRecentList()
         if (initialSearchTagList.contains(keyword)) { // 검색한 적 있는 경우 최신화를 위하여 삭제하고 추가
             initialSearchTagList.remove(keyword)
@@ -27,13 +38,11 @@ class SearchRepositoryImpl @Inject constructor(
         return requestSearchTag(tag = keyword)
     }
 
-    override fun deleteSearchKeywordRecent(keyword: String) {
-        val initialSearchTagList = requestSearchKeywordRecentList()
-        initialSearchTagList.remove(keyword)
-        DayoApplication.preferences.setSearchKeywordRecent(initialSearchTagList)
-    }
+    override fun requestSearchTag(tag: String) = Pager(PagingConfig(pageSize = SEARCH_PAGE_SIZE)) {
+        SearchPagingSource(searchApiService, SEARCH_PAGE_SIZE, tag)
+    }.flow
 
-    override fun clearSearchKeywordRecent() {
-        DayoApplication.preferences.setSearchKeywordRecent(ArrayList<String>())
+    companion object {
+        private const val SEARCH_PAGE_SIZE = 10
     }
 }
