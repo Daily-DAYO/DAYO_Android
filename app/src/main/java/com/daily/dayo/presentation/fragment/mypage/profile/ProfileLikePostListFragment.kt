@@ -1,3 +1,4 @@
+
 package com.daily.dayo.presentation.fragment.mypage.profile
 
 import android.os.Bundle
@@ -39,6 +40,11 @@ class ProfileLikePostListFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        getProfileLikePostList()
+    }
+
     private fun setRvProfileLikePostListAdapter() {
         profileLikePostListAdapter = ProfileLikePostListAdapter(requestManager = glideRequestManager)
         binding.rvProfileLikePost.adapter = profileLikePostListAdapter
@@ -54,11 +60,13 @@ class ProfileLikePostListFragment : Fragment() {
         })
     }
 
+    private fun getProfileLikePostList() {
+        profileViewModel.requestAllMyLikePostList()
+    }
+
     private fun setProfileLikePostList() {
-        lifecycleScope.launchWhenResumed {
-            profileViewModel.requestAllMyLikePostList().collect {
-                profileLikePostListAdapter.submitData(it)
-            }
+        profileViewModel.likePostList.observe(viewLifecycleOwner) {
+            profileLikePostListAdapter.submitData(this.lifecycle, it)
         }
     }
 

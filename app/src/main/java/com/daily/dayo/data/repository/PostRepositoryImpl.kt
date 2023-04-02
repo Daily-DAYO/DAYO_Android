@@ -2,10 +2,13 @@ package com.daily.dayo.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.daily.dayo.data.datasource.remote.post.*
 import com.daily.dayo.domain.model.Category
 import com.daily.dayo.domain.model.NetworkResponse
+import com.daily.dayo.domain.model.Post
 import com.daily.dayo.domain.repository.PostRepository
+import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import javax.inject.Inject
 
@@ -45,7 +48,7 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun requestDeletePost(postId: Int): NetworkResponse<Void> =
         postApiService.requestDeletePost(postId)
 
-    override fun requestFeedList() = Pager(PagingConfig(pageSize = FEED_PAGE_SIZE)) {
+    override suspend fun requestFeedList() = Pager(PagingConfig(pageSize = FEED_PAGE_SIZE)) {
         FeedPagingSource(postApiService, FEED_PAGE_SIZE)
     }.flow
 

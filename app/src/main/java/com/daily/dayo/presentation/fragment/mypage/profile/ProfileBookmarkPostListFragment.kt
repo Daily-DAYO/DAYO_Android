@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.bumptech.glide.Glide
@@ -33,13 +32,18 @@ class ProfileBookmarkPostListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentProfileBookmarkPostListBinding.inflate(inflater, container, false)
-        setRvProfileLikePostListAdapter()
-        setProfileLikePostList()
+        setRvProfileBookmarkPostListAdapter()
+        setProfileBookmarkPostList()
         setAdapterLoadStateListener()
         return binding.root
     }
 
-    private fun setRvProfileLikePostListAdapter() {
+    override fun onResume() {
+        super.onResume()
+        getProfileBookmarkPostList()
+    }
+
+    private fun setRvProfileBookmarkPostListAdapter() {
         profileBookmarkPostListAdapter = ProfileBookmarkPostListAdapter(requestManager = glideRequestManager)
         binding.rvProfileBookmarkPost.adapter = profileBookmarkPostListAdapter
         profileBookmarkPostListAdapter.setOnItemClickListener(object : ProfileBookmarkPostListAdapter.OnItemClickListener {
@@ -53,11 +57,13 @@ class ProfileBookmarkPostListFragment : Fragment() {
         })
     }
 
-    private fun setProfileLikePostList() {
-        lifecycleScope.launchWhenResumed {
-            profileViewModel.requestAllMyBookmarkPostList().collect {
-                profileBookmarkPostListAdapter.submitData(it)
-            }
+    private fun getProfileBookmarkPostList() {
+        profileViewModel.requestAllMyBookmarkPostList()
+    }
+
+    private fun setProfileBookmarkPostList() {
+        profileViewModel.bookmarkPostList.observe(viewLifecycleOwner) {
+            profileBookmarkPostListAdapter.submitData(this.lifecycle, it)
         }
     }
 

@@ -1,6 +1,9 @@
 package com.daily.dayo.presentation.viewmodel
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.daily.dayo.common.Resource
@@ -16,8 +19,7 @@ import com.daily.dayo.domain.usecase.like.RequestLikePostUseCase
 import com.daily.dayo.domain.usecase.like.RequestUnlikePostUseCase
 import com.daily.dayo.domain.usecase.post.RequestFeedListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,13 +31,21 @@ class FeedViewModel @Inject constructor(
     private val requestBookmarkPostUseCase: RequestBookmarkPostUseCase,
     private val requestDeleteBookmarkPostUseCase: RequestDeleteBookmarkPostUseCase
 ) : ViewModel() {
+
+    private val _feedList = MutableLiveData<PagingData<Post>>()
+    val feedList: LiveData<PagingData<Post>> get() = _feedList
+
     private val _postLiked = MutableLiveData<Resource<CreateHeartResponse>>()
     val postLiked: LiveData<Resource<CreateHeartResponse>> get() = _postLiked
 
     private val _postBookmarked = MutableLiveData<Resource<CreateBookmarkResponse>>()
     val postBookmarked: LiveData<Resource<CreateBookmarkResponse>> get() = _postBookmarked
 
-    fun requestFeedList() = requestFeedListUseCase().cachedIn(viewModelScope)
+    fun requestFeedList() = viewModelScope.launch {
+        requestFeedListUseCase()
+            .cachedIn(viewModelScope)
+            .collectLatest { _feedList.postValue(it) }
+    }
 
     fun requestLikePost(postId: Int) = viewModelScope.launch {
         requestLikePostUseCase(CreateHeartRequest(postId = postId))?.let { ApiResponse ->

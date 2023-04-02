@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
@@ -68,7 +67,8 @@ class SearchResultFragment : Fragment() {
     private fun initUI() {
         loadingPost()
         binding.tvSearchResultKeywordInput.setText(args.searchKeyword)
-        searchTagList(args.searchKeyword)
+        setSearchTagList()
+        getSearchTagList(args.searchKeyword)
     }
 
     private fun setSearchEditTextListener() {
@@ -113,7 +113,7 @@ class SearchResultFragment : Fragment() {
                     HideKeyBoardUtil.hide(requireContext(), binding.tvSearchResultKeywordInput)
                     binding.tvSearchResultKeywordInput.setText(ReplaceUnicode.replaceBlankText(binding.tvSearchResultKeywordInput.text.toString()))
                     if (ReplaceUnicode.replaceBlankText(binding.tvSearchResultKeywordInput.text.toString()).isNotBlank()) {
-                        searchTagList(ReplaceUnicode.replaceBlankText(binding.tvSearchResultKeywordInput.text.toString()))
+                        getSearchTagList(ReplaceUnicode.replaceBlankText(binding.tvSearchResultKeywordInput.text.toString()))
                     }
                     true
                 }
@@ -128,19 +128,19 @@ class SearchResultFragment : Fragment() {
         }
     }
 
-    private fun searchTagList(keyword: String) {
-        lifecycleScope.launchWhenResumed {
-            searchViewModel.searchKeyword(keyword).collect {
-                searchTagResultPostAdapter.submitData(it)
+    private fun getSearchTagList(keyword: String){
+        searchViewModel.searchKeyword(keyword)
+    }
 
-            }
+    private fun setSearchTagList() {
+        searchViewModel.searchTagList.observe(viewLifecycleOwner) {
+            searchTagResultPostAdapter.submitData(this.lifecycle, it)
         }
     }
 
     private fun setAdapterLoadStateListener() {
-        var isInitialLoad = false
         searchTagResultPostAdapter.addLoadStateListener { loadState ->
-            if (loadState.refresh is LoadState.NotLoading && !isInitialLoad) {
+            if (loadState.refresh is LoadState.NotLoading) {
                 val isListEmpty = searchTagResultPostAdapter.itemCount == 0
                 if (isListEmpty) {
                     binding.layoutSearchResultContents.visibility = View.INVISIBLE
@@ -153,7 +153,6 @@ class SearchResultFragment : Fragment() {
 
                 if (isListEmpty || loadState.append is LoadState.NotLoading) {
                     completeLoadPost()
-                    isInitialLoad = true
                 }
             }
         }

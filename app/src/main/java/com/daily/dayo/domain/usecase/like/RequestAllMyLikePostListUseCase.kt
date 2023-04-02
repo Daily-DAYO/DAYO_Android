@@ -6,6 +6,6 @@ import javax.inject.Inject
 class RequestAllMyLikePostListUseCase @Inject constructor(
     private val heartRepository: HeartRepository
 ) {
-    operator fun invoke() =
+    suspend operator fun invoke() =
         heartRepository.requestAllMyLikePostList()
 }
