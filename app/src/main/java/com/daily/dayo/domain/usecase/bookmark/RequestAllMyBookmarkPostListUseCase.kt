@@ -6,6 +6,6 @@ import javax.inject.Inject
 class RequestAllMyBookmarkPostListUseCase @Inject constructor(
     private val bookmarkRepository: BookmarkRepository
 ) {
-    operator fun invoke() =
+    suspend operator fun invoke() =
         bookmarkRepository.requestAllMyBookmarkPostList()
 }

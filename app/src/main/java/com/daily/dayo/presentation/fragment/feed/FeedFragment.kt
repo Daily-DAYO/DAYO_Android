@@ -22,6 +22,7 @@ import com.daily.dayo.presentation.adapter.FeedListAdapter
 import com.daily.dayo.presentation.viewmodel.FeedViewModel
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 
 class FeedFragment : Fragment() {
     private var binding by autoCleared<FragmentFeedBinding>()
@@ -49,6 +50,11 @@ class FeedFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        getFeedPostList()
+    }
+
     private fun setFeedRefreshListener() {
         binding.swipeRefreshLayoutFeed.setOnRefreshListener {
             feedListAdapter.refresh()
@@ -60,12 +66,14 @@ class FeedFragment : Fragment() {
         binding.rvFeedPost.adapter = feedListAdapter
     }
 
+    private fun getFeedPostList(){
+        feedViewModel.requestFeedList()
+    }
+
     private fun setFeedPostList() {
-        lifecycleScope.launchWhenResumed {
-            feedViewModel.requestFeedList().collect {
-                binding.swipeRefreshLayoutFeed.isRefreshing = false
-                feedListAdapter.submitData(it)
-            }
+        feedViewModel.feedList.observe(viewLifecycleOwner) {
+            binding.swipeRefreshLayoutFeed.isRefreshing = false
+            feedListAdapter.submitData(this.lifecycle, it)
         }
     }
 

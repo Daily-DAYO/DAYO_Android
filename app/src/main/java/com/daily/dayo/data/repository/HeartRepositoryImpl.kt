@@ -20,7 +20,7 @@ class HeartRepositoryImpl @Inject constructor(
     override suspend fun requestUnlikePost(postId: Int): NetworkResponse<Void> =
         heartApiService.requestUnlikePost(postId)
 
-    override fun requestAllMyLikePostList() = Pager(PagingConfig(pageSize = HEART_PAGE_SIZE)) {
+    override suspend fun requestAllMyLikePostList() = Pager(PagingConfig(pageSize = HEART_PAGE_SIZE)) {
         HeartPagingSource(heartApiService, HEART_PAGE_SIZE)
     }.flow
 

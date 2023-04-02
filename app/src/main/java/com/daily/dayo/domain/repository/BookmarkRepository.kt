@@ -11,5 +11,5 @@ interface BookmarkRepository {
     
     suspend fun requestBookmarkPost(body: CreateBookmarkRequest): NetworkResponse<CreateBookmarkResponse>
     suspend fun requestDeleteBookmarkPost(postId: Int): NetworkResponse<Void>
-    fun requestAllMyBookmarkPostList(): Flow<PagingData<BookmarkPost>>
+    suspend fun requestAllMyBookmarkPostList(): Flow<PagingData<BookmarkPost>>
 }

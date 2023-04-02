@@ -20,7 +20,7 @@ class BookmarkRepositoryImpl @Inject constructor(
     override suspend fun requestDeleteBookmarkPost(postId: Int): NetworkResponse<Void> =
         bookmarkApiService.requestDeleteBookmarkPost(postId)
 
-    override fun requestAllMyBookmarkPostList() = Pager(PagingConfig(pageSize = BOOKMARK_PAGE_SIZE)) {
+    override suspend fun requestAllMyBookmarkPostList() = Pager(PagingConfig(pageSize = BOOKMARK_PAGE_SIZE)) {
         BookmarkPagingSource(bookmarkApiService, BOOKMARK_PAGE_SIZE)
     }.flow
 

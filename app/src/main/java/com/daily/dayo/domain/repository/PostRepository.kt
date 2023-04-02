@@ -25,5 +25,5 @@ interface PostRepository {
     suspend fun requestPostDetail(postId: Int): NetworkResponse<DetailPostResponse>
     suspend fun requestDeletePost(postId: Int): NetworkResponse<Void>
     suspend fun requestEditPost(postId: Int, request: EditPostRequest): NetworkResponse<EditPostResponse>
-    fun requestFeedList(): Flow<PagingData<Post>>
+    suspend fun requestFeedList(): Flow<PagingData<Post>>
 }

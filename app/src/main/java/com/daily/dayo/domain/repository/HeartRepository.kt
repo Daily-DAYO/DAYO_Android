@@ -11,5 +11,5 @@ interface HeartRepository {
 
     suspend fun requestLikePost(body: CreateHeartRequest): NetworkResponse<CreateHeartResponse>
     suspend fun requestUnlikePost(postId: Int): NetworkResponse<Void>
-    fun requestAllMyLikePostList(): Flow<PagingData<LikePost>>
+    suspend fun requestAllMyLikePostList(): Flow<PagingData<LikePost>>
 }
