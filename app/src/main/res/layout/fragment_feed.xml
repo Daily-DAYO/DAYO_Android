@@ -8,8 +8,8 @@
         <import type="android.view.View" />
 
         <variable
-            name="feedCount"
-            type="Integer" />
+            name="isEmpty"
+            type="boolean" />
     </data>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -27,7 +27,7 @@
                 android:id="@+id/layout_scroll_feed"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:visibility="@{feedCount == 0 ? View.GONE : View.VISIBLE}"
+                android:visibility="@{isEmpty ? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:visibility="@{feedCount == 0 ? View.VISIBLE : View.GONE}"
+                android:visibility="@{isEmpty ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

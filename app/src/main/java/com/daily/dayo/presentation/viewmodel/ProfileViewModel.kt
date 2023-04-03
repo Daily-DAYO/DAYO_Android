@@ -4,12 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.daily.dayo.common.Event
 import com.daily.dayo.common.Resource
 import com.daily.dayo.data.datasource.remote.follow.CreateFollowRequest
-import com.daily.dayo.data.mapper.toBookmarkPost
 import com.daily.dayo.data.mapper.toFolder
-import com.daily.dayo.data.mapper.toLikePost
 import com.daily.dayo.data.mapper.toProfile
 import com.daily.dayo.domain.model.*
 import com.daily.dayo.domain.usecase.block.RequestBlockMemberUseCase
@@ -22,6 +22,7 @@ import com.daily.dayo.domain.usecase.follow.RequestDeleteFollowUseCase
 import com.daily.dayo.domain.usecase.like.RequestAllMyLikePostListUseCase
 import com.daily.dayo.domain.usecase.member.RequestOtherProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -52,11 +53,11 @@ class ProfileViewModel @Inject constructor(
     private val _folderList = MutableLiveData<Resource<List<Folder>>>()
     val folderList: LiveData<Resource<List<Folder>>> get() = _folderList
 
-    private val _likePostList = MutableLiveData<Resource<List<LikePost>>>()
-    val likePostList: LiveData<Resource<List<LikePost>>> get() = _likePostList
+    private val _likePostList = MutableLiveData<PagingData<LikePost>>()
+    val likePostList: LiveData<PagingData<LikePost>> get() = _likePostList
 
-    private val _bookmarkPostList = MutableLiveData<Resource<List<BookmarkPost>>>()
-    val bookmarkPostList: LiveData<Resource<List<BookmarkPost>>> get() = _bookmarkPostList
+    private val _bookmarkPostList = MutableLiveData<PagingData<BookmarkPost>>()
+    val bookmarkPostList: LiveData<PagingData<BookmarkPost>> get() = _bookmarkPostList
 
     private val _blockSuccess = MutableLiveData<Event<Boolean>>()
     val blockSuccess: LiveData<Event<Boolean>> get() = _blockSuccess
@@ -121,25 +122,15 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun requestAllMyLikePostList() = viewModelScope.launch {
-        requestAllMyLikePostListUseCase()?.let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> { _likePostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toLikePost() })) }
-                is NetworkResponse.NetworkError -> { _likePostList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                is NetworkResponse.ApiError -> { _likePostList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
-                is NetworkResponse.UnknownError -> { _likePostList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
-            }
-        }
+        requestAllMyLikePostListUseCase()
+            .cachedIn(viewModelScope)
+            .collectLatest { _likePostList.postValue(it) }
     }
 
     fun requestAllMyBookmarkPostList() = viewModelScope.launch {
-        requestAllMyBookmarkPostListUseCase()?.let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> { _bookmarkPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toBookmarkPost() })) }
-                is NetworkResponse.NetworkError -> { _bookmarkPostList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                is NetworkResponse.ApiError -> { _bookmarkPostList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
-                is NetworkResponse.UnknownError -> { _bookmarkPostList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
-            }
-        }
+        requestAllMyBookmarkPostListUseCase()
+            .cachedIn(viewModelScope)
+            .collectLatest { _bookmarkPostList.postValue(it) }
     }
 
     fun requestBlockMember(memberId: String) = viewModelScope.launch {

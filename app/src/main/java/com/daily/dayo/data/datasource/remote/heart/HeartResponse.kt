@@ -12,6 +12,8 @@ data class CreateHeartResponse(
 data class ListAllMyHeartPostResponse(
     @SerializedName("count")
     val count:Int,
+    @SerializedName("last")
+    val last: Boolean,
     @SerializedName("data")
     val data:List<MyHeartPostDto>
 )

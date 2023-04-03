@@ -5,7 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
@@ -14,14 +14,10 @@ import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemProfilePostBinding
 import com.daily.dayo.domain.model.LikePost
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class ProfileLikePostListAdapter(private val requestManager: RequestManager) :
-    RecyclerView.Adapter<ProfileLikePostListAdapter.ProfileLikePostListViewHolder>() {
+    PagingDataAdapter<LikePost, ProfileLikePostListAdapter.ProfileLikePostListViewHolder>(diffCallback) {
 
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<LikePost>() {
@@ -33,9 +29,6 @@ class ProfileLikePostListAdapter(private val requestManager: RequestManager) :
         }
     }
 
-    private val differ = AsyncListDiffer(this, diffCallback)
-    fun submitList(list: List<LikePost>) = differ.submitList(list)
-
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -46,12 +39,7 @@ class ProfileLikePostListAdapter(private val requestManager: RequestManager) :
     }
 
     override fun onBindViewHolder(holder: ProfileLikePostListViewHolder, position: Int) {
-        val item = differ.currentList[position]
-        holder.bind(item)
-    }
-
-    override fun getItemCount(): Int {
-        return differ.currentList.size
+        holder.bind(getItem(position))
     }
 
     interface OnItemClickListener {
@@ -66,7 +54,8 @@ class ProfileLikePostListAdapter(private val requestManager: RequestManager) :
     inner class ProfileLikePostListViewHolder(private val binding: ItemProfilePostBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(likePost: LikePost) {
+        fun bind(likePost: LikePost?) {
+            if (likePost == null) return
             val layoutParams = ViewGroup.MarginLayoutParams(
                 ViewGroup.MarginLayoutParams.MATCH_PARENT,
                 ViewGroup.MarginLayoutParams.MATCH_PARENT
@@ -78,7 +67,7 @@ class ProfileLikePostListAdapter(private val requestManager: RequestManager) :
 
             CoroutineScope(Dispatchers.Main).launch {
                 val profileListPostImage: Bitmap?
-                if(likePost.preLoadThumbnail == null) {
+                if (likePost.preLoadThumbnail == null) {
                     profileListPostImage = withContext(Dispatchers.IO) {
                         loadImageBackground(
                             requestManager = requestManager,
