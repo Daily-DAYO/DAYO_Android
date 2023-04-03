@@ -6,17 +6,3 @@ data class CreateBookmarkRequest(
     @SerializedName("postId")
     val postId: Int
 )
-
-data class ListAllMyBookmarkPostResponse(
-    @SerializedName("count")
-    val count: Int,
-    @SerializedName("data")
-    val data: List<BookmarkPostDto>
-)
-
-data class BookmarkPostDto(
-    @SerializedName("postId")
-    val postId: Int,
-    @SerializedName("thumbnailImage")
-    val thumbnailImage: String
-)

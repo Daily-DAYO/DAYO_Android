@@ -1,12 +1,13 @@
 package com.daily.dayo.data.datasource.remote.post
 
-import com.daily.dayo.data.datasource.remote.comment.CommentDto
 import com.daily.dayo.domain.model.Category
 import com.google.gson.annotations.SerializedName
 
 data class ListFeedResponse(
     @SerializedName("count")
     val count: Int,
+    @SerializedName("last")
+    val last: Boolean,
     @SerializedName("data")
     val data: List<FeedDto>
 )
@@ -16,12 +17,12 @@ data class EditPostResponse(
     val postId: Int
 )
 
-data class CreatePostResponse (
+data class CreatePostResponse(
     @SerializedName("id")
     val id: Int
 )
 
-data class ListAllPostResponse (
+data class ListAllPostResponse(
     @SerializedName("count")
     val count: Int,
     @SerializedName("data")
@@ -42,7 +43,7 @@ data class DayoPickPostListResponse(
     val data: List<DayoPick>
 )
 
-data class DetailPostResponse (
+data class DetailPostResponse(
     @SerializedName("bookmark")
     val bookmark: Boolean,
     @SerializedName("category")

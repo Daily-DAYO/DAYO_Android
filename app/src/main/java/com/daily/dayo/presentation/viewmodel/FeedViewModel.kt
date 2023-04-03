@@ -4,12 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.daily.dayo.common.Resource
 import com.daily.dayo.data.datasource.remote.bookmark.CreateBookmarkRequest
 import com.daily.dayo.data.datasource.remote.bookmark.CreateBookmarkResponse
 import com.daily.dayo.data.datasource.remote.heart.CreateHeartRequest
 import com.daily.dayo.data.datasource.remote.heart.CreateHeartResponse
-import com.daily.dayo.data.mapper.toPost
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.domain.usecase.bookmark.RequestBookmarkPostUseCase
@@ -18,6 +19,7 @@ import com.daily.dayo.domain.usecase.like.RequestLikePostUseCase
 import com.daily.dayo.domain.usecase.like.RequestUnlikePostUseCase
 import com.daily.dayo.domain.usecase.post.RequestFeedListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,8 +32,8 @@ class FeedViewModel @Inject constructor(
     private val requestDeleteBookmarkPostUseCase: RequestDeleteBookmarkPostUseCase
 ) : ViewModel() {
 
-    private val _feedList = MutableLiveData<Resource<List<Post>>>()
-    val feedList: LiveData<Resource<List<Post>>> get() = _feedList
+    private val _feedList = MutableLiveData<PagingData<Post>>()
+    val feedList: LiveData<PagingData<Post>> get() = _feedList
 
     private val _postLiked = MutableLiveData<Resource<CreateHeartResponse>>()
     val postLiked: LiveData<Resource<CreateHeartResponse>> get() = _postLiked
@@ -40,15 +42,9 @@ class FeedViewModel @Inject constructor(
     val postBookmarked: LiveData<Resource<CreateBookmarkResponse>> get() = _postBookmarked
 
     fun requestFeedList() = viewModelScope.launch {
-        _feedList.postValue(Resource.loading(null))
-        requestFeedListUseCase()?.let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> { _feedList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
-                is NetworkResponse.NetworkError -> { _feedList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                is NetworkResponse.ApiError -> { _feedList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
-                is NetworkResponse.UnknownError -> { _feedList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
-            }
-        }
+        requestFeedListUseCase()
+            .cachedIn(viewModelScope)
+            .collectLatest { _feedList.postValue(it) }
     }
 
     fun requestLikePost(postId: Int) = viewModelScope.launch {
