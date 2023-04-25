@@ -1,10 +1,12 @@
 package com.daily.dayo.domain.repository
 
-import com.daily.dayo.data.datasource.remote.alarm.ListAllAlarmResponse
+import androidx.paging.PagingData
 import com.daily.dayo.domain.model.NetworkResponse
+import com.daily.dayo.domain.model.Notification
+import kotlinx.coroutines.flow.Flow
 
 interface AlarmRepository {
 
-    suspend fun requestAllAlarmList(): NetworkResponse<ListAllAlarmResponse>
+    suspend fun requestAllAlarmList(): Flow<PagingData<Notification>>
     suspend fun requestIsCheckAlarm(alarmId: Int): NetworkResponse<Void>
 }
