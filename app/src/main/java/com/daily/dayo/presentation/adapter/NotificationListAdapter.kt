@@ -11,8 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.navigation.Navigation
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class NotificationListAdapter(private val requestManager: RequestManager) :
-    ListAdapter<Notification, NotificationListAdapter.NotificationListViewHolder>(
+    PagingDataAdapter<Notification, NotificationListAdapter.NotificationListViewHolder>(
         diffCallback
     ) {
     companion object {
@@ -41,11 +41,11 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
         }
     }
 
-    interface OnItemClickListener{
+    interface OnItemClickListener {
         fun notificationItemClick(alarmId: Int, alarmCheck: Boolean, position: Int)
     }
 
-    private var listener: OnItemClickListener?= null
+    private var listener: OnItemClickListener? = null
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.listener = listener
     }
@@ -57,20 +57,15 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
     }
 
     override fun onBindViewHolder(holder: NotificationListViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.bind(item, position)
-    }
-
-    override fun submitList(list: List<Notification>?) {
-        super.submitList(list?.let { ArrayList(it) })
+        holder.bind(getItem(position))
     }
 
     inner class NotificationListViewHolder(private val binding: ItemNotificationBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(notification: Notification, position: Int) {
+        fun bind(notification: Notification?) {
             binding.notification = notification
 
-            if(notification.image != null) {
+            if (notification?.image != null) {
                 val layoutParams = ViewGroup.MarginLayoutParams(
                     ViewGroup.MarginLayoutParams.MATCH_PARENT,
                     ViewGroup.MarginLayoutParams.MATCH_PARENT
@@ -95,13 +90,13 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
             }
 
             val spanContent = SpannableStringBuilder()
-            spanContent.append(notification.nickname)
+            spanContent.append(notification?.nickname)
             spanContent.setSpan(
                 object : ClickableSpan() {
                     override fun onClick(v: View) {
                         Navigation.findNavController(v).navigate(
                             NotificationFragmentDirections.actionNotificationFragmentToProfileFragment(
-                                memberId = notification.memberId
+                                memberId = notification?.memberId
                             )
                         )
                     }
@@ -111,14 +106,15 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
                         textPaint.isUnderlineText = false
                         textPaint.typeface = Typeface.DEFAULT_BOLD
                     }
-                }, 0, notification.nickname?.length ?: 0, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            spanContent.append(notification.content)
+                }, 0, notification?.nickname?.length ?: 0, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            spanContent.append(notification?.content)
             binding.tvNotificationTitle.movementMethod = LinkMovementMethod.getInstance()
             binding.tvNotificationTitle.text = spanContent
 
             binding.root.setOnDebounceClickListener {
                 // alarm check
-                notification.alarmId?.let { alarmId ->
+                notification?.alarmId?.let { alarmId ->
                     listener?.notificationItemClick(
                         alarmId = alarmId,
                         alarmCheck = notification.check!!,
@@ -127,7 +123,7 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
                 }
 
                 // move to alarm content
-                when (notification.topic) {
+                when (notification?.topic) {
                     Topic.COMMENT, Topic.HEART -> {
                         notification.postId?.let { postId ->
                             Navigation.findNavController(it).navigate(
