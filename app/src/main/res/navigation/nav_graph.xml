@@ -468,6 +468,14 @@
         <action
             android:id="@+id/action_settingFragment_to_settingBlockFragment"
             app:destination="@+id/SettingBlockFragment" />
+
+        <action
+            android:id="@+id/action_settingFragment_to_informationFragment"
+            app:destination="@id/InformationFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
     </fragment>
 
     <fragment
@@ -614,5 +622,30 @@
             app:exitAnim="@anim/translate_nothing"
             app:popEnterAnim="@anim/translate_nothing"
             app:popExitAnim="@anim/translate_to_right_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/InformationFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.information.InformationFragment"
+        android:label="fragment_information"
+        tools:layout="@layout/fragment_information">
+        <action
+            android:id="@+id/action_informationFragment_to_policyFragment"
+            app:destination="@+id/PolicyFragment"
+            app:enterAnim="@anim/translate_bottom_up"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_top_down"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/PolicyFragment"
+        android:name="com.daily.dayo.presentation.fragment.policy.PolicyFragment"
+        android:label="fragment_policy"
+        tools:layout="@layout/fragment_policy">
+        <argument
+            android:name="informationType"
+            android:defaultValue="privacy"
+            app:argType="string" />
     </fragment>
 </navigation>
