@@ -19,6 +19,7 @@ import com.daily.dayo.common.dialog.DefaultDialogConfirm
 import com.daily.dayo.common.dialog.DefaultDialogExplanationConfirm
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
+import com.daily.dayo.common.extension.navigateSafe
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentSettingBinding
 import com.daily.dayo.presentation.activity.LoginActivity
@@ -43,6 +44,7 @@ class SettingFragment : Fragment() {
         setWithdrawButtonClickListener()
         setNotificationButtonClickListener()
         setBlockButtonClickListener()
+        setInformationButtonClickListener()
         return binding.root
     }
 
@@ -72,6 +74,15 @@ class SettingFragment : Fragment() {
     private fun setBlockButtonClickListener() {
         binding.layoutSettingBlock.setOnDebounceClickListener {
             findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToSettingBlockFragment())
+        }
+    }
+
+    private fun setInformationButtonClickListener() {
+        binding.layoutSettingInformation.setOnDebounceClickListener {
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.SettingFragment,
+                action = R.id.action_settingFragment_to_informationFragment
+            )
         }
     }
 
