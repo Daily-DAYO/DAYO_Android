@@ -47,7 +47,7 @@
             android:id="@+id/view_folder_setting_edit_image_option_camera_horizontal_line"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="@color/gray_4_D3D2D2"
+            android:background="@color/gray_4_C5CAD2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -80,7 +80,7 @@
             android:id="@+id/view_folder_setting_edit_image_option_reset_horizontal_line"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="@color/gray_4_D3D2D2"
+            android:background="@color/gray_4_C5CAD2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

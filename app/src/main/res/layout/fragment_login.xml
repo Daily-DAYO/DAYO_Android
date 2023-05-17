@@ -117,7 +117,7 @@
             android:layout_height="wrap_content"
             android:text="@string/login_policy_guide_message"
             android:textSize="12dp"
-            android:textColor="@color/gray_3_9C9C9C"
+            android:textColor="@color/gray_3_9FA5AE"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

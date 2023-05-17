@@ -170,7 +170,7 @@ class FeedListAdapter(private val requestManager: RequestManager) :
                                     intArrayOf(android.R.attr.state_pressed)
                                 ),
                                 intArrayOf(
-                                    resources.getColor(R.color.gray_6_F6F6F6, context?.theme),
+                                    resources.getColor(R.color.gray_6_F0F1F3, context?.theme),
                                     resources.getColor(
                                         R.color.primary_green_23C882, context?.theme
                                     )

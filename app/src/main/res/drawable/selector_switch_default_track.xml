@@ -16,7 +16,7 @@
             <size
                 android:width="44dp"
                 android:height="26dp" />
-            <solid android:color="@color/gray_5_EDEDED" />
+            <solid android:color="@color/gray_5_E8EAEE" />
         </shape>
     </item>
 
@@ -26,7 +26,7 @@
             <size
                 android:width="44dp"
                 android:height="26dp" />
-            <solid android:color="@color/gray_5_EDEDED" />
+            <solid android:color="@color/gray_5_E8EAEE" />
         </shape>
     </item>
 </selector>

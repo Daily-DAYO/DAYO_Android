@@ -9,12 +9,12 @@ import com.google.android.material.textfield.TextInputLayout
 object SetTextInputLayout {
     fun setEditTextTheme(context: Context, textInputLayout: TextInputLayout, editText: TextInputEditText, isEditTextEmpty: Boolean) {
         if(isEditTextEmpty) {
-            textInputLayout.defaultHintTextColor = context.resources.getColorStateList(R.color.gray_4_D3D2D2, context.theme)
+            textInputLayout.defaultHintTextColor = context.resources.getColorStateList(R.color.gray_4_C5CAD2, context.theme)
             if(!textInputLayout.isErrorEnabled) {
-                editText.backgroundTintList = context.resources.getColorStateList(R.color.gray_5_EDEDED, context.theme)
+                editText.backgroundTintList = context.resources.getColorStateList(R.color.gray_5_E8EAEE, context.theme)
             }
         } else {
-            textInputLayout.defaultHintTextColor = context.resources.getColorStateList(R.color.gray_3_9C9C9C, context.theme)
+            textInputLayout.defaultHintTextColor = context.resources.getColorStateList(R.color.gray_3_9FA5AE, context.theme)
             if(!textInputLayout.isErrorEnabled) {
                 editText.backgroundTintList = context.resources.getColorStateList(R.color.primary_green_23C882, context.theme)
             }

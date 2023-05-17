@@ -68,7 +68,7 @@
                         android:id="@+id/view_profile_option_edit_profile_horizontal_line"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/gray_5_EDEDED"
+                        android:background="@color/gray_5_E8EAEE"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -101,7 +101,7 @@
                         android:id="@+id/view_profile_option_setting_horizontal_line"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/gray_5_EDEDED"
+                        android:background="@color/gray_5_E8EAEE"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -169,7 +169,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/gray_6_F6F6F6"/>
+                        android:background="@color/gray_6_F0F1F3"/>
 
                     <TextView
                         android:id="@+id/tv_other_profile_option_report_user"

@@ -208,9 +208,9 @@
                 app:layout_constraintStart_toStartOf="@id/guideline_folder_contents_start"
                 app:layout_constraintTop_toBottomOf="@id/img_folder_thumbnail"
                 app:layout_constraintVertical_bias="0.0"
-                app:shimmer_base_color="@color/gray_3_9C9C9C"
+                app:shimmer_base_color="@color/gray_3_9FA5AE"
                 app:shimmer_colored="true"
-                app:shimmer_highlight_color="@color/gray_6_F6F6F6">
+                app:shimmer_highlight_color="@color/gray_6_F0F1F3">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -223,7 +223,7 @@
                         android:layout_gravity="center"
                         android:layout_marginHorizontal="4dp"
                         android:adjustViewBounds="true"
-                        android:background="@color/gray_3_9C9C9C"
+                        android:background="@color/gray_3_9FA5AE"
                         android:src="@drawable/ic_dayo_circle_grayscale"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/item_shimmer_2"
@@ -240,7 +240,7 @@
                         android:layout_gravity="center"
                         android:layout_marginHorizontal="4dp"
                         android:adjustViewBounds="true"
-                        android:background="@color/gray_3_9C9C9C"
+                        android:background="@color/gray_3_9FA5AE"
                         android:src="@drawable/ic_dayo_circle_grayscale"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -258,7 +258,7 @@
                         android:layout_marginHorizontal="4dp"
                         android:layout_marginTop="8dp"
                         android:adjustViewBounds="true"
-                        android:background="@color/gray_3_9C9C9C"
+                        android:background="@color/gray_3_9FA5AE"
                         android:src="@drawable/ic_dayo_circle_grayscale"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/item_shimmer_4"
@@ -276,7 +276,7 @@
                         android:layout_marginHorizontal="4dp"
                         android:layout_marginTop="8dp"
                         android:adjustViewBounds="true"
-                        android:background="@color/gray_3_9C9C9C"
+                        android:background="@color/gray_3_9FA5AE"
                         android:src="@drawable/ic_dayo_circle_grayscale"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -294,7 +294,7 @@
                         android:layout_marginHorizontal="4dp"
                         android:layout_marginTop="8dp"
                         android:adjustViewBounds="true"
-                        android:background="@color/gray_3_9C9C9C"
+                        android:background="@color/gray_3_9FA5AE"
                         android:src="@drawable/ic_dayo_circle_grayscale"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/item_shimmer_6"
@@ -312,7 +312,7 @@
                         android:layout_marginHorizontal="4dp"
                         android:layout_marginTop="8dp"
                         android:adjustViewBounds="true"
-                        android:background="@color/gray_3_9C9C9C"
+                        android:background="@color/gray_3_9FA5AE"
                         android:src="@drawable/ic_dayo_circle_grayscale"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -329,7 +329,7 @@
                     android:layout_marginTop="25dp"
                     android:gravity="center"
                     android:text="@string/folder_post_empty_description"
-                    android:textColor="@color/gray_3_9C9C9C"
+                    android:textColor="@color/gray_3_9FA5AE"
                     android:textSize="15dp" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

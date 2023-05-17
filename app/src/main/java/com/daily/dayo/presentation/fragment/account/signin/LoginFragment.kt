@@ -235,7 +235,7 @@ class LoginFragment : Fragment() {
             ForegroundColorSpan(
                 ContextCompat.getColor(
                     requireContext(),
-                    R.color.gray_4_D3D2D2
+                    R.color.gray_4_C5CAD2
                 )
             ),
             0,
