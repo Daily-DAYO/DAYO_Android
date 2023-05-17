@@ -20,7 +20,7 @@
             android:scaleType="centerCrop"
             android:tintMode="src_atop"
             android:background="@drawable/button_profile_folder_default_gray"
-            app:tint="@color/gray_2_5D5D5D_alpha_40"
+            app:tint="@color/gray_2_767B83_alpha_40"
             app:shapeAppearanceOverlay="@style/roundedImageViewRoundedCorner"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>

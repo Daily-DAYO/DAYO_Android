@@ -15,7 +15,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/gray_6_F6F6F6"
+        android:background="@color/gray_6_F0F1F3"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -104,7 +104,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="7dp"
                         android:text="@{profile.email}"
-                        android:textColor="@color/gray_3_9C9C9C"
+                        android:textColor="@color/gray_3_9FA5AE"
                         android:textSize="12dp"
                         android:visibility="@{isMine ? View.VISIBLE : View.GONE}"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -148,7 +148,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:text="게시글"
-                                android:textColor="@color/gray_3_9C9C9C"
+                                android:textColor="@color/gray_3_9FA5AE"
                                 android:textSize="11dp"
                                 android:textStyle="bold" />
                         </LinearLayout>
@@ -157,7 +157,7 @@
                             android:id="@+id/view_profile_count_post_vertical_line"
                             android:layout_width="0.6dp"
                             android:layout_height="match_parent"
-                            android:background="@color/gray_4_D3D2D2" />
+                            android:background="@color/gray_4_C5CAD2" />
 
                         <LinearLayout
                             android:id="@+id/layout_profile_follower_count"
@@ -183,7 +183,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:text="팔로워"
-                                android:textColor="@color/gray_3_9C9C9C"
+                                android:textColor="@color/gray_3_9FA5AE"
                                 android:textSize="11dp"
                                 android:textStyle="bold" />
 
@@ -193,7 +193,7 @@
                             android:id="@+id/view_profile_count_follower_vertical_line"
                             android:layout_width="0.6dp"
                             android:layout_height="match_parent"
-                            android:background="@color/gray_4_D3D2D2" />
+                            android:background="@color/gray_4_C5CAD2" />
 
                         <LinearLayout
                             android:id="@+id/layout_profile_following_count"
@@ -219,7 +219,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:text="팔로잉"
-                                android:textColor="@color/gray_3_9C9C9C"
+                                android:textColor="@color/gray_3_9FA5AE"
                                 android:textSize="11dp"
                                 android:textStyle="bold" />
                         </LinearLayout>
@@ -260,7 +260,7 @@
                     app:tabPaddingStart="30dp"
                     app:tabSelectedTextColor="@color/gray_1_313131"
                     app:tabTextAppearance="@style/tab_profile"
-                    app:tabTextColor="@color/gray_3_9C9C9C"
+                    app:tabTextColor="@color/gray_3_9FA5AE"
                     tools:visibility="visible">
 
                     <com.google.android.material.tabs.TabItem
@@ -283,7 +283,7 @@
                     android:id="@+id/view_tabs_horizontal_line"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/gray_6_F6F6F6"
+                    android:background="@color/gray_6_F0F1F3"
                     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

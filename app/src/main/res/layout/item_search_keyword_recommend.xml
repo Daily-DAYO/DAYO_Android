@@ -13,7 +13,7 @@
         android:layout_height="30dp"
         android:stateListAnimator="@null"
         android:textSize="12dp"
-        android:textColor="@color/gray_2_5D5D5D"
+        android:textColor="@color/gray_2_767B83"
         android:textAlignment="center"
         android:paddingHorizontal="18dp"
         app:layout_constraintTop_toTopOf="parent"
