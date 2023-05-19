@@ -15,10 +15,10 @@
     <item android:state_enabled="false">
         <shape>
             <solid
-                android:color="@color/gray_5_EDEDED"/>
+                android:color="@color/gray_5_E8EAEE"/>
             <stroke
                 android:width="0.5dp"
-                android:color="@color/gray_5_EDEDED"
+                android:color="@color/gray_5_E8EAEE"
                 />
             <corners
                 android:radius="10dp"/>

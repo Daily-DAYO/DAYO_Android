@@ -182,7 +182,7 @@
                 android:inputType="textMultiLine"
                 android:maxLength="100"
                 android:padding="11dp"
-                android:textColorHint="@color/gray_4_D3D2D2"
+                android:textColorHint="@color/gray_4_C5CAD2"
                 android:textSize="13dp"
                 android:visibility="invisible"
                 tools:visibility="visible" />

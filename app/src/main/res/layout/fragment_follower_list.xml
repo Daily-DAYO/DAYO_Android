@@ -51,7 +51,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/follower_empty_description"
-                android:textColor="@color/gray_3_9C9C9C"
+                android:textColor="@color/gray_3_9FA5AE"
                 android:textSize="15dp" />
 
         </LinearLayout>

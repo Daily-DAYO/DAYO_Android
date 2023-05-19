@@ -93,7 +93,7 @@
                 android:hint="@string/my_profile_edit_nickname_edittext_hint"
                 android:textSize="17dp"
                 android:textColor="@color/gray_1_313131"
-                android:textColorHint="@color/gray_4_D3D2D2"
+                android:textColorHint="@color/gray_4_C5CAD2"
                 android:maxLength="10"
                 android:singleLine="true"
                 app:layout_constraintTop_toTopOf="parent"

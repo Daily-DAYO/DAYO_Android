@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:includeFontPadding="false"
                 android:text="@string/email"
-                android:textColor="@color/gray_3_9C9C9C"
+                android:textColor="@color/gray_3_9FA5AE"
                 android:textSize="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
@@ -80,7 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_login_email_address"
-                android:textColorHint="@color/gray_4_D3D2D2"
+                android:textColorHint="@color/gray_4_C5CAD2"
                 app:boxBackgroundMode="outline"
                 app:endIconMode="custom"
                 app:endIconTint="@android:color/transparent"
@@ -104,7 +104,7 @@
                     android:paddingStart="0dp"
                     android:singleLine="true"
                     android:textColor="@color/gray_1_313131"
-                    android:textColorHint="@color/gray_4_D3D2D2"
+                    android:textColorHint="@color/gray_4_C5CAD2"
                     android:textSize="17dp" />
             </com.google.android.material.textfield.TextInputLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -125,7 +125,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:text="@string/password"
-                android:textColor="@color/gray_3_9C9C9C"
+                android:textColor="@color/gray_3_9FA5AE"
                 android:textSize="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -136,7 +136,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_login_email_password"
-                android:textColorHint="@color/gray_4_D3D2D2"
+                android:textColorHint="@color/gray_4_C5CAD2"
                 app:boxBackgroundMode="outline"
                 app:hintAnimationEnabled="false"
                 app:hintEnabled="true"
@@ -157,7 +157,7 @@
                     android:paddingStart="0dp"
                     android:singleLine="true"
                     android:textColor="@color/gray_1_313131"
-                    android:textColorHint="@color/gray_4_D3D2D2"
+                    android:textColorHint="@color/gray_4_C5CAD2"
                     android:textSize="17dp" />
             </com.google.android.material.textfield.TextInputLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -171,7 +171,7 @@
             android:paddingHorizontal="3dp"
             android:paddingVertical="11dp"
             android:text="@string/login_email_forget"
-            android:textColor="@color/gray_3_9C9C9C"
+            android:textColor="@color/gray_3_9FA5AE"
             android:textFontWeight="400"
             android:textSize="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -188,7 +188,7 @@
             android:layout_marginBottom="38dp"
             android:lineHeight="12.36dp"
             android:text="@string/login_email_signup"
-            android:textColor="@color/gray_4_D3D2D2"
+            android:textColor="@color/gray_4_C5CAD2"
             android:textFontWeight="400"
             android:textSize="12dp"
             app:layout_constraintBottom_toTopOf="@id/btn_login_email_next"

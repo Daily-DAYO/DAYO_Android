@@ -43,7 +43,7 @@
                     android:layout_marginTop="22dp"
                     android:gravity="center"
                     android:text="@string/my_profile_folder_empty_description"
-                    android:textColor="@color/gray_3_9C9C9C"
+                    android:textColor="@color/gray_3_9FA5AE"
                     android:textSize="15dp" />
 
             </LinearLayout>

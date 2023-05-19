@@ -43,7 +43,7 @@
             android:id="@+id/view_signup_email_set_profile_image_option_take_photo_horizontal_line"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/gray_5_EDEDED"
+            android:background="@color/gray_5_E8EAEE"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
