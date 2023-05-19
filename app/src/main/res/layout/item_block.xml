@@ -49,7 +49,7 @@
             android:button="@android:color/transparent"
             android:text="해제"
             android:textAlignment="center"
-            android:textColor="@color/gray_3_9C9C9C"
+            android:textColor="@color/gray_3_9FA5AE"
             android:textSize="14dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

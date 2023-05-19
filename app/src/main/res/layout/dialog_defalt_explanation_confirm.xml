@@ -31,7 +31,7 @@
             android:id="@+id/tv_default_dialog_explanation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/gray_4_D3D2D2"
+            android:textColor="@color/gray_4_C5CAD2"
             android:textSize="11dp"
             android:gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/tv_default_dialog_description"
@@ -50,7 +50,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="20dp"
-        android:background="@color/gray_4_D3D2D2"/>
+        android:background="@color/gray_4_C5CAD2"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_default_dialog_explanation_confirm_contents_confirmation"
@@ -84,7 +84,7 @@
             android:gravity="center"
             android:text="@string/cancel"
             android:textSize="13dp"
-            android:textColor="@color/gray_3_9C9C9C"
+            android:textColor="@color/gray_3_9FA5AE"
             app:layout_constraintTop_toTopOf="@id/guideline_default_dialog_explanation_confirm_description"
             app:layout_constraintBottom_toBottomOf="@id/guideline_default_dialog_explanation_confirm_description"
             app:layout_constraintStart_toStartOf="parent"

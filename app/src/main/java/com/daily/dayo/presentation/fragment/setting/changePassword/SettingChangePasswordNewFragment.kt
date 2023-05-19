@@ -133,7 +133,7 @@ class SettingChangePasswordNewFragment : Fragment() {
                             verifyPasswordTextWatcher
                         )
                         binding.etSettingChangePasswordNewUserInput.backgroundTintList =
-                            ContextCompat.getColorStateList(requireContext(), R.color.gray_6_F6F6F6)
+                            ContextCompat.getColorStateList(requireContext(), R.color.gray_6_F0F1F3)
                         binding.etSettingChangePasswordNewUserInput.isEnabled = false
                         ButtonActivation.setSignupButtonInactive(
                             requireContext(),

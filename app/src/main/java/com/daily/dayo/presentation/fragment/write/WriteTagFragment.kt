@@ -178,7 +178,7 @@ class WriteTagFragment : Fragment() {
             } else {
                 tvWriteTagListCountSaved.setTextColor(
                     resources.getColor(
-                        R.color.gray_4_D3D2D2,
+                        R.color.gray_4_C5CAD2,
                         context?.theme
                     )
                 )
@@ -191,7 +191,7 @@ class WriteTagFragment : Fragment() {
         if(originalTagList == currentTagList) {
             binding.btnWritePostTagSubmit.setTextColor(
                 resources.getColor(
-                    R.color.gray_4_D3D2D2,
+                    R.color.gray_4_C5CAD2,
                     context?.theme
                 )
             )

@@ -54,14 +54,14 @@
             android:layout_height="wrap_content"
             app:boxBackgroundMode="outline"
             app:boxBackgroundColor="@android:color/transparent"
-            app:boxStrokeColor="@color/gray_5_EDEDED"
+            app:boxStrokeColor="@color/gray_5_E8EAEE"
             app:boxStrokeWidthFocused="1dp"
 
             android:hint="@string/email_address_example"
             app:hintEnabled="true"
-            app:hintTextColor="@color/gray_3_9C9C9C"
+            app:hintTextColor="@color/gray_3_9FA5AE"
             app:hintAnimationEnabled="false"
-            android:textColorHint="@color/gray_4_D3D2D2"
+            android:textColorHint="@color/gray_4_C5CAD2"
 
             app:endIconMode="custom"
             app:endIconTint="@android:color/transparent"

@@ -40,7 +40,7 @@
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:textColor="@color/gray_1_313131"
-            android:textColorHint="@color/gray_4_D3D2D2"
+            android:textColorHint="@color/gray_4_C5CAD2"
             android:textCursorDrawable="@color/gray_1_313131"
             android:textSize="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -67,7 +67,7 @@
             android:id="@+id/view_search_horizontal_line"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/gray_6_F6F6F6"
+            android:background="@color/gray_6_F0F1F3"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -99,7 +99,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/delete_all"
-            android:textColor="@color/gray_3_9C9C9C"
+            android:textColor="@color/gray_3_9FA5AE"
             android:textSize="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

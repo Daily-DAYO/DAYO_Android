@@ -55,7 +55,7 @@
         android:id="@+id/view_tabs_horizontal_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/gray_6_F6F6F6" />
+        android:background="@color/gray_6_F0F1F3" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/pager_follow"

@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:text="@{commentCreateTime}"
             android:textSize="10dp"
-            android:textColor="@color/gray_3_9C9C9C"
+            android:textColor="@color/gray_3_9FA5AE"
             app:layout_constraintTop_toTopOf="@id/tv_post_comment_user_nickname"
             app:layout_constraintBottom_toBottomOf="@id/tv_post_comment_user_nickname"
             app:layout_constraintStart_toEndOf="@id/tv_post_comment_user_nickname"

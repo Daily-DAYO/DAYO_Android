@@ -52,7 +52,7 @@
     <style name="EditTextStyle" parent="Theme.DAYO">
         <!-- EditText Color -->
         <item name="colorControlActivated">@color/gray_1_313131</item>
-        <item name="colorControlNormal">@color/gray_4_D3D2D2</item>
+        <item name="colorControlNormal">@color/gray_4_C5CAD2</item>
         <item name="colorAccent">@color/gray_1_313131</item>
     </style>
 
