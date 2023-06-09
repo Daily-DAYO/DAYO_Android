@@ -1,8 +1,11 @@
 package com.daily.dayo.domain.repository
 
+import androidx.paging.PagingData
 import com.daily.dayo.data.datasource.remote.folder.*
+import com.daily.dayo.domain.model.FolderPost
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Privacy
+import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 
 interface FolderRepository {
@@ -23,10 +26,11 @@ interface FolderRepository {
         thumbnailImage: MultipartBody.Part?
     ): NetworkResponse<EditFolderResponse>
 
-    suspend fun requestAllMyFolderList(): NetworkResponse<ListAllMyFolderResponse>
-    suspend fun requestAllFolderList(memberId: String): NetworkResponse<ListAllFolderResponse>
     suspend fun requestCreateFolderInPost(body: CreateFolderInPostRequest): NetworkResponse<CreateFolderInPostResponse>
     suspend fun requestDeleteFolder(folderId: Int): NetworkResponse<Void>
-    suspend fun requestDetailListFolder(folderId: Int): NetworkResponse<DetailFolderResponse>
     suspend fun requestOrderFolder(body: List<EditOrderDto>): NetworkResponse<Void>
+    suspend fun requestAllFolderList(memberId: String): NetworkResponse<ListAllFolderResponse>
+    suspend fun requestAllMyFolderList(): NetworkResponse<ListAllMyFolderResponse>
+    suspend fun requestFolderInfo(folderId: Int): NetworkResponse<FolderInfoResponse>
+    suspend fun requestDetailListFolder(folderId: Int): Flow<PagingData<FolderPost>>
 }

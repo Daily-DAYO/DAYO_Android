@@ -32,7 +32,7 @@ import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFolderSettingAddBinding
 import com.daily.dayo.domain.model.Privacy
-import com.daily.dayo.presentation.viewmodel.FolderSettingViewModel
+import com.daily.dayo.presentation.viewmodel.FolderViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,7 +46,7 @@ import java.util.regex.Pattern
 
 class FolderEditFragment : Fragment() {
     private var binding by autoCleared<FragmentFolderSettingAddBinding>()
-    private val folderSettingViewModel by activityViewModels<FolderSettingViewModel>()
+    private val folderViewModel by activityViewModels<FolderViewModel>()
     private val args by navArgs<FolderEditFragmentArgs>()
     private lateinit var glideRequestManager: RequestManager
     private lateinit var initThumbnailImg: String
@@ -88,9 +88,9 @@ class FolderEditFragment : Fragment() {
             ViewGroup.MarginLayoutParams.MATCH_PARENT
         )
 
-        folderSettingViewModel.requestDetailListFolder(args.folderId)
+        folderViewModel.requestFolderInfo(args.folderId)
         viewLifecycleOwner.lifecycleScope.launch {
-            folderSettingViewModel.detailFolderList.observe(viewLifecycleOwner) { it ->
+            folderViewModel.folderInfo.observe(viewLifecycleOwner) { it ->
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { folder ->
@@ -153,7 +153,7 @@ class FolderEditFragment : Fragment() {
             if (this::imageUri.isInitialized) {
                 // 폴더 커버 이미지 변경
                 val thumbnailImg = thumbnailImgBitmap?.let { bitmapToFile(it) }
-                folderSettingViewModel.requestEditFolder(
+                folderViewModel.requestEditFolder(
                     args.folderId,
                     name,
                     privacy,
@@ -163,7 +163,7 @@ class FolderEditFragment : Fragment() {
                 )
             } else {
                 // 폴더 커버 이미지 변경되지 않음
-                folderSettingViewModel.requestEditFolder(
+                folderViewModel.requestEditFolder(
                     args.folderId,
                     name,
                     privacy,
@@ -173,7 +173,7 @@ class FolderEditFragment : Fragment() {
                 )
             }
 
-            folderSettingViewModel.editSuccess.observe(viewLifecycleOwner) {
+            folderViewModel.editSuccess.observe(viewLifecycleOwner) {
                 if (it.getContentIfNotHandled() == true) {
                     findNavController().navigateUp()
                 } else {

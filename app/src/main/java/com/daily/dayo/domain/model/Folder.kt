@@ -9,11 +9,11 @@ data class Folder(
     val privacy: Privacy,
     val subheading: String?,
     val thumbnailImage: String,
-    val postCount: Int,
-    val posts: List<FolderPost>?
+    val postCount: Int
 )
 
 data class FolderPost(
+    val createDate: String,
     val postId: Int,
     val thumbnailImage: String,
     var preLoadThumbnail: Bitmap? = null

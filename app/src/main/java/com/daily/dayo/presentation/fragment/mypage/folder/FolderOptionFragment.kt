@@ -10,17 +10,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
+import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.dialog.DefaultDialogExplanationConfirm
-import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFolderOptionBinding
-import com.daily.dayo.presentation.viewmodel.FolderSettingViewModel
+import com.daily.dayo.presentation.viewmodel.FolderViewModel
 
 class FolderOptionFragment : DialogFragment()  {
     private var binding by autoCleared<FragmentFolderOptionBinding>()
     private val args by navArgs<FolderOptionFragmentArgs>()
-    private val folderSettingViewModel by activityViewModels<FolderSettingViewModel>()
+    private val folderViewModel by activityViewModels<FolderViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,8 +72,8 @@ class FolderOptionFragment : DialogFragment()  {
     }
 
     private fun folderDelete(){
-        folderSettingViewModel.requestDeleteFolder(args.folderId)
-        folderSettingViewModel.deleteSuccess.observe(viewLifecycleOwner) {
+        folderViewModel.requestDeleteFolder(args.folderId)
+        folderViewModel.deleteSuccess.observe(viewLifecycleOwner) {
             if(it.getContentIfNotHandled() == true) {
                 findNavController().navigate(FolderOptionFragmentDirections.actionFolderOptionFragmentToProfileFragment(memberId = DayoApplication.preferences.getCurrentUser().memberId!!))
             }
