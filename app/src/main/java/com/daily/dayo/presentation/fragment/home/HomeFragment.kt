@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.daily.dayo.R
@@ -13,6 +14,7 @@ import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentHomeBinding
 import com.daily.dayo.presentation.adapter.HomeFragmentPagerStateAdapter
+import com.daily.dayo.presentation.viewmodel.HomeViewModel
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,8 +22,10 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
     private var binding by autoCleared<FragmentHomeBinding>()
-    private lateinit var viewPager : ViewPager2
+    private val homeViewModel by activityViewModels<HomeViewModel>()
+    private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
+    private var pagerAdapter: HomeFragmentPagerStateAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,19 +52,23 @@ class HomeFragment : Fragment() {
         tabLayout = binding.tabsActionbarHomeCategory
 
         viewPager.isUserInputEnabled = false // DISABLE SWIPE
-
-        val pagerAdapter = HomeFragmentPagerStateAdapter(requireActivity())
-        pagerAdapter.addFragment(HomeDayoPickPostListFragment())
-        pagerAdapter.addFragment(HomeNewPostListFragment())
-        for (i in 0 until pagerAdapter.itemCount) {
-            pagerAdapter.refreshFragment(i,pagerAdapter.fragments[i])
+        pagerAdapter = HomeFragmentPagerStateAdapter(requireActivity())
+        pagerAdapter?.addFragment(HomeDayoPickPostListFragment())
+        pagerAdapter?.addFragment(HomeNewPostListFragment())
+        for (i in 0 until pagerAdapter!!.itemCount) {
+            pagerAdapter?.refreshFragment(i, pagerAdapter!!.fragments[i])
         }
 
         viewPager.adapter = pagerAdapter
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                pagerAdapter.refreshFragment(position,pagerAdapter.fragments[position])
+                pagerAdapter?.refreshFragment(position, pagerAdapter!!.fragments[position])
+                when (position) {
+//                    0 -> { homeViewModel.requestDayoPickPostList() }
+//                    1 -> { homeViewModel.requestNewPostList() }
+                    else -> {}
+                }
             }
         })
 
@@ -68,8 +76,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun initTabLayout() {
-        TabLayoutMediator(tabLayout, viewPager){ tab, position ->
-            when (position){
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            when (position) {
                 0 ->
                     tab.text = "DAYO PICK"
                 1 ->

@@ -41,6 +41,7 @@ import com.daily.dayo.domain.model.Comment
 import com.daily.dayo.domain.model.categoryKR
 import com.daily.dayo.presentation.adapter.PostCommentAdapter
 import com.daily.dayo.presentation.adapter.PostImageSliderAdapter
+import com.daily.dayo.presentation.viewmodel.HomeViewModel
 import com.daily.dayo.presentation.viewmodel.PostViewModel
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,6 +55,7 @@ import kotlinx.coroutines.withContext
 @AndroidEntryPoint
 class PostFragment : Fragment() {
     private var binding by autoCleared<FragmentPostBinding>()
+    private val homeViewModel by activityViewModels<HomeViewModel>()
     private val postViewModel by activityViewModels<PostViewModel>()
     private val args by navArgs<PostFragmentArgs>()
     private lateinit var mAlertDialog: AlertDialog
@@ -94,6 +96,13 @@ class PostFragment : Fragment() {
         setPostCommentClickListener()
 
         return binding.root
+    }
+
+    override fun onStop() {
+        binding.post?.let {
+            homeViewModel.setPostStatus(args.postId, it.heart, it.heartCount, binding.commentCount?: 0)
+        }
+        super.onStop()
     }
 
     override fun onDestroyView() {

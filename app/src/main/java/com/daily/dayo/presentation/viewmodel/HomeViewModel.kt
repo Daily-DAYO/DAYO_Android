@@ -30,9 +30,6 @@ class HomeViewModel @Inject constructor(
     private val requestLikePostUseCase: RequestLikePostUseCase,
     private val requestUnlikePostUseCase: RequestUnlikePostUseCase
 ) : ViewModel() {
-    var isInitLoadingDAYOPICK = false
-    var isInitLoadingNew = false
-
     var currentDayoPickCategory = Category.ALL
     var currentNewCategory = Category.ALL
 
@@ -43,21 +40,21 @@ class HomeViewModel @Inject constructor(
     val newPostList: LiveData<Resource<List<Post>>> get() = _newPostList
 
     fun requestDayoPickPostList() = viewModelScope.launch(Dispatchers.IO) {
-        if(currentDayoPickCategory == Category.ALL){
+        if (currentDayoPickCategory == Category.ALL) {
             requestHomeDayoPickPostList()
         } else {
             requestHomeDayoPickPostListCategory(currentDayoPickCategory)
         }
     }
     fun requestNewPostList() = viewModelScope.launch(Dispatchers.IO) {
-        if(currentNewCategory == Category.ALL){
+        if (currentNewCategory == Category.ALL) {
             requestHomeNewPostList()
         } else {
-            requestHomeDayoPickPostListCategory(currentNewCategory)
+            requestHomeNewPostListCategory(currentNewCategory)
         }
     }
 
-    fun requestHomeNewPostList() = viewModelScope.launch(Dispatchers.IO) {
+    private fun requestHomeNewPostList() = viewModelScope.launch(Dispatchers.IO) {
         requestNewPostListUseCase()?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> { _newPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
@@ -68,7 +65,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun requestHomeNewPostListCategory(category: Category) = viewModelScope.launch(Dispatchers.IO) {
+    private fun requestHomeNewPostListCategory(category: Category) = viewModelScope.launch(Dispatchers.IO) {
         requestNewPostListCategoryUseCase(category = category)?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> { _newPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
@@ -79,8 +76,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun requestHomeDayoPickPostList() = viewModelScope.launch(Dispatchers.IO) {
-        _dayoPickPostList.postValue(Resource.loading(null))
+    private fun requestHomeDayoPickPostList() = viewModelScope.launch(Dispatchers.IO) {
         requestHomeDayoPickPostListUseCase()?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> { _dayoPickPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
@@ -91,7 +87,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun requestHomeDayoPickPostListCategory(category: Category) = viewModelScope.launch(Dispatchers.IO) {
+    private fun requestHomeDayoPickPostListCategory(category: Category) = viewModelScope.launch(Dispatchers.IO) {
         requestDayoPickPostListCategoryUseCase(category = category)?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> { _dayoPickPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
@@ -108,5 +104,82 @@ class HomeViewModel @Inject constructor(
 
     fun requestUnlikePost(postId: Int) = viewModelScope.launch(Dispatchers.IO) {
         val response = requestUnlikePostUseCase(postId = postId)
+    }
+
+    fun toggleLikeStatusDayoPick(id: Int, isLike: Boolean) {
+        _dayoPickPostList.postValue(
+            Resource.success(
+                _dayoPickPostList.value?.data?.map {
+                    if (it.postId == id) {
+                        if (isLike) { this.requestLikePost(it.postId)
+                        } else { this.requestUnlikePost(it.postId) }
+                        it.copy(
+                            heart = isLike,
+                            heartCount = if (isLike) {
+                                it.heartCount + 1
+                            } else {
+                                if (it.heartCount <= 0) 0 else it.heartCount - 1
+                            }
+                        )
+                    } else {
+                        it
+                    }
+                }
+            )
+        )
+    }
+    fun toggleLikeStatusNewPost(id: Int, isLike: Boolean) {
+        _newPostList.postValue(
+            Resource.success(
+                _newPostList.value?.data?.map {
+                    if (it.postId == id) {
+                        if (isLike) { this.requestLikePost(it.postId)
+                        } else { this.requestUnlikePost(it.postId) }
+                        it.copy(
+                            heart = isLike,
+                            heartCount = if (isLike) {
+                                it.heartCount + 1
+                            } else {
+                                if (it.heartCount <= 0) 0 else it.heartCount - 1
+                            }
+                        )
+                    } else {
+                        it
+                    }
+                }
+            )
+        )
+    }
+    fun setPostStatus(postId: Int, isLike: Boolean, heartCount: Int, commentCount: Int) {
+        _dayoPickPostList.postValue(
+            Resource.success(
+                _dayoPickPostList.value?.data?.map {
+                    if (it.postId == postId) {
+                        it.copy(
+                            heart = isLike,
+                            heartCount = heartCount,
+                            commentCount = commentCount
+                        )
+                    } else {
+                        it
+                    }
+                }
+            )
+        )
+        _newPostList.postValue(
+            Resource.success(
+                _newPostList.value?.data?.map {
+                    if (it.postId == postId) {
+                        it.copy(
+                            heart = isLike,
+                            heartCount = heartCount,
+                            commentCount = commentCount
+                        )
+                    } else {
+                        it
+                    }
+                }
+            )
+        )
     }
 }
