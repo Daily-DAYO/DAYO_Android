@@ -32,7 +32,6 @@ class HomeNewPostListFragment : Fragment() {
     private var binding by autoCleared<FragmentHomeNewPostListBinding>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private lateinit var homeNewAdapter: HomeNewAdapter
-    private lateinit var currentCategory: Category
 
     lateinit var mGlideRequestManager: RequestManager
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,25 +44,23 @@ class HomeNewPostListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentHomeNewPostListBinding.inflate(inflater, container, false)
+        startLoadingView()
         setInitialCategory()
-        currentCategory = Category.ALL
         setRvNewPostAdapter()
         setNewPostListCollect()
         setPostLikeClickListener()
         setNewPostListRefreshListener()
-
-        binding.layoutNewPostShimmer.startShimmer()
         return binding.root
     }
 
     override fun onResume() {
+        loadPosts(homeViewModel.currentNewCategory)
         super.onResume()
-        homeViewModel.requestNewPostList()
     }
 
     private fun setNewPostListRefreshListener() {
         binding.swipeRefreshLayoutNewPost.setOnRefreshListener {
-            setCategoryPostList(homeViewModel.currentNewCategory)
+            loadPosts(homeViewModel.currentNewCategory)
         }
     }
 
@@ -84,7 +81,7 @@ class HomeNewPostListFragment : Fragment() {
     }
 
     private fun setRvNewPostAdapter() {
-        homeNewAdapter = HomeNewAdapter(false, mGlideRequestManager)
+        homeNewAdapter = HomeNewAdapter(false, mGlideRequestManager, this::toggleLikeStatus)
         binding.rvNewPost.adapter = homeNewAdapter
     }
 
@@ -108,44 +105,33 @@ class HomeNewPostListFragment : Fragment() {
         }
         with(binding) {
             radiobuttonNewPostCategoryAll.setOnDebounceClickListener {
-                setCategoryPostList(Category.ALL)
-                loadingPost()
+                loadPosts(Category.ALL)
             }
             radiobuttonNewPostCategoryScheduler.setOnDebounceClickListener {
-                setCategoryPostList(Category.SCHEDULER)
-                loadingPost()
+                loadPosts(Category.SCHEDULER)
             }
             radiobuttonNewPostCategoryStudyplanner.setOnDebounceClickListener {
-                setCategoryPostList(Category.STUDY_PLANNER)
-                loadingPost()
+                loadPosts(Category.STUDY_PLANNER)
             }
             radiobuttonNewPostCategoryPocketbook.setOnDebounceClickListener {
-                setCategoryPostList(Category.POCKET_BOOK)
-                loadingPost()
+                loadPosts(Category.POCKET_BOOK)
             }
             radiobuttonNewPostCategory6holediary.setOnDebounceClickListener {
-                setCategoryPostList(Category.SIX_DIARY)
-                loadingPost()
+                loadPosts(Category.SIX_DIARY)
             }
             radiobuttonNewPostCategoryDigital.setOnDebounceClickListener {
-                setCategoryPostList(Category.GOOD_NOTE)
-                loadingPost()
+                loadPosts(Category.GOOD_NOTE)
             }
             radiobuttonNewPostCategoryEtc.setOnDebounceClickListener {
-                setCategoryPostList(Category.ETC)
-                loadingPost()
+                loadPosts(Category.ETC)
             }
         }
     }
 
-    private fun setCategoryPostList(selectCategory: Category) {
-        currentCategory = selectCategory
-        if (selectCategory == Category.ALL) {
-            homeViewModel.currentNewCategory = selectCategory
-            homeViewModel.requestHomeNewPostList()
-        } else {
-            homeViewModel.currentNewCategory = selectCategory
-            homeViewModel.requestHomeNewPostListCategory(category = selectCategory)
+    private fun loadPosts(selectCategory: Category) {
+        with(homeViewModel) {
+            currentNewCategory = selectCategory
+            requestNewPostList()
         }
     }
 
@@ -153,26 +139,16 @@ class HomeNewPostListFragment : Fragment() {
         homeNewAdapter.setOnItemClickListener(object :
             HomeNewAdapter.OnItemClickListener {
             override fun likePostClick(btn: ImageButton, post: Post, position: Int) {
-                if (!post.heart) {
-                    homeViewModel.requestLikePost(post.postId!!)
-                } else {
-                    homeViewModel.requestUnlikePost(post.postId!!)
-                }.let {
-                    it.invokeOnCompletion { throwable ->
-                        when (throwable) {
-                            is CancellationException -> Log.e("Post Like Click", "CANCELLED")
-                            null -> {
-                                if (this@HomeNewPostListFragment::currentCategory.isInitialized) {
-                                    if (currentCategory != Category.ALL) {
-                                        homeViewModel.requestHomeNewPostListCategory(currentCategory)
-                                    } else {
-                                        homeViewModel.requestHomeNewPostList()
-                                    }
-                                } else {
-                                    homeViewModel.requestHomeNewPostList()
-                                }
-                            }
+                with(post) {
+                    try {
+                        if (!heart) {
+                            homeViewModel.requestLikePost(postId!!)
+                        } else {
+                            homeViewModel.requestUnlikePost(post.postId!!)
                         }
+                    } catch (postIdNullException: NullPointerException) {
+                        Log.e(this@HomeNewPostListFragment.tag, "PostId Null Exception Occurred")
+                        loadPosts(homeViewModel.currentNewCategory)
                     }
                 }
             }
@@ -206,13 +182,13 @@ class HomeNewPostListFragment : Fragment() {
             when (throwable) {
                 is CancellationException -> Log.e("Image Loading", "CANCELLED")
                 null -> {
-                    completeLoadPost()
                     var loadedPostList = postList.toMutableList()
                     for (i in 0 until (if (postList.size >= 6) 6 else postList.size)) {
                         loadedPostList[i].preLoadThumbnail = thumbnailImgList[i]
                         loadedPostList[i].preLoadUserImg = userImgList[i]
                     }
                     homeNewAdapter.submitList(postList.toMutableList())
+                    stopLoadingView()
                     thumbnailImgList.clear()
                     userImgList.clear()
                 }
@@ -220,15 +196,27 @@ class HomeNewPostListFragment : Fragment() {
         }
     }
 
-    private fun loadingPost() {
-        binding.layoutNewPostShimmer.startShimmer()
-        binding.layoutNewPostShimmer.visibility = View.VISIBLE
-        binding.rvNewPost.visibility = View.INVISIBLE
+    private fun startLoadingView() {
+        with(binding) {
+            with(layoutNewPostShimmer) {
+                startShimmer()
+                visibility = View.VISIBLE
+            }
+            rvNewPost.visibility = View.INVISIBLE
+        }
     }
 
-    private fun completeLoadPost() {
-        binding.layoutNewPostShimmer.stopShimmer()
-        binding.layoutNewPostShimmer.visibility = View.GONE
-        binding.rvNewPost.visibility = View.VISIBLE
+    private fun stopLoadingView() {
+        with(binding) {
+            with(layoutNewPostShimmer) {
+                stopShimmer()
+                visibility = View.GONE
+            }
+            rvNewPost.visibility = View.VISIBLE
+        }
+    }
+
+    private fun toggleLikeStatus(id: Int, isLiked: Boolean) {
+        homeViewModel.toggleLikeStatusNewPost(id, isLiked)
     }
 }
