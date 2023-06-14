@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
@@ -16,14 +16,10 @@ import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemFolderPostBinding
 import com.daily.dayo.domain.model.FolderPost
 import com.daily.dayo.presentation.fragment.mypage.folder.FolderFragmentDirections
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class FolderPostListAdapter(private val requestManager: RequestManager) :
-    RecyclerView.Adapter<FolderPostListAdapter.FolderPostListViewHolder>() {
+    PagingDataAdapter<FolderPost, FolderPostListAdapter.FolderPostListViewHolder>(diffCallback) {
 
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<FolderPost>() {
@@ -35,9 +31,6 @@ class FolderPostListAdapter(private val requestManager: RequestManager) :
         }
     }
 
-    private val differ = AsyncListDiffer(this, diffCallback)
-    fun submitList(list: List<FolderPost>) = differ.submitList(list)
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FolderPostListViewHolder {
         return FolderPostListViewHolder(
             ItemFolderPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -45,18 +38,13 @@ class FolderPostListAdapter(private val requestManager: RequestManager) :
     }
 
     override fun onBindViewHolder(holder: FolderPostListViewHolder, position: Int) {
-        val item = differ.currentList[position]
-        holder.bind(item)
-    }
-
-    override fun getItemCount(): Int {
-        return differ.currentList.size
+        holder.bind(getItem(position))
     }
 
     inner class FolderPostListViewHolder(private val binding: ItemFolderPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(folderPost: FolderPost) {
+        fun bind(folderPost: FolderPost?) {
             val layoutParams = ViewGroup.MarginLayoutParams(
                 ViewGroup.MarginLayoutParams.MATCH_PARENT,
                 ViewGroup.MarginLayoutParams.MATCH_PARENT
@@ -68,13 +56,13 @@ class FolderPostListAdapter(private val requestManager: RequestManager) :
 
             CoroutineScope(Dispatchers.Main).launch {
                 val folderPostImage: Bitmap?
-                if(folderPost.preLoadThumbnail == null) {
+                if (folderPost?.preLoadThumbnail == null) {
                     folderPostImage = withContext(Dispatchers.IO) {
                         loadImageBackground(
                             requestManager = requestManager,
                             width = layoutParams.width,
                             height = layoutParams.width,
-                            imgName = folderPost.thumbnailImage
+                            imgName = folderPost?.thumbnailImage ?: ""
                         )
                     }
                 } else {
@@ -100,8 +88,7 @@ class FolderPostListAdapter(private val requestManager: RequestManager) :
             }
 
             binding.root.setOnDebounceClickListener {
-                Navigation.findNavController(it)
-                    .navigate(FolderFragmentDirections.actionFolderFragmentToPostFragment(folderPost.postId))
+                Navigation.findNavController(it).navigate(FolderFragmentDirections.actionFolderFragmentToPostFragment(folderPost!!.postId))
             }
         }
     }

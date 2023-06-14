@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class CreateFolderResponse(
     @SerializedName("folderId")
-    val id:Int
+    val id: Int
 )
 
 data class ListAllFolderResponse(
@@ -22,26 +22,33 @@ data class ListAllMyFolderResponse(
     val data: List<FolderDto>
 )
 
-data class CreateFolderInPostResponse(
-    @SerializedName("folderId")
-    val folderId: Int
+data class FolderInfoResponse(
+    @SerializedName("memberId")
+    val memberId: String,
+    @SerializedName("name")
+    val name: String,
+    @SerializedName("postCount")
+    val postCount: Int,
+    @SerializedName("privacy")
+    val privacy: Privacy,
+    @SerializedName("subheading")
+    var subheading: String?,
+    @SerializedName("thumbnailImage")
+    val thumbnailImage: String
 )
 
 data class DetailFolderResponse(
     @SerializedName("count")
     val count: Int,
+    @SerializedName("last")
+    val last: Boolean,
     @SerializedName("data")
-    val posts: List<FolderPostDto>,
-    @SerializedName("memberId")
-    val memberId: String,
-    @SerializedName("name")
-    val name: String,
-    @SerializedName("privacy")
-    val privacy: Privacy,
-    @SerializedName("subheading")
-    val subheading: String,
-    @SerializedName("thumbnailImage")
-    val thumbnailImage: String
+    val posts: List<FolderPostDto>
+)
+
+data class CreateFolderInPostResponse(
+    @SerializedName("folderId")
+    val folderId: Int
 )
 
 data class EditFolderResponse(
@@ -65,6 +72,8 @@ data class FolderDto(
 )
 
 data class FolderPostDto(
+    @SerializedName("createDate")
+    val createDate: String,
     @SerializedName("postId")
     val postId: Int,
     @SerializedName("thumbnailImage")

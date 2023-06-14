@@ -24,12 +24,12 @@ import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFolderSettingBinding
 import com.daily.dayo.domain.model.FolderOrder
 import com.daily.dayo.presentation.adapter.FolderSettingAdapter
-import com.daily.dayo.presentation.viewmodel.FolderSettingViewModel
+import com.daily.dayo.presentation.viewmodel.FolderViewModel
 import kotlinx.coroutines.launch
 
 class FolderSettingFragment : Fragment() {
     private var binding by autoCleared<FragmentFolderSettingBinding>()
-    private val folderSettingViewModel by activityViewModels<FolderSettingViewModel>()
+    private val folderViewModel by activityViewModels<FolderViewModel>()
     private lateinit var folderSettingAdapter: FolderSettingAdapter
     private var folderOrderList : MutableList<FolderOrder> = mutableListOf()
     private lateinit var loadingAlertDialog: AlertDialog
@@ -76,8 +76,8 @@ class FolderSettingFragment : Fragment() {
     private fun setProfileFolderList(){
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                folderSettingViewModel.requestAllMyFolderList()
-                folderSettingViewModel.folderList.observe(viewLifecycleOwner, Observer {
+                folderViewModel.requestAllMyFolderList()
+                folderViewModel.folderList.observe(viewLifecycleOwner, Observer {
                     when(it.status){
                         Status.SUCCESS -> {
                             it.data?.let { folderList ->
@@ -97,7 +97,7 @@ class FolderSettingFragment : Fragment() {
     }
 
     private fun setProfileOrderFolderList() {
-        folderSettingViewModel.folderList.observe(viewLifecycleOwner, Observer {
+        folderViewModel.folderList.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { folderList ->
@@ -125,12 +125,12 @@ class FolderSettingFragment : Fragment() {
     private fun setSaveButtonClickListener(){
         binding.btnFolderSettingSave.setOnDebounceClickListener {
             //변경된 순서 저장
-            folderSettingViewModel.requestOrderFolder(folderOrderList)
+            folderViewModel.requestOrderFolder(folderOrderList)
 
             //순서 저장 완료 후 변경 불가능한 상태로 돌아가기
             setRvFolderSettingListAdapter()
             binding.btnFolderSettingSave.visibility = View.GONE
-            folderSettingViewModel.orderFolderSuccess.observe(viewLifecycleOwner) {
+            folderViewModel.orderFolderSuccess.observe(viewLifecycleOwner) {
                 if(it.getContentIfNotHandled() == true){
                     setProfileFolderList()
                 }
