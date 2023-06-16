@@ -35,7 +35,13 @@ class HomeNewAdapter(val rankingShowing: Boolean, private val requestManager: Re
                 oldItem.postId == newItem.postId
 
             override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean =
-                oldItem == newItem
+                oldItem.apply {
+                    preLoadThumbnail = null
+                    preLoadUserImg = null
+                } == newItem.apply {
+                    preLoadThumbnail = null
+                    preLoadUserImg = null
+                }
         }
     }
 
