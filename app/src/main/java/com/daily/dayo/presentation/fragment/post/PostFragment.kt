@@ -4,12 +4,14 @@ import android.app.AlertDialog
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -25,6 +27,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
@@ -44,6 +47,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -171,6 +175,7 @@ class PostFragment : Fragment() {
                                     (post.memberId == DayoApplication.preferences.getCurrentUser().memberId)
 
                                 setPostLikeClickListener(isChecked = post.heart)
+                                setPostLikeDoubleTap(isChecked = post.heart)
                                 post.memberId?.let { memberId ->
                                     setOnUserProfileClickListener(memberId)
                                     setPostOptionClickListener(isMine = isMine, memberId = memberId)
@@ -273,7 +278,7 @@ class PostFragment : Fragment() {
                                 intArrayOf(android.R.attr.state_pressed)
                             ),
                             intArrayOf(
-                                resources.getColor(R.color.gray_6_F6F6F6, context?.theme),
+                                resources.getColor(R.color.gray_6_F0F1F3, context?.theme),
                                 resources.getColor(R.color.primary_green_23C882, context?.theme)
                             )
                         )
@@ -362,18 +367,40 @@ class PostFragment : Fragment() {
     private fun setPostLikeClickListener(isChecked: Boolean) {
         with(binding.btnPostLike) {
             setOnDebounceClickListener {
-                if (!isChecked) {
-                    postViewModel.requestLikePost(postId = args.postId)
-                } else {
-                    postViewModel.requestUnlikePost(postId = args.postId)
-                }.let {
-                    it.invokeOnCompletion { throwable ->
-                        when (throwable) {
-                            is CancellationException -> Log.e("Post Like Click", "CANCELLED")
-                            null -> {
-                                postViewModel.requestPostDetail(postId = args.postId)
-                            }
-                        }
+                setPostLike(isChecked)
+            }
+        }
+    }
+
+    private fun setPostLikeDoubleTap(isChecked: Boolean) {
+        postImageSliderAdapter.setOnItemClickListener(object :
+            PostImageSliderAdapter.OnItemClickListener {
+            override fun postImageDoubleTap(lottieAnimationView: LottieAnimationView) {
+                setPostLike(isChecked, lottieAnimationView)
+            }
+        })
+    }
+
+    private fun setPostLike(isChecked: Boolean, lottieAnimationView: LottieAnimationView? = null) {
+        var requestLike: Job? = null
+        if (!isChecked) {
+            requestLike = postViewModel.requestLikePost(postId = args.postId)
+            if (lottieAnimationView != null) {
+                lottieAnimationView.visibility = View.VISIBLE
+                lottieAnimationView.playAnimation()
+            } else {
+            }
+        } else {
+            if (lottieAnimationView == null)
+                requestLike = postViewModel.requestUnlikePost(postId = args.postId)
+            else {
+            }
+        }.let {
+            requestLike?.invokeOnCompletion { throwable ->
+                when (throwable) {
+                    is CancellationException -> Log.e("Post Like Click", "CANCELLED")
+                    null -> {
+                        postViewModel.requestPostDetail(postId = args.postId)
                     }
                 }
             }

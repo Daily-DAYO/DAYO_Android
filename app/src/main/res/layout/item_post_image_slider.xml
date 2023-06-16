@@ -2,6 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -17,12 +18,25 @@
             android:id="@+id/lottie_post_image"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:lottie_rawRes="@raw/dayo_loading"
+            app:layout_constraintBottom_toBottomOf="@id/img_slider"
+            app:layout_constraintEnd_toEndOf="@id/img_slider"
+            app:layout_constraintStart_toStartOf="@id/img_slider"
+            app:layout_constraintTop_toTopOf="@id/img_slider"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:layout_constraintStart_toStartOf="@id/img_slider"
+            app:lottie_rawRes="@raw/dayo_loading" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_post_heart"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:lottie_speed="2"
+            app:layout_constraintBottom_toBottomOf="@id/img_slider"
             app:layout_constraintEnd_toEndOf="@id/img_slider"
+            app:layout_constraintStart_toStartOf="@id/img_slider"
             app:layout_constraintTop_toTopOf="@id/img_slider"
-            app:layout_constraintBottom_toBottomOf="@id/img_slider"/>
+            app:lottie_loop="false"
+            app:lottie_rawRes="@raw/like_big" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
