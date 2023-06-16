@@ -1,11 +1,17 @@
 package com.daily.dayo.presentation.adapter
 
+import android.animation.Animator
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.RequestManager
+import com.daily.dayo.R
 import com.daily.dayo.common.GlideLoadUtil
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.databinding.ItemPostImageSliderBinding
@@ -28,6 +34,15 @@ class PostImageSliderAdapter(private val requestManager: RequestManager) :
         }
     }
 
+    interface OnItemClickListener {
+        fun postImageDoubleTap(lottieAnimationView: LottieAnimationView)
+    }
+
+    private var clickListener: OnItemClickListener? = null
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        this.clickListener = listener
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostImageViewHolder {
         return PostImageViewHolder(
             ItemPostImageSliderBinding.inflate(
@@ -40,6 +55,19 @@ class PostImageSliderAdapter(private val requestManager: RequestManager) :
 
     override fun onBindViewHolder(holder: PostImageViewHolder, position: Int) {
         holder.bindSliderImage(getItem(position))
+
+        val gestureDetector = GestureDetector(
+            holder.itemView.context,
+            object : GestureDetector.SimpleOnGestureListener() {
+                override fun onDoubleTap(e: MotionEvent): Boolean {
+                    clickListener?.postImageDoubleTap(holder.itemView.findViewById(R.id.lottie_post_heart))
+                    return super.onDoubleTap(e)
+                }
+            })
+        holder.itemView.setOnTouchListener { v, event ->
+            gestureDetector.onTouchEvent(event)
+            true
+        }
     }
 
     override fun submitList(list: List<String>?) {
@@ -70,6 +98,17 @@ class PostImageSliderAdapter(private val requestManager: RequestManager) :
                     imgView = binding.imgSlider,
                     placeholderLottie = binding.lottiePostImage
                 )
+            }
+            binding.lottiePostHeart.let { bigLikeLottie ->
+                bigLikeLottie.addAnimatorListener(object : Animator.AnimatorListener {
+                    override fun onAnimationStart(animation: Animator?) {}
+                    override fun onAnimationEnd(animation: Animator?) {
+                        bigLikeLottie.visibility = View.GONE
+                    }
+
+                    override fun onAnimationCancel(animation: Animator?) {}
+                    override fun onAnimationRepeat(animation: Animator?) {}
+                })
             }
         }
     }
