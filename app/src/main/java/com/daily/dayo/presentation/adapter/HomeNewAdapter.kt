@@ -43,7 +43,13 @@ class HomeNewAdapter(
                 oldItem.postId == newItem.postId
 
             override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean =
-                oldItem == newItem
+                oldItem.apply {
+                    preLoadThumbnail = null
+                    preLoadUserImg = null
+                } == newItem.apply {
+                    preLoadThumbnail = null
+                    preLoadUserImg = null
+                }
 
             override fun getChangePayload(oldItem: Post, newItem: Post): Any? {
                 return if (oldItem.heart != newItem.heart && oldItem.heartCount != newItem.heartCount) true else null

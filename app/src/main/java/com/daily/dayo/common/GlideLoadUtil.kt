@@ -55,7 +55,7 @@ object GlideLoadUtil {
                 }
             })
             .thumbnail(0.1f)
-            .placeholder(placeholderImg ?: R.color.gray_3_9C9C9C_alpha_30)
+            .placeholder(placeholderImg ?: R.color.gray_3_9FA5AE)
             .error(errorImg ?: R.drawable.ic_dayo_circle_grayscale)
             .priority(Priority.HIGH)
             .centerCrop()
@@ -122,7 +122,7 @@ object GlideLoadUtil {
     ): Bitmap {
         return requestManager.asBitmap()
             .override(width, height)
-            .placeholder(placeholderImg ?: R.color.gray_3_9C9C9C_alpha_30)
+            .placeholder(placeholderImg ?: R.color.gray_3_9FA5AE)
             .error(errorImg ?: R.drawable.ic_dayo_circle_grayscale)
             .load("$BASE_URL_IMG${imgName}")
             .priority(Priority.HIGH)
