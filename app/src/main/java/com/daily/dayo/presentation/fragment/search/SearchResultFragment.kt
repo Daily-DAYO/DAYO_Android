@@ -46,6 +46,7 @@ class SearchResultFragment : Fragment() {
         initUI()
         setSearchEditTextListener()
         setSearchTagResultPostAdapter()
+        setSearchTagCount()
         setAdapterLoadStateListener()
         setSearchTagResultPostClickListener()
         setSearchKeywordInputDone()
@@ -128,13 +129,19 @@ class SearchResultFragment : Fragment() {
         }
     }
 
-    private fun getSearchTagList(keyword: String){
+    private fun getSearchTagList(keyword: String) {
         searchViewModel.searchKeyword(keyword)
     }
 
     private fun setSearchTagList() {
         searchViewModel.searchTagList.observe(viewLifecycleOwner) {
             searchTagResultPostAdapter.submitData(this.lifecycle, it)
+        }
+    }
+
+    private fun setSearchTagCount() {
+        searchViewModel.searchTotalCount.observe(viewLifecycleOwner) {
+            binding.resultCount = it
         }
     }
 
@@ -148,7 +155,6 @@ class SearchResultFragment : Fragment() {
                 } else {
                     binding.layoutSearchResultContents.visibility = View.VISIBLE
                     binding.layoutSearchResultEmpty.visibility = View.INVISIBLE
-                    binding.resultCount = searchTagResultPostAdapter.itemCount
                 }
 
                 if (isListEmpty || loadState.append is LoadState.NotLoading) {
