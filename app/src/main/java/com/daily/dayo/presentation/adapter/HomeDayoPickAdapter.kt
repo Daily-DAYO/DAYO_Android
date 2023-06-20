@@ -42,7 +42,13 @@ class HomeDayoPickAdapter(
                 oldItem.postId == newItem.postId
 
             override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean =
-                oldItem == newItem
+                oldItem.apply {
+                    preLoadThumbnail = null
+                    preLoadUserImg = null
+                } == newItem.apply {
+                    preLoadThumbnail = null
+                    preLoadUserImg = null
+                }
 
             override fun getChangePayload(oldItem: Post, newItem: Post): Any? {
                 return if (oldItem.heart != newItem.heart || oldItem.heartCount != newItem.heartCount) true else null
@@ -106,6 +112,7 @@ class HomeDayoPickAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
+        // ViewHolder Pattern의 이점을 잃었지만, 카테고리 간 이동하면서 랭킹 숫자가 잘못 표시되는 점을 해결
         return position
     }
 
