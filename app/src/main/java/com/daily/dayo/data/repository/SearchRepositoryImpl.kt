@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.data.datasource.remote.search.SearchApiService
 import com.daily.dayo.data.datasource.remote.search.SearchPagingSource
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Search
 import com.daily.dayo.domain.repository.SearchRepository
 import kotlinx.coroutines.flow.Flow
@@ -41,6 +42,16 @@ class SearchRepositoryImpl @Inject constructor(
     override fun requestSearchTag(tag: String) = Pager(PagingConfig(pageSize = SEARCH_PAGE_SIZE)) {
         SearchPagingSource(searchApiService, SEARCH_PAGE_SIZE, tag)
     }.flow
+
+    override suspend fun requestSearchTotalCount(tag: String, end: Int) : Int =
+        searchApiService.requestSearchTag(tag, end).let { ApiResponse ->
+            when(ApiResponse) {
+                is NetworkResponse.Success -> {
+                    return ApiResponse.body!!.totalCount
+                }
+                else -> return 0
+            }
+        }
 
     companion object {
         private const val SEARCH_PAGE_SIZE = 10

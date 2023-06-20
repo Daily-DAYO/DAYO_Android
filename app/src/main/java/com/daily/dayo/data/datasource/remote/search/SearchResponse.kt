@@ -3,6 +3,8 @@ package com.daily.dayo.data.datasource.remote.search
 import com.google.gson.annotations.SerializedName
 
 data class SearchResultResponse(
+    @SerializedName("allCount")
+    val totalCount: Int,
     @SerializedName("count")
     val count: Int,
     @SerializedName("last")

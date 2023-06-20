@@ -10,4 +10,5 @@ interface SearchRepository {
     fun requestSearchKeywordRecentList(): ArrayList<String>
     fun clearSearchKeywordRecent()
     fun deleteSearchKeywordRecent(keyword: String)
+    suspend fun requestSearchTotalCount(tag: String, end: Int): Int
 }
