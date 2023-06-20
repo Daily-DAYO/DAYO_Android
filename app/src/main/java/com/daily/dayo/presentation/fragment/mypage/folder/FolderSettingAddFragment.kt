@@ -27,7 +27,7 @@ import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFolderSettingAddBinding
 import com.daily.dayo.domain.model.Privacy
-import com.daily.dayo.presentation.viewmodel.FolderSettingViewModel
+import com.daily.dayo.presentation.viewmodel.FolderViewModel
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -37,7 +37,7 @@ import java.util.regex.Pattern
 
 class FolderSettingAddFragment : Fragment() {
     private var binding by autoCleared<FragmentFolderSettingAddBinding>()
-    private val folderSettingViewModel by activityViewModels<FolderSettingViewModel>()
+    private val folderViewModel by activityViewModels<FolderViewModel>()
     private lateinit var glideRequestManager: RequestManager
     lateinit var imageUri: String
     var thumbnailImgBitmap: Bitmap? = null
@@ -94,8 +94,8 @@ class FolderSettingAddFragment : Fragment() {
                 bitmapToFile(resizedThumbnailImg)
             }
 
-            folderSettingViewModel.requestCreateFolder(name, privacy, subheading, thumbnailImg)
-            folderSettingViewModel.folderAddAccess.observe(viewLifecycleOwner) {
+            folderViewModel.requestCreateFolder(name, privacy, subheading, thumbnailImg)
+            folderViewModel.folderAddAccess.observe(viewLifecycleOwner) {
                 if (it.getContentIfNotHandled() == true) {
                     findNavController().popBackStack()
                 } else if (it.getContentIfNotHandled() == false) {
