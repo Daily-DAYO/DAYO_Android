@@ -39,6 +39,7 @@
 
         <activity android:name=".presentation.activity.LoginActivity"
             android:theme="@style/Theme.DAYO.Splash"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -59,6 +60,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".presentation.activity.MainActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing" />
         <service
             android:name=".data.datasource.remote.firebase.FirebaseMessagingService"
