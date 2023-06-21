@@ -32,7 +32,6 @@ class HomeDayoPickPostListFragment : Fragment() {
     private var binding by autoCleared<FragmentHomeDayoPickPostListBinding>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private lateinit var homeDayoPickAdapter: HomeDayoPickAdapter
-    private lateinit var currentCategory: Category
 
     lateinit var mGlideRequestManager: RequestManager
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,24 +44,23 @@ class HomeDayoPickPostListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentHomeDayoPickPostListBinding.inflate(inflater, container, false)
+        startLoadingView()
         setInitialCategory()
         setRvDayoPickPostAdapter()
         setDayoPickPostListCollect()
         setPostLikeClickListener()
         setDayoPickPostListRefreshListener()
-
-        binding.layoutDayopickPostShimmer.startShimmer()
         return binding.root
     }
 
     override fun onResume() {
+        loadPosts(homeViewModel.currentDayoPickCategory)
         super.onResume()
-        homeViewModel.requestDayoPickPostList()
     }
 
     private fun setDayoPickPostListRefreshListener() {
         binding.swipeRefreshLayoutDayoPickPost.setOnRefreshListener {
-            setCategoryPostList(homeViewModel.currentDayoPickCategory)
+            loadPosts(homeViewModel.currentDayoPickCategory)
         }
     }
 
@@ -83,7 +81,7 @@ class HomeDayoPickPostListFragment : Fragment() {
     }
 
     private fun setRvDayoPickPostAdapter() {
-        homeDayoPickAdapter = HomeDayoPickAdapter(true, mGlideRequestManager)
+        homeDayoPickAdapter = HomeDayoPickAdapter(true, mGlideRequestManager, this::toggleLikeStatus)
         binding.rvDayopickPost.adapter = homeDayoPickAdapter
     }
 
@@ -109,44 +107,33 @@ class HomeDayoPickPostListFragment : Fragment() {
         }
         with(binding) {
             radiobuttonDayopickPostCategoryAll.setOnDebounceClickListener {
-                setCategoryPostList(Category.ALL)
-                loadingPost()
+                loadPosts(Category.ALL)
             }
             radiobuttonDayopickPostCategoryScheduler.setOnDebounceClickListener {
-                setCategoryPostList(Category.SCHEDULER)
-                loadingPost()
+                loadPosts(Category.SCHEDULER)
             }
             radiobuttonDayopickPostCategoryStudyplanner.setOnDebounceClickListener {
-                setCategoryPostList(Category.STUDY_PLANNER)
-                loadingPost()
+                loadPosts(Category.STUDY_PLANNER)
             }
             radiobuttonDayopickPostCategoryPocketbook.setOnDebounceClickListener {
-                setCategoryPostList(Category.POCKET_BOOK)
-                loadingPost()
+                loadPosts(Category.POCKET_BOOK)
             }
             radiobuttonDayopickPostCategory6holediary.setOnDebounceClickListener {
-                setCategoryPostList(Category.SIX_DIARY)
-                loadingPost()
+                loadPosts(Category.SIX_DIARY)
             }
             radiobuttonDayopickPostCategoryDigital.setOnDebounceClickListener {
-                setCategoryPostList(Category.GOOD_NOTE)
-                loadingPost()
+                loadPosts(Category.GOOD_NOTE)
             }
             radiobuttonDayopickPostCategoryEtc.setOnDebounceClickListener {
-                setCategoryPostList(Category.ETC)
-                loadingPost()
+                loadPosts(Category.ETC)
             }
         }
     }
 
-    private fun setCategoryPostList(selectCategory: Category) {
-        currentCategory = selectCategory
-        if (selectCategory == Category.ALL) {
-            homeViewModel.currentDayoPickCategory = selectCategory
-            homeViewModel.requestHomeDayoPickPostList()
-        } else {
-            homeViewModel.currentDayoPickCategory = selectCategory
-            homeViewModel.requestHomeDayoPickPostListCategory(selectCategory)
+    private fun loadPosts(selectCategory: Category) {
+        with(homeViewModel) {
+            currentDayoPickCategory = selectCategory
+            requestDayoPickPostList()
         }
     }
 
@@ -154,28 +141,16 @@ class HomeDayoPickPostListFragment : Fragment() {
         homeDayoPickAdapter.setOnItemClickListener(object :
             HomeDayoPickAdapter.OnItemClickListener {
             override fun likePostClick(btn: ImageButton, post: Post, position: Int) {
-                if (!post.heart) {
-                    homeViewModel.requestLikePost(post.postId!!)
-                } else {
-                    homeViewModel.requestUnlikePost(post.postId!!)
-                }.let {
-                    it.invokeOnCompletion { throwable ->
-                        when (throwable) {
-                            is CancellationException -> Log.e("Post Like Click", "CANCELLED")
-                            null -> {
-                                if (this@HomeDayoPickPostListFragment::currentCategory.isInitialized) {
-                                    if (currentCategory != Category.ALL) {
-                                        homeViewModel.requestHomeDayoPickPostListCategory(
-                                            currentCategory
-                                        )
-                                    } else {
-                                        homeViewModel.requestHomeDayoPickPostList()
-                                    }
-                                } else {
-                                    homeViewModel.requestHomeDayoPickPostList()
-                                }
-                            }
+                with(post) {
+                    try {
+                        if (!heart) {
+                            homeViewModel.requestLikePost(postId!!)
+                        } else {
+                            homeViewModel.requestUnlikePost(post.postId!!)
                         }
+                    } catch (postIdNullException: NullPointerException) {
+                        Log.e(this@HomeDayoPickPostListFragment.tag, "PostId Null Exception Occurred")
+                        loadPosts(homeViewModel.currentDayoPickCategory)
                     }
                 }
             }
@@ -215,7 +190,7 @@ class HomeDayoPickPostListFragment : Fragment() {
                         loadedPostList[i].preLoadUserImg = userImgList[i]
                     }
                     homeDayoPickAdapter.submitList(postList.toMutableList())
-                    completeLoadPost()
+                    stopLoadingView()
                     thumbnailImgList.clear()
                     userImgList.clear()
                 }
@@ -223,15 +198,27 @@ class HomeDayoPickPostListFragment : Fragment() {
         }
     }
 
-    private fun loadingPost() {
-        binding.layoutDayopickPostShimmer.startShimmer()
-        binding.layoutDayopickPostShimmer.visibility = View.VISIBLE
-        binding.rvDayopickPost.visibility = View.INVISIBLE
+    private fun startLoadingView() {
+        with(binding) {
+            with(layoutDayopickPostShimmer) {
+                startShimmer()
+                visibility = View.VISIBLE
+            }
+            rvDayopickPost.visibility = View.INVISIBLE
+        }
     }
 
-    private fun completeLoadPost() {
-        binding.layoutDayopickPostShimmer.stopShimmer()
-        binding.layoutDayopickPostShimmer.visibility = View.GONE
-        binding.rvDayopickPost.visibility = View.VISIBLE
+    private fun stopLoadingView() {
+        with(binding) {
+            with(layoutDayopickPostShimmer) {
+                stopShimmer()
+                visibility = View.GONE
+            }
+            rvDayopickPost.visibility = View.VISIBLE
+        }
+    }
+
+    private fun toggleLikeStatus(id: Int, isLiked: Boolean) {
+        homeViewModel.toggleLikeStatusDayoPick(id, isLiked)
     }
 }
