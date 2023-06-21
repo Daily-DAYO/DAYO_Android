@@ -7,10 +7,12 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentSettingBlockBinding
 import com.daily.dayo.domain.model.BlockUser
 import com.daily.dayo.presentation.adapter.BlockListAdapter
@@ -42,6 +44,7 @@ class SettingBlockFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setBackButtonClickListener()
         setBlockListAdapter()
     }
 
@@ -80,4 +83,11 @@ class SettingBlockFragment : Fragment() {
             }
         }
     }
+
+    private fun setBackButtonClickListener() {
+        binding.btnSettingBlockBack.setOnDebounceClickListener {
+            findNavController().navigateUp()
+        }
+    }
+
 }
