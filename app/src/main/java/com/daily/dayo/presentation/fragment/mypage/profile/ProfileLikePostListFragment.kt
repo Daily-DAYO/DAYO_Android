@@ -1,4 +1,3 @@
-
 package com.daily.dayo.presentation.fragment.mypage.profile
 
 import android.os.Bundle
@@ -7,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.bumptech.glide.Glide
@@ -51,11 +49,13 @@ class ProfileLikePostListFragment : Fragment() {
         profileLikePostListAdapter.setOnItemClickListener(object :
             ProfileLikePostListAdapter.OnItemClickListener {
             override fun onItemClick(v: View, likePost: LikePost, pos: Int) {
-                findNavController().navigate(
-                    ProfileFragmentDirections.actionProfileFragmentToPostFragment(
-                        likePost.postId
-                    )
-                )
+                when (requireParentFragment()) {
+                    is MyPageFragment -> MyPageFragmentDirections.actionMyPageFragmentToPostFragment(likePost.postId)
+                    is ProfileFragment -> ProfileFragmentDirections.actionProfileFragmentToPostFragment(likePost.postId)
+                    else -> null
+                }?.let {
+                    findNavController().navigate(it)
+                }
             }
         })
     }

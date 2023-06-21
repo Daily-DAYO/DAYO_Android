@@ -31,7 +31,7 @@ class ProfileFolderListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentProfileFolderListBinding.inflate(inflater, container, false)
         setRvProfileFolderListAdapter()
         setProfileFolderList()
@@ -41,17 +41,23 @@ class ProfileFolderListFragment : Fragment() {
     private fun setRvProfileFolderListAdapter() {
         profileFolderListAdapter = ProfileFolderListAdapter(requestManager = glideRequestManager)
         binding.rvProfileFolder.adapter = profileFolderListAdapter
-        profileFolderListAdapter.setOnItemClickListener(object : ProfileFolderListAdapter.OnItemClickListener{
+        profileFolderListAdapter.setOnItemClickListener(object : ProfileFolderListAdapter.OnItemClickListener {
             override fun onItemClick(v: View, folder: Folder, pos: Int) {
-                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToFolderFragment(folderId = folder.folderId!!))
+                when (requireParentFragment()) {
+                    is MyPageFragment -> MyPageFragmentDirections.actionMyPageFragmentToFolderFragment(folderId = folder.folderId!!)
+                    is ProfileFragment -> ProfileFragmentDirections.actionProfileFragmentToFolderFragment(folderId = folder.folderId!!)
+                    else -> null
+                }?.let {
+                    findNavController().navigate(it)
+                }
             }
         })
     }
 
-    private fun setProfileFolderList(){
+    private fun setProfileFolderList() {
         profileViewModel.requestFolderList(memberId = DayoApplication.preferences.getCurrentUser().memberId!!, true)
         profileViewModel.folderList.observe(viewLifecycleOwner) {
-            when(it.status){
+            when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { folderList ->
                         binding.folderCount = folderList.size
