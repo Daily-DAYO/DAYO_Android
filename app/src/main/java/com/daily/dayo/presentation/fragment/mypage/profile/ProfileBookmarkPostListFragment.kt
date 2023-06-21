@@ -48,11 +48,13 @@ class ProfileBookmarkPostListFragment : Fragment() {
         binding.rvProfileBookmarkPost.adapter = profileBookmarkPostListAdapter
         profileBookmarkPostListAdapter.setOnItemClickListener(object : ProfileBookmarkPostListAdapter.OnItemClickListener {
             override fun onItemClick(v: View, bookmarkPost: BookmarkPost, pos: Int) {
-                findNavController().navigate(
-                    ProfileFragmentDirections.actionProfileFragmentToPostFragment(
-                        bookmarkPost.postId
-                    )
-                )
+                when (requireParentFragment()) {
+                    is MyPageFragment -> MyPageFragmentDirections.actionMyPageFragmentToPostFragment(bookmarkPost.postId)
+                    is ProfileFragment -> ProfileFragmentDirections.actionProfileFragmentToPostFragment(bookmarkPost.postId)
+                    else -> null
+                }?.let {
+                    findNavController().navigate(it)
+                }
             }
         })
     }

@@ -84,6 +84,7 @@ class ProfileFragment : Fragment() {
         }
 
         setProfileDescription()
+        setBackButtonClickListener()
     }
 
     private fun setMyProfile() {
@@ -97,7 +98,6 @@ class ProfileFragment : Fragment() {
             View.GONE
         setRvProfileFolderListAdapter()
         setProfileFolderList()
-        setBackButtonClickListener()
         setOtherProfileOptionClickListener()
     }
 
@@ -153,7 +153,7 @@ class ProfileFragment : Fragment() {
     private fun setViewPager() {
         viewPager = binding.pagerProfile
         tabLayout = binding.tabsProfile
-        pagerAdapter = ProfileFragmentPagerStateAdapter(requireActivity())
+        pagerAdapter = ProfileFragmentPagerStateAdapter(this)
         pagerAdapter.addFragment(ProfileFolderListFragment())
         pagerAdapter.addFragment(ProfileLikePostListFragment())
         pagerAdapter.addFragment(ProfileBookmarkPostListFragment())

@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-class ProfileFragmentPagerStateAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
+class ProfileFragmentPagerStateAdapter(parentFragment: Fragment) : FragmentStateAdapter(parentFragment) {
     var fragments : ArrayList<Fragment> = ArrayList()
 
     override fun getItemCount(): Int {
