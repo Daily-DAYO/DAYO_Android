@@ -5,6 +5,12 @@
     android:background="@color/white_FFFFFF"
     tools:context=".presentation.fragment.setting.information.InformationFragment">
 
+    <data>
+        <variable
+            name="versionName"
+            type="String" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -149,15 +155,15 @@
                         android:textColor="@color/gray_1_313131"
                         android:textSize="15dp" />
 
-                    <ImageView
-                        android:id="@+id/img_information_contents_app_version"
+                    <TextView
+                        android:id="@+id/tv_information_contents_app_version_name"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="right"
-                        android:background="@android:color/transparent"
-                        android:paddingStart="17dp"
-                        android:src="@drawable/ic_right_sign_light_gray"
-                        app:tint="@color/gray_5_E8EAEE" />
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|center_vertical"
+                        android:textSize="16dp"
+                        android:textColor="@color/primary_green_23C882"
+                        android:text="@{`DAYO ` + versionName}"
+                        tools:text="DAYO 1.0" />
                 </LinearLayout>
 
                 <View

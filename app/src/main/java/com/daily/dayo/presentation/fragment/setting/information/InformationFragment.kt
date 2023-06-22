@@ -1,11 +1,12 @@
 package com.daily.dayo.presentation.fragment.setting.information
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.daily.dayo.BuildConfig
 import com.daily.dayo.R
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.extension.navigateSafe
@@ -30,7 +31,7 @@ class InformationFragment : Fragment() {
         setBackButtonClickListener()
         setTermsClickListener()
         setPrivacyClickListener()
-        setAppVersionClickListener()
+        setAppVersion()
     }
 
     private fun setBackButtonClickListener() {
@@ -63,9 +64,7 @@ class InformationFragment : Fragment() {
         }
     }
 
-    private fun setAppVersionClickListener() {
-        binding.layoutInformationContentsAppVersion.setOnDebounceClickListener {
-
-        }
+    private fun setAppVersion() {
+        binding.versionName = BuildConfig.VERSION_NAME
     }
 }
