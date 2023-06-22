@@ -292,6 +292,51 @@
     </dialog>
 
     <fragment
+        android:id="@+id/MyPageFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.profile.MyPageFragment"
+        android:label="fragment_my_page"
+        tools:layout="@layout/fragment_my_page">
+        <action
+            android:id="@+id/action_myPageFragment_to_writeFragment"
+            app:destination="@id/WriteFragment"
+            app:enterAnim="@anim/translate_bottom_up"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_top_down" />
+        <action
+            android:id="@+id/action_myPageFragment_to_followFragment"
+            app:destination="@id/FollowFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_myPageFragment_to_profileEditFragment"
+            app:destination="@id/ProfileEditFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_myPageFragment_to_profileOptionFragment"
+            app:destination="@id/ProfileOptionFragment" />
+        <action
+            android:id="@+id/action_myPageFragment_to_folderFragment"
+            app:destination="@+id/FolderFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_myPageFragment_to_postFragment"
+            app:destination="@id/PostFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </fragment>
+
+    <fragment
         android:id="@+id/ProfileFragment"
         android:name="com.daily.dayo.presentation.fragment.mypage.profile.ProfileFragment"
         android:label="fragment_profile"
