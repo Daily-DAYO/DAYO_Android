@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
+import com.daily.dayo.common.GlideLoadUtil.HOME_POST_THUMBNAIL_SIZE
+import com.daily.dayo.common.GlideLoadUtil.HOME_USER_THUMBNAIL_SIZE
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackgroundProfile
 import com.daily.dayo.common.GlideLoadUtil.loadImagePreload
@@ -93,8 +95,14 @@ class HomeNewAdapter(
     override fun onBindViewHolder(holder: HomeNewViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item, position)
+        preloadFutureLoadingImages(position)
+    }
 
-        //Preload
+    override fun submitList(list: MutableList<Post>?) {
+        super.submitList(list?.let { ArrayList(it) })
+    }
+
+    private fun preloadFutureLoadingImages(position: Int) {
         if (position <= itemCount) {
             val endPosition = if (position + 6 > itemCount) {
                 itemCount
@@ -104,16 +112,12 @@ class HomeNewAdapter(
             for (i in position until endPosition) {
                 loadImagePreload(
                     requestManager = requestManager,
-                    width = 158,
-                    height = 158,
+                    width = HOME_POST_THUMBNAIL_SIZE,
+                    height = HOME_POST_THUMBNAIL_SIZE,
                     imgName = getItem(i).thumbnailImage ?: ""
                 )
             }
         }
-    }
-
-    override fun submitList(list: MutableList<Post>?) {
-        super.submitList(list?.let { ArrayList(it) })
     }
 
     inner class HomeNewViewHolder(
@@ -252,16 +256,16 @@ class HomeNewAdapter(
                     postImgBitmap = withContext(Dispatchers.IO) {
                         loadImageBackground(
                             requestManager = requestManager,
-                            width = 158,
-                            height = 158,
+                            width = HOME_POST_THUMBNAIL_SIZE,
+                            height = HOME_POST_THUMBNAIL_SIZE,
                             imgName = postContent.thumbnailImage ?: ""
                         )
                     }
                     userThumbnailImgBitmap = withContext(Dispatchers.IO) {
                         loadImageBackgroundProfile(
                             requestManager = requestManager,
-                            width = 17,
-                            height = 17,
+                            width = HOME_USER_THUMBNAIL_SIZE,
+                            height = HOME_USER_THUMBNAIL_SIZE,
                             imgName = postContent.userProfileImage ?: ""
                         )
                     }
@@ -273,15 +277,15 @@ class HomeNewAdapter(
                 }
                 loadImageView(
                     requestManager = requestManager,
-                    width = 158,
-                    height = 158,
+                    width = HOME_POST_THUMBNAIL_SIZE,
+                    height = HOME_POST_THUMBNAIL_SIZE,
                     img = postImgBitmap!!,
                     imgView = postImg
                 )
                 loadImageViewProfile(
                     requestManager = requestManager,
-                    width = 17,
-                    height = 17,
+                    width = HOME_USER_THUMBNAIL_SIZE,
+                    height = HOME_USER_THUMBNAIL_SIZE,
                     img = userThumbnailImgBitmap!!,
                     imgView = userThumbnailImg
                 )
