@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
+import com.daily.dayo.common.GlideLoadUtil.HOME_POST_THUMBNAIL_SIZE
+import com.daily.dayo.common.GlideLoadUtil.HOME_USER_THUMBNAIL_SIZE
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImagePreload
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
@@ -92,23 +94,7 @@ class HomeDayoPickAdapter(
     override fun onBindViewHolder(holder: HomeDayoPickViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item, position)
-
-        //Preload
-        if (position <= itemCount) {
-            val endPosition = if (position + 6 > itemCount) {
-                itemCount
-            } else {
-                position + 6
-            }
-            for (i in position until endPosition) {
-                loadImagePreload(
-                    requestManager = requestManager,
-                    width = 158,
-                    height = 158,
-                    imgName = getItem(i).thumbnailImage ?: ""
-                )
-            }
-        }
+        preloadFutureLoadingImages(position)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -118,6 +104,24 @@ class HomeDayoPickAdapter(
 
     override fun submitList(list: MutableList<Post>?) {
         super.submitList(list?.let { ArrayList(it) })
+    }
+
+    private fun preloadFutureLoadingImages(position: Int) {
+        if (position <= itemCount) {
+            val endPosition = if (position + 6 > itemCount) {
+                itemCount
+            } else {
+                position + 6
+            }
+            for (i in position until endPosition) {
+                loadImagePreload(
+                    requestManager = requestManager,
+                    width = HOME_POST_THUMBNAIL_SIZE,
+                    height = HOME_POST_THUMBNAIL_SIZE,
+                    imgName = getItem(i).thumbnailImage ?: ""
+                )
+            }
+        }
     }
 
     inner class HomeDayoPickViewHolder(
@@ -255,16 +259,16 @@ class HomeDayoPickAdapter(
                     postImgBitmap = withContext(Dispatchers.IO) {
                         loadImageBackground(
                             requestManager = requestManager,
-                            width = 158,
-                            height = 158,
+                            width = HOME_POST_THUMBNAIL_SIZE,
+                            height = HOME_POST_THUMBNAIL_SIZE,
                             imgName = postContent.thumbnailImage ?: ""
                         )
                     }
                     userThumbnailImgBitmap = withContext(Dispatchers.IO) {
                         loadImageBackground(
                             requestManager = requestManager,
-                            width = 17,
-                            height = 17,
+                            width = HOME_USER_THUMBNAIL_SIZE,
+                            height = HOME_USER_THUMBNAIL_SIZE,
                             imgName = postContent.userProfileImage ?: ""
                         )
                     }
@@ -274,17 +278,18 @@ class HomeDayoPickAdapter(
                     postContent.preLoadThumbnail = null
                     postContent.preLoadUserImg = null
                 }
+
                 loadImageView(
                     requestManager = requestManager,
-                    width = 158,
-                    height = 158,
+                    width = HOME_POST_THUMBNAIL_SIZE,
+                    height = HOME_POST_THUMBNAIL_SIZE,
                     img = postImgBitmap!!,
                     imgView = postImg
                 )
                 loadImageViewProfile(
                     requestManager = requestManager,
-                    width = 17,
-                    height = 17,
+                    width = HOME_USER_THUMBNAIL_SIZE,
+                    height = HOME_USER_THUMBNAIL_SIZE,
                     img = userThumbnailImgBitmap!!,
                     imgView = userThumbnailImg
                 )

@@ -94,7 +94,7 @@ class HomeDayoPickPostListFragment : Fragment() {
                     Status.SUCCESS -> {
                         it.data?.let { postList ->
                             binding.swipeRefreshLayoutDayoPickPost.isRefreshing = false
-                            loadPostThumbnail(postList)
+                            loadInitialPostThumbnail(postList)
                         }
                     }
                     Status.LOADING -> {
@@ -157,7 +157,7 @@ class HomeDayoPickPostListFragment : Fragment() {
         })
     }
 
-    private fun loadPostThumbnail(postList: List<Post>) {
+    private fun loadInitialPostThumbnail(postList: List<Post>) {
         val thumbnailImgList = emptyList<Bitmap>().toMutableList()
         val userImgList = emptyList<Bitmap>().toMutableList()
 
@@ -184,10 +184,11 @@ class HomeDayoPickPostListFragment : Fragment() {
             when (throwable) {
                 is CancellationException -> Log.e("Image Loading", "CANCELLED")
                 null -> {
-                    var loadedPostList = postList.toMutableList()
                     for (i in 0 until (if (postList.size >= 6) 6 else postList.size)) {
-                        loadedPostList[i].preLoadThumbnail = thumbnailImgList[i]
-                        loadedPostList[i].preLoadUserImg = userImgList[i]
+                        with(postList[i]) {
+                            preLoadThumbnail = thumbnailImgList[i]
+                            preLoadUserImg = userImgList[i]
+                        }
                     }
                     homeDayoPickAdapter.submitList(postList.toMutableList())
                     stopLoadingView()
