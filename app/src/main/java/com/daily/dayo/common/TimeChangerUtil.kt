@@ -51,4 +51,16 @@ object TimeChangerUtil {
             return LocalDateTime.parse(time, detailTimeFormatter)
         }
     }
+
+    fun getFullStringTime(time: String): String {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+        val detailTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+        return try {
+            val currentTime = LocalDateTime.parse(time, formatter)
+            return "${currentTime.year}.${currentTime.monthValue}.${currentTime.dayOfMonth}"
+        } catch (e: DateTimeParseException) {
+            val currentTime = LocalDateTime.parse(time, detailTimeFormatter)
+            return "${currentTime.year}.${currentTime.monthValue}.${currentTime.dayOfMonth}"
+        }
+    }
 }
