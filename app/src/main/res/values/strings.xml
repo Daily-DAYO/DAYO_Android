@@ -307,6 +307,9 @@
     <!-- Information -->
     <string name="information_title">정보</string>
 
+    <!-- Notice -->
+    <string name="notice_actionbar_title">공지사항</string>
+
     <!-- Dialog -->
     <string name="dialog_loading_wait">잠시만 기다려주세요</string>
 
