@@ -57,23 +57,13 @@ class ProfileFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setProfile()
-    }
-
     override fun onResume() {
         super.onResume()
         setProfile()
     }
 
     private fun setProfile() {
-        if (args.memberId == null) {
-            profileViewModel.profileMemberId =
-                DayoApplication.preferences.getCurrentUser().memberId.toString()
-            binding.isMine = true
-            setMyProfile()
-        } else if (args.memberId == DayoApplication.preferences.getCurrentUser().memberId) {
+        if (args.memberId == DayoApplication.preferences.getCurrentUser().memberId) {
             profileViewModel.profileMemberId = args.memberId!!
             binding.isMine = true
             setMyProfile()
