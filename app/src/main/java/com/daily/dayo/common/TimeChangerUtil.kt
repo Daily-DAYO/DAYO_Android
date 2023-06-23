@@ -1,12 +1,15 @@
 package com.daily.dayo.common
 
 import android.content.Context
+import android.util.Log
 import com.daily.dayo.R
+import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import java.util.Locale
 
 object TimeChangerUtil {
     fun timeChange(context: Context, time: String): String {
@@ -50,5 +53,21 @@ object TimeChangerUtil {
         } catch (e: DateTimeParseException) {
             return LocalDateTime.parse(time, detailTimeFormatter)
         }
+    }
+
+    fun getFullStringTime(time: String): String {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+        val detailTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+        fun displayFormat(localDateTime: LocalDateTime) = SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).format(localDateTime)
+
+        val currentTime : LocalDateTime = try {
+            LocalDateTime.parse(time, formatter)
+        } catch (e: DateTimeParseException) {
+            LocalDateTime.parse(time, detailTimeFormatter)
+        } catch (e: Exception) {
+            Log.e("Time Changer Util", "Changing Time is Failed. Because:$e")
+            LocalDateTime.now()
+        }
+        return displayFormat(currentTime)
     }
 }
