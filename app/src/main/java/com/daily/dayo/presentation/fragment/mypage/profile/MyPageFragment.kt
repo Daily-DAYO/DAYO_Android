@@ -121,7 +121,7 @@ class MyPageFragment : Fragment() {
             findNavController().navigate(
                 MyPageFragmentDirections.actionMyPageFragmentToProfileOptionFragment(
                     isMine = true,
-                    memberId = profileViewModel.profileMemberId
+                    memberId = DayoApplication.preferences.getCurrentUser().memberId!!
                 )
             )
         }
