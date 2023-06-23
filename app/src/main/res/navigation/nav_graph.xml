@@ -525,6 +525,14 @@
             app:exitAnim="@anim/translate_to_left_out"
             app:popEnterAnim="@anim/translate_from_left_in"
             app:popExitAnim="@anim/translate_to_right_out" />
+
+        <action
+            android:id="@+id/action_settingFragment_to_noticeFragment"
+            app:destination="@id/NoticeFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
     </fragment>
 
     <fragment
@@ -697,4 +705,10 @@
             android:defaultValue="privacy"
             app:argType="string" />
     </fragment>
+
+    <fragment
+        android:id="@+id/NoticeFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.notice.NoticeListFragment"
+        android:label="fragment_notice"
+        tools:layout="@layout/fragment_notice_list" />
 </navigation>

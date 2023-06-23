@@ -45,6 +45,7 @@ class SettingFragment : Fragment() {
         setNotificationButtonClickListener()
         setBlockButtonClickListener()
         setInformationButtonClickListener()
+        setNoticeButtonClickListener()
         return binding.root
     }
 
@@ -82,6 +83,15 @@ class SettingFragment : Fragment() {
             findNavController().navigateSafe(
                 currentDestinationId = R.id.SettingFragment,
                 action = R.id.action_settingFragment_to_informationFragment
+            )
+        }
+    }
+
+    private fun setNoticeButtonClickListener() {
+        binding.layoutSettingNotice.setOnDebounceClickListener {
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.SettingFragment,
+                action = R.id.action_settingFragment_to_noticeFragment
             )
         }
     }
