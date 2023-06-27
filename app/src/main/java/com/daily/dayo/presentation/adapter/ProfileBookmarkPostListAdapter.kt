@@ -11,12 +11,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.GlideLoadUtil
 import com.daily.dayo.common.setOnDebounceClickListener
+import com.daily.dayo.data.di.IoDispatcher
+import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemProfilePostBinding
 import com.daily.dayo.domain.model.BookmarkPost
 import kotlinx.coroutines.*
 
-class ProfileBookmarkPostListAdapter(private val requestManager: RequestManager) :
-    PagingDataAdapter<BookmarkPost, ProfileBookmarkPostListAdapter.ProfileBookmarkPostListViewHolder>(diffCallback) {
+class ProfileBookmarkPostListAdapter(
+    private val requestManager: RequestManager,
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+) : PagingDataAdapter<BookmarkPost, ProfileBookmarkPostListAdapter.ProfileBookmarkPostListViewHolder>(diffCallback) {
 
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<BookmarkPost>() {
@@ -65,10 +70,10 @@ class ProfileBookmarkPostListAdapter(private val requestManager: RequestManager)
             }
             binding.imgProfilePost.visibility = View.INVISIBLE
 
-            CoroutineScope(Dispatchers.Main).launch {
+            CoroutineScope(mainDispatcher).launch {
                 val userThumbnailImgBitmap: Bitmap?
                 if (bookmarkPost?.preLoadThumbnail == null) {
-                    userThumbnailImgBitmap = withContext(Dispatchers.IO) {
+                    userThumbnailImgBitmap = withContext(ioDispatcher) {
                         GlideLoadUtil.loadImageBackground(
                             requestManager = requestManager,
                             width = layoutParams.width,

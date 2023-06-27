@@ -15,6 +15,7 @@ import com.daily.dayo.databinding.FragmentNotificationBinding
 import com.daily.dayo.presentation.adapter.NotificationListAdapter
 import com.daily.dayo.presentation.viewmodel.NotificationViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 
 @AndroidEntryPoint
 class NotificationFragment : Fragment() {
@@ -50,7 +51,11 @@ class NotificationFragment : Fragment() {
     }
 
     private fun setNotificationListAdapter() {
-        notificationAdapter = NotificationListAdapter(requestManager = glideRequestManager)
+        notificationAdapter = NotificationListAdapter(
+            requestManager = glideRequestManager,
+            mainDispatcher = Dispatchers.Main,
+            ioDispatcher = Dispatchers.IO
+        )
         binding.rvNotificationList.layoutManager = LinearLayoutManager(requireContext())
         binding.rvNotificationList.adapter = notificationAdapter
         notificationAdapter.setOnItemClickListener(object :

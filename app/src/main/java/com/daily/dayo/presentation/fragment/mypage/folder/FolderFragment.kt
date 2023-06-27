@@ -119,7 +119,11 @@ class FolderFragment : Fragment() {
     }
 
     private fun setRvFolderPostListAdapter() {
-        folderPostListAdapter = FolderPostListAdapter(requestManager = glideRequestManager)
+        folderPostListAdapter = FolderPostListAdapter(
+            requestManager = glideRequestManager,
+            mainDispatcher = Dispatchers.Main,
+            ioDispatcher = Dispatchers.IO
+        )
         binding.rvFolderPost.adapter = folderPostListAdapter
     }
 

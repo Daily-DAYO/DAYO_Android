@@ -25,19 +25,23 @@ import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.GlideLoadUtil.loadImageViewProfile
 import com.daily.dayo.common.extension.navigateSafe
 import com.daily.dayo.common.setOnDebounceClickListener
+import com.daily.dayo.data.di.IoDispatcher
+import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemMainPostBinding
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.presentation.fragment.home.HomeFragmentDirections
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class HomeNewAdapter(
     val rankingShowing: Boolean,
     private val requestManager: RequestManager,
-    private val likeListener: (Int, Boolean) -> Unit
+    private val likeListener: (Int, Boolean) -> Unit,
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ListAdapter<Post, HomeNewAdapter.HomeNewViewHolder>(diffCallback) {
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Post>() {
@@ -249,11 +253,11 @@ class HomeNewAdapter(
             val userThumbnailImg = binding.imgMainPostUserProfile
 
 
-            CoroutineScope(Dispatchers.Main).launch {
+            CoroutineScope(mainDispatcher).launch {
                 val postImgBitmap: Bitmap?
                 val userThumbnailImgBitmap: Bitmap?
                 if (postContent.preLoadThumbnail == null) {
-                    postImgBitmap = withContext(Dispatchers.IO) {
+                    postImgBitmap = withContext(ioDispatcher) {
                         loadImageBackground(
                             requestManager = requestManager,
                             width = HOME_POST_THUMBNAIL_SIZE,
@@ -261,7 +265,7 @@ class HomeNewAdapter(
                             imgName = postContent.thumbnailImage ?: ""
                         )
                     }
-                    userThumbnailImgBitmap = withContext(Dispatchers.IO) {
+                    userThumbnailImgBitmap = withContext(ioDispatcher) {
                         loadImageBackgroundProfile(
                             requestManager = requestManager,
                             width = HOME_USER_THUMBNAIL_SIZE,
