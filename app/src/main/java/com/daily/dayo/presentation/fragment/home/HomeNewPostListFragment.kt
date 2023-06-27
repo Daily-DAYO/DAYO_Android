@@ -7,14 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import com.daily.dayo.R
 import com.daily.dayo.common.GlideLoadUtil
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.extension.navigateSafe
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentHomeNewPostListBinding
 import com.daily.dayo.domain.model.Category
@@ -49,6 +53,7 @@ class HomeNewPostListFragment : Fragment() {
         setRvNewPostAdapter()
         setNewPostListCollect()
         setPostLikeClickListener()
+        setEmptyViewActionClickListener()
         setNewPostListRefreshListener()
         return binding.root
     }
@@ -93,6 +98,7 @@ class HomeNewPostListFragment : Fragment() {
                         it.data?.let { postList ->
                             binding.swipeRefreshLayoutNewPost.isRefreshing = false
                             loadPostThumbnail(postList)
+                            binding.layoutNewPostEmpty.isVisible = postList.isEmpty()
                         }
                     }
                     Status.LOADING -> {
@@ -153,6 +159,15 @@ class HomeNewPostListFragment : Fragment() {
                 }
             }
         })
+    }
+
+    private fun setEmptyViewActionClickListener() {
+        binding.btnNewPostEmptyAction.setOnDebounceClickListener {
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.HomeFragment,
+                action = R.id.action_homeFragment_to_writeFragment
+            )
+        }
     }
 
     private fun loadPostThumbnail(postList: List<Post>) {
