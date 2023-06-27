@@ -67,22 +67,22 @@ class BlockListAdapter(
 
         fun bind(blockUser: BlockUser) {
             binding.blockUser = blockUser.nickname
-            CoroutineScope(ioDispatcher).launch {
-                val profileImgBitmap = GlideLoadUtil.loadImageBackground(
-                    requestManager = requestManager,
-                    width = 45,
-                    height = 45,
-                    imgName = blockUser.profileImg ?: ""
-                )
-                withContext(mainDispatcher) {
-                    GlideLoadUtil.loadImageView(
+            CoroutineScope(mainDispatcher).launch {
+                val profileImgBitmap = withContext(ioDispatcher) {
+                    GlideLoadUtil.loadImageBackground(
                         requestManager = requestManager,
                         width = 45,
                         height = 45,
-                        img = profileImgBitmap,
-                        imgView = binding.imgBlockUserProfile
+                        imgName = blockUser.profileImg ?: ""
                     )
                 }
+                GlideLoadUtil.loadImageView(
+                    requestManager = requestManager,
+                    width = 45,
+                    height = 45,
+                    img = profileImgBitmap,
+                    imgView = binding.imgBlockUserProfile
+                )
             }
             setUnblockButtonClickListener(blockUser)
         }
