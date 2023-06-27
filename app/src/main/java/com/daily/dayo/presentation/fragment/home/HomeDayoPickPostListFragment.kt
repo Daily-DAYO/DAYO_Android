@@ -7,11 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import com.daily.dayo.R
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
@@ -49,6 +52,7 @@ class HomeDayoPickPostListFragment : Fragment() {
         setRvDayoPickPostAdapter()
         setDayoPickPostListCollect()
         setPostLikeClickListener()
+        setEmptyViewActionClickListener()
         setDayoPickPostListRefreshListener()
         return binding.root
     }
@@ -95,6 +99,7 @@ class HomeDayoPickPostListFragment : Fragment() {
                         it.data?.let { postList ->
                             binding.swipeRefreshLayoutDayoPickPost.isRefreshing = false
                             loadInitialPostThumbnail(postList)
+                            binding.layoutDayopickPostEmpty.isVisible = postList.isEmpty()
                         }
                     }
                     Status.LOADING -> {
@@ -155,6 +160,19 @@ class HomeDayoPickPostListFragment : Fragment() {
                 }
             }
         })
+    }
+
+    private fun setEmptyViewActionClickListener() {
+        binding.btnDayopickPostEmptyAction.setOnDebounceClickListener {
+            val homeViewPager = requireActivity().findViewById<ViewPager2>(R.id.pager_home_post)
+            val current = homeViewPager.currentItem
+            if (current == 0){
+                homeViewPager.setCurrentItem(1, true)
+            }
+            else{
+                homeViewPager.setCurrentItem(current-1, true)
+            }
+        }
     }
 
     private fun loadInitialPostThumbnail(postList: List<Post>) {
