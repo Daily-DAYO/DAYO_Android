@@ -20,7 +20,10 @@ import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,7 +39,6 @@ import com.daily.dayo.presentation.adapter.WriteUploadImageListAdapter
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
@@ -179,18 +181,20 @@ class WriteFragment : Fragment() {
                                                         .toString()
                                                 )
                                                 lateinit var imageBitmap: Bitmap
-                                                CoroutineScope(Dispatchers.IO).launch {
-                                                    val uploadImage = loadImageBackground(
-                                                        requestManager = glideRequestManager,
-                                                        width = 480,
-                                                        height = 480,
-                                                        imgName = element
-                                                    )
-                                                    imageBitmap = resizeBitmap(uploadImage)
-                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                                        postImageBitmapToStringList.add(
-                                                            imageBitmap.toBase64String()
+                                                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                                                    viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                                                        val uploadImage = loadImageBackground(
+                                                            requestManager = glideRequestManager,
+                                                            width = 480,
+                                                            height = 480,
+                                                            imgName = element
                                                         )
+                                                        imageBitmap = resizeBitmap(uploadImage)
+                                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                            postImageBitmapToStringList.add(
+                                                                imageBitmap.toBase64String()
+                                                            )
+                                                        }
                                                     }
                                                 }
                                             }

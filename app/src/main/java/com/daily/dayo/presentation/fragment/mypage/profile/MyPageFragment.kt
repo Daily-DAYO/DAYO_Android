@@ -6,6 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
@@ -21,7 +24,6 @@ import com.daily.dayo.presentation.adapter.ProfileFragmentPagerStateAdapter
 import com.daily.dayo.presentation.viewmodel.ProfileViewModel
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -61,20 +63,22 @@ class MyPageFragment : Fragment() {
         profileViewModel.profileInfo.observe(viewLifecycleOwner) {
             it?.let { profile ->
                 binding.profile = profile
-                CoroutineScope(Dispatchers.Main).launch {
-                    val userProfileThumbnailImage = withContext(Dispatchers.IO) {
-                        loadImageBackgroundProfile(
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        val userProfileThumbnailImage = withContext(Dispatchers.IO) {
+                            loadImageBackgroundProfile(
+                                requestManager = glideRequestManager,
+                                width = 70, height = 70, imgName = profile.profileImg
+                            )
+                        }
+                        loadImageViewProfile(
                             requestManager = glideRequestManager,
-                            width = 70, height = 70, imgName = profile.profileImg
+                            width = 70,
+                            height = 70,
+                            img = userProfileThumbnailImage,
+                            imgView = binding.imgMyPageUserProfile
                         )
                     }
-                    loadImageViewProfile(
-                        requestManager = glideRequestManager,
-                        width = 70,
-                        height = 70,
-                        img = userProfileThumbnailImage,
-                        imgView = binding.imgMyPageUserProfile
-                    )
                 }
 
                 setFollowerCountButtonClickListener(
