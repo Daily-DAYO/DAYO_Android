@@ -17,7 +17,6 @@ import com.daily.dayo.domain.usecase.post.RequestDayoPickPostListUseCase
 import com.daily.dayo.domain.usecase.post.RequestNewPostListCategoryUseCase
 import com.daily.dayo.domain.usecase.post.RequestNewPostListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,14 +38,14 @@ class HomeViewModel @Inject constructor(
     private val _newPostList = MutableLiveData<Resource<List<Post>>>()
     val newPostList: LiveData<Resource<List<Post>>> get() = _newPostList
 
-    fun requestDayoPickPostList() = viewModelScope.launch(Dispatchers.IO) {
+    fun requestDayoPickPostList() = viewModelScope.launch {
         if (currentDayoPickCategory == Category.ALL) {
             requestHomeDayoPickPostList()
         } else {
             requestHomeDayoPickPostListCategory(currentDayoPickCategory)
         }
     }
-    fun requestNewPostList() = viewModelScope.launch(Dispatchers.IO) {
+    fun requestNewPostList() = viewModelScope.launch {
         if (currentNewCategory == Category.ALL) {
             requestHomeNewPostList()
         } else {
@@ -54,7 +53,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun requestHomeNewPostList() = viewModelScope.launch(Dispatchers.IO) {
+    private fun requestHomeNewPostList() = viewModelScope.launch {
         requestNewPostListUseCase()?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> { _newPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
@@ -65,7 +64,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun requestHomeNewPostListCategory(category: Category) = viewModelScope.launch(Dispatchers.IO) {
+    private fun requestHomeNewPostListCategory(category: Category) = viewModelScope.launch {
         requestNewPostListCategoryUseCase(category = category)?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> { _newPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
@@ -76,7 +75,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun requestHomeDayoPickPostList() = viewModelScope.launch(Dispatchers.IO) {
+    private fun requestHomeDayoPickPostList() = viewModelScope.launch {
         requestHomeDayoPickPostListUseCase()?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> { _dayoPickPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
@@ -87,7 +86,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun requestHomeDayoPickPostListCategory(category: Category) = viewModelScope.launch(Dispatchers.IO) {
+    private fun requestHomeDayoPickPostListCategory(category: Category) = viewModelScope.launch {
         requestDayoPickPostListCategoryUseCase(category = category)?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> { _dayoPickPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
@@ -98,11 +97,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun requestLikePost(postId: Int) = viewModelScope.launch(Dispatchers.IO) {
+    fun requestLikePost(postId: Int) = viewModelScope.launch {
         val response = requestLikePostUseCase(CreateHeartRequest(postId = postId))
     }
 
-    fun requestUnlikePost(postId: Int) = viewModelScope.launch(Dispatchers.IO) {
+    fun requestUnlikePost(postId: Int) = viewModelScope.launch {
         val response = requestUnlikePostUseCase(postId = postId)
     }
 
