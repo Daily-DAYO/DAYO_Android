@@ -67,14 +67,14 @@ class BlockListAdapter(
 
         fun bind(blockUser: BlockUser) {
             binding.blockUser = blockUser.nickname
-            CoroutineScope(mainDispatcher).launch {
+            CoroutineScope(ioDispatcher).launch {
                 val profileImgBitmap = GlideLoadUtil.loadImageBackground(
                     requestManager = requestManager,
                     width = 45,
                     height = 45,
                     imgName = blockUser.profileImg ?: ""
                 )
-                withContext(ioDispatcher) {
+                withContext(mainDispatcher) {
                     GlideLoadUtil.loadImageView(
                         requestManager = requestManager,
                         width = 45,
