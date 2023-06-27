@@ -28,7 +28,6 @@ import com.daily.dayo.presentation.adapter.ProfileFragmentPagerStateAdapter
 import com.daily.dayo.presentation.viewmodel.ProfileViewModel
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -96,7 +95,7 @@ class ProfileFragment : Fragment() {
         profileViewModel.profileInfo.observe(viewLifecycleOwner) {
             it?.let { profile ->
                 binding.profile = profile
-                CoroutineScope(Dispatchers.Main).launch {
+                viewLifecycleOwner.lifecycleScope.launch {
                     val userProfileThumbnailImage = withContext(Dispatchers.IO) {
                         loadImageBackgroundProfile(
                             requestManager = glideRequestManager,

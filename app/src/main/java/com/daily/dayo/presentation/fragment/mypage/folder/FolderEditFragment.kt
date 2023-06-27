@@ -17,7 +17,9 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -108,25 +110,28 @@ class FolderEditFragment : Fragment() {
                                 Privacy.ONLY_ME -> binding.radiobuttonFolderSettingAddSetPrivateOnlyMe.isChecked =
                                     true
                             }
-                            CoroutineScope(Dispatchers.Main).launch {
-                                val folderThumbnailImage = withContext(Dispatchers.IO) {
-                                    loadImageBackground(
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                                    val folderThumbnailImage = withContext(Dispatchers.IO) {
+                                        loadImageBackground(
+                                            requestManager = glideRequestManager,
+                                            width = layoutParams.width,
+                                            height = 40,
+                                            imgName = folder.thumbnailImage
+                                        )
+                                    }
+                                    loadImageView(
                                         requestManager = glideRequestManager,
                                         width = layoutParams.width,
-                                        height = 40,
-                                        imgName = folder.thumbnailImage
+                                        height = 148,
+                                        img = folderThumbnailImage,
+                                        imgView = binding.ivFolderSettingThumbnail
                                     )
                                 }
-                                loadImageView(
-                                    requestManager = glideRequestManager,
-                                    width = layoutParams.width,
-                                    height = 148,
-                                    img = folderThumbnailImage,
-                                    imgView = binding.ivFolderSettingThumbnail
-                                )
                             }
                         }
                     }
+                    else -> { }
                 }
             }
         }

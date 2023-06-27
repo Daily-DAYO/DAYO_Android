@@ -162,22 +162,24 @@ class PostFragment : Fragment() {
                                 binding.categoryKR = post.category?.let { it1 -> categoryKR(it1) }
                                 binding.executePendingBindings()
                                 postImageSliderAdapter.submitList(post.postImages)
-                                CoroutineScope(Dispatchers.Main).launch {
-                                    val userThumbnailImgBitmap = withContext(Dispatchers.IO) {
-                                        GlideLoadUtil.loadImageBackground(
+                                viewLifecycleOwner.lifecycleScope.launch {
+                                    viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                                        val userThumbnailImgBitmap = withContext(Dispatchers.IO) {
+                                            GlideLoadUtil.loadImageBackground(
+                                                requestManager = glideRequestManager,
+                                                width = 40,
+                                                height = 40,
+                                                imgName = post.userProfileImage
+                                            )
+                                        }
+                                        GlideLoadUtil.loadImageViewProfile(
                                             requestManager = glideRequestManager,
                                             width = 40,
                                             height = 40,
-                                            imgName = post.userProfileImage
+                                            img = userThumbnailImgBitmap,
+                                            imgView = binding.imgPostUserProfile
                                         )
                                     }
-                                    GlideLoadUtil.loadImageViewProfile(
-                                        requestManager = glideRequestManager,
-                                        width = 40,
-                                        height = 40,
-                                        img = userThumbnailImgBitmap,
-                                        imgView = binding.imgPostUserProfile
-                                    )
                                 }
 
                                 val isMine =
@@ -438,22 +440,24 @@ class PostFragment : Fragment() {
     }
 
     private fun setCreatePostComment() {
-        CoroutineScope(Dispatchers.Main).launch {
-            val userThumbnailImgBitmap = withContext(Dispatchers.IO) {
-                GlideLoadUtil.loadImageBackground(
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                val userThumbnailImgBitmap = withContext(Dispatchers.IO) {
+                    GlideLoadUtil.loadImageBackground(
+                        requestManager = glideRequestManager,
+                        width = 40,
+                        height = 40,
+                        imgName = DayoApplication.preferences.getCurrentUser().profileImg ?: ""
+                    )
+                }
+                GlideLoadUtil.loadImageViewProfile(
                     requestManager = glideRequestManager,
                     width = 40,
                     height = 40,
-                    imgName = DayoApplication.preferences.getCurrentUser().profileImg ?: ""
+                    img = userThumbnailImgBitmap,
+                    imgView = binding.imgPostCommentMyProfile
                 )
             }
-            GlideLoadUtil.loadImageViewProfile(
-                requestManager = glideRequestManager,
-                width = 40,
-                height = 40,
-                img = userThumbnailImgBitmap,
-                imgView = binding.imgPostCommentMyProfile
-            )
         }
 
         binding.tvPostCommentUpload.setOnDebounceClickListener {
