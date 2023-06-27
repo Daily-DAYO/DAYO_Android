@@ -185,7 +185,11 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setRvProfileFolderListAdapter() {
-        profileFolderListAdapter = ProfileFolderListAdapter(requestManager = glideRequestManager)
+        profileFolderListAdapter = ProfileFolderListAdapter(
+            requestManager = glideRequestManager,
+            mainDispatcher = Dispatchers.Main,
+            ioDispatcher = Dispatchers.IO
+        )
         binding.rvProfileFolder.adapter = profileFolderListAdapter
         profileFolderListAdapter.setOnItemClickListener(object :
             ProfileFolderListAdapter.OnItemClickListener {

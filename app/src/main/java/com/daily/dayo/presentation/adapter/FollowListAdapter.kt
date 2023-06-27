@@ -12,16 +12,21 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
+import com.daily.dayo.data.di.IoDispatcher
+import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemFollowBinding
 import com.daily.dayo.domain.model.Follow
 import com.daily.dayo.presentation.fragment.mypage.follow.FollowFragmentDirections
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FollowListAdapter(private val requestManager: RequestManager) :
-    RecyclerView.Adapter<FollowListAdapter.FollowListViewHolder>() {
+class FollowListAdapter(
+    private val requestManager: RequestManager,
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+) : RecyclerView.Adapter<FollowListAdapter.FollowListViewHolder>() {
 
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Follow>() {
@@ -67,8 +72,8 @@ class FollowListAdapter(private val requestManager: RequestManager) :
             binding.follow = follow
             binding.isMine =
                 follow.memberId == DayoApplication.preferences.getCurrentUser().memberId
-            CoroutineScope(Dispatchers.Main).launch {
-                val userThumbnailImgBitmap = withContext(Dispatchers.IO) {
+            CoroutineScope(mainDispatcher).launch {
+                val userThumbnailImgBitmap = withContext(ioDispatcher) {
                     loadImageBackground(
                         requestManager = requestManager,
                         width = 40,

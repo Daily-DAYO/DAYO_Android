@@ -22,6 +22,7 @@ import com.daily.dayo.presentation.adapter.FeedListAdapter
 import com.daily.dayo.presentation.viewmodel.FeedViewModel
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class FeedFragment : Fragment() {
@@ -62,7 +63,11 @@ class FeedFragment : Fragment() {
     }
 
     private fun setRvFeedListAdapter() {
-        feedListAdapter = FeedListAdapter(requestManager = glideRequestManager)
+        feedListAdapter = FeedListAdapter(
+            requestManager = glideRequestManager,
+            mainDispatcher = Dispatchers.Main,
+            ioDispatcher = Dispatchers.IO
+        )
         binding.rvFeedPost.adapter = feedListAdapter
     }
 

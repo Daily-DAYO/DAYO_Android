@@ -12,12 +12,20 @@ import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
+import com.daily.dayo.data.di.IoDispatcher
+import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemProfilePostBinding
 import com.daily.dayo.domain.model.LikePost
 import kotlinx.coroutines.*
 
-class ProfileLikePostListAdapter(private val requestManager: RequestManager) :
-    PagingDataAdapter<LikePost, ProfileLikePostListAdapter.ProfileLikePostListViewHolder>(diffCallback) {
+class ProfileLikePostListAdapter(
+    private val requestManager: RequestManager,
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+) :
+    PagingDataAdapter<LikePost, ProfileLikePostListAdapter.ProfileLikePostListViewHolder>(
+        diffCallback
+    ) {
 
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<LikePost>() {
@@ -65,10 +73,10 @@ class ProfileLikePostListAdapter(private val requestManager: RequestManager) :
             binding.layoutProfilePostShimmer.visibility = View.VISIBLE
             binding.imgProfilePost.visibility = View.INVISIBLE
 
-            CoroutineScope(Dispatchers.Main).launch {
+            CoroutineScope(mainDispatcher).launch {
                 val profileListPostImage: Bitmap?
                 if (likePost.preLoadThumbnail == null) {
-                    profileListPostImage = withContext(Dispatchers.IO) {
+                    profileListPostImage = withContext(ioDispatcher) {
                         loadImageBackground(
                             requestManager = requestManager,
                             width = layoutParams.width,

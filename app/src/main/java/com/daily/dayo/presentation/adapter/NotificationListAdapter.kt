@@ -18,19 +18,24 @@ import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
 import com.daily.dayo.common.GlideLoadUtil
 import com.daily.dayo.common.setOnDebounceClickListener
+import com.daily.dayo.data.di.IoDispatcher
+import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemNotificationBinding
 import com.daily.dayo.domain.model.Notification
 import com.daily.dayo.domain.model.Topic
 import com.daily.dayo.presentation.fragment.notification.NotificationFragmentDirections
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class NotificationListAdapter(private val requestManager: RequestManager) :
-    PagingDataAdapter<Notification, NotificationListAdapter.NotificationListViewHolder>(
-        diffCallback
-    ) {
+class NotificationListAdapter(
+    private val requestManager: RequestManager,
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+) : PagingDataAdapter<Notification, NotificationListAdapter.NotificationListViewHolder>(
+    diffCallback
+) {
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Notification>() {
             override fun areItemsTheSame(oldItem: Notification, newItem: Notification) =
@@ -70,8 +75,8 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
                     ViewGroup.MarginLayoutParams.MATCH_PARENT,
                     ViewGroup.MarginLayoutParams.MATCH_PARENT
                 )
-                CoroutineScope(Dispatchers.Main).launch {
-                    val thumbnailImage = withContext(Dispatchers.IO) {
+                CoroutineScope(mainDispatcher).launch {
+                    val thumbnailImage = withContext(ioDispatcher) {
                         GlideLoadUtil.loadImageBackground(
                             requestManager = requestManager,
                             width = 56,
@@ -102,7 +107,10 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
                     }
 
                     override fun updateDrawState(textPaint: TextPaint) {
-                        textPaint.color = ContextCompat.getColor(binding.tvNotificationTitle.context, R.color.gray_1_313131)
+                        textPaint.color = ContextCompat.getColor(
+                            binding.tvNotificationTitle.context,
+                            R.color.gray_1_313131
+                        )
                         textPaint.isUnderlineText = false
                         textPaint.typeface = Typeface.DEFAULT_BOLD
                     }

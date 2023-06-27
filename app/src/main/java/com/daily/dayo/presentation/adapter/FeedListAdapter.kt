@@ -18,18 +18,23 @@ import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.convertCountPlace
 import com.daily.dayo.common.setOnDebounceClickListener
+import com.daily.dayo.data.di.IoDispatcher
+import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemFeedPostBinding
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.domain.model.categoryKR
 import com.daily.dayo.presentation.fragment.feed.FeedFragmentDirections
 import com.google.android.material.chip.Chip
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FeedListAdapter(private val requestManager: RequestManager) :
-    PagingDataAdapter<Post, FeedListAdapter.FeedListViewHolder>(diffCallback) {
+class FeedListAdapter(
+    private val requestManager: RequestManager,
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+) : PagingDataAdapter<Post, FeedListAdapter.FeedListViewHolder>(diffCallback) {
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Post>() {
             override fun areItemsTheSame(oldItem: Post, newItem: Post) =
@@ -76,10 +81,10 @@ class FeedListAdapter(private val requestManager: RequestManager) :
             binding.commentCountStr =
                 if (post?.commentCount != null) convertCountPlace(post.commentCount) else "0"
             binding.categoryKR = post?.category?.let { categoryKR(it) }
-            CoroutineScope(Dispatchers.Main).launch {
+            CoroutineScope(mainDispatcher).launch {
                 val postImgBitmap: Bitmap?
                 val userThumbnailImgBitmap: Bitmap?
-                postImgBitmap = withContext(Dispatchers.IO) {
+                postImgBitmap = withContext(ioDispatcher) {
                     loadImageBackground(
                         requestManager = requestManager,
                         width = binding.imgFeedPost.width,
@@ -87,7 +92,7 @@ class FeedListAdapter(private val requestManager: RequestManager) :
                         imgName = post?.thumbnailImage ?: ""
                     )
                 }
-                userThumbnailImgBitmap = withContext(Dispatchers.IO) {
+                userThumbnailImgBitmap = withContext(ioDispatcher) {
                     loadImageBackground(
                         requestManager = requestManager,
                         width = binding.imgFeedPostUserProfile.width,
