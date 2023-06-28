@@ -13,6 +13,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.common.ButtonActivation
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
@@ -85,13 +86,13 @@ class WriteFolderAddFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 when {
-                    s.toString().trim().isEmpty() -> {
+                    trimBlankText(s).isEmpty() -> {
                         ButtonActivation.setTextViewConfirmButtonInactive(
                             requireContext(),
                             binding.tvPostFolderAddConfirm
                         )
                     }
-                    Pattern.matches("[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9|\\s]*", s.toString().trim()) -> {
+                    Pattern.matches("[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9|\\s]*", trimBlankText(s)) -> {
                         ButtonActivation.setTextViewConfirmButtonActive(
                             requireContext(),
                             binding.tvPostFolderAddConfirm

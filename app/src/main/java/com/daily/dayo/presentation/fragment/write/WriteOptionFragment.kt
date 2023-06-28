@@ -16,6 +16,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.common.ImageResizeUtil
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
@@ -145,7 +146,7 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
                         isCloseIconVisible = false
                         isCheckable = false
                         ensureAccessibleTouchTarget(42.toPx())
-                        text = "# ${it[index].trim()}"
+                        text = "# ${trimBlankText(it[index])}"
                     }
                     binding.chipgroupWriteOptionTagListSaved.addView(chip, layoutParams)
                 }
