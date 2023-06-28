@@ -16,7 +16,8 @@ import com.daily.dayo.R
 import com.daily.dayo.common.Event
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.ListLiveData
-import com.daily.dayo.common.ReplaceUnicode
+import com.daily.dayo.common.ReplaceUnicode.replaceBlankText
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
@@ -92,8 +93,8 @@ class WriteTagFragment : Fragment() {
         binding.etWriteTagAdd.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-                    val originalTag = binding.etWriteTagAdd.text.toString().trim()
-                    val removeBlankTag = ReplaceUnicode.replaceBlankText(originalTag)
+                    val originalTag = trimBlankText(binding.etWriteTagAdd.text)
+                    val removeBlankTag = replaceBlankText(originalTag)
 
                     if (removeBlankTag.isEmpty()
                         || binding.chipgroupWriteTagListSaved.getAllChipsTagText()
@@ -147,7 +148,7 @@ class WriteTagFragment : Fragment() {
                         setTagCountLimit()
                         setTagSubmitClickListener(binding.chipgroupWriteTagListSaved.getAllChipsTagText())
                     }
-                    text = "# ${it[index].trim()}"
+                    text = "# ${trimBlankText(it[index])}"
                 }
                 binding.chipgroupWriteTagListSaved.addView(chip, layoutParams)
                 originalTagList.add(it[index])

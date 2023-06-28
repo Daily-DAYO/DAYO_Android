@@ -306,11 +306,11 @@ class PostFragment : Fragment() {
                         )
                     )
                     ensureAccessibleTouchTarget(42.toPx())
-                    text = "# ${tagList[index].trim()}"
+                    text = "# ${trimBlankText(tagList[index])}"
                     setOnDebounceClickListener {
                         keyboardVisibilityUtils.detachKeyboardListeners() // TODO : 임시 처리, 화면을 벗어나므로 detach 처리 필요
                         Navigation.findNavController(it).navigate(
-                            PostFragmentDirections.actionPostFragmentToSearchResultFragment(tagList[index].trim())
+                            PostFragmentDirections.actionPostFragmentToSearchResultFragment(trimBlankText(tagList[index]))
                         )
                     }
                 }

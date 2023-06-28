@@ -16,6 +16,7 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.convertCountPlace
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemFeedPostBinding
@@ -192,7 +193,7 @@ class FeedListAdapter(private val requestManager: RequestManager) :
                             )
                         )
                         setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12F)
-                        text = "# ${tagList[index].trim()}"
+                        text = "# ${trimBlankText(tagList[index])}"
 
                         setOnDebounceClickListener {
                             listener?.tagPostClick(chip = this)

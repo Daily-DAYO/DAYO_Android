@@ -19,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.databinding.FragmentLoginEmailBinding
@@ -88,8 +89,8 @@ class LoginEmailFragment : Fragment() {
             LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
             isLoginButtonClick = true
             loginViewModel.requestLoginEmail(
-                email = binding.etLoginEmailAddress.text.toString().trim(),
-                password = binding.etLoginEmailPassword.text.toString().trim(),
+                email = trimBlankText(binding.etLoginEmailAddress.text),
+                password = trimBlankText(binding.etLoginEmailPassword.text),
             )
         }
     }

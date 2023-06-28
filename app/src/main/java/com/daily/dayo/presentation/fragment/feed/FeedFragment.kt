@@ -14,6 +14,7 @@ import androidx.paging.LoadState
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFeedBinding
@@ -105,7 +106,7 @@ class FeedFragment : Fragment() {
             override fun tagPostClick(chip: Chip) {
                 findNavController().navigate(
                     FeedFragmentDirections.actionFeedFragmentToSearchResultFragment(
-                        chip.text.toString().substringAfter("#").trim()
+                        trimBlankText(chip.text.toString().substringAfter("#"))
                     )
                 )
             }
