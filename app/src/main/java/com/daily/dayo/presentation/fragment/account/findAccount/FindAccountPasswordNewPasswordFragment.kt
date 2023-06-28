@@ -16,6 +16,7 @@ import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentFindAccountPasswordNewPasswordBinding
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
@@ -130,7 +131,7 @@ class FindAccountPasswordNewPasswordFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                if (s.toString().trim().length < 8) { // 비밀번호 길이 검사 1에
+                if (trimBlankText(s).length < 8) { // 비밀번호 길이 검사 1에
                     SetTextInputLayout.setEditTextTheme(
                         requireContext(),
                         binding.layoutFindAccountPasswordNewPasswordUserPassword,
@@ -142,7 +143,7 @@ class FindAccountPasswordNewPasswordFragment : Fragment() {
                         requireContext(),
                         binding.btnFindAccountPasswordNewPasswordNext
                     )
-                } else if (s.toString().trim().length > 16) { // 비밀번호 길이 검사 2
+                } else if (trimBlankText(s).length > 16) { // 비밀번호 길이 검사 2
                     SetTextInputLayout.setEditTextErrorTheme(
                         requireContext(),
                         binding.layoutFindAccountPasswordNewPasswordUserPassword,
@@ -154,7 +155,7 @@ class FindAccountPasswordNewPasswordFragment : Fragment() {
                         requireContext(),
                         binding.btnFindAccountPasswordNewPasswordNext
                     )
-                } else if (!Pattern.matches("^[a-z|0-9|]+\$", s.toString().trim())) { // 비밀번호 양식 검사
+                } else if (!Pattern.matches("^[a-z|0-9|]+\$", trimBlankText(s))) { // 비밀번호 양식 검사
                     SetTextInputLayout.setEditTextErrorTheme(
                         requireContext(),
                         binding.layoutFindAccountPasswordNewPasswordUserPassword,
@@ -206,7 +207,7 @@ class FindAccountPasswordNewPasswordFragment : Fragment() {
             Navigation.findNavController(it).navigate(
                 FindAccountPasswordNewPasswordFragmentDirections.actionFindAccountPasswordNewPasswordFragmentToFindAccountPasswordNewPasswordConfirmationFragment(
                     args.email,
-                    binding.etFindAccountPasswordNewPasswordUserPassword.text.toString().trim()
+                    trimBlankText(binding.etFindAccountPasswordNewPasswordUserPassword.text)
                 )
             )
         }

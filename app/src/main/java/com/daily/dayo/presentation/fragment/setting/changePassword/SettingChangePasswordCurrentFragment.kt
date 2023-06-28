@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
@@ -141,7 +142,7 @@ class SettingChangePasswordCurrentFragment : Fragment() {
 
     private fun checkPassword() {
         accountViewModel.requestCheckCurrentPassword(
-            inputPassword = binding.etSettingChangePasswordCurrentUserInput.text.toString().trim()
+            inputPassword = trimBlankText(binding.etSettingChangePasswordCurrentUserInput.text)
         )
     }
 

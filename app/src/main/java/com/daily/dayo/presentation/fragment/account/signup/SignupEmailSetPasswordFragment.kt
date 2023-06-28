@@ -16,6 +16,7 @@ import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentSignupEmailSetPasswordBinding
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
@@ -46,34 +47,64 @@ class SignupEmailSetPasswordFragment : Fragment() {
         view.setOnTouchListener { _, _ ->
             HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetPasswordUserPassword)
             changeEditTextTitle()
-            SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword.text.isNullOrEmpty())
+            SetTextInputLayout.setEditTextTheme(
+                requireContext(),
+                binding.layoutSignupEmailSetPasswordUserPassword,
+                binding.etSignupEmailSetPasswordUserPassword,
+                binding.etSignupEmailSetPasswordUserPassword.text.isNullOrEmpty()
+            )
             true
         }
     }
+
     private fun setTextEditorActionListener() {
-        binding.etSignupEmailSetPasswordUserPassword.setOnEditorActionListener {  _, actionId, _ ->
-            when(actionId) {
+        binding.etSignupEmailSetPasswordUserPassword.setOnEditorActionListener { _, actionId, _ ->
+            when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-                    HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetPasswordUserPassword)
+                    HideKeyBoardUtil.hide(
+                        requireContext(),
+                        binding.etSignupEmailSetPasswordUserPassword
+                    )
                     changeEditTextTitle()
-                    SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword.text.isNullOrEmpty())
+                    SetTextInputLayout.setEditTextTheme(
+                        requireContext(),
+                        binding.layoutSignupEmailSetPasswordUserPassword,
+                        binding.etSignupEmailSetPasswordUserPassword,
+                        binding.etSignupEmailSetPasswordUserPassword.text.isNullOrEmpty()
+                    )
                     true
-                } else -> false
+                }
+                else -> false
             }
         }
     }
 
     private fun initEditText() {
-        SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword.text.isNullOrEmpty())
+        SetTextInputLayout.setEditTextTheme(
+            requireContext(),
+            binding.layoutSignupEmailSetPasswordUserPassword,
+            binding.etSignupEmailSetPasswordUserPassword,
+            binding.etSignupEmailSetPasswordUserPassword.text.isNullOrEmpty()
+        )
         with(binding.etSignupEmailSetPasswordUserPassword) {
             setOnFocusChangeListener { _, hasFocus -> // EditText Title 설정
                 with(binding.layoutSignupEmailSetPasswordUserPassword) {
-                    if(hasFocus){
+                    if (hasFocus) {
                         hint = getString(R.string.password)
-                        SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, false)
+                        SetTextInputLayout.setEditTextTheme(
+                            requireContext(),
+                            binding.layoutSignupEmailSetPasswordUserPassword,
+                            binding.etSignupEmailSetPasswordUserPassword,
+                            false
+                        )
                     } else {
                         hint = getString(R.string.signup_email_set_password_message_length_fail_min)
-                        SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, true)
+                        SetTextInputLayout.setEditTextTheme(
+                            requireContext(),
+                            binding.layoutSignupEmailSetPasswordUserPassword,
+                            binding.etSignupEmailSetPasswordUserPassword,
+                            true
+                        )
                     }
                 }
             }
@@ -82,7 +113,7 @@ class SignupEmailSetPasswordFragment : Fragment() {
 
     private fun changeEditTextTitle() {
         with(binding.layoutSignupEmailSetPasswordUserPassword) {
-            if(binding.etSignupEmailSetPasswordUserPassword.text.isNullOrEmpty()) {
+            if (binding.etSignupEmailSetPasswordUserPassword.text.isNullOrEmpty()) {
                 hint = getString(R.string.signup_email_set_password_message_length_fail_min)
             } else {
                 hint = getString(R.string.password)
@@ -92,22 +123,58 @@ class SignupEmailSetPasswordFragment : Fragment() {
 
     private fun verifyPassword() {
         binding.etSignupEmailSetPasswordUserPassword.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                if(s.toString().trim().length < 8){ // 비밀번호 길이 검사 1에
-                    SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, false)
+                if (trimBlankText(s).length < 8) { // 비밀번호 길이 검사 1에
+                    SetTextInputLayout.setEditTextTheme(
+                        requireContext(),
+                        binding.layoutSignupEmailSetPasswordUserPassword,
+                        binding.etSignupEmailSetPasswordUserPassword,
+                        false
+                    )
                     // 8자 이하일 때에는 오류 검사 실패시, 에러메시지가 나오지 않도록 디자인 수정
-                    ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetPasswordNext)
-                } else if(s.toString().trim().length > 16) { // 비밀번호 길이 검사 2
-                    SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, getString(R.string.signup_email_set_password_message_length_fail_max), false)
-                    ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetPasswordNext)
-                } else if(!Pattern.matches("^[a-z|0-9|]+\$", s.toString().trim())) { // 비밀번호 양식 검사
-                    SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, getString(R.string.signup_email_set_password_message_format_fail), false)
-                    ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetPasswordNext)
+                    ButtonActivation.setSignupButtonInactive(
+                        requireContext(),
+                        binding.btnSignupEmailSetPasswordNext
+                    )
+                } else if (trimBlankText(s).length > 16) { // 비밀번호 길이 검사 2
+                    SetTextInputLayout.setEditTextErrorTheme(
+                        requireContext(),
+                        binding.layoutSignupEmailSetPasswordUserPassword,
+                        binding.etSignupEmailSetPasswordUserPassword,
+                        getString(R.string.signup_email_set_password_message_length_fail_max),
+                        false
+                    )
+                    ButtonActivation.setSignupButtonInactive(
+                        requireContext(),
+                        binding.btnSignupEmailSetPasswordNext
+                    )
+                } else if (!Pattern.matches("^[a-z|0-9|]+\$", trimBlankText(s))
+                ) { // 비밀번호 양식 검사
+                    SetTextInputLayout.setEditTextErrorTheme(
+                        requireContext(),
+                        binding.layoutSignupEmailSetPasswordUserPassword,
+                        binding.etSignupEmailSetPasswordUserPassword,
+                        getString(R.string.signup_email_set_password_message_format_fail),
+                        false
+                    )
+                    ButtonActivation.setSignupButtonInactive(
+                        requireContext(),
+                        binding.btnSignupEmailSetPasswordNext
+                    )
                 } else {
-                    SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetPasswordUserPassword, binding.etSignupEmailSetPasswordUserPassword, null, true)
-                    ButtonActivation.setSignupButtonActive(requireContext(), binding.btnSignupEmailSetPasswordNext)
+                    SetTextInputLayout.setEditTextErrorTheme(
+                        requireContext(),
+                        binding.layoutSignupEmailSetPasswordUserPassword,
+                        binding.etSignupEmailSetPasswordUserPassword,
+                        null,
+                        true
+                    )
+                    ButtonActivation.setSignupButtonActive(
+                        requireContext(),
+                        binding.btnSignupEmailSetPasswordNext
+                    )
                 }
             }
         })
@@ -125,7 +192,7 @@ class SignupEmailSetPasswordFragment : Fragment() {
         binding.etSignupEmailSetPasswordUserPassword.filters = arrayOf(filterInputCheck)
     }
 
-    private fun setBackClickListener(){
+    private fun setBackClickListener() {
         binding.btnSignupEmailSetPasswordBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
@@ -133,7 +200,12 @@ class SignupEmailSetPasswordFragment : Fragment() {
 
     private fun setNextClickListener() {
         binding.btnSignupEmailSetPasswordNext.setOnDebounceClickListener {
-            Navigation.findNavController(it).navigate(SignupEmailSetPasswordFragmentDirections.actionSignupEmailSetPasswordFragmentToSignupEmailSetPasswordConfirmationFragment(args.email,binding.etSignupEmailSetPasswordUserPassword.text.toString().trim()))
+            Navigation.findNavController(it).navigate(
+                SignupEmailSetPasswordFragmentDirections.actionSignupEmailSetPasswordFragmentToSignupEmailSetPasswordConfirmationFragment(
+                    args.email,
+                    trimBlankText(binding.etSignupEmailSetPasswordUserPassword.text)
+                )
+            )
         }
     }
 }

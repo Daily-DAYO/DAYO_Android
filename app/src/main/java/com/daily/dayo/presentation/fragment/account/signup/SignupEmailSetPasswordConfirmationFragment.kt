@@ -16,6 +16,7 @@ import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentSignupEmailSetPasswordConfirmationBinding
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
@@ -94,7 +95,7 @@ class SignupEmailSetPasswordConfirmationFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
             override fun afterTextChanged(s: Editable?) {
-                if(args.password != binding.etSignupEmailSetPasswordConfirmationUserInput.text.toString().trim() ){ // 동일 비밀번호 검사
+                if(args.password != trimBlankText(binding.etSignupEmailSetPasswordConfirmationUserInput.text)){ // 동일 비밀번호 검사
                     ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetPasswordConfirmationNext)
                     SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetPasswordConfirmationUserInput, binding.etSignupEmailSetPasswordConfirmationUserInput, getString(R.string.signup_email_set_password_confirmation_message_fail), false)
                 } else {

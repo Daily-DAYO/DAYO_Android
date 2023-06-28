@@ -30,6 +30,7 @@ import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.GlideLoadUtil
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.ImageResizeUtil
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
@@ -165,11 +166,11 @@ class ProfileEditFragment : Fragment() {
                             "0${getString(R.string.my_profile_edit_nickname_edittext_count)}"
                     } else {
                         tvProfileEditNicknameCount.text = "${
-                            s.toString().trim().length
+                            trimBlankText(s).length
                         }${getString(R.string.my_profile_edit_nickname_edittext_count)}"
                     }
 
-                    if (s.toString().trim().length < 2) { // 닉네임 길이 검사 1
+                    if (trimBlankText(s).length < 2) { // 닉네임 길이 검사 1
                         setEditTextTheme(
                             getString(R.string.my_profile_edit_nickname_message_length_fail_min),
                             false
@@ -178,7 +179,7 @@ class ProfileEditFragment : Fragment() {
                             requireContext(),
                             btnProfileEditComplete
                         )
-                    } else if (s.toString().trim().length > 10) { // 닉네임 길이 검사 2
+                    } else if (trimBlankText(s).length > 10) { // 닉네임 길이 검사 2
                         setEditTextTheme(
                             getString(R.string.my_profile_edit_nickname_message_length_fail_max),
                             false
@@ -190,7 +191,7 @@ class ProfileEditFragment : Fragment() {
                     } else {
                         if (Pattern.matches(
                                 "^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9|]+\$",
-                                s.toString().trim()
+                                trimBlankText(s)
                             )
                         ) { // 닉네임 양식 검사
                             if (true) { // TODO : 닉네임 중복검사 통과 코드 작성
@@ -277,7 +278,7 @@ class ProfileEditFragment : Fragment() {
     private fun setProfileUpdateClickListener() {
         binding.btnProfileEditComplete.setOnDebounceClickListener {
             LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
-            val nickname: String? = binding.etProfileEditNickname.text.toString().trim()
+            val nickname: String? = trimBlankText(binding.etProfileEditNickname.text)
             var profileImgFile: File?
 
             runBlocking {

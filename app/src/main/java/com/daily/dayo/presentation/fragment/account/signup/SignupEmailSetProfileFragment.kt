@@ -42,6 +42,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 import com.daily.dayo.common.ImageResizeUtil
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 
 @AndroidEntryPoint
 class SignupEmailSetProfileFragment : Fragment() {
@@ -115,7 +116,7 @@ class SignupEmailSetProfileFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 with(binding) {
-                    if (s.toString().trim().length < 2) { // 닉네임 길이 검사 1
+                    if (trimBlankText(s).length < 2) { // 닉네임 길이 검사 1
                         setEditTextTheme(
                             getString(R.string.my_profile_edit_nickname_message_length_fail_min),
                             false
@@ -124,7 +125,7 @@ class SignupEmailSetProfileFragment : Fragment() {
                             requireContext(),
                             binding.btnSignupEmailSetProfileNext
                         )
-                    } else if (s.toString().trim().length > 10) { // 닉네임 길이 검사 2
+                    } else if (trimBlankText(s).length > 10) { // 닉네임 길이 검사 2
                         setEditTextTheme(
                             getString(R.string.my_profile_edit_nickname_message_length_fail_max),
                             false
@@ -134,14 +135,11 @@ class SignupEmailSetProfileFragment : Fragment() {
                             binding.btnSignupEmailSetProfileNext
                         )
                     } else {
-                        if (Pattern.matches(
-                                "^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9|]+\$",
-                                s.toString().trim()
-                            )
+                        if (Pattern.matches("^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9|]+\$", trimBlankText(s))
                         ) {
-                            loginViewModel.requestCheckNicknameDuplicate(binding.etSignupEmailSetProfileNickname.text.toString().trim())
+                            loginViewModel.requestCheckNicknameDuplicate(trimBlankText(binding.etSignupEmailSetProfileNickname.text))
                             loginViewModel.isNicknameDuplicate.observe(viewLifecycleOwner) { isDuplicate ->
-                                if(isDuplicate) {
+                                if (isDuplicate) {
                                     setEditTextTheme(
                                         getString(R.string.my_profile_edit_nickname_message_success),
                                         true
@@ -314,14 +312,17 @@ class SignupEmailSetProfileFragment : Fragment() {
             if (args.password != null) {
                 loginViewModel.requestSignupEmail(
                     args.email,
-                    binding.etSignupEmailSetProfileNickname.text.toString().trim(),
+                    trimBlankText(binding.etSignupEmailSetProfileNickname.text),
                     args.password!!,
                     profileImgFile
                 )
             } else {
                 // 카카오 계정 회원가입 시 비밀번호가 null
                 profileSettingViewModel.requestUpdateMyProfile(
-                    binding.etSignupEmailSetProfileNickname.text.toString().trim(), profileImgFile, profileImgFile == null)
+                    trimBlankText(binding.etSignupEmailSetProfileNickname.text),
+                    profileImgFile,
+                    profileImgFile == null
+                )
             }
             Toast.makeText(
                 requireContext(),
@@ -336,7 +337,7 @@ class SignupEmailSetProfileFragment : Fragment() {
             if (isSuccess.getContentIfNotHandled() == true) {
                 Navigation.findNavController(requireView()).navigate(
                     SignupEmailSetProfileFragmentDirections.actionSignupEmailSetProfileFragmentToSignupEmailCompleteFragment(
-                        binding.etSignupEmailSetProfileNickname.text.toString().trim()
+                        trimBlankText(binding.etSignupEmailSetProfileNickname.text)
                     )
                 )
             } else if (isSuccess.getContentIfNotHandled() == false) {
@@ -355,7 +356,7 @@ class SignupEmailSetProfileFragment : Fragment() {
             if (isSuccess.getContentIfNotHandled() == true) {
                 Navigation.findNavController(requireView()).navigate(
                     SignupEmailSetProfileFragmentDirections.actionSignupEmailSetProfileFragmentToSignupEmailCompleteFragment(
-                        binding.etSignupEmailSetProfileNickname.text.toString().trim()
+                        trimBlankText(binding.etSignupEmailSetProfileNickname.text)
                     )
                 )
             } else if (isSuccess.getContentIfNotHandled() == false) {
