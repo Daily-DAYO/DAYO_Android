@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ import com.daily.dayo.databinding.FragmentFindAccountPasswordCheckEmailBinding
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
@@ -44,45 +46,53 @@ class FindAccountPasswordCheckEmailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.setOnTouchListener { _, _ ->
-            HideKeyBoardUtil.hide(requireContext(), binding.etFindAccountPasswordCheckEmailUserInput)
-            changeEditTextTitle()
-            SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutFindAccountPasswordCheckEmailUserInput, binding.etFindAccountPasswordCheckEmailUserInput, binding.etFindAccountPasswordCheckEmailUserInput.text.isNullOrEmpty())
+            with(binding.etFindAccountPasswordCheckEmailUserInput) {
+                HideKeyBoardUtil.hide(requireContext(), this)
+                changeEditTextTitle()
+                SetTextInputLayout.setEditTextTheme(
+                    requireContext(),
+                    binding.layoutFindAccountPasswordCheckEmailUserInput,
+                    this,
+                    this.text.isNullOrEmpty()
+                )
+            }
+
             verifyEmailAddress()
             true
         }
     }
 
     private fun setTextEditorActionListener() {
-        binding.etFindAccountPasswordCheckEmailUserInput.setOnEditorActionListener { _, actionId, _ ->
-            when (actionId) {
-                EditorInfo.IME_ACTION_DONE -> {
-                    HideKeyBoardUtil.hide(
-                        requireContext(),
-                        binding.etFindAccountPasswordCheckEmailUserInput
-                    )
-                    changeEditTextTitle()
-                    SetTextInputLayout.setEditTextTheme(
-                        requireContext(),
-                        binding.layoutFindAccountPasswordCheckEmailUserInput,
-                        binding.etFindAccountPasswordCheckEmailUserInput,
-                        binding.etFindAccountPasswordCheckEmailUserInput.text.isNullOrEmpty()
-                    )
-                    verifyEmailAddress()
-                    true
+        with(binding.etFindAccountPasswordCheckEmailUserInput) {
+            this.setOnEditorActionListener { _, actionId, _ ->
+                when (actionId) {
+                    EditorInfo.IME_ACTION_DONE -> {
+                        HideKeyBoardUtil.hide(requireContext(), this)
+                        changeEditTextTitle()
+                        SetTextInputLayout.setEditTextTheme(
+                            requireContext(),
+                            binding.layoutFindAccountPasswordCheckEmailUserInput,
+                            this,
+                            this.text.isNullOrEmpty()
+                        )
+                        verifyEmailAddress()
+                        true
+                    }
+                    else -> false
                 }
-                else -> false
             }
         }
     }
 
     private fun initEditText() {
-        SetTextInputLayout.setEditTextTheme(
-            requireContext(),
-            binding.layoutFindAccountPasswordCheckEmailUserInput,
-            binding.etFindAccountPasswordCheckEmailUserInput,
-            binding.etFindAccountPasswordCheckEmailUserInput.text.isNullOrEmpty()
-        )
         with(binding.etFindAccountPasswordCheckEmailUserInput) {
+            SetTextInputLayout.setEditTextTheme(
+                requireContext(),
+                binding.layoutFindAccountPasswordCheckEmailUserInput,
+                this,
+                this.text.isNullOrEmpty()
+            )
+
             setOnFocusChangeListener { _, hasFocus -> // Title
                 with(binding.layoutFindAccountPasswordCheckEmailUserInput) {
                     if (hasFocus) {
@@ -140,12 +150,12 @@ class FindAccountPasswordCheckEmailFragment : Fragment() {
     }
 
     private fun verifyEmailAddress() {
-        if (android.util.Patterns.EMAIL_ADDRESS.matcher(
-                binding.etFindAccountPasswordCheckEmailUserInput.text.toString().trim()
+        if (Patterns.EMAIL_ADDRESS.matcher(
+                trimBlankText(binding.etFindAccountPasswordCheckEmailUserInput.text)
             ).matches()
         ) { // 이메일 주소 양식 검사
             loginViewModel.requestCheckEmail(
-                inputEmail = binding.etFindAccountPasswordCheckEmailUserInput.text.toString().trim()
+                inputEmail = trimBlankText(binding.etFindAccountPasswordCheckEmailUserInput.text)
             )
             loginViewModel.checkEmailSuccess.observe(viewLifecycleOwner) { isSuccess ->
                 if (isSuccess) { // 이메일 가입과 달리 중복검사해서 false 경우에는 있는 이메일 이므로 성공 처리
@@ -210,7 +220,7 @@ class FindAccountPasswordCheckEmailFragment : Fragment() {
         binding.btnFindAccountPasswordCheckEmailNext.setOnDebounceClickListener {
             Navigation.findNavController(it).navigate(
                 FindAccountPasswordCheckEmailFragmentDirections.actionFindAccountPasswordCheckEmailFragmentToFindAccountPasswordCheckEmailCertificateFragment(
-                    binding.etFindAccountPasswordCheckEmailUserInput.text.toString().trim()
+                    trimBlankText(binding.etFindAccountPasswordCheckEmailUserInput.text)
                 )
             )
         }

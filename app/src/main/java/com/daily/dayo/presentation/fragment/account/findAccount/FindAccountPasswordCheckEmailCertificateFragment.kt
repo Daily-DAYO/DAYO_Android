@@ -20,6 +20,7 @@ import com.daily.dayo.databinding.FragmentFindAccountPasswordCheckEmailCertifica
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
@@ -279,7 +280,7 @@ class FindAccountPasswordCheckEmailCertificateFragment : Fragment() {
         binding.btnLoginEmailFindPasswordCertificateNext.setOnDebounceClickListener {
             Navigation.findNavController(it).navigate(
                 FindAccountPasswordCheckEmailCertificateFragmentDirections.actionFindAccountPasswordCheckEmailCertificateFragmentToFindAccountPasswordNewPasswordFragment(
-                    binding.etLoginEmailFindPasswordCertificateUserInput.text.toString().trim()
+                    trimBlankText(binding.etLoginEmailFindPasswordCertificateUserInput.text)
                 )
             )
         }

@@ -17,6 +17,7 @@ import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentFindAccountPasswordNewPasswordConfirmationBinding
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
@@ -146,8 +147,7 @@ class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                if (args.password != binding.etFindAccountPasswordNewPasswordConfirmationUserInput.text.toString()
-                        .trim()
+                if (args.password != trimBlankText(binding.etFindAccountPasswordNewPasswordConfirmationUserInput.text)
                 ) { // 동일 비밀번호 검사
                     ButtonActivation.setSignupButtonInactive(
                         requireContext(),
@@ -209,7 +209,7 @@ class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
 
     private fun observeChangePasswordSuccess() {
         loginViewModel.changePasswordSuccess.observe(viewLifecycleOwner) { isChangeSuccess ->
-            if(isChangeSuccess) {
+            if (isChangeSuccess) {
                 findNavController().navigate(R.id.action_findAccountPasswordNewPasswordConfirmationFragment_to_findAccountPasswordCompleteFragment)
             }
         }

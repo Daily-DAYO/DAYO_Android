@@ -33,6 +33,7 @@ import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.*
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.dialog.DefaultDialogConfirm
 import com.daily.dayo.common.dialog.LoadingAlertDialog
@@ -305,11 +306,11 @@ class PostFragment : Fragment() {
                         )
                     )
                     ensureAccessibleTouchTarget(42.toPx())
-                    text = "# ${tagList[index].trim()}"
+                    text = "# ${trimBlankText(tagList[index])}"
                     setOnDebounceClickListener {
                         keyboardVisibilityUtils.detachKeyboardListeners() // TODO : 임시 처리, 화면을 벗어나므로 detach 처리 필요
                         Navigation.findNavController(it).navigate(
-                            PostFragmentDirections.actionPostFragmentToSearchResultFragment(tagList[index].trim())
+                            PostFragmentDirections.actionPostFragmentToSearchResultFragment(trimBlankText(tagList[index]))
                         )
                     }
                 }
@@ -457,10 +458,11 @@ class PostFragment : Fragment() {
         }
 
         binding.tvPostCommentUpload.setOnDebounceClickListener {
-            if (binding.etPostCommentDescription.text.toString().trim().isNotEmpty()) {
+            val currentCommentEditText = trimBlankText(binding.etPostCommentDescription.text)
+            if (currentCommentEditText.isNotEmpty()) {
                 LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
                 postViewModel.requestCreatePostComment(
-                    contents = binding.etPostCommentDescription.text.toString(),
+                    contents = currentCommentEditText,
                     postId = args.postId
                 )
                 with(binding.etPostCommentDescription) {

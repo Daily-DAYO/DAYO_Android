@@ -18,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.HideKeyBoardUtil
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.SetTextInputLayout
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
@@ -111,8 +112,7 @@ class SettingChangePasswordNewFragment : Fragment() {
                     setOnDebounceClickListener {
                         LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
                         accountViewModel.requestChangePassword(
-                            newPassword = binding.etSettingChangePasswordNewUserInput.text.toString()
-                                .trim()
+                            newPassword = trimBlankText(binding.etSettingChangePasswordNewUserInput.text)
                         )
                         accountViewModel.changePasswordSuccess.observe(viewLifecycleOwner) {
                             Toast.makeText(
@@ -193,9 +193,8 @@ class SettingChangePasswordNewFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                if (binding.etSettingChangePasswordNewUserInput.text.toString()
-                        .trim() != binding.etSettingChangePasswordNewConfirmation.text.toString()
-                        .trim()
+                if (trimBlankText(binding.etSettingChangePasswordNewUserInput.text)
+                    != trimBlankText(binding.etSettingChangePasswordNewConfirmation.text)
                 ) { // 동일 비밀번호 검사
                     ButtonActivation.setSignupButtonInactive(
                         requireContext(),
@@ -230,7 +229,7 @@ class SettingChangePasswordNewFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                if (s.toString().trim().length < 8) { // 비밀번호 길이 검사 1에
+                if (trimBlankText(s).length < 8) { // 비밀번호 길이 검사 1에
                     SetTextInputLayout.setEditTextTheme(
                         requireContext(),
                         binding.layoutSettingChangePasswordNewUserInput,
@@ -242,7 +241,7 @@ class SettingChangePasswordNewFragment : Fragment() {
                         requireContext(),
                         binding.btnSettingChangePasswordNewNext
                     )
-                } else if (s.toString().trim().length > 16) { // 비밀번호 길이 검사 2
+                } else if (trimBlankText(s).length > 16) { // 비밀번호 길이 검사 2
                     SetTextInputLayout.setEditTextErrorTheme(
                         requireContext(),
                         binding.layoutSettingChangePasswordNewUserInput,
@@ -254,7 +253,7 @@ class SettingChangePasswordNewFragment : Fragment() {
                         requireContext(),
                         binding.btnSettingChangePasswordNewNext
                     )
-                } else if (!Pattern.matches("^[a-z|0-9|]+\$", s.toString().trim())) { // 비밀번호 양식 검사
+                } else if (!Pattern.matches("^[a-z|0-9|]+\$", trimBlankText(s))) { // 비밀번호 양식 검사
                     SetTextInputLayout.setEditTextErrorTheme(
                         requireContext(),
                         binding.layoutSettingChangePasswordNewUserInput,
