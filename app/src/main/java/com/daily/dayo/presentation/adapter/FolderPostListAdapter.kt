@@ -24,10 +24,10 @@ class FolderPostListAdapter(private val requestManager: RequestManager) :
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<FolderPost>() {
             override fun areItemsTheSame(oldItem: FolderPost, newItem: FolderPost) =
-                oldItem === newItem
+                oldItem.postId == newItem.postId
 
             override fun areContentsTheSame(oldItem: FolderPost, newItem: FolderPost): Boolean =
-                oldItem.hashCode() == newItem.hashCode()
+                oldItem.apply { preLoadThumbnail = null } == newItem.apply { preLoadThumbnail = null }
         }
     }
 

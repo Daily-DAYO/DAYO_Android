@@ -23,7 +23,7 @@ class ProfileFolderListAdapter(private val requestManager: RequestManager) :
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Folder>() {
             override fun areItemsTheSame(oldItem: Folder, newItem: Folder) =
-                oldItem === newItem
+                oldItem.folderId == newItem.folderId
 
             override fun areContentsTheSame(oldItem: Folder, newItem: Folder): Boolean =
                 oldItem == newItem
