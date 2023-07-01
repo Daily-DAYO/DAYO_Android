@@ -4,14 +4,12 @@ import android.app.AlertDialog
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -110,6 +108,7 @@ class PostFragment : Fragment() {
         super.onDestroyView()
         LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
         keyboardVisibilityUtils.detachKeyboardListeners()
+        postViewModel.cleanUpPostDetail()
     }
 
     private fun setBackButtonClickListener() {
@@ -153,8 +152,7 @@ class PostFragment : Fragment() {
 
     private fun setPostDetailCollect() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                postViewModel.requestPostDetail(args.postId)
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 postViewModel.postDetail.observe(viewLifecycleOwner) {
                     when (it.status) {
                         Status.SUCCESS -> {
@@ -199,6 +197,7 @@ class PostFragment : Fragment() {
                         Status.ERROR -> {}
                     }
                 }
+                postViewModel.requestPostDetail(args.postId)
             }
         }
     }
@@ -323,6 +322,9 @@ class PostFragment : Fragment() {
         postImageSliderAdapter = PostImageSliderAdapter(requestManager = glideRequestManager)
         with(binding.vpPostImage) {
             adapter = postImageSliderAdapter
+            setPageTransformer { page, position ->
+                // To Disable image changing animation
+            }
             offscreenPageLimit = 1
             registerOnPageChangeCallback(object : OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
