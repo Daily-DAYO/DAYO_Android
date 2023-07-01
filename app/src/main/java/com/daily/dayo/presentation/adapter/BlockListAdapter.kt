@@ -9,14 +9,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.GlideLoadUtil
 import com.daily.dayo.common.setOnDebounceClickListener
+import com.daily.dayo.data.di.IoDispatcher
+import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemBlockBinding
 import com.daily.dayo.domain.model.BlockUser
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class BlockListAdapter(private val requestManager: RequestManager) :
+class BlockListAdapter(
+    private val requestManager: RequestManager,
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+) :
     RecyclerView.Adapter<BlockListAdapter.BlockListViewHolder>() {
 
     companion object {
@@ -61,8 +67,8 @@ class BlockListAdapter(private val requestManager: RequestManager) :
 
         fun bind(blockUser: BlockUser) {
             binding.blockUser = blockUser.nickname
-            CoroutineScope(Dispatchers.Main).launch {
-                val profileImgBitmap = withContext(Dispatchers.IO) {
+            CoroutineScope(mainDispatcher).launch {
+                val profileImgBitmap = withContext(ioDispatcher) {
                     GlideLoadUtil.loadImageBackground(
                         requestManager = requestManager,
                         width = 45,

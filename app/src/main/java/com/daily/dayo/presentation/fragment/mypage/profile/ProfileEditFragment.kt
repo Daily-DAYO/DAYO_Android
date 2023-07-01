@@ -21,6 +21,9 @@ import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
@@ -38,7 +41,6 @@ import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentProfileEditBinding
 import com.daily.dayo.presentation.viewmodel.ProfileSettingViewModel
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -120,22 +122,24 @@ class ProfileEditFragment : Fragment() {
         profileSettingViewModel.requestProfile(memberId = DayoApplication.preferences.getCurrentUser().memberId!!)
         profileSettingViewModel.profileInfo.observe(viewLifecycleOwner) {
             it?.let { profile ->
-                CoroutineScope(Dispatchers.Main).launch {
-                    val userProfileThumbnailImage = withContext(Dispatchers.IO) {
-                        GlideLoadUtil.loadImageBackgroundProfile(
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        val userProfileThumbnailImage = withContext(Dispatchers.IO) {
+                            GlideLoadUtil.loadImageBackgroundProfile(
+                                requestManager = glideRequestManager,
+                                width = 100,
+                                height = 100,
+                                imgName = profile.profileImg
+                            )
+                        }
+                        GlideLoadUtil.loadImageViewProfile(
                             requestManager = glideRequestManager,
                             width = 100,
                             height = 100,
-                            imgName = profile.profileImg
+                            img = userProfileThumbnailImage,
+                            imgView = binding.imgProfileEditUserImage
                         )
                     }
-                    GlideLoadUtil.loadImageViewProfile(
-                        requestManager = glideRequestManager,
-                        width = 100,
-                        height = 100,
-                        img = userProfileThumbnailImage,
-                        imgView = binding.imgProfileEditUserImage
-                    )
                 }
                 binding.etProfileEditNickname.setText(profile.nickname)
             }

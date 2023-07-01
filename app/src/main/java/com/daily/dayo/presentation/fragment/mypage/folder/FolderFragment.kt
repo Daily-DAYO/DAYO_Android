@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
@@ -88,22 +91,24 @@ class FolderFragment : Fragment() {
                     it.data?.let { folder ->
                         binding.folder = folder
                         binding.isMine = folder.memberId == DayoApplication.preferences.getCurrentUser().memberId
-                        CoroutineScope(Dispatchers.Main).launch {
-                            val folderThumbnailImage = withContext(Dispatchers.IO) {
-                                loadImageBackground(
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                                val folderThumbnailImage = withContext(Dispatchers.IO) {
+                                    loadImageBackground(
+                                        requestManager = glideRequestManager,
+                                        width = layoutParams.width,
+                                        height = 200,
+                                        imgName = folder.thumbnailImage
+                                    )
+                                }
+                                loadImageView(
                                     requestManager = glideRequestManager,
                                     width = layoutParams.width,
                                     height = 200,
-                                    imgName = folder.thumbnailImage
+                                    img = folderThumbnailImage,
+                                    imgView = binding.imgFolderThumbnail
                                 )
                             }
-                            loadImageView(
-                                requestManager = glideRequestManager,
-                                width = layoutParams.width,
-                                height = 200,
-                                img = folderThumbnailImage,
-                                imgView = binding.imgFolderThumbnail
-                            )
                         }
                         if (folder.memberId == DayoApplication.preferences.getCurrentUser().memberId) binding.btnFolderOption.isVisible =
                             true
@@ -114,7 +119,11 @@ class FolderFragment : Fragment() {
     }
 
     private fun setRvFolderPostListAdapter() {
-        folderPostListAdapter = FolderPostListAdapter(requestManager = glideRequestManager)
+        folderPostListAdapter = FolderPostListAdapter(
+            requestManager = glideRequestManager,
+            mainDispatcher = Dispatchers.Main,
+            ioDispatcher = Dispatchers.IO
+        )
         binding.rvFolderPost.adapter = folderPostListAdapter
     }
 

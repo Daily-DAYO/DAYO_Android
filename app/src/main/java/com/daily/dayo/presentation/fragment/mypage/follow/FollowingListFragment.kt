@@ -18,6 +18,7 @@ import com.daily.dayo.databinding.FragmentFollowingListBinding
 import com.daily.dayo.domain.model.Follow
 import com.daily.dayo.presentation.adapter.FollowListAdapter
 import com.daily.dayo.presentation.viewmodel.FollowViewModel
+import kotlinx.coroutines.Dispatchers
 
 class FollowingListFragment : Fragment() {
     private var binding by autoCleared<FragmentFollowingListBinding>()
@@ -46,7 +47,11 @@ class FollowingListFragment : Fragment() {
     }
 
     private fun setRvFollowingListAdapter(){
-        followingListAdapter = FollowListAdapter(requestManager = glideRequestManager)
+        followingListAdapter = FollowListAdapter(
+            requestManager = glideRequestManager,
+            mainDispatcher = Dispatchers.Main,
+            ioDispatcher = Dispatchers.IO
+        )
         binding.rvFollowing.adapter = followingListAdapter
         followingListAdapter.setOnItemClickListener(object : FollowListAdapter.OnItemClickListener{
             override fun onItemClick(checkbox: CheckBox, follow: Follow, position: Int) {

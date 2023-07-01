@@ -10,7 +10,6 @@ import com.daily.dayo.data.datasource.remote.member.*
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.usecase.member.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
@@ -161,7 +160,7 @@ class AccountViewModel @Inject constructor(
     }
 
     fun requestSignupEmail(email: String, nickname: String, password: String, profileImg: File?) =
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             requestSignUpEmailUseCase(email, nickname, password, profileImg).let {  ApiResponse ->
                 when (ApiResponse) {
                     is NetworkResponse.Success -> {
@@ -180,7 +179,7 @@ class AccountViewModel @Inject constructor(
             }
         }
 
-    fun requestCheckEmailDuplicate(email: String) = viewModelScope.launch(Dispatchers.IO) {
+    fun requestCheckEmailDuplicate(email: String) = viewModelScope.launch {
         requestCheckEmailDuplicateUseCase(email).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
@@ -199,7 +198,7 @@ class AccountViewModel @Inject constructor(
         }
     }
 
-    fun requestCheckNicknameDuplicate(nickname: String) = viewModelScope.launch(Dispatchers.IO) {
+    fun requestCheckNicknameDuplicate(nickname: String) = viewModelScope.launch {
         requestCheckNicknameDuplicateUseCase(nickname).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
@@ -218,7 +217,7 @@ class AccountViewModel @Inject constructor(
         }
     }
 
-    fun requestCertificateEmail(email: String) = viewModelScope.launch(Dispatchers.IO) {
+    fun requestCertificateEmail(email: String) = viewModelScope.launch {
         requestCertificateEmailUseCase(email).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
@@ -246,7 +245,7 @@ class AccountViewModel @Inject constructor(
         registerFcmTokenUseCase()
     }
 
-    fun requestWithdraw(content: String) = viewModelScope.launch(Dispatchers.IO) {
+    fun requestWithdraw(content: String) = viewModelScope.launch {
         requestResignUseCase(content).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {

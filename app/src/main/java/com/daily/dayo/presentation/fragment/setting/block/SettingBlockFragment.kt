@@ -19,6 +19,7 @@ import com.daily.dayo.presentation.adapter.BlockListAdapter
 import com.daily.dayo.presentation.viewmodel.ProfileSettingViewModel
 import com.daily.dayo.presentation.viewmodel.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 
 @AndroidEntryPoint
 class SettingBlockFragment : Fragment() {
@@ -54,7 +55,11 @@ class SettingBlockFragment : Fragment() {
     }
 
     private fun setBlockListAdapter() {
-        blockListAdapter = BlockListAdapter(requestManager = glideRequestManager)
+        blockListAdapter = BlockListAdapter(
+            requestManager = glideRequestManager,
+            mainDispatcher = Dispatchers.Main,
+            ioDispatcher = Dispatchers.IO
+        )
         binding.rvBlock.adapter = blockListAdapter
         blockListAdapter.setOnItemClickListener(object :
             BlockListAdapter.OnItemClickListener {

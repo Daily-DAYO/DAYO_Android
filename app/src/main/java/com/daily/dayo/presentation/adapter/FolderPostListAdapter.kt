@@ -13,13 +13,18 @@ import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
+import com.daily.dayo.data.di.IoDispatcher
+import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemFolderPostBinding
 import com.daily.dayo.domain.model.FolderPost
 import com.daily.dayo.presentation.fragment.mypage.folder.FolderFragmentDirections
 import kotlinx.coroutines.*
 
-class FolderPostListAdapter(private val requestManager: RequestManager) :
-    PagingDataAdapter<FolderPost, FolderPostListAdapter.FolderPostListViewHolder>(diffCallback) {
+class FolderPostListAdapter(
+    private val requestManager: RequestManager,
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+) : PagingDataAdapter<FolderPost, FolderPostListAdapter.FolderPostListViewHolder>(diffCallback) {
 
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<FolderPost>() {
@@ -54,10 +59,10 @@ class FolderPostListAdapter(private val requestManager: RequestManager) :
             binding.layoutFolderPostContentsShimmer.visibility = View.VISIBLE
             binding.imgFolderPost.visibility = View.INVISIBLE
 
-            CoroutineScope(Dispatchers.Main).launch {
+            CoroutineScope(mainDispatcher).launch {
                 val folderPostImage: Bitmap?
                 if (folderPost?.preLoadThumbnail == null) {
-                    folderPostImage = withContext(Dispatchers.IO) {
+                    folderPostImage = withContext(ioDispatcher) {
                         loadImageBackground(
                             requestManager = requestManager,
                             width = layoutParams.width,

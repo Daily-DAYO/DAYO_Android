@@ -16,6 +16,7 @@ import com.daily.dayo.databinding.FragmentProfileFolderListBinding
 import com.daily.dayo.domain.model.Folder
 import com.daily.dayo.presentation.adapter.ProfileFolderListAdapter
 import com.daily.dayo.presentation.viewmodel.ProfileViewModel
+import kotlinx.coroutines.Dispatchers
 
 class ProfileFolderListFragment : Fragment() {
     private var binding by autoCleared<FragmentProfileFolderListBinding>()
@@ -39,7 +40,11 @@ class ProfileFolderListFragment : Fragment() {
     }
 
     private fun setRvProfileFolderListAdapter() {
-        profileFolderListAdapter = ProfileFolderListAdapter(requestManager = glideRequestManager)
+        profileFolderListAdapter = ProfileFolderListAdapter(
+            requestManager = glideRequestManager,
+            mainDispatcher = Dispatchers.Main,
+            ioDispatcher = Dispatchers.IO
+        )
         binding.rvProfileFolder.adapter = profileFolderListAdapter
         profileFolderListAdapter.setOnItemClickListener(object : ProfileFolderListAdapter.OnItemClickListener {
             override fun onItemClick(v: View, folder: Folder, pos: Int) {

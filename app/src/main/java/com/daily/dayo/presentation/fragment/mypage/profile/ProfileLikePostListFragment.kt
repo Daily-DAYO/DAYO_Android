@@ -15,6 +15,7 @@ import com.daily.dayo.databinding.FragmentProfileLikePostListBinding
 import com.daily.dayo.domain.model.LikePost
 import com.daily.dayo.presentation.adapter.ProfileLikePostListAdapter
 import com.daily.dayo.presentation.viewmodel.ProfileViewModel
+import kotlinx.coroutines.Dispatchers
 
 class ProfileLikePostListFragment : Fragment() {
     private var binding by autoCleared<FragmentProfileLikePostListBinding>()
@@ -44,7 +45,11 @@ class ProfileLikePostListFragment : Fragment() {
     }
 
     private fun setRvProfileLikePostListAdapter() {
-        profileLikePostListAdapter = ProfileLikePostListAdapter(requestManager = glideRequestManager)
+        profileLikePostListAdapter = ProfileLikePostListAdapter(
+            requestManager = glideRequestManager,
+            mainDispatcher = Dispatchers.Main,
+            ioDispatcher = Dispatchers.IO
+        )
         binding.rvProfileLikePost.adapter = profileLikePostListAdapter
         profileLikePostListAdapter.setOnItemClickListener(object :
             ProfileLikePostListAdapter.OnItemClickListener {

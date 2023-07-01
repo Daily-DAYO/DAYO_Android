@@ -85,7 +85,13 @@ class HomeDayoPickPostListFragment : Fragment() {
     }
 
     private fun setRvDayoPickPostAdapter() {
-        homeDayoPickAdapter = HomeDayoPickAdapter(true, mGlideRequestManager, this::toggleLikeStatus)
+        homeDayoPickAdapter = HomeDayoPickAdapter(
+            rankingShowing = true,
+            requestManager = mGlideRequestManager,
+            likeListener = this::toggleLikeStatus,
+            mainDispatcher = Dispatchers.Main,
+            ioDispatcher = Dispatchers.IO
+        )
         binding.rvDayopickPost.adapter = homeDayoPickAdapter
     }
 
