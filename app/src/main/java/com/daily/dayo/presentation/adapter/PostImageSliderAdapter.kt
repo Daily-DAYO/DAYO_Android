@@ -14,14 +14,19 @@ import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
 import com.daily.dayo.common.GlideLoadUtil
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
+import com.daily.dayo.data.di.IoDispatcher
+import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemPostImageSliderBinding
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class PostImageSliderAdapter(private val requestManager: RequestManager) :
-    ListAdapter<String, PostImageSliderAdapter.PostImageViewHolder>(
+class PostImageSliderAdapter(
+    private val requestManager: RequestManager,
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+) : ListAdapter<String, PostImageSliderAdapter.PostImageViewHolder>(
         diffCallback
     ) {
     companion object {
@@ -81,8 +86,8 @@ class PostImageSliderAdapter(private val requestManager: RequestManager) :
                 ViewGroup.MarginLayoutParams.MATCH_PARENT,
                 ViewGroup.MarginLayoutParams.MATCH_PARENT
             )
-            CoroutineScope(Dispatchers.Main).launch {
-                val postImage = withContext(Dispatchers.IO) {
+            CoroutineScope(mainDispatcher).launch {
+                val postImage = withContext(ioDispatcher) {
                     GlideLoadUtil.loadImageBackground(
                         requestManager = requestManager,
                         width = layoutParams.width,

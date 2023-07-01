@@ -20,6 +20,7 @@ import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.extension.navigateSafe
 import com.daily.dayo.common.setOnDebounceClickListener
+import com.daily.dayo.data.di.IoDispatcher
 import com.daily.dayo.databinding.FragmentHomeNewPostListBinding
 import com.daily.dayo.domain.model.Category
 import com.daily.dayo.domain.model.Post
@@ -27,6 +28,7 @@ import com.daily.dayo.presentation.adapter.HomeNewAdapter
 import com.daily.dayo.presentation.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -86,7 +88,13 @@ class HomeNewPostListFragment : Fragment() {
     }
 
     private fun setRvNewPostAdapter() {
-        homeNewAdapter = HomeNewAdapter(false, mGlideRequestManager, this::toggleLikeStatus)
+        homeNewAdapter = HomeNewAdapter(
+            rankingShowing = false,
+            requestManager = mGlideRequestManager,
+            likeListener = this::toggleLikeStatus,
+            mainDispatcher = Dispatchers.Main,
+            ioDispatcher = Dispatchers.IO
+        )
         binding.rvNewPost.adapter = homeNewAdapter
     }
 
@@ -97,7 +105,7 @@ class HomeNewPostListFragment : Fragment() {
                     Status.SUCCESS -> {
                         it.data?.let { postList ->
                             binding.swipeRefreshLayoutNewPost.isRefreshing = false
-                            loadPostThumbnail(postList)
+                            loadPostThumbnail(postList, Dispatchers.IO)
                             binding.layoutNewPostEmpty.isVisible = postList.isEmpty()
                         }
                     }
@@ -170,13 +178,13 @@ class HomeNewPostListFragment : Fragment() {
         }
     }
 
-    private fun loadPostThumbnail(postList: List<Post>) {
+    private fun loadPostThumbnail(postList: List<Post>, @IoDispatcher ioDispatcher: CoroutineDispatcher) {
         val thumbnailImgList = emptyList<Bitmap>().toMutableList()
         val userImgList = emptyList<Bitmap>().toMutableList()
 
         viewLifecycleOwner.lifecycleScope.launch {
             for (i in 0 until (if (postList.size >= 6) 6 else postList.size)) {
-                thumbnailImgList.add(withContext(Dispatchers.IO) {
+                thumbnailImgList.add(withContext(ioDispatcher) {
                     GlideLoadUtil.loadImageBackground(
                         context = requireContext(),
                         height = 158,
@@ -184,7 +192,7 @@ class HomeNewPostListFragment : Fragment() {
                         imgName = postList[i].thumbnailImage ?: ""
                     )
                 })
-                userImgList.add(withContext(Dispatchers.IO) {
+                userImgList.add(withContext(ioDispatcher) {
                     GlideLoadUtil.loadImageBackground(
                         context = requireContext(),
                         height = 17,

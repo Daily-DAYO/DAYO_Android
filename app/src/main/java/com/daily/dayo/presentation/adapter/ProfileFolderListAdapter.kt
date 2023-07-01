@@ -10,15 +10,20 @@ import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
+import com.daily.dayo.data.di.IoDispatcher
+import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemProfileFolderBinding
 import com.daily.dayo.domain.model.Folder
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ProfileFolderListAdapter(private val requestManager: RequestManager) :
-    RecyclerView.Adapter<ProfileFolderListAdapter.ProfileFolderListViewHolder>() {
+class ProfileFolderListAdapter(
+    private val requestManager: RequestManager,
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+) : RecyclerView.Adapter<ProfileFolderListAdapter.ProfileFolderListViewHolder>() {
 
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Folder>() {
@@ -67,8 +72,8 @@ class ProfileFolderListAdapter(private val requestManager: RequestManager) :
             )
 
             binding.folder = folder
-            CoroutineScope(Dispatchers.Main).launch {
-                val profileFolderThumbnailImage = withContext(Dispatchers.IO) {
+            CoroutineScope(mainDispatcher).launch {
+                val profileFolderThumbnailImage = withContext(ioDispatcher) {
                     loadImageBackground(
                         requestManager = requestManager,
                         width = layoutParams.width,

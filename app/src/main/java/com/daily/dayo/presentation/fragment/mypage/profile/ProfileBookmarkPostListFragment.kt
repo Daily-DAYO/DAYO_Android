@@ -15,6 +15,7 @@ import com.daily.dayo.databinding.FragmentProfileBookmarkPostListBinding
 import com.daily.dayo.domain.model.BookmarkPost
 import com.daily.dayo.presentation.adapter.ProfileBookmarkPostListAdapter
 import com.daily.dayo.presentation.viewmodel.ProfileViewModel
+import kotlinx.coroutines.Dispatchers
 
 class ProfileBookmarkPostListFragment : Fragment() {
     private var binding by autoCleared<FragmentProfileBookmarkPostListBinding>()
@@ -44,7 +45,11 @@ class ProfileBookmarkPostListFragment : Fragment() {
     }
 
     private fun setRvProfileBookmarkPostListAdapter() {
-        profileBookmarkPostListAdapter = ProfileBookmarkPostListAdapter(requestManager = glideRequestManager)
+        profileBookmarkPostListAdapter = ProfileBookmarkPostListAdapter(
+            requestManager = glideRequestManager,
+            mainDispatcher = Dispatchers.Main,
+            ioDispatcher = Dispatchers.IO
+        )
         binding.rvProfileBookmarkPost.adapter = profileBookmarkPostListAdapter
         profileBookmarkPostListAdapter.setOnItemClickListener(object : ProfileBookmarkPostListAdapter.OnItemClickListener {
             override fun onItemClick(v: View, bookmarkPost: BookmarkPost, pos: Int) {
