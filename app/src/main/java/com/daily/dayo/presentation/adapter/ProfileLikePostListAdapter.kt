@@ -30,10 +30,14 @@ class ProfileLikePostListAdapter(
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<LikePost>() {
             override fun areItemsTheSame(oldItem: LikePost, newItem: LikePost) =
-                oldItem === newItem
+                oldItem.postId == newItem.postId
 
             override fun areContentsTheSame(oldItem: LikePost, newItem: LikePost): Boolean =
-                oldItem == newItem
+                oldItem.apply { preLoadThumbnail = null } == newItem.apply { preLoadThumbnail = null }
+
+            override fun getChangePayload(oldItem: LikePost, newItem: LikePost): Any? {
+                return if (oldItem.postId != newItem.postId || oldItem.thumbnailImage != newItem.thumbnailImage) true else null
+            }
         }
     }
 

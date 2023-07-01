@@ -29,7 +29,7 @@ class ProfileBookmarkPostListAdapter(
                 oldItem.postId == newItem.postId
 
             override fun areContentsTheSame(oldItem: BookmarkPost, newItem: BookmarkPost): Boolean =
-                oldItem == newItem
+                oldItem.apply { preLoadThumbnail = null } == newItem.apply { preLoadThumbnail = null }
         }
     }
 
