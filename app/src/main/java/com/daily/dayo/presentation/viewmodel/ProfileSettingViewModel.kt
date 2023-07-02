@@ -12,6 +12,7 @@ import com.daily.dayo.domain.model.BlockUser
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Profile
 import com.daily.dayo.domain.usecase.block.RequestBlockListUseCase
+import com.daily.dayo.domain.usecase.member.RequestCheckNicknameDuplicateUseCase
 import com.daily.dayo.domain.usecase.member.RequestOtherProfileUseCase
 import com.daily.dayo.domain.usecase.member.RequestUpdateMyProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +24,8 @@ import javax.inject.Inject
 class ProfileSettingViewModel @Inject constructor(
     private val requestOtherProfileUseCase: RequestOtherProfileUseCase,
     private val requestUpdateMyProfileUseCase: RequestUpdateMyProfileUseCase,
-    private val requestBlockListUseCase: RequestBlockListUseCase
+    private val requestBlockListUseCase: RequestBlockListUseCase,
+    private val requestCheckNicknameDuplicateUseCase: RequestCheckNicknameDuplicateUseCase
 ) : ViewModel() {
 
     private val _profileInfo = MutableLiveData<Profile>()
@@ -34,6 +36,15 @@ class ProfileSettingViewModel @Inject constructor(
 
     private val _blockList = MutableLiveData<Resource<List<BlockUser>>>()
     val blockList: LiveData<Resource<List<BlockUser>>> get() = _blockList
+
+    private val _isNicknameDuplicate = MutableLiveData<Boolean>()
+    val isNicknameDuplicate: LiveData<Boolean> get() = _isNicknameDuplicate
+
+    private val _isErrorExceptionOccurred = MutableLiveData<Event<Boolean>>()
+    val isErrorExceptionOccurred get() = _isErrorExceptionOccurred
+
+    private val _isApiErrorExceptionOccurred = MutableLiveData<Event<Boolean>>()
+    val isApiErrorExceptionOccurred get() = _isApiErrorExceptionOccurred
 
     fun requestProfile(memberId: String) = viewModelScope.launch {
         requestOtherProfileUseCase(memberId = memberId).let { ApiResponse ->
@@ -91,4 +102,22 @@ class ProfileSettingViewModel @Inject constructor(
         }
     }
 
+    fun requestCheckNicknameDuplicate(nickname: String) = viewModelScope.launch {
+        requestCheckNicknameDuplicateUseCase(nickname).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _isNicknameDuplicate.postValue(true)
+                }
+                is NetworkResponse.NetworkError -> {
+                    _isErrorExceptionOccurred.postValue(Event(true))
+                    _isNicknameDuplicate.postValue(false)
+                }
+                is NetworkResponse.ApiError -> {
+                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                    _isNicknameDuplicate.postValue(false)
+                }
+                else -> {}
+            }
+        }
+    }
 }
