@@ -122,7 +122,6 @@ class SearchFragment : Fragment() {
     }
 
     private fun searchKeyword(keyword: String) {
-        searchViewModel.searchKeyword(keyword)
         findNavController().navigate(
             SearchFragmentDirections.actionSearchFragmentToSearchResultFragment(
                 keyword
