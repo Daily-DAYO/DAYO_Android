@@ -65,6 +65,11 @@ class PostViewModel @Inject constructor(
     private val _blockSuccess = MutableLiveData<Event<Boolean>>()
     val blockSuccess: LiveData<Event<Boolean>> get() = _blockSuccess
 
+    fun cleanUpPostDetail() {
+        _postDetail.postValue(Resource.loading(null))
+        _postComment.postValue(Resource.loading(null))
+    }
+
     fun requestPostDetail(postId: Int) = viewModelScope.launch {
         _postDetail.postValue(Resource.loading(null))
         requestPostDetailUseCase(postId)?.let { ApiResponse ->
