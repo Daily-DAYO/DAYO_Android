@@ -2,6 +2,9 @@ package com.daily.dayo.presentation.fragment.write
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputFilter
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +18,6 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.common.Event
 import com.daily.dayo.common.HideKeyBoardUtil
-import com.daily.dayo.common.ListLiveData
 import com.daily.dayo.common.ReplaceUnicode.replaceBlankText
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.autoCleared
@@ -29,62 +31,57 @@ import com.google.android.material.chip.ChipGroup
 class WriteTagFragment : Fragment() {
     private var binding by autoCleared<FragmentWriteTagBinding>()
     private val writeViewModel by activityViewModels<WriteViewModel>()
-    private var originalTagList: MutableList<String> = mutableListOf()
     private lateinit var loadingAlertDialog: AlertDialog
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentWriteTagBinding.inflate(inflater, container, false)
-        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
-        setBackButtonClickListener()
-        setSubmitButtonClickListener()
-        setEditTextAddTagKeyClickListener()
-        initPreviousTagList()
-        setTagCountLimit()
-        return binding.root
+    private val originalTags by lazy {
+        (writeViewModel.postTagList.value ?: arrayListOf()).toMutableList()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val onBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                writeViewModel.showWriteOptionDialog.value = Event(true)
-                LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
-                LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
+                displayLoadingDialog()
                 findNavController().navigateUp()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentWriteTagBinding.inflate(inflater, container, false)
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setBackButtonClickListener()
+        setSubmitButtonClickListener()
+        setEditTextAddTagKeyClickListener()
+        setEditTextAddTagLimit()
+        observeTags()
         HideKeyBoardUtil.hideTouchDisplay(requireActivity(), requireView())
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onStop() {
+        super.onStop()
         LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun setBackButtonClickListener() {
         binding.btnWriteTagBack.setOnDebounceClickListener {
-            writeViewModel.showWriteOptionDialog.value = Event(true)
-            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
-            LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
+            displayLoadingDialog()
             findNavController().navigateUp()
         }
     }
 
     private fun setSubmitButtonClickListener() {
         binding.btnWritePostTagSubmit.setOnDebounceClickListener {
-            writeViewModel.postTagList = ListLiveData<String>()
             writeViewModel.postTagList.replaceAll(binding.chipgroupWriteTagListSaved.getAllChipsTagText())
-            writeViewModel.showWriteOptionDialog.value = Event(true)
-            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
-            LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
+            displayLoadingDialog()
             findNavController().navigateUp()
         }
     }
@@ -93,38 +90,16 @@ class WriteTagFragment : Fragment() {
         binding.etWriteTagAdd.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-                    val originalTag = trimBlankText(binding.etWriteTagAdd.text)
-                    val removeBlankTag = replaceBlankText(originalTag)
-
-                    if (removeBlankTag.isEmpty()
-                        || binding.chipgroupWriteTagListSaved.getAllChipsTagText()
+                    val removeBlankTag = replaceBlankText(trimBlankText(binding.etWriteTagAdd.text))
+                    if (removeBlankTag.isNotEmpty()
+                        && !binding.chipgroupWriteTagListSaved
+                            .getAllChipsTagText()
                             .contains(removeBlankTag)
+                        && binding.chipgroupWriteTagListSaved.size < MAX_TAG_COUNT
                     ) {
-                        binding.etWriteTagAdd.setText("")
-                    } else {
-                        val chip = LayoutInflater.from(context)
-                            .inflate(R.layout.item_write_post_tag_chip, null) as Chip
-                        val layoutParams = ViewGroup.MarginLayoutParams(
-                            ViewGroup.MarginLayoutParams.WRAP_CONTENT,
-                            ViewGroup.MarginLayoutParams.WRAP_CONTENT
-                        )
-                        with(chip) {
-                            setTextAppearance(R.style.WritePostTagTextStyle)
-                            setOnCloseIconClickListener {
-                                binding.chipgroupWriteTagListSaved.removeView(chip as View)
-                                setTagCountLimit()
-                                setTagSubmitClickListener(binding.chipgroupWriteTagListSaved.getAllChipsTagText())
-                            }
-                            ensureAccessibleTouchTarget(42.toPx())
-                            text = "# $removeBlankTag"
-                        }
-                        if (binding.chipgroupWriteTagListSaved.size < 8) {
-                            binding.chipgroupWriteTagListSaved.addView(chip, layoutParams)
-                        }
-                        binding.etWriteTagAdd.setText("")
+                        writeViewModel.addPostTag(removeBlankTag)
                     }
-                    setTagCountLimit()
-                    setTagSubmitClickListener(binding.chipgroupWriteTagListSaved.getAllChipsTagText())
+                    binding.etWriteTagAdd.setText("")
                     true
                 }
                 else -> false
@@ -132,10 +107,40 @@ class WriteTagFragment : Fragment() {
         }
     }
 
-    private fun initPreviousTagList() {
+    private fun setEditTextAddTagLimit() {
+        binding.tagCountMax = MAX_TAG_COUNT
+
+        val lengthFilter = InputFilter.LengthFilter(MAX_TAG_LENGTH)
+        binding.etWriteTagAdd.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                if (trimBlankText(s).length >= MAX_TAG_LENGTH) {
+                    Toast.makeText(
+                        requireContext(),
+                        String.format(
+                            getString(R.string.write_post_tag_alert_message_tag_length_fail_max),
+                            MAX_TAG_LENGTH
+                        ),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        })
+        binding.etWriteTagAdd.filters = arrayOf(lengthFilter)
+    }
+
+    private fun observeTags() {
         writeViewModel.postTagList.observe(viewLifecycleOwner) {
+            with(binding) {
+                tagCount = it.size
+                isClickEnable = originalTags != it
+            }
+            displayTagCountLimitMessage(tagCount = it.size)
+            binding.chipgroupWriteTagListSaved.clearChips()
+
             (0 until it.size).mapNotNull { index ->
-                val chip = LayoutInflater.from(context)
+                val chip = LayoutInflater.from(requireContext())
                     .inflate(R.layout.item_write_post_tag_chip, null) as Chip
                 val layoutParams = ViewGroup.MarginLayoutParams(
                     ViewGroup.MarginLayoutParams.WRAP_CONTENT,
@@ -144,68 +149,39 @@ class WriteTagFragment : Fragment() {
                 with(chip) {
                     setTextAppearance(R.style.WritePostTagTextStyle)
                     setOnCloseIconClickListener {
-                        binding.chipgroupWriteTagListSaved.removeView(chip as View)
-                        setTagCountLimit()
-                        setTagSubmitClickListener(binding.chipgroupWriteTagListSaved.getAllChipsTagText())
+                        writeViewModel.removePostTag(
+                            trimBlankText(
+                                (chip.text as String).replace(
+                                    "#",
+                                    ""
+                                )
+                            )
+                        )
                     }
                     text = "# ${trimBlankText(it[index])}"
                 }
                 binding.chipgroupWriteTagListSaved.addView(chip, layoutParams)
-                originalTagList.add(it[index])
-            }
-            setTagCountLimit()
-            setTagSubmitClickListener(binding.chipgroupWriteTagListSaved.getAllChipsTagText())
-        }
-    }
-
-    private fun setTagCountLimit() {
-        with(binding) {
-            val currentTagCount = chipgroupWriteTagListSaved.size
-            tagCount = chipgroupWriteTagListSaved.size
-            if (currentTagCount >= 8) {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.write_post_tag_alert_message_tag_size_fail_max,
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else if (currentTagCount > 0) {
-                tvWriteTagListCountSaved.setTextColor(
-                    resources.getColor(
-                        R.color.primary_green_23C882,
-                        context?.theme
-                    )
-                )
-                imgWriteTagListEmpty.visibility = View.INVISIBLE
-            } else {
-                tvWriteTagListCountSaved.setTextColor(
-                    resources.getColor(
-                        R.color.gray_4_C5CAD2,
-                        context?.theme
-                    )
-                )
-                imgWriteTagListEmpty.visibility = View.VISIBLE
             }
         }
     }
 
-    private fun setTagSubmitClickListener(currentTagList: List<String>) {
-        if(originalTagList == currentTagList) {
-            binding.btnWritePostTagSubmit.setTextColor(
-                resources.getColor(
-                    R.color.gray_4_C5CAD2,
-                    context?.theme
-                )
-            )
-            binding.btnWritePostTagSubmit.isEnabled = false
-        } else {
-            binding.btnWritePostTagSubmit.setTextColor(
-                resources.getColor(
-                    R.color.gray_1_313131,
-                    context?.theme
-                )
-            )
-            binding.btnWritePostTagSubmit.isEnabled = true
+    private fun displayTagCountLimitMessage(tagCount: Int) {
+        if (tagCount >= MAX_TAG_COUNT) {
+            Toast.makeText(
+                requireContext(),
+                String.format(
+                    getString(R.string.write_post_tag_alert_message_tag_size_fail_max),
+                    MAX_TAG_COUNT
+                ),
+                Toast.LENGTH_SHORT
+            ).show()
         }
+    }
+
+    private fun displayLoadingDialog() {
+        writeViewModel.showWriteOptionDialog.value = Event(true)
+        LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
+        LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
     }
 
     private fun ChipGroup.getAllChipsTagText(): List<String> {
@@ -223,8 +199,8 @@ class WriteTagFragment : Fragment() {
         chipViews.forEach { removeView(it) }
     }
 
-    fun Int.toPx(): Int {
-        val density = resources.displayMetrics.density
-        return (this * density).toInt()
+    companion object {
+        private const val MAX_TAG_COUNT = 8
+        private const val MAX_TAG_LENGTH = 15
     }
 }

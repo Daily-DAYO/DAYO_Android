@@ -45,7 +45,8 @@ class WriteViewModel @Inject constructor(
     var postFolderId = MutableLiveData("")
     var postFolderName = MutableLiveData("")
     var postImageUriList = ListLiveData<String>() // 갤러리에서 불러온 이미지 리스트
-    var postTagList = ListLiveData<String>()
+    private val _postTagList = ListLiveData<String>()
+    val postTagList : ListLiveData<String> get () = _postTagList
 
     // WritePost
     private val _writePostId = MutableLiveData<Event<Int>>()
@@ -161,6 +162,14 @@ class WriteViewModel @Inject constructor(
         postFolderId = MutableLiveData<String>("")
         postFolderName = MutableLiveData<String>("")
         postImageUriList = ListLiveData()
-        postTagList = ListLiveData()
+        _postTagList.postValue(arrayListOf())
+    }
+
+    fun addPostTag(tagText: String) {
+        _postTagList.add(tagText)
+    }
+
+    fun removePostTag(tagText: String) {
+        _postTagList.remove(tagText)
     }
 }
