@@ -12,7 +12,7 @@ fun FolderInfoResponse.toFolder() : Folder =
     Folder(
         folderId = null,
         title = name,
-        memberId = null,
+        memberId = memberId,
         privacy = privacy,
         subheading = subheading,
         thumbnailImage = thumbnailImage,
