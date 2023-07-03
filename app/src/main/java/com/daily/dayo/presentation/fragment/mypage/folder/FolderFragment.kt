@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -24,7 +23,9 @@ import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFolderBinding
 import com.daily.dayo.presentation.adapter.FolderPostListAdapter
 import com.daily.dayo.presentation.viewmodel.FolderViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FolderFragment : Fragment() {
     private var binding by autoCleared<FragmentFolderBinding>()
@@ -110,8 +111,6 @@ class FolderFragment : Fragment() {
                                 )
                             }
                         }
-                        if (folder.memberId == DayoApplication.preferences.getCurrentUser().memberId) binding.btnFolderOption.isVisible =
-                            true
                     }
                 }
             }
