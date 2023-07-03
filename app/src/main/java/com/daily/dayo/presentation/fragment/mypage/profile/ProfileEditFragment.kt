@@ -29,22 +29,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
-import com.daily.dayo.common.ButtonActivation
-import com.daily.dayo.common.GlideLoadUtil
-import com.daily.dayo.common.HideKeyBoardUtil
-import com.daily.dayo.common.ImageResizeUtil
+import com.daily.dayo.common.*
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
-import com.daily.dayo.common.Status
-import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
-import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentProfileEditBinding
 import com.daily.dayo.presentation.viewmodel.ProfileSettingViewModel
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -197,25 +187,28 @@ class ProfileEditFragment : Fragment() {
                                 "^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9|]+\$",
                                 trimBlankText(s)
                             )
-                        ) { // 닉네임 양식 검사
-                            if (true) { // TODO : 닉네임 중복검사 통과 코드 작성
-                                setEditTextTheme(
-                                    getString(R.string.my_profile_edit_nickname_message_success),
-                                    true
-                                )
-                                ButtonActivation.setTextViewButtonActive(
-                                    requireContext(),
-                                    btnProfileEditComplete
-                                )
-                            } else {
-                                setEditTextTheme(
-                                    getString(R.string.my_profile_edit_nickname_message_duplicate_fail),
-                                    false
-                                )
-                                ButtonActivation.setTextViewButtonInactive(
-                                    requireContext(),
-                                    btnProfileEditComplete
-                                )
+                        ) {
+                            profileSettingViewModel.requestCheckNicknameDuplicate(trimBlankText(binding.etProfileEditNickname.text))
+                            profileSettingViewModel.isNicknameDuplicate.observe(viewLifecycleOwner) { isDuplicate ->
+                                if (isDuplicate) {
+                                    setEditTextTheme(
+                                        getString(R.string.my_profile_edit_nickname_message_success),
+                                        true
+                                    )
+                                    ButtonActivation.setTextViewButtonActive(
+                                        requireContext(),
+                                        btnProfileEditComplete
+                                    )
+                                } else {
+                                    setEditTextTheme(
+                                        getString(R.string.my_profile_edit_nickname_message_duplicate_fail),
+                                        false
+                                    )
+                                    ButtonActivation.setTextViewButtonInactive(
+                                        requireContext(),
+                                        btnProfileEditComplete
+                                    )
+                                }
                             }
                         } else {
                             setEditTextTheme(
