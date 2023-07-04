@@ -100,8 +100,9 @@
     <string name="write_option_title_private">공개 설정</string>
     <string name="write_option_title_tag">태그 추가</string>
     <string name="write_option_description_tag">기록에 관한 키워드를 추가해보세요.</string>
-    <string name="write_post_tag_count_limit"> / 8</string>
-    <string name="write_post_tag_alert_message_tag_size_fail_max">태그는 8개까지 등록 가능해요.</string>
+    <string name="write_post_tag_count_limit"> / %d</string>
+    <string name="write_post_tag_alert_message_tag_size_fail_max">태그는 %d개까지 등록 가능해요.</string>
+    <string name="write_post_tag_alert_message_tag_length_fail_max">태그는 %d자 까지만 입력할 수 있어요!</string>
     <string name="write_post_folder_title">폴더 설정</string>
     <string name="write_post_folder_new_title">폴더 추가</string>
     <string name="write_post_upload_alert_message_empty_content">내용을 입력해 주세요.</string>
