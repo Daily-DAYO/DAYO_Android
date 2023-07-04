@@ -22,6 +22,7 @@ import com.daily.dayo.common.ReplaceUnicode.replaceBlankText
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
+import com.daily.dayo.common.dp
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentWriteTagBinding
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
@@ -144,7 +145,7 @@ class WriteTagFragment : Fragment() {
                     .inflate(R.layout.item_write_post_tag_chip, null) as Chip
                 val layoutParams = ViewGroup.MarginLayoutParams(
                     ViewGroup.MarginLayoutParams.WRAP_CONTENT,
-                    ViewGroup.MarginLayoutParams.WRAP_CONTENT
+                    48.dp
                 )
                 with(chip) {
                     setTextAppearance(R.style.WritePostTagTextStyle)
