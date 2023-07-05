@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -72,6 +73,7 @@ class ProfileFragment : Fragment() {
             setOtherProfile()
         }
 
+        getProfileDescription()
         setProfileDescription()
         setBackButtonClickListener()
     }
@@ -90,8 +92,11 @@ class ProfileFragment : Fragment() {
         setOtherProfileOptionClickListener()
     }
 
-    private fun setProfileDescription() {
+    private fun getProfileDescription() {
         profileViewModel.requestProfile(memberId = profileViewModel.profileMemberId)
+    }
+
+    private fun setProfileDescription() {
         profileViewModel.profileInfo.observe(viewLifecycleOwner) {
             it?.let { profile ->
                 binding.profile = profile
@@ -111,7 +116,7 @@ class ProfileFragment : Fragment() {
                     )
                 }
 
-                setFollowButtonClickListener(follow = profile.follow)
+                setFollowButtonClickListener()
                 setFollowerCountButtonClickListener(
                     memberId = profile.memberId,
                     nickname = profile.nickname
@@ -157,9 +162,9 @@ class ProfileFragment : Fragment() {
         }.attach()
     }
 
-    private fun setFollowButtonClickListener(follow: Boolean) {
+    private fun setFollowButtonClickListener() {
         binding.btnProfileFollow.setOnDebounceClickListener {
-            when (follow) {
+            when (profileViewModel.profileInfo.value?.follow) {
                 false -> setFollow()
                 true -> setUnfollow()
             }
@@ -169,8 +174,12 @@ class ProfileFragment : Fragment() {
     private fun setFollow() {
         profileViewModel.requestCreateFollow(followerId = profileViewModel.profileMemberId)
         profileViewModel.followSuccess.observe(viewLifecycleOwner) {
-            if (it.getContentIfNotHandled() == true) {
-                setProfileDescription()
+            it.getContentIfNotHandled()?.let { success ->
+                if (success) {
+                    getProfileDescription()
+                } else {
+                    Toast.makeText(requireContext(), "네트워크 연결 상태가 불안정합니다", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -178,8 +187,12 @@ class ProfileFragment : Fragment() {
     private fun setUnfollow() {
         profileViewModel.requestDeleteFollow(followerId = profileViewModel.profileMemberId)
         profileViewModel.unfollowSuccess.observe(viewLifecycleOwner) {
-            if (it.getContentIfNotHandled() == true) {
-                setProfileDescription()
+            it.getContentIfNotHandled()?.let { success ->
+                if (success) {
+                    getProfileDescription()
+                } else {
+                    Toast.makeText(requireContext(), "네트워크 연결 상태가 불안정합니다", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
