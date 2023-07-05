@@ -49,25 +49,21 @@ class WriteFolderFragment : Fragment() {
         super.onCreate(savedInstanceState)
         val onBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                writeViewModel.showWriteOptionDialog.value = Event(true)
-                LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
-                LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
+                displayLoadingDialog()
                 findNavController().navigateUp()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onStop() {
+        super.onStop()
         LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun setBackButtonClickListener() {
         binding.btnWriteFolderBack.setOnDebounceClickListener {
-            writeViewModel.showWriteOptionDialog.value = Event(true)
-            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
-            LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
+            displayLoadingDialog()
             findNavController().navigateUp()
         }
     }
@@ -85,9 +81,7 @@ class WriteFolderFragment : Fragment() {
     private fun onFolderClicked(folder: Folder) {
         writeViewModel.postFolderId.value = folder.folderId.toString()
         writeViewModel.postFolderName.value = folder.title
-        writeViewModel.showWriteOptionDialog.value = Event(true)
-        LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
-        LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
+        displayLoadingDialog()
         findNavController().navigateUp()
     }
 
@@ -117,5 +111,11 @@ class WriteFolderFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun displayLoadingDialog() {
+        writeViewModel.showWriteOptionDialog.value = Event(true)
+        LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
+        LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
     }
 }
