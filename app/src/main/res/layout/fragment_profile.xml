@@ -224,19 +224,20 @@
                         </LinearLayout>
                     </LinearLayout>
 
-                    <CheckBox
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btn_profile_follow"
                         android:layout_width="93dp"
-                        android:layout_height="32dp"
+                        android:layout_height="33dp"
                         android:layout_marginTop="32dp"
+                        android:paddingVertical="0dp"
                         android:button="@android:color/transparent"
-                        android:visibility="@{isMine ? View.GONE : View.VISIBLE}"
-                        android:checked="@{profile.follow}"
-                        android:text="@{profile.follow ? `팔로잉`: `팔로우`}"
                         android:textSize="12dp"
                         android:textAlignment="center"
-                        android:textColor="@drawable/selector_button_follow_text"
-                        android:background="@drawable/selector_button_follow"
+                        android:visibility="@{isMine ? View.GONE : View.VISIBLE}"
+                        android:text="@{profile.follow ? `팔로잉`: `팔로우`}"
+                        android:textColor="@{profile.follow ? @color/gray_3_9FA5AE : @color/white_FFFFFF}"
+                        android:background="@{profile.follow ? @drawable/button_follow_white : @drawable/button_follow_green}"
+                        android:stateListAnimator="@null"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/layout_profile_count"
