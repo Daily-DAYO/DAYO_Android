@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+
     <data>
-        <import type="android.view.View"/>
+
+        <import type="android.view.View" />
+
         <variable
             name="follow"
             type="com.daily.dayo.domain.model.Follow" />
+
         <variable
             name="isMine"
             type="boolean" />
@@ -22,43 +26,44 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginStart="18dp"
-            app:layout_constraintTop_toTopOf="parent"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:scaleType="centerCrop"
+            app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-            tools:src="@drawable/ic_dayo_circle_grayscale"/>
+            tools:src="@drawable/ic_dayo_circle_grayscale" />
 
         <TextView
             android:id="@+id/tv_follow_user_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="11dp"
             android:text="@{follow.nickname}"
+            android:textColor="@color/gray_1_313131"
             android:textSize="13dp"
             android:textStyle="bold"
-            android:textColor="@color/gray_1_313131"
-            android:layout_marginStart="11dp"
-            app:layout_constraintTop_toTopOf="@id/img_follow_user_profile"
             app:layout_constraintBottom_toBottomOf="@id/img_follow_user_profile"
             app:layout_constraintStart_toEndOf="@id/img_follow_user_profile"
-            tools:text="Nickname"/>
+            app:layout_constraintTop_toTopOf="@id/img_follow_user_profile"
+            tools:text="Nickname" />
 
-        <CheckBox
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_follow_user_follow"
             android:layout_width="85dp"
             android:layout_height="30dp"
-            android:button="@android:color/transparent"
-            android:textSize="13dp"
-            android:textAlignment="center"
-            android:text="@{follow.isFollow == true? `팔로잉`: `팔로우`}"
-            android:visibility="@{isMine ? View.INVISIBLE : View.VISIBLE }"
-            android:checked="@{follow.isFollow}"
-            android:textColor="@drawable/selector_button_follow_text"
-            android:background="@drawable/selector_button_follow"
             android:layout_marginEnd="23dp"
-            app:layout_constraintTop_toTopOf="parent"
+            android:background="@{follow.isFollow  ? @drawable/button_follow_white : @drawable/button_follow_green}"
+            android:button="@android:color/transparent"
+            android:paddingVertical="0dp"
+            android:stateListAnimator="@null"
+            android:text="@{follow.isFollow  ? `팔로잉`: `팔로우`}"
+            android:textAlignment="center"
+            android:textColor="@{follow.isFollow  ? @color/gray_3_9FA5AE : @color/white_FFFFFF}"
+            android:textSize="13dp"
+            android:visibility="@{isMine ? View.INVISIBLE : View.VISIBLE }"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:text="팔로우"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="팔로우" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

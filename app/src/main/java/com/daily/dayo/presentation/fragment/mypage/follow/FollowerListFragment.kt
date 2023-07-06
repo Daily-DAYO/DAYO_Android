@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
@@ -53,14 +53,14 @@ class FollowerListFragment : Fragment() {
         )
         binding.rvFollower.adapter = followerListAdapter
         followerListAdapter.setOnItemClickListener(object : FollowListAdapter.OnItemClickListener {
-            override fun onItemClick(checkbox: CheckBox, follow: Follow, position: Int) {
+            override fun onItemClick(button: Button, follow: Follow, position: Int) {
                 when (follow.isFollow) {
                     false -> { // 클릭 시 팔로우
                         setFollow(follow.memberId)
                     }
                     true -> { // 클릭 시 언팔로우
-                        var mAlertDialog = DefaultDialogConfirm.createDialog(requireContext(), R.string.follow_delete_description_message,
-                            true, true, R.string.confirm, R.string.cancel, { setUnfollow(follow.memberId) }, { checkbox.isChecked = true })
+                        val mAlertDialog = DefaultDialogConfirm.createDialog(requireContext(), R.string.follow_delete_description_message,
+                            true, true, R.string.confirm, R.string.cancel, { setUnfollow(follow.memberId) }, { })
                         if (!mAlertDialog.isShowing) {
                             mAlertDialog.show()
                             DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.23f)
