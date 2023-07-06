@@ -10,17 +10,17 @@ import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
-import com.daily.dayo.common.dialog.DefaultDialogConfigure
-import com.daily.dayo.common.dialog.DefaultDialogConfirm
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.DefaultDialogConfigure
+import com.daily.dayo.common.dialog.DefaultDialogConfirm
 import com.daily.dayo.databinding.FragmentFollowerListBinding
 import com.daily.dayo.domain.model.Follow
 import com.daily.dayo.presentation.adapter.FollowListAdapter
 import com.daily.dayo.presentation.viewmodel.FollowViewModel
 import kotlinx.coroutines.Dispatchers
 
-class FollowerListFragment : Fragment(){
+class FollowerListFragment : Fragment() {
     private var binding by autoCleared<FragmentFollowerListBinding>()
     private val followViewModel by activityViewModels<FollowViewModel>()
     private lateinit var followerListAdapter: FollowListAdapter
@@ -42,18 +42,17 @@ class FollowerListFragment : Fragment(){
 
     override fun onResume() {
         super.onResume()
-        requestFollowerList()
         setFollowerList()
     }
 
-    private fun setRvFollowerListAdapter(){
+    private fun setRvFollowerListAdapter() {
         followerListAdapter = FollowListAdapter(
             requestManager = glideRequestManager,
             mainDispatcher = Dispatchers.Main,
             ioDispatcher = Dispatchers.IO
         )
         binding.rvFollower.adapter = followerListAdapter
-        followerListAdapter.setOnItemClickListener(object : FollowListAdapter.OnItemClickListener{
+        followerListAdapter.setOnItemClickListener(object : FollowListAdapter.OnItemClickListener {
             override fun onItemClick(checkbox: CheckBox, follow: Follow, position: Int) {
                 when (follow.isFollow) {
                     false -> { // 클릭 시 팔로우
@@ -61,8 +60,8 @@ class FollowerListFragment : Fragment(){
                     }
                     true -> { // 클릭 시 언팔로우
                         var mAlertDialog = DefaultDialogConfirm.createDialog(requireContext(), R.string.follow_delete_description_message,
-                            true, true, R.string.confirm, R.string.cancel, {setUnfollow(follow.memberId)}, {checkbox.isChecked=true})
-                        if(!mAlertDialog.isShowing) {
+                            true, true, R.string.confirm, R.string.cancel, { setUnfollow(follow.memberId) }, { checkbox.isChecked = true })
+                        if (!mAlertDialog.isShowing) {
                             mAlertDialog.show()
                             DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.23f)
                         }
@@ -75,31 +74,31 @@ class FollowerListFragment : Fragment(){
         })
     }
 
-    private fun setFollow(memberId: String){
+    private fun setFollow(memberId: String) {
         followViewModel.requestCreateFollow(memberId)
         followViewModel.followSuccess.observe(viewLifecycleOwner) {
-            if(it.getContentIfNotHandled() == true) {
+            if (it.getContentIfNotHandled() == true) {
                 requestFollowerList()
             }
         }
     }
 
-    private fun setUnfollow(memberId: String){
+    private fun setUnfollow(memberId: String) {
         followViewModel.requestDeleteFollow(memberId)
         followViewModel.unfollowSuccess.observe(viewLifecycleOwner) {
-            if(it.getContentIfNotHandled() == true) {
+            if (it.getContentIfNotHandled() == true) {
                 requestFollowerList()
             }
         }
     }
 
-    private fun requestFollowerList(){
+    private fun requestFollowerList() {
         followViewModel.requestListAllFollower(followViewModel.memberId)
     }
 
-    private fun setFollowerList(){
+    private fun setFollowerList() {
         followViewModel.followerList.observe(viewLifecycleOwner) {
-            when(it.status){
+            when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { followerList ->
                         binding.followerCount = followerList.size
