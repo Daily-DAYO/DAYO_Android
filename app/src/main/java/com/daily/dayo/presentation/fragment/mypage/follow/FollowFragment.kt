@@ -18,6 +18,7 @@ import com.daily.dayo.databinding.FragmentFollowBinding
 import com.daily.dayo.presentation.adapter.FollowFragmentPagerStateAdapter
 import com.daily.dayo.presentation.viewmodel.FollowViewModel
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 
 class FollowFragment : Fragment() {
@@ -40,12 +41,14 @@ class FollowFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setViewPager()
+
+        setTabLayout()
         setBackButtonClickListener()
         setFollowFragmentDescription()
+        setOnTabSelectedListener()
     }
 
-    private fun setViewPager() {
+    private fun setTabLayout() {
         viewPager = binding.pagerFollow
         tabLayout = binding.tabsFollow
         pagerAdapter = FollowFragmentPagerStateAdapter(requireActivity())
@@ -98,6 +101,20 @@ class FollowFragment : Fragment() {
         viewPager.post {
             viewPager.setCurrentItem(args.initPosition, false)
         }
+    }
+
+    private fun setOnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                when (tab.position) {
+                    0 -> followViewModel.requestListAllFollower(args.memberId)
+                    1 -> followViewModel.requestListAllFollowing(args.memberId)
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
     }
 
     private fun setBackButtonClickListener() {
