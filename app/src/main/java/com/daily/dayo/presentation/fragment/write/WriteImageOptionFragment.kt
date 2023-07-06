@@ -117,7 +117,7 @@ class WriteImageOptionFragment : DialogFragment() {
                 val remainingNum = 5 - writeViewModel.postImageUriList.size()
                 if (data?.clipData != null) { //사진 여러 개 선택 시
                     val count = data.clipData!!.itemCount
-                    if (count > remainingNum) {
+                    if (count >= remainingNum) {
                         Toast.makeText(
                             requireContext(),
                             getString(R.string.write_post_upload_alert_message_image_fail_max),
@@ -133,13 +133,15 @@ class WriteImageOptionFragment : DialogFragment() {
                     findNavController().popBackStack()
                 } else { // 단일 선택
                     data?.data?.let { uri ->
-                        if (remainingNum <= 0) {
+                        if (remainingNum <= 1) {
                             Toast.makeText(
                                 requireContext(),
                                 getString(R.string.write_post_upload_alert_message_image_fail_max),
                                 Toast.LENGTH_SHORT
                             ).show()
-                        } else {
+                        }
+
+                        if (remainingNum >= 1) {
                             val imageUri: Uri? = data.data
                             if (imageUri != null) {
                                 writeViewModel.postImageUriList.add(imageUri.toString())

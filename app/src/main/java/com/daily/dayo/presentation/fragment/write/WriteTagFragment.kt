@@ -81,7 +81,6 @@ class WriteTagFragment : Fragment() {
 
     private fun setSubmitButtonClickListener() {
         binding.btnWritePostTagSubmit.setOnDebounceClickListener {
-            writeViewModel.postTagList.replaceAll(binding.chipgroupWriteTagListSaved.getAllChipsTagText())
             displayLoadingDialog()
             findNavController().navigateUp()
         }

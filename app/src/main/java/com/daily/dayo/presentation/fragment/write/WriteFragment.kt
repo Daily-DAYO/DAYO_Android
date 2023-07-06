@@ -268,11 +268,6 @@ class WriteFragment : Fragment() {
                         postImageBitmapToStringList.add(imageBitmap.toBase64String())
                     }
                     if (postImageBitmapToStringList.size >= 5) {
-                        Toast.makeText(
-                            requireContext(),
-                            getString(R.string.write_post_upload_alert_message_image_fail_max),
-                            Toast.LENGTH_SHORT
-                        ).show()
                         binding.btnUploadImage.visibility = View.GONE
                         break
                     }
