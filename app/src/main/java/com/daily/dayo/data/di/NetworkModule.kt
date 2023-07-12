@@ -67,7 +67,7 @@ object NetworkModule {
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://117.17.198.45:8080")
+            .baseUrl(BuildConfig.BASE_URL)
             .addCallAdapterFactory(NetworkResponseAdapterFactory())
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(gsonConverterFactory)

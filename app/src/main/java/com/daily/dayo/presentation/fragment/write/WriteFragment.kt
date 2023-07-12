@@ -29,6 +29,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import com.daily.dayo.BuildConfig
 import com.daily.dayo.R
 import com.daily.dayo.common.*
 import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
@@ -177,7 +178,7 @@ class WriteFragment : Fragment() {
 
                                             for (element in postDetail.postImages!!) {
                                                 writeViewModel.postImageUriList.add(
-                                                    Uri.parse("http://117.17.198.45:8080/images/$element")
+                                                    Uri.parse("${BuildConfig.BASE_URL}/images/$element")
                                                         .toString()
                                                 )
                                                 lateinit var imageBitmap: Bitmap

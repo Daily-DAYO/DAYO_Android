@@ -15,10 +15,11 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.daily.dayo.BuildConfig
 import com.daily.dayo.R
 
 object GlideLoadUtil {
-    private const val BASE_URL_IMG = "http://117.17.198.45:8080/images/"
+    private const val BASE_URL_IMG = "${BuildConfig.BASE_URL}/images/"
     const val HOME_POST_THUMBNAIL_SIZE = 158
     const val HOME_USER_THUMBNAIL_SIZE = 17
 
