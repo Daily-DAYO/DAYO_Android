@@ -42,7 +42,9 @@ class FollowingListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        setFollowingList()
+        observeFollowingList()
+        observeFollowSuccess()
+        observeUnfollowSuccess()
     }
 
     private fun setRvFollowingListAdapter() {
@@ -56,11 +58,11 @@ class FollowingListFragment : Fragment() {
             override fun onItemClick(button: Button, follow: Follow, position: Int) {
                 when (follow.isFollow) {
                     false -> { // 클릭 시 팔로우
-                        setFollow(follow.memberId)
+                        requestFollow(follow.memberId)
                     }
                     true -> { // 클릭 시 언팔로우
                         val mAlertDialog = DefaultDialogConfirm.createDialog(requireContext(), R.string.follow_delete_description_message,
-                            true, true, R.string.confirm, R.string.cancel, { setUnfollow(follow.memberId) }, { })
+                            true, true, R.string.confirm, R.string.cancel, { requestUnfollow(follow.memberId) }, { })
                         if (!mAlertDialog.isShowing) {
                             mAlertDialog.show()
                             DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.23f)
@@ -74,29 +76,19 @@ class FollowingListFragment : Fragment() {
         })
     }
 
-    private fun setFollow(memberId: String) {
-        followViewModel.requestCreateFollow(memberId)
-        followViewModel.followSuccess.observe(viewLifecycleOwner) {
-            if (it.getContentIfNotHandled() == true) {
-                requestFollowingList()
-            }
-        }
-    }
-
-    private fun setUnfollow(memberId: String) {
-        followViewModel.requestDeleteFollow(memberId)
-        followViewModel.unfollowSuccess.observe(viewLifecycleOwner) {
-            if (it.getContentIfNotHandled() == true) {
-                requestFollowingList()
-            }
-        }
-    }
-
     private fun requestFollowingList() {
         followViewModel.requestListAllFollowing(followViewModel.memberId)
     }
 
-    private fun setFollowingList() {
+    private fun requestFollow(memberId: String) {
+        followViewModel.requestCreateFollow(followerId = memberId, isFollower = false)
+    }
+
+    private fun requestUnfollow(memberId: String) {
+        followViewModel.requestDeleteFollow(followerId = memberId, isFollower = false)
+    }
+
+    private fun observeFollowingList() {
         followViewModel.followingList.observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
@@ -105,6 +97,22 @@ class FollowingListFragment : Fragment() {
                         followingListAdapter.submitList(followingList)
                     }
                 }
+            }
+        }
+    }
+
+    private fun observeFollowSuccess() {
+        followViewModel.followingFollowSuccess.observe(viewLifecycleOwner) {
+            if (it.getContentIfNotHandled() == true) {
+                requestFollowingList()
+            }
+        }
+    }
+
+    private fun observeUnfollowSuccess() {
+        followViewModel.followingUnfollowSuccess.observe(viewLifecycleOwner) {
+            if (it.getContentIfNotHandled() == true) {
+                requestFollowingList()
             }
         }
     }
