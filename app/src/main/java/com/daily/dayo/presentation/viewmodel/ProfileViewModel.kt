@@ -20,6 +20,7 @@ import com.daily.dayo.domain.usecase.folder.RequestAllMyFolderListUseCase
 import com.daily.dayo.domain.usecase.follow.RequestCreateFollowUseCase
 import com.daily.dayo.domain.usecase.follow.RequestDeleteFollowUseCase
 import com.daily.dayo.domain.usecase.like.RequestAllMyLikePostListUseCase
+import com.daily.dayo.domain.usecase.member.RequestMyProfileUseCase
 import com.daily.dayo.domain.usecase.member.RequestOtherProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -30,6 +31,7 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val requestAllFolderListUseCase: RequestAllFolderListUseCase,
     private val requestAllMyFolderListUseCase: RequestAllMyFolderListUseCase,
+    private val requestMyProfileUseCase: RequestMyProfileUseCase,
     private val requestOtherProfileUseCase: RequestOtherProfileUseCase,
     private val requestCreateFollowUseCase: RequestCreateFollowUseCase,
     private val requestDeleteFollowUseCase: RequestDeleteFollowUseCase,
@@ -65,7 +67,22 @@ class ProfileViewModel @Inject constructor(
     private val _unblockSuccess = MutableLiveData<Event<Boolean>>()
     val unblockSuccess: LiveData<Event<Boolean>> get() = _unblockSuccess
 
-    fun requestProfile(memberId: String) = viewModelScope.launch {
+    fun requestMyProfile() = viewModelScope.launch {
+        requestMyProfileUseCase().let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _profileInfo.postValue(ApiResponse.body?.toProfile())
+                }
+                is NetworkResponse.NetworkError  -> {
+                }
+                is NetworkResponse.ApiError  -> {
+
+                }
+            }
+        }
+    }
+
+    fun requestOtherProfile(memberId: String) = viewModelScope.launch {
         requestOtherProfileUseCase(memberId = memberId).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
