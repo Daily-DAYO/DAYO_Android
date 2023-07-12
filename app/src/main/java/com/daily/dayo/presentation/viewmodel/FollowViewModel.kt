@@ -29,11 +29,17 @@ class FollowViewModel @Inject constructor(
 
     var memberId: String = ""
 
-    private val _followSuccess = MutableLiveData<Event<Boolean>>()
-    val followSuccess: LiveData<Event<Boolean>> get() = _followSuccess
+    private val _followerFollowSuccess = MutableLiveData<Event<Boolean>>()
+    val followerFollowSuccess: LiveData<Event<Boolean>> get() = _followerFollowSuccess
 
-    private val _unfollowSuccess = MutableLiveData<Event<Boolean>>()
-    val unfollowSuccess: LiveData<Event<Boolean>> get() = _unfollowSuccess
+    private val _followerUnfollowSuccess = MutableLiveData<Event<Boolean>>()
+    val followerUnfollowSuccess: LiveData<Event<Boolean>> get() = _followerUnfollowSuccess
+
+    private val _followingFollowSuccess = MutableLiveData<Event<Boolean>>()
+    val followingFollowSuccess: LiveData<Event<Boolean>> get() = _followingFollowSuccess
+
+    private val _followingUnfollowSuccess = MutableLiveData<Event<Boolean>>()
+    val followingUnfollowSuccess: LiveData<Event<Boolean>> get() = _followingUnfollowSuccess
 
     private val _followerList = MutableLiveData<Resource<List<Follow>>>()
     val followerList: LiveData<Resource<List<Follow>>> get() = _followerList
@@ -103,27 +109,31 @@ class FollowViewModel @Inject constructor(
         }
     }
 
-    fun requestCreateFollow(followerId: String) = viewModelScope.launch {
+    fun requestCreateFollow(followerId: String, isFollower: Boolean) = viewModelScope.launch {
         requestCreateFollowUseCase(CreateFollowRequest(followerId = followerId)).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _followSuccess.postValue(Event(true))
+                    if (isFollower) _followerFollowSuccess.postValue(Event(true))
+                    else _followingFollowSuccess.postValue(Event(true))
                 }
                 else -> {
-                    _followSuccess.postValue(Event(false))
+                    if (isFollower) _followerFollowSuccess.postValue(Event(false))
+                    else _followingFollowSuccess.postValue(Event(false))
                 }
             }
         }
     }
 
-    fun requestDeleteFollow(followerId: String) = viewModelScope.launch {
+    fun requestDeleteFollow(followerId: String, isFollower: Boolean) = viewModelScope.launch {
         requestDeleteFollowUseCase(followerId).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _unfollowSuccess.postValue(Event(true))
+                    if (isFollower) _followerUnfollowSuccess.postValue(Event(true))
+                    else _followingUnfollowSuccess.postValue(Event(true))
                 }
                 else -> {
-                    _unfollowSuccess.postValue(Event(false))
+                    if (isFollower) _followerUnfollowSuccess.postValue(Event(false))
+                    else _followingUnfollowSuccess.postValue(Event(false))
                 }
             }
         }
