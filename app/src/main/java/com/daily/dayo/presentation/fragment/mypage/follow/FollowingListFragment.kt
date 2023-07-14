@@ -4,16 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
-import com.daily.dayo.common.dialog.DefaultDialogConfigure
-import com.daily.dayo.common.dialog.DefaultDialogConfirm
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.dialog.DefaultDialogConfigure
+import com.daily.dayo.common.dialog.DefaultDialogConfirm
 import com.daily.dayo.databinding.FragmentFollowingListBinding
 import com.daily.dayo.domain.model.Follow
 import com.daily.dayo.presentation.adapter.FollowListAdapter
@@ -34,7 +34,7 @@ class FollowingListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentFollowingListBinding.inflate(inflater, container, false)
         setRvFollowingListAdapter()
         return binding.root
@@ -42,27 +42,28 @@ class FollowingListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        requestFollowingList()
-        setFollowingList()
+        observeFollowingList()
+        observeFollowSuccess()
+        observeUnfollowSuccess()
     }
 
-    private fun setRvFollowingListAdapter(){
+    private fun setRvFollowingListAdapter() {
         followingListAdapter = FollowListAdapter(
             requestManager = glideRequestManager,
             mainDispatcher = Dispatchers.Main,
             ioDispatcher = Dispatchers.IO
         )
         binding.rvFollowing.adapter = followingListAdapter
-        followingListAdapter.setOnItemClickListener(object : FollowListAdapter.OnItemClickListener{
-            override fun onItemClick(checkbox: CheckBox, follow: Follow, position: Int) {
+        followingListAdapter.setOnItemClickListener(object : FollowListAdapter.OnItemClickListener {
+            override fun onItemClick(button: Button, follow: Follow, position: Int) {
                 when (follow.isFollow) {
                     false -> { // 클릭 시 팔로우
-                        setFollow(follow.memberId)
+                        requestFollow(follow.memberId)
                     }
                     true -> { // 클릭 시 언팔로우
-                        var mAlertDialog = DefaultDialogConfirm.createDialog(requireContext(), R.string.follow_delete_description_message,
-                            true, true, R.string.confirm, R.string.cancel, {setUnfollow(follow.memberId)}, {checkbox.isChecked=true})
-                        if(!mAlertDialog.isShowing) {
+                        val mAlertDialog = DefaultDialogConfirm.createDialog(requireContext(), R.string.follow_delete_description_message,
+                            true, true, R.string.confirm, R.string.cancel, { requestUnfollow(follow.memberId) }, { })
+                        if (!mAlertDialog.isShowing) {
                             mAlertDialog.show()
                             DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.23f)
                         }
@@ -75,37 +76,43 @@ class FollowingListFragment : Fragment() {
         })
     }
 
-    private fun setFollow(memberId: String){
-        followViewModel.requestCreateFollow(memberId)
-        followViewModel.followSuccess.observe(viewLifecycleOwner) {
-            if(it.getContentIfNotHandled() == true) {
-                requestFollowingList()
-            }
-        }
-    }
-
-    private fun setUnfollow(memberId: String){
-        followViewModel.requestDeleteFollow(memberId)
-        followViewModel.unfollowSuccess.observe(viewLifecycleOwner) {
-            if(it.getContentIfNotHandled() == true) {
-                requestFollowingList()
-            }
-        }
-    }
-
-    private fun requestFollowingList(){
+    private fun requestFollowingList() {
         followViewModel.requestListAllFollowing(followViewModel.memberId)
     }
 
-    private fun setFollowingList(){
+    private fun requestFollow(memberId: String) {
+        followViewModel.requestCreateFollow(followerId = memberId, isFollower = false)
+    }
+
+    private fun requestUnfollow(memberId: String) {
+        followViewModel.requestDeleteFollow(followerId = memberId, isFollower = false)
+    }
+
+    private fun observeFollowingList() {
         followViewModel.followingList.observe(viewLifecycleOwner) {
-            when(it.status){
+            when (it.status) {
                 Status.SUCCESS -> {
                     it.data?.let { followingList ->
                         binding.followingCount = followingList.size
                         followingListAdapter.submitList(followingList)
                     }
                 }
+            }
+        }
+    }
+
+    private fun observeFollowSuccess() {
+        followViewModel.followingFollowSuccess.observe(viewLifecycleOwner) {
+            if (it.getContentIfNotHandled() == true) {
+                requestFollowingList()
+            }
+        }
+    }
+
+    private fun observeUnfollowSuccess() {
+        followViewModel.followingUnfollowSuccess.observe(viewLifecycleOwner) {
+            if (it.getContentIfNotHandled() == true) {
+                requestFollowingList()
             }
         }
     }

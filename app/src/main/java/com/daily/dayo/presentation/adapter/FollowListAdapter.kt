@@ -2,7 +2,7 @@ package com.daily.dayo.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.CheckBox
+import android.widget.Button
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -57,7 +57,7 @@ class FollowListAdapter(
     }
 
     interface OnItemClickListener {
-        fun onItemClick(checkbox: CheckBox, follow: Follow, position: Int)
+        fun onItemClick(button: Button, follow: Follow, position: Int)
     }
 
     private var listener: OnItemClickListener? = null
