@@ -18,6 +18,7 @@ import com.daily.dayo.databinding.FragmentFollowBinding
 import com.daily.dayo.presentation.adapter.FollowFragmentPagerStateAdapter
 import com.daily.dayo.presentation.viewmodel.FollowViewModel
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 
 class FollowFragment : Fragment() {
@@ -41,12 +42,13 @@ class FollowFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setViewPager()
+        setTabLayout()
         setBackButtonClickListener()
         setFollowFragmentDescription()
+        setOnTabSelectedListener()
     }
 
-    private fun setViewPager(){
+    private fun setTabLayout() {
         viewPager = binding.pagerFollow
         tabLayout = binding.tabsFollow
         pagerAdapter = FollowFragmentPagerStateAdapter(requireActivity())
@@ -54,39 +56,41 @@ class FollowFragment : Fragment() {
         pagerAdapter.addFragment(FollowingListFragment())
         viewPager.adapter = pagerAdapter
 
-        TabLayoutMediator(tabLayout, viewPager){ tab, position ->
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.setCustomView(R.layout.tab_follow)
             val tvFollow = tab.customView?.findViewById<TextView>(R.id.tv_follow)
             val tvFollowCount = tab.customView?.findViewById<TextView>(R.id.tv_follow_count)
-
-            when (position){
+            when (position) {
                 0 -> {
                     tvFollow?.text = getText(R.string.follower)
-                    tvFollowCount?.text = followViewModel.followerCount.value.toString()
-                    followViewModel.requestListAllFollower(followViewModel.memberId)
+                    followViewModel.requestListAllFollower(args.memberId)
                     followViewModel.followerCount.observe(viewLifecycleOwner) {
-                        when(it.status){
+                        when (it.status) {
                             Status.SUCCESS -> {
                                 it.data?.let { followerCount ->
                                     tvFollowCount?.text = followerCount.toString()
                                 }
                             }
-                            Status.ERROR -> { "0" }
+                            Status.ERROR -> {
+                                tvFollowCount?.text = "0"
+                            }
                             Status.LOADING -> {}
                         }
                     }
                 }
                 1 -> {
                     tvFollow?.text = getText(R.string.following)
-                    followViewModel.requestListAllFollowing(followViewModel.memberId)
+                    followViewModel.requestListAllFollowing(args.memberId)
                     followViewModel.followingCount.observe(viewLifecycleOwner) {
-                        when(it.status){
+                        when (it.status) {
                             Status.SUCCESS -> {
                                 it.data?.let { followingCount ->
                                     tvFollowCount?.text = followingCount.toString()
                                 }
                             }
-                            Status.ERROR -> { tvFollowCount?.text = "0" }
+                            Status.ERROR -> {
+                                tvFollowCount?.text = "0"
+                            }
                             Status.LOADING -> {}
                         }
                     }
@@ -94,18 +98,32 @@ class FollowFragment : Fragment() {
             }
         }.attach()
 
-        viewPager.post{
+        viewPager.post {
             viewPager.setCurrentItem(args.initPosition, false)
         }
     }
 
-    private fun setBackButtonClickListener(){
+    private fun setOnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                when (tab.position) {
+                    0 -> followViewModel.requestListAllFollower(args.memberId)
+                    1 -> followViewModel.requestListAllFollowing(args.memberId)
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
+    }
+
+    private fun setBackButtonClickListener() {
         binding.btnFollowBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
-    private fun setFollowFragmentDescription(){
+    private fun setFollowFragmentDescription() {
         binding.tvFollowUserNickname.text = args.nickname
         followViewModel.memberId = args.memberId
     }
