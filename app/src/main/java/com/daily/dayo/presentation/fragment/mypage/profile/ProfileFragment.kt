@@ -73,7 +73,6 @@ class ProfileFragment : Fragment() {
             setOtherProfile()
         }
 
-        getProfileDescription()
         setProfileDescription()
         setBackButtonClickListener()
     }
@@ -82,6 +81,7 @@ class ProfileFragment : Fragment() {
         setViewPager()
         setViewPagerChangeEvent()
         setMyProfileOptionClickListener()
+        getMyProfileDescription()
     }
 
     private fun setOtherProfile() {
@@ -90,10 +90,15 @@ class ProfileFragment : Fragment() {
         setRvProfileFolderListAdapter()
         setProfileFolderList()
         setOtherProfileOptionClickListener()
+        getOtherProfileDescription()
     }
 
-    private fun getProfileDescription() {
-        profileViewModel.requestProfile(memberId = profileViewModel.profileMemberId)
+    private fun getMyProfileDescription() {
+        profileViewModel.requestMyProfile()
+    }
+
+    private fun getOtherProfileDescription() {
+        profileViewModel.requestOtherProfile(memberId = profileViewModel.profileMemberId)
     }
 
     private fun setProfileDescription() {
@@ -117,14 +122,16 @@ class ProfileFragment : Fragment() {
                 }
 
                 setFollowButtonClickListener()
-                setFollowerCountButtonClickListener(
-                    memberId = profile.memberId,
-                    nickname = profile.nickname
-                )
-                setFollowingCountButtonClickListener(
-                    memberId = profile.memberId,
-                    nickname = profile.nickname
-                )
+                profile.memberId?.let{
+                    setFollowerCountButtonClickListener(
+                        memberId = profile.memberId,
+                        nickname = profile.nickname
+                    )
+                    setFollowingCountButtonClickListener(
+                        memberId = profile.memberId,
+                        nickname = profile.nickname
+                    )
+                }
             }
         }
     }
@@ -176,7 +183,7 @@ class ProfileFragment : Fragment() {
         profileViewModel.followSuccess.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let { success ->
                 if (success) {
-                    getProfileDescription()
+                    getOtherProfileDescription()
                 } else {
                     Toast.makeText(requireContext(), "네트워크 연결 상태가 불안정합니다", Toast.LENGTH_SHORT).show()
                 }
@@ -189,7 +196,7 @@ class ProfileFragment : Fragment() {
         profileViewModel.unfollowSuccess.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let { success ->
                 if (success) {
-                    getProfileDescription()
+                    getOtherProfileDescription()
                 } else {
                     Toast.makeText(requireContext(), "네트워크 연결 상태가 불안정합니다", Toast.LENGTH_SHORT).show()
                 }

@@ -59,7 +59,7 @@ class MyPageFragment : Fragment() {
     }
 
     private fun setProfileDescription() {
-        profileViewModel.requestProfile(memberId = DayoApplication.preferences.getCurrentUser().memberId!!)
+        profileViewModel.requestMyProfile()
         profileViewModel.profileInfo.observe(viewLifecycleOwner) {
             it?.let { profile ->
                 binding.profile = profile
@@ -81,14 +81,16 @@ class MyPageFragment : Fragment() {
                     }
                 }
 
-                setFollowerCountButtonClickListener(
-                    memberId = profile.memberId,
-                    nickname = profile.nickname
-                )
-                setFollowingCountButtonClickListener(
-                    memberId = profile.memberId,
-                    nickname = profile.nickname
-                )
+                profile.memberId?.let {
+                    setFollowerCountButtonClickListener(
+                        memberId = profile.memberId,
+                        nickname = profile.nickname
+                    )
+                    setFollowingCountButtonClickListener(
+                        memberId = profile.memberId,
+                        nickname = profile.nickname
+                    )
+                }
             }
         }
     }
