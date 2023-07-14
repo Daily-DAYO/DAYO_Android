@@ -22,14 +22,6 @@ sentry {
 }
 
 android {
-    signingConfigs {
-        release {
-            storePassword SIGNED_STORE_PASSWORD
-            keyAlias SIGNED_KEY_ALIAS
-            keyPassword SIGNED_KEY_PASSWORD
-            storeFile file(SIGNED_STORE_FILE)
-        }
-    }
     compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
@@ -46,11 +38,25 @@ android {
         manifestPlaceholders = [NATIVE_APP_KEY: NATIVE_APP_KEY]
     }
 
+    signingConfigs {
+        release {
+            storePassword SIGNED_STORE_PASSWORD
+            keyAlias SIGNED_KEY_ALIAS
+            keyPassword SIGNED_KEY_PASSWORD
+            storeFile file(SIGNED_STORE_FILE)
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+            buildConfigField("String", "BASE_URL", properties['BASE_URL_RELEASE'])
+        }
+
+        debug {
+            buildConfigField("String", "BASE_URL", properties['BASE_URL_DEBUG'])
         }
     }
     compileOptions {
@@ -134,7 +140,7 @@ dependencies {
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
-    
+
     // Kakao sdk
     implementation "com.kakao.sdk:v2-user:2.8.3"
 
