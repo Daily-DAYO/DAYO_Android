@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.webkit.WebViewClient
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.daily.dayo.BuildConfig
 import com.daily.dayo.R
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
@@ -51,7 +52,7 @@ class PolicyFragment : Fragment() {
                 webViewClient = WebViewClient()
                 settings.javaScriptEnabled = false
             }
-            loadUrl("http://117.17.198.45:8080/$informationType.html")
+            loadUrl("${BuildConfig.BASE_URL}/$informationType.html")
         }
         binding.webviewPolicyContents.visibility = View.VISIBLE
     }
