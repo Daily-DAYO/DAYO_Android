@@ -22,7 +22,7 @@ import com.daily.dayo.presentation.viewmodel.WriteViewModel
 import kotlinx.coroutines.launch
 
 class WriteFolderFragment : Fragment() {
-    private var binding by autoCleared<FragmentWriteFolderBinding>()
+    private var binding by autoCleared<FragmentWriteFolderBinding> { onDestroyBindingView() }
     private val writeViewModel by activityViewModels<WriteViewModel>()
     private val writeFolderAdapter by lazy {
         WriteFolderAdapter(
@@ -61,6 +61,10 @@ class WriteFolderFragment : Fragment() {
         LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
+    private fun onDestroyBindingView() {
+        binding.rvWriteFolderListSaved.adapter = null
+    }
+
     private fun setBackButtonClickListener() {
         binding.btnWriteFolderBack.setOnDebounceClickListener {
             displayLoadingDialog()
@@ -79,8 +83,8 @@ class WriteFolderFragment : Fragment() {
     }
 
     private fun onFolderClicked(folder: Folder) {
-        writeViewModel.postFolderId.value = folder.folderId.toString()
-        writeViewModel.postFolderName.value = folder.title
+        writeViewModel.setFolderId(folder.folderId.toString())
+        writeViewModel.setFolderName(folder.title)
         displayLoadingDialog()
         findNavController().navigateUp()
     }
@@ -107,6 +111,7 @@ class WriteFolderFragment : Fragment() {
                                 }
                             }
                         }
+                        else -> { }
                     }
                 }
             }

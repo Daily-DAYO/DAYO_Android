@@ -35,7 +35,9 @@ import kotlin.math.min
 
 @AndroidEntryPoint
 class WriteImageOptionFragment : DialogFragment() {
-    private var binding by autoCleared<FragmentWriteImageOptionBinding>()
+    private var binding by autoCleared<FragmentWriteImageOptionBinding> {
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
     private val writeViewModel by activityViewModels<WriteViewModel>()
     private lateinit var currentTakenPhotoPath: String
     private lateinit var loadingAlertDialog: AlertDialog
@@ -66,11 +68,6 @@ class WriteImageOptionFragment : DialogFragment() {
     override fun onResume() {
         super.onResume()
         resizeImageOptionDialogFragment()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun resizeImageOptionDialogFragment() {
@@ -124,12 +121,19 @@ class WriteImageOptionFragment : DialogFragment() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                    for (i in 0 until min(count, remainingNum)) { // 이전 선택 사진을 포함해 선택 사진의 총 갯수가 5개 이하면 count를, 초과하면 remainingNumber을 선택
+                    for (i in 0 until min(
+                        count,
+                        remainingNum
+                    )) { // 이전 선택 사진을 포함해 선택 사진의 총 갯수가 5개 이하면 count를, 초과하면 remainingNumber을 선택
                         val imageUri = data.clipData!!.getItemAt(i).uri
                         writeViewModel.postImageUriList.add(imageUri.toString())
                     }
                     LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
-                    LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
+                    LoadingAlertDialog.resizeDialogFragment(
+                        requireContext(),
+                        loadingAlertDialog,
+                        0.8f
+                    )
                     findNavController().popBackStack()
                 } else { // 단일 선택
                     data?.data?.let { uri ->
@@ -146,7 +150,11 @@ class WriteImageOptionFragment : DialogFragment() {
                             if (imageUri != null) {
                                 writeViewModel.postImageUriList.add(imageUri.toString())
                                 LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
-                                LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
+                                LoadingAlertDialog.resizeDialogFragment(
+                                    requireContext(),
+                                    loadingAlertDialog,
+                                    0.8f
+                                )
                                 findNavController().popBackStack()
                             }
                         }
