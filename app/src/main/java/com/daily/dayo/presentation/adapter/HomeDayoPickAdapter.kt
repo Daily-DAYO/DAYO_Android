@@ -6,14 +6,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import androidx.core.view.isVisible
 import androidx.databinding.library.baseAdapters.BR
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
 import com.daily.dayo.common.GlideLoadUtil.HOME_POST_THUMBNAIL_SIZE
@@ -38,7 +36,6 @@ import kotlinx.coroutines.withContext
 class HomeDayoPickAdapter(
     val rankingShowing: Boolean,
     private val requestManager: RequestManager,
-    private val likeListener: (Int, Boolean) -> Unit,
     @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ListAdapter<Post, HomeDayoPickAdapter.HomeDayoPickViewHolder>(diffCallback) {
@@ -63,7 +60,7 @@ class HomeDayoPickAdapter(
     }
 
     interface OnItemClickListener {
-        fun likePostClick(btn: ImageButton, post: Post, position: Int)
+        fun likePostClick(post: Post)
     }
 
     private var clickListener: OnItemClickListener? = null
@@ -77,7 +74,7 @@ class HomeDayoPickAdapter(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            ), likeListener
+            )
         )
     }
 
@@ -90,7 +87,7 @@ class HomeDayoPickAdapter(
             this.onBindViewHolder(holder, position)
         } else {
             if (payloads[0] == true) {
-                holder.bindLikeState(getItem(position).heart)
+                holder.bindLikeState(getItem(position))
             }
         }
     }
@@ -129,16 +126,9 @@ class HomeDayoPickAdapter(
     }
 
     inner class HomeDayoPickViewHolder(
-        private val binding: ItemMainPostBinding,
-        private val likeListener: (Int, Boolean) -> Unit
+        private val binding: ItemMainPostBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         lateinit var postContent: Post
-
-        init {
-            binding.lottieMainPostLike.setOnDebounceClickListener(300L) {
-                likeListener(postContent.postId ?: 0, (it as LottieAnimationView).progress == 0F)
-            }
-        }
 
         fun bind(postContent: Post, currentPosition: Int) {
             this.postContent = postContent
@@ -152,6 +142,9 @@ class HomeDayoPickAdapter(
             )
             postContent.postId?.let { setRootClickListener(it, postContent.nickname) }
             postContent.memberId?.let { setNicknameClickListener(it) }
+            binding.lottieMainPostLike.setOnDebounceClickListener(300L) {
+                clickListener?.likePostClick(post = postContent)
+            }
         }
 
         private fun setBindingSetVariable(post: Post) {
@@ -161,13 +154,17 @@ class HomeDayoPickAdapter(
             }
         }
 
-        fun bindLikeState(isLiked: Boolean) {
-            setLottieClickListener(isLiked)
-            setHeartCount(isLiked)
+        fun bindLikeState(post: Post) {
+            setLottieClickListener(post)
+            setHeartCount(post)
         }
 
-        private fun setLottieClickListener(isLiked: Boolean) {
+        private fun setLottieClickListener(post: Post) {
             with(binding.lottieMainPostLike) {
+                setOnDebounceClickListener(300L) {
+                    clickListener?.likePostClick(post = post)
+                }
+
                 this.removeAllAnimatorListeners()
                 this.addAnimatorListener(object : Animator.AnimatorListener {
                     override fun onAnimationStart(animation: Animator?) {
@@ -176,10 +173,7 @@ class HomeDayoPickAdapter(
 
                     override fun onAnimationEnd(animation: Animator?) {
                         this@with.setOnDebounceClickListener(0L) {
-                            likeListener(
-                                postContent.postId ?: 0,
-                                (it as LottieAnimationView).progress == 0F
-                            )
+                            clickListener?.likePostClick(post = post)
                         }
                     }
 
@@ -187,23 +181,14 @@ class HomeDayoPickAdapter(
                     override fun onAnimationRepeat(animation: Animator?) {}
                 })
 
-                if (isLiked) this.playAnimation()
+                if (post.heart) this.playAnimation()
                 else this.progress = 0F
             }
         }
 
-        private fun setHeartCount(isLiked: Boolean) {
-            with(binding) {
-                post?.let {
-                    if (isLiked) {
-                        it.heartCount = it.heartCount + 1
-                    } else {
-                        if (it.heartCount <= 0) it.heartCount = 0
-                        else it.heartCount = it.heartCount - 1
-                    }
-                    setBindingSetVariable(it)
-                }
-            }
+        private fun setHeartCount(post: Post) {
+            binding.post = post
+            setBindingSetVariable(post)
         }
 
         private fun setRootClickListener(postId: Int, nickname: String) {

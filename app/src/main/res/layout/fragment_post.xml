@@ -191,11 +191,10 @@
                             android:layout_marginVertical="6dp"
                             android:layout_marginStart="9dp"
                             android:background="@android:color/transparent"
-                            android:src="@{post.heart == true ? @drawable/ic_post_like_checked : @drawable/ic_post_like_default}"
+                            android:src="@drawable/selector_button_post_like"
                             app:layout_constraintBottom_toTopOf="@id/view_post_horizontal_line"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            tools:src="@drawable/ic_post_like_default" />
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
                             android:id="@+id/tv_post_like_count"

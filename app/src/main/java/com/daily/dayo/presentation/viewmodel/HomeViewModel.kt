@@ -97,58 +97,60 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun requestLikePost(postId: Int) = viewModelScope.launch {
-        val response = requestLikePostUseCase(CreateHeartRequest(postId = postId))
-    }
-
-    fun requestUnlikePost(postId: Int) = viewModelScope.launch {
-        val response = requestUnlikePostUseCase(postId = postId)
-    }
-
-    fun toggleLikeStatusDayoPick(id: Int, isLike: Boolean) {
-        _dayoPickPostList.postValue(
-            Resource.success(
-                _dayoPickPostList.value?.data?.map {
-                    if (it.postId == id) {
-                        if (isLike) { this.requestLikePost(it.postId)
-                        } else { this.requestUnlikePost(it.postId) }
-                        it.copy(
-                            heart = isLike,
-                            heartCount = if (isLike) {
-                                it.heartCount + 1
-                            } else {
-                                if (it.heartCount <= 0) 0 else it.heartCount - 1
+    fun requestLikePost(postId: Int, isDayoPickLike: Boolean) = viewModelScope.launch {
+        val editList = if (isDayoPickLike) _dayoPickPostList else _newPostList
+        requestLikePostUseCase(CreateHeartRequest(postId = postId)).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    editList.postValue(
+                        Resource.success(
+                            editList.value?.data?.map {
+                                if (it.postId == postId) {
+                                    it.copy(
+                                        heart = true,
+                                        heartCount = ApiResponse.body?.allCount ?: 0
+                                    )
+                                } else {
+                                    it
+                                }
                             }
                         )
-                    } else {
-                        it
-                    }
+                    )
                 }
-            )
-        )
+                is NetworkResponse.NetworkError -> {}
+                is NetworkResponse.ApiError -> {}
+                is NetworkResponse.UnknownError -> {}
+            }
+        }
     }
-    fun toggleLikeStatusNewPost(id: Int, isLike: Boolean) {
-        _newPostList.postValue(
-            Resource.success(
-                _newPostList.value?.data?.map {
-                    if (it.postId == id) {
-                        if (isLike) { this.requestLikePost(it.postId)
-                        } else { this.requestUnlikePost(it.postId) }
-                        it.copy(
-                            heart = isLike,
-                            heartCount = if (isLike) {
-                                it.heartCount + 1
-                            } else {
-                                if (it.heartCount <= 0) 0 else it.heartCount - 1
+
+    fun requestUnlikePost(postId: Int, isDayoPickLike: Boolean) = viewModelScope.launch {
+        val editList = if (isDayoPickLike) _dayoPickPostList else _newPostList
+        requestUnlikePostUseCase(postId = postId).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    editList.postValue(
+                        Resource.success(
+                            editList.value?.data?.map {
+                                if (it.postId == postId) {
+                                    it.copy(
+                                        heart = false,
+                                        heartCount = ApiResponse.body?.allCount ?: 0
+                                    )
+                                } else {
+                                    it
+                                }
                             }
                         )
-                    } else {
-                        it
-                    }
+                    )
                 }
-            )
-        )
+                is NetworkResponse.NetworkError -> {}
+                is NetworkResponse.ApiError -> {}
+                is NetworkResponse.UnknownError -> {}
+            }
+        }
     }
+
     fun setPostStatus(postId: Int, isLike: Boolean, heartCount: Int, commentCount: Int) {
         _dayoPickPostList.postValue(
             Resource.success(

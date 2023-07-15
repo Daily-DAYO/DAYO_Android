@@ -164,16 +164,19 @@ class HomeDayoPickPostListFragment : Fragment() {
     private fun setPostLikeClickListener() {
         homeDayoPickAdapter?.setOnItemClickListener(object :
             HomeDayoPickAdapter.OnItemClickListener {
-            override fun likePostClick(btn: ImageButton, post: Post, position: Int) {
+            override fun likePostClick(post: Post) {
                 with(post) {
                     try {
                         if (!heart) {
-                            homeViewModel.requestLikePost(postId!!)
+                            homeViewModel.requestLikePost(postId!!, isDayoPickLike = true)
                         } else {
-                            homeViewModel.requestUnlikePost(post.postId!!)
+                            homeViewModel.requestUnlikePost(postId!!, isDayoPickLike = true)
                         }
                     } catch (postIdNullException: NullPointerException) {
-                        Log.e(this@HomeDayoPickPostListFragment.tag, "PostId Null Exception Occurred")
+                        Log.e(
+                            this@HomeDayoPickPostListFragment.tag,
+                            "PostId Null Exception Occurred"
+                        )
                         loadPosts(homeViewModel.currentDayoPickCategory)
                     }
                 }
@@ -254,9 +257,5 @@ class HomeDayoPickPostListFragment : Fragment() {
             }
             rvDayopickPost.visibility = View.VISIBLE
         }
-    }
-
-    private fun toggleLikeStatus(id: Int, isLiked: Boolean) {
-        homeViewModel.toggleLikeStatusDayoPick(id, isLiked)
     }
 }
