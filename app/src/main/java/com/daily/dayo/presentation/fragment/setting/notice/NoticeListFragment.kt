@@ -25,9 +25,9 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class NoticeListFragment : Fragment() {
-    private var binding by autoCleared<FragmentNoticeListBinding>()
+    private var binding by autoCleared<FragmentNoticeListBinding>{ onDestroyBindingView() }
     private val noticeViewModel by activityViewModels<NoticeViewModel>()
-    private lateinit var noticeListAdapter: NoticeListAdapter
+    private var noticeListAdapter: NoticeListAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +42,11 @@ class NoticeListFragment : Fragment() {
         setBackButtonClickListener()
         getNoticeList()
         initNoticeListAdapter()
+    }
+
+    private fun onDestroyBindingView() {
+        noticeListAdapter = null
+        binding.rvNoticePost.adapter = null
     }
 
     private fun setBackButtonClickListener() {
@@ -74,7 +79,7 @@ class NoticeListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 noticeViewModel.noticeList.collectLatest { noticeList ->
-                    noticeListAdapter.submitData(noticeList)
+                    noticeListAdapter?.submitData(noticeList)
                 }
             }
         }

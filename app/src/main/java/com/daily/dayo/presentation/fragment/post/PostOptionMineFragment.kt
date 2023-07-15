@@ -21,7 +21,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PostOptionMineFragment : DialogFragment() {
-    private var binding by autoCleared<FragmentPostOptionMineBinding>()
+    private var binding by autoCleared<FragmentPostOptionMineBinding> {
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
     private val postViewModel by activityViewModels<PostViewModel>()
     private val args by navArgs<PostOptionMineFragmentArgs>()
     private lateinit var mAlertDialog: AlertDialog
@@ -52,11 +54,6 @@ class PostOptionMineFragment : DialogFragment() {
     override fun onResume() {
         super.onResume()
         resizePostOptionMineDialogFragment()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun resizePostOptionMineDialogFragment() {

@@ -35,21 +35,22 @@ import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class HomeNewPostListFragment : Fragment() {
-    private var binding by autoCleared<FragmentHomeNewPostListBinding>()
+    private var binding by autoCleared<FragmentHomeNewPostListBinding> { onDestroyBindingView() }
     private val homeViewModel by activityViewModels<HomeViewModel>()
-    private lateinit var homeNewAdapter: HomeNewAdapter
-
-    lateinit var mGlideRequestManager: RequestManager
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mGlideRequestManager = Glide.with(this)
-    }
+    private var homeNewAdapter: HomeNewAdapter? = null
+    private var glideRequestManager: RequestManager? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentHomeNewPostListBinding.inflate(inflater, container, false)
+        glideRequestManager = Glide.with(this)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         startLoadingView()
         setInitialCategory()
         setRvNewPostAdapter()
@@ -57,12 +58,23 @@ class HomeNewPostListFragment : Fragment() {
         setPostLikeClickListener()
         setEmptyViewActionClickListener()
         setNewPostListRefreshListener()
-        return binding.root
     }
 
     override fun onResume() {
         loadPosts(homeViewModel.currentNewCategory)
+        binding.swipeRefreshLayoutNewPost.isEnabled = true
         super.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.swipeRefreshLayoutNewPost.isEnabled = false
+    }
+
+    private fun onDestroyBindingView() {
+        glideRequestManager = null
+        homeNewAdapter = null
+        binding.rvNewPost.adapter = null
     }
 
     private fun setNewPostListRefreshListener() {
@@ -88,13 +100,14 @@ class HomeNewPostListFragment : Fragment() {
     }
 
     private fun setRvNewPostAdapter() {
-        homeNewAdapter = HomeNewAdapter(
-            rankingShowing = false,
-            requestManager = mGlideRequestManager,
-            likeListener = this::toggleLikeStatus,
-            mainDispatcher = Dispatchers.Main,
-            ioDispatcher = Dispatchers.IO
-        )
+        homeNewAdapter = glideRequestManager?.let { requestManager ->
+            HomeNewAdapter(
+                rankingShowing = false,
+                requestManager = requestManager,
+                mainDispatcher = Dispatchers.Main,
+                ioDispatcher = Dispatchers.IO
+            )
+        }
         binding.rvNewPost.adapter = homeNewAdapter
     }
 
@@ -150,7 +163,7 @@ class HomeNewPostListFragment : Fragment() {
     }
 
     private fun setPostLikeClickListener() {
-        homeNewAdapter.setOnItemClickListener(object :
+        homeNewAdapter?.setOnItemClickListener(object :
             HomeNewAdapter.OnItemClickListener {
             override fun likePostClick(btn: ImageButton, post: Post, position: Int) {
                 with(post) {
@@ -210,7 +223,7 @@ class HomeNewPostListFragment : Fragment() {
                         loadedPostList[i].preLoadThumbnail = thumbnailImgList[i]
                         loadedPostList[i].preLoadUserImg = userImgList[i]
                     }
-                    homeNewAdapter.submitList(postList.toMutableList())
+                    homeNewAdapter?.submitList(postList.toMutableList())
                     stopLoadingView()
                     thumbnailImgList.clear()
                     userImgList.clear()

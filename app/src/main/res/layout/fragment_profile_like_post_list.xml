@@ -12,222 +12,217 @@
             type="boolean" />
     </data>
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="12dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="12dp">
+            android:layout_marginTop="69dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="@{isEmpty ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone">
 
-            <LinearLayout
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="69dp"
+                android:src="@drawable/ic_profile_empty" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:visibility="@{isEmpty ? View.VISIBLE : View.GONE}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="gone">
+                android:text="@string/my_profile_like_empty_description"
+                android:textColor="@color/gray_3_9FA5AE"
+                android:textSize="15dp" />
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_profile_like_post"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingTop="30dp"
+            android:visibility="@{isEmpty ? View.GONE : View.VISIBLE}"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:spanCount="2"
+            tools:listitem="@layout/item_profile_post" />
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/layout_profile_like_post_shimmer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="30dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/rv_profile_like_post"
+            app:layout_constraintStart_toStartOf="@id/rv_profile_like_post"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:shimmer_base_color="@color/gray_3_9FA5AE"
+            app:shimmer_colored="true"
+            app:shimmer_highlight_color="@color/gray_6_F0F1F3">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <ImageView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/item_shimmer_1"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_profile_empty" />
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="4dp"
+                    android:adjustViewBounds="true"
+                    android:background="@color/gray_3_9FA5AE"
+                    android:src="@drawable/ic_dayo_circle_grayscale"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/item_shimmer_2"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:tint="@android:color/transparent" />
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <ImageView
+                    android:id="@+id/item_shimmer_2"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="22dp"
-                    android:gravity="center"
-                    android:text="@string/my_profile_like_empty_description"
-                    android:textColor="@color/gray_3_9FA5AE"
-                    android:textSize="15dp" />
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="4dp"
+                    android:adjustViewBounds="true"
+                    android:background="@color/gray_3_9FA5AE"
+                    android:src="@drawable/ic_dayo_circle_grayscale"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@id/item_shimmer_1"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:tint="@android:color/transparent" />
 
-            </LinearLayout>
+                <ImageView
+                    android:id="@+id/item_shimmer_3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_marginTop="7dp"
+                    android:adjustViewBounds="true"
+                    android:background="@color/gray_3_9FA5AE"
+                    android:src="@drawable/ic_dayo_circle_grayscale"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/item_shimmer_4"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/item_shimmer_1"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:tint="@android:color/transparent" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_profile_like_post"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:overScrollMode="never"
-                android:paddingTop="30dp"
-                android:visibility="@{isEmpty ? View.GONE : View.VISIBLE}"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:spanCount="2"
-                tools:listitem="@layout/item_profile_post" />
+                <ImageView
+                    android:id="@+id/item_shimmer_4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_marginTop="7dp"
+                    android:adjustViewBounds="true"
+                    android:background="@color/gray_3_9FA5AE"
+                    android:src="@drawable/ic_dayo_circle_grayscale"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@id/item_shimmer_3"
+                    app:layout_constraintTop_toBottomOf="@id/item_shimmer_2"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:tint="@android:color/transparent" />
 
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/layout_profile_like_post_shimmer"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:orientation="vertical"
-                android:paddingTop="30dp"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/rv_profile_like_post"
-                app:layout_constraintStart_toStartOf="@id/rv_profile_like_post"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
-                app:shimmer_base_color="@color/gray_3_9FA5AE"
-                app:shimmer_colored="true"
-                app:shimmer_highlight_color="@color/gray_6_F0F1F3">
+                <ImageView
+                    android:id="@+id/item_shimmer_5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_marginTop="7dp"
+                    android:adjustViewBounds="true"
+                    android:background="@color/gray_3_9FA5AE"
+                    android:src="@drawable/ic_dayo_circle_grayscale"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/item_shimmer_6"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/item_shimmer_3"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:tint="@android:color/transparent" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                <ImageView
+                    android:id="@+id/item_shimmer_6"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_marginTop="7dp"
+                    android:adjustViewBounds="true"
+                    android:background="@color/gray_3_9FA5AE"
+                    android:src="@drawable/ic_dayo_circle_grayscale"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@id/item_shimmer_5"
+                    app:layout_constraintTop_toBottomOf="@id/item_shimmer_4"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:tint="@android:color/transparent" />
 
-                    <ImageView
-                        android:id="@+id/item_shimmer_1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginHorizontal="4dp"
-                        android:adjustViewBounds="true"
-                        android:background="@color/gray_3_9FA5AE"
-                        android:src="@drawable/ic_dayo_circle_grayscale"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/item_shimmer_2"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.0"
-                        app:tint="@android:color/transparent" />
+                <ImageView
+                    android:id="@+id/item_shimmer_7"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_marginTop="7dp"
+                    android:adjustViewBounds="true"
+                    android:background="@color/gray_3_9FA5AE"
+                    android:src="@drawable/ic_dayo_circle_grayscale"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/item_shimmer_8"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/item_shimmer_6"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:tint="@android:color/transparent" />
 
-                    <ImageView
-                        android:id="@+id/item_shimmer_2"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginHorizontal="4dp"
-                        android:adjustViewBounds="true"
-                        android:background="@color/gray_3_9FA5AE"
-                        android:src="@drawable/ic_dayo_circle_grayscale"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toEndOf="@id/item_shimmer_1"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.0"
-                        app:tint="@android:color/transparent" />
-
-                    <ImageView
-                        android:id="@+id/item_shimmer_3"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginHorizontal="4dp"
-                        android:layout_marginTop="7dp"
-                        android:adjustViewBounds="true"
-                        android:background="@color/gray_3_9FA5AE"
-                        android:src="@drawable/ic_dayo_circle_grayscale"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/item_shimmer_4"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/item_shimmer_1"
-                        app:layout_constraintVertical_bias="0.0"
-                        app:tint="@android:color/transparent" />
-
-                    <ImageView
-                        android:id="@+id/item_shimmer_4"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginHorizontal="4dp"
-                        android:layout_marginTop="7dp"
-                        android:adjustViewBounds="true"
-                        android:background="@color/gray_3_9FA5AE"
-                        android:src="@drawable/ic_dayo_circle_grayscale"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toEndOf="@id/item_shimmer_3"
-                        app:layout_constraintTop_toBottomOf="@id/item_shimmer_2"
-                        app:layout_constraintVertical_bias="0.0"
-                        app:tint="@android:color/transparent" />
-
-                    <ImageView
-                        android:id="@+id/item_shimmer_5"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginHorizontal="4dp"
-                        android:layout_marginTop="7dp"
-                        android:adjustViewBounds="true"
-                        android:background="@color/gray_3_9FA5AE"
-                        android:src="@drawable/ic_dayo_circle_grayscale"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/item_shimmer_6"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/item_shimmer_3"
-                        app:layout_constraintVertical_bias="0.0"
-                        app:tint="@android:color/transparent" />
-
-                    <ImageView
-                        android:id="@+id/item_shimmer_6"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginHorizontal="4dp"
-                        android:layout_marginTop="7dp"
-                        android:adjustViewBounds="true"
-                        android:background="@color/gray_3_9FA5AE"
-                        android:src="@drawable/ic_dayo_circle_grayscale"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toEndOf="@id/item_shimmer_5"
-                        app:layout_constraintTop_toBottomOf="@id/item_shimmer_4"
-                        app:layout_constraintVertical_bias="0.0"
-                        app:tint="@android:color/transparent" />
-
-                    <ImageView
-                        android:id="@+id/item_shimmer_7"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginHorizontal="4dp"
-                        android:layout_marginTop="7dp"
-                        android:adjustViewBounds="true"
-                        android:background="@color/gray_3_9FA5AE"
-                        android:src="@drawable/ic_dayo_circle_grayscale"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/item_shimmer_8"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/item_shimmer_6"
-                        app:layout_constraintVertical_bias="0.0"
-                        app:tint="@android:color/transparent" />
-
-                    <ImageView
-                        android:id="@+id/item_shimmer_8"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginHorizontal="4dp"
-                        android:layout_marginTop="7dp"
-                        android:adjustViewBounds="true"
-                        android:background="@color/gray_3_9FA5AE"
-                        android:src="@drawable/ic_dayo_circle_grayscale"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toEndOf="@id/item_shimmer_7"
-                        app:layout_constraintTop_toBottomOf="@id/item_shimmer_6"
-                        app:layout_constraintVertical_bias="0.0"
-                        app:tint="@android:color/transparent" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.facebook.shimmer.ShimmerFrameLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+                <ImageView
+                    android:id="@+id/item_shimmer_8"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_marginTop="7dp"
+                    android:adjustViewBounds="true"
+                    android:background="@color/gray_3_9FA5AE"
+                    android:src="@drawable/ic_dayo_circle_grayscale"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@id/item_shimmer_7"
+                    app:layout_constraintTop_toBottomOf="@id/item_shimmer_6"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:tint="@android:color/transparent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

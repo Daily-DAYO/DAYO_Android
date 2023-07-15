@@ -32,21 +32,22 @@ import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class HomeDayoPickPostListFragment : Fragment() {
-    private var binding by autoCleared<FragmentHomeDayoPickPostListBinding>()
+    private var binding by autoCleared<FragmentHomeDayoPickPostListBinding>() { onDestroyBindingView() }
     private val homeViewModel by activityViewModels<HomeViewModel>()
-    private lateinit var homeDayoPickAdapter: HomeDayoPickAdapter
-
-    lateinit var mGlideRequestManager: RequestManager
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mGlideRequestManager = Glide.with(this)
-    }
+    private var homeDayoPickAdapter: HomeDayoPickAdapter? = null
+    private var glideRequestManager: RequestManager? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentHomeDayoPickPostListBinding.inflate(inflater, container, false)
+        glideRequestManager = Glide.with(this)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         startLoadingView()
         setInitialCategory()
         setRvDayoPickPostAdapter()
@@ -54,12 +55,23 @@ class HomeDayoPickPostListFragment : Fragment() {
         setPostLikeClickListener()
         setEmptyViewActionClickListener()
         setDayoPickPostListRefreshListener()
-        return binding.root
     }
 
     override fun onResume() {
         loadPosts(homeViewModel.currentDayoPickCategory)
+        binding.swipeRefreshLayoutDayoPickPost.isEnabled = true
         super.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.swipeRefreshLayoutDayoPickPost.isEnabled = false
+    }
+
+    private fun onDestroyBindingView() {
+        glideRequestManager = null
+        homeDayoPickAdapter = null
+        binding.rvDayopickPost.adapter = null
     }
 
     private fun setDayoPickPostListRefreshListener() {
@@ -85,13 +97,14 @@ class HomeDayoPickPostListFragment : Fragment() {
     }
 
     private fun setRvDayoPickPostAdapter() {
-        homeDayoPickAdapter = HomeDayoPickAdapter(
-            rankingShowing = true,
-            requestManager = mGlideRequestManager,
-            likeListener = this::toggleLikeStatus,
-            mainDispatcher = Dispatchers.Main,
-            ioDispatcher = Dispatchers.IO
-        )
+        homeDayoPickAdapter = glideRequestManager?.let { requestManager ->
+            HomeDayoPickAdapter(
+                rankingShowing = true,
+                requestManager = requestManager,
+                mainDispatcher = Dispatchers.Main,
+                ioDispatcher = Dispatchers.IO
+            )
+        }
         binding.rvDayopickPost.adapter = homeDayoPickAdapter
     }
 
@@ -149,7 +162,7 @@ class HomeDayoPickPostListFragment : Fragment() {
     }
 
     private fun setPostLikeClickListener() {
-        homeDayoPickAdapter.setOnItemClickListener(object :
+        homeDayoPickAdapter?.setOnItemClickListener(object :
             HomeDayoPickAdapter.OnItemClickListener {
             override fun likePostClick(btn: ImageButton, post: Post, position: Int) {
                 with(post) {
@@ -170,13 +183,13 @@ class HomeDayoPickPostListFragment : Fragment() {
 
     private fun setEmptyViewActionClickListener() {
         binding.btnDayopickPostEmptyAction.setOnDebounceClickListener {
-            val homeViewPager = requireActivity().findViewById<ViewPager2>(R.id.pager_home_post)
+            val homeViewPager =
+                requireParentFragment().requireView().findViewById<ViewPager2>(R.id.pager_home_post)
             val current = homeViewPager.currentItem
-            if (current == 0){
+            if (current == 0) {
                 homeViewPager.setCurrentItem(1, true)
-            }
-            else{
-                homeViewPager.setCurrentItem(current-1, true)
+            } else {
+                homeViewPager.setCurrentItem(current - 1, true)
             }
         }
     }
@@ -214,7 +227,7 @@ class HomeDayoPickPostListFragment : Fragment() {
                             preLoadUserImg = userImgList[i]
                         }
                     }
-                    homeDayoPickAdapter.submitList(postList.toMutableList())
+                    homeDayoPickAdapter?.submitList(postList.toMutableList())
                     stopLoadingView()
                     thumbnailImgList.clear()
                     userImgList.clear()

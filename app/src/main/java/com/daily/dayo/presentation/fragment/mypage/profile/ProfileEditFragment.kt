@@ -43,26 +43,30 @@ import java.util.*
 import java.util.regex.Pattern
 
 class ProfileEditFragment : Fragment() {
-    private var binding by autoCleared<FragmentProfileEditBinding>()
+    private var binding by autoCleared<FragmentProfileEditBinding> {
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+        onDestroyBindingView()
+    }
     private val profileSettingViewModel by activityViewModels<ProfileSettingViewModel>()
-    private lateinit var glideRequestManager: RequestManager
+    private var glideRequestManager: RequestManager? = null
     private lateinit var userProfileImageString: String
     private var imagePath: String? = null
     private val imageFileTimeFormat = SimpleDateFormat("yyyy-MM-d-HH-mm-ss", Locale.KOREA)
     private lateinit var userProfileImageExtension: String
     private lateinit var loadingAlertDialog: AlertDialog
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        glideRequestManager = Glide.with(this)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentProfileEditBinding.inflate(inflater, container, false)
-        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
+        glideRequestManager = Glide.with(this)
+        initializeLoadingDialog()
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setBackButtonClickListener()
         setLimitEditTextInputType()
         setTextEditorActionListener()
@@ -74,20 +78,22 @@ class ProfileEditFragment : Fragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setProfileUpdateClickListener()
         }
-        return binding.root
+        setHideKeyboard()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        view.setOnTouchListener { _, _ ->
+    private fun onDestroyBindingView() {
+        glideRequestManager = null
+    }
+
+    private fun setHideKeyboard() {
+        requireView().setOnTouchListener { _, _ ->
             HideKeyBoardUtil.hide(requireContext(), binding.etProfileEditNickname)
             true
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    private fun initializeLoadingDialog() {
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
     }
 
     private fun setTextEditorActionListener() {
@@ -115,20 +121,26 @@ class ProfileEditFragment : Fragment() {
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                         val userProfileThumbnailImage = withContext(Dispatchers.IO) {
-                            GlideLoadUtil.loadImageBackgroundProfile(
-                                requestManager = glideRequestManager,
-                                width = 100,
-                                height = 100,
-                                imgName = profile.profileImg
-                            )
+                            glideRequestManager?.let { requestManager ->
+                                GlideLoadUtil.loadImageBackgroundProfile(
+                                    requestManager = requestManager,
+                                    width = 100,
+                                    height = 100,
+                                    imgName = profile.profileImg
+                                )
+                            }
                         }
-                        GlideLoadUtil.loadImageViewProfile(
-                            requestManager = glideRequestManager,
-                            width = 100,
-                            height = 100,
-                            img = userProfileThumbnailImage,
-                            imgView = binding.imgProfileEditUserImage
-                        )
+                        glideRequestManager?.let { requestManager ->
+                            if (userProfileThumbnailImage != null) {
+                                GlideLoadUtil.loadImageViewProfile(
+                                    requestManager = requestManager,
+                                    width = 100,
+                                    height = 100,
+                                    img = userProfileThumbnailImage,
+                                    imgView = binding.imgProfileEditUserImage
+                                )
+                            }
+                        }
                     }
                 }
                 binding.etProfileEditNickname.setText(profile.nickname)
@@ -255,12 +267,12 @@ class ProfileEditFragment : Fragment() {
                 userProfileImageString = it
                 if (this::userProfileImageString.isInitialized) {
                     if (userProfileImageString == "resetMyProfileImage") {
-                        glideRequestManager.load(R.drawable.ic_user_profile_image_empty)
-                            .centerCrop().into(binding.imgProfileEditUserImage)
+                        glideRequestManager?.load(R.drawable.ic_user_profile_image_empty)
+                            ?.centerCrop()?.into(binding.imgProfileEditUserImage)
                     } else {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            glideRequestManager.load(userProfileImageString.toUri()).centerCrop()
-                                .into(binding.imgProfileEditUserImage)
+                            glideRequestManager?.load(userProfileImageString.toUri())?.centerCrop()
+                                ?.into(binding.imgProfileEditUserImage)
                         }
                     }
                 }

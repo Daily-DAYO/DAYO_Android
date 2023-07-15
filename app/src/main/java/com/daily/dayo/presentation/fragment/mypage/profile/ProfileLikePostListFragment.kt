@@ -18,40 +18,47 @@ import com.daily.dayo.presentation.viewmodel.ProfileViewModel
 import kotlinx.coroutines.Dispatchers
 
 class ProfileLikePostListFragment : Fragment() {
-    private var binding by autoCleared<FragmentProfileLikePostListBinding>()
+    private var binding by autoCleared<FragmentProfileLikePostListBinding>{ onDestroyBindingView() }
     private val profileViewModel by activityViewModels<ProfileViewModel>()
-    private lateinit var profileLikePostListAdapter: ProfileLikePostListAdapter
-    private lateinit var glideRequestManager: RequestManager
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        glideRequestManager = Glide.with(this)
-    }
+    private var profileLikePostListAdapter: ProfileLikePostListAdapter? = null
+    private var glideRequestManager: RequestManager? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentProfileLikePostListBinding.inflate(inflater, container, false)
+        glideRequestManager = Glide.with(this)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setRvProfileLikePostListAdapter()
         setProfileLikePostList()
         setAdapterLoadStateListener()
-        return binding.root
     }
 
     override fun onResume() {
         super.onResume()
         getProfileLikePostList()
     }
+    private fun onDestroyBindingView() {
+        glideRequestManager = null
+        profileLikePostListAdapter = null
+        binding.rvProfileLikePost.adapter = null
+    }
 
     private fun setRvProfileLikePostListAdapter() {
-        profileLikePostListAdapter = ProfileLikePostListAdapter(
-            requestManager = glideRequestManager,
-            mainDispatcher = Dispatchers.Main,
-            ioDispatcher = Dispatchers.IO
-        )
+        profileLikePostListAdapter = glideRequestManager?.let { requestManager ->
+            ProfileLikePostListAdapter(
+                requestManager = requestManager,
+                mainDispatcher = Dispatchers.Main,
+                ioDispatcher = Dispatchers.IO
+            )
+        }
         binding.rvProfileLikePost.adapter = profileLikePostListAdapter
-        profileLikePostListAdapter.setOnItemClickListener(object :
+        profileLikePostListAdapter?.setOnItemClickListener(object :
             ProfileLikePostListAdapter.OnItemClickListener {
             override fun onItemClick(v: View, likePost: LikePost, pos: Int) {
                 when (requireParentFragment()) {
@@ -71,19 +78,21 @@ class ProfileLikePostListFragment : Fragment() {
 
     private fun setProfileLikePostList() {
         profileViewModel.likePostList.observe(viewLifecycleOwner) {
-            profileLikePostListAdapter.submitData(this.lifecycle, it)
+            profileLikePostListAdapter?.submitData(viewLifecycleOwner.lifecycle, it)
         }
     }
 
     private fun setAdapterLoadStateListener() {
         var isInitialLoad = false
-        profileLikePostListAdapter.addLoadStateListener { loadState ->
-            if (loadState.refresh is LoadState.NotLoading && !isInitialLoad) {
-                val isListEmpty = profileLikePostListAdapter.itemCount == 0
-                binding.isEmpty = isListEmpty
-                if (isListEmpty || loadState.append is LoadState.NotLoading) {
-                    completeLoadPost()
-                    isInitialLoad = true
+        profileLikePostListAdapter?.let {
+            it.addLoadStateListener { loadState ->
+                if (loadState.refresh is LoadState.NotLoading && !isInitialLoad) {
+                    val isListEmpty = it.itemCount == 0
+                    binding.isEmpty = isListEmpty
+                    if (isListEmpty || loadState.append is LoadState.NotLoading) {
+                        completeLoadPost()
+                        isInitialLoad = true
+                    }
                 }
             }
         }
