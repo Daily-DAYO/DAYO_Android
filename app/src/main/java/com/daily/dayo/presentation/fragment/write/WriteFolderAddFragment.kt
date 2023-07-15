@@ -23,7 +23,9 @@ import com.daily.dayo.presentation.viewmodel.WriteViewModel
 import java.util.regex.Pattern
 
 class WriteFolderAddFragment : Fragment() {
-    private var binding by autoCleared<FragmentWriteFolderAddBinding>()
+    private var binding by autoCleared<FragmentWriteFolderAddBinding> {
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
     private val writeViewModel by activityViewModels<WriteViewModel>()
     private lateinit var loadingAlertDialog: AlertDialog
     override fun onCreateView(
@@ -37,11 +39,6 @@ class WriteFolderAddFragment : Fragment() {
         verifyFolderName()
 
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun setBackButtonClickListener() {
