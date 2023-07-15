@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.viewpager2.widget.ViewPager2
 import com.daily.dayo.R
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
@@ -22,12 +21,22 @@ import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 
 class FollowFragment : Fragment() {
-    private var binding by autoCleared<FragmentFollowBinding>()
+    private var binding by autoCleared<FragmentFollowBinding> { onDestroyBindingView() }
     private val followViewModel by activityViewModels<FollowViewModel>()
-    private lateinit var pagerAdapter: FollowFragmentPagerStateAdapter
-    private lateinit var viewPager: ViewPager2
-    private lateinit var tabLayout: TabLayout
+    private var mediator: TabLayoutMediator? = null
+    private var pagerAdapter: FollowFragmentPagerStateAdapter? = null
     private val args by navArgs<FollowFragmentArgs>()
+    private val tabSelectedListener = object : OnTabSelectedListener {
+        override fun onTabSelected(tab: TabLayout.Tab) {
+            when (tab.position) {
+                0 -> followViewModel.requestListAllFollower(args.memberId)
+                1 -> followViewModel.requestListAllFollowing(args.memberId)
+            }
+        }
+
+        override fun onTabUnselected(tab: TabLayout.Tab) {}
+        override fun onTabReselected(tab: TabLayout.Tab) {}
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,15 +57,24 @@ class FollowFragment : Fragment() {
         setOnTabSelectedListener()
     }
 
-    private fun setTabLayout() {
-        viewPager = binding.pagerFollow
-        tabLayout = binding.tabsFollow
-        pagerAdapter = FollowFragmentPagerStateAdapter(requireActivity())
-        pagerAdapter.addFragment(FollowerListFragment())
-        pagerAdapter.addFragment(FollowingListFragment())
-        viewPager.adapter = pagerAdapter
+    private fun onDestroyBindingView() {
+        binding.apply {
+            pagerFollow.adapter = null
+            tabsFollow.removeOnTabSelectedListener(tabSelectedListener)
+        }
+        mediator?.detach()
+        mediator = null
+        pagerAdapter = null
+    }
 
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+    private fun setTabLayout() {
+        pagerAdapter =
+            FollowFragmentPagerStateAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+        pagerAdapter?.addFragment(FollowerListFragment())
+        pagerAdapter?.addFragment(FollowingListFragment())
+        binding.pagerFollow.adapter = pagerAdapter
+
+        mediator = TabLayoutMediator(binding.tabsFollow, binding.pagerFollow) { tab, position ->
             tab.setCustomView(R.layout.tab_follow)
             val tvFollow = tab.customView?.findViewById<TextView>(R.id.tv_follow)
             val tvFollowCount = tab.customView?.findViewById<TextView>(R.id.tv_follow_count)
@@ -70,6 +88,9 @@ class FollowFragment : Fragment() {
                                 it.data?.let { followerCount ->
                                     tvFollowCount?.text = followerCount.toString()
                                 }
+                            }
+                            Status.ERROR -> {
+                                "0"
                             }
                             Status.ERROR -> {
                                 tvFollowCount?.text = "0"
@@ -96,25 +117,16 @@ class FollowFragment : Fragment() {
                     }
                 }
             }
-        }.attach()
+        }
+        mediator?.attach()
 
-        viewPager.post {
-            viewPager.setCurrentItem(args.initPosition, false)
+        binding.pagerFollow.post {
+            binding.pagerFollow.setCurrentItem(args.initPosition, false)
         }
     }
 
     private fun setOnTabSelectedListener() {
-        tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                when (tab.position) {
-                    0 -> followViewModel.requestListAllFollower(args.memberId)
-                    1 -> followViewModel.requestListAllFollowing(args.memberId)
-                }
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab) {}
-            override fun onTabReselected(tab: TabLayout.Tab) {}
-        })
+        binding.tabsFollow.addOnTabSelectedListener(tabSelectedListener)
     }
 
     private fun setBackButtonClickListener() {

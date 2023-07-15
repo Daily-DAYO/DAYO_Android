@@ -23,16 +23,11 @@ import kotlinx.coroutines.Dispatchers
 
 @AndroidEntryPoint
 class SettingBlockFragment : Fragment() {
-    private var binding by autoCleared<FragmentSettingBlockBinding>()
+    private var binding by autoCleared<FragmentSettingBlockBinding> { onDestroyBindingView() }
     private val profileViewModel by viewModels<ProfileViewModel>()
     private val profileSettingViewModel by viewModels<ProfileSettingViewModel>()
-    private lateinit var blockListAdapter: BlockListAdapter
-    private lateinit var glideRequestManager: RequestManager
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        glideRequestManager = Glide.with(this)
-    }
+    private var blockListAdapter: BlockListAdapter? = null
+    private var glideRequestManager: RequestManager? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,6 +35,7 @@ class SettingBlockFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSettingBlockBinding.inflate(inflater, container, false)
+        glideRequestManager = Glide.with(this)
         return binding.root
     }
 
@@ -54,14 +50,22 @@ class SettingBlockFragment : Fragment() {
         setBlockList()
     }
 
+    private fun onDestroyBindingView() {
+        glideRequestManager = null
+        blockListAdapter = null
+        binding.rvBlock.adapter = null
+    }
+
     private fun setBlockListAdapter() {
-        blockListAdapter = BlockListAdapter(
-            requestManager = glideRequestManager,
-            mainDispatcher = Dispatchers.Main,
-            ioDispatcher = Dispatchers.IO
-        )
+        blockListAdapter = glideRequestManager?.let { requestManager ->
+            BlockListAdapter(
+                requestManager = requestManager,
+                mainDispatcher = Dispatchers.Main,
+                ioDispatcher = Dispatchers.IO
+            )
+        }
         binding.rvBlock.adapter = blockListAdapter
-        blockListAdapter.setOnItemClickListener(object :
+        blockListAdapter?.setOnItemClickListener(object :
             BlockListAdapter.OnItemClickListener {
             override fun onItemClick(checkbox: CheckBox, blockUser: BlockUser, position: Int) {
                 unblockUser(blockUser.memberId, position)
@@ -74,8 +78,9 @@ class SettingBlockFragment : Fragment() {
         profileSettingViewModel.blockList.observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> it.data?.let { blockList ->
-                    blockListAdapter.submitList(blockList)
+                    blockListAdapter?.submitList(blockList)
                 }
+                else -> {}
             }
         }
     }

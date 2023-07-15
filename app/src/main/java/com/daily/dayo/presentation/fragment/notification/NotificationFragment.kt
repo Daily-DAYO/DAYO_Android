@@ -19,27 +19,22 @@ import kotlinx.coroutines.Dispatchers
 
 @AndroidEntryPoint
 class NotificationFragment : Fragment() {
-    private var binding by autoCleared<FragmentNotificationBinding>()
+    private var binding by autoCleared<FragmentNotificationBinding> { onDestroyBindingView() }
     private val notificationViewModel by viewModels<NotificationViewModel>()
-    private lateinit var notificationAdapter: NotificationListAdapter
-    private lateinit var glideRequestManager: RequestManager
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        glideRequestManager = Glide.with(this)
-    }
+    private var notificationAdapter: NotificationListAdapter? = null
+    private var glideRequestManager: RequestManager? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentNotificationBinding.inflate(inflater, container, false)
+        glideRequestManager = Glide.with(this)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setNotificationListAdapter()
         setAdapterLoadStateListener()
         setAlarmList()
@@ -50,21 +45,29 @@ class NotificationFragment : Fragment() {
         getAlarmList()
     }
 
+    private fun onDestroyBindingView() {
+        glideRequestManager = null
+        notificationAdapter = null
+        binding.rvNotificationList.adapter = null
+    }
+
     private fun setNotificationListAdapter() {
-        notificationAdapter = NotificationListAdapter(
-            requestManager = glideRequestManager,
-            mainDispatcher = Dispatchers.Main,
-            ioDispatcher = Dispatchers.IO
-        )
+        notificationAdapter = glideRequestManager?.let {
+            NotificationListAdapter(
+                requestManager = it,
+                mainDispatcher = Dispatchers.Main,
+                ioDispatcher = Dispatchers.IO
+            )
+        }
         binding.rvNotificationList.layoutManager = LinearLayoutManager(requireContext())
         binding.rvNotificationList.adapter = notificationAdapter
-        notificationAdapter.setOnItemClickListener(object :
+        notificationAdapter?.setOnItemClickListener(object :
             NotificationListAdapter.OnItemClickListener {
             override fun notificationItemClick(alarmId: Int, alarmCheck: Boolean, position: Int) {
                 if (!alarmCheck) {
                     notificationViewModel.requestIsCheckAlarm(alarmId = alarmId)
                     notificationViewModel.checkAlarmSuccess.observe(viewLifecycleOwner) {
-                        if (it == true) notificationAdapter.notifyItemChanged(position)
+                        if (it == true) notificationAdapter?.notifyItemChanged(position)
                     }
                 }
             }
@@ -77,15 +80,15 @@ class NotificationFragment : Fragment() {
 
     private fun setAlarmList() {
         notificationViewModel.alarmList.observe(viewLifecycleOwner) {
-            notificationAdapter.submitData(this.lifecycle, it)
+            notificationAdapter?.submitData(viewLifecycleOwner.lifecycle, it)
         }
     }
 
     private fun setAdapterLoadStateListener() {
         var isInitialLoad = false
-        notificationAdapter.addLoadStateListener { loadState ->
+        notificationAdapter?.addLoadStateListener { loadState ->
             if (loadState.refresh is LoadState.NotLoading && !isInitialLoad) {
-                val isListEmpty = notificationAdapter.itemCount == 0
+                val isListEmpty = notificationAdapter?.itemCount == 0
                 binding.isEmpty = isListEmpty
                 if (isListEmpty || loadState.append is LoadState.NotLoading) {
                     isInitialLoad = true

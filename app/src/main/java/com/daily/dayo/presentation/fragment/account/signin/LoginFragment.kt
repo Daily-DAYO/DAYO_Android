@@ -48,12 +48,20 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
-    private var binding by autoCleared<FragmentLoginBinding>()
+    private var binding by autoCleared<FragmentLoginBinding> {
+        onDestroyBindingView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
     private val loginViewModel by activityViewModels<AccountViewModel>()
     private lateinit var indicators: Array<ImageView?>
-    private lateinit var pagerAdapter: OnBoardingPagerStateAdapter
-    private lateinit var viewPager: ViewPager2
+    private var pagerAdapter: OnBoardingPagerStateAdapter? = null
     private lateinit var loadingAlertDialog: AlertDialog
+    private val pageChangeCallBack = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            super.onPageSelected(position)
+            setCurrentIndicator(position)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,9 +79,12 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    private fun onDestroyBindingView() {
+        pagerAdapter = null
+        with(binding.vpLoginOnboarding) {
+            unregisterOnPageChangeCallback(pageChangeCallBack)
+            adapter = null
+        }
     }
 
     private fun setKakaoLoginButtonClickListener() {
@@ -170,24 +181,19 @@ class LoginFragment : Fragment() {
     }
 
     private fun setViewPager() {
-        viewPager = binding.vpLoginOnboarding
-        viewPager.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
-        pagerAdapter = OnBoardingPagerStateAdapter(requireActivity())
-        pagerAdapter.addFragment(OnBoardingFirstFragment())
-        pagerAdapter.addFragment(OnBoardingSecondFragment())
-        pagerAdapter.addFragment(OnBoardingThirdFragment())
-        pagerAdapter.addFragment(OnBoardingFourthFragment())
-        viewPager.adapter = pagerAdapter
-        setupIndicators(pagerAdapter.itemCount)
+        binding.vpLoginOnboarding.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+        pagerAdapter =
+            OnBoardingPagerStateAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+        pagerAdapter?.addFragment(OnBoardingFirstFragment())
+        pagerAdapter?.addFragment(OnBoardingSecondFragment())
+        pagerAdapter?.addFragment(OnBoardingThirdFragment())
+        pagerAdapter?.addFragment(OnBoardingFourthFragment())
+        binding.vpLoginOnboarding.adapter = pagerAdapter
+        setupIndicators(pagerAdapter?.itemCount ?: 0)
     }
 
     private fun setViewPagerChangeEvent() {
-        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                setCurrentIndicator(position)
-            }
-        })
+        binding.vpLoginOnboarding.registerOnPageChangeCallback(pageChangeCallBack)
     }
 
     private fun setupIndicators(count: Int) {
@@ -209,20 +215,21 @@ class LoginFragment : Fragment() {
     }
 
     private fun setCurrentIndicator(position: Int) {
-        val childCount: Int = binding.viewLoginOnboardingIndicators.childCount
-        for (i in 0 until childCount) {
-            val imageView = binding.viewLoginOnboardingIndicators.getChildAt(i) as ImageView
-            if (i == position) {
-                imageView.setImageDrawable(
-                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_indicator_active)
-                )
-            } else {
-                imageView.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        requireContext(),
-                        R.drawable.ic_indicator_inactive_gray
+        with(binding.viewLoginOnboardingIndicators) {
+            for (i in 0 until this.childCount) {
+                val imageView = this.getChildAt(i) as ImageView
+                if (i == position) {
+                    imageView.setImageDrawable(
+                        ContextCompat.getDrawable(requireContext(), R.drawable.ic_indicator_active)
                     )
-                )
+                } else {
+                    imageView.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            requireContext(),
+                            R.drawable.ic_indicator_inactive_gray
+                        )
+                    )
+                }
             }
         }
     }

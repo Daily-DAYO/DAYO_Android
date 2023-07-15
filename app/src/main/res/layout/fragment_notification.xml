@@ -18,33 +18,18 @@
         android:background="@color/white_FFFFFF"
         tools:context=".presentation.fragment.notification.NotificationFragment">
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/layout_scroll_notification"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_notification_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:overScrollMode="never"
             android:visibility="@{isEmpty ? View.GONE : View.VISIBLE}"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_notification_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:overScrollMode="never"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:listitem="@layout/item_notification" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.core.widget.NestedScrollView>
+            tools:listitem="@layout/item_notification"
+            tools:visibility="visible" />
 
         <LinearLayout
             android:layout_width="wrap_content"

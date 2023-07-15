@@ -28,7 +28,9 @@ import java.util.regex.Pattern
 
 @AndroidEntryPoint
 class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
-    private var binding by autoCleared<FragmentFindAccountPasswordNewPasswordConfirmationBinding>()
+    private var binding by autoCleared<FragmentFindAccountPasswordNewPasswordConfirmationBinding>{
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
     private val args by navArgs<FindAccountPasswordNewPasswordConfirmationFragmentArgs>()
     private val loginViewModel by activityViewModels<AccountViewModel>()
     private lateinit var loadingAlertDialog: AlertDialog
@@ -70,11 +72,6 @@ class FindAccountPasswordNewPasswordConfirmationFragment : Fragment() {
             )
             true
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun setTextEditorActionListener() {

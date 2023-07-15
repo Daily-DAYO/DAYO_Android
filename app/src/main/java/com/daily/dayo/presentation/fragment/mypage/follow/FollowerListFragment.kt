@@ -21,21 +21,17 @@ import com.daily.dayo.presentation.viewmodel.FollowViewModel
 import kotlinx.coroutines.Dispatchers
 
 class FollowerListFragment : Fragment() {
-    private var binding by autoCleared<FragmentFollowerListBinding>()
+    private var binding by autoCleared<FragmentFollowerListBinding> { onDestroyBindingView() }
     private val followViewModel by activityViewModels<FollowViewModel>()
-    private lateinit var followerListAdapter: FollowListAdapter
-    private lateinit var glideRequestManager: RequestManager
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        glideRequestManager = Glide.with(this)
-    }
+    private var followerListAdapter: FollowListAdapter? = null
+    private var glideRequestManager: RequestManager? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentFollowerListBinding.inflate(inflater, container, false)
+        glideRequestManager = Glide.with(this)
         setRvFollowerListAdapter()
         return binding.root
     }
@@ -47,25 +43,44 @@ class FollowerListFragment : Fragment() {
         observeUnfollowSuccess()
     }
 
+    private fun onDestroyBindingView() {
+        glideRequestManager = null
+        followerListAdapter = null
+        binding.rvFollower.adapter = null
+    }
+
     private fun setRvFollowerListAdapter() {
-        followerListAdapter = FollowListAdapter(
-            requestManager = glideRequestManager,
-            mainDispatcher = Dispatchers.Main,
-            ioDispatcher = Dispatchers.IO
-        )
+        followerListAdapter = glideRequestManager?.let { requestManager ->
+            FollowListAdapter(
+                requestManager = requestManager,
+                mainDispatcher = Dispatchers.Main,
+                ioDispatcher = Dispatchers.IO
+            )
+        }
         binding.rvFollower.adapter = followerListAdapter
-        followerListAdapter.setOnItemClickListener(object : FollowListAdapter.OnItemClickListener {
+        followerListAdapter?.setOnItemClickListener(object : FollowListAdapter.OnItemClickListener {
             override fun onItemClick(button: Button, follow: Follow, position: Int) {
                 when (follow.isFollow) {
                     false -> { // 클릭 시 팔로우
                         requestFollow(follow.memberId)
                     }
                     true -> { // 클릭 시 언팔로우
-                        val mAlertDialog = DefaultDialogConfirm.createDialog(requireContext(), R.string.follow_delete_description_message,
-                            true, true, R.string.confirm, R.string.cancel, { requestUnfollow(follow.memberId) }, { })
+                        val mAlertDialog = DefaultDialogConfirm.createDialog(requireContext(),
+                            R.string.follow_delete_description_message,
+                            true,
+                            true,
+                            R.string.confirm,
+                            R.string.cancel,
+                            { requestUnfollow(follow.memberId) },
+                            { })
                         if (!mAlertDialog.isShowing) {
                             mAlertDialog.show()
-                            DefaultDialogConfigure.dialogResize(requireContext(), mAlertDialog, 0.7f, 0.23f)
+                            DefaultDialogConfigure.dialogResize(
+                                requireContext(),
+                                mAlertDialog,
+                                0.7f,
+                                0.23f
+                            )
                         }
                         mAlertDialog.setOnCancelListener {
                             mAlertDialog.dismiss()
@@ -94,9 +109,10 @@ class FollowerListFragment : Fragment() {
                 Status.SUCCESS -> {
                     it.data?.let { followerList ->
                         binding.followerCount = followerList.size
-                        followerListAdapter.submitList(followerList)
+                        followerListAdapter?.submitList(followerList)
                     }
                 }
+                else -> {}
             }
         }
     }

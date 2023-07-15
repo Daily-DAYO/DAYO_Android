@@ -32,10 +32,12 @@ import java.util.regex.Pattern
 
 @AndroidEntryPoint
 class SettingChangePasswordNewFragment : Fragment() {
-    private var binding by autoCleared<FragmentSettingChangePasswordNewBinding>()
+    private var binding by autoCleared<FragmentSettingChangePasswordNewBinding> {
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
     private val accountViewModel by activityViewModels<AccountViewModel>()
     private var isNewConfirmation = MutableLiveData<Boolean>(false)
-    private lateinit var verifyPasswordTextWatcher: TextWatcher
+    private var verifyPasswordTextWatcher: TextWatcher? = null
     private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreateView(
@@ -89,11 +91,6 @@ class SettingChangePasswordNewFragment : Fragment() {
             getString(R.string.signup_email_set_password_confirmation_edittext_hint)
         )
         observePasswordChange()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun setBackClickListener() {

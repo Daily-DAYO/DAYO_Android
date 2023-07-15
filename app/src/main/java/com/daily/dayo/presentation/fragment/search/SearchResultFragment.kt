@@ -26,22 +26,23 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SearchResultFragment : Fragment() {
-    private var binding by autoCleared<FragmentSearchResultBinding>()
+    private var binding by autoCleared<FragmentSearchResultBinding>{ onDestroyBindingView() }
     private val searchViewModel by activityViewModels<SearchViewModel>()
     private val args by navArgs<SearchResultFragmentArgs>()
-    private lateinit var searchTagResultPostAdapter: SearchTagResultPostAdapter
-    private lateinit var glideRequestManager: RequestManager
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        glideRequestManager = Glide.with(this)
-    }
+    private var searchTagResultPostAdapter: SearchTagResultPostAdapter? = null
+    private var glideRequestManager: RequestManager? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         binding = FragmentSearchResultBinding.inflate(inflater, container, false)
+        glideRequestManager = Glide.with(this)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setBackButtonClickListener()
         initUI()
         setSearchEditTextListener()
@@ -51,12 +52,13 @@ class SearchResultFragment : Fragment() {
         setSearchTagResultPostClickListener()
         setSearchKeywordInputDone()
         setSearchKeywordInputRemoveClickListener()
-        return binding.root
+        HideKeyBoardUtil.hideTouchDisplay(requireActivity(), view)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        HideKeyBoardUtil.hideTouchDisplay(requireActivity(), view)
+    private fun onDestroyBindingView() {
+        glideRequestManager = null
+        searchTagResultPostAdapter = null
+        binding.rvSearchResultContentsPostList.adapter = null
     }
 
     private fun setBackButtonClickListener() {
@@ -90,12 +92,12 @@ class SearchResultFragment : Fragment() {
 
     private fun setSearchTagResultPostAdapter() {
         searchTagResultPostAdapter =
-            SearchTagResultPostAdapter(requestManager = glideRequestManager)
+            glideRequestManager?.let { SearchTagResultPostAdapter(requestManager = it) }
         binding.rvSearchResultContentsPostList.adapter = searchTagResultPostAdapter
     }
 
     private fun setSearchTagResultPostClickListener() {
-        searchTagResultPostAdapter.setOnItemClickListener(object :
+        searchTagResultPostAdapter?.setOnItemClickListener(object :
             SearchTagResultPostAdapter.OnItemClickListener {
             override fun onItemClick(v: View, search: Search, position: Int) {
                 findNavController().navigate(
@@ -135,7 +137,7 @@ class SearchResultFragment : Fragment() {
 
     private fun setSearchTagList() {
         searchViewModel.searchTagList.observe(viewLifecycleOwner) {
-            searchTagResultPostAdapter.submitData(this.lifecycle, it)
+            searchTagResultPostAdapter?.submitData(viewLifecycleOwner.lifecycle, it)
         }
     }
 
@@ -146,19 +148,21 @@ class SearchResultFragment : Fragment() {
     }
 
     private fun setAdapterLoadStateListener() {
-        searchTagResultPostAdapter.addLoadStateListener { loadState ->
-            if (loadState.refresh is LoadState.NotLoading) {
-                val isListEmpty = searchTagResultPostAdapter.itemCount == 0
-                if (isListEmpty) {
-                    binding.layoutSearchResultContents.visibility = View.INVISIBLE
-                    binding.layoutSearchResultEmpty.visibility = View.VISIBLE
-                } else {
-                    binding.layoutSearchResultContents.visibility = View.VISIBLE
-                    binding.layoutSearchResultEmpty.visibility = View.INVISIBLE
-                }
+        searchTagResultPostAdapter?.let {
+            it.addLoadStateListener { loadState ->
+                if (loadState.refresh is LoadState.NotLoading) {
+                    val isListEmpty = it.itemCount == 0
+                    if (isListEmpty) {
+                        binding.layoutSearchResultContents.visibility = View.INVISIBLE
+                        binding.layoutSearchResultEmpty.visibility = View.VISIBLE
+                    } else {
+                        binding.layoutSearchResultContents.visibility = View.VISIBLE
+                        binding.layoutSearchResultEmpty.visibility = View.INVISIBLE
+                    }
 
-                if (isListEmpty || loadState.append is LoadState.NotLoading) {
-                    completeLoadPost()
+                    if (isListEmpty || loadState.append is LoadState.NotLoading) {
+                        completeLoadPost()
+                    }
                 }
             }
         }

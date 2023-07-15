@@ -23,7 +23,9 @@ import com.daily.dayo.presentation.activity.LoginActivity
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
 
 class WithdrawFragment : Fragment() {
-    private var binding by autoCleared<FragmentWithdrawBinding>()
+    private var binding by autoCleared<FragmentWithdrawBinding> {
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
     private val accountViewModel by activityViewModels<AccountViewModel>()
     private lateinit var loadingAlertDialog: AlertDialog
 
@@ -46,37 +48,34 @@ class WithdrawFragment : Fragment() {
         return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
-    }
-
     private fun setBackButtonClickListener() {
         binding.btnWithdrawBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
     }
 
-    private fun setOnClickWithdrawOtherReason(){
+    private fun setOnClickWithdrawOtherReason() {
         binding.radiogroupWithdrawReason.setOnCheckedChangeListener { _, id ->
-            if(binding.radiogroupWithdrawReason.checkedRadioButtonId!=-1) binding.btnWithdraw.isEnabled = true
-            when(id) {
-                binding.radiobuttonWithdrawReasonOther.id -> binding.etWithdrawReasonOther.visibility = View.VISIBLE
+            if (binding.radiogroupWithdrawReason.checkedRadioButtonId != -1) binding.btnWithdraw.isEnabled =
+                true
+            when (id) {
+                binding.radiobuttonWithdrawReasonOther.id -> binding.etWithdrawReasonOther.visibility =
+                    View.VISIBLE
                 else -> binding.etWithdrawReasonOther.visibility = View.GONE
             }
         }
     }
 
-    private fun setWithdrawButtonActivation(){
-        if(binding.radiogroupWithdrawReason.checkedRadioButtonId==-1) {
+    private fun setWithdrawButtonActivation() {
+        if (binding.radiogroupWithdrawReason.checkedRadioButtonId == -1) {
             binding.btnWithdraw.isEnabled = false
         }
     }
 
-    private fun setWithdrawButtonClickListener(){
+    private fun setWithdrawButtonClickListener() {
         binding.btnWithdraw.setOnDebounceClickListener {
             LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
-            val reason = when(binding.radiogroupWithdrawReason.checkedRadioButtonId){
+            val reason = when (binding.radiogroupWithdrawReason.checkedRadioButtonId) {
                 R.id.radiobutton_withdraw_reason_1 -> binding.radiobuttonWithdrawReason1.text.toString()
                 R.id.radiobutton_withdraw_reason_2 -> binding.radiobuttonWithdrawReason2.text.toString()
                 R.id.radiobutton_withdraw_reason_3 -> binding.radiobuttonWithdrawReason3.text.toString()
@@ -85,8 +84,8 @@ class WithdrawFragment : Fragment() {
                 else -> binding.radiobuttonWithdrawReasonOther.text.toString()
             }
             accountViewModel.requestWithdraw(content = reason)
-            accountViewModel.withdrawSuccess.observe(viewLifecycleOwner){
-                if(it.getContentIfNotHandled() == true) {
+            accountViewModel.withdrawSuccess.observe(viewLifecycleOwner) {
+                if (it.getContentIfNotHandled() == true) {
                     DayoApplication.preferences.clearPreferences()
                     val intent = Intent(this.activity, LoginActivity::class.java)
                     startActivity(intent)
@@ -96,8 +95,15 @@ class WithdrawFragment : Fragment() {
         }
     }
 
-    private fun setFinalMessageTextSpan(){
-        val spannableText : Spannable = binding.tvWithdrawFinalMessage.text as Spannable
-        spannableText.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.primary_green_23C882)), 16, 35, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    private fun setFinalMessageTextSpan() {
+        val spannableText: Spannable = binding.tvWithdrawFinalMessage.text as Spannable
+        spannableText.setSpan(
+            ForegroundColorSpan(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.primary_green_23C882
+                )
+            ), 16, 35, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
     }
 }

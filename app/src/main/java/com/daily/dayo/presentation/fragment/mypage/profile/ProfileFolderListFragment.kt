@@ -19,34 +19,42 @@ import com.daily.dayo.presentation.viewmodel.ProfileViewModel
 import kotlinx.coroutines.Dispatchers
 
 class ProfileFolderListFragment : Fragment() {
-    private var binding by autoCleared<FragmentProfileFolderListBinding>()
+    private var binding by autoCleared<FragmentProfileFolderListBinding> { onDestroyBindingView() }
     private val profileViewModel by activityViewModels<ProfileViewModel>()
-    private lateinit var profileFolderListAdapter: ProfileFolderListAdapter
-    private lateinit var glideRequestManager: RequestManager
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        glideRequestManager = Glide.with(this)
-    }
+    private var profileFolderListAdapter: ProfileFolderListAdapter?= null
+    private var glideRequestManager: RequestManager?= null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentProfileFolderListBinding.inflate(inflater, container, false)
-        setRvProfileFolderListAdapter()
-        setProfileFolderList()
+        glideRequestManager = Glide.with(this)
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setRvProfileFolderListAdapter()
+        setProfileFolderList()
+    }
+
+    private fun onDestroyBindingView() {
+        glideRequestManager = null
+        profileFolderListAdapter = null
+        binding.rvProfileFolder.adapter = null
+    }
+
     private fun setRvProfileFolderListAdapter() {
-        profileFolderListAdapter = ProfileFolderListAdapter(
-            requestManager = glideRequestManager,
-            mainDispatcher = Dispatchers.Main,
-            ioDispatcher = Dispatchers.IO
-        )
+        profileFolderListAdapter = glideRequestManager?.let {
+            ProfileFolderListAdapter(
+                requestManager = it,
+                mainDispatcher = Dispatchers.Main,
+                ioDispatcher = Dispatchers.IO
+            )
+        }
         binding.rvProfileFolder.adapter = profileFolderListAdapter
-        profileFolderListAdapter.setOnItemClickListener(object : ProfileFolderListAdapter.OnItemClickListener {
+        profileFolderListAdapter?.setOnItemClickListener(object : ProfileFolderListAdapter.OnItemClickListener {
             override fun onItemClick(v: View, folder: Folder, pos: Int) {
                 when (requireParentFragment()) {
                     is MyPageFragment -> MyPageFragmentDirections.actionMyPageFragmentToFolderFragment(folderId = folder.folderId!!)
@@ -66,9 +74,10 @@ class ProfileFolderListFragment : Fragment() {
                 Status.SUCCESS -> {
                     it.data?.let { folderList ->
                         binding.folderCount = folderList.size
-                        profileFolderListAdapter.submitList(folderList)
+                        profileFolderListAdapter?.submitList(folderList)
                     }
                 }
+                else -> {}
             }
         }
     }

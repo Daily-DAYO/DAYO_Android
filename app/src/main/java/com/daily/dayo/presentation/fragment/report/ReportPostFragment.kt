@@ -20,7 +20,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ReportPostFragment : Fragment() {
-    private var binding by autoCleared<FragmentReportPostBinding>()
+    private var binding by autoCleared<FragmentReportPostBinding> {
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
     private val reportViewModel by activityViewModels<ReportViewModel>()
     private val args by navArgs<ReportPostFragmentArgs>()
     private lateinit var reportPostOptionMap: Map<Int, String>
@@ -39,11 +41,6 @@ class ReportPostFragment : Fragment() {
         setReportPostButtonActivation()
         setReportPostButtonClickListener()
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun initReportPostOption() {

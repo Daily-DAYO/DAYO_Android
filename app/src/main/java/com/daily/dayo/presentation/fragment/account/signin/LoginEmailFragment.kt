@@ -29,7 +29,11 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class LoginEmailFragment : Fragment() {
-    private var binding by autoCleared<FragmentLoginEmailBinding>()
+    private var binding by autoCleared<FragmentLoginEmailBinding> {
+        LoadingAlertDialog.hideLoadingDialog(
+            loadingAlertDialog
+        )
+    }
     private val loginViewModel by activityViewModels<AccountViewModel>()
     private var isLoginButtonClick = false // TODO : 첫 화면에서 로그인 실패 메시지 등장으로 인한 임시 해결
     private lateinit var loadingAlertDialog: AlertDialog
@@ -58,11 +62,6 @@ class LoginEmailFragment : Fragment() {
             HideKeyBoardUtil.hide(requireContext(), binding.etLoginEmailPassword)
             true
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun setTextEditorActionListener() {
@@ -107,7 +106,11 @@ class LoginEmailFragment : Fragment() {
                 if (isLoginButtonClick) {
                     Log.e(ContentValues.TAG, "로그인 실패")
                     LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
-                    Toast.makeText(requireContext(), getString(R.string.login_email_alert_message_fail), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.login_email_alert_message_fail),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
