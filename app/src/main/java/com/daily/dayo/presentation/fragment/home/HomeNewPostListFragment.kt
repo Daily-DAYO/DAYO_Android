@@ -165,13 +165,13 @@ class HomeNewPostListFragment : Fragment() {
     private fun setPostLikeClickListener() {
         homeNewAdapter?.setOnItemClickListener(object :
             HomeNewAdapter.OnItemClickListener {
-            override fun likePostClick(btn: ImageButton, post: Post, position: Int) {
+            override fun likePostClick(post: Post) {
                 with(post) {
                     try {
                         if (!heart) {
-                            homeViewModel.requestLikePost(postId!!)
+                            homeViewModel.requestLikePost(postId!!, false)
                         } else {
-                            homeViewModel.requestUnlikePost(post.postId!!)
+                            homeViewModel.requestUnlikePost(post.postId!!, false)
                         }
                     } catch (postIdNullException: NullPointerException) {
                         Log.e(this@HomeNewPostListFragment.tag, "PostId Null Exception Occurred")
@@ -250,9 +250,5 @@ class HomeNewPostListFragment : Fragment() {
             }
             rvNewPost.visibility = View.VISIBLE
         }
-    }
-
-    private fun toggleLikeStatus(id: Int, isLiked: Boolean) {
-        homeViewModel.toggleLikeStatusNewPost(id, isLiked)
     }
 }

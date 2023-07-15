@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.daily.dayo.data.datasource.remote.heart.CreateHeartRequest
 import com.daily.dayo.data.datasource.remote.heart.CreateHeartResponse
+import com.daily.dayo.data.datasource.remote.heart.DeleteHeartResponse
 import com.daily.dayo.data.datasource.remote.heart.HeartApiService
 import com.daily.dayo.data.datasource.remote.heart.HeartPagingSource
 import com.daily.dayo.domain.model.NetworkResponse
@@ -17,7 +18,7 @@ class HeartRepositoryImpl @Inject constructor(
     override suspend fun requestLikePost(body: CreateHeartRequest): NetworkResponse<CreateHeartResponse> =
         heartApiService.requestLikePost(body)
 
-    override suspend fun requestUnlikePost(postId: Int): NetworkResponse<Void> =
+    override suspend fun requestUnlikePost(postId: Int): NetworkResponse<DeleteHeartResponse> =
         heartApiService.requestUnlikePost(postId)
 
     override suspend fun requestAllMyLikePostList() = Pager(PagingConfig(pageSize = HEART_PAGE_SIZE)) {

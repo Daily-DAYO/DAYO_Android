@@ -89,7 +89,16 @@ class PostViewModel @Inject constructor(
     fun requestLikePost(postId: Int) = viewModelScope.launch {
         requestLikePostUseCase(CreateHeartRequest(postId = postId))?.let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success -> { _postLiked.postValue(Resource.success(ApiResponse.body)) }
+                is NetworkResponse.Success -> {
+                    _postDetail.postValue(
+                        Resource.success(
+                            _postDetail.value?.data?.apply {
+                                heart = true
+                                heartCount = ApiResponse.body?.allCount?: 0
+                            }
+                        )
+                    )
+                }
                 is NetworkResponse.NetworkError -> { _postLiked.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
                 is NetworkResponse.ApiError -> { _postLiked.postValue(Resource.error(ApiResponse.error.toString(), null)) }
                 is NetworkResponse.UnknownError -> { _postLiked.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
@@ -98,7 +107,24 @@ class PostViewModel @Inject constructor(
     }
 
     fun requestUnlikePost(postId: Int) = viewModelScope.launch {
-        requestUnlikePostUseCase(postId)
+        requestUnlikePostUseCase(postId).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _postDetail.postValue(
+                        Resource.success(
+                            _postDetail.value?.data?.apply {
+                                heart = false
+                                heartCount = ApiResponse.body?.allCount?: 0
+                            }
+                        )
+                    )
+                }
+                is NetworkResponse.NetworkError -> {}
+                is NetworkResponse.ApiError -> {}
+                is NetworkResponse.UnknownError -> {}
+            }
+
+        }
     }
 
     fun requestBookmarkPost(postId: Int) = viewModelScope.launch {

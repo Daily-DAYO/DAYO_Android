@@ -9,7 +9,7 @@ interface HeartApiService {
     suspend fun requestLikePost(@Body body: CreateHeartRequest): NetworkResponse<CreateHeartResponse>
 
     @POST("/api/v1/heart/delete/{postId}")
-    suspend fun requestUnlikePost(@Path("postId") postId: Int): NetworkResponse<Void>
+    suspend fun requestUnlikePost(@Path("postId") postId: Int): NetworkResponse<DeleteHeartResponse>
 
     @GET("/api/v1/heart/list")
     suspend fun requestAllMyLikePostList(@Query("end") end: Int): NetworkResponse<ListAllMyHeartPostResponse>
