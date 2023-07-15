@@ -223,48 +223,25 @@
             android:textColorHint="@color/gray_3_9FA5AE"
             android:textSize="15dp"
             android:theme="@style/WriteEditTextStyle"
-            app:layout_constraintBottom_toTopOf="@+id/layout_scroll_uploaded_images"
+            app:layout_constraintBottom_toTopOf="@+id/rv_img_upload_list"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_write_detail_count" />
 
-        <HorizontalScrollView
-            android:id="@+id/layout_scroll_uploaded_images"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_img_upload_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="18dp"
             android:layout_marginTop="17dp"
+            android:minWidth="141dp"
             android:overScrollMode="never"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/btn_write_post_upload"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/et_write_detail"
-            app:layout_constraintVertical_bias="0.0">
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:id="@+id/btn_upload_image"
-                    android:layout_width="141dp"
-                    android:layout_height="141dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/button_default_white"
-                    android:scaleType="center"
-                    android:src="@drawable/ic_upload_picture" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_img_upload_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_toEndOf="@id/btn_upload_image"
-                    android:minWidth="141dp"
-                    android:orientation="horizontal" />
-            </RelativeLayout>
-        </HorizontalScrollView>
+            app:layout_constraintVertical_bias="0.0" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_write_post_upload"
@@ -282,7 +259,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layout_scroll_uploaded_images"
+            app:layout_constraintTop_toBottomOf="@id/rv_img_upload_list"
             app:layout_constraintVertical_bias="1.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
