@@ -86,6 +86,7 @@ class WriteViewModel @Inject constructor(
         ).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
+                    resetWriteInfoValue()
                     _writePostId.postValue(ApiResponse.body?.let { Event(it.id) })
                     _writeSuccess.postValue(Event(true))
                 }
@@ -108,9 +109,9 @@ class WriteViewModel @Inject constructor(
         ).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
+                    resetWriteInfoValue()
                     _writePostId.postValue(ApiResponse.body?.let { Event(it.postId) })
                     _writeEditSuccess.postValue(Event(true))
-                    resetWriteInfoValue()
                 }
                 else -> {
                     _writeEditSuccess.postValue(Event(false))
