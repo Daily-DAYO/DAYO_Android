@@ -49,6 +49,11 @@ class FeedListAdapter(
                     preLoadThumbnail = null
                     preLoadUserImg = null
                 }
+
+            override fun getChangePayload(oldItem: Post, newItem: Post): Any? {
+                return if (oldItem.heart != newItem.heart || oldItem.heartCount != newItem.heartCount ||
+                        oldItem.commentCount != newItem.commentCount) true else null
+            }
         }
     }
 

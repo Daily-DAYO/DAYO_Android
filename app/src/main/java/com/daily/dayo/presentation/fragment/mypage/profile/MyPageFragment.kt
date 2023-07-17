@@ -22,23 +22,24 @@ import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentMyPageBinding
 import com.daily.dayo.presentation.adapter.ProfileFragmentPagerStateAdapter
 import com.daily.dayo.presentation.viewmodel.ProfileViewModel
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MyPageFragment : Fragment() {
-    private var binding by autoCleared<FragmentMyPageBinding>()
+    private var binding by autoCleared<FragmentMyPageBinding> { onDestroyBindingView() }
     private val profileViewModel by activityViewModels<ProfileViewModel>()
-    private lateinit var glideRequestManager: RequestManager
-    private lateinit var pagerAdapter: ProfileFragmentPagerStateAdapter
-    private lateinit var viewPager: ViewPager2
-    private lateinit var tabLayout: TabLayout
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        glideRequestManager = Glide.with(this)
+    private var glideRequestManager: RequestManager? = null
+    private var mediator: TabLayoutMediator? = null
+    private var pagerAdapter: ProfileFragmentPagerStateAdapter? = null
+    private val pageChangeCallBack = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            super.onPageSelected(position)
+            pagerAdapter?.let {
+                it.refreshFragment(position, it.fragments[position])
+            }
+        }
     }
 
     override fun onCreateView(
@@ -47,6 +48,7 @@ class MyPageFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMyPageBinding.inflate(inflater, container, false)
+        glideRequestManager = Glide.with(this)
         return binding.root
     }
 
@@ -58,6 +60,17 @@ class MyPageFragment : Fragment() {
         setMyProfileOptionClickListener()
     }
 
+    private fun onDestroyBindingView() {
+        mediator?.detach()
+        mediator = null
+        glideRequestManager = null
+        pagerAdapter = null
+        with(binding.pagerMyPage) {
+            unregisterOnPageChangeCallback(pageChangeCallBack)
+            adapter = null
+        }
+    }
+
     private fun setProfileDescription() {
         profileViewModel.requestMyProfile()
         profileViewModel.profileInfo.observe(viewLifecycleOwner) {
@@ -66,18 +79,24 @@ class MyPageFragment : Fragment() {
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                         val userProfileThumbnailImage = withContext(Dispatchers.IO) {
-                            loadImageBackgroundProfile(
-                                requestManager = glideRequestManager,
-                                width = 70, height = 70, imgName = profile.profileImg
-                            )
+                            glideRequestManager?.let { requestManager ->
+                                loadImageBackgroundProfile(
+                                    requestManager = requestManager,
+                                    width = 70, height = 70, imgName = profile.profileImg
+                                )
+                            }
                         }
-                        loadImageViewProfile(
-                            requestManager = glideRequestManager,
-                            width = 70,
-                            height = 70,
-                            img = userProfileThumbnailImage,
-                            imgView = binding.imgMyPageUserProfile
-                        )
+                        glideRequestManager?.let { requestManager ->
+                            if (userProfileThumbnailImage != null) {
+                                loadImageViewProfile(
+                                    requestManager = requestManager,
+                                    width = 70,
+                                    height = 70,
+                                    img = userProfileThumbnailImage,
+                                    imgView = binding.imgMyPageUserProfile
+                                )
+                            }
+                        }
                     }
                 }
 
@@ -96,30 +115,25 @@ class MyPageFragment : Fragment() {
     }
 
     private fun setViewPagerChangeEvent() {
-        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                pagerAdapter.refreshFragment(position, pagerAdapter.fragments[position])
-            }
-        })
+        binding.pagerMyPage.registerOnPageChangeCallback(pageChangeCallBack)
     }
 
     private fun setViewPager() {
-        viewPager = binding.pagerMyPage
-        tabLayout = binding.tabsMyPage
-        pagerAdapter = ProfileFragmentPagerStateAdapter(this)
-        pagerAdapter.addFragment(ProfileFolderListFragment())
-        pagerAdapter.addFragment(ProfileLikePostListFragment())
-        pagerAdapter.addFragment(ProfileBookmarkPostListFragment())
-        viewPager.adapter = pagerAdapter
+        pagerAdapter =
+            ProfileFragmentPagerStateAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+        pagerAdapter?.addFragment(ProfileFolderListFragment())
+        pagerAdapter?.addFragment(ProfileLikePostListFragment())
+        pagerAdapter?.addFragment(ProfileBookmarkPostListFragment())
+        binding.pagerMyPage.adapter = pagerAdapter
 
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+        mediator = TabLayoutMediator(binding.tabsMyPage, binding.pagerMyPage) { tab, position ->
             when (position) {
                 0 -> tab.text = "작성한 글"
                 1 -> tab.text = "좋아요"
                 2 -> tab.text = "북마크"
             }
-        }.attach()
+        }
+        mediator?.attach()
     }
 
     private fun setMyProfileOptionClickListener() {

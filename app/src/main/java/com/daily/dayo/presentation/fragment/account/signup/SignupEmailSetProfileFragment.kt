@@ -46,27 +46,31 @@ import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 
 @AndroidEntryPoint
 class SignupEmailSetProfileFragment : Fragment() {
-    private var binding by autoCleared<FragmentSignupEmailSetProfileBinding>()
+    private var binding by autoCleared<FragmentSignupEmailSetProfileBinding> {
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+        onDestroyBindingView()
+    }
     private val loginViewModel by activityViewModels<AccountViewModel>()
     private val profileSettingViewModel by viewModels<ProfileSettingViewModel>()
     private val args by navArgs<SignupEmailSetProfileFragmentArgs>()
-    private lateinit var glideRequestManager: RequestManager
+    private var glideRequestManager: RequestManager? = null
     private lateinit var userProfileImageString: String
     private var imagePath: String? = null
     private val imageFileTimeFormat = SimpleDateFormat("yyyy-MM-d-HH-mm-ss", Locale.KOREA)
     private lateinit var userProfileImageExtension: String
     private lateinit var loadingAlertDialog: AlertDialog
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        glideRequestManager = Glide.with(this)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSignupEmailSetProfileBinding.inflate(inflater, container, false)
+        glideRequestManager = Glide.with(this)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initAlertDialog()
         setBackClickListener()
         setNextClickListener()
@@ -77,20 +81,18 @@ class SignupEmailSetProfileFragment : Fragment() {
         observeNavigationMyProfileImageCallBack()
         observeKakaoSignupCallback()
         observeSignupCallback()
-        return binding.root
+        setHideKeyboard()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        view.setOnTouchListener { _, _ ->
+    private fun setHideKeyboard() {
+        requireView().setOnTouchListener { _, _ ->
             HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetProfileNickname)
             true
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    private fun onDestroyBindingView() {
+        glideRequestManager = null
     }
 
     private fun initAlertDialog() {
@@ -217,12 +219,12 @@ class SignupEmailSetProfileFragment : Fragment() {
                 userProfileImageString = it
                 if (this::userProfileImageString.isInitialized) {
                     if (userProfileImageString == "resetMyProfileImage") {
-                        glideRequestManager.load(R.drawable.ic_user_profile_image_empty)
-                            .centerCrop().into(binding.imgSignupEmailSetProfileUserImage)
+                        glideRequestManager?.load(R.drawable.ic_user_profile_image_empty)
+                            ?.centerCrop()?.into(binding.imgSignupEmailSetProfileUserImage)
                     } else {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            glideRequestManager.load(userProfileImageString.toUri()).centerCrop()
-                                .into(binding.imgSignupEmailSetProfileUserImage)
+                            glideRequestManager?.load(userProfileImageString.toUri())?.centerCrop()
+                                ?.into(binding.imgSignupEmailSetProfileUserImage)
                         }
                     }
                 }

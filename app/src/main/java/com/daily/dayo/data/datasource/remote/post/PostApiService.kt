@@ -1,5 +1,6 @@
 package com.daily.dayo.data.datasource.remote.post
 
+import com.daily.dayo.data.datasource.remote.heart.DeleteHeartResponse
 import com.daily.dayo.domain.model.Category
 import com.daily.dayo.domain.model.NetworkResponse
 import okhttp3.MultipartBody
@@ -39,7 +40,7 @@ interface PostApiService {
     suspend fun requestPostDetail(@Path("postId") postId: Int): NetworkResponse<DetailPostResponse>
 
     @POST("/api/v1/posts/delete/{postId}")
-    suspend fun requestDeletePost(@Path("postId") postId: Int): NetworkResponse<Void>
+    suspend fun requestDeletePost(@Path("postId") postId: Int): NetworkResponse<DeleteHeartResponse>
 
     @GET("/api/v1/posts/feed/list")
     suspend fun requestFeedList(@Query("end") end: Int): NetworkResponse<ListFeedResponse>

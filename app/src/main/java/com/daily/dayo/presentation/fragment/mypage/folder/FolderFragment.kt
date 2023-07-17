@@ -28,16 +28,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class FolderFragment : Fragment() {
-    private var binding by autoCleared<FragmentFolderBinding>()
+    private var binding by autoCleared<FragmentFolderBinding> { onDestroyBindingView() }
     private val folderViewModel by activityViewModels<FolderViewModel>()
     private val args by navArgs<FolderFragmentArgs>()
-    private lateinit var folderPostListAdapter: FolderPostListAdapter
-    private lateinit var glideRequestManager: RequestManager
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        glideRequestManager = Glide.with(this)
-    }
+    private var folderPostListAdapter: FolderPostListAdapter? = null
+    private var glideRequestManager: RequestManager? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,22 +40,29 @@ class FolderFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFolderBinding.inflate(inflater, container, false)
-        setBackButtonClickListener()
-        setFolderOptionClickListener()
-        setRvFolderPostListAdapter()
-        setFolderPostList()
-        setAdapterLoadStateListener()
+        glideRequestManager = Glide.with(this)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setBackButtonClickListener()
+        setFolderOptionClickListener()
+        setRvFolderPostListAdapter()
+        setFolderPostList()
+        setAdapterLoadStateListener()
         setFolderDetail()
     }
 
     override fun onResume() {
         super.onResume()
         getFolderPostList()
+    }
+
+    private fun onDestroyBindingView() {
+        glideRequestManager = null
+        folderPostListAdapter = null
+        binding.rvFolderPost.adapter = null
     }
 
     private fun setBackButtonClickListener() {
@@ -95,34 +97,43 @@ class FolderFragment : Fragment() {
                         viewLifecycleOwner.lifecycleScope.launch {
                             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                                 val folderThumbnailImage = withContext(Dispatchers.IO) {
-                                    loadImageBackground(
-                                        requestManager = glideRequestManager,
-                                        width = layoutParams.width,
-                                        height = 200,
-                                        imgName = folder.thumbnailImage
-                                    )
+                                    glideRequestManager?.let { requestManager ->
+                                        loadImageBackground(
+                                            requestManager = requestManager,
+                                            width = layoutParams.width,
+                                            height = 200,
+                                            imgName = folder.thumbnailImage
+                                        )
+                                    }
                                 }
-                                loadImageView(
-                                    requestManager = glideRequestManager,
-                                    width = layoutParams.width,
-                                    height = 200,
-                                    img = folderThumbnailImage,
-                                    imgView = binding.imgFolderThumbnail
-                                )
+                                glideRequestManager?.let { requestManager ->
+                                    if (folderThumbnailImage != null) {
+                                        loadImageView(
+                                            requestManager = requestManager,
+                                            width = layoutParams.width,
+                                            height = 200,
+                                            img = folderThumbnailImage,
+                                            imgView = binding.imgFolderThumbnail
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
                 }
+                else -> {}
             }
         }
     }
 
     private fun setRvFolderPostListAdapter() {
-        folderPostListAdapter = FolderPostListAdapter(
-            requestManager = glideRequestManager,
-            mainDispatcher = Dispatchers.Main,
-            ioDispatcher = Dispatchers.IO
-        )
+        folderPostListAdapter = glideRequestManager?.let { requestManager ->
+            FolderPostListAdapter(
+                requestManager = requestManager,
+                mainDispatcher = Dispatchers.Main,
+                ioDispatcher = Dispatchers.IO
+            )
+        }
         binding.rvFolderPost.adapter = folderPostListAdapter
     }
 
@@ -132,17 +143,15 @@ class FolderFragment : Fragment() {
 
     private fun setFolderPostList() {
         folderViewModel.folderPostList.observe(viewLifecycleOwner) {
-            folderPostListAdapter.submitData(this.lifecycle, it)
+            folderPostListAdapter?.submitData(viewLifecycleOwner.lifecycle, it)
         }
     }
 
     private fun setAdapterLoadStateListener() {
         var isInitialLoad = false
-        folderPostListAdapter.addLoadStateListener { loadState ->
+        folderPostListAdapter?.addLoadStateListener { loadState ->
             if (loadState.refresh is LoadState.NotLoading && !isInitialLoad) {
-                val isListEmpty = folderPostListAdapter.itemCount == 0
-                binding.isEmpty = isListEmpty
-                if (isListEmpty || loadState.append is LoadState.NotLoading) {
+                if (loadState.append is LoadState.NotLoading) {
                     completeLoadPost()
                     isInitialLoad = true
                 }

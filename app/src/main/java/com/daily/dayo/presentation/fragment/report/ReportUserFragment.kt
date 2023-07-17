@@ -20,7 +20,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ReportUserFragment : Fragment() {
-    private var binding by autoCleared<FragmentReportUserBinding>()
+    private var binding by autoCleared<FragmentReportUserBinding> {
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
     private val reportViewModel by activityViewModels<ReportViewModel>()
     private val args by navArgs<ReportUserFragmentArgs>()
     private lateinit var reportUserOptionMap: Map<Int, String>
@@ -41,11 +43,6 @@ class ReportUserFragment : Fragment() {
         return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
-    }
-
     private fun initReportUserOption() {
         reportUserOptionMap = mapOf(
             binding.radiobuttonReportUserReason1.id to binding.radiobuttonReportUserReason1.text.toString(),
@@ -57,7 +54,7 @@ class ReportUserFragment : Fragment() {
             binding.radiobuttonReportUserReason7.id to binding.radiobuttonReportUserReason7.text.toString()
         )
     }
-    
+
     private fun setBackButtonClickListener() {
         binding.btnReportUserBack.setOnDebounceClickListener {
             findNavController().navigateUp()

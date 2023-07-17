@@ -54,23 +54,30 @@ import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class PostFragment : Fragment() {
-    private var binding by autoCleared<FragmentPostBinding>()
+    private var binding by autoCleared<FragmentPostBinding> {
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+        keyboardVisibilityUtils.detachKeyboardListeners()
+        postViewModel.cleanUpPostDetail()
+        onDestroyBindingView()
+    }
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val postViewModel by activityViewModels<PostViewModel>()
     private val args by navArgs<PostFragmentArgs>()
     private lateinit var mAlertDialog: AlertDialog
-    private lateinit var glideRequestManager: RequestManager
-
-    private lateinit var postCommentAdapter: PostCommentAdapter
-    private lateinit var postImageSliderAdapter: PostImageSliderAdapter
-    private lateinit var indicators: Array<ImageView?>
+    private var glideRequestManager: RequestManager? = null
+    private var postCommentAdapter: PostCommentAdapter? = null
+    private var postImageSliderAdapter: PostImageSliderAdapter? = null
+    private var indicators: Array<ImageView?>? = null
     private lateinit var keyboardVisibilityUtils: KeyboardVisibilityUtils
     private lateinit var loadingAlertDialog: AlertDialog
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentPostBinding.inflate(inflater, container, false)
         glideRequestManager = Glide.with(this)
-
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         keyboardVisibilityUtils = KeyboardVisibilityUtils(requireActivity().window,
             onShowKeyboard = { keyboardHeight ->
@@ -78,14 +85,6 @@ class PostFragment : Fragment() {
                     scrollTo(0, binding.layoutScrollPost.bottom + keyboardHeight)
                 }
             })
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentPostBinding.inflate(inflater, container, false)
-        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
 
         setBackButtonClickListener()
         setCommentListAdapter()
@@ -105,11 +104,12 @@ class PostFragment : Fragment() {
         super.onStop()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
-        keyboardVisibilityUtils.detachKeyboardListeners()
-        postViewModel.cleanUpPostDetail()
+    private fun onDestroyBindingView() {
+        glideRequestManager = null
+        postImageSliderAdapter = null
+        postCommentAdapter = null
+        indicators = null
+        binding.rvPostCommentList.adapter = null
     }
 
     private fun setBackButtonClickListener() {
@@ -130,11 +130,13 @@ class PostFragment : Fragment() {
     }
 
     private fun setCommentListAdapter() {
-        postCommentAdapter = PostCommentAdapter(
-            requestManager = glideRequestManager,
-            mainDispatcher = Dispatchers.Main,
-            ioDispatcher = Dispatchers.IO
-        )
+        postCommentAdapter = glideRequestManager?.let { requestManager ->
+            PostCommentAdapter(
+                requestManager = requestManager,
+                mainDispatcher = Dispatchers.Main,
+                ioDispatcher = Dispatchers.IO
+            )
+        }
         binding.rvPostCommentList.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPostCommentList.adapter = postCommentAdapter
     }
@@ -165,30 +167,36 @@ class PostFragment : Fragment() {
                                 binding.post = post
                                 binding.categoryKR = post.category?.let { it1 -> categoryKR(it1) }
                                 binding.executePendingBindings()
-                                postImageSliderAdapter.submitList(post.postImages)
+                                postImageSliderAdapter?.submitList(post.postImages)
                                 viewLifecycleOwner.lifecycleScope.launch {
                                     viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                                         val userThumbnailImgBitmap = withContext(ioDispatcher) {
-                                            GlideLoadUtil.loadImageBackground(
-                                                requestManager = glideRequestManager,
-                                                width = 40,
-                                                height = 40,
-                                                imgName = post.userProfileImage
-                                            )
+                                            glideRequestManager?.let { requestManager ->
+                                                GlideLoadUtil.loadImageBackground(
+                                                    requestManager = requestManager,
+                                                    width = 40,
+                                                    height = 40,
+                                                    imgName = post.userProfileImage
+                                                )
+                                            }
                                         }
-                                        GlideLoadUtil.loadImageViewProfile(
-                                            requestManager = glideRequestManager,
-                                            width = 40,
-                                            height = 40,
-                                            img = userThumbnailImgBitmap,
-                                            imgView = binding.imgPostUserProfile
-                                        )
+                                        glideRequestManager?.let { requestManager ->
+                                            if (userThumbnailImgBitmap != null) {
+                                                GlideLoadUtil.loadImageViewProfile(
+                                                    requestManager = requestManager,
+                                                    width = 40,
+                                                    height = 40,
+                                                    img = userThumbnailImgBitmap,
+                                                    imgView = binding.imgPostUserProfile
+                                                )
+                                            }
+                                        }
                                     }
                                 }
 
                                 val isMine =
                                     (post.memberId == DayoApplication.preferences.getCurrentUser().memberId)
-
+                                binding.btnPostLike.isSelected = post.heart
                                 setPostLikeClickListener(isChecked = post.heart)
                                 setPostLikeDoubleTap(isChecked = post.heart)
                                 post.memberId?.let { memberId ->
@@ -217,7 +225,7 @@ class PostFragment : Fragment() {
                     when (it.status) {
                         Status.SUCCESS -> {
                             it.data?.let { postComment ->
-                                postCommentAdapter.submitList(postComment.toMutableList())
+                                postCommentAdapter?.submitList(postComment.toMutableList())
                                 binding.commentCount = postComment.size
                                 binding.commentCountStr = postComment.size.toString()
                             }
@@ -231,7 +239,7 @@ class PostFragment : Fragment() {
     }
 
     private fun setPostCommentClickListener() {
-        postCommentAdapter.setOnItemClickListener(object : PostCommentAdapter.OnItemClickListener {
+        postCommentAdapter?.setOnItemClickListener(object : PostCommentAdapter.OnItemClickListener {
             override fun onItemClick(v: View, comment: Comment, position: Int) {
                 // Item 자체를 클릭하는 경우 나타나는 Event 작성
             }
@@ -314,7 +322,6 @@ class PostFragment : Fragment() {
                     ensureAccessibleTouchTarget(42.toPx())
                     text = "# ${trimBlankText(tagList[index])}"
                     setOnDebounceClickListener {
-                        keyboardVisibilityUtils.detachKeyboardListeners() // TODO : 임시 처리, 화면을 벗어나므로 detach 처리 필요
                         Navigation.findNavController(it).navigate(
                             PostFragmentDirections.actionPostFragmentToSearchResultFragment(trimBlankText(tagList[index]))
                         )
@@ -326,11 +333,13 @@ class PostFragment : Fragment() {
     }
 
     private fun setImageSlider() {
-        postImageSliderAdapter = PostImageSliderAdapter(
-            requestManager = glideRequestManager,
-            mainDispatcher = Dispatchers.Main,
-            ioDispatcher = Dispatchers.IO
-        )
+        postImageSliderAdapter = glideRequestManager?.let { requestManager ->
+            PostImageSliderAdapter(
+                requestManager = requestManager,
+                mainDispatcher = Dispatchers.Main,
+                ioDispatcher = Dispatchers.IO
+            )
+        }
         with(binding.vpPostImage) {
             adapter = postImageSliderAdapter
             setPageTransformer { page, position ->
@@ -353,19 +362,22 @@ class PostFragment : Fragment() {
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
         params.setMargins(16, 8, 16, 8)
-        for (i in indicators.indices) {
-            indicators[i] = ImageView(requireContext())
-            indicators[i]!!.setImageDrawable(
-                ContextCompat.getDrawable(requireContext(), R.drawable.ic_indicator_inactive)
-            )
-            indicators[i]!!.layoutParams = params
-            binding.viewPostImageIndicators.addView(indicators[i])
-        }
 
-        // TODO: addView로 인하여 Indicator가 비정상적으로 많아지는 현상 임시 해결
-        if (indicators.size < binding.viewPostImageIndicators.childCount) {
-            for (i in binding.viewPostImageIndicators.childCount - 1 downTo (indicators.size)) {
-                binding.viewPostImageIndicators.removeViewAt(i)
+        indicators?.let { indicators ->
+            for (i in indicators.indices) {
+                indicators[i] = ImageView(requireContext())
+                indicators[i]!!.setImageDrawable(
+                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_indicator_inactive)
+                )
+                indicators[i]!!.layoutParams = params
+                binding.viewPostImageIndicators.addView(indicators[i])
+            }
+
+            // TODO: addView로 인하여 Indicator가 비정상적으로 많아지는 현상 임시 해결
+            if (indicators.size < binding.viewPostImageIndicators.childCount) {
+                for (i in binding.viewPostImageIndicators.childCount - 1 downTo (indicators.size)) {
+                    binding.viewPostImageIndicators.removeViewAt(i)
+                }
             }
         }
         setCurrentIndicator(0)
@@ -396,7 +408,7 @@ class PostFragment : Fragment() {
     }
 
     private fun setPostLikeDoubleTap(isChecked: Boolean) {
-        postImageSliderAdapter.setOnItemClickListener(object :
+        postImageSliderAdapter?.setOnItemClickListener(object :
             PostImageSliderAdapter.OnItemClickListener {
             override fun postImageDoubleTap(lottieAnimationView: LottieAnimationView) {
                 setPostLike(isChecked, lottieAnimationView)
@@ -405,27 +417,17 @@ class PostFragment : Fragment() {
     }
 
     private fun setPostLike(isChecked: Boolean, lottieAnimationView: LottieAnimationView? = null) {
-        var requestLike: Job? = null
         if (!isChecked) {
-            requestLike = postViewModel.requestLikePost(postId = args.postId)
+            binding.btnPostLike.isSelected = true
+            postViewModel.requestLikePost(postId = args.postId)
             if (lottieAnimationView != null) {
                 lottieAnimationView.visibility = View.VISIBLE
                 lottieAnimationView.playAnimation()
-            } else {
             }
         } else {
-            if (lottieAnimationView == null)
-                requestLike = postViewModel.requestUnlikePost(postId = args.postId)
-            else {
-            }
-        }.let {
-            requestLike?.invokeOnCompletion { throwable ->
-                when (throwable) {
-                    is CancellationException -> Log.e("Post Like Click", "CANCELLED")
-                    null -> {
-                        postViewModel.requestPostDetail(postId = args.postId)
-                    }
-                }
+            if (lottieAnimationView == null) {
+                binding.btnPostLike.isSelected = false
+                postViewModel.requestUnlikePost(postId = args.postId)
             }
         }
     }
@@ -455,20 +457,26 @@ class PostFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 val userThumbnailImgBitmap = withContext(ioDispatcher) {
-                    GlideLoadUtil.loadImageBackground(
-                        requestManager = glideRequestManager,
-                        width = 40,
-                        height = 40,
-                        imgName = DayoApplication.preferences.getCurrentUser().profileImg ?: ""
-                    )
+                    glideRequestManager?.let { requestManager ->
+                        GlideLoadUtil.loadImageBackground(
+                            requestManager = requestManager,
+                            width = 40,
+                            height = 40,
+                            imgName = DayoApplication.preferences.getCurrentUser().profileImg ?: ""
+                        )
+                    }
                 }
-                GlideLoadUtil.loadImageViewProfile(
-                    requestManager = glideRequestManager,
-                    width = 40,
-                    height = 40,
-                    img = userThumbnailImgBitmap,
-                    imgView = binding.imgPostCommentMyProfile
-                )
+                glideRequestManager?.let { requestManager ->
+                    if (userThumbnailImgBitmap != null) {
+                        GlideLoadUtil.loadImageViewProfile(
+                            requestManager = requestManager,
+                            width = 40,
+                            height = 40,
+                            img = userThumbnailImgBitmap,
+                            imgView = binding.imgPostCommentMyProfile
+                        )
+                    }
+                }
             }
         }
 
@@ -499,14 +507,16 @@ class PostFragment : Fragment() {
         // TODO : Handler 수정 필요
         Handler().postDelayed(
             {
-                with(binding.rvPostCommentList.adapter as PostCommentAdapter) {
-                    postViewModel.requestPostComment(args.postId)
-                    submitList(
-                        postViewModel.postComment.value?.data?.subList(
-                            0,
-                            postCommentAdapter.itemCount
-                        )?.toMutableList()
-                    )
+                binding.rvPostCommentList.adapter?.let {
+                    with (it as PostCommentAdapter) {
+                        postViewModel.requestPostComment(args.postId)
+                        submitList(
+                            postViewModel.postComment.value?.data?.subList(
+                                0,
+                                it.itemCount
+                            )?.toMutableList()
+                        )
+                    }
                 }
             }, 60
         )

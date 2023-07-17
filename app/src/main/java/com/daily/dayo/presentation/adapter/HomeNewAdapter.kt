@@ -39,7 +39,6 @@ import kotlinx.coroutines.withContext
 class HomeNewAdapter(
     val rankingShowing: Boolean,
     private val requestManager: RequestManager,
-    private val likeListener: (Int, Boolean) -> Unit,
     @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ListAdapter<Post, HomeNewAdapter.HomeNewViewHolder>(diffCallback) {
@@ -58,13 +57,13 @@ class HomeNewAdapter(
                 }
 
             override fun getChangePayload(oldItem: Post, newItem: Post): Any? {
-                return if (oldItem.heart != newItem.heart && oldItem.heartCount != newItem.heartCount) true else null
+                return if (oldItem.heart != newItem.heart || oldItem.heartCount != newItem.heartCount) true else null
             }
         }
     }
 
     interface OnItemClickListener {
-        fun likePostClick(btn: ImageButton, post: Post, position: Int)
+        fun likePostClick(post: Post)
     }
 
     private var clickListener: OnItemClickListener? = null
@@ -78,7 +77,7 @@ class HomeNewAdapter(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            ), likeListener
+            )
         )
     }
 
@@ -91,7 +90,7 @@ class HomeNewAdapter(
             this.onBindViewHolder(holder, position)
         } else {
             if (payloads[0] == true) {
-                holder.bindLikeState(getItem(position).heart)
+                holder.bindLikeState(getItem(position))
             }
         }
     }
@@ -125,16 +124,9 @@ class HomeNewAdapter(
     }
 
     inner class HomeNewViewHolder(
-        private val binding: ItemMainPostBinding,
-        private val likeListener: (Int, Boolean) -> Unit
+        private val binding: ItemMainPostBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         lateinit var postContent: Post
-
-        init {
-            binding.lottieMainPostLike.setOnDebounceClickListener(300L) {
-                likeListener(postContent.postId ?: 0, (it as LottieAnimationView).progress == 0F)
-            }
-        }
 
         fun bind(postContent: Post, currentPosition: Int) {
             this.postContent = postContent
@@ -148,6 +140,9 @@ class HomeNewAdapter(
             )
             postContent.postId?.let { setRootClickListener(it, postContent.nickname) }
             postContent.memberId?.let { setNicknameClickListener(it) }
+            binding.lottieMainPostLike.setOnDebounceClickListener(300L) {
+                clickListener?.likePostClick(post = postContent)
+            }
         }
 
         private fun setBindingSetVariable(post: Post) {
@@ -157,13 +152,17 @@ class HomeNewAdapter(
             }
         }
 
-        fun bindLikeState(isLiked: Boolean) {
-            setLottieClickListener(isLiked)
-            setHeartCount(isLiked)
+        fun bindLikeState(post: Post) {
+            setLottieClickListener(post)
+            setHeartCount(post)
         }
 
-        private fun setLottieClickListener(isLiked: Boolean) {
+        private fun setLottieClickListener(post: Post) {
             with(binding.lottieMainPostLike) {
+                setOnDebounceClickListener(300L) {
+                    clickListener?.likePostClick(post = post)
+                }
+
                 this.removeAllAnimatorListeners()
                 this.addAnimatorListener(object : Animator.AnimatorListener {
                     override fun onAnimationStart(animation: Animator?) {
@@ -172,10 +171,7 @@ class HomeNewAdapter(
 
                     override fun onAnimationEnd(animation: Animator?) {
                         this@with.setOnDebounceClickListener(0L) {
-                            likeListener(
-                                postContent.postId ?: 0,
-                                (it as LottieAnimationView).progress == 0F
-                            )
+                            clickListener?.likePostClick(post = post)
                         }
                     }
 
@@ -183,23 +179,14 @@ class HomeNewAdapter(
                     override fun onAnimationRepeat(animation: Animator?) {}
                 })
 
-                if (isLiked) this.playAnimation()
+                if (post.heart) this.playAnimation()
                 else this.progress = 0F
             }
         }
 
-        private fun setHeartCount(isLiked: Boolean) {
-            with(binding) {
-                post?.let {
-                    if (isLiked) {
-                        it.heartCount = it.heartCount + 1
-                    } else {
-                        if (it.heartCount <= 0) it.heartCount = 0
-                        else it.heartCount = it.heartCount - 1
-                    }
-                    setBindingSetVariable(it)
-                }
-            }
+        private fun setHeartCount(post: Post) {
+            binding.post = post
+            setBindingSetVariable(post)
         }
 
         private fun setRootClickListener(postId: Int, nickname: String) {

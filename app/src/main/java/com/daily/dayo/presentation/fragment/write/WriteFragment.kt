@@ -1,26 +1,19 @@
 package com.daily.dayo.presentation.fragment.write
 
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.annotation.RequiresApi
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -29,34 +22,30 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
-import com.daily.dayo.BuildConfig
 import com.daily.dayo.R
 import com.daily.dayo.common.*
-import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
-import com.daily.dayo.common.ImageResizeUtil.resizeBitmap
+import com.daily.dayo.common.ReplaceUnicode.trimBlankText
+import com.daily.dayo.common.extension.navigateSafe
 import com.daily.dayo.databinding.FragmentWriteBinding
 import com.daily.dayo.domain.model.Category
 import com.daily.dayo.presentation.adapter.WriteUploadImageListAdapter
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import java.io.ByteArrayOutputStream
-import java.util.*
 
 @AndroidEntryPoint
 class WriteFragment : Fragment() {
-    private var binding by autoCleared<FragmentWriteBinding>()
+    private var binding by autoCleared<FragmentWriteBinding> { onDestroyBindingView() }
     private val writeViewModel by activityViewModels<WriteViewModel>()
     private val args by navArgs<WriteFragmentArgs>()
-    private var postImageBitmapToStringList = ArrayList<String>() // Bitmap을 String으로 변환
-    private lateinit var uploadImageListAdapter: WriteUploadImageListAdapter
-    private lateinit var glideRequestManager: RequestManager
+    private var uploadImageListAdapter: WriteUploadImageListAdapter? = null
+    private var glideRequestManager: RequestManager? = null
 
-    private var isCategorySelected: Boolean = false
-    private var isImageUploaded: Boolean = false
-    private var isLoadedEditPost: Boolean = false
+    private var isCategorySelected = MutableStateFlow(false)
+    private var isImageUploaded = MutableStateFlow(false)
+    private var isLoadedEditPost: MutableLiveData<Boolean> = MutableLiveData(false)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,53 +53,68 @@ class WriteFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentWriteBinding.inflate(inflater, container, false)
-        initWritingContents()
-
-        setPostImageListAdapter()
-        setBackButtonClickListener()
-        setEditTextCountLimit()
-        setImageUploadButtonClickListener()
-        setImageDeleteClickListener()
-        setCategoryClickListener()
-        setUploadButtonActivation()
-        observeUploadStateCallBack()
-        showOptionDialog()
+        glideRequestManager = Glide.with(this)
         return binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        glideRequestManager = Glide.with(this)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setKeyboardMode()
+        setBackButtonClickListener()
+        setPostImagesAdapter()
+        initWritingContents()
+        observeUploadImages()
+        observeEditTextCountLimit()
+        setImageModifyListener()
+        setCategoryClickListener()
+        setUploadButtonClickListener()
+        observeUploadStateCallBack()
+        showOptionDialog()
+    }
+
+    private fun onDestroyBindingView() {
+        glideRequestManager = null
+        uploadImageListAdapter = null
+        binding.rvImgUploadList.adapter = null
+    }
+
+    private fun setKeyboardMode() {
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-        val onBackPressedCallback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                writeViewModel.setInitWriteInfoValue()
-                findNavController().navigateUp()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
     private fun setBackButtonClickListener() {
+        val onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                writeViewModel.resetWriteInfoValue()
+                findNavController().navigateUp()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            onBackPressedCallback
+        )
+
         binding.btnWritePostBack.setOnDebounceClickListener {
-            writeViewModel.setInitWriteInfoValue()
+            writeViewModel.resetWriteInfoValue()
             findNavController().navigateUp()
         }
     }
 
     private fun showOptionDialog() {
-        writeViewModel.showWriteOptionDialog.observe(viewLifecycleOwner, Observer {
+        writeViewModel.showWriteOptionDialog.observe(viewLifecycleOwner) {
             if (it.getContentIfNotHandled() == true) {
                 writeViewModel.showWriteOptionDialog.value = Event(false)
-                findNavController().navigate(WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment())
+                findNavController().navigateSafe(
+                    currentDestinationId = R.id.WriteFragment,
+                    action = R.id.action_writeFragment_to_writeOptionFragment
+                )
             }
-        })
+        }
     }
 
-    private fun setEditTextCountLimit() {
-        val lengthFilter = InputFilter.LengthFilter(200)
+    private fun observeEditTextCountLimit() {
         with(binding.etWriteDetail) {
-            filters = arrayOf(lengthFilter)
+            filters = arrayOf(InputFilter.LengthFilter(200))
             addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,
@@ -129,8 +133,6 @@ class WriteFragment : Fragment() {
                             R.string.write_post_upload_alert_message_edittext_length_fail_max,
                             Toast.LENGTH_SHORT
                         ).show()
-                    } else {
-                        setUploadButtonActivation()
                     }
                 }
             })
@@ -138,84 +140,38 @@ class WriteFragment : Fragment() {
     }
 
     private fun initWritingContents() {
-        // TODO : 이미지 추가 버튼 GONE처리가 풀리는 현상 임시 해결
-        if (args.postId != 0) {
-            binding.btnUploadImage.visibility = View.GONE
-        }
-        // 기존 글 수정하는 경우
-        if (args.postId != 0 && !isLoadedEditPost) {
-            isLoadedEditPost = true
-            binding.btnUploadImage.visibility = View.GONE // 새로운 이미지 추가 불가능 처리
-            writeViewModel.requestPostDetail(args.postId).invokeOnCompletion { throwable ->
-                when (throwable) {
-                    is CancellationException -> Log.e("Getting Post", "CANCELLED")
-                    null -> {
-                        writeViewModel.getCurrentPostSuccess.observe(
-                            viewLifecycleOwner,
-                            Observer { isSuccess ->
-                                if (isSuccess.getContentIfNotHandled() == true) {
-                                    isCategorySelected = true
-                                    isImageUploaded = true
-
-                                    writeViewModel.writeCurrentPostDetail.value?.getContentIfNotHandled()
-                                        ?.let { postDetail ->
-                                            when (postDetail.category) {
-                                                Category.SCHEDULER -> binding.radiobuttonWritePostCategoryScheduler.isChecked =
-                                                    true
-                                                Category.STUDY_PLANNER -> binding.radiobuttonWritePostCategoryStudyplanner.isChecked =
-                                                    true
-                                                Category.GOOD_NOTE -> binding.radiobuttonWritePostCategoryGoodnote.isChecked =
-                                                    true
-                                                Category.POCKET_BOOK -> binding.radiobuttonWritePostCategoryPocketbook.isChecked =
-                                                    true
-                                                Category.SIX_DIARY -> binding.radiobuttonWritePostCategorySixHoleDiary.isChecked =
-                                                    true
-                                                Category.ETC -> binding.radiobuttonWritePostCategoryEtc.isChecked =
-                                                    true
-                                            }
-
-                                            binding.etWriteDetail.setText(postDetail.contents)
-
-                                            for (element in postDetail.postImages!!) {
-                                                writeViewModel.postImageUriList.add(
-                                                    Uri.parse("${BuildConfig.BASE_URL}/images/$element")
-                                                        .toString()
-                                                )
-                                                lateinit var imageBitmap: Bitmap
-                                                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-                                                    viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                                                        val uploadImage = loadImageBackground(
-                                                            requestManager = glideRequestManager,
-                                                            width = 480,
-                                                            height = 480,
-                                                            imgName = element
-                                                        )
-                                                        imageBitmap = resizeBitmap(uploadImage)
-                                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                                            postImageBitmapToStringList.add(
-                                                                imageBitmap.toBase64String()
-                                                            )
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            uploadImageListAdapter.notifyDataSetChanged()
-
-                                            postDetail.hashtags?.let {
-                                                writeViewModel.postTagList.addAll(
-                                                    it
-                                                )
-                                            }
-                                            writeViewModel.postFolderId.value =
-                                                postDetail.folderId.toString()
-                                            writeViewModel.postFolderName.value =
-                                                postDetail.folderName
-                                        }
-                                }
-                            })
-                    }
+        if (args.postId != 0 && isLoadedEditPost.value == false) {
+            isLoadedEditPost.value = true
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    isCategorySelected.emit(true)
+                    isImageUploaded.emit(true)
                 }
             }
+            writeViewModel.requestPostDetail(args.postId)
+            setOriginalContents()
+        }
+    }
+
+    private fun setOriginalContents() {
+        // 기존 글 수정하는 경우
+        writeViewModel.writeCurrentPostDetail.observe(viewLifecycleOwner) { postDetail ->
+            when (postDetail.category) {
+                Category.SCHEDULER -> binding.radiobuttonWritePostCategoryScheduler.isChecked =
+                    true
+                Category.STUDY_PLANNER -> binding.radiobuttonWritePostCategoryStudyplanner.isChecked =
+                    true
+                Category.GOOD_NOTE -> binding.radiobuttonWritePostCategoryGoodnote.isChecked =
+                    true
+                Category.POCKET_BOOK -> binding.radiobuttonWritePostCategoryPocketbook.isChecked =
+                    true
+                Category.SIX_DIARY -> binding.radiobuttonWritePostCategorySixHoleDiary.isChecked =
+                    true
+                Category.ETC -> binding.radiobuttonWritePostCategoryEtc.isChecked =
+                    true
+                else -> {}
+            }
+            binding.etWriteDetail.setText(postDetail.contents)
         }
     }
 
@@ -223,15 +179,18 @@ class WriteFragment : Fragment() {
         binding.radiogroupWritePostCategory.setOnCheckedChangeListener(object :
             RadioGridGroup.OnCheckedChangeListener {
             override fun onCheckedChanged(group: RadioGridGroup?, checkedId: Int) {
-                isCategorySelected = true
-                setUploadButtonActivation()
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        isCategorySelected.emit(true)
+                    }
+                }
                 setCheckedCategoryName(checkedId)
             }
         })
     }
 
-    private fun setCheckedCategoryName(checkedId : Int) {
-        writeViewModel.postCategory.value =
+    private fun setCheckedCategoryName(checkedId: Int) {
+        writeViewModel.setPostCategory(
             when (checkedId) {
                 R.id.radiobutton_write_post_category_scheduler -> Category.SCHEDULER
                 R.id.radiobutton_write_post_category_studyplanner -> Category.STUDY_PLANNER
@@ -241,91 +200,93 @@ class WriteFragment : Fragment() {
                 R.id.radiobutton_write_post_category_etc -> Category.ETC
                 else -> null
             }
+        )
     }
 
-    private fun setImageUploadButtonClickListener() {
-        val btnUploadImage = binding.btnUploadImage
-        btnUploadImage.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_writeFragment_to_writeImageOptionFragment)
+    private fun setPostImagesAdapter() {
+        uploadImageListAdapter = glideRequestManager?.let { requestManager ->
+            WriteUploadImageListAdapter(
+                requestManager = requestManager, postId = args.postId
+            )
         }
-    }
-
-    private fun setPostImageListAdapter() {
-        writeViewModel.postImageUriList.observe(viewLifecycleOwner) {
-            uploadImageListAdapter =
-                WriteUploadImageListAdapter(it, requestManager = glideRequestManager, args.postId)
-            val rvUploadImageList = binding.rvImgUploadList
-            val layoutManager =
+        with(binding.rvImgUploadList) {
+            layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-            rvUploadImageList.layoutManager = layoutManager
-            rvUploadImageList.adapter = uploadImageListAdapter
-            // 새로 작성하는 글
-            if (args.postId == 0) {
-                postImageBitmapToStringList.clear()
-                for (element in it) {
-                    var imageBitmap = element.toBitmap()
-                    imageBitmap = resizeBitmap(imageBitmap)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        postImageBitmapToStringList.add(imageBitmap.toBase64String())
-                    }
-                    if (postImageBitmapToStringList.size >= 5) {
-                        binding.btnUploadImage.visibility = View.GONE
-                        break
-                    }
-                    if (postImageBitmapToStringList.size != 0) {
-                        isImageUploaded = true
-                        setUploadButtonActivation()
-                    }
-                }
-            }
+            adapter = uploadImageListAdapter
         }
     }
 
-    private fun setImageDeleteClickListener() {
+    private fun observeUploadImages() {
         writeViewModel.postImageUriList.observe(viewLifecycleOwner) {
-            uploadImageListAdapter.setOnItemClickListener(object :
-                WriteUploadImageListAdapter.OnItemClickListener {
-                override fun deleteUploadImageClick(pos: Int) {
-                    it.removeAt(pos)
-                    postImageBitmapToStringList.removeAt(pos)
-                    uploadImageListAdapter.notifyDataSetChanged()
-                    binding.btnUploadImage.visibility = View.VISIBLE
-                    if (it.isNullOrEmpty()) {
-                        isImageUploaded = false
-                        setUploadButtonActivation()
-                    }
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    isImageUploaded.emit(!it.isNullOrEmpty())
                 }
-            })
+            }
+            uploadImageListAdapter?.submitList(
+                if (args.postId != 0 || it.size >= 5) it
+                else mutableListOf("") + it
+            )
         }
     }
 
-    private fun setUploadButtonActivation() {
-        if (!isCategorySelected) {
-            binding.btnWritePostUpload.isSelected = false
-            binding.btnWritePostUpload.setOnDebounceClickListener {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.write_post_upload_alert_message_empty_category,
-                    Toast.LENGTH_SHORT
-                ).show()
+    private fun setImageModifyListener() {
+        if (args.postId == 0) {
+            writeViewModel.postImageUriList.observe(viewLifecycleOwner) {
+                uploadImageListAdapter?.setOnItemClickListener(object :
+                    WriteUploadImageListAdapter.OnItemClickListener {
+                    override fun deleteUploadImageClick(pos: Int) {
+                        writeViewModel.deleteUploadImage(if (it.size >= 5) pos else pos - 1)
+                    }
+
+                    override fun addUploadImageClick(pos: Int) {
+                        findNavController().navigateSafe(
+                            currentDestinationId = R.id.WriteFragment,
+                            action = R.id.action_writeFragment_to_writeImageOptionFragment
+                        )
+                    }
+                })
             }
-        } else if (!isImageUploaded) {
-            binding.btnWritePostUpload.isSelected = false
-            binding.btnWritePostUpload.setOnDebounceClickListener {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.write_post_upload_alert_message_empty_image,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        } else {
-            binding.btnWritePostUpload.isSelected = true
-            binding.btnWritePostUpload.setOnDebounceClickListener {
-                writeViewModel.postId.value = args.postId
-                writeViewModel.postContents.value =
-                    ReplaceUnicode.trimBlankText(binding.etWriteDetail.text.toString())
-                        .ifEmpty { "" }
-                findNavController().navigate(WriteFragmentDirections.actionWriteFragmentToWriteOptionFragment())
+        }
+    }
+
+    private fun setUploadButtonClickListener() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                isCategorySelected.combine(isImageUploaded) { categorySelected, imageSelected ->
+                    if (!categorySelected) {
+                        R.string.write_post_upload_alert_message_empty_category
+                    } else if (!imageSelected) {
+                        R.string.write_post_upload_alert_message_empty_image
+                    } else {
+                        null
+                    }
+                }.collect { toastMessage ->
+                    with(binding.btnWritePostUpload) {
+                        isSelected = (toastMessage == null)
+                        setOnDebounceClickListener {
+                            if (toastMessage != null) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    toastMessage,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                with(writeViewModel) {
+                                    setPostId(args.postId)
+                                    setPostContents(
+                                        trimBlankText(binding.etWriteDetail.text.toString()).ifEmpty { "" }
+                                    )
+                                }
+
+                                findNavController().navigateSafe(
+                                    currentDestinationId = R.id.WriteFragment,
+                                    action = R.id.action_writeFragment_to_writeOptionFragment
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -334,9 +295,10 @@ class WriteFragment : Fragment() {
         writeViewModel.writeSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
             if (isSuccess.getContentIfNotHandled() == true) {
                 writeViewModel.writePostId.value?.getContentIfNotHandled()?.let { writePostId ->
-                    findNavController().navigate(
-                        WriteFragmentDirections.actionWriteFragmentToPostFragment
-                            (writePostId)
+                    findNavController().navigateSafe(
+                        currentDestinationId = R.id.WriteFragment,
+                        action = R.id.action_writeFragment_to_postFragment,
+                        args = WriteFragmentDirections.actionWriteFragmentToPostFragment(writePostId).arguments
                     )
                 }
             } else if (isSuccess.getContentIfNotHandled() == false) {
@@ -350,9 +312,10 @@ class WriteFragment : Fragment() {
         writeViewModel.writeEditSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
             if (isSuccess.getContentIfNotHandled() == true) {
                 writeViewModel.writePostId.value?.getContentIfNotHandled()?.let { writePostId ->
-                    findNavController().navigate(
-                        WriteFragmentDirections.actionWriteFragmentToPostFragment
-                            (writePostId)
+                    findNavController().navigateSafe(
+                        currentDestinationId = R.id.WriteFragment,
+                        action = R.id.action_writeFragment_to_postFragment,
+                        args = WriteFragmentDirections.actionWriteFragmentToPostFragment(writePostId).arguments
                     )
                 }
             } else if (isSuccess.getContentIfNotHandled() == false) {
@@ -363,26 +326,5 @@ class WriteFragment : Fragment() {
                 ).show()
             }
         })
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun Bitmap.toBase64String(): String {
-        ByteArrayOutputStream().apply {
-            compress(Bitmap.CompressFormat.JPEG, 100, this)
-            return Base64.getEncoder().encodeToString(toByteArray())
-        }
-    }
-
-    fun String.toBitmap(): Bitmap {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            ImageDecoder.decodeBitmap(
-                ImageDecoder.createSource(
-                    requireContext().contentResolver,
-                    this.toUri()
-                )
-            )
-        } else {
-            MediaStore.Images.Media.getBitmap(requireContext().contentResolver, this.toUri())
-        }
     }
 }

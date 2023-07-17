@@ -20,6 +20,7 @@ import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.dp
+import com.daily.dayo.common.extension.navigateSafe
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentWriteOptionBinding
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
@@ -34,7 +35,9 @@ import java.util.*
 
 @AndroidEntryPoint
 class WriteOptionFragment : BottomSheetDialogFragment() {
-    private var binding by autoCleared<FragmentWriteOptionBinding>()
+    private var binding by autoCleared<FragmentWriteOptionBinding> {
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
     private val writeViewModel by activityViewModels<WriteViewModel>()
     private val postImageFileList = ArrayList<File>()
     private val imageFileTimeFormat = SimpleDateFormat("yyyy-MM-d-HH-mm-ss-SSS", Locale.KOREA)
@@ -52,11 +55,6 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
         setOptionFolderClickListener()
         setFolderDescription()
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -84,19 +82,12 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
                 }
                 writeViewModel.postId.value != 0 -> { // 기존 게시글을 수정하는 경우
                     LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
-                    writeViewModel.requestEditPost(
-                        writeViewModel.postId.value!!,
-                        writeViewModel.postCategory.value!!,
-                        writeViewModel.postContents.value!!,
-                        writeViewModel.postFolderId.value!!.toInt(),
-                        writeViewModel.postTagList.value!!.toTypedArray()
-                    )
+                    writeViewModel.requestEditPost()
                     Toast.makeText(
                         requireContext(),
                         R.string.write_post_upload_alert_message_loading,
                         Toast.LENGTH_SHORT
                     ).show()
-                    writeViewModel.setInitWriteInfoValue()
                     findNavController().navigateUp()
                 }
                 else -> { // 새로 글을 작성하는 경우
@@ -104,19 +95,12 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         setUploadImageFileList()
                     }
-                    writeViewModel.requestUploadPost(
-                        writeViewModel.postCategory.value!!,
-                        writeViewModel.postContents.value!!,
-                        postImageFileList.toTypedArray(),
-                        writeViewModel.postFolderId.value!!.toInt(),
-                        writeViewModel.postTagList.value!!.toTypedArray()
-                    )
+                    writeViewModel.requestUploadPost(postImageFileList.toTypedArray())
                     Toast.makeText(
                         requireContext(),
                         R.string.write_post_upload_alert_message_loading,
                         Toast.LENGTH_SHORT
                     ).show()
-                    writeViewModel.setInitWriteInfoValue()
                     findNavController().navigateUp()
                 }
             }
@@ -173,7 +157,10 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
 
     private fun setOptionFolderClickListener() {
         binding.layoutWriteOptionFolder.setOnDebounceClickListener {
-            findNavController().navigate(WriteOptionFragmentDirections.actionWriteOptionFragmentToWriteFolderFragment())
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.WriteOptionFragment,
+                action = R.id.action_writeOptionFragment_to_writeFolderFragment
+            )
         }
     }
 

@@ -27,25 +27,28 @@ import com.daily.dayo.domain.model.Folder
 import com.daily.dayo.presentation.adapter.ProfileFolderListAdapter
 import com.daily.dayo.presentation.adapter.ProfileFragmentPagerStateAdapter
 import com.daily.dayo.presentation.viewmodel.ProfileViewModel
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ProfileFragment : Fragment() {
-    private var binding by autoCleared<FragmentProfileBinding>()
+    private var binding by autoCleared<FragmentProfileBinding> {
+        onDestroyBindingView()
+    }
     private val profileViewModel by activityViewModels<ProfileViewModel>()
     private val args by navArgs<ProfileFragmentArgs>()
-    private lateinit var profileFolderListAdapter: ProfileFolderListAdapter
-    private lateinit var glideRequestManager: RequestManager
-    private lateinit var pagerAdapter: ProfileFragmentPagerStateAdapter
-    private lateinit var viewPager: ViewPager2
-    private lateinit var tabLayout: TabLayout
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        glideRequestManager = Glide.with(this)
+    private var profileFolderListAdapter: ProfileFolderListAdapter?= null
+    private var glideRequestManager: RequestManager?= null
+    private var pagerAdapter: ProfileFragmentPagerStateAdapter?= null
+    private var mediator: TabLayoutMediator? = null
+    private val pageChangeCallBack = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            super.onPageSelected(position)
+            pagerAdapter?.let {
+                it.refreshFragment(position, it.fragments[position])
+            }
+        }
     }
 
     override fun onCreateView(
@@ -54,12 +57,25 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
+        glideRequestManager = Glide.with(this)
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
         setProfile()
+    }
+
+    private fun onDestroyBindingView() {
+        mediator?.detach()
+        mediator = null
+        profileFolderListAdapter = null
+        glideRequestManager = null
+        pagerAdapter = null
+        with (binding.pagerProfile) {
+            unregisterOnPageChangeCallback(pageChangeCallBack)
+            adapter = null
+        }
     }
 
     private fun setProfile() {
@@ -107,18 +123,24 @@ class ProfileFragment : Fragment() {
                 binding.profile = profile
                 viewLifecycleOwner.lifecycleScope.launch {
                     val userProfileThumbnailImage = withContext(Dispatchers.IO) {
-                        loadImageBackgroundProfile(
-                            requestManager = glideRequestManager,
-                            width = 70, height = 70, imgName = profile.profileImg
-                        )
+                        glideRequestManager?.let { requestManager ->
+                            loadImageBackgroundProfile(
+                                requestManager = requestManager,
+                                width = 70, height = 70, imgName = profile.profileImg
+                            )
+                        }
                     }
-                    loadImageViewProfile(
-                        requestManager = glideRequestManager,
-                        width = 70,
-                        height = 70,
-                        img = userProfileThumbnailImage,
-                        imgView = binding.imgProfileUserProfile
-                    )
+                    glideRequestManager?.let { requestManager ->
+                        if (userProfileThumbnailImage != null) {
+                            loadImageViewProfile(
+                                requestManager = requestManager,
+                                width = 70,
+                                height = 70,
+                                img = userProfileThumbnailImage,
+                                imgView = binding.imgProfileUserProfile
+                            )
+                        }
+                    }
                 }
 
                 setFollowButtonClickListener()
@@ -137,12 +159,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setViewPagerChangeEvent() {
-        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                pagerAdapter.refreshFragment(position, pagerAdapter.fragments[position])
-            }
-        })
+        binding.pagerProfile.registerOnPageChangeCallback(pageChangeCallBack)
     }
 
     private fun setBackButtonClickListener() {
@@ -152,21 +169,20 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setViewPager() {
-        viewPager = binding.pagerProfile
-        tabLayout = binding.tabsProfile
-        pagerAdapter = ProfileFragmentPagerStateAdapter(this)
-        pagerAdapter.addFragment(ProfileFolderListFragment())
-        pagerAdapter.addFragment(ProfileLikePostListFragment())
-        pagerAdapter.addFragment(ProfileBookmarkPostListFragment())
-        viewPager.adapter = pagerAdapter
+        pagerAdapter = ProfileFragmentPagerStateAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+        pagerAdapter?.addFragment(ProfileFolderListFragment())
+        pagerAdapter?.addFragment(ProfileLikePostListFragment())
+        pagerAdapter?.addFragment(ProfileBookmarkPostListFragment())
+        binding.pagerProfile.adapter = pagerAdapter
 
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+        mediator = TabLayoutMediator(binding.tabsProfile, binding.pagerProfile) { tab, position ->
             when (position) {
                 0 -> tab.text = "작성한 글"
                 1 -> tab.text = "좋아요"
                 2 -> tab.text = "북마크"
             }
-        }.attach()
+        }
+        mediator?.attach()
     }
 
     private fun setFollowButtonClickListener() {
@@ -174,6 +190,7 @@ class ProfileFragment : Fragment() {
             when (profileViewModel.profileInfo.value?.follow) {
                 false -> setFollow()
                 true -> setUnfollow()
+                else -> {}
             }
         }
     }
@@ -205,13 +222,15 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setRvProfileFolderListAdapter() {
-        profileFolderListAdapter = ProfileFolderListAdapter(
-            requestManager = glideRequestManager,
-            mainDispatcher = Dispatchers.Main,
-            ioDispatcher = Dispatchers.IO
-        )
+        profileFolderListAdapter = glideRequestManager?.let {
+            ProfileFolderListAdapter(
+                requestManager = it,
+                mainDispatcher = Dispatchers.Main,
+                ioDispatcher = Dispatchers.IO
+            )
+        }
         binding.rvProfileFolder.adapter = profileFolderListAdapter
-        profileFolderListAdapter.setOnItemClickListener(object :
+        profileFolderListAdapter?.setOnItemClickListener(object :
             ProfileFolderListAdapter.OnItemClickListener {
             override fun onItemClick(v: View, folder: Folder, pos: Int) {
                 findNavController().navigate(
@@ -233,9 +252,10 @@ class ProfileFragment : Fragment() {
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { folderList ->
-                            profileFolderListAdapter.submitList(folderList)
+                            profileFolderListAdapter?.submitList(folderList)
                         }
                     }
+                    else -> {}
                 }
             }
         }

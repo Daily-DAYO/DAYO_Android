@@ -28,7 +28,10 @@ import java.util.regex.Pattern
 
 @AndroidEntryPoint
 class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
-    private var binding by autoCleared<FragmentSignupEmailSetEmailAddressCertificateBinding>()
+    private var binding by autoCleared<FragmentSignupEmailSetEmailAddressCertificateBinding> {
+        currentCountDownTimer?.cancel()
+        currentCountDownTimer = null
+    }
     private val loginViewModel by activityViewModels<AccountViewModel>()
     private val args by navArgs<SignupEmailSetEmailAddressCertificateFragmentArgs>()
     private var currentCountDownTimer: CountDownTimer?= null
@@ -185,11 +188,5 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
         binding.btnSignupEmailSetEmailAddressCertificateNext.setOnDebounceClickListener {
             Navigation.findNavController(it).navigate(SignupEmailSetEmailAddressCertificateFragmentDirections.actionSignupEmailSetEmailAddressCertificateFragmentToSignupEmailSetPasswordFragment(args.email))
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        currentCountDownTimer?.cancel()
-        currentCountDownTimer = null
     }
 }
