@@ -10,7 +10,6 @@ import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
@@ -26,9 +25,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SearchResultFragment : Fragment() {
-    private var binding by autoCleared<FragmentSearchResultBinding>{ onDestroyBindingView() }
+    private var binding by autoCleared<FragmentSearchResultBinding> { onDestroyBindingView() }
     private val searchViewModel by activityViewModels<SearchViewModel>()
-    private val args by navArgs<SearchResultFragmentArgs>()
     private var searchTagResultPostAdapter: SearchTagResultPostAdapter? = null
     private var glideRequestManager: RequestManager? = null
 
@@ -43,11 +41,13 @@ class SearchResultFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setSearchResult()
+        observeSearchTagList()
+        observeSearchTagCount()
         setBackButtonClickListener()
-        initUI()
         setSearchEditTextListener()
         setSearchTagResultPostAdapter()
-        setSearchTagCount()
         setAdapterLoadStateListener()
         setSearchTagResultPostClickListener()
         setSearchKeywordInputDone()
@@ -67,11 +67,10 @@ class SearchResultFragment : Fragment() {
         }
     }
 
-    private fun initUI() {
+    private fun setSearchResult() {
         loadingPost()
-        binding.tvSearchResultKeywordInput.setText(args.searchKeyword)
-        setSearchTagList()
-        getSearchTagList(args.searchKeyword)
+        binding.tvSearchResultKeywordInput.setText(searchViewModel.searchKeyword)
+        getSearchTagList(searchViewModel.searchKeyword)
     }
 
     private fun setSearchEditTextListener() {
@@ -116,7 +115,8 @@ class SearchResultFragment : Fragment() {
                     HideKeyBoardUtil.hide(requireContext(), binding.tvSearchResultKeywordInput)
                     binding.tvSearchResultKeywordInput.setText(ReplaceUnicode.replaceBlankText(binding.tvSearchResultKeywordInput.text.toString()))
                     if (ReplaceUnicode.replaceBlankText(binding.tvSearchResultKeywordInput.text.toString()).isNotBlank()) {
-                        getSearchTagList(ReplaceUnicode.replaceBlankText(binding.tvSearchResultKeywordInput.text.toString()))
+                        searchViewModel.searchKeyword = ReplaceUnicode.replaceBlankText(binding.tvSearchResultKeywordInput.text.toString())
+                        getSearchTagList(searchViewModel.searchKeyword)
                     }
                     true
                 }
@@ -135,13 +135,13 @@ class SearchResultFragment : Fragment() {
         searchViewModel.searchKeyword(keyword)
     }
 
-    private fun setSearchTagList() {
+    private fun observeSearchTagList() {
         searchViewModel.searchTagList.observe(viewLifecycleOwner) {
             searchTagResultPostAdapter?.submitData(viewLifecycleOwner.lifecycle, it)
         }
     }
 
-    private fun setSearchTagCount() {
+    private fun observeSearchTagCount() {
         searchViewModel.searchTotalCount.observe(viewLifecycleOwner) {
             binding.resultCount = it
         }
