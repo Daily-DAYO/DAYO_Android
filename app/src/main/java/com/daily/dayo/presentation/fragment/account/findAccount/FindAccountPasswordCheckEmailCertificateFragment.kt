@@ -29,7 +29,10 @@ import java.util.regex.Pattern
 
 @AndroidEntryPoint
 class FindAccountPasswordCheckEmailCertificateFragment : Fragment() {
-    private var binding by autoCleared<FragmentFindAccountPasswordCheckEmailCertificateBinding>()
+    private var binding by autoCleared<FragmentFindAccountPasswordCheckEmailCertificateBinding> {
+        currentCountDownTimer?.cancel()
+        currentCountDownTimer = null
+    }
     private val loginViewModel by activityViewModels<AccountViewModel>()
     private val args by navArgs<FindAccountPasswordCheckEmailCertificateFragmentArgs>()
     private var currentCountDownTimer: CountDownTimer? = null
@@ -284,11 +287,5 @@ class FindAccountPasswordCheckEmailCertificateFragment : Fragment() {
                 )
             )
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        currentCountDownTimer?.cancel()
-        currentCountDownTimer = null
     }
 }

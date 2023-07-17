@@ -28,10 +28,13 @@ import com.daily.dayo.presentation.viewmodel.FolderViewModel
 import kotlinx.coroutines.launch
 
 class FolderSettingFragment : Fragment() {
-    private var binding by autoCleared<FragmentFolderSettingBinding>()
+    private var binding by autoCleared<FragmentFolderSettingBinding> {
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+        onDestroyBindingView()
+    }
     private val folderViewModel by activityViewModels<FolderViewModel>()
-    private lateinit var folderSettingAdapter: FolderSettingAdapter
-    private var folderOrderList : MutableList<FolderOrder> = mutableListOf()
+    private var folderSettingAdapter: FolderSettingAdapter? = null
+    private var folderOrderList: MutableList<FolderOrder> = mutableListOf()
     private lateinit var loadingAlertDialog: AlertDialog
 
     override fun onCreateView(
@@ -51,9 +54,9 @@ class FolderSettingFragment : Fragment() {
         return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    private fun onDestroyBindingView() {
+        folderSettingAdapter = null
+        binding.rvFolderSettingListSaved.adapter = null
     }
 
     private fun setBackButtonClickListener() {
@@ -73,23 +76,29 @@ class FolderSettingFragment : Fragment() {
         binding.rvFolderSettingListSaved.adapter = folderSettingAdapter
     }
 
-    private fun setProfileFolderList(){
+    private fun setProfileFolderList() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 folderViewModel.requestAllMyFolderList()
                 folderViewModel.folderList.observe(viewLifecycleOwner, Observer {
-                    when(it.status){
+                    when (it.status) {
                         Status.SUCCESS -> {
                             it.data?.let { folderList ->
-                                folderSettingAdapter.submitList(folderList)
-                                if(folderList.size < 5){
-                                    ButtonActivation.setTextViewButtonActive(requireContext(), binding.tvFolderSettingAdd)
-                                }
-                                else{
-                                    ButtonActivation.setTextViewButtonInactive(requireContext(), binding.tvFolderSettingAdd)
+                                folderSettingAdapter?.submitList(folderList)
+                                if (folderList.size < 5) {
+                                    ButtonActivation.setTextViewButtonActive(
+                                        requireContext(),
+                                        binding.tvFolderSettingAdd
+                                    )
+                                } else {
+                                    ButtonActivation.setTextViewButtonInactive(
+                                        requireContext(),
+                                        binding.tvFolderSettingAdd
+                                    )
                                 }
                             }
                         }
+                        else -> {}
                     }
                 })
             }
@@ -106,14 +115,15 @@ class FolderSettingFragment : Fragment() {
                         for (i in 0 until size) {
                             folderOrderList.add(FolderOrder(folderList[i].folderId!!, i))
                         }
-                        folderSettingAdapter.submitList(folderList)
+                        folderSettingAdapter?.submitList(folderList)
                     }
                 }
+                else -> {}
             }
         })
     }
 
-    private fun setChangeOrderButtonClickListener(){
+    private fun setChangeOrderButtonClickListener() {
         binding.btnFolderSettingChangeOrderOption.setOnDebounceClickListener {
             binding.btnFolderSettingSave.visibility = View.VISIBLE
             folderSettingAdapter = FolderSettingAdapter(true)
@@ -122,7 +132,7 @@ class FolderSettingFragment : Fragment() {
         }
     }
 
-    private fun setSaveButtonClickListener(){
+    private fun setSaveButtonClickListener() {
         binding.btnFolderSettingSave.setOnDebounceClickListener {
             //변경된 순서 저장
             folderViewModel.requestOrderFolder(folderOrderList)
@@ -131,22 +141,22 @@ class FolderSettingFragment : Fragment() {
             setRvFolderSettingListAdapter()
             binding.btnFolderSettingSave.visibility = View.GONE
             folderViewModel.orderFolderSuccess.observe(viewLifecycleOwner) {
-                if(it.getContentIfNotHandled() == true){
+                if (it.getContentIfNotHandled() == true) {
                     setProfileFolderList()
                 }
             }
         }
     }
 
-    private fun changeOrder(){
-        folderSettingAdapter.folderOrderList = folderOrderList
-        val callback = ItemTouchHelperCallback(folderSettingAdapter)
-        val touchHelper = ItemTouchHelper(callback)
-        touchHelper.attachToRecyclerView(binding.rvFolderSettingListSaved)
+    private fun changeOrder() {
+        folderSettingAdapter?.folderOrderList = folderOrderList
+        val callback = folderSettingAdapter?.let { ItemTouchHelperCallback(it) }
+        val touchHelper = callback?.let { ItemTouchHelper(it) }
+        touchHelper?.attachToRecyclerView(binding.rvFolderSettingListSaved)
         binding.rvFolderSettingListSaved.adapter = folderSettingAdapter
-        folderSettingAdapter.startDrag(object : FolderSettingAdapter.OnStartDragListener {
+        folderSettingAdapter?.startDrag(object : FolderSettingAdapter.OnStartDragListener {
             override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
-                touchHelper.startDrag(viewHolder)
+                touchHelper?.startDrag(viewHolder)
             }
         })
     }

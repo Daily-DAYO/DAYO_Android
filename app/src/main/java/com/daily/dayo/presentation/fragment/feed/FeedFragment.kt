@@ -22,71 +22,86 @@ import com.daily.dayo.domain.model.Post
 import com.daily.dayo.presentation.adapter.FeedListAdapter
 import com.daily.dayo.presentation.viewmodel.FeedViewModel
 import com.google.android.material.chip.Chip
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class FeedFragment : Fragment() {
-    private var binding by autoCleared<FragmentFeedBinding>()
+    private var binding by autoCleared<FragmentFeedBinding> { onDestroyBindingView() }
     private val feedViewModel by activityViewModels<FeedViewModel>()
-    private lateinit var feedListAdapter: FeedListAdapter
-    private lateinit var glideRequestManager: RequestManager
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        glideRequestManager = Glide.with(this)
-    }
+    private var feedListAdapter: FeedListAdapter? = null
+    private var glideRequestManager: RequestManager? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFeedBinding.inflate(inflater, container, false)
+        glideRequestManager = Glide.with(this)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setRvFeedListAdapter()
         setFeedPostList()
         setAdapterLoadStateListener()
         setFeedPostClickListener()
         setFeedEmptyButtonClickListener()
         setFeedRefreshListener()
-
-        return binding.root
     }
 
     override fun onResume() {
         super.onResume()
+        binding.swipeRefreshLayoutFeed.isEnabled = true
         getFeedPostList()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.swipeRefreshLayoutFeed.isEnabled = false
+    }
+
+    private fun onDestroyBindingView() {
+        binding.rvFeedPost.adapter = null
+        glideRequestManager = null
+        feedListAdapter = null
     }
 
     private fun setFeedRefreshListener() {
         binding.swipeRefreshLayoutFeed.setOnRefreshListener {
-            feedListAdapter.refresh()
+            feedListAdapter?.refresh()
         }
     }
 
     private fun setRvFeedListAdapter() {
-        feedListAdapter = FeedListAdapter(
-            requestManager = glideRequestManager,
-            mainDispatcher = Dispatchers.Main,
-            ioDispatcher = Dispatchers.IO
-        )
+        feedListAdapter = glideRequestManager?.let { requestManager ->
+            FeedListAdapter(
+                requestManager = requestManager,
+                mainDispatcher = Dispatchers.Main,
+                ioDispatcher = Dispatchers.IO
+            )
+        }
         binding.rvFeedPost.adapter = feedListAdapter
     }
 
-    private fun getFeedPostList(){
+    private fun getFeedPostList() {
         feedViewModel.requestFeedList()
     }
 
     private fun setFeedPostList() {
         feedViewModel.feedList.observe(viewLifecycleOwner) {
             binding.swipeRefreshLayoutFeed.isRefreshing = false
-            feedListAdapter.submitData(this.lifecycle, it)
+            feedListAdapter?.submitData(viewLifecycleOwner.lifecycle, it)
         }
     }
 
     private fun setAdapterLoadStateListener() {
-        feedListAdapter.addLoadStateListener { loadState ->
+        feedListAdapter?.addLoadStateListener { loadState ->
             if (loadState.refresh is LoadState.NotLoading) {
-                val isListEmpty = feedListAdapter.itemCount == 0
+                val isListEmpty = (feedListAdapter?.itemCount ?: 0 == 0)
                 binding.isEmpty = isListEmpty
             }
         }
@@ -99,7 +114,7 @@ class FeedFragment : Fragment() {
     }
 
     private fun setFeedPostClickListener() {
-        feedListAdapter.setOnItemClickListener(object : FeedListAdapter.OnItemClickListener {
+        feedListAdapter?.setOnItemClickListener(object : FeedListAdapter.OnItemClickListener {
             override fun likePostClick(button: ImageButton, post: Post, position: Int) {
                 setFeedPostLikeClickListener(button, post, position)
             }
@@ -130,7 +145,7 @@ class FeedFragment : Fragment() {
                     null -> {
                         val heartUpdate = post.heart.not()
                         val heartCountUpdate = if (heartUpdate) post.heartCount.plus(1) else post.heartCount.minus(1)
-                        feedListAdapter.updateItemAtPosition(position, post.apply {
+                        feedListAdapter?.updateItemAtPosition(position, post.apply {
                             heart = heartUpdate
                             heartCount = heartCountUpdate
                         })
@@ -152,7 +167,7 @@ class FeedFragment : Fragment() {
                     is CancellationException -> Log.e("Post Bookmark Click", "CANCELLED")
                     null -> {
                         val bookmarkUpdate = post.bookmark?.not()
-                        feedListAdapter.updateItemAtPosition(position, post.apply {
+                        feedListAdapter?.updateItemAtPosition(position, post.apply {
                             bookmark = bookmarkUpdate
                         })
                     }

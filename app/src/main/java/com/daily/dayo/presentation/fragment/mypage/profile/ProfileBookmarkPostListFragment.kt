@@ -18,25 +18,25 @@ import com.daily.dayo.presentation.viewmodel.ProfileViewModel
 import kotlinx.coroutines.Dispatchers
 
 class ProfileBookmarkPostListFragment : Fragment() {
-    private var binding by autoCleared<FragmentProfileBookmarkPostListBinding>()
+    private var binding by autoCleared<FragmentProfileBookmarkPostListBinding> { onDestroyBindingView() }
     private val profileViewModel by activityViewModels<ProfileViewModel>()
-    private lateinit var profileBookmarkPostListAdapter: ProfileBookmarkPostListAdapter
-    private lateinit var glideRequestManager: RequestManager
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        glideRequestManager = Glide.with(this)
-    }
+    private var profileBookmarkPostListAdapter: ProfileBookmarkPostListAdapter? = null
+    private var glideRequestManager: RequestManager? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentProfileBookmarkPostListBinding.inflate(inflater, container, false)
+        glideRequestManager = Glide.with(this)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setRvProfileBookmarkPostListAdapter()
         setProfileBookmarkPostList()
         setAdapterLoadStateListener()
-        return binding.root
     }
 
     override fun onResume() {
@@ -44,18 +44,31 @@ class ProfileBookmarkPostListFragment : Fragment() {
         getProfileBookmarkPostList()
     }
 
+    private fun onDestroyBindingView() {
+        glideRequestManager = null
+        profileBookmarkPostListAdapter = null
+        binding.rvProfileBookmarkPost.adapter = null
+    }
+
     private fun setRvProfileBookmarkPostListAdapter() {
-        profileBookmarkPostListAdapter = ProfileBookmarkPostListAdapter(
-            requestManager = glideRequestManager,
-            mainDispatcher = Dispatchers.Main,
-            ioDispatcher = Dispatchers.IO
-        )
+        profileBookmarkPostListAdapter = glideRequestManager?.let { requestManager ->
+            ProfileBookmarkPostListAdapter(
+                requestManager = requestManager,
+                mainDispatcher = Dispatchers.Main,
+                ioDispatcher = Dispatchers.IO
+            )
+        }
         binding.rvProfileBookmarkPost.adapter = profileBookmarkPostListAdapter
-        profileBookmarkPostListAdapter.setOnItemClickListener(object : ProfileBookmarkPostListAdapter.OnItemClickListener {
+        profileBookmarkPostListAdapter?.setOnItemClickListener(object :
+            ProfileBookmarkPostListAdapter.OnItemClickListener {
             override fun onItemClick(v: View, bookmarkPost: BookmarkPost, pos: Int) {
                 when (requireParentFragment()) {
-                    is MyPageFragment -> MyPageFragmentDirections.actionMyPageFragmentToPostFragment(bookmarkPost.postId)
-                    is ProfileFragment -> ProfileFragmentDirections.actionProfileFragmentToPostFragment(bookmarkPost.postId)
+                    is MyPageFragment -> MyPageFragmentDirections.actionMyPageFragmentToPostFragment(
+                        bookmarkPost.postId
+                    )
+                    is ProfileFragment -> ProfileFragmentDirections.actionProfileFragmentToPostFragment(
+                        bookmarkPost.postId
+                    )
                     else -> null
                 }?.let {
                     findNavController().navigate(it)
@@ -70,19 +83,21 @@ class ProfileBookmarkPostListFragment : Fragment() {
 
     private fun setProfileBookmarkPostList() {
         profileViewModel.bookmarkPostList.observe(viewLifecycleOwner) {
-            profileBookmarkPostListAdapter.submitData(this.lifecycle, it)
+            profileBookmarkPostListAdapter?.submitData(viewLifecycleOwner.lifecycle, it)
         }
     }
 
     private fun setAdapterLoadStateListener() {
         var isInitialLoad = false
-        profileBookmarkPostListAdapter.addLoadStateListener { loadState ->
-            if (loadState.refresh is LoadState.NotLoading && !isInitialLoad) {
-                val isListEmpty = profileBookmarkPostListAdapter.itemCount == 0
-                binding.isEmpty = isListEmpty
-                if (isListEmpty || loadState.append is LoadState.NotLoading) {
-                    completeLoadPost()
-                    isInitialLoad = true
+        profileBookmarkPostListAdapter?.let {
+            it.addLoadStateListener { loadState ->
+                if (loadState.refresh is LoadState.NotLoading && !isInitialLoad) {
+                    val isListEmpty = it.itemCount == 0
+                    binding.isEmpty = isListEmpty
+                    if (isListEmpty || loadState.append is LoadState.NotLoading) {
+                        completeLoadPost()
+                        isInitialLoad = true
+                    }
                 }
             }
         }

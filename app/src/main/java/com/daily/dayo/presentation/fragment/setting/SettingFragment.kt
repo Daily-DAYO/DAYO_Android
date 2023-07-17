@@ -26,7 +26,9 @@ import com.daily.dayo.presentation.activity.LoginActivity
 import com.daily.dayo.presentation.viewmodel.AccountViewModel
 
 class SettingFragment : Fragment() {
-    private var binding by autoCleared<FragmentSettingBinding>()
+    private var binding by autoCleared<FragmentSettingBinding> {
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
     private val accountViewModel by activityViewModels<AccountViewModel>()
     private lateinit var loadingAlertDialog: AlertDialog
 
@@ -37,6 +39,11 @@ class SettingFragment : Fragment() {
     ): View? {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
         loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setChangePasswordClickListener()
         setBackButtonClickListener()
         setLogoutButtonClickListener()
@@ -46,12 +53,6 @@ class SettingFragment : Fragment() {
         setBlockButtonClickListener()
         setInformationButtonClickListener()
         setNoticeButtonClickListener()
-        return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     private fun setChangePasswordClickListener() {
@@ -120,7 +121,8 @@ class SettingFragment : Fragment() {
     }
 
     private fun doContact() {
-        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboard =
+            requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip: ClipData = ClipData.newPlainText("Contact E-Mail", "gemij.dev@gmail.com")
         clipboard.setPrimaryClip(clip)
     }
@@ -128,7 +130,7 @@ class SettingFragment : Fragment() {
     private fun setLogoutButtonClickListener() {
         binding.layoutSettingLogout.setOnDebounceClickListener {
             val logoutAlertDialog =
-                 DefaultDialogConfirm.createDialog(requireContext(), R.string.setting_logout_message,
+                DefaultDialogConfirm.createDialog(requireContext(), R.string.setting_logout_message,
                     true, true, R.string.confirm, R.string.cancel, { doLogout() }, {})
             if (!logoutAlertDialog.isShowing) {
                 logoutAlertDialog.show()

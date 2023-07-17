@@ -48,41 +48,48 @@ import java.util.*
 import java.util.regex.Pattern
 
 class FolderEditFragment : Fragment() {
-    private var binding by autoCleared<FragmentFolderSettingAddBinding>()
+    private var binding by autoCleared<FragmentFolderSettingAddBinding> {
+        onDestroyBindingView()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+    }
     private val folderViewModel by activityViewModels<FolderViewModel>()
     private val args by navArgs<FolderEditFragmentArgs>()
-    private lateinit var glideRequestManager: RequestManager
-    private lateinit var initThumbnailImg: String
-    lateinit var imageUri: String
+    private var glideRequestManager: RequestManager?= null
+    private lateinit var imageUri: String
     var thumbnailImgBitmap: Bitmap? = null
     private lateinit var loadingAlertDialog: AlertDialog
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        glideRequestManager = Glide.with(this)
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFolderSettingAddBinding.inflate(inflater, container, false)
-        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
-
+        glideRequestManager = Glide.with(this)
+        setKeyboardMode()
+        initializeLoadingDialog()
+        return binding.root
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setFolderInfoDescription()
         setBackButtonClickListener()
         setConfirmButtonClickListener()
         setFolderSettingThumbnailOptionClickListener()
         observeNavigationFolderSettingImageCallBack()
         verifyFolderName()
-
-        return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+
+    private fun onDestroyBindingView() {
+        glideRequestManager = null
+    }
+
+    private fun setKeyboardMode() {
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+    }
+
+    private fun initializeLoadingDialog() {
+        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
     }
 
     private fun setFolderInfoDescription() {
@@ -114,20 +121,26 @@ class FolderEditFragment : Fragment() {
                             viewLifecycleOwner.lifecycleScope.launch {
                                 viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                                     val folderThumbnailImage = withContext(Dispatchers.IO) {
-                                        loadImageBackground(
-                                            requestManager = glideRequestManager,
-                                            width = layoutParams.width,
-                                            height = 40,
-                                            imgName = folder.thumbnailImage
-                                        )
+                                        glideRequestManager?.let { requestManager ->
+                                            loadImageBackground(
+                                                requestManager = requestManager,
+                                                width = layoutParams.width,
+                                                height = 40,
+                                                imgName = folder.thumbnailImage
+                                            )
+                                        }
                                     }
-                                    loadImageView(
-                                        requestManager = glideRequestManager,
-                                        width = layoutParams.width,
-                                        height = 148,
-                                        img = folderThumbnailImage,
-                                        imgView = binding.ivFolderSettingThumbnail
-                                    )
+                                    glideRequestManager?.let { requestManager ->
+                                        if (folderThumbnailImage != null) {
+                                            loadImageView(
+                                                requestManager = requestManager,
+                                                width = layoutParams.width,
+                                                height = 148,
+                                                img = folderThumbnailImage,
+                                                imgView = binding.ivFolderSettingThumbnail
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -201,8 +214,8 @@ class FolderEditFragment : Fragment() {
                 imageUri = it
                 if (this::imageUri.isInitialized) {
                     if (imageUri == "") {
-                        glideRequestManager.load(R.drawable.ic_folder_thumbnail_empty).centerCrop()
-                            .into(binding.ivFolderSettingThumbnail)
+                        glideRequestManager?.load(R.drawable.ic_folder_thumbnail_empty)?.centerCrop()
+                            ?.into(binding.ivFolderSettingThumbnail)
                         thumbnailImgBitmap = null
                     } else {
                         thumbnailImgBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -218,7 +231,7 @@ class FolderEditFragment : Fragment() {
                                 imageUri.toUri()
                             )
                         }
-                        glideRequestManager.load(imageUri).into(binding.ivFolderSettingThumbnail)
+                        glideRequestManager?.load(imageUri)?.into(binding.ivFolderSettingThumbnail)
                     }
                 }
             }

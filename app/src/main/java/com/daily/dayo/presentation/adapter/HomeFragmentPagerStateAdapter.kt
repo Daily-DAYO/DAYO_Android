@@ -1,11 +1,13 @@
 package com.daily.dayo.presentation.adapter
 
 import android.os.Handler
+import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-class HomeFragmentPagerStateAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
+class HomeFragmentPagerStateAdapter(@NonNull fragmentManager: FragmentManager, @NonNull lifecycle: Lifecycle) : FragmentStateAdapter(fragmentManager, lifecycle) {
     var fragments : ArrayList<Fragment> = ArrayList()
 
     override fun getItemCount(): Int {

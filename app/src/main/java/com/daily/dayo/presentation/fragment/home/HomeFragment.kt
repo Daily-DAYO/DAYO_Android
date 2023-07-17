@@ -1,12 +1,10 @@
 package com.daily.dayo.presentation.fragment.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.daily.dayo.R
@@ -14,18 +12,22 @@ import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentHomeBinding
 import com.daily.dayo.presentation.adapter.HomeFragmentPagerStateAdapter
-import com.daily.dayo.presentation.viewmodel.HomeViewModel
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
-    private var binding by autoCleared<FragmentHomeBinding>()
-    private val homeViewModel by activityViewModels<HomeViewModel>()
-    private lateinit var viewPager: ViewPager2
-    private lateinit var tabLayout: TabLayout
+    private var binding by autoCleared<FragmentHomeBinding>(onDestroy = {
+        onDestroyBindingView()
+    })
+    private var mediator: TabLayoutMediator? = null
     private var pagerAdapter: HomeFragmentPagerStateAdapter? = null
+    private val pageChangeCallBack = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            super.onPageSelected(position)
+            pagerAdapter?.refreshFragment(position, pagerAdapter!!.fragments[position])
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,6 +43,16 @@ class HomeFragment : Fragment() {
         setSearchClickListener()
     }
 
+    private fun onDestroyBindingView() {
+        mediator?.detach()
+        mediator = null
+        pagerAdapter = null
+        with (binding.pagerHomePost) {
+            unregisterOnPageChangeCallback(pageChangeCallBack)
+            adapter = null
+        }
+    }
+
     private fun setSearchClickListener() {
         binding.btnPostSearch.setOnDebounceClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_searchFragment)
@@ -48,41 +60,35 @@ class HomeFragment : Fragment() {
     }
 
     private fun initViewPager() {
-        viewPager = binding.pagerHomePost
-        tabLayout = binding.tabsActionbarHomeCategory
-
-        viewPager.isUserInputEnabled = false // DISABLE SWIPE
-        pagerAdapter = HomeFragmentPagerStateAdapter(requireActivity())
+        pagerAdapter =
+            HomeFragmentPagerStateAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         pagerAdapter?.addFragment(HomeDayoPickPostListFragment())
         pagerAdapter?.addFragment(HomeNewPostListFragment())
         for (i in 0 until pagerAdapter!!.itemCount) {
             pagerAdapter?.refreshFragment(i, pagerAdapter!!.fragments[i])
         }
 
-        viewPager.adapter = pagerAdapter
-        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                pagerAdapter?.refreshFragment(position, pagerAdapter!!.fragments[position])
-                when (position) {
-//                    0 -> { homeViewModel.requestDayoPickPostList() }
-//                    1 -> { homeViewModel.requestNewPostList() }
-                    else -> {}
-                }
-            }
-        })
+        with(binding.pagerHomePost) {
+            isUserInputEnabled = false // DISABLE SWIPE
+            adapter = pagerAdapter
+            registerOnPageChangeCallback(pageChangeCallBack)
+        }
 
         initTabLayout()
     }
 
     private fun initTabLayout() {
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+        mediator = TabLayoutMediator(
+            binding.tabsActionbarHomeCategory,
+            binding.pagerHomePost
+        ) { tab, position ->
             when (position) {
                 0 ->
                     tab.text = "DAYO PICK"
                 1 ->
                     tab.text = "NEW"
             }
-        }.attach()
+        }
+        mediator?.attach()
     }
 }
