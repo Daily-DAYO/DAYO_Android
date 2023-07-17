@@ -131,7 +131,7 @@
             android:id="@+id/layout_search_result_contents"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="15dp"
+            android:paddingTop="15dp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -175,8 +175,9 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/view_search_result_contents_count_post_divider">
@@ -186,7 +187,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="8dp"
                     android:background="@color/gray_6_F0F1F3"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.constraintlayout.widget.Guideline
@@ -206,11 +206,13 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_search_result_contents_post_list"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="16dp"
+                    android:layout_height="0dp"
+                    android:paddingTop="16dp"
+                    android:clipToPadding="false"
                     android:overScrollMode="never"
                     android:visibility="gone"
                     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@id/guideline_search_result_contents_end"
                     app:layout_constraintStart_toStartOf="@id/guideline_search_result_contents_start"
                     app:layout_constraintTop_toBottomOf="@id/view_search_result_contents_count_post_margin"
@@ -224,6 +226,7 @@
                     android:layout_gravity="center"
                     android:orientation="vertical"
                     android:paddingTop="16dp"
+                    android:clipToPadding="false"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@id/guideline_search_result_contents_end"
