@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.daily.dayo.R
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.ReplaceUnicode
 import com.daily.dayo.common.autoCleared
@@ -126,10 +127,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun searchKeyword(keyword: String) {
-        findNavController().navigate(
-            SearchFragmentDirections.actionSearchFragmentToSearchResultFragment(
-                keyword
-            )
-        )
+        searchViewModel.searchKeyword = keyword
+        findNavController().navigate(R.id.action_searchFragment_to_searchResultFragment)
     }
 }
