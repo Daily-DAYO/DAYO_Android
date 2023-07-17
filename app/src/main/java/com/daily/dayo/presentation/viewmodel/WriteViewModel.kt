@@ -1,14 +1,19 @@
 package com.daily.dayo.presentation.viewmodel
 
 import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.BuildConfig
+import com.daily.dayo.DayoApplication
 import com.daily.dayo.common.Event
+import com.daily.dayo.common.ImageResizeUtil
 import com.daily.dayo.common.ListLiveData
 import com.daily.dayo.common.Resource
+import com.daily.dayo.common.toBitmap
+import com.daily.dayo.common.toFile
 import com.daily.dayo.data.datasource.remote.folder.CreateFolderInPostRequest
 import com.daily.dayo.data.datasource.remote.post.EditPostRequest
 import com.daily.dayo.data.mapper.toFolder
@@ -24,9 +29,13 @@ import com.daily.dayo.domain.usecase.post.RequestEditPostUseCase
 import com.daily.dayo.domain.usecase.post.RequestPostDetailUseCase
 import com.daily.dayo.domain.usecase.post.RequestUploadPostUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.io.File
+import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -64,8 +73,6 @@ class WriteViewModel @Inject constructor(
     val writeSuccess: LiveData<Event<Boolean>> get() = _writeSuccess
     private val _writeCurrentPostDetail = MutableLiveData<Post>()
     val writeCurrentPostDetail: LiveData<Post> get() = _writeCurrentPostDetail
-    private val _getCurrentPostSuccess = MutableLiveData<Event<Boolean>>()
-    val getCurrentPostSuccess: LiveData<Event<Boolean>> get() = _getCurrentPostSuccess
     private val _writeEditSuccess = MutableLiveData<Event<Boolean>>()
     val writeEditSuccess: LiveData<Event<Boolean>> get() = _writeEditSuccess
 
@@ -75,29 +82,59 @@ class WriteViewModel @Inject constructor(
     private val _folderAddSuccess = MutableLiveData<Event<Boolean>>()
     val folderAddAccess: LiveData<Event<Boolean>> get() = _folderAddSuccess
 
-    fun requestUploadPost(files: Array<File>) = viewModelScope.launch {
+    fun requestUploadPost() {
+        if (this@WriteViewModel.postId.value != 0) {
+            requestUploadEditingPost()
+        } else {
+            requestUploadNewPost()
+        }
+    }
+
+    private val uploadImagePath: String
+        get() {
+            val imageFileTimeFormat = SimpleDateFormat("yyyy-MM-d-HH-mm-ss-SSS", Locale.KOREA)
+            // URI를 통해 불러온 이미지를 임시로 파일로 저장할 경로로 앱 내부 캐시 디렉토리로 설정,
+            // 파일 이름은 불러온 시간 사용
+            val fileName =
+                imageFileTimeFormat.format(Date(System.currentTimeMillis())).toString() + ".jpg"
+            return "${DayoApplication.cacheDirPath}/$fileName"
+        }
+
+    private fun requestUploadNewPost() = viewModelScope.launch(Dispatchers.IO) {
         _writeSuccess.postValue(Event(false))
-        requestUploadPostUseCase(
-            category = this@WriteViewModel.postCategory.value!!,
-            contents = this@WriteViewModel.postContents.value!!,
-            files = files,
-            folderId = this@WriteViewModel.postFolderId.value!!.toInt(),
-            tags = this@WriteViewModel.postTagList.value!!.toTypedArray()
-        ).let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
+        val resizedImages = async {
+            postImageUriList.value?.map { item ->
+                val postImageBitmap =
+                    item.toUri().toBitmap(DayoApplication.applicationContext().contentResolver)
+                val resizedImageBitmap = postImageBitmap?.let {
+                    ImageResizeUtil.resizeBitmap(
+                        originalBitmap = it,
+                        resizedWidth = 480,
+                        resizedHeight = 480
+                    )
+                }
+                resizedImageBitmap.toFile(uploadImagePath)
+            }
+        }
+
+        resizedImages.await()?.let {
+            requestUploadPostUseCase(
+                category = this@WriteViewModel.postCategory.value!!,
+                contents = this@WriteViewModel.postContents.value!!,
+                files = it.toTypedArray(),
+                folderId = this@WriteViewModel.postFolderId.value!!.toInt(),
+                tags = this@WriteViewModel.postTagList.value!!.toTypedArray()
+            ).let { ApiResponse ->
+                _writeSuccess.postValue(Event(ApiResponse is NetworkResponse.Success))
+                if (ApiResponse is NetworkResponse.Success) {
                     resetWriteInfoValue()
                     _writePostId.postValue(ApiResponse.body?.let { Event(it.id) })
-                    _writeSuccess.postValue(Event(true))
-                }
-                else -> {
-                    _writeSuccess.postValue(Event(false))
                 }
             }
         }
     }
 
-    fun requestEditPost() = viewModelScope.launch {
+    private fun requestUploadEditingPost() = viewModelScope.launch(Dispatchers.IO) {
         requestEditPostUseCase(
             postId = this@WriteViewModel.postId.value!!,
             EditPostRequest(
@@ -107,35 +144,26 @@ class WriteViewModel @Inject constructor(
                 hashtags = this@WriteViewModel.postTagList.value!!.toList()
             )
         ).let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    resetWriteInfoValue()
-                    _writePostId.postValue(ApiResponse.body?.let { Event(it.postId) })
-                    _writeEditSuccess.postValue(Event(true))
-                }
-                else -> {
-                    _writeEditSuccess.postValue(Event(false))
-                }
+            _writeEditSuccess.postValue(Event(ApiResponse is NetworkResponse.Success))
+            if (ApiResponse is NetworkResponse.Success) {
+                resetWriteInfoValue()
+                _writePostId.postValue(ApiResponse.body?.let { Event(it.postId) })
             }
         }
     }
 
-    fun requestPostDetail(postId: Int) {
-        viewModelScope.launch {
-            val response = async {
-                resetWriteInfoValue()
-                requestPostDetailUseCase(postId = postId)
-            }
-            response.await().let { ApiResponse ->
-                when (ApiResponse) {
-                    is NetworkResponse.Success -> {
-                        ApiResponse.body?.toPost().let { postDetail ->
-                            postDetail?.let {
-                                setOriginalPostDetail(postDetail)
-                            }
+    fun requestPostDetail(postId: Int) = viewModelScope.launch(Dispatchers.IO) {
+        withContext(Dispatchers.Main) {
+            resetWriteInfoValue()
+            requestPostDetailUseCase(postId = postId)
+        }.let { ApiResponse ->
+            if (ApiResponse is NetworkResponse.Success) {
+                ApiResponse.body?.toPost().let { postDetail ->
+                    postDetail?.let {
+                        withContext(Dispatchers.Main) {
+                            setOriginalPostDetail(postDetail)
                         }
                     }
-                    else -> {}
                 }
             }
         }
@@ -143,63 +171,57 @@ class WriteViewModel @Inject constructor(
 
     private fun setOriginalPostDetail(postDetail: Post) {
         _writeCurrentPostDetail.postValue(postDetail)
-        postDetail.postImages?.forEach { element ->
+        postDetail.postImages?.map { element ->
             addUploadImage(
                 Uri.parse("${BuildConfig.BASE_URL}/images/$element")
-                    .toString()
+                    .toString(),
+                true
             )
         }
 
-        postDetail.hashtags?.let { _postTagList.addAll(it) }
-        _postFolderId.value = postDetail.folderId.toString()
-        _postFolderName.value = postDetail.folderName
+        postDetail.hashtags?.let { _postTagList.addAll(it, false) }
+        _postFolderId.postValue(postDetail.folderId.toString())
+        _postFolderName.postValue(postDetail.folderName)
     }
 
-    fun requestAllMyFolderList() = viewModelScope.launch {
+    fun requestAllMyFolderList() = viewModelScope.launch(Dispatchers.IO) {
         _folderList.postValue(Resource.loading(null))
         requestAllMyFolderListUseCase()?.let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _folderList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toFolder() }))
+            _folderList.postValue(
+                when (ApiResponse) {
+                    is NetworkResponse.Success -> {
+                        Resource.success(ApiResponse.body?.data?.map { it.toFolder() })
+                    }
+                    is NetworkResponse.NetworkError -> {
+                        Resource.error(ApiResponse.exception.toString(), null)
+                    }
+                    is NetworkResponse.ApiError -> {
+                        Resource.error(ApiResponse.error.toString(), null)
+                    }
+                    is NetworkResponse.UnknownError -> {
+                        Resource.error(ApiResponse.throwable.toString(), null)
+                    }
                 }
-                is NetworkResponse.NetworkError -> {
-                    _folderList.postValue(Resource.error(ApiResponse.exception.toString(), null))
-                }
-                is NetworkResponse.ApiError -> {
-                    _folderList.postValue(Resource.error(ApiResponse.error.toString(), null))
-                }
-                is NetworkResponse.UnknownError -> {
-                    _folderList.postValue(Resource.error(ApiResponse.throwable.toString(), null))
-                }
-            }
+            )
         }
     }
 
-    fun requestCreateFolderInPost(name: String, privacy: Privacy) = viewModelScope.launch {
-        requestCreateFolderInPostUseCase(
-            CreateFolderInPostRequest(
-                name = name,
-                privacy = privacy
-            )
-        ).let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _folderAddSuccess.postValue(Event(true))
-                }
-                else -> {
-                    _folderAddSuccess.postValue(Event(false))
-                }
+    fun requestCreateFolderInPost(name: String, privacy: Privacy) =
+        viewModelScope.launch(Dispatchers.IO) {
+            requestCreateFolderInPostUseCase(
+                CreateFolderInPostRequest(name = name, privacy = privacy)
+            ).let { ApiResponse ->
+                _folderAddSuccess.postValue(Event(ApiResponse is NetworkResponse.Success))
             }
         }
-    }
 
     fun resetWriteInfoValue() {
         _postId.postValue(0)
-        _postContents.value = ""
-        _postFolderId.value = ""
-        _postFolderName.value = ""
-        _postImageUriList.value = arrayListOf()
-        _postTagList.clear(notify = true)
+        _postContents.postValue("")
+        _postFolderId.postValue("")
+        _postFolderName.postValue("")
+        _postImageUriList.postValue(arrayListOf())
+        _postTagList.clear(notify = false)
     }
 
     fun setPostId(id: Int) {
@@ -222,23 +244,23 @@ class WriteViewModel @Inject constructor(
         _postFolderName.value = name
     }
 
-    fun addUploadImage(uriPath: String) {
-        _postImageUriList.add(uriPath)
+    fun addUploadImage(uriPath: String, notify: Boolean = false) {
+        _postImageUriList.add(uriPath, notify)
     }
 
-    fun deleteUploadImage(pos: Int) {
-        _postImageUriList.removeAt(pos)
+    fun deleteUploadImage(pos: Int, notify: Boolean = false) {
+        _postImageUriList.removeAt(pos, notify)
     }
 
     fun clearUploadImage() {
         _postImageUriList.clear(notify = true)
     }
 
-    fun addPostTag(tagText: String) {
-        _postTagList.add(tagText)
+    fun addPostTag(tagText: String, notify: Boolean = false) {
+        _postTagList.add(tagText, notify)
     }
 
-    fun removePostTag(tagText: String) {
-        _postTagList.remove(tagText)
+    fun removePostTag(tagText: String, notify: Boolean = false) {
+        _postTagList.remove(tagText, notify)
     }
 }

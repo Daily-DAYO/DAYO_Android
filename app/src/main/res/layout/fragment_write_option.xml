@@ -22,7 +22,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="18dp"
-        android:layout_marginTop="31dp"
+        android:paddingTop="31dp"
+        android:paddingBottom="23dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/img_write_option_swipe_top_bar">
 
@@ -62,7 +63,6 @@
         android:id="@+id/view_folder_horizontal_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="23dp"
         android:background="@color/gray_5_E8EAEE"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,6 +74,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="18dp"
         android:paddingTop="18dp"
+        android:paddingBottom="23dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/view_folder_horizontal_line">
 
@@ -143,7 +144,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="18dp"
-        android:layout_marginTop="43dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="18dp"
         android:background="@drawable/button_default_green"
         android:stateListAnimator="@null"

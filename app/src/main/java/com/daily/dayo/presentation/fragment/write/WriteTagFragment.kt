@@ -1,6 +1,5 @@
 package com.daily.dayo.presentation.fragment.write
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -32,20 +31,9 @@ import com.google.android.material.chip.ChipGroup
 class WriteTagFragment : Fragment() {
     private var binding by autoCleared<FragmentWriteTagBinding>()
     private val writeViewModel by activityViewModels<WriteViewModel>()
-    private lateinit var loadingAlertDialog: AlertDialog
+    private val loadingAlertDialog by lazy { LoadingAlertDialog.createLoadingDialog(requireContext()) }
     private val originalTags by lazy {
         (writeViewModel.postTagList.value ?: arrayListOf()).toMutableList()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val onBackPressedCallback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                displayLoadingDialog()
-                findNavController().navigateUp()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
     override fun onCreateView(
@@ -53,7 +41,6 @@ class WriteTagFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentWriteTagBinding.inflate(inflater, container, false)
-        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
         return binding.root
     }
 
@@ -73,6 +60,17 @@ class WriteTagFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
+        val onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                displayLoadingDialog()
+                findNavController().navigateUp()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            onBackPressedCallback
+        )
+
         binding.btnWriteTagBack.setOnDebounceClickListener {
             displayLoadingDialog()
             findNavController().navigateUp()
@@ -97,7 +95,7 @@ class WriteTagFragment : Fragment() {
                             .contains(removeBlankTag)
                         && binding.chipgroupWriteTagListSaved.size < MAX_TAG_COUNT
                     ) {
-                        writeViewModel.addPostTag(removeBlankTag)
+                        writeViewModel.addPostTag(removeBlankTag, true)
                     }
                     binding.etWriteTagAdd.setText("")
                     true
@@ -155,7 +153,7 @@ class WriteTagFragment : Fragment() {
                                     "#",
                                     ""
                                 )
-                            )
+                            ), true
                         )
                     }
                     text = "# ${trimBlankText(it[index])}"

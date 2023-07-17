@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
@@ -68,7 +67,6 @@ class WriteFragment : Fragment() {
         setImageModifyListener()
         setCategoryClickListener()
         setUploadButtonClickListener()
-        observeUploadStateCallBack()
         showOptionDialog()
     }
 
@@ -236,7 +234,7 @@ class WriteFragment : Fragment() {
                 uploadImageListAdapter?.setOnItemClickListener(object :
                     WriteUploadImageListAdapter.OnItemClickListener {
                     override fun deleteUploadImageClick(pos: Int) {
-                        writeViewModel.deleteUploadImage(if (it.size >= 5) pos else pos - 1)
+                        writeViewModel.deleteUploadImage(if (it.size >= 5) pos else pos - 1, true)
                     }
 
                     override fun addUploadImageClick(pos: Int) {
@@ -289,42 +287,5 @@ class WriteFragment : Fragment() {
                 }
             }
         }
-    }
-
-    private fun observeUploadStateCallBack() {
-        writeViewModel.writeSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
-            if (isSuccess.getContentIfNotHandled() == true) {
-                writeViewModel.writePostId.value?.getContentIfNotHandled()?.let { writePostId ->
-                    findNavController().navigateSafe(
-                        currentDestinationId = R.id.WriteFragment,
-                        action = R.id.action_writeFragment_to_postFragment,
-                        args = WriteFragmentDirections.actionWriteFragmentToPostFragment(writePostId).arguments
-                    )
-                }
-            } else if (isSuccess.getContentIfNotHandled() == false) {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.write_post_upload_alert_message_fail,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
-        writeViewModel.writeEditSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
-            if (isSuccess.getContentIfNotHandled() == true) {
-                writeViewModel.writePostId.value?.getContentIfNotHandled()?.let { writePostId ->
-                    findNavController().navigateSafe(
-                        currentDestinationId = R.id.WriteFragment,
-                        action = R.id.action_writeFragment_to_postFragment,
-                        args = WriteFragmentDirections.actionWriteFragmentToPostFragment(writePostId).arguments
-                    )
-                }
-            } else if (isSuccess.getContentIfNotHandled() == false) {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.write_post_upload_alert_message_fail,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
     }
 }
