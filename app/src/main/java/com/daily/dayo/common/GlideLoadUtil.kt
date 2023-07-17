@@ -36,7 +36,7 @@ object GlideLoadUtil {
         imgView: ImageView,
         placeholderImg: Int? = null,
         errorImg: Int? = null,
-        placeholderLottie: LottieAnimationView?= null
+        placeholderLottie: LottieAnimationView? = null
     ) {
         requestManager
             .load("$BASE_URL_IMG${imgName}")
@@ -80,7 +80,7 @@ object GlideLoadUtil {
         imgView: ImageView,
         placeholderImg: Int? = null,
         errorImg: Int? = null,
-        placeholderLottie: LottieAnimationView?= null
+        placeholderLottie: LottieAnimationView? = null
     ) {
         requestManager.load(img)
             .override(width, height)
@@ -257,5 +257,9 @@ object GlideLoadUtil {
             .load("$BASE_URL_IMG${imgName}")
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
             .preload(width, height)
+    }
+
+    fun cancelImageLoad(requestManager: RequestManager, clearImageView: ImageView) {
+        requestManager.clear(clearImageView)
     }
 }
