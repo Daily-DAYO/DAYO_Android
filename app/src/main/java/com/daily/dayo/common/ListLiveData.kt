@@ -7,16 +7,20 @@ class ListLiveData<T> : MutableLiveData<ArrayList<T>>() {
         value = ArrayList()
     }
 
-    fun add(item: T) {
+    fun add(item: T, notify: Boolean) {
         val items: ArrayList<T>? = value
         items!!.add(item)
-        value = items
+        if (notify) {
+            value = items
+        }
     }
 
-    fun addAll(list: List<T>) {
+    fun addAll(list: List<T>, notify: Boolean) {
         val items: ArrayList<T>? = value
         items!!.addAll(list)
-        value = items
+        if (notify) {
+            value = items
+        }
     }
 
     fun clear(notify: Boolean) {
@@ -31,22 +35,28 @@ class ListLiveData<T> : MutableLiveData<ArrayList<T>>() {
         return value?.size ?: 0
     }
 
-    fun replaceAll(list: List<T>) {
+    fun replaceAll(list: List<T>, notify: Boolean) {
         val items: ArrayList<T> = arrayListOf()
         items.addAll(list)
-        value = items
+        if (notify) {
+            value = items
+        }
     }
 
-    fun removeAt(pos: Int) {
+    fun removeAt(pos: Int, notify: Boolean) {
         val items: ArrayList<T>? = value
         items!!.removeAt(pos)
-        value = items
+        if (notify) {
+            value = items
+        }
     }
 
-    fun remove(item: T) {
+    fun remove(item: T, notify: Boolean) {
         val items: ArrayList<T>? = value
         items!!.remove(item)
-        value = items
+        if (notify) {
+            value = items
+        }
     }
 
     fun notifyChange() {

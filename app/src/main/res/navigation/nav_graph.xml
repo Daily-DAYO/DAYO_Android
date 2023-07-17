@@ -124,15 +124,6 @@
             android:id="@+id/action_writeFragment_to_writeOptionFragment"
             app:destination="@id/WriteOptionFragment" />
         <action
-            android:id="@+id/action_writeFragment_to_postFragment"
-            app:destination="@id/PostFragment"
-            app:enterAnim="@anim/translate_from_right_in"
-            app:exitAnim="@anim/translate_nothing"
-            app:popEnterAnim="@anim/translate_nothing"
-            app:popExitAnim="@anim/translate_to_right_out"
-            app:popUpTo="@id/WriteFragment"
-            app:popUpToInclusive="true" />
-        <action
             android:id="@+id/action_writeFragment_to_writeImageOptionFragment"
             app:destination="@id/WriteImageOptionFragment" />
     </fragment>
@@ -147,6 +138,17 @@
         android:name="com.daily.dayo.presentation.fragment.write.WriteOptionFragment"
         android:label="fragment_write_option"
         tools:layout="@layout/fragment_write_option">
+
+        <action
+            android:id="@+id/action_writeOptionFragment_to_postFragment"
+            app:destination="@id/PostFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out"
+            app:popUpTo="@id/WriteFragment"
+            app:popUpToInclusive="true" />
+
         <action
             android:id="@+id/action_writeOptionFragment_to_writeTagFragment"
             app:destination="@id/WriteTagFragment"
