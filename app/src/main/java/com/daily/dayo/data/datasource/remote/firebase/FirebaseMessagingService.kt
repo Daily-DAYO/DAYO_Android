@@ -10,9 +10,8 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.daily.dayo.DayoApplication
-import com.daily.dayo.presentation.activity.MainActivity
 import com.daily.dayo.R
+import com.daily.dayo.presentation.activity.MainActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -20,7 +19,7 @@ import com.google.firebase.messaging.RemoteMessage
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class FirebaseMessagingService: FirebaseMessagingService() {
+class FirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -29,18 +28,18 @@ class FirebaseMessagingService: FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        if(remoteMessage.data.isNotEmpty()) {
+        if (remoteMessage.data.isNotEmpty()) {
             val body = remoteMessage.data["body"]
             val postId = remoteMessage.data["postId"]
             val memberId = remoteMessage.data["memberId"]
             sendNotification(body = body, postId = postId, memberId = memberId)
-        }else if (remoteMessage.notification != null) {
+        } else if (remoteMessage.notification != null) {
             val body = remoteMessage.notification!!.body
             sendNotification(body = body, postId = null, memberId = null)
         }
     }
 
-    private fun sendNotification(body: String?, postId: String?, memberId: String?){
+    private fun sendNotification(body: String?, postId: String?, memberId: String?) {
         val id = System.currentTimeMillis().toInt()
 
         // notification 클릭 시 이동하는 액티비티
@@ -78,7 +77,7 @@ class FirebaseMessagingService: FirebaseMessagingService() {
 
     suspend fun getCurrentToken() = suspendCoroutine<String> { continuation ->
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if(task.isSuccessful){
+            if (task.isSuccessful) {
                 val token = task.result
                 Log.d(TAG, token)
                 continuation.resume(token)
@@ -90,8 +89,7 @@ class FirebaseMessagingService: FirebaseMessagingService() {
         })
     }
 
-    suspend fun registerFcmToken() {
-        DayoApplication.preferences.fcmDeviceToken = getCurrentToken()
+    fun registerFcmToken() {
         FirebaseMessaging.getInstance().isAutoInitEnabled = true
     }
 

@@ -95,7 +95,7 @@ class MemberRepositoryImpl @Inject constructor(
     override suspend fun getCurrentFcmToken(): String =
         FirebaseMessagingService().getCurrentToken()
 
-    override suspend fun registerFcmToken() =
+    override fun registerFcmToken() =
         FirebaseMessagingService().registerFcmToken()
 
     override fun unregisterFcmToken() =
