@@ -42,7 +42,7 @@ class SettingNotificationFragment : Fragment() {
             binding.switchSettingNotificationNotice.isEnabled = true
             binding.switchSettingNotificationReaction.isEnabled = true
             settingNotificationViewModel.requestReceiveAlarm()
-            settingNotificationViewModel.notiReactionPermit.observe(viewLifecycleOwner){ reactionPermit ->
+            settingNotificationViewModel.notiReactionPermit.observe(viewLifecycleOwner) { reactionPermit ->
                 binding.notiReactionPermit = reactionPermit
             }
             binding.switchSettingNotificationNotice.isChecked = DayoApplication.preferences.notiNoticePermit
@@ -99,7 +99,7 @@ class SettingNotificationFragment : Fragment() {
         setFCM()
         DayoApplication.preferences.notiDevicePermit = true
         settingNotificationViewModel.requestReceiveAlarm()
-        settingNotificationViewModel.notiReactionPermit.observe(viewLifecycleOwner){ reactionPermit ->
+        settingNotificationViewModel.notiReactionPermit.observe(viewLifecycleOwner) { reactionPermit ->
             binding.notiReactionPermit = reactionPermit
         }
         binding.switchSettingNotificationNotice.isChecked =
@@ -112,7 +112,6 @@ class SettingNotificationFragment : Fragment() {
         DayoApplication.preferences.notiDevicePermit = false
         DayoApplication.preferences.notiNoticePermit = false
         settingNotificationViewModel.unregisterFcmToken()
-        settingNotificationViewModel.requestDeviceToken(null)
     }
 
     private fun setBackButtonClickListener() {
@@ -122,7 +121,6 @@ class SettingNotificationFragment : Fragment() {
     }
 
     private fun setFCM() {
-        settingNotificationViewModel.registerFcmToken()
-        settingNotificationViewModel.requestDeviceToken(DayoApplication.preferences.fcmDeviceToken)
+        settingNotificationViewModel.registerDeviceToken()
     }
 }

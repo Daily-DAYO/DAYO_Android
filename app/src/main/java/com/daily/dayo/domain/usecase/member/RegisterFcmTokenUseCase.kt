@@ -6,6 +6,6 @@ import javax.inject.Inject
 class RegisterFcmTokenUseCase @Inject constructor(
     private val memberRepository: MemberRepository
 ) {
-    suspend operator fun invoke() =
+    operator fun invoke() =
         memberRepository.registerFcmToken()
 }

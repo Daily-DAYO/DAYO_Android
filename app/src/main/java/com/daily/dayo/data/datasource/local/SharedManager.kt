@@ -63,12 +63,6 @@ class SharedManager @Inject constructor(context: Context) {
             prefs["notiNoticePermit"] = value
         }
 
-    var fcmDeviceToken: String
-        get() = prefs["deviceToken"]
-        set(value) {
-            prefs["deviceToken"] = value
-        }
-
     fun setSearchKeywordRecent(searchKeywordRecent: ArrayList<String>) {
         val jsonArr = JsonArray()
         for (i in searchKeywordRecent) {

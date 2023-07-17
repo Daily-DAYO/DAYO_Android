@@ -4,13 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daily.dayo.common.Event
 import com.daily.dayo.data.datasource.remote.member.ChangeReceiveAlarmRequest
 import com.daily.dayo.data.datasource.remote.member.DeviceTokenRequest
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.usecase.member.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,14 +25,10 @@ class SettingNotificationViewModel @Inject constructor(
     private val _notiReactionPermit = MutableLiveData<Boolean>()
     val notiReactionPermit: LiveData<Boolean> get() = _notiReactionPermit
 
-    fun requestDeviceToken(fcmDeviceToken: String?) = viewModelScope.launch {
-        val response = requestDeviceTokenUseCase(DeviceTokenRequest(deviceToken = fcmDeviceToken))
-    }
-
     fun requestReceiveAlarm() = viewModelScope.launch {
         requestReceiveAlarmUseCase().let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success  -> {
+                is NetworkResponse.Success -> {
                     _notiReactionPermit.postValue(ApiResponse.body?.onReceiveAlarm)
                 }
             }
@@ -46,15 +40,10 @@ class SettingNotificationViewModel @Inject constructor(
             requestChangeReceiveAlarmUseCase(ChangeReceiveAlarmRequest(onReceiveAlarm = onReceiveAlarm))
     }
 
-    fun getCurrentFcmToken() = viewModelScope.launch {
-        val currentFcmToken = getCurrentFcmTokenUseCase()
-    }
-
-    fun registerFcmToken() = viewModelScope.launch {
+    fun registerDeviceToken() = viewModelScope.launch {
         registerFcmTokenUseCase()
+        requestDeviceTokenUseCase(DeviceTokenRequest(deviceToken = getCurrentFcmTokenUseCase()))
     }
 
-    fun unregisterFcmToken() {
-        unregisterFcmTokenUseCase()
-    }
+    fun unregisterFcmToken() = unregisterFcmTokenUseCase()
 }

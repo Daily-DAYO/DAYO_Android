@@ -35,24 +35,18 @@ class LoginActivity : AppCompatActivity() {
         setSplash()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        if (loginViewModel.loginSuccess.value?.peekContent() == true) {
-            setFCM()
-        }
-    }
-
     private fun setFCM() {
         GlobalScope.launch(Dispatchers.IO) {
-            loginViewModel.registerFcmToken()
-            loginViewModel.requestDeviceToken(deviceToken = DayoApplication.preferences.fcmDeviceToken)
+            loginViewModel.getCurrentFcmToken().let { deviceToken ->
+                loginViewModel.requestDeviceToken(deviceToken = deviceToken)
+            }
         }
     }
 
     private fun autoLogin() {
         // refresh token 존재 여부 확인
-        if(DayoApplication.preferences.getCurrentUser().refreshToken != null){
-           // refresh token 존재 시 유효성 확인
+        if (DayoApplication.preferences.getCurrentUser().refreshToken != null) {
+            // refresh token 존재 시 유효성 확인
             loginViewModel.requestRefreshToken()
         }
     }
@@ -60,10 +54,10 @@ class LoginActivity : AppCompatActivity() {
     private fun loginSuccess() {
         loginViewModel.loginSuccess.observe(this) { isSuccess ->
             if (isSuccess.peekContent()) {
-                if (DayoApplication.preferences.getCurrentUser().nickname == ""){
+                setFCM()
+                if (DayoApplication.preferences.getCurrentUser().nickname == "") {
                     isReady = true
-                }
-                else {
+                } else {
                     // 로그인 성공 시 메인 화면으로 이동
                     isReady = false // 로그인이 성공한 경우에는 Splash 화면을 없애지 않고 바로 넘어가게 하기 위해 false 설정
                     val intent = Intent(this, MainActivity::class.java)

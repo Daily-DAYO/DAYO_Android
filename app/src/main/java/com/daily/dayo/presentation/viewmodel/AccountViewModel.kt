@@ -27,6 +27,7 @@ class AccountViewModel @Inject constructor(
     private val requestCertificateEmailUseCase: RequestCertificateEmailUseCase,
     private val requestDeviceTokenUseCase: RequestDeviceTokenUseCase,
     private val registerFcmTokenUseCase: RegisterFcmTokenUseCase,
+    private val getCurrentFcmTokenUseCase: GetCurrentFcmTokenUseCase,
     private val requestResignUseCase: RequestResignUseCase,
     private val requestLogoutUseCase: RequestLogoutUseCase,
     private val requestCheckEmailUseCase: RequestCheckEmailUseCase,
@@ -154,14 +155,14 @@ class AccountViewModel @Inject constructor(
                 is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
                 }
-                else -> { }
+                else -> {}
             }
         }
     }
 
     fun requestSignupEmail(email: String, nickname: String, password: String, profileImg: File?) =
         viewModelScope.launch {
-            requestSignUpEmailUseCase(email, nickname, password, profileImg).let {  ApiResponse ->
+            requestSignUpEmailUseCase(email, nickname, password, profileImg).let { ApiResponse ->
                 when (ApiResponse) {
                     is NetworkResponse.Success -> {
                         _signupSuccess.postValue(Event(true))
@@ -238,12 +239,11 @@ class AccountViewModel @Inject constructor(
     }
 
     suspend fun requestDeviceToken(deviceToken: String) = coroutineScope {
+        if (DayoApplication.preferences.notiDevicePermit) registerFcmTokenUseCase()
         requestDeviceTokenUseCase(DeviceTokenRequest(deviceToken = deviceToken))
     }
 
-    suspend fun registerFcmToken() = coroutineScope {
-        registerFcmTokenUseCase()
-    }
+    suspend fun getCurrentFcmToken() = getCurrentFcmTokenUseCase()
 
     fun requestWithdraw(content: String) = viewModelScope.launch {
         requestResignUseCase(content).let { ApiResponse ->
