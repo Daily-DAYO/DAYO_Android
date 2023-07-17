@@ -1,6 +1,5 @@
 package com.daily.dayo.presentation.fragment.write
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,31 +29,24 @@ class WriteFolderFragment : Fragment() {
             writeViewModel.postFolderId.value!!
         )
     }
-    private lateinit var loadingAlertDialog: AlertDialog
+    private val loadingAlertDialog by lazy { LoadingAlertDialog.createLoadingDialog(requireContext()) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentWriteFolderBinding.inflate(inflater, container, false)
-        loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setBackButtonClickListener()
         setFolderAddButtonClickListener()
         setRvWriteFolderListAdapter()
         setWriteFolderList()
-        return binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val onBackPressedCallback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                displayLoadingDialog()
-                findNavController().navigateUp()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
-    }
 
     override fun onStop() {
         super.onStop()
@@ -66,6 +58,17 @@ class WriteFolderFragment : Fragment() {
     }
 
     private fun setBackButtonClickListener() {
+        val onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                displayLoadingDialog()
+                findNavController().navigateUp()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            onBackPressedCallback
+        )
+
         binding.btnWriteFolderBack.setOnDebounceClickListener {
             displayLoadingDialog()
             findNavController().navigateUp()
@@ -111,7 +114,7 @@ class WriteFolderFragment : Fragment() {
                                 }
                             }
                         }
-                        else -> { }
+                        else -> {}
                     }
                 }
             }
@@ -119,8 +122,8 @@ class WriteFolderFragment : Fragment() {
     }
 
     private fun displayLoadingDialog() {
-        writeViewModel.showWriteOptionDialog.value = Event(true)
         LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
         LoadingAlertDialog.resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
+        writeViewModel.showWriteOptionDialog.value = Event(true)
     }
 }
