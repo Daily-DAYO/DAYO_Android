@@ -19,6 +19,7 @@ class DayoApplication : Application(){
         fun applicationContext(): Context {
             return instance.applicationContext
         }
+        val cacheDirPath get () = applicationContext().cacheDir.toString()
     }
 
     override fun onCreate() {
