@@ -1,7 +1,6 @@
 package com.daily.dayo.presentation.adapter
 
 import android.content.res.ColorStateList
-import android.graphics.Bitmap
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -14,28 +13,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
-import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.convertCountPlace
 import com.daily.dayo.common.setOnDebounceClickListener
-import com.daily.dayo.data.di.IoDispatcher
-import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemFeedPostBinding
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.domain.model.categoryKR
 import com.daily.dayo.presentation.fragment.feed.FeedFragmentDirections
 import com.google.android.material.chip.Chip
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class FeedListAdapter(
-    private val requestManager: RequestManager,
-    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
-) : PagingDataAdapter<Post, FeedListAdapter.FeedListViewHolder>(diffCallback) {
+class FeedListAdapter(private val requestManager: RequestManager) :
+    PagingDataAdapter<Post, FeedListAdapter.FeedListViewHolder>(diffCallback) {
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Post>() {
             override fun areItemsTheSame(oldItem: Post, newItem: Post) =
@@ -52,7 +41,8 @@ class FeedListAdapter(
 
             override fun getChangePayload(oldItem: Post, newItem: Post): Any? {
                 return if (oldItem.heart != newItem.heart || oldItem.heartCount != newItem.heartCount ||
-                        oldItem.commentCount != newItem.commentCount) true else null
+                    oldItem.commentCount != newItem.commentCount
+                ) true else null
             }
         }
     }
@@ -93,40 +83,20 @@ class FeedListAdapter(
             binding.commentCountStr =
                 if (post?.commentCount != null) convertCountPlace(post.commentCount) else "0"
             binding.categoryKR = post?.category?.let { categoryKR(it) }
-            CoroutineScope(mainDispatcher).launch {
-                val postImgBitmap: Bitmap?
-                val userThumbnailImgBitmap: Bitmap?
-                postImgBitmap = withContext(ioDispatcher) {
-                    loadImageBackground(
-                        requestManager = requestManager,
-                        width = binding.imgFeedPost.width,
-                        height = binding.imgFeedPost.width,
-                        imgName = post?.thumbnailImage ?: ""
-                    )
-                }
-                userThumbnailImgBitmap = withContext(ioDispatcher) {
-                    loadImageBackground(
-                        requestManager = requestManager,
-                        width = binding.imgFeedPostUserProfile.width,
-                        height = binding.imgFeedPostUserProfile.height,
-                        imgName = post?.userProfileImage ?: ""
-                    )
-                }
-                loadImageView(
-                    requestManager = requestManager,
-                    width = binding.imgFeedPostUserProfile.width,
-                    height = binding.imgFeedPostUserProfile.height,
-                    img = userThumbnailImgBitmap,
-                    imgView = binding.imgFeedPostUserProfile
-                )
-                loadImageView(
-                    requestManager = requestManager,
-                    width = binding.imgFeedPost.width,
-                    height = binding.imgFeedPost.width,
-                    img = postImgBitmap,
-                    imgView = binding.imgFeedPost
-                )
-            }
+            loadImageView(
+                requestManager = requestManager,
+                width = binding.imgFeedPostUserProfile.width,
+                height = binding.imgFeedPostUserProfile.height,
+                imgName = post?.userProfileImage ?: "",
+                imgView = binding.imgFeedPostUserProfile
+            )
+            loadImageView(
+                requestManager = requestManager,
+                width = binding.imgFeedPost.width,
+                height = binding.imgFeedPost.width,
+                imgName = post?.thumbnailImage ?: "",
+                imgView = binding.imgFeedPost
+            )
 
             val isMine = (post?.memberId == DayoApplication.preferences.getCurrentUser().memberId)
             setPostOptionClickListener(

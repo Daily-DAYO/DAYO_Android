@@ -14,21 +14,18 @@ import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
 import com.daily.dayo.common.GlideLoadUtil
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
-import com.daily.dayo.data.di.IoDispatcher
 import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemPostImageSliderBinding
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class PostImageSliderAdapter(
     private val requestManager: RequestManager,
-    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher
 ) : ListAdapter<String, PostImageSliderAdapter.PostImageViewHolder>(
-        diffCallback
-    ) {
+    diffCallback
+) {
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<String>() {
             override fun areItemsTheSame(oldItem: String, newItem: String) =
@@ -87,19 +84,11 @@ class PostImageSliderAdapter(
                 ViewGroup.MarginLayoutParams.MATCH_PARENT
             )
             CoroutineScope(mainDispatcher).launch {
-                val postImage = withContext(ioDispatcher) {
-                    GlideLoadUtil.loadImageBackground(
-                        requestManager = requestManager,
-                        width = layoutParams.width,
-                        height = layoutParams.width,
-                        imgName = imageURL ?: ""
-                    )
-                }
                 loadImageView(
                     requestManager = requestManager,
                     width = layoutParams.width,
                     height = layoutParams.width,
-                    img = postImage,
+                    imgName = imageURL ?: "",
                     imgView = binding.imgSlider,
                     placeholderLottie = binding.lottiePostImage
                 )

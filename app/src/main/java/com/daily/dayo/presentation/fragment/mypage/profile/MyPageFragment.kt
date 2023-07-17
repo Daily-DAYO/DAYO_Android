@@ -6,16 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
-import com.daily.dayo.common.GlideLoadUtil.loadImageBackgroundProfile
+import com.daily.dayo.common.GlideLoadUtil.PROFILE_USER_THUMBNAIL_SIZE
 import com.daily.dayo.common.GlideLoadUtil.loadImageViewProfile
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
@@ -23,9 +20,6 @@ import com.daily.dayo.databinding.FragmentMyPageBinding
 import com.daily.dayo.presentation.adapter.ProfileFragmentPagerStateAdapter
 import com.daily.dayo.presentation.viewmodel.ProfileViewModel
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MyPageFragment : Fragment() {
     private var binding by autoCleared<FragmentMyPageBinding> { onDestroyBindingView() }
@@ -76,28 +70,14 @@ class MyPageFragment : Fragment() {
         profileViewModel.profileInfo.observe(viewLifecycleOwner) {
             it?.let { profile ->
                 binding.profile = profile
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        val userProfileThumbnailImage = withContext(Dispatchers.IO) {
-                            glideRequestManager?.let { requestManager ->
-                                loadImageBackgroundProfile(
-                                    requestManager = requestManager,
-                                    width = 70, height = 70, imgName = profile.profileImg
-                                )
-                            }
-                        }
-                        glideRequestManager?.let { requestManager ->
-                            if (userProfileThumbnailImage != null) {
-                                loadImageViewProfile(
-                                    requestManager = requestManager,
-                                    width = 70,
-                                    height = 70,
-                                    img = userProfileThumbnailImage,
-                                    imgView = binding.imgMyPageUserProfile
-                                )
-                            }
-                        }
-                    }
+                glideRequestManager?.let { requestManager ->
+                    loadImageViewProfile(
+                        requestManager = requestManager,
+                        width = PROFILE_USER_THUMBNAIL_SIZE,
+                        height = PROFILE_USER_THUMBNAIL_SIZE,
+                        imgName = profile.profileImg,
+                        imgView = binding.imgMyPageUserProfile
+                    )
                 }
 
                 profile.memberId?.let {
