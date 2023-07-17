@@ -42,6 +42,6 @@ interface MemberRepository {
 
     // Firebase Messaging Service
     suspend fun getCurrentFcmToken(): String
-    suspend fun registerFcmToken()
+    fun registerFcmToken()
     fun unregisterFcmToken()
 }
