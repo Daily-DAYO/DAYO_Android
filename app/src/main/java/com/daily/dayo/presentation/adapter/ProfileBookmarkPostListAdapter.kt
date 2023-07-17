@@ -1,6 +1,5 @@
 package com.daily.dayo.presentation.adapter
 
-import android.graphics.Bitmap
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +8,8 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
-import com.daily.dayo.common.GlideLoadUtil
+import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
-import com.daily.dayo.data.di.IoDispatcher
 import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemProfilePostBinding
 import com.daily.dayo.domain.model.BookmarkPost
@@ -19,9 +17,10 @@ import kotlinx.coroutines.*
 
 class ProfileBookmarkPostListAdapter(
     private val requestManager: RequestManager,
-    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
-) : PagingDataAdapter<BookmarkPost, ProfileBookmarkPostListAdapter.ProfileBookmarkPostListViewHolder>(diffCallback) {
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher
+) : PagingDataAdapter<BookmarkPost, ProfileBookmarkPostListAdapter.ProfileBookmarkPostListViewHolder>(
+    diffCallback
+) {
 
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<BookmarkPost>() {
@@ -29,7 +28,9 @@ class ProfileBookmarkPostListAdapter(
                 oldItem.postId == newItem.postId
 
             override fun areContentsTheSame(oldItem: BookmarkPost, newItem: BookmarkPost): Boolean =
-                oldItem.apply { preLoadThumbnail = null } == newItem.apply { preLoadThumbnail = null }
+                oldItem.apply { preLoadThumbnail = null } == newItem.apply {
+                    preLoadThumbnail = null
+                }
         }
     }
 
@@ -71,25 +72,11 @@ class ProfileBookmarkPostListAdapter(
             binding.imgProfilePost.visibility = View.INVISIBLE
 
             CoroutineScope(mainDispatcher).launch {
-                val userThumbnailImgBitmap: Bitmap?
-                if (bookmarkPost?.preLoadThumbnail == null) {
-                    userThumbnailImgBitmap = withContext(ioDispatcher) {
-                        GlideLoadUtil.loadImageBackground(
-                            requestManager = requestManager,
-                            width = layoutParams.width,
-                            height = layoutParams.width,
-                            imgName = bookmarkPost?.thumbnailImage ?: ""
-                        )
-                    }
-                } else {
-                    userThumbnailImgBitmap = bookmarkPost.preLoadThumbnail
-                    bookmarkPost.preLoadThumbnail = null
-                }
-                GlideLoadUtil.loadImageView(
+                loadImageView(
                     requestManager = requestManager,
                     width = layoutParams.width,
                     height = layoutParams.width,
-                    img = userThumbnailImgBitmap!!,
+                    imgName = bookmarkPost?.thumbnailImage ?: "",
                     imgView = binding.imgProfilePost
                 )
             }.invokeOnCompletion { throwable ->

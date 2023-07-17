@@ -1,6 +1,5 @@
 package com.daily.dayo.presentation.adapter
 
-import android.graphics.Bitmap
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +9,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
-import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
+import com.daily.dayo.common.GlideLoadUtil.HOME_POST_THUMBNAIL_SIZE
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemSearchResultPostBinding
@@ -61,25 +60,11 @@ class SearchTagResultPostAdapter(private val requestManager: RequestManager) :
             binding.imgSearchResultPost.visibility = View.INVISIBLE
 
             CoroutineScope(Dispatchers.Main).launch {
-                val postImage: Bitmap?
-                if (postContent?.preLoadThumbnail == null) {
-                    postImage = withContext(Dispatchers.IO) {
-                        loadImageBackground(
-                            requestManager = requestManager,
-                            width = 158,
-                            height = 158,
-                            imgName = postContent?.thumbnailImage ?: ""
-                        )
-                    }
-                } else {
-                    postImage = postContent.preLoadThumbnail
-                    postContent.preLoadThumbnail = null
-                }
                 loadImageView(
                     requestManager = requestManager,
-                    width = 158,
-                    height = 158,
-                    img = postImage!!,
+                    width = HOME_POST_THUMBNAIL_SIZE,
+                    height = HOME_POST_THUMBNAIL_SIZE,
+                    imgName = postContent?.thumbnailImage ?: "",
                     imgView = binding.imgSearchResultPost
                 )
             }.invokeOnCompletion { throwable ->

@@ -7,22 +7,18 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
-import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
-import com.daily.dayo.data.di.IoDispatcher
 import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemProfileFolderBinding
 import com.daily.dayo.domain.model.Folder
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ProfileFolderListAdapter(
     private val requestManager: RequestManager,
-    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher
 ) : RecyclerView.Adapter<ProfileFolderListAdapter.ProfileFolderListViewHolder>() {
 
     companion object {
@@ -73,19 +69,11 @@ class ProfileFolderListAdapter(
 
             binding.folder = folder
             CoroutineScope(mainDispatcher).launch {
-                val profileFolderThumbnailImage = withContext(ioDispatcher) {
-                    loadImageBackground(
-                        requestManager = requestManager,
-                        width = layoutParams.width,
-                        height = 163,
-                        imgName = folder.thumbnailImage
-                    )
-                }
                 loadImageView(
                     requestManager = requestManager,
                     width = layoutParams.width,
                     163,
-                    img = profileFolderThumbnailImage,
+                    imgName = folder.thumbnailImage,
                     imgView = binding.btnProfileFolderItem
                 )
             }

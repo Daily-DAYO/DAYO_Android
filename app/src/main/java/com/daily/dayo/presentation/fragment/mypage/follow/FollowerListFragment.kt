@@ -18,7 +18,6 @@ import com.daily.dayo.databinding.FragmentFollowerListBinding
 import com.daily.dayo.domain.model.Follow
 import com.daily.dayo.presentation.adapter.FollowListAdapter
 import com.daily.dayo.presentation.viewmodel.FollowViewModel
-import kotlinx.coroutines.Dispatchers
 
 class FollowerListFragment : Fragment() {
     private var binding by autoCleared<FragmentFollowerListBinding> { onDestroyBindingView() }
@@ -51,11 +50,7 @@ class FollowerListFragment : Fragment() {
 
     private fun setRvFollowerListAdapter() {
         followerListAdapter = glideRequestManager?.let { requestManager ->
-            FollowListAdapter(
-                requestManager = requestManager,
-                mainDispatcher = Dispatchers.Main,
-                ioDispatcher = Dispatchers.IO
-            )
+            FollowListAdapter(requestManager = requestManager)
         }
         binding.rvFollower.adapter = followerListAdapter
         followerListAdapter?.setOnItemClickListener(object : FollowListAdapter.OnItemClickListener {

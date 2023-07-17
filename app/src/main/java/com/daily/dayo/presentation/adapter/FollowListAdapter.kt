@@ -9,24 +9,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
-import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
+import com.daily.dayo.common.GlideLoadUtil.FOLLOW_USER_THUMBNAIL_SIZE
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
-import com.daily.dayo.data.di.IoDispatcher
-import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemFollowBinding
 import com.daily.dayo.domain.model.Follow
 import com.daily.dayo.presentation.fragment.mypage.follow.FollowFragmentDirections
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class FollowListAdapter(
-    private val requestManager: RequestManager,
-    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
-) : RecyclerView.Adapter<FollowListAdapter.FollowListViewHolder>() {
+class FollowListAdapter(private val requestManager: RequestManager) :
+    RecyclerView.Adapter<FollowListAdapter.FollowListViewHolder>() {
 
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Follow>() {
@@ -72,23 +63,13 @@ class FollowListAdapter(
             binding.follow = follow
             binding.isMine =
                 follow.memberId == DayoApplication.preferences.getCurrentUser().memberId
-            CoroutineScope(mainDispatcher).launch {
-                val userThumbnailImgBitmap = withContext(ioDispatcher) {
-                    loadImageBackground(
-                        requestManager = requestManager,
-                        width = 40,
-                        height = 40,
-                        imgName = follow.profileImg ?: ""
-                    )
-                }
-                loadImageView(
-                    requestManager = requestManager,
-                    width = 40,
-                    height = 40,
-                    img = userThumbnailImgBitmap,
-                    imgView = binding.imgFollowUserProfile
-                )
-            }
+            loadImageView(
+                requestManager = requestManager,
+                width = FOLLOW_USER_THUMBNAIL_SIZE,
+                height = FOLLOW_USER_THUMBNAIL_SIZE,
+                imgName = follow.profileImg ?: "",
+                imgView = binding.imgFollowUserProfile
+            )
 
             setRootClickListener(follow.memberId)
             setFollowButtonClickListener(follow)

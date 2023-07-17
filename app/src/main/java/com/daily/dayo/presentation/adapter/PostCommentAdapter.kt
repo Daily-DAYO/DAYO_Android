@@ -10,25 +10,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.BR
 import com.daily.dayo.DayoApplication
-import com.daily.dayo.common.GlideLoadUtil
+import com.daily.dayo.common.GlideLoadUtil.COMMENT_USER_THUMBNAIL_SIZE
 import com.daily.dayo.common.GlideLoadUtil.loadImageViewProfile
 import com.daily.dayo.common.setOnDebounceClickListener
-import com.daily.dayo.data.di.IoDispatcher
-import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemPostCommentBinding
 import com.daily.dayo.domain.model.Comment
 import com.daily.dayo.presentation.fragment.post.PostFragmentDirections
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class PostCommentAdapter(
-    private val requestManager: RequestManager,
-    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
-) : ListAdapter<Comment, PostCommentAdapter.PostCommentViewHolder>(
+class PostCommentAdapter(private val requestManager: RequestManager) :
+    ListAdapter<Comment, PostCommentAdapter.PostCommentViewHolder>(
         diffCallback
     ) {
     companion object {
@@ -83,23 +74,13 @@ class PostCommentAdapter(
                 layoutPostCommentDelete.setOnDebounceClickListener {
                     Snackbar.make(it, "삭제버튼 클릭", Snackbar.LENGTH_SHORT).show()
                 }
-                CoroutineScope(mainDispatcher).launch {
-                    val userThumbnailImgBitmap = withContext(ioDispatcher) {
-                        GlideLoadUtil.loadImageBackground(
-                            requestManager = requestManager,
-                            width = 40,
-                            height = 40,
-                            imgName = comment.profileImg
-                        )
-                    }
-                    loadImageViewProfile(
-                        requestManager = requestManager,
-                        width = 40,
-                        height = 40,
-                        img = userThumbnailImgBitmap,
-                        imgView = imgPostCommentUserProfile
-                    )
-                }
+                loadImageViewProfile(
+                    requestManager = requestManager,
+                    width = COMMENT_USER_THUMBNAIL_SIZE,
+                    height = COMMENT_USER_THUMBNAIL_SIZE,
+                    imgName = comment.profileImg,
+                    imgView = imgPostCommentUserProfile
+                )
             }
 
             val pos = adapterPosition

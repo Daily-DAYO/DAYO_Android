@@ -1,6 +1,5 @@
 package com.daily.dayo.presentation.adapter
 
-import android.graphics.Bitmap
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +9,8 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
-import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
-import com.daily.dayo.data.di.IoDispatcher
 import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemFolderPostBinding
 import com.daily.dayo.domain.model.FolderPost
@@ -22,8 +19,7 @@ import kotlinx.coroutines.*
 
 class FolderPostListAdapter(
     private val requestManager: RequestManager,
-    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher
 ) : PagingDataAdapter<FolderPost, FolderPostListAdapter.FolderPostListViewHolder>(diffCallback) {
 
     companion object {
@@ -32,7 +28,9 @@ class FolderPostListAdapter(
                 oldItem.postId == newItem.postId
 
             override fun areContentsTheSame(oldItem: FolderPost, newItem: FolderPost): Boolean =
-                oldItem.apply { preLoadThumbnail = null } == newItem.apply { preLoadThumbnail = null }
+                oldItem.apply { preLoadThumbnail = null } == newItem.apply {
+                    preLoadThumbnail = null
+                }
         }
     }
 
@@ -60,25 +58,11 @@ class FolderPostListAdapter(
             binding.imgFolderPost.visibility = View.INVISIBLE
 
             CoroutineScope(mainDispatcher).launch {
-                val folderPostImage: Bitmap?
-                if (folderPost?.preLoadThumbnail == null) {
-                    folderPostImage = withContext(ioDispatcher) {
-                        loadImageBackground(
-                            requestManager = requestManager,
-                            width = layoutParams.width,
-                            height = layoutParams.width,
-                            imgName = folderPost?.thumbnailImage ?: ""
-                        )
-                    }
-                } else {
-                    folderPostImage = folderPost.preLoadThumbnail!!
-                    folderPost.preLoadThumbnail = null
-                }
                 loadImageView(
                     requestManager = requestManager,
                     width = layoutParams.width,
                     height = layoutParams.width,
-                    img = folderPostImage,
+                    imgName = folderPost?.thumbnailImage ?: "",
                     imgView = binding.imgFolderPost
                 )
             }.invokeOnCompletion { throwable ->
@@ -93,7 +77,8 @@ class FolderPostListAdapter(
             }
 
             binding.root.setOnDebounceClickListener {
-                Navigation.findNavController(it).navigate(FolderFragmentDirections.actionFolderFragmentToPostFragment(folderPost!!.postId))
+                Navigation.findNavController(it)
+                    .navigate(FolderFragmentDirections.actionFolderFragmentToPostFragment(folderPost!!.postId))
             }
         }
     }

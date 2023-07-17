@@ -53,11 +53,7 @@ class NotificationFragment : Fragment() {
 
     private fun setNotificationListAdapter() {
         notificationAdapter = glideRequestManager?.let {
-            NotificationListAdapter(
-                requestManager = it,
-                mainDispatcher = Dispatchers.Main,
-                ioDispatcher = Dispatchers.IO
-            )
+            NotificationListAdapter(requestManager = it)
         }
         binding.rvNotificationList.layoutManager = LinearLayoutManager(requireContext())
         binding.rvNotificationList.adapter = notificationAdapter

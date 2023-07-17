@@ -15,7 +15,6 @@ import androidx.paging.LoadState
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
-import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
@@ -25,7 +24,6 @@ import com.daily.dayo.presentation.adapter.FolderPostListAdapter
 import com.daily.dayo.presentation.viewmodel.FolderViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class FolderFragment : Fragment() {
     private var binding by autoCleared<FragmentFolderBinding> { onDestroyBindingView() }
@@ -94,30 +92,14 @@ class FolderFragment : Fragment() {
                     it.data?.let { folder ->
                         binding.folder = folder
                         binding.isMine = folder.memberId == DayoApplication.preferences.getCurrentUser().memberId
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                                val folderThumbnailImage = withContext(Dispatchers.IO) {
-                                    glideRequestManager?.let { requestManager ->
-                                        loadImageBackground(
-                                            requestManager = requestManager,
-                                            width = layoutParams.width,
-                                            height = 200,
-                                            imgName = folder.thumbnailImage
-                                        )
-                                    }
-                                }
-                                glideRequestManager?.let { requestManager ->
-                                    if (folderThumbnailImage != null) {
-                                        loadImageView(
-                                            requestManager = requestManager,
-                                            width = layoutParams.width,
-                                            height = 200,
-                                            img = folderThumbnailImage,
-                                            imgView = binding.imgFolderThumbnail
-                                        )
-                                    }
-                                }
-                            }
+                        glideRequestManager?.let { requestManager ->
+                            loadImageView(
+                                requestManager = requestManager,
+                                width = layoutParams.width,
+                                height = 200,
+                                imgName = folder.thumbnailImage,
+                                imgView = binding.imgFolderThumbnail
+                            )
                         }
                     }
                 }
@@ -130,8 +112,7 @@ class FolderFragment : Fragment() {
         folderPostListAdapter = glideRequestManager?.let { requestManager ->
             FolderPostListAdapter(
                 requestManager = requestManager,
-                mainDispatcher = Dispatchers.Main,
-                ioDispatcher = Dispatchers.IO
+                mainDispatcher = Dispatchers.Main
             )
         }
         binding.rvFolderPost.adapter = folderPostListAdapter
