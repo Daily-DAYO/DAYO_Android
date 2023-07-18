@@ -49,6 +49,7 @@ class SearchFragment : Fragment() {
 
     private fun onDestroyBindingView() {
         searchKeywordRecentAdapter = null
+        binding.rvSearchRecentKeyword.adapter = null
     }
 
     private fun setBackButtonClickListener() {
