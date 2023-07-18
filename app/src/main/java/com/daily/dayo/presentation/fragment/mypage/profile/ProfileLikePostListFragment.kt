@@ -53,8 +53,7 @@ class ProfileLikePostListFragment : Fragment() {
         profileLikePostListAdapter = glideRequestManager?.let { requestManager ->
             ProfileLikePostListAdapter(
                 requestManager = requestManager,
-                mainDispatcher = Dispatchers.Main,
-                ioDispatcher = Dispatchers.IO
+                mainDispatcher = Dispatchers.Main
             )
         }
         binding.rvProfileLikePost.adapter = profileLikePostListAdapter

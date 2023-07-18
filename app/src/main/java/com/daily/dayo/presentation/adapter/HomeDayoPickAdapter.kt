@@ -268,20 +268,56 @@ class HomeDayoPickAdapter(
                     postContent.preLoadUserImg = null
                 }
 
-                loadImageView(
-                    requestManager = requestManager,
-                    width = HOME_POST_THUMBNAIL_SIZE,
-                    height = HOME_POST_THUMBNAIL_SIZE,
-                    img = postImgBitmap!!,
-                    imgView = postImg
-                )
-                loadImageViewProfile(
-                    requestManager = requestManager,
-                    width = HOME_USER_THUMBNAIL_SIZE,
-                    height = HOME_USER_THUMBNAIL_SIZE,
-                    img = userThumbnailImgBitmap!!,
-                    imgView = userThumbnailImg
-                )
+                try {
+                    loadImageView(
+                        requestManager = requestManager,
+                        width = HOME_POST_THUMBNAIL_SIZE,
+                        height = HOME_POST_THUMBNAIL_SIZE,
+                        img = postImgBitmap!!,
+                        imgView = postImg
+                    )
+                } catch (loadException: IllegalStateException) {
+                    loadImageView(
+                        requestManager = requestManager,
+                        width = HOME_POST_THUMBNAIL_SIZE,
+                        height = HOME_POST_THUMBNAIL_SIZE,
+                        imgName = postContent.thumbnailImage ?: "",
+                        imgView = postImg
+                    )
+                } catch (imgNullException: NullPointerException) {
+                    loadImageView(
+                        requestManager = requestManager,
+                        width = HOME_POST_THUMBNAIL_SIZE,
+                        height = HOME_POST_THUMBNAIL_SIZE,
+                        imgName = postContent.thumbnailImage ?: "",
+                        imgView = postImg
+                    )
+                }
+                try {
+                    loadImageViewProfile(
+                        requestManager = requestManager,
+                        width = HOME_USER_THUMBNAIL_SIZE,
+                        height = HOME_USER_THUMBNAIL_SIZE,
+                        img = userThumbnailImgBitmap!!,
+                        imgView = userThumbnailImg
+                    )
+                } catch (loadException: IllegalStateException) {
+                    loadImageViewProfile(
+                        requestManager = requestManager,
+                        width = HOME_USER_THUMBNAIL_SIZE,
+                        height = HOME_USER_THUMBNAIL_SIZE,
+                        imgName = postContent.userProfileImage ?: "",
+                        imgView = userThumbnailImg
+                    )
+                } catch (imgNullException: NullPointerException) {
+                    loadImageViewProfile(
+                        requestManager = requestManager,
+                        width = HOME_USER_THUMBNAIL_SIZE,
+                        height = HOME_USER_THUMBNAIL_SIZE,
+                        imgName = postContent.userProfileImage ?: "",
+                        imgView = userThumbnailImg
+                    )
+                }
             }.invokeOnCompletion { throwable ->
                 when (throwable) {
                     is CancellationException -> Log.e("Image Loading", "CANCELLED")

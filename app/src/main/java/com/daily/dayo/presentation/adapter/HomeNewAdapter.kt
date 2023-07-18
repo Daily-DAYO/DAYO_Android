@@ -6,14 +6,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import androidx.core.view.isVisible
 import androidx.databinding.library.baseAdapters.BR
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
 import com.daily.dayo.common.GlideLoadUtil.HOME_POST_THUMBNAIL_SIZE
@@ -266,20 +264,57 @@ class HomeNewAdapter(
                     postContent.preLoadThumbnail = null
                     postContent.preLoadUserImg = null
                 }
-                loadImageView(
-                    requestManager = requestManager,
-                    width = HOME_POST_THUMBNAIL_SIZE,
-                    height = HOME_POST_THUMBNAIL_SIZE,
-                    img = postImgBitmap!!,
-                    imgView = postImg
-                )
-                loadImageViewProfile(
-                    requestManager = requestManager,
-                    width = HOME_USER_THUMBNAIL_SIZE,
-                    height = HOME_USER_THUMBNAIL_SIZE,
-                    img = userThumbnailImgBitmap!!,
-                    imgView = userThumbnailImg
-                )
+
+                try {
+                    loadImageView(
+                        requestManager = requestManager,
+                        width = HOME_POST_THUMBNAIL_SIZE,
+                        height = HOME_POST_THUMBNAIL_SIZE,
+                        img = postImgBitmap!!,
+                        imgView = postImg
+                    )
+                } catch (loadException: IllegalStateException) {
+                    loadImageView(
+                        requestManager = requestManager,
+                        width = HOME_POST_THUMBNAIL_SIZE,
+                        height = HOME_POST_THUMBNAIL_SIZE,
+                        imgName = postContent.thumbnailImage ?: "",
+                        imgView = postImg
+                    )
+                } catch (imgNullException: NullPointerException) {
+                    loadImageView(
+                        requestManager = requestManager,
+                        width = HOME_POST_THUMBNAIL_SIZE,
+                        height = HOME_POST_THUMBNAIL_SIZE,
+                        imgName = postContent.thumbnailImage ?: "",
+                        imgView = postImg
+                    )
+                }
+                try {
+                    loadImageViewProfile(
+                        requestManager = requestManager,
+                        width = HOME_USER_THUMBNAIL_SIZE,
+                        height = HOME_USER_THUMBNAIL_SIZE,
+                        img = userThumbnailImgBitmap!!,
+                        imgView = userThumbnailImg
+                    )
+                } catch (loadException: IllegalStateException) {
+                    loadImageViewProfile(
+                        requestManager = requestManager,
+                        width = HOME_USER_THUMBNAIL_SIZE,
+                        height = HOME_USER_THUMBNAIL_SIZE,
+                        imgName = postContent.userProfileImage ?: "",
+                        imgView = userThumbnailImg
+                    )
+                } catch (imgNullException: NullPointerException) {
+                    loadImageViewProfile(
+                        requestManager = requestManager,
+                        width = HOME_USER_THUMBNAIL_SIZE,
+                        height = HOME_USER_THUMBNAIL_SIZE,
+                        imgName = postContent.userProfileImage ?: "",
+                        imgView = userThumbnailImg
+                    )
+                }
             }.invokeOnCompletion { throwable ->
                 when (throwable) {
                     is CancellationException -> Log.e("Image Loading", "CANCELLED")

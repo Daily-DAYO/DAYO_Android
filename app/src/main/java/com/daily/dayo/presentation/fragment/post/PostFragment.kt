@@ -31,11 +31,11 @@ import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.*
+import com.daily.dayo.common.GlideLoadUtil.COMMENT_USER_THUMBNAIL_SIZE
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.dialog.DefaultDialogConfirm
 import com.daily.dayo.common.dialog.LoadingAlertDialog
-import com.daily.dayo.data.di.IoDispatcher
 import com.daily.dayo.databinding.FragmentPostBinding
 import com.daily.dayo.domain.model.Comment
 import com.daily.dayo.domain.model.categoryKR
@@ -46,11 +46,8 @@ import com.daily.dayo.presentation.viewmodel.PostViewModel
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class PostFragment : Fragment() {
@@ -89,9 +86,9 @@ class PostFragment : Fragment() {
         setBackButtonClickListener()
         setCommentListAdapter()
         setImageSlider()
-        setPostDetailCollect(Dispatchers.IO)
+        setPostDetailCollect()
         setPostCommentCollect()
-        setCreatePostComment(Dispatchers.IO)
+        setCreatePostComment()
         setPostCommentClickListener()
 
         return binding.root
@@ -99,7 +96,12 @@ class PostFragment : Fragment() {
 
     override fun onStop() {
         binding.post?.let {
-            homeViewModel.setPostStatus(args.postId, it.heart, it.heartCount, binding.commentCount?: 0)
+            homeViewModel.setPostStatus(
+                args.postId,
+                it.heart,
+                it.heartCount,
+                binding.commentCount ?: 0
+            )
         }
         super.onStop()
     }
@@ -131,11 +133,7 @@ class PostFragment : Fragment() {
 
     private fun setCommentListAdapter() {
         postCommentAdapter = glideRequestManager?.let { requestManager ->
-            PostCommentAdapter(
-                requestManager = requestManager,
-                mainDispatcher = Dispatchers.Main,
-                ioDispatcher = Dispatchers.IO
-            )
+            PostCommentAdapter(requestManager = requestManager)
         }
         binding.rvPostCommentList.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPostCommentList.adapter = postCommentAdapter
@@ -152,12 +150,17 @@ class PostFragment : Fragment() {
                     )
             } else {
                 Navigation.findNavController(it)
-                    .navigate(PostFragmentDirections.actionPostFragmentToPostOptionFragment(postId = args.postId, memberId = memberId))
+                    .navigate(
+                        PostFragmentDirections.actionPostFragmentToPostOptionFragment(
+                            postId = args.postId,
+                            memberId = memberId
+                        )
+                    )
             }
         }
     }
 
-    private fun setPostDetailCollect(@IoDispatcher ioDispatcher: CoroutineDispatcher) {
+    private fun setPostDetailCollect() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 postViewModel.postDetail.observe(viewLifecycleOwner) {
@@ -170,26 +173,14 @@ class PostFragment : Fragment() {
                                 postImageSliderAdapter?.submitList(post.postImages)
                                 viewLifecycleOwner.lifecycleScope.launch {
                                     viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                                        val userThumbnailImgBitmap = withContext(ioDispatcher) {
-                                            glideRequestManager?.let { requestManager ->
-                                                GlideLoadUtil.loadImageBackground(
-                                                    requestManager = requestManager,
-                                                    width = 40,
-                                                    height = 40,
-                                                    imgName = post.userProfileImage
-                                                )
-                                            }
-                                        }
                                         glideRequestManager?.let { requestManager ->
-                                            if (userThumbnailImgBitmap != null) {
-                                                GlideLoadUtil.loadImageViewProfile(
-                                                    requestManager = requestManager,
-                                                    width = 40,
-                                                    height = 40,
-                                                    img = userThumbnailImgBitmap,
-                                                    imgView = binding.imgPostUserProfile
-                                                )
-                                            }
+                                            GlideLoadUtil.loadImageViewProfile(
+                                                requestManager = requestManager,
+                                                width = COMMENT_USER_THUMBNAIL_SIZE,
+                                                height = COMMENT_USER_THUMBNAIL_SIZE,
+                                                imgName = post.userProfileImage,
+                                                imgView = binding.imgPostUserProfile
+                                            )
                                         }
                                     }
                                 }
@@ -323,7 +314,9 @@ class PostFragment : Fragment() {
                     text = "# ${trimBlankText(tagList[index])}"
                     setOnDebounceClickListener {
                         Navigation.findNavController(it).navigate(
-                            PostFragmentDirections.actionPostFragmentToSearchResultFragment(trimBlankText(tagList[index]))
+                            PostFragmentDirections.actionPostFragmentToSearchResultFragment(
+                                trimBlankText(tagList[index])
+                            )
                         )
                     }
                 }
@@ -336,8 +329,7 @@ class PostFragment : Fragment() {
         postImageSliderAdapter = glideRequestManager?.let { requestManager ->
             PostImageSliderAdapter(
                 requestManager = requestManager,
-                mainDispatcher = Dispatchers.Main,
-                ioDispatcher = Dispatchers.IO
+                mainDispatcher = Dispatchers.Main
             )
         }
         with(binding.vpPostImage) {
@@ -453,29 +445,17 @@ class PostFragment : Fragment() {
         }
     }
 
-    private fun setCreatePostComment(@IoDispatcher ioDispatcher: CoroutineDispatcher) {
+    private fun setCreatePostComment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                val userThumbnailImgBitmap = withContext(ioDispatcher) {
-                    glideRequestManager?.let { requestManager ->
-                        GlideLoadUtil.loadImageBackground(
-                            requestManager = requestManager,
-                            width = 40,
-                            height = 40,
-                            imgName = DayoApplication.preferences.getCurrentUser().profileImg ?: ""
-                        )
-                    }
-                }
                 glideRequestManager?.let { requestManager ->
-                    if (userThumbnailImgBitmap != null) {
-                        GlideLoadUtil.loadImageViewProfile(
-                            requestManager = requestManager,
-                            width = 40,
-                            height = 40,
-                            img = userThumbnailImgBitmap,
-                            imgView = binding.imgPostCommentMyProfile
-                        )
-                    }
+                    GlideLoadUtil.loadImageViewProfile(
+                        requestManager = requestManager,
+                        width = COMMENT_USER_THUMBNAIL_SIZE,
+                        height = COMMENT_USER_THUMBNAIL_SIZE,
+                        imgName = DayoApplication.preferences.getCurrentUser().profileImg ?: "",
+                        imgView = binding.imgPostCommentMyProfile
+                    )
                 }
             }
         }
@@ -508,7 +488,7 @@ class PostFragment : Fragment() {
         Handler().postDelayed(
             {
                 binding.rvPostCommentList.adapter?.let {
-                    with (it as PostCommentAdapter) {
+                    with(it as PostCommentAdapter) {
                         postViewModel.requestPostComment(args.postId)
                         submitList(
                             postViewModel.postComment.value?.data?.subList(

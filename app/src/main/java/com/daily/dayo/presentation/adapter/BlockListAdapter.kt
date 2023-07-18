@@ -7,22 +7,13 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
-import com.daily.dayo.common.GlideLoadUtil
+import com.daily.dayo.common.GlideLoadUtil.BLOCK_USER_THUMBNAIL_SIZE
+import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
-import com.daily.dayo.data.di.IoDispatcher
-import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemBlockBinding
 import com.daily.dayo.domain.model.BlockUser
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class BlockListAdapter(
-    private val requestManager: RequestManager,
-    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
-) :
+class BlockListAdapter(private val requestManager: RequestManager) :
     RecyclerView.Adapter<BlockListAdapter.BlockListViewHolder>() {
 
     companion object {
@@ -67,23 +58,13 @@ class BlockListAdapter(
 
         fun bind(blockUser: BlockUser) {
             binding.blockUser = blockUser.nickname
-            CoroutineScope(mainDispatcher).launch {
-                val profileImgBitmap = withContext(ioDispatcher) {
-                    GlideLoadUtil.loadImageBackground(
-                        requestManager = requestManager,
-                        width = 45,
-                        height = 45,
-                        imgName = blockUser.profileImg ?: ""
-                    )
-                }
-                GlideLoadUtil.loadImageView(
-                    requestManager = requestManager,
-                    width = 45,
-                    height = 45,
-                    img = profileImgBitmap,
-                    imgView = binding.imgBlockUserProfile
-                )
-            }
+            loadImageView(
+                requestManager = requestManager,
+                width = BLOCK_USER_THUMBNAIL_SIZE,
+                height = BLOCK_USER_THUMBNAIL_SIZE,
+                imgName = blockUser.profileImg ?: "",
+                imgView = binding.imgBlockUserProfile
+            )
             setUnblockButtonClickListener(blockUser)
         }
 

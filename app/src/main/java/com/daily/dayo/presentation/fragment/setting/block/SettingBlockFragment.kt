@@ -58,11 +58,7 @@ class SettingBlockFragment : Fragment() {
 
     private fun setBlockListAdapter() {
         blockListAdapter = glideRequestManager?.let { requestManager ->
-            BlockListAdapter(
-                requestManager = requestManager,
-                mainDispatcher = Dispatchers.Main,
-                ioDispatcher = Dispatchers.IO
-            )
+            BlockListAdapter(requestManager = requestManager)
         }
         binding.rvBlock.adapter = blockListAdapter
         blockListAdapter?.setOnItemClickListener(object :
