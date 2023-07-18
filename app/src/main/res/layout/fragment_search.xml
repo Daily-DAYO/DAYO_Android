@@ -110,6 +110,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="21dp"
             android:orientation="horizontal"
+            android:overScrollMode="never"
             app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
