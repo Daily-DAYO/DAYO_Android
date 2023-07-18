@@ -16,26 +16,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
-import com.daily.dayo.common.GlideLoadUtil
+import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
-import com.daily.dayo.data.di.IoDispatcher
-import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemNotificationBinding
 import com.daily.dayo.domain.model.Notification
 import com.daily.dayo.domain.model.Topic
 import com.daily.dayo.presentation.fragment.notification.NotificationFragmentDirections
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class NotificationListAdapter(
-    private val requestManager: RequestManager,
-    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
-) : PagingDataAdapter<Notification, NotificationListAdapter.NotificationListViewHolder>(
-    diffCallback
-) {
+class NotificationListAdapter(private val requestManager: RequestManager) :
+    PagingDataAdapter<Notification, NotificationListAdapter.NotificationListViewHolder>(
+        diffCallback
+    ) {
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Notification>() {
             override fun areItemsTheSame(oldItem: Notification, newItem: Notification) =
@@ -75,23 +66,13 @@ class NotificationListAdapter(
                     ViewGroup.MarginLayoutParams.MATCH_PARENT,
                     ViewGroup.MarginLayoutParams.MATCH_PARENT
                 )
-                CoroutineScope(mainDispatcher).launch {
-                    val thumbnailImage = withContext(ioDispatcher) {
-                        GlideLoadUtil.loadImageBackground(
-                            requestManager = requestManager,
-                            width = 56,
-                            height = 56,
-                            imgName = notification.image ?: ""
-                        )
-                    }
-                    GlideLoadUtil.loadImageView(
-                        requestManager = requestManager,
-                        width = layoutParams.width,
-                        height = layoutParams.width,
-                        img = thumbnailImage,
-                        imgView = binding.ivNotificationThumbnail
-                    )
-                }
+                loadImageView(
+                    requestManager = requestManager,
+                    width = layoutParams.width,
+                    height = layoutParams.width,
+                    imgName = notification.image,
+                    imgView = binding.ivNotificationThumbnail
+                )
             }
 
             val spanContent = SpannableStringBuilder()

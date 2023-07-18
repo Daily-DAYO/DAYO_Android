@@ -78,11 +78,7 @@ class FeedFragment : Fragment() {
 
     private fun setRvFeedListAdapter() {
         feedListAdapter = glideRequestManager?.let { requestManager ->
-            FeedListAdapter(
-                requestManager = requestManager,
-                mainDispatcher = Dispatchers.Main,
-                ioDispatcher = Dispatchers.IO
-            )
+            FeedListAdapter(requestManager = requestManager)
         }
         binding.rvFeedPost.adapter = feedListAdapter
     }

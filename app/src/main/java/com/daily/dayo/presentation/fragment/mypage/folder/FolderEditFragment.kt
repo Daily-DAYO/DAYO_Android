@@ -26,7 +26,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
 import com.daily.dayo.common.ButtonActivation
-import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.Status
@@ -36,10 +35,7 @@ import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFolderSettingAddBinding
 import com.daily.dayo.domain.model.Privacy
 import com.daily.dayo.presentation.viewmodel.FolderViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -54,7 +50,7 @@ class FolderEditFragment : Fragment() {
     }
     private val folderViewModel by activityViewModels<FolderViewModel>()
     private val args by navArgs<FolderEditFragmentArgs>()
-    private var glideRequestManager: RequestManager?= null
+    private var glideRequestManager: RequestManager? = null
     private lateinit var imageUri: String
     var thumbnailImgBitmap: Bitmap? = null
     private lateinit var loadingAlertDialog: AlertDialog
@@ -69,6 +65,7 @@ class FolderEditFragment : Fragment() {
         initializeLoadingDialog()
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setFolderInfoDescription()
@@ -120,32 +117,20 @@ class FolderEditFragment : Fragment() {
                             }
                             viewLifecycleOwner.lifecycleScope.launch {
                                 viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                                    val folderThumbnailImage = withContext(Dispatchers.IO) {
-                                        glideRequestManager?.let { requestManager ->
-                                            loadImageBackground(
-                                                requestManager = requestManager,
-                                                width = layoutParams.width,
-                                                height = 40,
-                                                imgName = folder.thumbnailImage
-                                            )
-                                        }
-                                    }
                                     glideRequestManager?.let { requestManager ->
-                                        if (folderThumbnailImage != null) {
-                                            loadImageView(
-                                                requestManager = requestManager,
-                                                width = layoutParams.width,
-                                                height = 148,
-                                                img = folderThumbnailImage,
-                                                imgView = binding.ivFolderSettingThumbnail
-                                            )
-                                        }
+                                        loadImageView(
+                                            requestManager = requestManager,
+                                            width = layoutParams.width,
+                                            height = 148,
+                                            imgName = folder.thumbnailImage,
+                                            imgView = binding.ivFolderSettingThumbnail
+                                        )
                                     }
                                 }
                             }
                         }
                     }
-                    else -> { }
+                    else -> {}
                 }
             }
         }
@@ -214,7 +199,8 @@ class FolderEditFragment : Fragment() {
                 imageUri = it
                 if (this::imageUri.isInitialized) {
                     if (imageUri == "") {
-                        glideRequestManager?.load(R.drawable.ic_folder_thumbnail_empty)?.centerCrop()
+                        glideRequestManager?.load(R.drawable.ic_folder_thumbnail_empty)
+                            ?.centerCrop()
                             ?.into(binding.ivFolderSettingThumbnail)
                         thumbnailImgBitmap = null
                     } else {

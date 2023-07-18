@@ -54,8 +54,7 @@ class ProfileBookmarkPostListFragment : Fragment() {
         profileBookmarkPostListAdapter = glideRequestManager?.let { requestManager ->
             ProfileBookmarkPostListAdapter(
                 requestManager = requestManager,
-                mainDispatcher = Dispatchers.Main,
-                ioDispatcher = Dispatchers.IO
+                mainDispatcher = Dispatchers.Main
             )
         }
         binding.rvProfileBookmarkPost.adapter = profileBookmarkPostListAdapter

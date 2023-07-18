@@ -49,8 +49,7 @@ class ProfileFolderListFragment : Fragment() {
         profileFolderListAdapter = glideRequestManager?.let {
             ProfileFolderListAdapter(
                 requestManager = it,
-                mainDispatcher = Dispatchers.Main,
-                ioDispatcher = Dispatchers.IO
+                mainDispatcher = Dispatchers.Main
             )
         }
         binding.rvProfileFolder.adapter = profileFolderListAdapter

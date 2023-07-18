@@ -21,15 +21,13 @@ import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.*
+import com.daily.dayo.common.GlideLoadUtil.PROFILE_EDIT_USER_THUMBNAIL_SIZE
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.databinding.FragmentProfileEditBinding
@@ -118,30 +116,14 @@ class ProfileEditFragment : Fragment() {
         profileSettingViewModel.requestProfile(memberId = DayoApplication.preferences.getCurrentUser().memberId!!)
         profileSettingViewModel.profileInfo.observe(viewLifecycleOwner) {
             it?.let { profile ->
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        val userProfileThumbnailImage = withContext(Dispatchers.IO) {
-                            glideRequestManager?.let { requestManager ->
-                                GlideLoadUtil.loadImageBackgroundProfile(
-                                    requestManager = requestManager,
-                                    width = 100,
-                                    height = 100,
-                                    imgName = profile.profileImg
-                                )
-                            }
-                        }
-                        glideRequestManager?.let { requestManager ->
-                            if (userProfileThumbnailImage != null) {
-                                GlideLoadUtil.loadImageViewProfile(
-                                    requestManager = requestManager,
-                                    width = 100,
-                                    height = 100,
-                                    img = userProfileThumbnailImage,
-                                    imgView = binding.imgProfileEditUserImage
-                                )
-                            }
-                        }
-                    }
+                glideRequestManager?.let { requestManager ->
+                    GlideLoadUtil.loadImageViewProfile(
+                        requestManager = requestManager,
+                        width = PROFILE_EDIT_USER_THUMBNAIL_SIZE,
+                        height = PROFILE_EDIT_USER_THUMBNAIL_SIZE,
+                        imgName = profile.profileImg,
+                        imgView = binding.imgProfileEditUserImage
+                    )
                 }
                 binding.etProfileEditNickname.setText(profile.nickname)
             }
@@ -200,7 +182,11 @@ class ProfileEditFragment : Fragment() {
                                 trimBlankText(s)
                             )
                         ) {
-                            profileSettingViewModel.requestCheckNicknameDuplicate(trimBlankText(binding.etProfileEditNickname.text))
+                            profileSettingViewModel.requestCheckNicknameDuplicate(
+                                trimBlankText(
+                                    binding.etProfileEditNickname.text
+                                )
+                            )
                             profileSettingViewModel.isNicknameDuplicate.observe(viewLifecycleOwner) { isDuplicate ->
                                 if (isDuplicate) {
                                     setEditTextTheme(

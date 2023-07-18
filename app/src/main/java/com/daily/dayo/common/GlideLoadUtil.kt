@@ -22,6 +22,55 @@ object GlideLoadUtil {
     private const val BASE_URL_IMG = "${BuildConfig.BASE_URL}/images/"
     const val HOME_POST_THUMBNAIL_SIZE = 158
     const val HOME_USER_THUMBNAIL_SIZE = 17
+    const val COMMENT_USER_THUMBNAIL_SIZE = 40
+    const val PROFILE_USER_THUMBNAIL_SIZE = 70
+    const val PROFILE_EDIT_USER_THUMBNAIL_SIZE = 100
+    const val BLOCK_USER_THUMBNAIL_SIZE = 45
+    const val FOLLOW_USER_THUMBNAIL_SIZE = 40
+
+    fun loadImageView(
+        requestManager: RequestManager,
+        width: Int,
+        height: Int,
+        imgName: String,
+        imgView: ImageView,
+        placeholderImg: Int? = null,
+        errorImg: Int? = null,
+        placeholderLottie: LottieAnimationView? = null
+    ) {
+        requestManager
+            .load("$BASE_URL_IMG${imgName}")
+            .override(width, height)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    placeholderLottie?.let { lottieView ->
+                        lottieView.visibility = View.GONE
+                    }
+                    return false
+                }
+            })
+            .thumbnail(0.1f)
+            .placeholder(placeholderImg ?: R.color.gray_3_9FA5AE)
+            .error(errorImg ?: R.drawable.ic_dayo_circle_grayscale)
+            .priority(Priority.HIGH)
+            .centerCrop()
+            .into(imgView)
+    }
 
     fun loadImageView(
         requestManager: RequestManager,
@@ -31,7 +80,7 @@ object GlideLoadUtil {
         imgView: ImageView,
         placeholderImg: Int? = null,
         errorImg: Int? = null,
-        placeholderLottie: LottieAnimationView?= null
+        placeholderLottie: LottieAnimationView? = null
     ) {
         requestManager.load(img)
             .override(width, height)
@@ -62,6 +111,36 @@ object GlideLoadUtil {
             .placeholder(placeholderImg ?: R.color.gray_3_9FA5AE)
             .error(errorImg ?: R.drawable.ic_dayo_circle_grayscale)
             .priority(Priority.HIGH)
+            .centerCrop()
+            .into(imgView)
+    }
+
+    fun loadImageViewProfile(
+        requestManager: RequestManager,
+        width: Int,
+        height: Int,
+        imgName: String,
+        imgView: ImageView,
+        placeholderImg: Int? = null,
+        errorImg: Int? = null
+    ) {
+        val requestOption =
+            if (placeholderImg != null && errorImg != null) {
+                RequestOptions()
+                    .placeholder(placeholderImg)
+                    .error(errorImg)
+            } else if (placeholderImg != null) {
+                RequestOptions().placeholder(placeholderImg)
+            } else if (errorImg != null) {
+                RequestOptions().error(errorImg)
+            } else {
+                RequestOptions()
+            }
+
+        requestManager
+            .load("$BASE_URL_IMG${imgName}")
+            .override(width, height)
+            .apply(requestOption)
             .centerCrop()
             .into(imgView)
     }
@@ -178,5 +257,9 @@ object GlideLoadUtil {
             .load("$BASE_URL_IMG${imgName}")
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
             .preload(width, height)
+    }
+
+    fun cancelImageLoad(requestManager: RequestManager, clearImageView: ImageView) {
+        requestManager.clear(clearImageView)
     }
 }

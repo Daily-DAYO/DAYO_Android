@@ -1,6 +1,5 @@
 package com.daily.dayo.presentation.adapter
 
-import android.graphics.Bitmap
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,10 +8,8 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
-import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
-import com.daily.dayo.data.di.IoDispatcher
 import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemProfilePostBinding
 import com.daily.dayo.domain.model.LikePost
@@ -20,8 +17,7 @@ import kotlinx.coroutines.*
 
 class ProfileLikePostListAdapter(
     private val requestManager: RequestManager,
-    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher
 ) :
     PagingDataAdapter<LikePost, ProfileLikePostListAdapter.ProfileLikePostListViewHolder>(
         diffCallback
@@ -33,7 +29,9 @@ class ProfileLikePostListAdapter(
                 oldItem.postId == newItem.postId
 
             override fun areContentsTheSame(oldItem: LikePost, newItem: LikePost): Boolean =
-                oldItem.apply { preLoadThumbnail = null } == newItem.apply { preLoadThumbnail = null }
+                oldItem.apply { preLoadThumbnail = null } == newItem.apply {
+                    preLoadThumbnail = null
+                }
 
             override fun getChangePayload(oldItem: LikePost, newItem: LikePost): Any? {
                 return if (oldItem.postId != newItem.postId || oldItem.thumbnailImage != newItem.thumbnailImage) true else null
@@ -78,25 +76,11 @@ class ProfileLikePostListAdapter(
             binding.imgProfilePost.visibility = View.INVISIBLE
 
             CoroutineScope(mainDispatcher).launch {
-                val profileListPostImage: Bitmap?
-                if (likePost.preLoadThumbnail == null) {
-                    profileListPostImage = withContext(ioDispatcher) {
-                        loadImageBackground(
-                            requestManager = requestManager,
-                            width = layoutParams.width,
-                            height = layoutParams.width,
-                            imgName = likePost.thumbnailImage
-                        )
-                    }
-                } else {
-                    profileListPostImage = likePost.preLoadThumbnail
-                    likePost.preLoadThumbnail = null
-                }
                 loadImageView(
                     requestManager = requestManager,
                     width = layoutParams.width,
                     height = layoutParams.width,
-                    img = profileListPostImage!!,
+                    imgName = likePost.thumbnailImage,
                     imgView = binding.imgProfilePost
                 )
             }.invokeOnCompletion { throwable ->

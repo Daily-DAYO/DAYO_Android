@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -17,7 +16,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
-import com.daily.dayo.common.GlideLoadUtil.loadImageBackgroundProfile
+import com.daily.dayo.common.GlideLoadUtil.PROFILE_USER_THUMBNAIL_SIZE
 import com.daily.dayo.common.GlideLoadUtil.loadImageViewProfile
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
@@ -29,8 +28,6 @@ import com.daily.dayo.presentation.adapter.ProfileFragmentPagerStateAdapter
 import com.daily.dayo.presentation.viewmodel.ProfileViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ProfileFragment : Fragment() {
     private var binding by autoCleared<FragmentProfileBinding> {
@@ -38,9 +35,9 @@ class ProfileFragment : Fragment() {
     }
     private val profileViewModel by activityViewModels<ProfileViewModel>()
     private val args by navArgs<ProfileFragmentArgs>()
-    private var profileFolderListAdapter: ProfileFolderListAdapter?= null
-    private var glideRequestManager: RequestManager?= null
-    private var pagerAdapter: ProfileFragmentPagerStateAdapter?= null
+    private var profileFolderListAdapter: ProfileFolderListAdapter? = null
+    private var glideRequestManager: RequestManager? = null
+    private var pagerAdapter: ProfileFragmentPagerStateAdapter? = null
     private var mediator: TabLayoutMediator? = null
     private val pageChangeCallBack = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
@@ -72,7 +69,7 @@ class ProfileFragment : Fragment() {
         profileFolderListAdapter = null
         glideRequestManager = null
         pagerAdapter = null
-        with (binding.pagerProfile) {
+        with(binding.pagerProfile) {
             unregisterOnPageChangeCallback(pageChangeCallBack)
             adapter = null
         }
@@ -121,30 +118,18 @@ class ProfileFragment : Fragment() {
         profileViewModel.profileInfo.observe(viewLifecycleOwner) {
             it?.let { profile ->
                 binding.profile = profile
-                viewLifecycleOwner.lifecycleScope.launch {
-                    val userProfileThumbnailImage = withContext(Dispatchers.IO) {
-                        glideRequestManager?.let { requestManager ->
-                            loadImageBackgroundProfile(
-                                requestManager = requestManager,
-                                width = 70, height = 70, imgName = profile.profileImg
-                            )
-                        }
-                    }
-                    glideRequestManager?.let { requestManager ->
-                        if (userProfileThumbnailImage != null) {
-                            loadImageViewProfile(
-                                requestManager = requestManager,
-                                width = 70,
-                                height = 70,
-                                img = userProfileThumbnailImage,
-                                imgView = binding.imgProfileUserProfile
-                            )
-                        }
-                    }
+                glideRequestManager?.let { requestManager ->
+                    loadImageViewProfile(
+                        requestManager = requestManager,
+                        width = PROFILE_USER_THUMBNAIL_SIZE,
+                        height = PROFILE_USER_THUMBNAIL_SIZE,
+                        imgName = profile.profileImg,
+                        imgView = binding.imgProfileUserProfile
+                    )
                 }
 
                 setFollowButtonClickListener()
-                profile.memberId?.let{
+                profile.memberId?.let {
                     setFollowerCountButtonClickListener(
                         memberId = profile.memberId,
                         nickname = profile.nickname
@@ -169,7 +154,8 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setViewPager() {
-        pagerAdapter = ProfileFragmentPagerStateAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+        pagerAdapter =
+            ProfileFragmentPagerStateAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         pagerAdapter?.addFragment(ProfileFolderListFragment())
         pagerAdapter?.addFragment(ProfileLikePostListFragment())
         pagerAdapter?.addFragment(ProfileBookmarkPostListFragment())
@@ -202,7 +188,8 @@ class ProfileFragment : Fragment() {
                 if (success) {
                     getOtherProfileDescription()
                 } else {
-                    Toast.makeText(requireContext(), "네트워크 연결 상태가 불안정합니다", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "네트워크 연결 상태가 불안정합니다", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
@@ -215,7 +202,8 @@ class ProfileFragment : Fragment() {
                 if (success) {
                     getOtherProfileDescription()
                 } else {
-                    Toast.makeText(requireContext(), "네트워크 연결 상태가 불안정합니다", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "네트워크 연결 상태가 불안정합니다", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
@@ -225,8 +213,7 @@ class ProfileFragment : Fragment() {
         profileFolderListAdapter = glideRequestManager?.let {
             ProfileFolderListAdapter(
                 requestManager = it,
-                mainDispatcher = Dispatchers.Main,
-                ioDispatcher = Dispatchers.IO
+                mainDispatcher = Dispatchers.Main
             )
         }
         binding.rvProfileFolder.adapter = profileFolderListAdapter
@@ -247,16 +234,14 @@ class ProfileFragment : Fragment() {
             memberId = profileViewModel.profileMemberId,
             isMine = false
         )
-        viewLifecycleOwner.lifecycleScope.launch {
-            profileViewModel.folderList.observe(viewLifecycleOwner) {
-                when (it.status) {
-                    Status.SUCCESS -> {
-                        it.data?.let { folderList ->
-                            profileFolderListAdapter?.submitList(folderList)
-                        }
+        profileViewModel.folderList.observe(viewLifecycleOwner) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { folderList ->
+                        profileFolderListAdapter?.submitList(folderList)
                     }
-                    else -> {}
                 }
+                else -> {}
             }
         }
     }
