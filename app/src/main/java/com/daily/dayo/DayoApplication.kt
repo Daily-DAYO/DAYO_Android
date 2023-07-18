@@ -2,6 +2,7 @@ package com.daily.dayo
 
 import android.app.Application
 import android.content.Context
+import com.bumptech.glide.Glide
 import com.daily.dayo.data.datasource.local.SharedManager
 import com.kakao.sdk.common.KakaoSdk
 import dagger.hilt.android.HiltAndroidApp
@@ -27,5 +28,15 @@ class DayoApplication : Application(){
 
         KakaoSdk.init(this, BuildConfig.NATIVE_APP_KEY)
         preferences = SharedManager(applicationContext)
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        Glide.get(this).clearMemory()
+    }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        Glide.get(this).trimMemory(level)
     }
 }
