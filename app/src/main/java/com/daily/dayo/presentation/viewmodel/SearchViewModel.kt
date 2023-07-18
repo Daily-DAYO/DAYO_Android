@@ -20,8 +20,10 @@ class SearchViewModel @Inject constructor(
     private val requestSearchKeywordRecentUseCase: RequestSearchKeywordRecentUseCase,
     private val requestSearchKeywordUseCase: RequestSearchKeywordUseCase,
     private val requestSearchTotalCountUseCase: RequestSearchTotalCountUseCase
-) :
-    ViewModel() {
+) : ViewModel() {
+
+    var searchKeyword = ""
+
     private val _searchTotalCount = MutableLiveData(0)
     val searchTotalCount: LiveData<Int> get() = _searchTotalCount
 

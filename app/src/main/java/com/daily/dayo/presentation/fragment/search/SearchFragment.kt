@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.daily.dayo.R
 import com.daily.dayo.common.HideKeyBoardUtil
 import com.daily.dayo.common.ReplaceUnicode
 import com.daily.dayo.common.autoCleared
@@ -21,9 +22,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
-    private var binding by autoCleared<FragmentSearchBinding>()
+    private var binding by autoCleared<FragmentSearchBinding> { onDestroyBindingView() }
     private val searchViewModel by activityViewModels<SearchViewModel>()
-    private lateinit var searchKeywordRecentAdapter: SearchKeywordRecentAdapter
+    private var searchKeywordRecentAdapter: SearchKeywordRecentAdapter? = null
     private lateinit var searchKeywordRecentList: ArrayList<String>
 
     override fun onCreateView(
@@ -31,6 +32,11 @@ class SearchFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setBackButtonClickListener()
         setSearchKeywordRecentListAdapter()
         setSearchEditTextListener()
@@ -38,12 +44,12 @@ class SearchFragment : Fragment() {
         setSearchKeywordRecentClickListener()
         setSearchKeywordInputDone()
         setSearchKeywordInputRemoveClickListener()
-        return binding.root
+        HideKeyBoardUtil.hideTouchDisplay(requireActivity(), view)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        HideKeyBoardUtil.hideTouchDisplay(requireActivity(), view)
+    private fun onDestroyBindingView() {
+        searchKeywordRecentAdapter = null
+        binding.rvSearchRecentKeyword.adapter = null
     }
 
     private fun setBackButtonClickListener() {
@@ -97,11 +103,11 @@ class SearchFragment : Fragment() {
 
     private fun initSearchKeywordRecentList() {
         searchKeywordRecentList = searchViewModel.getSearchKeywordRecent()
-        searchKeywordRecentAdapter.submitList(searchKeywordRecentList)
+        searchKeywordRecentAdapter?.submitList(searchKeywordRecentList)
     }
 
     private fun setSearchKeywordRecentClickListener() {
-        searchKeywordRecentAdapter.setOnItemClickListener(object :
+        searchKeywordRecentAdapter?.setOnItemClickListener(object :
             SearchKeywordRecentAdapter.OnItemClickListener {
             override fun onItemClick(v: View, keyword: String, pos: Int) {
                 searchKeyword(keyword)
@@ -110,22 +116,19 @@ class SearchFragment : Fragment() {
             override fun deleteSearchKeywordRecentClick(keyword: String, pos: Int) {
                 searchViewModel.deleteSearchKeywordRecent(keyword)
                 searchKeywordRecentList = searchViewModel.getSearchKeywordRecent()
-                searchKeywordRecentAdapter.submitList(searchKeywordRecentList)
+                searchKeywordRecentAdapter?.submitList(searchKeywordRecentList)
             }
         })
 
         binding.tvSearchAllDelete.setOnDebounceClickListener {
             searchViewModel.clearSearchKeywordRecent()
             searchKeywordRecentList = searchViewModel.getSearchKeywordRecent()
-            searchKeywordRecentAdapter.submitList(searchKeywordRecentList)
+            searchKeywordRecentAdapter?.submitList(searchKeywordRecentList)
         }
     }
 
     private fun searchKeyword(keyword: String) {
-        findNavController().navigate(
-            SearchFragmentDirections.actionSearchFragmentToSearchResultFragment(
-                keyword
-            )
-        )
+        searchViewModel.searchKeyword = keyword
+        findNavController().navigate(R.id.action_searchFragment_to_searchResultFragment)
     }
 }
