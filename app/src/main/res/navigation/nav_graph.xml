@@ -47,11 +47,11 @@
         <action
             android:id="@+id/action_searchFragment_to_searchResultFragment"
             app:destination="@id/SearchResultFragment"
-            app:popUpTo="@id/HomeFragment"
             app:enterAnim="@anim/translate_from_right_in"
             app:exitAnim="@anim/translate_to_left_out"
             app:popEnterAnim="@anim/translate_from_left_in"
-            app:popExitAnim="@anim/translate_to_right_out" />
+            app:popExitAnim="@anim/translate_to_right_out"
+            app:popUpTo="@id/HomeFragment" />
     </fragment>
 
     <fragment
@@ -278,19 +278,19 @@
         <action
             android:id="@+id/action_postOptionMineFragment_to_HomeFragment"
             app:destination="@+id/HomeFragment"
-            app:popUpTo="@id/PostFragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/translate_nothing"
-            app:exitAnim="@anim/translate_to_right_out" />
+            app:exitAnim="@anim/translate_to_right_out"
+            app:popUpTo="@id/PostFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_postOptionMineFragment_to_writeFragment"
             app:destination="@id/WriteFragment"
-            app:popUpTo="@id/PostFragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/translate_from_right_in"
             app:exitAnim="@anim/translate_nothing"
             app:popEnterAnim="@anim/translate_nothing"
-            app:popExitAnim="@anim/translate_to_right_out" />
+            app:popExitAnim="@anim/translate_to_right_out"
+            app:popUpTo="@id/PostFragment"
+            app:popUpToInclusive="true" />
     </dialog>
 
     <fragment
@@ -432,9 +432,9 @@
         <action
             android:id="@+id/action_folderOptionFragment_to_profileFragment"
             app:destination="@+id/ProfileFragment"
-            app:popUpTo="@id/ProfileFragment"
             app:enterAnim="@anim/translate_nothing"
-            app:exitAnim="@anim/translate_to_right_out" />
+            app:exitAnim="@anim/translate_to_right_out"
+            app:popUpTo="@id/ProfileFragment" />
         <action
             android:id="@+id/action_folderOptionFragment_to_folderEditFragment"
             app:destination="@+id/FolderEditFragment"
@@ -530,7 +530,7 @@
 
         <action
             android:id="@+id/action_settingFragment_to_noticeFragment"
-            app:destination="@id/NoticeFragment"
+            app:destination="@id/NoticeListFragment"
             app:enterAnim="@anim/translate_from_right_in"
             app:exitAnim="@anim/translate_to_left_out"
             app:popEnterAnim="@anim/translate_from_left_in"
@@ -565,12 +565,12 @@
         <action
             android:id="@+id/action_settingChangePasswordNewFragment_to_settingFragment"
             app:destination="@id/SettingFragment"
-            app:popUpTo="@id/SettingFragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/translate_from_right_in"
             app:exitAnim="@anim/translate_to_left_out"
             app:popEnterAnim="@anim/translate_from_left_in"
-            app:popExitAnim="@anim/translate_to_right_out" />
+            app:popExitAnim="@anim/translate_to_right_out"
+            app:popUpTo="@id/SettingFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -694,7 +694,7 @@
             app:enterAnim="@anim/translate_bottom_up"
             app:exitAnim="@anim/translate_nothing"
             app:popEnterAnim="@anim/translate_nothing"
-            app:popExitAnim="@anim/translate_top_down"/>
+            app:popExitAnim="@anim/translate_top_down" />
     </fragment>
 
     <fragment
@@ -709,8 +709,26 @@
     </fragment>
 
     <fragment
-        android:id="@+id/NoticeFragment"
+        android:id="@+id/NoticeListFragment"
         android:name="com.daily.dayo.presentation.fragment.setting.notice.NoticeListFragment"
-        android:label="fragment_notice"
-        tools:layout="@layout/fragment_notice_list" />
+        android:label="fragment_notice_list"
+        tools:layout="@layout/fragment_notice_list">
+        <action
+            android:id="@+id/action_noticeListFragment_to_noticeDetailFragment"
+            app:destination="@+id/NoticeDetailFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/NoticeDetailFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.notice.NoticeDetailFragment"
+        android:label="fragment_notice_detail"
+        tools:layout="@layout/fragment_notice_detail">
+        <argument
+            android:name="notice"
+            app:argType="com.daily.dayo.domain.model.Notice" />
+    </fragment>
 </navigation>
