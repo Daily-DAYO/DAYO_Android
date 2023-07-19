@@ -1,7 +1,5 @@
 package com.daily.dayo.data.di
 
-import com.daily.dayo.common.DispatcherProvider
-import com.daily.dayo.data.datasource.remote.block.BlockApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
