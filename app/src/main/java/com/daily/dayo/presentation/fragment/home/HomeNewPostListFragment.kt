@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -67,7 +68,6 @@ class HomeNewPostListFragment : Fragment() {
     }
 
     override fun onResume() {
-        loadPosts(homeViewModel.currentNewCategory)
         binding.swipeRefreshLayoutNewPost.isEnabled = true
         super.onResume()
     }
@@ -167,6 +167,9 @@ class HomeNewPostListFragment : Fragment() {
             currentNewCategory = selectCategory
             requestNewPostList()
         }
+
+        if (this.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED))
+            binding.rvNewPost.scrollToPosition(0)
     }
 
     private fun setPostLikeClickListener() {
@@ -250,6 +253,7 @@ class HomeNewPostListFragment : Fragment() {
     }
 
     private fun stopLoadingView() {
+        binding.rvNewPost.scrollToPosition(0)
         with(binding) {
             with(layoutNewPostShimmer) {
                 stopShimmer()
