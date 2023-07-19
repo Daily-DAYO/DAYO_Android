@@ -16,6 +16,14 @@
             type="String" />
 
         <variable
+            name="heart"
+            type="Boolean" />
+
+        <variable
+            name="bookmark"
+            type="Boolean" />
+
+        <variable
             name="heartCountStr"
             type="String" />
 
@@ -134,7 +142,7 @@
                 android:layout_marginVertical="6dp"
                 android:layout_marginStart="9dp"
                 android:background="@android:color/transparent"
-                android:src="@{post.heart == true ? @drawable/ic_post_like_checked : @drawable/ic_post_like_default}"
+                android:src="@{heart == true ? @drawable/ic_post_like_checked : @drawable/ic_post_like_default}"
                 app:layout_constraintBottom_toTopOf="@id/view_feed_post_horizontal_line"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -186,7 +194,7 @@
                 android:layout_height="40dp"
                 android:layout_marginEnd="7dp"
                 android:background="@android:color/transparent"
-                android:src="@{post.bookmark == true ? @drawable/ic_bookmark_checked : @drawable/ic_bookmark_default}"
+                android:src="@{bookmark == true ? @drawable/ic_bookmark_checked : @drawable/ic_bookmark_default}"
                 app:layout_constraintBottom_toBottomOf="@id/btn_feed_post_like"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/btn_feed_post_like"
@@ -222,10 +230,10 @@
                 android:textColor="@color/gray_1_313131"
                 android:textSize="14dp"
                 android:visibility="@{post.contents.length() == 0 ? View.GONE : View.VISIBLE}"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/layout_scroll_feed_post_tag_list"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_goneMarginBottom="25dp"
                 tools:text="다이어리를 꾸며봤어요~! 블랙 앤 화이트로 꾸며봤습니다:) 일기를 써보았어요. 이러쿵 저러쿵" />
 
@@ -239,10 +247,10 @@
                 android:overScrollMode="never"
                 android:scrollbars="none"
                 android:visibility="@{post.hashtags.size() > 0 ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_feed_post_content"
-                app:layout_constraintBottom_toBottomOf="parent"
                 tools:visibility="visible">
 
                 <com.google.android.flexbox.FlexboxLayout

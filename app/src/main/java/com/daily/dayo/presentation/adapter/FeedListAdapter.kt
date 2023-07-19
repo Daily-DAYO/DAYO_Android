@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.databinding.library.baseAdapters.BR
 import androidx.navigation.Navigation
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -15,7 +16,6 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
-import com.daily.dayo.common.convertCountPlace
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemFeedPostBinding
 import com.daily.dayo.domain.model.Post
@@ -39,9 +39,12 @@ class FeedListAdapter(private val requestManager: RequestManager) :
                     preLoadUserImg = null
                 }
 
+            // areItemTheSame()이 true, areContentsTheSame()이 false을 호출 하면 반환
             override fun getChangePayload(oldItem: Post, newItem: Post): Any? {
-                return if (oldItem.heart != newItem.heart || oldItem.heartCount != newItem.heartCount ||
-                    oldItem.commentCount != newItem.commentCount
+                return if (oldItem.heart != newItem.heart
+                    || oldItem.heartCount != newItem.heartCount
+                    || oldItem.commentCount != newItem.commentCount
+                    || oldItem.bookmark != newItem.bookmark
                 ) true else null
             }
         }
@@ -69,6 +72,24 @@ class FeedListAdapter(private val requestManager: RequestManager) :
         )
     }
 
+    override fun onBindViewHolder(
+        holder: FeedListViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.isEmpty()) {
+            this.onBindViewHolder(holder, position)
+        } else {
+            if (payloads[0] == true) {
+                if (getItem(position) == null) {
+                    this.onBindViewHolder(holder, position)
+                } else {
+                    holder.bindReactionState(getItem(position)!!)
+                }
+            }
+        }
+    }
+
     override fun onBindViewHolder(holder: FeedListViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
@@ -77,11 +98,16 @@ class FeedListAdapter(private val requestManager: RequestManager) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(post: Post?) {
-            binding.post = post
-            binding.heartCountStr =
-                if (post?.heartCount != null) convertCountPlace(post.heartCount ?: 0) else "0"
-            binding.commentCountStr =
-                if (post?.commentCount != null) convertCountPlace(post.commentCount) else "0"
+            with(binding) {
+                post?.let {
+                    this.post = it
+                    this.heart = it.heart
+                    this.heartCountStr = it.heartCount.toString()
+                    this.commentCountStr = it.commentCount?.toString() ?: ""
+                    this.bookmark = it.bookmark
+                }
+            }
+
             binding.categoryKR = post?.category?.let { categoryKR(it) }
             loadImageView(
                 requestManager = requestManager,
@@ -116,26 +142,21 @@ class FeedListAdapter(private val requestManager: RequestManager) :
             }
 
             // 좋아요
-            val pos = adapterPosition
-            if (pos != RecyclerView.NO_POSITION) {
-                binding.btnFeedPostLike.setOnDebounceClickListener {
-                    listener?.likePostClick(
-                        button = binding.btnFeedPostLike,
-                        post = post,
-                        position = pos
-                    )
-                }
+            binding.btnFeedPostLike.setOnDebounceClickListener {
+                listener?.likePostClick(
+                    button = binding.btnFeedPostLike,
+                    post = post,
+                    position = bindingAdapterPosition
+                )
             }
 
             // 북마크
-            if (pos != RecyclerView.NO_POSITION) {
-                binding.btnFeedPostBookmark.setOnDebounceClickListener {
-                    listener?.bookmarkPostClick(
-                        button = binding.btnFeedPostBookmark,
-                        post = post,
-                        position = pos
-                    )
-                }
+            binding.btnFeedPostBookmark.setOnDebounceClickListener {
+                listener?.bookmarkPostClick(
+                    button = binding.btnFeedPostBookmark,
+                    post = post,
+                    position = bindingAdapterPosition
+                )
             }
         }
 
@@ -229,6 +250,29 @@ class FeedListAdapter(private val requestManager: RequestManager) :
                             )
                         )
                 }
+            }
+        }
+
+        fun bindReactionState(post: Post) {
+            setHeartState(post)
+        }
+
+        private fun setHeartState(post: Post) {
+            binding.post?.let {
+                it.heart = post.heart
+                it.heartCount = post.heartCount
+                it.bookmark = post.bookmark
+            }
+            setBindingSetVariable(post)
+        }
+
+        private fun setBindingSetVariable(post: Post) {
+            with(binding) {
+                setVariable(BR.heart, post.heart)
+                setVariable(BR.heartCountStr, post.heartCount.toString())
+                setVariable(BR.commentCountStr, post.commentCount.toString())
+                setVariable(BR.bookmark, post.bookmark)
+                executePendingBindings()
             }
         }
     }
