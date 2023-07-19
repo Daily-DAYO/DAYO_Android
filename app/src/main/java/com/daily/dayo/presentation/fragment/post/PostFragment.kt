@@ -43,6 +43,7 @@ import com.daily.dayo.presentation.adapter.PostCommentAdapter
 import com.daily.dayo.presentation.adapter.PostImageSliderAdapter
 import com.daily.dayo.presentation.viewmodel.HomeViewModel
 import com.daily.dayo.presentation.viewmodel.PostViewModel
+import com.daily.dayo.presentation.viewmodel.SearchViewModel
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
@@ -59,6 +60,7 @@ class PostFragment : Fragment() {
     }
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val postViewModel by activityViewModels<PostViewModel>()
+    private val searchViewModel by activityViewModels<SearchViewModel>()
     private val args by navArgs<PostFragmentArgs>()
     private lateinit var mAlertDialog: AlertDialog
     private var glideRequestManager: RequestManager? = null
@@ -313,10 +315,9 @@ class PostFragment : Fragment() {
                     ensureAccessibleTouchTarget(42.toPx())
                     text = "# ${trimBlankText(tagList[index])}"
                     setOnDebounceClickListener {
+                        searchViewModel.searchKeyword = trimBlankText(tagList[index])
                         Navigation.findNavController(it).navigate(
-                            PostFragmentDirections.actionPostFragmentToSearchResultFragment(
-                                trimBlankText(tagList[index])
-                            )
+                            PostFragmentDirections.actionPostFragmentToSearchResultFragment()
                         )
                     }
                 }
