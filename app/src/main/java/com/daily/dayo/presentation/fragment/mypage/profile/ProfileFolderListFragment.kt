@@ -23,6 +23,11 @@ class ProfileFolderListFragment : Fragment() {
     private val profileViewModel by activityViewModels<ProfileViewModel>()
     private var profileFolderListAdapter: ProfileFolderListAdapter?= null
     private var glideRequestManager: RequestManager?= null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null)
+            getProfileFolderList()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,8 +71,11 @@ class ProfileFolderListFragment : Fragment() {
         })
     }
 
-    private fun setProfileFolderList() {
+    private fun getProfileFolderList() {
         profileViewModel.requestFolderList(memberId = DayoApplication.preferences.getCurrentUser().memberId!!, true)
+    }
+
+    private fun setProfileFolderList() {
         profileViewModel.folderList.observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {

@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
@@ -37,6 +38,12 @@ class HomeDayoPickPostListFragment : Fragment() {
     private var homeDayoPickAdapter: HomeDayoPickAdapter? = null
     private var glideRequestManager: RequestManager? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null)
+            loadPosts(homeViewModel.currentDayoPickCategory)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -58,7 +65,6 @@ class HomeDayoPickPostListFragment : Fragment() {
     }
 
     override fun onResume() {
-        loadPosts(homeViewModel.currentDayoPickCategory)
         binding.swipeRefreshLayoutDayoPickPost.isEnabled = true
         super.onResume()
     }
@@ -105,6 +111,7 @@ class HomeDayoPickPostListFragment : Fragment() {
                 ioDispatcher = Dispatchers.IO
             )
         }
+        homeDayoPickAdapter?.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         binding.rvDayopickPost.adapter = homeDayoPickAdapter
     }
 

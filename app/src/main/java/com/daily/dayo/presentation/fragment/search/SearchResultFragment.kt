@@ -30,6 +30,12 @@ class SearchResultFragment : Fragment() {
     private var searchTagResultPostAdapter: SearchTagResultPostAdapter? = null
     private var glideRequestManager: RequestManager? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null)
+            getSearchTagList(searchViewModel.searchKeyword)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -70,7 +76,6 @@ class SearchResultFragment : Fragment() {
     private fun setSearchResult() {
         loadingPost()
         binding.tvSearchResultKeywordInput.setText(searchViewModel.searchKeyword)
-        getSearchTagList(searchViewModel.searchKeyword)
     }
 
     private fun setSearchEditTextListener() {
