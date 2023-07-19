@@ -94,18 +94,6 @@ class PostFragment : Fragment() {
         return binding.root
     }
 
-    override fun onStop() {
-        binding.post?.let {
-            homeViewModel.setPostStatus(
-                args.postId,
-                it.heart,
-                it.heartCount,
-                binding.commentCount ?: 0
-            )
-        }
-        super.onStop()
-    }
-
     private fun onDestroyBindingView() {
         glideRequestManager = null
         postImageSliderAdapter = null
@@ -167,6 +155,7 @@ class PostFragment : Fragment() {
                     when (it.status) {
                         Status.SUCCESS -> {
                             it.data?.let { post ->
+                                updatePostStatus(post.heart, post.heartCount, null)
                                 binding.post = post
                                 binding.categoryKR = post.category?.let { it1 -> categoryKR(it1) }
                                 binding.executePendingBindings()
@@ -217,6 +206,7 @@ class PostFragment : Fragment() {
                         Status.SUCCESS -> {
                             it.data?.let { postComment ->
                                 postCommentAdapter?.submitList(postComment.toMutableList())
+                                updatePostStatus(null, null, postComment.size)
                                 binding.commentCount = postComment.size
                                 binding.commentCountStr = postComment.size.toString()
                             }
@@ -511,5 +501,19 @@ class PostFragment : Fragment() {
     fun Int.toPx(): Int {
         val density = resources.displayMetrics.density
         return (this * density).toInt()
+    }
+
+    // Home에서도 업데이트한 내용을 반영할 수 있도록 Status 업데이트
+    private fun updatePostStatus(
+        heart: Boolean? = null,
+        heartCount: Int? = null,
+        commentCount: Int? = null
+    ) {
+        homeViewModel.setPostStatus(
+            args.postId,
+            heart,
+            heartCount,
+            commentCount
+        )
     }
 }
