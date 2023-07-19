@@ -23,6 +23,12 @@ class ProfileBookmarkPostListFragment : Fragment() {
     private var profileBookmarkPostListAdapter: ProfileBookmarkPostListAdapter? = null
     private var glideRequestManager: RequestManager? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null)
+            getProfileBookmarkPostList()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,11 +43,6 @@ class ProfileBookmarkPostListFragment : Fragment() {
         setRvProfileBookmarkPostListAdapter()
         setProfileBookmarkPostList()
         setAdapterLoadStateListener()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        getProfileBookmarkPostList()
     }
 
     private fun onDestroyBindingView() {
