@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.bumptech.glide.Glide
@@ -23,9 +22,6 @@ import com.daily.dayo.presentation.adapter.FeedListAdapter
 import com.daily.dayo.presentation.viewmodel.FeedViewModel
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FeedFragment : Fragment() {
@@ -130,44 +126,31 @@ class FeedFragment : Fragment() {
     }
 
     private fun setFeedPostLikeClickListener(button: ImageButton, post: Post, position: Int) {
-        if (!post.heart) {
-            feedViewModel.requestLikePost(postId = post.postId!!)
-        } else {
-            feedViewModel.requestUnlikePost(postId = post.postId!!)
-        }.let {
-            it.invokeOnCompletion { throwable ->
-                when (throwable) {
-                    is CancellationException -> Log.e("Post Like Click", "CANCELLED")
-                    null -> {
-                        val heartUpdate = post.heart.not()
-                        val heartCountUpdate = if (heartUpdate) post.heartCount.plus(1) else post.heartCount.minus(1)
-                        feedListAdapter?.updateItemAtPosition(position, post.apply {
-                            heart = heartUpdate
-                            heartCount = heartCountUpdate
-                        })
-                    }
+        with(post) {
+            try {
+                if (!heart) {
+                    feedViewModel.requestLikePost(postId!!)
+                } else {
+                    feedViewModel.requestUnlikePost(post.postId!!)
                 }
+            } catch (postIdNullException: NullPointerException) {
+                Log.e(this@FeedFragment.tag, "PostId Null Exception Occurred")
+                getFeedPostList()
             }
         }
     }
 
     private fun setFeedPostBookmarkClickListener(button: ImageButton, post: Post, position: Int) {
-        if (post.bookmark == null) return
-        if (!post.bookmark!!) {
-            feedViewModel.requestBookmarkPost(postId = post.postId!!)
-        } else {
-            feedViewModel.requestDeleteBookmarkPost(postId = post.postId!!)
-        }.let {
-            it.invokeOnCompletion { throwable ->
-                when (throwable) {
-                    is CancellationException -> Log.e("Post Bookmark Click", "CANCELLED")
-                    null -> {
-                        val bookmarkUpdate = post.bookmark?.not()
-                        feedListAdapter?.updateItemAtPosition(position, post.apply {
-                            bookmark = bookmarkUpdate
-                        })
-                    }
+        with(post) {
+            try {
+                if (bookmark == false) {
+                    feedViewModel.requestBookmarkPost(postId = post.postId!!)
+                } else {
+                    feedViewModel.requestDeleteBookmarkPost(postId = post.postId!!)
                 }
+            } catch (postIdNullException: NullPointerException) {
+                Log.e(this@FeedFragment.tag, "PostId Null Exception Occurred")
+                getFeedPostList()
             }
         }
     }
