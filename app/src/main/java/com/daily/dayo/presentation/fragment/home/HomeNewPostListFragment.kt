@@ -6,12 +6,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
@@ -39,6 +39,12 @@ class HomeNewPostListFragment : Fragment() {
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private var homeNewAdapter: HomeNewAdapter? = null
     private var glideRequestManager: RequestManager? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null)
+            loadPosts(homeViewModel.currentNewCategory)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -108,6 +114,7 @@ class HomeNewPostListFragment : Fragment() {
                 ioDispatcher = Dispatchers.IO
             )
         }
+        homeNewAdapter?.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         binding.rvNewPost.adapter = homeNewAdapter
     }
 

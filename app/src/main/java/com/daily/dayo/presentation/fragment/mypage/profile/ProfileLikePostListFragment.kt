@@ -23,6 +23,12 @@ class ProfileLikePostListFragment : Fragment() {
     private var profileLikePostListAdapter: ProfileLikePostListAdapter? = null
     private var glideRequestManager: RequestManager? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null)
+            getProfileLikePostList()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,10 +45,6 @@ class ProfileLikePostListFragment : Fragment() {
         setAdapterLoadStateListener()
     }
 
-    override fun onResume() {
-        super.onResume()
-        getProfileLikePostList()
-    }
     private fun onDestroyBindingView() {
         glideRequestManager = null
         profileLikePostListAdapter = null

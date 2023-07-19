@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
@@ -29,6 +30,12 @@ class FeedFragment : Fragment() {
     private val feedViewModel by activityViewModels<FeedViewModel>()
     private var feedListAdapter: FeedListAdapter? = null
     private var glideRequestManager: RequestManager? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null)
+            getFeedPostList()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,7 +59,6 @@ class FeedFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         binding.swipeRefreshLayoutFeed.isEnabled = true
-        getFeedPostList()
     }
 
     override fun onPause() {
@@ -76,6 +82,7 @@ class FeedFragment : Fragment() {
         feedListAdapter = glideRequestManager?.let { requestManager ->
             FeedListAdapter(requestManager = requestManager)
         }
+        feedListAdapter?.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         binding.rvFeedPost.adapter = feedListAdapter
     }
 
