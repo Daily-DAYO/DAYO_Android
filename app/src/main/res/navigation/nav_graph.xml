@@ -47,7 +47,6 @@
         <action
             android:id="@+id/action_searchFragment_to_searchResultFragment"
             app:destination="@id/SearchResultFragment"
-            app:popUpTo="@id/HomeFragment"
             app:enterAnim="@anim/translate_from_right_in"
             app:exitAnim="@anim/translate_to_left_out"
             app:popEnterAnim="@anim/translate_from_left_in"
@@ -59,9 +58,6 @@
         android:name="com.daily.dayo.presentation.fragment.search.SearchResultFragment"
         android:label="fragment_search_result"
         tools:layout="@layout/fragment_search_result">
-        <argument
-            android:name="searchKeyword"
-            app:argType="string" />
         <action
             android:id="@+id/action_searchResultFragment_to_postFragment"
             app:destination="@id/PostFragment"
@@ -207,6 +203,8 @@
             app:destination="@id/PostOptionMineFragment" />
         <action
             android:id="@+id/action_postFragment_to_searchResultFragment"
+            app:popUpTo="@id/SearchResultFragment"
+            app:popUpToInclusive="true"
             app:destination="@id/SearchResultFragment"
             app:enterAnim="@anim/translate_from_right_in"
             app:exitAnim="@anim/translate_nothing"
