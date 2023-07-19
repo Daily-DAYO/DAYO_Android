@@ -17,6 +17,7 @@ import com.daily.dayo.domain.usecase.post.RequestDayoPickPostListUseCase
 import com.daily.dayo.domain.usecase.post.RequestNewPostListCategoryUseCase
 import com.daily.dayo.domain.usecase.post.RequestNewPostListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,13 +40,16 @@ class HomeViewModel @Inject constructor(
     val newPostList: LiveData<Resource<List<Post>>> get() = _newPostList
 
     fun requestDayoPickPostList() = viewModelScope.launch {
+        _dayoPickPostList.postValue(Resource.loading(null))
         if (currentDayoPickCategory == Category.ALL) {
             requestHomeDayoPickPostList()
         } else {
             requestHomeDayoPickPostListCategory(currentDayoPickCategory)
         }
     }
+
     fun requestNewPostList() = viewModelScope.launch {
+        _newPostList.postValue(Resource.loading(null))
         if (currentNewCategory == Category.ALL) {
             requestHomeNewPostList()
         } else {
@@ -56,10 +60,18 @@ class HomeViewModel @Inject constructor(
     private fun requestHomeNewPostList() = viewModelScope.launch {
         requestNewPostListUseCase()?.let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success -> { _newPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
-                is NetworkResponse.NetworkError -> { _newPostList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                is NetworkResponse.ApiError -> { _newPostList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
-                is NetworkResponse.UnknownError -> { _newPostList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+                is NetworkResponse.Success -> {
+                    _newPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() }))
+                }
+                is NetworkResponse.NetworkError -> {
+                    _newPostList.postValue(Resource.error(ApiResponse.exception.toString(), null))
+                }
+                is NetworkResponse.ApiError -> {
+                    _newPostList.postValue(Resource.error(ApiResponse.error.toString(), null))
+                }
+                is NetworkResponse.UnknownError -> {
+                    _newPostList.postValue(Resource.error(ApiResponse.throwable.toString(), null))
+                }
             }
         }
     }
@@ -67,10 +79,18 @@ class HomeViewModel @Inject constructor(
     private fun requestHomeNewPostListCategory(category: Category) = viewModelScope.launch {
         requestNewPostListCategoryUseCase(category = category)?.let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success -> { _newPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
-                is NetworkResponse.NetworkError -> { _newPostList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                is NetworkResponse.ApiError -> { _newPostList.postValue(Resource.error(ApiResponse.error.toString(), null))  }
-                is NetworkResponse.UnknownError -> { _newPostList.postValue(Resource.error(ApiResponse.throwable.toString(), null))  }
+                is NetworkResponse.Success -> {
+                    _newPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() }))
+                }
+                is NetworkResponse.NetworkError -> {
+                    _newPostList.postValue(Resource.error(ApiResponse.exception.toString(), null))
+                }
+                is NetworkResponse.ApiError -> {
+                    _newPostList.postValue(Resource.error(ApiResponse.error.toString(), null))
+                }
+                is NetworkResponse.UnknownError -> {
+                    _newPostList.postValue(Resource.error(ApiResponse.throwable.toString(), null))
+                }
             }
         }
     }
@@ -78,10 +98,28 @@ class HomeViewModel @Inject constructor(
     private fun requestHomeDayoPickPostList() = viewModelScope.launch {
         requestHomeDayoPickPostListUseCase()?.let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success -> { _dayoPickPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
-                is NetworkResponse.NetworkError -> { _dayoPickPostList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                is NetworkResponse.ApiError -> { _dayoPickPostList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
-                is NetworkResponse.UnknownError -> { _dayoPickPostList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+                is NetworkResponse.Success -> {
+                    _dayoPickPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() }))
+                }
+                is NetworkResponse.NetworkError -> {
+                    _dayoPickPostList.postValue(
+                        Resource.error(
+                            ApiResponse.exception.toString(),
+                            null
+                        )
+                    )
+                }
+                is NetworkResponse.ApiError -> {
+                    _dayoPickPostList.postValue(Resource.error(ApiResponse.error.toString(), null))
+                }
+                is NetworkResponse.UnknownError -> {
+                    _dayoPickPostList.postValue(
+                        Resource.error(
+                            ApiResponse.throwable.toString(),
+                            null
+                        )
+                    )
+                }
             }
         }
     }
@@ -89,77 +127,102 @@ class HomeViewModel @Inject constructor(
     private fun requestHomeDayoPickPostListCategory(category: Category) = viewModelScope.launch {
         requestDayoPickPostListCategoryUseCase(category = category)?.let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success -> { _dayoPickPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() })) }
-                is NetworkResponse.NetworkError -> { _dayoPickPostList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                is NetworkResponse.ApiError -> { _dayoPickPostList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
-                is NetworkResponse.UnknownError -> { _dayoPickPostList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
-            }
-        }
-    }
-
-    fun requestLikePost(postId: Int, isDayoPickLike: Boolean) = viewModelScope.launch {
-        val editList = if (isDayoPickLike) _dayoPickPostList else _newPostList
-        requestLikePostUseCase(CreateHeartRequest(postId = postId)).let { ApiResponse ->
-            when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    editList.postValue(
-                        Resource.success(
-                            editList.value?.data?.map {
-                                if (it.postId == postId) {
-                                    it.copy(
-                                        heart = true,
-                                        heartCount = ApiResponse.body?.allCount ?: 0
-                                    )
-                                } else {
-                                    it
-                                }
-                            }
+                    _dayoPickPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() }))
+                }
+                is NetworkResponse.NetworkError -> {
+                    _dayoPickPostList.postValue(
+                        Resource.error(
+                            ApiResponse.exception.toString(),
+                            null
                         )
                     )
                 }
-                is NetworkResponse.NetworkError -> {}
-                is NetworkResponse.ApiError -> {}
-                is NetworkResponse.UnknownError -> {}
-            }
-        }
-    }
-
-    fun requestUnlikePost(postId: Int, isDayoPickLike: Boolean) = viewModelScope.launch {
-        val editList = if (isDayoPickLike) _dayoPickPostList else _newPostList
-        requestUnlikePostUseCase(postId = postId).let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    editList.postValue(
-                        Resource.success(
-                            editList.value?.data?.map {
-                                if (it.postId == postId) {
-                                    it.copy(
-                                        heart = false,
-                                        heartCount = ApiResponse.body?.allCount ?: 0
-                                    )
-                                } else {
-                                    it
-                                }
-                            }
+                is NetworkResponse.ApiError -> {
+                    _dayoPickPostList.postValue(Resource.error(ApiResponse.error.toString(), null))
+                }
+                is NetworkResponse.UnknownError -> {
+                    _dayoPickPostList.postValue(
+                        Resource.error(
+                            ApiResponse.throwable.toString(),
+                            null
                         )
                     )
                 }
-                is NetworkResponse.NetworkError -> {}
-                is NetworkResponse.ApiError -> {}
-                is NetworkResponse.UnknownError -> {}
             }
         }
     }
 
-    fun setPostStatus(postId: Int, isLike: Boolean, heartCount: Int, commentCount: Int) {
+    fun requestLikePost(postId: Int, isDayoPickLike: Boolean) =
+        viewModelScope.launch(Dispatchers.IO) {
+            val editList = if (isDayoPickLike) _dayoPickPostList else _newPostList
+            requestLikePostUseCase(CreateHeartRequest(postId = postId)).let { ApiResponse ->
+                when (ApiResponse) {
+                    is NetworkResponse.Success -> {
+                        editList.postValue(
+                            Resource.success(
+                                editList.value?.data?.map {
+                                    if (it.postId == postId) {
+                                        it.copy(
+                                            heart = true,
+                                            heartCount = ApiResponse.body?.allCount ?: 0
+                                        )
+                                    } else {
+                                        it
+                                    }
+                                }
+                            )
+                        )
+                    }
+                    is NetworkResponse.NetworkError -> {}
+                    is NetworkResponse.ApiError -> {}
+                    is NetworkResponse.UnknownError -> {}
+                }
+            }
+        }
+
+    fun requestUnlikePost(postId: Int, isDayoPickLike: Boolean) =
+        viewModelScope.launch(Dispatchers.IO) {
+            val editList = if (isDayoPickLike) _dayoPickPostList else _newPostList
+            requestUnlikePostUseCase(postId = postId).let { ApiResponse ->
+                when (ApiResponse) {
+                    is NetworkResponse.Success -> {
+                        editList.postValue(
+                            Resource.success(
+                                editList.value?.data?.map {
+                                    if (it.postId == postId) {
+                                        it.copy(
+                                            heart = false,
+                                            heartCount = ApiResponse.body?.allCount ?: 0
+                                        )
+                                    } else {
+                                        it
+                                    }
+                                }
+                            )
+                        )
+                    }
+                    is NetworkResponse.NetworkError -> {}
+                    is NetworkResponse.ApiError -> {}
+                    is NetworkResponse.UnknownError -> {}
+                }
+            }
+        }
+
+    fun setPostStatus(
+        postId: Int,
+        isLike: Boolean? = null,
+        heartCount: Int? = null,
+        commentCount: Int? = null
+    ) {
         _dayoPickPostList.postValue(
             Resource.success(
                 _dayoPickPostList.value?.data?.map {
                     if (it.postId == postId) {
                         it.copy(
-                            heart = isLike,
-                            heartCount = heartCount,
-                            commentCount = commentCount
+                            heart = isLike ?: it.heart,
+                            heartCount = heartCount ?: it.heartCount,
+                            commentCount = commentCount ?: it.commentCount
                         )
                     } else {
                         it
@@ -172,9 +235,9 @@ class HomeViewModel @Inject constructor(
                 _newPostList.value?.data?.map {
                     if (it.postId == postId) {
                         it.copy(
-                            heart = isLike,
-                            heartCount = heartCount,
-                            commentCount = commentCount
+                            heart = isLike ?: it.heart,
+                            heartCount = heartCount ?: it.heartCount,
+                            commentCount = commentCount ?: it.commentCount
                         )
                     } else {
                         it
