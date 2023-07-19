@@ -6,9 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
@@ -23,7 +20,6 @@ import com.daily.dayo.databinding.FragmentFolderBinding
 import com.daily.dayo.presentation.adapter.FolderPostListAdapter
 import com.daily.dayo.presentation.viewmodel.FolderViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class FolderFragment : Fragment() {
     private var binding by autoCleared<FragmentFolderBinding> { onDestroyBindingView() }
@@ -31,6 +27,12 @@ class FolderFragment : Fragment() {
     private val args by navArgs<FolderFragmentArgs>()
     private var folderPostListAdapter: FolderPostListAdapter? = null
     private var glideRequestManager: RequestManager? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null)
+            getFolderPostList()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,11 +52,6 @@ class FolderFragment : Fragment() {
         setFolderPostList()
         setAdapterLoadStateListener()
         setFolderDetail()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        getFolderPostList()
     }
 
     private fun onDestroyBindingView() {

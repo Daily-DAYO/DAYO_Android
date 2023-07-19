@@ -101,6 +101,7 @@ class ProfileFragment : Fragment() {
         requireActivity().findViewById<ConstraintLayout>(R.id.layout_bottom_navigation_main).visibility =
             View.GONE
         setRvProfileFolderListAdapter()
+        getProfileFolderList()
         setProfileFolderList()
         setOtherProfileOptionClickListener()
         getOtherProfileDescription()
@@ -229,11 +230,14 @@ class ProfileFragment : Fragment() {
         })
     }
 
-    private fun setProfileFolderList() {
+    private fun getProfileFolderList() {
         profileViewModel.requestFolderList(
             memberId = profileViewModel.profileMemberId,
             isMine = false
         )
+    }
+
+    private fun setProfileFolderList() {
         profileViewModel.folderList.observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
