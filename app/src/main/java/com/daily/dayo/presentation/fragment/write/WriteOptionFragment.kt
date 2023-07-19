@@ -85,14 +85,16 @@ class WriteOptionFragment : BottomSheetDialogFragment() {
 
     private fun setUploadResultCallback(isSuccess: Event<Boolean>) {
         if (isSuccess.getContentIfNotHandled() == true) {
-            writeViewModel.writePostId.value?.getContentIfNotHandled()?.let { writePostId ->
-                findNavController().navigateSafe(
-                    currentDestinationId = R.id.WriteOptionFragment,
-                    action = R.id.action_writeOptionFragment_to_postFragment,
-                    args = WriteOptionFragmentDirections.actionWriteOptionFragmentToPostFragment(
-                        writePostId
-                    ).arguments
-                )
+            writeViewModel.writePostId.observe(viewLifecycleOwner) {
+                it.getContentIfNotHandled()?.let { writePostId ->
+                    findNavController().navigateSafe(
+                        currentDestinationId = R.id.WriteOptionFragment,
+                        action = R.id.action_writeOptionFragment_to_postFragment,
+                        args = WriteOptionFragmentDirections.actionWriteOptionFragmentToPostFragment(
+                            writePostId
+                        ).arguments
+                    )
+                }
             }
         } else if (isSuccess.getContentIfNotHandled() == false) {
             Toast.makeText(
