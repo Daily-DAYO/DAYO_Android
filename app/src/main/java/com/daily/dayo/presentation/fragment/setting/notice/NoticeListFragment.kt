@@ -1,11 +1,11 @@
 package com.daily.dayo.presentation.fragment.setting.notice
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class NoticeListFragment : Fragment() {
-    private var binding by autoCleared<FragmentNoticeListBinding>{ onDestroyBindingView() }
+    private var binding by autoCleared<FragmentNoticeListBinding> { onDestroyBindingView() }
     private val noticeViewModel by activityViewModels<NoticeViewModel>()
     private var noticeListAdapter: NoticeListAdapter? = null
 
@@ -72,7 +72,7 @@ class NoticeListFragment : Fragment() {
     }
 
     private fun getNoticeList() {
-        // TODO
+        noticeViewModel.requestAllNoticeList()
     }
 
     private fun observeNoticeList() {

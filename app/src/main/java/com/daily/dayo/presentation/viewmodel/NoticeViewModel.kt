@@ -1,14 +1,46 @@
 package com.daily.dayo.presentation.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Notice
+import com.daily.dayo.domain.usecase.notice.RequestAllNoticeListUseCase
+import com.daily.dayo.domain.usecase.notice.RequestDetailNoticeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-//@HiltViewModel // TODO 서버연결로 인해 Data Layer 구현시 Hilt사용하므로 잊지 않고 추가하기 위해 미리 남김
-class NoticeViewModel: ViewModel() {
+@HiltViewModel
+class NoticeViewModel @Inject constructor(
+    private val requestAllNoticeListUseCase: RequestAllNoticeListUseCase,
+    private val requestDetailNoticeUseCase: RequestDetailNoticeUseCase
+) : ViewModel() {
+
     private val _noticeList = MutableStateFlow<PagingData<Notice>>(PagingData.empty())
     val noticeList = _noticeList.asStateFlow()
+
+    private val _detailNotice = MutableLiveData<String>()
+    val detailNotice: LiveData<String> get() = _detailNotice
+
+    fun requestAllNoticeList() = viewModelScope.launch {
+        requestAllNoticeListUseCase()
+            .cachedIn(viewModelScope)
+            .collectLatest { _noticeList.emit(it) }
+    }
+
+    fun requestDetailNotice(noticeId: Int) = viewModelScope.launch {
+        requestDetailNoticeUseCase(noticeId).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> _detailNotice.postValue(ApiResponse.body?.contents.toString())
+                else -> _detailNotice.postValue("")
+            }
+        }
+    }
 }
