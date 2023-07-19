@@ -6,8 +6,6 @@
 
     <data>
 
-        <import type="com.daily.dayo.common.TimeChangerUtil" />
-
         <variable
             name="notice"
             type="com.daily.dayo.domain.model.Notice" />
@@ -17,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="18dp"
-        android:paddingVertical="15dp">
+        android:paddingVertical="20dp">
 
         <TextView
             android:id="@+id/tv_notice_post_title"
@@ -25,7 +23,7 @@
             android:layout_height="wrap_content"
             android:text="@{notice.title}"
             android:textColor="@color/gray_1_313131"
-            android:textSize="15dp"
+            android:textSize="16dp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -35,34 +33,18 @@
             tools:text="DAYO 2.0 업데이트!" />
 
         <TextView
-            android:id="@+id/tv_notice_post_detail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="11dp"
-            android:text="@{notice.detail}"
-            android:textColor="@color/gray_2_767B83"
-            android:textSize="13dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_notice_post_title"
-            app:layout_constraintVertical_bias="0.0"
-            tools:text="어떤 부분들이 업데이트 됐을까용 어떤 부분들이 업데이트 됐을까용어떤 부분들이 업데이트" />
-
-        <TextView
             android:id="@+id/tv_notice_post_upload_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="19dp"
-            android:text="@{TimeChangerUtil.INSTANCE.getFullStringTime(notice.uploadDate)}"
+            android:layout_marginTop="8dp"
+            android:text="@{notice.uploadDate}"
             android:textColor="@color/gray_3_9FA5AE"
             android:textSize="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_notice_post_detail"
+            app:layout_constraintTop_toBottomOf="@id/tv_notice_post_title"
             app:layout_constraintVertical_bias="0.0"
             tools:text="2022. 03. 29" />
     </androidx.constraintlayout.widget.ConstraintLayout>

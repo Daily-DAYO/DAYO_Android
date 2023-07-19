@@ -9,6 +9,7 @@ import com.daily.dayo.data.datasource.remote.follow.FollowApiService
 import com.daily.dayo.data.datasource.remote.heart.HeartApiService
 import com.daily.dayo.data.datasource.remote.image.ImageApiService
 import com.daily.dayo.data.datasource.remote.member.MemberApiService
+import com.daily.dayo.data.datasource.remote.notice.NoticeApiService
 import com.daily.dayo.data.datasource.remote.post.PostApiService
 import com.daily.dayo.data.datasource.remote.report.ReportApiService
 import com.daily.dayo.data.datasource.remote.search.SearchApiService
@@ -24,6 +25,16 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ServiceModule {
+
+    @Singleton
+    @Provides
+    fun provideNoticeApiService(retrofit: Retrofit) =
+        retrofit.create(NoticeApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideNoticeRepository(noticeApiService: NoticeApiService): NoticeRepository =
+        NoticeRepositoryImpl(noticeApiService)
 
     @Singleton
     @Provides
