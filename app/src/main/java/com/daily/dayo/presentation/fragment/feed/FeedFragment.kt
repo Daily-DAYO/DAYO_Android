@@ -20,6 +20,7 @@ import com.daily.dayo.databinding.FragmentFeedBinding
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.presentation.adapter.FeedListAdapter
 import com.daily.dayo.presentation.viewmodel.FeedViewModel
+import com.daily.dayo.presentation.viewmodel.SearchViewModel
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,6 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class FeedFragment : Fragment() {
     private var binding by autoCleared<FragmentFeedBinding> { onDestroyBindingView() }
     private val feedViewModel by activityViewModels<FeedViewModel>()
+    private val searchViewModel by activityViewModels<SearchViewModel>()
     private var feedListAdapter: FeedListAdapter? = null
     private var glideRequestManager: RequestManager? = null
 
@@ -116,11 +118,8 @@ class FeedFragment : Fragment() {
             }
 
             override fun tagPostClick(chip: Chip) {
-                findNavController().navigate(
-                    FeedFragmentDirections.actionFeedFragmentToSearchResultFragment(
-                        trimBlankText(chip.text.toString().substringAfter("#"))
-                    )
-                )
+                searchViewModel.searchKeyword = trimBlankText(chip.text.toString().substringAfter("#"))
+                findNavController().navigate(FeedFragmentDirections.actionFeedFragmentToSearchResultFragment())
             }
         })
     }
