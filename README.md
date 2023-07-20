@@ -1,9 +1,9 @@
 ![프로젝트소개](https://user-images.githubusercontent.com/65344669/224528950-53b6cca1-5b50-4f43-a364-fd6607776898.png)
-<p align='center'>
-  <img src='https://img.shields.io/github/package-json/v/Daily-DAYO/DAYO_Android'>
+<p align="center">
+  <a href="https://github.com/Daily-DAYO/DAYO_Android/releases"><img src='https://img.shields.io/github/v/release/Daily-DAYO/DAYO_Android'></a>
   <a href="https://github.com/Daily-DAYO/DAYO_Android/issues"><img src='https://img.shields.io/github/issues/Daily-DAYO/DAYO_Android'></a>
- <a href="https://github.com/Daily-DAYO/DAYO_Android/graphs/contributors"><img src='https://img.shields.io/github/contributors/Daily-DAYO/DAYO_Android'></a>
- <a href='https://github.com/Daily-DAYO/DAYO_Android/blob/main/LICENSE'><img src='https://img.shields.io/github/license/Daily-DAYO/DAYO_Android'></a>
+  <a href="https://github.com/Daily-DAYO/DAYO_Android/graphs/contributors"><img src='https://img.shields.io/github/contributors/Daily-DAYO/DAYO_Android'></a>
+  <a href='https://github.com/Daily-DAYO/DAYO_Android/blob/main/LICENSE'><img src='https://img.shields.io/github/license/Daily-DAYO/DAYO_Android'></a>
 </p>
 
 # 함께 즐기는 다이어리, DAYO📚
