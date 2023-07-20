@@ -163,18 +163,18 @@ class HomeNewAdapter(
 
                 this.removeAllAnimatorListeners()
                 this.addAnimatorListener(object : Animator.AnimatorListener {
-                    override fun onAnimationStart(animation: Animator?) {
+                    override fun onAnimationStart(animation: Animator) {
                         this@with.setOnDebounceClickListener(0L) {}
                     }
 
-                    override fun onAnimationEnd(animation: Animator?) {
+                    override fun onAnimationEnd(animation: Animator) {
                         this@with.setOnDebounceClickListener(0L) {
                             clickListener?.likePostClick(post = post)
                         }
                     }
 
-                    override fun onAnimationCancel(animation: Animator?) {}
-                    override fun onAnimationRepeat(animation: Animator?) {}
+                    override fun onAnimationCancel(animation: Animator) {}
+                    override fun onAnimationRepeat(animation: Animator) {}
                 })
 
                 if (post.heart) this.playAnimation()
