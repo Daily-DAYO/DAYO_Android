@@ -98,3 +98,7 @@
 # ==================================
 -keep class com.kakao.sdk.**.model.* { <fields>; }
 -keep class * extends com.google.gson.TypeAdapter
+
+-keep class com.daily.dayo.data.datasource.remote.**.* { *; }
+-keep class * implements java.io.Serializable { *; }
+-keepclassmembers enum * { *; }
