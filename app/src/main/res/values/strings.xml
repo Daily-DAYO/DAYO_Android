@@ -28,6 +28,16 @@
     <string name="time_month_ago">달 전</string>
     <string name="time_year_ago">년 전</string>
 
+    <!-- Device Permission -->
+    <string name="permission_fail_message_camera">카메라 권한을 허용하지 않으면 사진을 등록할 수 없습니다</string>
+    <string name="permission_fail_final_message_camera">카메라를 통해 사진을 등록하려면 설정에서 카메라 권한을 허용으로 변경해주세요</string>
+    <string name="permission_fail_message_gallery">파일 권한을 허용하지 않으면 사진을 등록할 수 없습니다</string>
+    <string name="permission_fail_final_message_gallery">갤러리를 통해 사진을 등록하려면 설정에서 파일 권한을 허용으로 변경해주세요</string>
+    <string name="permission_fail_message_notification">알림 권한을 허용하지 않으면 정상적 사용이 불가능할 수 있습니다</string>
+    <string name="permission_fail_final_message_notification">설정에서 알림을 허용으로 변경해주세요</string>
+    <string name="permission_fail_second">DENIED</string>
+    <string name="permission_fail_final">EXPLAINED</string>
+
     <!-- OnBoarding -->
     <string name="onboarding_first_message">인기가 많은 다꾸들을 구경할 수 있어요</string>
     <string name="onboarding_second_message">내 취향의 다꾸러들을 팔로우하고 모아볼 수 있어요</string>

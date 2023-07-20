@@ -1,11 +1,21 @@
 package com.daily.dayo.presentation.fragment.setting.notification
 
+import android.Manifest
 import android.content.ContentValues.TAG
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -14,6 +24,7 @@ import com.daily.dayo.R
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentSettingNotificationBinding
+import com.daily.dayo.presentation.activity.MainActivity
 import com.daily.dayo.presentation.viewmodel.SettingNotificationViewModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
@@ -28,12 +39,23 @@ class SettingNotificationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSettingNotificationBinding.inflate(inflater, container, false)
+        checkCurrentNotification()
         setInitSwitchState()
         setBackButtonClickListener()
         setDeviceNotification()
         setNoticeNotification()
         setReactionNotification()
         return binding.root
+    }
+
+    private fun checkCurrentNotification() {
+        if (!NotificationManagerCompat.from(requireContext()).areNotificationsEnabled()) {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.permission_fail_message_notification),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     private fun setInitSwitchState() {
@@ -45,7 +67,8 @@ class SettingNotificationFragment : Fragment() {
             settingNotificationViewModel.notiReactionPermit.observe(viewLifecycleOwner) { reactionPermit ->
                 binding.notiReactionPermit = reactionPermit
             }
-            binding.switchSettingNotificationNotice.isChecked = DayoApplication.preferences.notiNoticePermit
+            binding.switchSettingNotificationNotice.isChecked =
+                DayoApplication.preferences.notiNoticePermit
         } else {
             binding.switchSettingNotificationDevice.isChecked = false
             binding.switchSettingNotificationNotice.isEnabled = false
@@ -56,8 +79,6 @@ class SettingNotificationFragment : Fragment() {
     private fun setDeviceNotification() {
         binding.switchSettingNotificationDevice.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) { // 디바이스 알림 켜기
-                binding.switchSettingNotificationReaction.isEnabled = true
-                binding.switchSettingNotificationNotice.isEnabled = true
                 setNotificationOnState() // 디바이스 알림 켰을 때의 공지, 반응 알림 상태에 따라 설정
             } else { // 디바이스 알림 끄기
                 binding.switchSettingNotificationNotice.isEnabled = false
@@ -96,14 +117,35 @@ class SettingNotificationFragment : Fragment() {
     }
 
     private fun setNotificationOnState() { // 디바이스 알림 켰을 때의 공지, 반응 알림 상태에 따라 설정
-        setFCM()
-        DayoApplication.preferences.notiDevicePermit = true
-        settingNotificationViewModel.requestReceiveAlarm()
-        settingNotificationViewModel.notiReactionPermit.observe(viewLifecycleOwner) { reactionPermit ->
-            binding.notiReactionPermit = reactionPermit
+        // This is only necessary for API level >= 33 (TIRAMISU)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                // FCM SDK (and your app) can post notifications.
+                binding.switchSettingNotificationReaction.isEnabled = true
+                binding.switchSettingNotificationNotice.isEnabled = true
+
+                setFCM()
+                DayoApplication.preferences.notiDevicePermit = true
+                settingNotificationViewModel.requestReceiveAlarm()
+                settingNotificationViewModel.notiReactionPermit.observe(viewLifecycleOwner) { reactionPermit ->
+                    binding.notiReactionPermit = reactionPermit
+                }
+                binding.switchSettingNotificationNotice.isChecked =
+                    DayoApplication.preferences.notiNoticePermit
+            } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                // TODO: display an educational UI explaining to the user the features that will be enabled
+                // by them granting the POST_NOTIFICATION permission. This UI should provide the user
+                // "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
+                // If the user selects "No thanks," allow the user to continue without notifications.
+            } else {
+                // Directly ask for the permission
+                permissionLauncherNotification.launch(MainActivity.notificationPermission)
+            }
         }
-        binding.switchSettingNotificationNotice.isChecked =
-            DayoApplication.preferences.notiNoticePermit
     }
 
     private fun setNotificationOffState() { // 디바이스 알림 껐을 때의 공지, 반응 알림 설정 모두 끄기
@@ -123,4 +165,62 @@ class SettingNotificationFragment : Fragment() {
     private fun setFCM() {
         settingNotificationViewModel.registerDeviceToken()
     }
+
+    private val permissionLauncherNotification =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val deniedList: List<String> = permissions.filter {
+                !it.value
+            }.map {
+                it.key
+            }
+
+            when {
+                deniedList.isNotEmpty() -> {
+                    DayoApplication.preferences.notiDevicePermit = false
+                    DayoApplication.preferences.notiNoticePermit = false
+                    val map = deniedList.groupBy { permission ->
+                        if (shouldShowRequestPermissionRationale(permission)) getString(R.string.permission_fail_second) else getString(
+                            R.string.permission_fail_final
+                        )
+                    }
+                    map[getString(R.string.permission_fail_second)]?.let {
+                        // request denied , request again
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.permission_fail_message_notification),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        ActivityCompat.requestPermissions(
+                            requireActivity(),
+                            MainActivity.notificationPermission,
+                            1000
+                        )
+                    }
+                    map[getString(R.string.permission_fail_final)]?.let {
+                        Intent().apply {
+                            action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                            putExtra(Settings.EXTRA_APP_PACKAGE, requireActivity().packageName)
+                        }
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.permission_fail_final_message_notification),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    binding.switchSettingNotificationDevice.isChecked = false
+                    binding.switchSettingNotificationReaction.isEnabled = false
+                    binding.switchSettingNotificationNotice.isEnabled = false
+                }
+                else -> {
+                    //All request are permitted
+                    // 알림 최초 허용시에 모든 알림 허용처리
+                    DayoApplication.preferences.notiDevicePermit = true
+                    DayoApplication.preferences.notiNoticePermit = true
+                    settingNotificationViewModel.registerDeviceToken()
+                    settingNotificationViewModel.requestReceiveAlarm()
+                    setInitSwitchState()
+                }
+            }
+        }
 }

@@ -9,10 +9,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.Settings
 import android.view.*
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -82,23 +84,52 @@ class WriteImageOptionFragment : DialogFragment() {
 
     private fun setImageSelectGalleryClickListener() {
         binding.layoutWriteImageOptionSelectGallery.setOnDebounceClickListener {
-            requestOpenGallery.launch(
-                arrayOf(
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-            )
+            requestOpenGallery.launch(PERMISSIONS_GALLERY)
         }
     }
 
     private val requestOpenGallery =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            permissions.entries.forEach {
-                if (it.value == false) {
-                    return@registerForActivityResult
+            val deniedList: List<String> = permissions.filter { !it.value }.map { it.key }
+
+            when {
+                deniedList.isNotEmpty() -> {
+                    val map = deniedList.groupBy { permission ->
+                        if (shouldShowRequestPermissionRationale(permission)) getString(R.string.permission_fail_second)
+                        else getString(R.string.permission_fail_final)
+                    }
+                    map[getString(R.string.permission_fail_second)]?.let {
+                        // request denied , request again
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.permission_fail_message_gallery),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        ActivityCompat.requestPermissions(
+                            requireActivity(),
+                            PERMISSIONS_GALLERY,
+                            1000
+                        )
+                    }
+                    map[getString(R.string.permission_fail_final)]?.let {
+                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).also {
+                            val uri = Uri.parse("package:${requireContext().packageName}")
+                            it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            it.data = uri
+                        }
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.permission_fail_final_message_gallery),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        //request denied ,send to settings
+                    }
+                }
+                else -> {
+                    //All request are permitted
+                    openGallery()
                 }
             }
-            openGallery()
         }
 
     private fun openGallery() {
@@ -161,11 +192,7 @@ class WriteImageOptionFragment : DialogFragment() {
     private fun setImageTakePhotoClickListener() {
         binding.layoutWriteImageOptionTakePhoto.setOnDebounceClickListener {
             requestOpenCamera.launch(
-                arrayOf(
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
+                PERMISSIONS_CAMERA
             )
         }
     }
@@ -230,5 +257,32 @@ class WriteImageOptionFragment : DialogFragment() {
     private fun displayLoadingDialog() {
         showLoadingDialog(loadingAlertDialog)
         resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
+    }
+
+    companion object {
+        val PERMISSIONS_CAMERA = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arrayOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.READ_MEDIA_VIDEO
+            )
+        } else {
+            arrayOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+        }
+        val PERMISSIONS_GALLERY = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arrayOf(
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.READ_MEDIA_VIDEO
+            )
+        } else {
+            arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+        }
     }
 }
