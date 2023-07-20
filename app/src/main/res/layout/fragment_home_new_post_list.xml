@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout_new_post"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <HorizontalScrollView
+                android:id="@+id/layout_new_post_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="19dp"
+                android:scrollbars="none"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0">
+
+                <RadioGroup
+                    android:id="@+id/radiogroup_new_post_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="20dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <RadioButton
+                        android:id="@+id/radiobutton_new_post_category_all"
+                        android:layout_width="83dp"
+                        android:layout_height="26dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/selector_button_home_post_category"
+                        android:button="@null"
+                        android:checked="true"
+                        android:text="@string/all"
+                        android:textAlignment="center"
+                        android:textColor="@drawable/selector_button_home_post_category_text"
+                        android:textSize="12dp" />
+
+                    <RadioButton
+                        android:id="@+id/radiobutton_new_post_category_scheduler"
+                        android:layout_width="83dp"
+                        android:layout_height="26dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/selector_button_home_post_category"
+                        android:button="@null"
+                        android:text="@string/scheduler"
+                        android:textAlignment="center"
+                        android:textColor="@drawable/selector_button_home_post_category_text"
+                        android:textSize="12dp" />
+
+                    <RadioButton
+                        android:id="@+id/radiobutton_new_post_category_studyplanner"
+                        android:layout_width="83dp"
+                        android:layout_height="26dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/selector_button_home_post_category"
+                        android:button="@null"
+                        android:text="@string/studyplanner"
+                        android:textAlignment="center"
+                        android:textColor="@drawable/selector_button_home_post_category_text"
+                        android:textSize="12dp" />
+
+                    <RadioButton
+                        android:id="@+id/radiobutton_new_post_category_pocketbook"
+                        android:layout_width="83dp"
+                        android:layout_height="26dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/selector_button_home_post_category"
+                        android:button="@null"
+                        android:text="@string/pocketbook"
+                        android:textAlignment="center"
+                        android:textColor="@drawable/selector_button_home_post_category_text"
+                        android:textSize="12dp" />
+
+                    <RadioButton
+                        android:id="@+id/radiobutton_new_post_category_6holediary"
+                        android:layout_width="83dp"
+                        android:layout_height="26dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/selector_button_home_post_category"
+                        android:button="@null"
+                        android:text="@string/sixHoleDiary"
+                        android:textAlignment="center"
+                        android:textColor="@drawable/selector_button_home_post_category_text"
+                        android:textSize="12dp" />
+
+                    <RadioButton
+                        android:id="@+id/radiobutton_new_post_category_digital"
+                        android:layout_width="83dp"
+                        android:layout_height="26dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/selector_button_home_post_category"
+                        android:button="@null"
+                        android:text="@string/digital"
+                        android:textAlignment="center"
+                        android:textColor="@drawable/selector_button_home_post_category_text"
+                        android:textSize="12dp" />
+
+                    <RadioButton
+                        android:id="@+id/radiobutton_new_post_category_etc"
+                        android:layout_width="83dp"
+                        android:layout_height="26dp"
+                        android:background="@drawable/selector_button_home_post_category"
+                        android:button="@null"
+                        android:text="@string/etc"
+                        android:textAlignment="center"
+                        android:textColor="@drawable/selector_button_home_post_category_text"
+                        android:textSize="12dp" />
+                </RadioGroup>
+            </HorizontalScrollView>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_new_contents_start"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.039" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_new_contents_end"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.961" />
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/layout_new_post_shimmer"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="14dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/guideline_new_contents_end"
+                app:layout_constraintStart_toStartOf="@id/guideline_new_contents_start"
+                app:layout_constraintTop_toBottomOf="@id/layout_new_post_category"
+                app:layout_constraintVertical_bias="0.0"
+                app:shimmer_base_color="@color/gray_3_9FA5AE"
+                app:shimmer_colored="true"
+                app:shimmer_highlight_color="@color/gray_6_F0F1F3">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <include
+                        android:id="@+id/item_shimmer_1"
+                        layout="@layout/item_main_post_shimmer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="4dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/item_shimmer_2"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <include
+                        android:id="@+id/item_shimmer_2"
+                        layout="@layout/item_main_post_shimmer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="4dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@id/item_shimmer_1"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <include
+                        android:id="@+id/item_shimmer_3"
+                        layout="@layout/item_main_post_shimmer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="4dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/item_shimmer_4"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/item_shimmer_1"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <include
+                        android:id="@+id/item_shimmer_4"
+                        layout="@layout/item_main_post_shimmer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="4dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@id/item_shimmer_3"
+                        app:layout_constraintTop_toBottomOf="@id/item_shimmer_1"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <include
+                        android:id="@+id/item_shimmer_5"
+                        layout="@layout/item_main_post_shimmer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="4dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/item_shimmer_2"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/item_shimmer_3"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <include
+                        android:id="@+id/item_shimmer_6"
+                        layout="@layout/item_main_post_shimmer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="4dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@id/item_shimmer_5"
+                        app:layout_constraintTop_toBottomOf="@id/item_shimmer_4"
+                        app:layout_constraintVertical_bias="0.0" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_new_post"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:overScrollMode="never"
+                android:visibility="invisible"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/guideline_new_contents_end"
+                app:layout_constraintStart_toStartOf="@id/guideline_new_contents_start"
+                app:layout_constraintTop_toBottomOf="@id/layout_new_post_category"
+                app:layout_constraintVertical_bias="0.0"
+                app:spanCount="2"
+                tools:listitem="@layout/item_main_post" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_new_post_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/guideline_new_contents_end"
+                app:layout_constraintStart_toStartOf="@id/guideline_new_contents_start"
+                app:layout_constraintTop_toBottomOf="@id/layout_new_post_category"
+                app:layout_constraintVertical_bias="0.5">
+
+                <ImageView
+                    android:id="@+id/img_new_post_empty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_home_empty"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/tv_new_post_empty_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/home_new_empty_title"
+                    android:textColor="@color/gray_3_9FA5AE"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/img_new_post_empty"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/tv_new_post_empty_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/home_new_empty_detail"
+                    android:textColor="@color/gray_4_C5CAD2"
+                    android:textSize="13dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_new_post_empty_title"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_new_post_empty_action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:background="@drawable/background_white_radius_32"
+                    android:backgroundTint="@color/primary_green_23C882"
+                    android:includeFontPadding="false"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="8dp"
+                    android:stateListAnimator="@null"
+                    android:text="@string/home_new_empty_action"
+                    android:textColor="@color/white_FFFFFF"
+                    android:textSize="14dp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_new_post_empty_detail"
+                    app:layout_constraintVertical_bias="0.0" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</layout>

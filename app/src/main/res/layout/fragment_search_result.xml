@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="resultCount"
+            type="Integer" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white_FFFFFF"
+        tools:context=".presentation.fragment.search.SearchResultFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_search_result_action_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:elevation="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
+
+            <ImageButton
+                android:id="@+id/btn_search_result_back"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:paddingHorizontal="16dp"
+                android:src="@drawable/ic_back_sign"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription" />
+
+            <MultiAutoCompleteTextView
+                android:id="@+id/tv_search_result_keyword_input"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:backgroundTint="@color/white_FFFFFF"
+                android:completionThreshold="2"
+                android:hint="@string/hint_search_keyword_input"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:textColor="@color/gray_1_313131"
+                android:textColorHint="@color/gray_4_C5CAD2"
+                android:textCursorDrawable="@color/gray_1_313131"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@id/btn_search_result_back"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btn_search_result_remove_et_input"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="4dp"
+                android:background="@android:color/transparent"
+                android:padding="14dp"
+                android:src="@drawable/ic_remove_edittext"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/view_search_result_horizontal_line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray_6_F0F1F3"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_search_result_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/img_search_result_empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_search_result_empty"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/tv_search_result_empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:lineHeight="15.45dp"
+                android:text="@string/search_result_empty"
+                android:textAlignment="center"
+                android:textColor="@color/gray_3_9FA5AE"
+                android:textFontWeight="400"
+                android:textSize="15dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/img_search_result_empty"
+                app:layout_constraintVertical_bias="0.0" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_search_result_contents"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingTop="15dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_search_result_action_bar">
+
+            <TextView
+                android:id="@+id/tv_search_result_contents_post_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="@{Integer.toString(resultCount)}"
+                android:textColor="@color/primary_green_23C882"
+                android:textSize="13dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="10" />
+
+            <TextView
+                android:id="@+id/tv_search_result_contents_post_count_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" 개의 검색 결과가 있어요."
+                android:textColor="@color/gray_1_313131"
+                android:textSize="13dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@id/tv_search_result_contents_post_count"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/view_search_result_contents_count_post_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="15dp"
+                android:background="@color/gray_6_F0F1F3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_search_result_contents_post_count" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_search_result_contents_count_post_divider">
+
+                <View
+                    android:id="@+id/view_search_result_contents_count_post_margin"
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:background="@color/gray_6_F0F1F3"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_search_result_contents_start"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.039" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_search_result_contents_end"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.961" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_search_result_contents_post_list"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:paddingTop="16dp"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    android:visibility="gone"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/guideline_search_result_contents_end"
+                    app:layout_constraintStart_toStartOf="@id/guideline_search_result_contents_start"
+                    app:layout_constraintTop_toBottomOf="@id/view_search_result_contents_count_post_margin"
+                    app:spanCount="2"
+                    tools:listitem="@layout/item_search_result_post" />
+
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/layout_search_result_post_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp"
+                    android:clipToPadding="false"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/guideline_search_result_contents_end"
+                    app:layout_constraintStart_toStartOf="@id/guideline_search_result_contents_start"
+                    app:layout_constraintTop_toBottomOf="@id/view_search_result_contents_count_post_margin"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:shimmer_base_color="@color/gray_3_9FA5AE"
+                    app:shimmer_colored="true"
+                    app:shimmer_highlight_color="@color/gray_6_F0F1F3">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/item_shimmer_1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginHorizontal="4dp"
+                            android:adjustViewBounds="true"
+                            android:background="@color/gray_3_9FA5AE"
+                            android:src="@drawable/ic_dayo_circle_grayscale"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/item_shimmer_2"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.0"
+                            app:tint="@android:color/transparent" />
+
+                        <ImageView
+                            android:id="@+id/item_shimmer_2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginHorizontal="4dp"
+                            android:adjustViewBounds="true"
+                            android:background="@color/gray_3_9FA5AE"
+                            android:src="@drawable/ic_dayo_circle_grayscale"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toEndOf="@id/item_shimmer_1"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.0"
+                            app:tint="@android:color/transparent" />
+
+                        <ImageView
+                            android:id="@+id/item_shimmer_3"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginHorizontal="4dp"
+                            android:layout_marginTop="8dp"
+                            android:adjustViewBounds="true"
+                            android:background="@color/gray_3_9FA5AE"
+                            android:src="@drawable/ic_dayo_circle_grayscale"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/item_shimmer_4"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/item_shimmer_1"
+                            app:layout_constraintVertical_bias="0.0"
+                            app:tint="@android:color/transparent" />
+
+                        <ImageView
+                            android:id="@+id/item_shimmer_4"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginHorizontal="4dp"
+                            android:layout_marginTop="8dp"
+                            android:adjustViewBounds="true"
+                            android:background="@color/gray_3_9FA5AE"
+                            android:src="@drawable/ic_dayo_circle_grayscale"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toEndOf="@id/item_shimmer_3"
+                            app:layout_constraintTop_toBottomOf="@id/item_shimmer_2"
+                            app:layout_constraintVertical_bias="0.0"
+                            app:tint="@android:color/transparent" />
+
+                        <ImageView
+                            android:id="@+id/item_shimmer_5"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginHorizontal="4dp"
+                            android:layout_marginTop="8dp"
+                            android:adjustViewBounds="true"
+                            android:background="@color/gray_3_9FA5AE"
+                            android:src="@drawable/ic_dayo_circle_grayscale"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/item_shimmer_6"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/item_shimmer_3"
+                            app:layout_constraintVertical_bias="0.0"
+                            app:tint="@android:color/transparent" />
+
+                        <ImageView
+                            android:id="@+id/item_shimmer_6"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginHorizontal="4dp"
+                            android:layout_marginTop="8dp"
+                            android:adjustViewBounds="true"
+                            android:background="@color/gray_3_9FA5AE"
+                            android:src="@drawable/ic_dayo_circle_grayscale"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toEndOf="@id/item_shimmer_5"
+                            app:layout_constraintTop_toBottomOf="@id/item_shimmer_4"
+                            app:layout_constraintVertical_bias="0.0"
+                            app:tint="@android:color/transparent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.facebook.shimmer.ShimmerFrameLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

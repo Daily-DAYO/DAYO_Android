@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/HomeFragment">
+
+    <fragment
+        android:id="@+id/HomeFragment"
+        android:name="com.daily.dayo.presentation.fragment.home.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_postFragment"
+            app:destination="@id/PostFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_homeFragment_to_writeFragment"
+            app:destination="@id/WriteFragment"
+            app:enterAnim="@anim/translate_bottom_up"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_top_down" />
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@+id/ProfileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_searchFragment"
+            app:destination="@+id/SearchFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_homeFragment_to_notificationFragment"
+            app:destination="@+id/NotificationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/SearchFragment"
+        android:name="com.daily.dayo.presentation.fragment.search.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_searchFragment_to_searchResultFragment"
+            app:destination="@id/SearchResultFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out"
+            app:popUpTo="@id/HomeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/SearchResultFragment"
+        android:name="com.daily.dayo.presentation.fragment.search.SearchResultFragment"
+        android:label="fragment_search_result"
+        tools:layout="@layout/fragment_search_result">
+        <action
+            android:id="@+id/action_searchResultFragment_to_postFragment"
+            app:destination="@id/PostFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/FeedFragment"
+        android:name="com.daily.dayo.presentation.fragment.feed.FeedFragment"
+        android:label="fragment_feed"
+        tools:layout="@layout/fragment_feed">
+        <action
+            android:id="@+id/action_feedFragment_to_homeFragment"
+            app:destination="@id/HomeFragment" />
+        <action
+            android:id="@+id/action_feedFragment_to_writeFragment"
+            app:destination="@id/WriteFragment"
+            app:enterAnim="@anim/translate_bottom_up"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_top_down" />
+        <action
+            android:id="@+id/action_feedFragment_to_profileFragment"
+            app:destination="@+id/ProfileFragment" />
+        <action
+            android:id="@+id/action_feedFragment_to_postFragment"
+            app:destination="@id/PostFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_feedFragment_to_postOptionFragment"
+            app:destination="@id/PostOptionFragment" />
+        <action
+            android:id="@+id/action_feedFragment_to_postOptionMineFragment"
+            app:destination="@id/PostOptionMineFragment" />
+        <action
+            android:id="@+id/action_feedFragment_to_searchResultFragment"
+            app:destination="@id/SearchResultFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/WriteFragment"
+        android:name="com.daily.dayo.presentation.fragment.write.WriteFragment"
+        android:label="fragment_write"
+        tools:layout="@layout/fragment_write">
+        <argument
+            android:name="postId"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_writeFragment_to_writeOptionFragment"
+            app:destination="@id/WriteOptionFragment" />
+        <action
+            android:id="@+id/action_writeFragment_to_writeImageOptionFragment"
+            app:destination="@id/WriteImageOptionFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/WriteImageOptionFragment"
+        android:name="com.daily.dayo.presentation.fragment.write.WriteImageOptionFragment"
+        android:label="fragment_write_image_option"
+        tools:layout="@layout/fragment_write_image_option"></dialog>
+
+    <dialog
+        android:id="@+id/WriteOptionFragment"
+        android:name="com.daily.dayo.presentation.fragment.write.WriteOptionFragment"
+        android:label="fragment_write_option"
+        tools:layout="@layout/fragment_write_option">
+
+        <action
+            android:id="@+id/action_writeOptionFragment_to_postFragment"
+            app:destination="@id/PostFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out"
+            app:popUpTo="@id/WriteFragment"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_writeOptionFragment_to_writeTagFragment"
+            app:destination="@id/WriteTagFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_writeOptionFragment_to_writeFolderFragment"
+            app:destination="@id/WriteFolderFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </dialog>
+
+    <fragment
+        android:id="@+id/WriteTagFragment"
+        android:name="com.daily.dayo.presentation.fragment.write.WriteTagFragment"
+        android:label="fragment_write_tag"
+        tools:layout="@layout/fragment_write_tag"></fragment>
+
+    <fragment
+        android:id="@+id/WriteFolderFragment"
+        android:name="com.daily.dayo.presentation.fragment.write.WriteFolderFragment"
+        android:label="fragment_write_folder"
+        tools:layout="@layout/fragment_write_folder">
+        <action
+            android:id="@+id/action_writeFolderFragment_to_folderAddFragment"
+            app:destination="@id/FolderAddFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/FolderAddFragment"
+        android:name="com.daily.dayo.presentation.fragment.write.WriteFolderAddFragment"
+        android:label="fragment_write_add"
+        tools:layout="@layout/fragment_write_folder_add"></fragment>
+
+    <fragment
+        android:id="@+id/PostFragment"
+        android:name="com.daily.dayo.presentation.fragment.post.PostFragment"
+        android:label="fragment_post"
+        tools:layout="@layout/fragment_post">
+        <argument
+            android:name="postId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_postFragment_to_postOptionFragment"
+            app:destination="@id/PostOptionFragment" />
+        <action
+            android:id="@+id/action_postFragment_to_postOptionMineFragment"
+            app:destination="@id/PostOptionMineFragment" />
+        <action
+            android:id="@+id/action_postFragment_to_searchResultFragment"
+            app:popUpTo="@id/SearchResultFragment"
+            app:popUpToInclusive="true"
+            app:destination="@id/SearchResultFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_postFragment_to_profileFragment"
+            app:destination="@+id/ProfileFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </fragment>
+    <dialog
+        android:id="@+id/PostOptionFragment"
+        android:name="com.daily.dayo.presentation.fragment.post.PostOptionFragment"
+        android:label="fragment_post_option"
+        tools:layout="@layout/fragment_post_option">
+        <argument
+            android:name="postId"
+            app:argType="integer" />
+        <argument
+            android:name="memberId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_postOptionFragment_to_reportPostFragment"
+            app:destination="@id/ReportPostFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_postOptionFragment_to_reportUserFragment"
+            app:destination="@id/ReportUserFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </dialog>
+
+    <fragment
+        android:id="@+id/ReportPostFragment"
+        android:name="com.daily.dayo.presentation.fragment.report.ReportPostFragment"
+        android:label="fragment_report_post"
+        tools:layout="@layout/fragment_report_post">
+        <argument
+            android:name="postId"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ReportUserFragment"
+        android:name="com.daily.dayo.presentation.fragment.report.ReportUserFragment"
+        android:label="fragment_report_user"
+        tools:layout="@layout/fragment_report_user">
+        <argument
+            android:name="memberId"
+            app:argType="string" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/PostOptionMineFragment"
+        android:name="com.daily.dayo.presentation.fragment.post.PostOptionMineFragment"
+        android:label="fragment_post_option_mine"
+        tools:layout="@layout/fragment_post_option_mine">
+        <argument
+            android:name="postId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_postOptionMineFragment_to_HomeFragment"
+            app:destination="@+id/HomeFragment"
+            app:enterAnim="@anim/translate_nothing"
+            app:exitAnim="@anim/translate_to_right_out"
+            app:popUpTo="@id/PostFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_postOptionMineFragment_to_writeFragment"
+            app:destination="@id/WriteFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out"
+            app:popUpTo="@id/PostFragment"
+            app:popUpToInclusive="true" />
+    </dialog>
+
+    <fragment
+        android:id="@+id/MyPageFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.profile.MyPageFragment"
+        android:label="fragment_my_page"
+        tools:layout="@layout/fragment_my_page">
+        <action
+            android:id="@+id/action_myPageFragment_to_writeFragment"
+            app:destination="@id/WriteFragment"
+            app:enterAnim="@anim/translate_bottom_up"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_top_down" />
+        <action
+            android:id="@+id/action_myPageFragment_to_followFragment"
+            app:destination="@id/FollowFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_myPageFragment_to_profileEditFragment"
+            app:destination="@id/ProfileEditFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_myPageFragment_to_profileOptionFragment"
+            app:destination="@id/ProfileOptionFragment" />
+        <action
+            android:id="@+id/action_myPageFragment_to_folderFragment"
+            app:destination="@+id/FolderFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_myPageFragment_to_postFragment"
+            app:destination="@id/PostFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ProfileFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.profile.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile">
+        <argument
+            android:name="memberId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_profileFragment_to_writeFragment"
+            app:destination="@id/WriteFragment"
+            app:enterAnim="@anim/translate_bottom_up"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_top_down" />
+        <action
+            android:id="@+id/action_profileFragment_to_followFragment"
+            app:destination="@id/FollowFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_profileFragment_to_profileEditFragment"
+            app:destination="@id/ProfileEditFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_profileFragment_to_profileOptionFragment"
+            app:destination="@id/ProfileOptionFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_folderFragment"
+            app:destination="@+id/FolderFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_profileFragment_to_postFragment"
+            app:destination="@id/PostFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/FolderFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.folder.FolderFragment"
+        android:label="fragment_folder"
+        tools:layout="@layout/fragment_folder">
+        <argument
+            android:name="folderId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_folderFragment_to_folderOptionFragment"
+            app:destination="@id/FolderOptionFragment" />
+        <action
+            android:id="@+id/action_folderFragment_to_postFragment"
+            app:destination="@id/PostFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/FolderEditFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.folder.FolderEditFragment"
+        android:label="fragment_folder_edit"
+        tools:layout="@layout/fragment_folder_setting_add">
+        <argument
+            android:name="folderId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_folderEditFragment_to_folderSettingAddImageOptionFragment"
+            app:destination="@id/FolderSettingEditImageOptionFragment" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/FolderOptionFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.folder.FolderOptionFragment"
+        android:label="fragment_folder_option"
+        tools:layout="@layout/fragment_folder_option">
+        <argument
+            android:name="folderId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_folderOptionFragment_to_profileFragment"
+            app:destination="@+id/ProfileFragment"
+            app:enterAnim="@anim/translate_nothing"
+            app:exitAnim="@anim/translate_to_right_out"
+            app:popUpTo="@id/ProfileFragment" />
+        <action
+            android:id="@+id/action_folderOptionFragment_to_folderEditFragment"
+            app:destination="@+id/FolderEditFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/ProfileOptionFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.profile.ProfileOptionFragment"
+        android:label="fragment_profile_option"
+        tools:layout="@layout/fragment_profile_option">
+        <argument
+            android:name="isMine"
+            app:argType="boolean" />
+        <argument
+            android:name="memberId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_profileOptionFragment_to_folderSettingFragment"
+            app:destination="@id/FolderSettingFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_profileOptionFragment_to_profileEditFragment"
+            app:destination="@+id/ProfileEditFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_profileOptionFragment_to_settingFragment"
+            app:destination="@+id/SettingFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_profileOptionFragment_to_reportUserFragment"
+            app:destination="@id/ReportUserFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </dialog>
+
+    <fragment
+        android:id="@+id/SettingFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting">
+        <action
+            android:id="@+id/action_settingFragment_to_settingChangePasswordCurrentFragment"
+            app:destination="@id/SettingChangePasswordCurrentFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_settingFragment_to_withdrawFragment"
+            app:destination="@id/WithdrawFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_settingFragment_to_settingNotificationFragment"
+            app:destination="@id/SettingNotificationFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+
+        <action
+            android:id="@+id/action_settingFragment_to_settingBlockFragment"
+            app:destination="@+id/SettingBlockFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+
+        <action
+            android:id="@+id/action_settingFragment_to_informationFragment"
+            app:destination="@id/InformationFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+
+        <action
+            android:id="@+id/action_settingFragment_to_noticeFragment"
+            app:destination="@id/NoticeListFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/SettingBlockFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.block.SettingBlockFragment"
+        android:label="fragment_setting_block"
+        tools:layout="@layout/fragment_setting_block" />
+
+    <fragment
+        android:id="@+id/SettingChangePasswordCurrentFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.changePassword.SettingChangePasswordCurrentFragment"
+        android:label="fragment_setting_change_password_current"
+        tools:layout="@layout/fragment_setting_change_password_current">
+        <action
+            android:id="@+id/action_settingChangePasswordCurrentFragment_to_settingChangePasswordNewFragment"
+            app:destination="@id/SettingChangePasswordNewFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/SettingChangePasswordNewFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.changePassword.SettingChangePasswordNewFragment"
+        android:label="fragment_setting_change_password_new"
+        tools:layout="@layout/fragment_setting_change_password_new">
+        <action
+            android:id="@+id/action_settingChangePasswordNewFragment_to_settingFragment"
+            app:destination="@id/SettingFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out"
+            app:popUpTo="@id/SettingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/SettingNotificationFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.notification.SettingNotificationFragment"
+        android:label="fragment_withdraw"
+        tools:layout="@layout/fragment_setting_notification"></fragment>
+
+    <fragment
+        android:id="@+id/WithdrawFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.withdraw.WithdrawFragment"
+        android:label="fragment_withdraw"
+        tools:layout="@layout/fragment_withdraw"></fragment>
+
+    <fragment
+        android:id="@+id/FolderSettingFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.folder.FolderSettingFragment"
+        android:label="fragment_folder_setting"
+        tools:layout="@layout/fragment_folder_setting">
+        <action
+            android:id="@+id/action_folderSettingFragment_to_folderSettingAddFragment"
+            app:destination="@id/FolderSettingAddFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/FolderSettingAddFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.folder.FolderSettingAddFragment"
+        tools:layout="@layout/fragment_folder_setting_add">
+        <action
+            android:id="@+id/action_folderSettingAddFragment_to_folderSettingAddImageOptionFragment"
+            app:destination="@id/FolderSettingEditImageOptionFragment" />
+
+    </fragment>
+
+    <dialog
+        android:id="@+id/FolderSettingEditImageOptionFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.folder.FolderSettingEditImageOptionFragment"
+        android:label="fragment_folder_setting_edit_image_option"
+        tools:layout="@layout/fragment_folder_setting_edit_image_option"></dialog>
+
+    <fragment
+        android:id="@+id/ProfileEditFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.profile.ProfileEditFragment"
+        android:label="fragment_profile_edit"
+        tools:layout="@layout/fragment_profile_edit">
+        <action
+            android:id="@+id/action_profileEditFragment_to_profileEditImageOptionFragment"
+            app:destination="@id/ProfileEditImageOptionFragment" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/ProfileEditImageOptionFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.profile.ProfileEditImageOptionFragment"
+        android:label="fragment_my_profile_edit_image_option"
+        tools:layout="@layout/fragment_profile_edit_image_option"></dialog>
+
+    <fragment
+        android:id="@+id/FollowFragment"
+        android:name="com.daily.dayo.presentation.fragment.mypage.follow.FollowFragment"
+        android:label="fragment_follow"
+        tools:layout="@layout/fragment_follow">
+        <argument
+            android:name="memberId"
+            app:argType="string" />
+        <argument
+            android:name="nickname"
+            app:argType="string" />
+        <argument
+            android:name="initPosition"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_followFragment_to_profileFragment"
+            app:destination="@+id/ProfileFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/NotificationFragment"
+        android:name="com.daily.dayo.presentation.fragment.notification.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification">
+        <action
+            android:id="@+id/action_notificationFragment_to_writeFragment"
+            app:destination="@id/WriteFragment"
+            app:enterAnim="@anim/translate_bottom_up"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_top_down" />
+        <action
+            android:id="@+id/action_notificationFragment_to_profileFragment"
+            app:destination="@id/ProfileFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
+            android:id="@+id/action_notificationFragment_to_postFragment"
+            app:destination="@id/PostFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/InformationFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.information.InformationFragment"
+        android:label="fragment_information"
+        tools:layout="@layout/fragment_information">
+        <action
+            android:id="@+id/action_informationFragment_to_policyFragment"
+            app:destination="@+id/PolicyFragment"
+            app:enterAnim="@anim/translate_bottom_up"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_top_down" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/PolicyFragment"
+        android:name="com.daily.dayo.presentation.fragment.policy.PolicyFragment"
+        android:label="fragment_policy"
+        tools:layout="@layout/fragment_policy">
+        <argument
+            android:name="informationType"
+            android:defaultValue="privacy"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/NoticeListFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.notice.NoticeListFragment"
+        android:label="fragment_notice_list"
+        tools:layout="@layout/fragment_notice_list">
+        <action
+            android:id="@+id/action_noticeListFragment_to_noticeDetailFragment"
+            app:destination="@+id/NoticeDetailFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_to_left_out"
+            app:popEnterAnim="@anim/translate_from_left_in"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/NoticeDetailFragment"
+        android:name="com.daily.dayo.presentation.fragment.setting.notice.NoticeDetailFragment"
+        android:label="fragment_notice_detail"
+        tools:layout="@layout/fragment_notice_detail">
+        <argument
+            android:name="notice"
+            app:argType="com.daily.dayo.domain.model.Notice" />
+    </fragment>
+</navigation>

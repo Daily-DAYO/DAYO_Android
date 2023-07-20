@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/img_upload"
+        android:layout_width="141dp"
+        android:layout_height="141dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/button_default_white"
+        android:scaleType="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_launcher_background" />
+
+    <ImageButton
+        android:id="@+id/btn_img_upload_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_img_delete_gray_5"
+        app:layout_constraintBottom_toTopOf="@id/img_upload"
+        app:layout_constraintEnd_toEndOf="@id/img_upload"
+        app:layout_constraintStart_toEndOf="@id/img_upload"
+        app:layout_constraintTop_toTopOf="@id/img_upload" />
+</androidx.constraintlayout.widget.ConstraintLayout>
