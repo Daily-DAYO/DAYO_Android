@@ -2,20 +2,76 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.daily.dayo">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+
     <application
+        android:name=".DayoApplication"
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DAYO">
-        <activity android:name=".MainActivity">
+        <meta-data android:name="io.sentry.dsn" android:value="https://7f03a2b5d1c24582bfca11c28231a45f@o4504230448136192.ingest.sentry.io/4504230448988160" />
+        <!-- Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+           We recommend adjusting this value in production. -->
+        <meta-data android:name="io.sentry.traces.sample-rate" android:value="1.0" />
+        <!-- Enable user interaction tracing to capture transactions for various UI events (such as clicks or scrolls). -->
+        <meta-data android:name="io.sentry.traces.user-interaction.enable" android:value="true" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_dayo_logo" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.daily.dayo.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
+        <activity android:name=".presentation.activity.LoginActivity"
+            android:theme="@style/Theme.DAYO.Splash"
+            android:screenOrientation="portrait"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Redirect URI: "kakao{NATIVE_APP_KEY}://oauth" -->
+                <data android:host="oauth"
+                    android:scheme="kakao${NATIVE_APP_KEY}" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".presentation.activity.MainActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing" />
+        <service
+            android:name=".data.datasource.remote.firebase.FirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

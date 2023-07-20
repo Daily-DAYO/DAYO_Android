@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="followerCount"
+            type="Integer" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".presentation.fragment.mypage.follow.FollowerListFragment">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_follower"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="12dp"
+            android:overScrollMode="never"
+            android:visibility="@{followerCount == 0 ? View.GONE : View.VISIBLE}"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_follow"
+            tools:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="@{followerCount == 0 ? View.VISIBLE : View.GONE}"
+            tools:visibility="visible">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="76dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:src="@drawable/ic_follow_empty" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/follower_empty_description"
+                android:textColor="@color/gray_3_9FA5AE"
+                android:textSize="15dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".presentation.fragment.post.PostOptionFragment"
+    android:orientation="vertical"
+    android:paddingBottom="18dp">
+
+    <LinearLayout
+        android:id="@+id/layout_post_option_block_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_option_default_top"
+        android:backgroundTint="@color/white_FFFFFF"
+        android:gravity="center"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tv_post_option_block_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/post_option_block_user"
+            android:textSize="14dp"
+            android:textColor="@color/gray_1_313131"
+            android:layout_marginTop="21dp"
+            android:layout_marginBottom="18dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_post_option_report_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white_FFFFFF"
+        android:gravity="center"
+        android:orientation="vertical">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray_6_F0F1F3"/>
+        <TextView
+            android:id="@+id/tv_post_option_report_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/post_option_report_user"
+            android:textSize="14dp"
+            android:textColor="@color/gray_1_313131"
+            android:layout_marginVertical="18dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_post_option_report_post"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_option_default_bottom"
+        android:backgroundTint="@color/white_FFFFFF"
+        android:gravity="center"
+        android:orientation="vertical" >
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray_6_F0F1F3"/>
+        <TextView
+            android:id="@+id/tv_post_option_report_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/post_option_report_post"
+            android:textSize="14dp"
+            android:textColor="@color/gray_1_313131"
+            android:layout_marginTop="18dp"
+            android:layout_marginBottom="21dp" />
+    </LinearLayout>
+</LinearLayout>

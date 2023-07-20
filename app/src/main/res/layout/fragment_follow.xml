@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_FFFFFF"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_follow_action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:elevation="24dp">
+
+        <ImageButton
+            android:id="@+id/btn_follow_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:paddingHorizontal="18dp"
+            android:src="@drawable/ic_back_sign"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/tv_follow_user_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="nickname"
+            android:textColor="@color/gray_1_313131"
+            android:textSize="17dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs_follow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabGravity="fill"
+        app:tabIndicator="@drawable/tab_indicator"
+        app:tabIndicatorColor="@color/gray_1_313131"
+        app:tabIndicatorFullWidth="false"
+        app:tabIndicatorGravity="bottom"
+        app:tabMode="fixed" />
+
+    <View
+        android:id="@+id/view_tabs_horizontal_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray_6_F0F1F3" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/pager_follow"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="userNickname"
+            type="String" />
+    </data>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_FFFFFF"
+    tools:context=".presentation.fragment.account.signup.SignupEmailCompleteFragment">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_signup_email_complete_action_bar"
+        android:layout_width="0dp"
+        android:layout_height="?actionBarSize"
+        android:elevation="24dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <ImageButton
+            android:id="@+id/btn_signup_email_complete_close"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_x_sign"
+            tools:ignore="ContentDescription"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:paddingHorizontal="16dp"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_signup_email_complete_guide_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:main="@{@string/signup_email_complete_guide_message(userNickname)}"
+        app:secondText="@{userNickname}"
+        android:textSize="22dp"
+        android:textColor="@color/gray_1_313131"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/guideline_signup_email_complete_message_image_top"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_signup_email_complete_message_image_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.36"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_signup_email_complete_message_image_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.67"/>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_signup_email_complete_dayo_logo"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:lottie_rawRes="@raw/signup_email_complete_dayo_logo"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="false"
+        app:layout_constraintTop_toTopOf="@id/guideline_signup_email_complete_message_image_top"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_signup_email_complete_message_image_bottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

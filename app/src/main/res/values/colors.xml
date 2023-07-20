@@ -5,6 +5,27 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+
+    <color name="primary_green_23C882">#FF23C882</color>
+    <color name="primary_l1_8FD9B9">#FF8FD9B9</color>
+    <color name="primary_l2_E6FBF1">#FFE6FBF1</color>
+    <color name="primary_l3_F2FBF7">#FFF2FBF7</color>
+
+    <color name="pink_F34D7A">#FFF34D7A</color>
+    <color name="blue_597CF2">#FF597CF2</color>
+    <color name="yellow_FFEB5A">#FFFFEB5A</color>
+    <color name="red_FF4545">#FFFF4545</color>
+
+    <color name="black_000000">#FF000000</color>
+    <color name="white_FFFFFF">#FFFFFFFF</color>
+    <color name="gray_1_313131">#FF313131</color>
+    <color name="gray_1_313131_alpha_40">#66313131</color>
+    <color name="gray_2_767B83">#FF767B83</color>
+    <color name="gray_2_767B83_alpha_40">#66767B83</color>
+    <color name="gray_3_9FA5AE">#FF9FA5AE</color>
+    <color name="gray_3_9FA5AE_alpha_30">#4D9FA5AE</color>
+    <color name="gray_4_C5CAD2">#FFC5CAD2</color>
+    <color name="gray_5_E8EAEE">#FFE8EAEE</color>
+    <color name="gray_6_F0F1F3">#FFF0F1F3</color>
+    <color name="gray_7_F6F6F7">#FFF6F6F7</color>
 </resources>

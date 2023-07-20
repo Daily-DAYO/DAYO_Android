@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/dialog_alert_default"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/img_default_dialog_alert"
+        android:layout_width="29dp"
+        android:layout_height="26dp"
+        android:src="@drawable/ic_alert"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="25dp"/>
+
+    <TextView
+        android:id="@+id/tv_default_dialog_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:textColor="@color/gray_1_313131"
+        app:layout_constraintTop_toBottomOf="@id/img_default_dialog_alert"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        tools:text="@string/write_post_upload_alert_message_empty_content"/>
+
+    <TextView
+        android:id="@+id/tv_default_dialog_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/confirm"
+        android:textSize="15dp"
+        android:textColor="@color/primary_green_23C882"
+        app:layout_constraintTop_toBottomOf="@id/tv_default_dialog_description"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="28dp"
+        android:paddingBottom="23dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
