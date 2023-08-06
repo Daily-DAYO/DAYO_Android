@@ -13,4 +13,7 @@ interface HeartApiService {
 
     @GET("/api/v1/heart/list")
     suspend fun requestAllMyLikePostList(@Query("end") end: Int): NetworkResponse<ListAllMyHeartPostResponse>
+
+    @GET("/api/v1/heart/post/{postId}/list")
+    suspend fun requestPostLikeUsers(@Path("postId") postId: Int, @Query("end") end: Int): NetworkResponse<PostMemberHeartListResponse>
 }

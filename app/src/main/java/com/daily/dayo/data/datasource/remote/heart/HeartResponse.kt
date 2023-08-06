@@ -31,3 +31,23 @@ data class MyHeartPostDto(
     @SerializedName("thumbnailImage")
     val thumbnailImage: String
 )
+
+data class PostMemberHeartListResponse(
+    @SerializedName("count")
+    val count:Int,
+    @SerializedName("last")
+    val last: Boolean,
+    @SerializedName("data")
+    val data:List<HeartMemberDto>
+)
+
+data class HeartMemberDto(
+    @SerializedName("follow")
+    val follow: Boolean,
+    @SerializedName("memberId")
+    val memberId: Int,
+    @SerializedName("nickname")
+    val nickname: String,
+    @SerializedName("thumbnailImage")
+    val thumbnailImage: String
+)
