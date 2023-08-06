@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.daily.dayo.common.Event
 import com.daily.dayo.common.Resource
 import com.daily.dayo.data.datasource.remote.bookmark.CreateBookmarkRequest
@@ -14,6 +16,7 @@ import com.daily.dayo.data.datasource.remote.heart.CreateHeartResponse
 import com.daily.dayo.data.mapper.toComment
 import com.daily.dayo.data.mapper.toPost
 import com.daily.dayo.domain.model.Comment
+import com.daily.dayo.domain.model.LikeUser
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.domain.usecase.block.RequestBlockMemberUseCase
@@ -23,10 +26,13 @@ import com.daily.dayo.domain.usecase.comment.RequestCreatePostCommentUseCase
 import com.daily.dayo.domain.usecase.comment.RequestDeletePostCommentUseCase
 import com.daily.dayo.domain.usecase.comment.RequestPostCommentUseCase
 import com.daily.dayo.domain.usecase.like.RequestLikePostUseCase
+import com.daily.dayo.domain.usecase.like.RequestPostLikeUsersUseCase
 import com.daily.dayo.domain.usecase.like.RequestUnlikePostUseCase
 import com.daily.dayo.domain.usecase.post.RequestDeletePostUseCase
 import com.daily.dayo.domain.usecase.post.RequestPostDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,7 +47,8 @@ class PostViewModel @Inject constructor(
     private val requestPostCommentUseCase: RequestPostCommentUseCase,
     private val requestCreatePostCommentUseCase: RequestCreatePostCommentUseCase,
     private val requestDeletePostCommentUseCase: RequestDeletePostCommentUseCase,
-    private val requestBlockMemberUseCase: RequestBlockMemberUseCase
+    private val requestBlockMemberUseCase: RequestBlockMemberUseCase,
+    private val requestPostLikeUsersUseCase: RequestPostLikeUsersUseCase
 ): ViewModel() {
 
     private val _postDetail = MutableLiveData<Resource<Post>>()
@@ -64,6 +71,9 @@ class PostViewModel @Inject constructor(
 
     private val _blockSuccess = MutableLiveData<Event<Boolean>>()
     val blockSuccess: LiveData<Event<Boolean>> get() = _blockSuccess
+
+    private val _postLikeUsers = MutableLiveData<PagingData<LikeUser>>()
+    val postLikeUsers get() = _postLikeUsers
 
     fun cleanUpPostDetail() {
         _postDetail.postValue(Resource.loading(null))
@@ -179,5 +189,11 @@ class PostViewModel @Inject constructor(
                 else -> { _blockSuccess.postValue(Event(false)) }
             }
         }
+    }
+
+    fun requestPostLikeUsers(postId: Int) = viewModelScope.launch(Dispatchers.IO) {
+        requestPostLikeUsersUseCase(postId = postId)
+            .cachedIn(viewModelScope)
+            .collectLatest { _postLikeUsers.postValue(it) }
     }
 }
