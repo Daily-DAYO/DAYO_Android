@@ -49,6 +49,11 @@ android {
         }
     }
 
+    buildFeatures {
+        // AGP 9.0부터 buildConfig가 사라짐에 따라 8.0에서의 임시방편
+        buildConfig = true
+    }
+
     buildTypes {
         release {
             minifyEnabled true
