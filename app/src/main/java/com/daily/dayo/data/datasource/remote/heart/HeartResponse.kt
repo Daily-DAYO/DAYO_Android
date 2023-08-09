@@ -45,9 +45,9 @@ data class HeartMemberDto(
     @SerializedName("follow")
     val follow: Boolean,
     @SerializedName("memberId")
-    val memberId: Int,
+    val memberId: String,
     @SerializedName("nickname")
     val nickname: String,
-    @SerializedName("thumbnailImage")
-    val thumbnailImage: String
+    @SerializedName("profileImg")
+    val profileImg: String
 )

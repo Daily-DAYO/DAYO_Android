@@ -16,5 +16,5 @@ fun HeartMemberDto.toLikeUser() : LikeUser =
         follow = follow,
         nickname = nickname,
         memberId = memberId,
-        thumbnailImage = thumbnailImage
+        profileImg = profileImg
     )
