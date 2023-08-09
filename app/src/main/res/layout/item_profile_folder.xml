@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+
     <data>
+
+        <import type="android.view.View" />
+        <import type="com.daily.dayo.domain.model.Privacy" />
+
         <variable
             name="folder"
             type="com.daily.dayo.domain.model.Folder" />
@@ -17,13 +22,13 @@
             android:id="@+id/btn_profile_folder_item"
             android:layout_width="match_parent"
             android:layout_height="163dp"
+            android:background="@drawable/button_profile_folder_default_gray"
             android:scaleType="centerCrop"
             android:tintMode="src_atop"
-            android:background="@drawable/button_profile_folder_default_gray"
-            app:tint="@color/gray_2_767B83_alpha_40"
-            app:shapeAppearanceOverlay="@style/roundedImageViewRoundedCorner"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/roundedImageViewRoundedCorner"
+            app:tint="@color/gray_2_767B83_alpha_40" />
 
         <ImageView
             android:id="@+id/img_profile_folder_post_count"
@@ -32,47 +37,62 @@
             android:layout_marginTop="14dp"
             android:layout_marginEnd="34dp"
             android:src="@drawable/ic_profile_folder_post_count"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_profile_folder_post_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{Integer.toString(folder.postCount)}"
-            android:textSize="13dp"
-            android:textColor="@color/white_FFFFFF"
             android:layout_marginStart="4dp"
+            android:text="@{Integer.toString(folder.postCount)}"
+            android:textColor="@color/white_FFFFFF"
+            android:textSize="13dp"
+            app:layout_constraintBottom_toBottomOf="@+id/img_profile_folder_post_count"
             app:layout_constraintStart_toEndOf="@+id/img_profile_folder_post_count"
             app:layout_constraintTop_toTopOf="@+id/img_profile_folder_post_count"
-            app:layout_constraintBottom_toBottomOf="@+id/img_profile_folder_post_count"
-            tools:text="12"/>
+            tools:text="12" />
+
+        <ImageView
+            android:id="@+id/img_profile_folder_privacy"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="3dp"
+            android:src="@drawable/ic_lock"
+            android:visibility="@{folder.privacy == Privacy.ONLY_ME ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@id/tv_profile_folder_name"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/tv_profile_folder_name"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_profile_folder_name"
+            app:layout_constraintVertical_bias="0.5" />
 
         <TextView
             android:id="@+id/tv_profile_folder_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{folder.title}"
-            android:textSize="15dp"
-            android:textColor="@color/white_FFFFFF"
             android:layout_marginBottom="40dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@{folder.title}"
+            android:textColor="@color/white_FFFFFF"
+            android:textSize="15dp"
             app:layout_constraintBottom_toBottomOf="@+id/btn_profile_folder_item"
-            tools:text="오늘의 일기"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="오늘의 일기" />
 
         <TextView
             android:id="@+id/tv_profile_folder_subheading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{folder.subheading}"
-            android:textSize="11dp"
-            android:textColor="@color/white_FFFFFF"
             android:layout_marginTop="6dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:text="@{folder.subheading}"
+            android:textColor="@color/white_FFFFFF"
+            android:textSize="11dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_profile_folder_name"
-            tools:text="우당탕탕 빙글빙글 오늘 하루"/>
+            tools:text="우당탕탕 빙글빙글 오늘 하루" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
