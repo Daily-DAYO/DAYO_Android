@@ -20,7 +20,6 @@ import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentWriteFolderAddBinding
 import com.daily.dayo.domain.model.Privacy
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
-import java.util.regex.Pattern
 
 class WriteFolderAddFragment : Fragment() {
     private var binding by autoCleared<FragmentWriteFolderAddBinding> {
@@ -82,30 +81,16 @@ class WriteFolderAddFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                when {
-                    trimBlankText(s).isEmpty() -> {
-                        ButtonActivation.setTextViewConfirmButtonInactive(
-                            requireContext(),
-                            binding.tvPostFolderAddConfirm
-                        )
-                    }
-                    Pattern.matches("[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9|\\s]*", trimBlankText(s)) -> {
-                        ButtonActivation.setTextViewConfirmButtonActive(
-                            requireContext(),
-                            binding.tvPostFolderAddConfirm
-                        )
-                    }
-                    else -> {
-                        Toast.makeText(
-                            requireContext(),
-                            getString(R.string.folder_add_message_format_fail),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        ButtonActivation.setTextViewConfirmButtonInactive(
-                            requireContext(),
-                            binding.tvPostFolderAddConfirm
-                        )
-                    }
+                if (trimBlankText(s).isEmpty()) {
+                    ButtonActivation.setTextViewConfirmButtonInactive(
+                        requireContext(),
+                        binding.tvPostFolderAddConfirm
+                    )
+                } else {
+                    ButtonActivation.setTextViewConfirmButtonActive(
+                        requireContext(),
+                        binding.tvPostFolderAddConfirm
+                    )
                 }
             }
         })
