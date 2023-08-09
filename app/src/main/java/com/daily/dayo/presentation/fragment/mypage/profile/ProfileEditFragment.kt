@@ -158,65 +158,76 @@ class ProfileEditFragment : Fragment() {
                         }${getString(R.string.my_profile_edit_nickname_edittext_count)}"
                     }
 
-                    if (trimBlankText(s).length < 2) { // 닉네임 길이 검사 1
+                    if (trimBlankText(s) == profileSettingViewModel.profileInfo.value?.nickname) { // 기존 닉네임과 동일한 경우
                         setEditTextTheme(
-                            getString(R.string.my_profile_edit_nickname_message_length_fail_min),
-                            false
+                            "",
+                            true
                         )
-                        ButtonActivation.setTextViewButtonInactive(
-                            requireContext(),
-                            btnProfileEditComplete
-                        )
-                    } else if (trimBlankText(s).length > 10) { // 닉네임 길이 검사 2
-                        setEditTextTheme(
-                            getString(R.string.my_profile_edit_nickname_message_length_fail_max),
-                            false
-                        )
-                        ButtonActivation.setTextViewButtonInactive(
+                        ButtonActivation.setTextViewButtonActive(
                             requireContext(),
                             btnProfileEditComplete
                         )
                     } else {
-                        if (Pattern.matches(
-                                "^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9|]+\$",
-                                trimBlankText(s)
-                            )
-                        ) {
-                            profileSettingViewModel.requestCheckNicknameDuplicate(
-                                trimBlankText(
-                                    binding.etProfileEditNickname.text
-                                )
-                            )
-                            profileSettingViewModel.isNicknameDuplicate.observe(viewLifecycleOwner) { isDuplicate ->
-                                if (isDuplicate) {
-                                    setEditTextTheme(
-                                        getString(R.string.my_profile_edit_nickname_message_success),
-                                        true
-                                    )
-                                    ButtonActivation.setTextViewButtonActive(
-                                        requireContext(),
-                                        btnProfileEditComplete
-                                    )
-                                } else {
-                                    setEditTextTheme(
-                                        getString(R.string.my_profile_edit_nickname_message_duplicate_fail),
-                                        false
-                                    )
-                                    ButtonActivation.setTextViewButtonInactive(
-                                        requireContext(),
-                                        btnProfileEditComplete
-                                    )
-                                }
-                            }
-                        } else {
+                        if (trimBlankText(s).length < 2) { // 닉네임 길이 검사 1
                             setEditTextTheme(
-                                getString(R.string.my_profile_edit_nickname_message_format_fail),
+                                getString(R.string.my_profile_edit_nickname_message_length_fail_min),
                                 false
                             )
                             ButtonActivation.setTextViewButtonInactive(
                                 requireContext(),
                                 btnProfileEditComplete
                             )
+                        } else if (trimBlankText(s).length > 10) { // 닉네임 길이 검사 2
+                            setEditTextTheme(
+                                getString(R.string.my_profile_edit_nickname_message_length_fail_max),
+                                false
+                            )
+                            ButtonActivation.setTextViewButtonInactive(
+                                requireContext(),
+                                btnProfileEditComplete
+                            )
+                        } else {
+                            if (Pattern.matches(
+                                    "^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9|]+\$",
+                                    trimBlankText(s)
+                                )
+                            ) {
+                                profileSettingViewModel.requestCheckNicknameDuplicate(
+                                    trimBlankText(
+                                        binding.etProfileEditNickname.text
+                                    )
+                                )
+                                profileSettingViewModel.isNicknameDuplicate.observe(viewLifecycleOwner) { isDuplicate ->
+                                    if (isDuplicate) {
+                                        setEditTextTheme(
+                                            getString(R.string.my_profile_edit_nickname_message_success),
+                                            true
+                                        )
+                                        ButtonActivation.setTextViewButtonActive(
+                                            requireContext(),
+                                            btnProfileEditComplete
+                                        )
+                                    } else {
+                                        setEditTextTheme(
+                                            getString(R.string.my_profile_edit_nickname_message_duplicate_fail),
+                                            false
+                                        )
+                                        ButtonActivation.setTextViewButtonInactive(
+                                            requireContext(),
+                                            btnProfileEditComplete
+                                        )
+                                    }
+                                }
+                            } else {
+                                setEditTextTheme(
+                                    getString(R.string.my_profile_edit_nickname_message_format_fail),
+                                    false
+                                )
+                                ButtonActivation.setTextViewButtonInactive(
+                                    requireContext(),
+                                    btnProfileEditComplete
+                                )
+                            }
                         }
                     }
                 }
