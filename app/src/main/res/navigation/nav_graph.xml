@@ -302,8 +302,7 @@
     <fragment
         android:id="@+id/PostLikeUsersFragment"
         android:name="com.daily.dayo.presentation.fragment.post.PostLikeUsersFragment"
-        android:label="fragment_post_like_users"
-        tools:layout="@layout/fragment_post_like_users">
+        android:label="fragment_post_like_users">
         <argument
             android:name="postId"
             app:argType="integer" />

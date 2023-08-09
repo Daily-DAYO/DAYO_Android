@@ -41,6 +41,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -60,11 +62,9 @@ import com.daily.dayo.BuildConfig
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.Event
-import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.extension.clickableSingle
 import com.daily.dayo.common.extension.navigateSafe
 import com.daily.dayo.common.toSp
-import com.daily.dayo.databinding.FragmentPostLikeUsersBinding
 import com.daily.dayo.domain.model.LikeUser
 import com.daily.dayo.presentation.viewmodel.FollowViewModel
 import com.daily.dayo.presentation.viewmodel.PostViewModel
@@ -74,7 +74,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PostLikeUsersFragment : Fragment() {
-    private var binding by autoCleared<FragmentPostLikeUsersBinding>()
     private val args by navArgs<PostLikeUsersFragmentArgs>()
     private val postViewModel by activityViewModels<PostViewModel>()
     private val followViewModel by activityViewModels<FollowViewModel>()
@@ -83,22 +82,15 @@ class PostLikeUsersFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPostLikeUsersBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         requestPostLikeUsers()
-        setComposeView()
-    }
-
-    private fun setComposeView() {
-        binding.composeViewPostLikeUsers.setContent {
-            MaterialTheme {
-                Column(modifier = Modifier) {
-                    SetPostLikeUsersActionbar()
-                    SetPostLikeUsers()
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                MaterialTheme {
+                    Column(modifier = Modifier) {
+                        SetPostLikeUsersActionbar()
+                        SetPostLikeUsers()
+                    }
                 }
             }
         }
@@ -159,6 +151,7 @@ class PostLikeUsersFragment : Fragment() {
             modifier = Modifier
                 .padding(vertical = 4.dp)
                 .fillMaxSize()
+                .background(color = colorResource(id = R.color.white_FFFFFF))
         ) {
             items(likeUsers.itemCount) { index ->
                 val item = likeUsers[index]
