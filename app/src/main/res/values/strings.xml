@@ -213,7 +213,7 @@
     <string name="my_profile_edit_nickname_message_success">사용할 수 있는 닉네임이에요.</string>
     <string name="my_profile_edit_nickname_message_format_fail">닉네임에는 한글, 영문, 숫자만 사용할 수 있어요.</string>
     <string name="my_profile_edit_nickname_message_length_fail_min">닉네임을 2글자 이상 입력해주세요.</string>
-    <string name="my_profile_edit_nickname_message_length_fail_max">닉네임을 10글자 이하로 가능해요.</string>
+    <string name="my_profile_edit_nickname_message_length_fail_max">닉네임은 10글자 이하로 가능해요.</string>
     <string name="my_profile_edit_nickname_message_duplicate_fail">이미 사용중인 닉네임이에요.</string>
     <string name="my_profile_edit_image_select_gallery">앨범에서 선택</string>
     <string name="my_profile_edit_image_reset">프로필 사진 초기화</string>
