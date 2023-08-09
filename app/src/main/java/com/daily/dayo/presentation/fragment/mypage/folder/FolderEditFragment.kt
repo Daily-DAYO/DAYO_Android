@@ -13,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -41,7 +40,6 @@ import java.io.FileOutputStream
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.regex.Pattern
 
 class FolderEditFragment : Fragment() {
     private var binding by autoCleared<FragmentFolderSettingAddBinding> {
@@ -245,30 +243,16 @@ class FolderEditFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                when {
-                    trimBlankText(s).isEmpty() -> {
-                        ButtonActivation.setTextViewConfirmButtonInactive(
-                            requireContext(),
-                            binding.tvFolderSettingAddConfirm
-                        )
-                    }
-                    Pattern.matches("[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9|\\s]*", trimBlankText(s)) -> {
-                        ButtonActivation.setTextViewConfirmButtonActive(
-                            requireContext(),
-                            binding.tvFolderSettingAddConfirm
-                        )
-                    }
-                    else -> {
-                        Toast.makeText(
-                            requireContext(),
-                            getString(R.string.folder_add_message_format_fail),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        ButtonActivation.setTextViewConfirmButtonInactive(
-                            requireContext(),
-                            binding.tvFolderSettingAddConfirm
-                        )
-                    }
+                if (trimBlankText(s).isEmpty()) {
+                    ButtonActivation.setTextViewConfirmButtonInactive(
+                        requireContext(),
+                        binding.tvFolderSettingAddConfirm
+                    )
+                } else {
+                    ButtonActivation.setTextViewConfirmButtonActive(
+                        requireContext(),
+                        binding.tvFolderSettingAddConfirm
+                    )
                 }
             }
         })
