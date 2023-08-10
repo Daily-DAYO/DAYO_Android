@@ -203,6 +203,13 @@
             android:id="@+id/action_postFragment_to_postOptionMineFragment"
             app:destination="@id/PostOptionMineFragment" />
         <action
+            android:id="@+id/action_postFragment_to_postLikeUsersFragment"
+            app:destination="@id/PostLikeUsersFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+        <action
             android:id="@+id/action_postFragment_to_searchResultFragment"
             app:popUpTo="@id/SearchResultFragment"
             app:popUpToInclusive="true"
@@ -291,6 +298,23 @@
             app:popUpTo="@id/PostFragment"
             app:popUpToInclusive="true" />
     </dialog>
+
+    <fragment
+        android:id="@+id/PostLikeUsersFragment"
+        android:name="com.daily.dayo.presentation.fragment.post.PostLikeUsersFragment"
+        android:label="fragment_post_like_users">
+        <argument
+            android:name="postId"
+            app:argType="integer" />
+
+        <action
+            android:id="@+id/action_postLikeUsersFragment_to_profileFragment"
+            app:destination="@+id/ProfileFragment"
+            app:enterAnim="@anim/translate_from_right_in"
+            app:exitAnim="@anim/translate_nothing"
+            app:popEnterAnim="@anim/translate_nothing"
+            app:popExitAnim="@anim/translate_to_right_out" />
+    </fragment>
 
     <fragment
         android:id="@+id/MyPageFragment"

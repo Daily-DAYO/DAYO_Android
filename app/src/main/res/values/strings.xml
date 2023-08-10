@@ -177,6 +177,9 @@
     <string name="report_user_reason_other_hint">신고 사유를 작성해주세요. (100자 이내)</string>
     <string name="report_user_alert_message">신고가 접수되었어요.</string>
 
+    <!-- Post Like Users -->
+    <string name="post_like_users_title">좋아요</string>
+
     <!-- Folder -->
     <string name="post_folder_add_title">폴더 추가</string>
     <string name="folder_edit_title">폴더 편집</string>
@@ -202,6 +205,8 @@
     <!-- Follow -->
     <string name="follower">팔로워</string>
     <string name="following">팔로잉</string>
+    <string name="follow_already">팔로잉</string>
+    <string name="follow_yet">팔로우</string>
     <string name="follow_delete_description_message">팔로우를 취소할까요?</string>
     <string name="follower_empty_description">아직 회원님을\n팔로우하는 사람이 없어요</string>
     <string name="following_empty_description">관심이 가는 사람들을 팔로우해보세요</string>
