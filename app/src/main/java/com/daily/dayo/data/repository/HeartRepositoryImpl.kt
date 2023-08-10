@@ -7,6 +7,7 @@ import com.daily.dayo.data.datasource.remote.heart.CreateHeartResponse
 import com.daily.dayo.data.datasource.remote.heart.DeleteHeartResponse
 import com.daily.dayo.data.datasource.remote.heart.HeartApiService
 import com.daily.dayo.data.datasource.remote.heart.HeartPagingSource
+import com.daily.dayo.data.datasource.remote.heart.HeartPostUsersPagingSource
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.repository.HeartRepository
 import javax.inject.Inject
@@ -23,6 +24,10 @@ class HeartRepositoryImpl @Inject constructor(
 
     override suspend fun requestAllMyLikePostList() = Pager(PagingConfig(pageSize = HEART_PAGE_SIZE)) {
         HeartPagingSource(heartApiService, HEART_PAGE_SIZE)
+    }.flow
+
+    override suspend fun requestPostLikeUsers(postId: Int) = Pager(PagingConfig(pageSize = HEART_PAGE_SIZE)) {
+        HeartPostUsersPagingSource(heartApiService, HEART_PAGE_SIZE, postId)
     }.flow
 
     companion object {
