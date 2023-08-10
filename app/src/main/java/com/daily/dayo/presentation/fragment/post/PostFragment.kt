@@ -36,6 +36,7 @@ import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.dialog.DefaultDialogConfirm
 import com.daily.dayo.common.dialog.LoadingAlertDialog
+import com.daily.dayo.common.extension.navigateSafe
 import com.daily.dayo.databinding.FragmentPostBinding
 import com.daily.dayo.domain.model.Comment
 import com.daily.dayo.domain.model.categoryKR
@@ -94,6 +95,11 @@ class PostFragment : Fragment() {
         setPostCommentClickListener()
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setLikeCountClickListener()
     }
 
     private fun onDestroyBindingView() {
@@ -471,6 +477,15 @@ class PostFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun setLikeCountClickListener() {
+        binding.tvPostLikeCount.setOnDebounceClickListener {
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.PostFragment,
+                action = PostFragmentDirections.actionPostFragmentToPostLikeUsersFragment(postId = args.postId)
+            )
         }
     }
 

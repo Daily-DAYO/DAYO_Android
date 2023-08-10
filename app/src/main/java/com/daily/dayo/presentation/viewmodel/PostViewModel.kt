@@ -32,6 +32,8 @@ import com.daily.dayo.domain.usecase.post.RequestDeletePostUseCase
 import com.daily.dayo.domain.usecase.post.RequestPostDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -49,7 +51,7 @@ class PostViewModel @Inject constructor(
     private val requestDeletePostCommentUseCase: RequestDeletePostCommentUseCase,
     private val requestBlockMemberUseCase: RequestBlockMemberUseCase,
     private val requestPostLikeUsersUseCase: RequestPostLikeUsersUseCase
-): ViewModel() {
+) : ViewModel() {
 
     private val _postDetail = MutableLiveData<Resource<Post>>()
     val postDetail: LiveData<Resource<Post>> get() = _postDetail
@@ -72,8 +74,8 @@ class PostViewModel @Inject constructor(
     private val _blockSuccess = MutableLiveData<Event<Boolean>>()
     val blockSuccess: LiveData<Event<Boolean>> get() = _blockSuccess
 
-    private val _postLikeUsers = MutableLiveData<PagingData<LikeUser>>()
-    val postLikeUsers get() = _postLikeUsers
+    private val _postLikeUsers = MutableStateFlow<PagingData<LikeUser>>(PagingData.empty())
+    val postLikeUsers = _postLikeUsers.asStateFlow()
 
     fun cleanUpPostDetail() {
         _postDetail.postValue(Resource.loading(null))
@@ -194,6 +196,6 @@ class PostViewModel @Inject constructor(
     fun requestPostLikeUsers(postId: Int) = viewModelScope.launch(Dispatchers.IO) {
         requestPostLikeUsersUseCase(postId = postId)
             .cachedIn(viewModelScope)
-            .collectLatest { _postLikeUsers.postValue(it) }
+            .collectLatest { _postLikeUsers.emit(it) }
     }
 }
