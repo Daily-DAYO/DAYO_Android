@@ -1,12 +1,17 @@
 package com.daily.dayo.common
 
 import android.graphics.Bitmap
+import android.media.ThumbnailUtils
 
 object ImageResizeUtil {
+    const val USER_PROFILE_THUMBNAIL_RESIZE_SIZE = 320
+    const val POST_IMAGE_RESIZE_SIZE = 1080
+
     fun resizeBitmap(
         originalBitmap: Bitmap,
         resizedWidth: Int = 480,
-        resizedHeight: Int = 480, ): Bitmap {
+        resizedHeight: Int = 480,
+    ): Bitmap {
         var bmpWidth = originalBitmap.width.toFloat()
         var bmpHeight = originalBitmap.height.toFloat()
 
@@ -26,4 +31,13 @@ object ImageResizeUtil {
         return Bitmap.createScaledBitmap(originalBitmap, bmpWidth.toInt(), bmpHeight.toInt(), true)
     }
 
+    fun Bitmap.cropCenterBitmap(): Bitmap {
+        val dimension = getSquareCropDimensionForBitmap(this)
+        return ThumbnailUtils.extractThumbnail(this, dimension, dimension)
+    }
+
+    private fun getSquareCropDimensionForBitmap(bitmap: Bitmap): Int {
+        //use the smallest dimension of the image to crop to
+        return Math.min(bitmap.width, bitmap.height)
+    }
 }
