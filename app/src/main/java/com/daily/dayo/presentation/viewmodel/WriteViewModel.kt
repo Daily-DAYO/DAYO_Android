@@ -9,7 +9,9 @@ import androidx.lifecycle.viewModelScope
 import com.daily.dayo.BuildConfig
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.common.Event
-import com.daily.dayo.common.ImageResizeUtil
+import com.daily.dayo.common.image.ImageResizeUtil
+import com.daily.dayo.common.image.ImageResizeUtil.POST_IMAGE_RESIZE_SIZE
+import com.daily.dayo.common.image.ImageResizeUtil.cropCenterBitmap
 import com.daily.dayo.common.ListLiveData
 import com.daily.dayo.common.Resource
 import com.daily.dayo.common.toBitmap
@@ -105,12 +107,12 @@ class WriteViewModel @Inject constructor(
         val resizedImages = async {
             postImageUriList.value?.map { item ->
                 val postImageBitmap =
-                    item.toUri().toBitmap(DayoApplication.applicationContext().contentResolver)
+                    item.toUri().toBitmap(DayoApplication.applicationContext().contentResolver)?.cropCenterBitmap()
                 val resizedImageBitmap = postImageBitmap?.let {
                     ImageResizeUtil.resizeBitmap(
                         originalBitmap = it,
-                        resizedWidth = 480,
-                        resizedHeight = 480
+                        resizedWidth = POST_IMAGE_RESIZE_SIZE,
+                        resizedHeight = POST_IMAGE_RESIZE_SIZE
                     )
                 }
                 resizedImageBitmap.toFile(uploadImagePath)
