@@ -26,6 +26,8 @@ import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.dialog.LoadingAlertDialog.resizeDialogFragment
 import com.daily.dayo.common.dialog.LoadingAlertDialog.showLoadingDialog
+import com.daily.dayo.common.image.ImageUploadUtil.extension
+import com.daily.dayo.common.image.ImageUploadUtil.isPermitExtension
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentWriteImageOptionBinding
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
@@ -35,7 +37,6 @@ import java.io.IOException
 import java.lang.NullPointerException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.min
 
 @AndroidEntryPoint
 class WriteImageOptionFragment : DialogFragment() {
@@ -144,9 +145,10 @@ class WriteImageOptionFragment : DialogFragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
             if (activityResult.resultCode == Activity.RESULT_OK) {
                 val data: Intent? = activityResult.data
-                val remainingNum = 5 - writeViewModel.postImageUriList.size()
+                var remainingNum = 5 - writeViewModel.postImageUriList.size()
                 if (data?.clipData != null) { //사진 여러 개 선택 시
-                    val count = data.clipData!!.itemCount
+                    var uriIdx = 0
+                    var count = data.clipData!!.itemCount
                     if (count >= remainingNum) {
                         Toast.makeText(
                             requireContext(),
@@ -154,10 +156,23 @@ class WriteImageOptionFragment : DialogFragment() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                    // 이전 선택 사진을 포함해 선택 사진의 총 갯수가 5개 이하면 count를, 초과하면 remainingNumber을 선택
-                    for (i in 0 until min(count, remainingNum)) {
-                        val imageUri = data.clipData!!.getItemAt(i).uri
-                        writeViewModel.addUploadImage(imageUri.toString(), true)
+                    // 선택한 갯수 만큼 loop
+                    while (count > 0) {
+                        uriIdx++
+                        count--
+                        remainingNum = 5 - writeViewModel.postImageUriList.size()
+                        if (remainingNum > 0 && uriIdx < data.clipData!!.itemCount) {
+                            val imageUri = data.clipData!!.getItemAt(uriIdx).uri
+                            if (imageUri.extension.isPermitExtension) {
+                                writeViewModel.addUploadImage(imageUri.toString(), true)
+                            } else {
+                                Toast.makeText(
+                                    requireContext(),
+                                    getString(R.string.write_post_upload_alert_message_image_fail_file_extension),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } else break
                     }
                     displayLoadingDialog()
                     findNavController().popBackStack()
@@ -174,16 +189,20 @@ class WriteImageOptionFragment : DialogFragment() {
                         if (remainingNum >= 1) {
                             val imageUri: Uri? = data.data
                             if (imageUri != null) {
-                                writeViewModel.addUploadImage(imageUri.toString(), true)
-                                LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
-                                LoadingAlertDialog.resizeDialogFragment(
-                                    requireContext(),
-                                    loadingAlertDialog,
-                                    0.8f
-                                )
-                                findNavController().popBackStack()
+                                if (imageUri.extension.isPermitExtension) {
+                                    writeViewModel.addUploadImage(imageUri.toString(), true)
+                                    showLoadingDialog(loadingAlertDialog)
+                                    resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
+                                } else {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        getString(R.string.write_post_upload_alert_message_image_fail_file_extension),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
                         }
+                        findNavController().popBackStack()
                     }
                 }
             }

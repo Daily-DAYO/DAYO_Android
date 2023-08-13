@@ -28,8 +28,11 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.*
 import com.daily.dayo.common.GlideLoadUtil.PROFILE_EDIT_USER_THUMBNAIL_SIZE
+import com.daily.dayo.common.image.ImageResizeUtil.USER_PROFILE_THUMBNAIL_RESIZE_SIZE
+import com.daily.dayo.common.image.ImageResizeUtil.cropCenterBitmap
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.dialog.LoadingAlertDialog
+import com.daily.dayo.common.image.ImageResizeUtil
 import com.daily.dayo.databinding.FragmentProfileEditBinding
 import com.daily.dayo.presentation.viewmodel.ProfileSettingViewModel
 import kotlinx.coroutines.*
@@ -334,11 +337,11 @@ class ProfileEditFragment : Fragment() {
             null
         } else { // 2. 프로필 사진을 다른 사진으로 변경 한 경우
             setUploadImagePath(userProfileImageExtension)
-            val originalBitmap = userProfileImageString.toUri().toBitmap()
+            val originalBitmap = userProfileImageString.toUri().toBitmap().cropCenterBitmap()
             val resizedBitmap = ImageResizeUtil.resizeBitmap(
                 originalBitmap = originalBitmap,
-                resizedWidth = 100,
-                resizedHeight = 100
+                resizedWidth = USER_PROFILE_THUMBNAIL_RESIZE_SIZE,
+                resizedHeight = USER_PROFILE_THUMBNAIL_RESIZE_SIZE
             )
             bitmapToFile(resizedBitmap, imagePath)
         }
