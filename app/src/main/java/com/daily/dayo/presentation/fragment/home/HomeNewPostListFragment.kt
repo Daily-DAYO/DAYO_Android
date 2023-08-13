@@ -253,7 +253,6 @@ class HomeNewPostListFragment : Fragment() {
     }
 
     private fun stopLoadingView() {
-        binding.rvNewPost.scrollToPosition(0)
         with(binding) {
             with(layoutNewPostShimmer) {
                 stopShimmer()
