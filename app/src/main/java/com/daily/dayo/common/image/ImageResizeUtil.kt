@@ -1,4 +1,4 @@
-package com.daily.dayo.common
+package com.daily.dayo.common.image
 
 import android.graphics.Bitmap
 

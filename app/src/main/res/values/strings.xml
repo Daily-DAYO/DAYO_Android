@@ -121,6 +121,7 @@
     <string name="write_post_upload_alert_message_empty_folder">폴더를 선택해 주세요</string>
     <string name="write_post_upload_alert_message_edittext_length_fail_max">내용은 200자까지 작성할 수 있어요.</string>
     <string name="write_post_upload_alert_message_image_fail_max">사진은 5장까지만 선택 가능합니다.</string>
+    <string name="write_post_upload_alert_message_image_fail_file_extension">jpg, jpeg, png, webp 형식의 이미지 파일만 업로드 가능합니다.</string>
     <string name="write_post_upload_alert_message_image_fail_null">사진 가져오기에 실패했습니다. 다시 선택해주세요</string>
     <string name="write_post_upload_alert_message_loading">게시글을 올리고 있어요! 잠시만 기다려주세요.</string>
     <string name="write_post_upload_alert_message_fail">게시글을 업로드 할 수 없어요. 다시 시도해주세요.</string>
