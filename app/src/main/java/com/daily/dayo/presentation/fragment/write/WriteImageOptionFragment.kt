@@ -158,8 +158,6 @@ class WriteImageOptionFragment : DialogFragment() {
                     }
                     // 선택한 갯수 만큼 loop
                     while (count > 0) {
-                        uriIdx++
-                        count--
                         remainingNum = 5 - writeViewModel.postImageUriList.size()
                         if (remainingNum > 0 && uriIdx < data.clipData!!.itemCount) {
                             val imageUri = data.clipData!!.getItemAt(uriIdx).uri
@@ -173,6 +171,9 @@ class WriteImageOptionFragment : DialogFragment() {
                                 ).show()
                             }
                         } else break
+
+                        uriIdx++
+                        count--
                     }
                     displayLoadingDialog()
                     findNavController().popBackStack()
