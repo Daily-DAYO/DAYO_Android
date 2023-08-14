@@ -109,6 +109,7 @@ class SignupEmailSetProfileFragment : Fragment() {
                     HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetProfileNickname)
                     true
                 }
+
                 else -> false
             }
         }
