@@ -28,10 +28,11 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
 import com.daily.dayo.common.*
 import com.daily.dayo.common.GlideLoadUtil.PROFILE_EDIT_USER_THUMBNAIL_SIZE
-import com.daily.dayo.common.ImageResizeUtil.USER_PROFILE_THUMBNAIL_RESIZE_SIZE
-import com.daily.dayo.common.ImageResizeUtil.cropCenterBitmap
+import com.daily.dayo.common.image.ImageResizeUtil.USER_PROFILE_THUMBNAIL_RESIZE_SIZE
+import com.daily.dayo.common.image.ImageResizeUtil.cropCenterBitmap
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.dialog.LoadingAlertDialog
+import com.daily.dayo.common.image.ImageResizeUtil
 import com.daily.dayo.databinding.FragmentProfileEditBinding
 import com.daily.dayo.presentation.viewmodel.ProfileSettingViewModel
 import kotlinx.coroutines.*
@@ -103,6 +104,7 @@ class ProfileEditFragment : Fragment() {
                     HideKeyBoardUtil.hide(requireContext(), binding.etProfileEditNickname)
                     true
                 }
+
                 else -> false
             }
         }
@@ -199,7 +201,9 @@ class ProfileEditFragment : Fragment() {
                                         binding.etProfileEditNickname.text
                                     )
                                 )
-                                profileSettingViewModel.isNicknameDuplicate.observe(viewLifecycleOwner) { isDuplicate ->
+                                profileSettingViewModel.isNicknameDuplicate.observe(
+                                    viewLifecycleOwner
+                                ) { isDuplicate ->
                                     if (isDuplicate) {
                                         setEditTextTheme(
                                             getString(R.string.my_profile_edit_nickname_message_success),
@@ -304,6 +308,7 @@ class ProfileEditFragment : Fragment() {
                                     "My Profile Update",
                                     "CANCELLED"
                                 )
+
                                 null -> {
                                     profileSettingViewModel.requestProfile(memberId = DayoApplication.preferences.getCurrentUser().memberId!!)
                                     findNavController().navigateUp()
