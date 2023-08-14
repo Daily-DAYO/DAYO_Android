@@ -107,7 +107,8 @@ class WriteViewModel @Inject constructor(
         val resizedImages = async {
             postImageUriList.value?.map { item ->
                 val postImageBitmap =
-                    item.toUri().toBitmap(DayoApplication.applicationContext().contentResolver)?.cropCenterBitmap()
+                    item.toUri().toBitmap(DayoApplication.applicationContext().contentResolver)
+                        ?.cropCenterBitmap()
                 val resizedImageBitmap = postImageBitmap?.let {
                     ImageResizeUtil.resizeBitmap(
                         originalBitmap = it,
@@ -194,12 +195,15 @@ class WriteViewModel @Inject constructor(
                     is NetworkResponse.Success -> {
                         Resource.success(ApiResponse.body?.data?.map { it.toFolder() })
                     }
+
                     is NetworkResponse.NetworkError -> {
                         Resource.error(ApiResponse.exception.toString(), null)
                     }
+
                     is NetworkResponse.ApiError -> {
                         Resource.error(ApiResponse.error.toString(), null)
                     }
+
                     is NetworkResponse.UnknownError -> {
                         Resource.error(ApiResponse.throwable.toString(), null)
                     }

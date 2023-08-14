@@ -104,6 +104,7 @@ class ProfileEditFragment : Fragment() {
                     HideKeyBoardUtil.hide(requireContext(), binding.etProfileEditNickname)
                     true
                 }
+
                 else -> false
             }
         }
@@ -200,7 +201,9 @@ class ProfileEditFragment : Fragment() {
                                         binding.etProfileEditNickname.text
                                     )
                                 )
-                                profileSettingViewModel.isNicknameDuplicate.observe(viewLifecycleOwner) { isDuplicate ->
+                                profileSettingViewModel.isNicknameDuplicate.observe(
+                                    viewLifecycleOwner
+                                ) { isDuplicate ->
                                     if (isDuplicate) {
                                         setEditTextTheme(
                                             getString(R.string.my_profile_edit_nickname_message_success),
@@ -305,6 +308,7 @@ class ProfileEditFragment : Fragment() {
                                     "My Profile Update",
                                     "CANCELLED"
                                 )
+
                                 null -> {
                                     profileSettingViewModel.requestProfile(memberId = DayoApplication.preferences.getCurrentUser().memberId!!)
                                     findNavController().navigateUp()
