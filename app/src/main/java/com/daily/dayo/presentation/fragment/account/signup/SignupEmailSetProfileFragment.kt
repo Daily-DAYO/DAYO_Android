@@ -42,6 +42,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 import com.daily.dayo.common.ImageResizeUtil
+import com.daily.dayo.common.ImageResizeUtil.USER_PROFILE_THUMBNAIL_RESIZE_SIZE
+import com.daily.dayo.common.ImageResizeUtil.cropCenterBitmap
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 
 @AndroidEntryPoint
@@ -302,10 +304,11 @@ class SignupEmailSetProfileFragment : Fragment() {
             var profileImgFile: File? = null
             profileImgFile = if (this::userProfileImageString.isInitialized) {
                 setUploadImagePath(userProfileImageExtension)
+                val originalBitmap = userProfileImageString.toUri().toBitmap().cropCenterBitmap()
                 val resizedBitmap = ImageResizeUtil.resizeBitmap(
-                    originalBitmap = userProfileImageString.toUri().toBitmap(),
-                    resizedWidth = 100,
-                    resizedHeight = 100
+                    originalBitmap = originalBitmap,
+                    resizedWidth = USER_PROFILE_THUMBNAIL_RESIZE_SIZE,
+                    resizedHeight = USER_PROFILE_THUMBNAIL_RESIZE_SIZE
                 )
                 bitmapToFile(resizedBitmap, imagePath)
             } else { // 기본 프로필 사진으로 설정
