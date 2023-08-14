@@ -99,7 +99,7 @@ class PostFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setLikeCountClickListener()
+        binding.postFragment = this
     }
 
     private fun onDestroyBindingView() {
@@ -480,13 +480,11 @@ class PostFragment : Fragment() {
         }
     }
 
-    private fun setLikeCountClickListener() {
-        binding.tvPostLikeCount.setOnDebounceClickListener {
-            findNavController().navigateSafe(
-                currentDestinationId = R.id.PostFragment,
-                action = PostFragmentDirections.actionPostFragmentToPostLikeUsersFragment(postId = args.postId)
-            )
-        }
+    fun setLikeCountClickListener() {
+        findNavController().navigateSafe(
+            currentDestinationId = R.id.PostFragment,
+            action = PostFragmentDirections.actionPostFragmentToPostLikeUsersFragment(postId = args.postId)
+        )
     }
 
     private fun refreshPostComment() {
