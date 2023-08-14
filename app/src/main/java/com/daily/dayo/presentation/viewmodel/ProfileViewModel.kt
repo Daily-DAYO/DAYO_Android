@@ -73,9 +73,16 @@ class ProfileViewModel @Inject constructor(
                 is NetworkResponse.Success -> {
                     _profileInfo.postValue(ApiResponse.body?.toProfile())
                 }
-                is NetworkResponse.NetworkError  -> {
+
+                is NetworkResponse.NetworkError -> {
+
                 }
-                is NetworkResponse.ApiError  -> {
+
+                is NetworkResponse.ApiError -> {
+
+                }
+
+                is NetworkResponse.UnknownError -> {
 
                 }
             }
@@ -88,9 +95,14 @@ class ProfileViewModel @Inject constructor(
                 is NetworkResponse.Success -> {
                     _profileInfo.postValue(ApiResponse.body?.toProfile())
                 }
-                is NetworkResponse.NetworkError  -> {
+
+                is NetworkResponse.NetworkError -> {
                 }
-                is NetworkResponse.ApiError  -> {
+
+                is NetworkResponse.ApiError -> {
+                }
+
+                is NetworkResponse.UnknownError -> {
 
                 }
             }
@@ -100,8 +112,13 @@ class ProfileViewModel @Inject constructor(
     fun requestCreateFollow(followerId: String) = viewModelScope.launch {
         requestCreateFollowUseCase(CreateFollowRequest(followerId = followerId))?.let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success -> { _followSuccess.postValue(Event(true)) }
-                else -> { _followSuccess.postValue(Event(false)) }
+                is NetworkResponse.Success -> {
+                    _followSuccess.postValue(Event(true))
+                }
+
+                else -> {
+                    _followSuccess.postValue(Event(false))
+                }
             }
         }
     }
@@ -109,8 +126,13 @@ class ProfileViewModel @Inject constructor(
     fun requestDeleteFollow(followerId: String) = viewModelScope.launch {
         requestDeleteFollowUseCase(followerId = followerId)?.let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success -> { _unfollowSuccess.postValue(Event(true)) }
-                else -> { _unfollowSuccess.postValue(Event(false)) }
+                is NetworkResponse.Success -> {
+                    _unfollowSuccess.postValue(Event(true))
+                }
+
+                else -> {
+                    _unfollowSuccess.postValue(Event(false))
+                }
             }
         }
     }
@@ -120,19 +142,61 @@ class ProfileViewModel @Inject constructor(
         if (isMine) {
             requestAllMyFolderListUseCase()?.let { ApiResponse ->
                 when (ApiResponse) {
-                    is NetworkResponse.Success -> { _folderList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toFolder() })) }
-                    is NetworkResponse.NetworkError -> { _folderList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                    is NetworkResponse.ApiError -> { _folderList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
-                    is NetworkResponse.UnknownError -> { _folderList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+                    is NetworkResponse.Success -> {
+                        _folderList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toFolder() }))
+                    }
+
+                    is NetworkResponse.NetworkError -> {
+                        _folderList.postValue(
+                            Resource.error(
+                                ApiResponse.exception.toString(),
+                                null
+                            )
+                        )
+                    }
+
+                    is NetworkResponse.ApiError -> {
+                        _folderList.postValue(Resource.error(ApiResponse.error.toString(), null))
+                    }
+
+                    is NetworkResponse.UnknownError -> {
+                        _folderList.postValue(
+                            Resource.error(
+                                ApiResponse.throwable.toString(),
+                                null
+                            )
+                        )
+                    }
                 }
             }
         } else {
             requestAllFolderListUseCase(memberId = memberId)?.let { ApiResponse ->
                 when (ApiResponse) {
-                    is NetworkResponse.Success -> { _folderList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toFolder() })) }
-                    is NetworkResponse.NetworkError -> { _folderList.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                    is NetworkResponse.ApiError -> { _folderList.postValue(Resource.error(ApiResponse.error.toString(), null)) }
-                    is NetworkResponse.UnknownError -> { _folderList.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+                    is NetworkResponse.Success -> {
+                        _folderList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toFolder() }))
+                    }
+
+                    is NetworkResponse.NetworkError -> {
+                        _folderList.postValue(
+                            Resource.error(
+                                ApiResponse.exception.toString(),
+                                null
+                            )
+                        )
+                    }
+
+                    is NetworkResponse.ApiError -> {
+                        _folderList.postValue(Resource.error(ApiResponse.error.toString(), null))
+                    }
+
+                    is NetworkResponse.UnknownError -> {
+                        _folderList.postValue(
+                            Resource.error(
+                                ApiResponse.throwable.toString(),
+                                null
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -151,12 +215,23 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun requestBlockMember(memberId: String) = viewModelScope.launch {
-        requestBlockMemberUseCase(memberId)?.let {  ApiResponse ->
+        requestBlockMemberUseCase(memberId)?.let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success -> { _blockSuccess.postValue(Event(true)) }
-                is NetworkResponse.NetworkError -> { _blockSuccess.postValue(Event(false)) }
-                is NetworkResponse.ApiError -> { _blockSuccess.postValue(Event(false)) }
-                is NetworkResponse.UnknownError -> { _blockSuccess.postValue(Event(false)) }
+                is NetworkResponse.Success -> {
+                    _blockSuccess.postValue(Event(true))
+                }
+
+                is NetworkResponse.NetworkError -> {
+                    _blockSuccess.postValue(Event(false))
+                }
+
+                is NetworkResponse.ApiError -> {
+                    _blockSuccess.postValue(Event(false))
+                }
+
+                is NetworkResponse.UnknownError -> {
+                    _blockSuccess.postValue(Event(false))
+                }
             }
         }
     }
@@ -164,10 +239,21 @@ class ProfileViewModel @Inject constructor(
     fun requestUnblockMember(memberId: String) = viewModelScope.launch {
         requestUnblockMemberUseCase(memberId).let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success -> { _unblockSuccess.postValue(Event(true)) }
-                is NetworkResponse.NetworkError -> { _unblockSuccess.postValue(Event(false)) }
-                is NetworkResponse.ApiError -> { _unblockSuccess.postValue(Event(false)) }
-                is NetworkResponse.UnknownError -> { _unblockSuccess.postValue(Event(false)) }
+                is NetworkResponse.Success -> {
+                    _unblockSuccess.postValue(Event(true))
+                }
+
+                is NetworkResponse.NetworkError -> {
+                    _unblockSuccess.postValue(Event(false))
+                }
+
+                is NetworkResponse.ApiError -> {
+                    _unblockSuccess.postValue(Event(false))
+                }
+
+                is NetworkResponse.UnknownError -> {
+                    _unblockSuccess.postValue(Event(false))
+                }
             }
         }
     }

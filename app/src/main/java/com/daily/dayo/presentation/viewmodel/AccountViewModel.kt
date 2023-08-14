@@ -97,6 +97,9 @@ class AccountViewModel @Inject constructor(
                     _isErrorExceptionOccurred.postValue(Event(true))
                     _loginSuccess.postValue(Event(false))
                 }
+                is NetworkResponse.UnknownError -> {
+                    _loginSuccess.postValue(Event(false))
+                }
             }
         }
     }
@@ -115,6 +118,9 @@ class AccountViewModel @Inject constructor(
                 }
                 is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
+                    _loginSuccess.postValue(Event(false))
+                }
+                is NetworkResponse.UnknownError -> {
                     _loginSuccess.postValue(Event(false))
                 }
             }
@@ -137,6 +143,9 @@ class AccountViewModel @Inject constructor(
                 }
                 is NetworkResponse.ApiError -> {
                     if (ApiResponse.code != 401) _isApiErrorExceptionOccurred.postValue(Event(true))
+                    _loginSuccess.postValue(Event(false))
+                }
+                is NetworkResponse.UnknownError -> {
                     _loginSuccess.postValue(Event(false))
                 }
             }
