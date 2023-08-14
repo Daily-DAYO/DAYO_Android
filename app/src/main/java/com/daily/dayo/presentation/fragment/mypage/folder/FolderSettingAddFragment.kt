@@ -21,7 +21,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
 import com.daily.dayo.common.ButtonActivation
-import com.daily.dayo.common.ImageResizeUtil
+import com.daily.dayo.common.image.ImageResizeUtil
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog

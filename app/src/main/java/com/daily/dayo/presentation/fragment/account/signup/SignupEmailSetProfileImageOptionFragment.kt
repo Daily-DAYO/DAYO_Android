@@ -10,15 +10,19 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.daily.dayo.BuildConfig
+import com.daily.dayo.R
 import com.daily.dayo.databinding.FragmentSignupEmailSetProfileImageOptionBinding
 import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.autoCleared
+import com.daily.dayo.common.image.ImageUploadUtil.extension
+import com.daily.dayo.common.image.ImageUploadUtil.isPermitExtension
 import com.daily.dayo.common.setOnDebounceClickListener
 import java.io.File
 import java.io.IOException
@@ -91,8 +95,16 @@ class SignupEmailSetProfileImageOptionFragment : DialogFragment() {
             // 호출된 갤러리에서 이미지 선택시, data의 data속성으로 해당 이미지의 Uri 전달
             val uri = data?.data!!
             // 이미지 파일과 함께, 파일 확장자도 같이 저장
-            val fileExtension = requireContext().contentResolver.getType(uri).toString().split("/")[1]
-            setMyProfileImage(uri.toString(), fileExtension)
+            if (uri.extension.isPermitExtension) {
+                setMyProfileImage(uri.toString(), uri.extension)
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.write_post_upload_alert_message_image_fail_file_extension),
+                    Toast.LENGTH_SHORT
+                ).show()
+                findNavController().popBackStack()
+            }
         }
     }
 

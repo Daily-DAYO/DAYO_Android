@@ -41,9 +41,9 @@ import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
-import com.daily.dayo.common.ImageResizeUtil
-import com.daily.dayo.common.ImageResizeUtil.USER_PROFILE_THUMBNAIL_RESIZE_SIZE
-import com.daily.dayo.common.ImageResizeUtil.cropCenterBitmap
+import com.daily.dayo.common.image.ImageResizeUtil
+import com.daily.dayo.common.image.ImageResizeUtil.USER_PROFILE_THUMBNAIL_RESIZE_SIZE
+import com.daily.dayo.common.image.ImageResizeUtil.cropCenterBitmap
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 
 @AndroidEntryPoint
@@ -109,6 +109,7 @@ class SignupEmailSetProfileFragment : Fragment() {
                     HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetProfileNickname)
                     true
                 }
+
                 else -> false
             }
         }

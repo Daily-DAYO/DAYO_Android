@@ -9,9 +9,9 @@ import androidx.lifecycle.viewModelScope
 import com.daily.dayo.BuildConfig
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.common.Event
-import com.daily.dayo.common.ImageResizeUtil
-import com.daily.dayo.common.ImageResizeUtil.POST_IMAGE_RESIZE_SIZE
-import com.daily.dayo.common.ImageResizeUtil.cropCenterBitmap
+import com.daily.dayo.common.image.ImageResizeUtil
+import com.daily.dayo.common.image.ImageResizeUtil.POST_IMAGE_RESIZE_SIZE
+import com.daily.dayo.common.image.ImageResizeUtil.cropCenterBitmap
 import com.daily.dayo.common.ListLiveData
 import com.daily.dayo.common.Resource
 import com.daily.dayo.common.toBitmap
@@ -107,7 +107,8 @@ class WriteViewModel @Inject constructor(
         val resizedImages = async {
             postImageUriList.value?.map { item ->
                 val postImageBitmap =
-                    item.toUri().toBitmap(DayoApplication.applicationContext().contentResolver)?.cropCenterBitmap()
+                    item.toUri().toBitmap(DayoApplication.applicationContext().contentResolver)
+                        ?.cropCenterBitmap()
                 val resizedImageBitmap = postImageBitmap?.let {
                     ImageResizeUtil.resizeBitmap(
                         originalBitmap = it,
@@ -194,12 +195,15 @@ class WriteViewModel @Inject constructor(
                     is NetworkResponse.Success -> {
                         Resource.success(ApiResponse.body?.data?.map { it.toFolder() })
                     }
+
                     is NetworkResponse.NetworkError -> {
                         Resource.error(ApiResponse.exception.toString(), null)
                     }
+
                     is NetworkResponse.ApiError -> {
                         Resource.error(ApiResponse.error.toString(), null)
                     }
+
                     is NetworkResponse.UnknownError -> {
                         Resource.error(ApiResponse.throwable.toString(), null)
                     }
