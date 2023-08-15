@@ -23,6 +23,7 @@ import com.daily.dayo.R
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.ImageResizeUtil
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
+import com.daily.dayo.common.TextLimitUtil
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
@@ -33,7 +34,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class FolderSettingAddFragment : Fragment() {
     private var binding by autoCleared<FragmentFolderSettingAddBinding> {
@@ -161,10 +163,18 @@ class FolderSettingAddFragment : Fragment() {
     }
 
     private fun verifyFolderName() {
+        val maxLength = 15
         binding.etFolderSettingAddSetTitle.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
+                val text = s.toString()
+                val newText = TextLimitUtil.trimToMaxLength(text, maxLength)
+                if (text != newText) {
+                    binding.etFolderSettingAddSetTitle.setText(newText)
+                    binding.etFolderSettingAddSetTitle.setSelection(newText.length)
+                }
+
                 if (trimBlankText(s).isEmpty()) {
                     ButtonActivation.setTextViewConfirmButtonInactive(
                         requireContext(),

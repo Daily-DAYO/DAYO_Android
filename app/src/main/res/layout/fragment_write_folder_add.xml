@@ -76,7 +76,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:singleLine="true"
-            android:maxLength="15"
             android:hint="@string/hint_post_folder_add_set_title"
             android:textSize="16dp"
             android:textColor="@color/gray_1_313131"
