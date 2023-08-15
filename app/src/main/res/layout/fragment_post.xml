@@ -9,6 +9,10 @@
         <import type="android.view.View" />
 
         <variable
+            name="postFragment"
+            type="com.daily.dayo.presentation.fragment.post.PostFragment" />
+
+        <variable
             name="post"
             type="com.daily.dayo.domain.model.Post" />
 
@@ -210,6 +214,7 @@
                             app:layout_constraintBottom_toBottomOf="@id/btn_post_like"
                             app:layout_constraintStart_toEndOf="@id/btn_post_like"
                             app:layout_constraintTop_toTopOf="@id/btn_post_like"
+                            android:onClick="@{() ->post.heartCount != 0 ? postFragment.setLikeCountClickListener(): null}"
                             tools:text="135" />
 
                         <ImageButton
