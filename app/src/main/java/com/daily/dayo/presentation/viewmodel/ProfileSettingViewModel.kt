@@ -58,6 +58,9 @@ class ProfileSettingViewModel @Inject constructor(
                 is NetworkResponse.ApiError -> {
 
                 }
+                is NetworkResponse.UnknownError -> {
+
+                }
             }
         }
     }
@@ -77,6 +80,9 @@ class ProfileSettingViewModel @Inject constructor(
                         _updateSuccess.postValue(Event(false))
                     }
                     is NetworkResponse.ApiError -> {
+                        _updateSuccess.postValue(Event(false))
+                    }
+                    is NetworkResponse.UnknownError -> {
                         _updateSuccess.postValue(Event(false))
                     }
                 }
