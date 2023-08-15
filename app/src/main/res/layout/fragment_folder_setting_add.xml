@@ -103,7 +103,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:hint="@string/hint_folder_setting_add_set_title"
-            android:maxLength="15"
             android:backgroundTint="@drawable/selector_edittext_background_stroke"
             android:singleLine="true"
             android:textColor="@color/gray_1_313131"

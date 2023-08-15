@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.daily.dayo.R
 import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
+import com.daily.dayo.common.TextLimitUtil
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
@@ -77,10 +78,18 @@ class WriteFolderAddFragment : Fragment() {
     }
 
     private fun verifyFolderName() {
+        val maxLength = 15
         binding.etPostFolderAddSetTitle.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
+                val text = s.toString()
+                val newText = TextLimitUtil.trimToMaxLength(text, maxLength)
+                if (text != newText) {
+                    binding.etPostFolderAddSetTitle.setText(newText)
+                    binding.etPostFolderAddSetTitle.setSelection(newText.length)
+                }
+
                 if (trimBlankText(s).isEmpty()) {
                     ButtonActivation.setTextViewConfirmButtonInactive(
                         requireContext(),
