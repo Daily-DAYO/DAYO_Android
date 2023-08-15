@@ -31,6 +31,9 @@ class SettingNotificationViewModel @Inject constructor(
                 is NetworkResponse.Success -> {
                     _notiReactionPermit.postValue(ApiResponse.body?.onReceiveAlarm)
                 }
+                else -> {
+
+                }
             }
         }
     }
