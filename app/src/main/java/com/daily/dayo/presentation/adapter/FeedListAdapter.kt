@@ -6,11 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import androidx.databinding.library.baseAdapters.BR
 import androidx.navigation.Navigation
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
+import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.R
@@ -22,9 +27,15 @@ import com.daily.dayo.domain.model.Post
 import com.daily.dayo.domain.model.categoryKR
 import com.daily.dayo.presentation.fragment.feed.FeedFragmentDirections
 import com.google.android.material.chip.Chip
+import kotlinx.coroutines.Dispatchers
 
 class FeedListAdapter(private val requestManager: RequestManager) :
     PagingDataAdapter<Post, FeedListAdapter.FeedListViewHolder>(diffCallback) {
+
+    private var glideRequestManager: RequestManager? = null
+    private var postImageSliderAdapter: PostImageSliderAdapter? = null
+    private var indicators: Array<ImageView?>? = null
+
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<Post>() {
             override fun areItemsTheSame(oldItem: Post, newItem: Post) =
@@ -94,9 +105,15 @@ class FeedListAdapter(private val requestManager: RequestManager) :
         holder.bind(getItem(position))
     }
 
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        glideRequestManager = null
+        postImageSliderAdapter = null
+        indicators = null
+    }
+
     inner class FeedListViewHolder(private val binding: ItemFeedPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
         fun bind(post: Post?) {
             with(binding) {
                 post?.let {
@@ -116,14 +133,16 @@ class FeedListAdapter(private val requestManager: RequestManager) :
                 imgName = post?.userProfileImage ?: "",
                 imgView = binding.imgFeedPostUserProfile
             )
-            loadImageView(
-                requestManager = requestManager,
-                width = binding.imgFeedPost.width,
-                height = binding.imgFeedPost.width,
-                imgName = post?.thumbnailImage ?: "",
-                imgView = binding.imgFeedPost
-            )
 
+            // 이미지
+            setImageSlider()
+            binding.viewFeedPostImageIndicators.removeAllViews()
+            post?.postImages?.let {
+                postImageSliderAdapter?.submitList(it)
+                if (it.size > 1) setUpIndicators(it.size)
+            }
+
+            // 옵션
             val isMine = (post?.memberId == DayoApplication.preferences.getCurrentUser().memberId)
             setPostOptionClickListener(
                 isMine = isMine,
@@ -157,6 +176,64 @@ class FeedListAdapter(private val requestManager: RequestManager) :
                     post = post,
                     position = bindingAdapterPosition
                 )
+            }
+        }
+
+        private fun setImageSlider() {
+            glideRequestManager = Glide.with(binding.root)
+            postImageSliderAdapter = glideRequestManager?.let { requestManager ->
+                PostImageSliderAdapter(
+                    requestManager = requestManager,
+                    mainDispatcher = Dispatchers.Main
+                )
+            }
+
+            with(binding.vpFeedPostImage) {
+                adapter = postImageSliderAdapter
+                overScrollMode = View.OVER_SCROLL_NEVER
+                offscreenPageLimit = 1
+                registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        super.onPageSelected(position)
+                        setCurrentIndicator(position)
+                    }
+                })
+            }
+        }
+
+        private fun setUpIndicators(count: Int) {
+            indicators = arrayOfNulls(count)
+            val params = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(16, 8, 16, 8)
+
+            indicators?.let { indicators ->
+                for (i in indicators.indices) {
+                    indicators[i] = ImageView(binding.root.context)
+                    indicators[i]!!.setImageDrawable(
+                        ContextCompat.getDrawable(binding.root.context, R.drawable.ic_indicator_inactive)
+                    )
+                    indicators[i]!!.layoutParams = params
+                    binding.viewFeedPostImageIndicators.addView(indicators[i])
+                }
+            }
+            setCurrentIndicator(0)
+        }
+
+        private fun setCurrentIndicator(position: Int) {
+            val childCount: Int = binding.viewFeedPostImageIndicators.childCount
+            for (i in 0 until childCount) {
+                val imageView = binding.viewFeedPostImageIndicators.getChildAt(i) as ImageView
+                if (i == position) {
+                    imageView.setImageDrawable(
+                        ContextCompat.getDrawable(binding.root.context, R.drawable.ic_indicator_active)
+                    )
+                } else {
+                    imageView.setImageDrawable(
+                        ContextCompat.getDrawable(binding.root.context, R.drawable.ic_indicator_inactive)
+                    )
+                }
             }
         }
 
