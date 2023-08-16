@@ -15,6 +15,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.DayoApplication
@@ -168,6 +169,22 @@ class FeedListAdapter(private val requestManager: RequestManager) :
                     position = bindingAdapterPosition
                 )
             }
+
+            postImageSliderAdapter?.setOnItemClickListener(object :
+                PostImageSliderAdapter.OnItemClickListener {
+                override fun postImageDoubleTap(lottieAnimationView: LottieAnimationView) {
+                    if (!post.heart) {
+                        lottieAnimationView.visibility = View.VISIBLE
+                        lottieAnimationView.playAnimation()
+                    }
+
+                    listener?.likePostClick(
+                        button = binding.btnFeedPostLike,
+                        post = post,
+                        position = bindingAdapterPosition
+                    )
+                }
+            })
 
             // 북마크
             binding.btnFeedPostBookmark.setOnDebounceClickListener {
