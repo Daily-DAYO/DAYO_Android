@@ -75,7 +75,7 @@ class FolderOptionFragment : DialogFragment()  {
         folderViewModel.requestDeleteFolder(args.folderId)
         folderViewModel.deleteSuccess.observe(viewLifecycleOwner) {
             if(it.getContentIfNotHandled() == true) {
-                findNavController().navigate(FolderOptionFragmentDirections.actionFolderOptionFragmentToProfileFragment(memberId = DayoApplication.preferences.getCurrentUser().memberId!!))
+                findNavController().navigate(FolderOptionFragmentDirections.actionFolderOptionFragmentToMyPageFragment())
             }
         }
     }

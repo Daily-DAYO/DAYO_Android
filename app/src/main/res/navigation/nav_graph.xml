@@ -453,11 +453,12 @@
             android:name="folderId"
             app:argType="integer" />
         <action
-            android:id="@+id/action_folderOptionFragment_to_profileFragment"
-            app:destination="@+id/ProfileFragment"
+            android:id="@+id/action_folderOptionFragment_to_myPageFragment"
+            app:destination="@+id/MyPageFragment"
             app:enterAnim="@anim/translate_nothing"
             app:exitAnim="@anim/translate_to_right_out"
-            app:popUpTo="@id/ProfileFragment" />
+            app:popUpTo="@id/MyPageFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_folderOptionFragment_to_folderEditFragment"
             app:destination="@+id/FolderEditFragment"
