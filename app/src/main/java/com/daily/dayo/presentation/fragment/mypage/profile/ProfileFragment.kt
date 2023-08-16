@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
@@ -58,6 +59,11 @@ class ProfileFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setScrollPosition()
+    }
+
     override fun onResume() {
         super.onResume()
         setProfile()
@@ -72,6 +78,14 @@ class ProfileFragment : Fragment() {
         with(binding.pagerProfile) {
             unregisterOnPageChangeCallback(pageChangeCallBack)
             adapter = null
+        }
+        profileViewModel.cleanUpFolders()
+    }
+
+    private fun setScrollPosition() {
+        with(binding) {
+            ViewCompat.requestApplyInsets(layoutProfile)
+            ViewCompat.requestApplyInsets(layoutProfileAppBar)
         }
     }
 
@@ -118,27 +132,31 @@ class ProfileFragment : Fragment() {
     private fun setProfileDescription() {
         profileViewModel.profileInfo.observe(viewLifecycleOwner) {
             it?.let { profile ->
-                binding.profile = profile
+                binding.profile = profile.data
                 glideRequestManager?.let { requestManager ->
-                    loadImageViewProfile(
-                        requestManager = requestManager,
-                        width = PROFILE_USER_THUMBNAIL_SIZE,
-                        height = PROFILE_USER_THUMBNAIL_SIZE,
-                        imgName = profile.profileImg,
-                        imgView = binding.imgProfileUserProfile
-                    )
+                    profile.data?.let { profile ->
+                        loadImageViewProfile(
+                            requestManager = requestManager,
+                            width = PROFILE_USER_THUMBNAIL_SIZE,
+                            height = PROFILE_USER_THUMBNAIL_SIZE,
+                            imgName = profile.profileImg,
+                            imgView = binding.imgProfileUserProfile
+                        )
+                    }
                 }
 
                 setFollowButtonClickListener()
-                profile.memberId?.let {
-                    setFollowerCountButtonClickListener(
-                        memberId = profile.memberId,
-                        nickname = profile.nickname
-                    )
-                    setFollowingCountButtonClickListener(
-                        memberId = profile.memberId,
-                        nickname = profile.nickname
-                    )
+                profile.data?.let { profile ->
+                    profile.memberId?.let {
+                        setFollowerCountButtonClickListener(
+                            memberId = profile.memberId,
+                            nickname = profile.nickname
+                        )
+                        setFollowingCountButtonClickListener(
+                            memberId = profile.memberId,
+                            nickname = profile.nickname
+                        )
+                    }
                 }
             }
         }
@@ -174,7 +192,7 @@ class ProfileFragment : Fragment() {
 
     private fun setFollowButtonClickListener() {
         binding.btnProfileFollow.setOnDebounceClickListener {
-            when (profileViewModel.profileInfo.value?.follow) {
+            when (profileViewModel.profileInfo.value?.data?.follow) {
                 false -> setFollow()
                 true -> setUnfollow()
                 else -> {}
@@ -245,6 +263,7 @@ class ProfileFragment : Fragment() {
                         profileFolderListAdapter?.submitList(folderList)
                     }
                 }
+
                 else -> {}
             }
         }
