@@ -13,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -29,6 +28,7 @@ import com.daily.dayo.common.ButtonActivation
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.Status
+import com.daily.dayo.common.TextLimitUtil
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
@@ -40,8 +40,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.text.SimpleDateFormat
-import java.util.*
-import java.util.regex.Pattern
+import java.util.Date
+import java.util.Locale
 
 class FolderEditFragment : Fragment() {
     private var binding by autoCleared<FragmentFolderSettingAddBinding> {
@@ -112,6 +112,7 @@ class FolderEditFragment : Fragment() {
                             when (folder.privacy) {
                                 Privacy.ALL -> binding.radiobuttonFolderSettingAddSetPrivateAll.isChecked =
                                     true
+
                                 Privacy.ONLY_ME -> binding.radiobuttonFolderSettingAddSetPrivateOnlyMe.isChecked =
                                     true
                             }
@@ -130,6 +131,7 @@ class FolderEditFragment : Fragment() {
                             }
                         }
                     }
+
                     else -> {}
                 }
             }
@@ -241,34 +243,28 @@ class FolderEditFragment : Fragment() {
     }
 
     private fun verifyFolderName() {
+        val maxLength = 15
         binding.etFolderSettingAddSetTitle.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                when {
-                    trimBlankText(s).isEmpty() -> {
-                        ButtonActivation.setTextViewConfirmButtonInactive(
-                            requireContext(),
-                            binding.tvFolderSettingAddConfirm
-                        )
-                    }
-                    Pattern.matches("[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z|A-Z|0-9|\\s]*", trimBlankText(s)) -> {
-                        ButtonActivation.setTextViewConfirmButtonActive(
-                            requireContext(),
-                            binding.tvFolderSettingAddConfirm
-                        )
-                    }
-                    else -> {
-                        Toast.makeText(
-                            requireContext(),
-                            getString(R.string.folder_add_message_format_fail),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        ButtonActivation.setTextViewConfirmButtonInactive(
-                            requireContext(),
-                            binding.tvFolderSettingAddConfirm
-                        )
-                    }
+                val text = s.toString()
+                val newText = TextLimitUtil.trimToMaxLength(text, maxLength)
+                if (text != newText) {
+                    binding.etFolderSettingAddSetTitle.setText(newText)
+                    binding.etFolderSettingAddSetTitle.setSelection(newText.length)
+                }
+
+                if (trimBlankText(s).isEmpty()) {
+                    ButtonActivation.setTextViewConfirmButtonInactive(
+                        requireContext(),
+                        binding.tvFolderSettingAddConfirm
+                    )
+                } else {
+                    ButtonActivation.setTextViewConfirmButtonActive(
+                        requireContext(),
+                        binding.tvFolderSettingAddConfirm
+                    )
                 }
             }
         })
