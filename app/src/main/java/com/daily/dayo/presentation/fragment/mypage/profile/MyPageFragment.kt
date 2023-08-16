@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
@@ -48,6 +49,7 @@ class MyPageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setScrollPosition()
         setProfileDescription()
         setViewPager()
         setViewPagerChangeEvent()
@@ -63,32 +65,44 @@ class MyPageFragment : Fragment() {
             unregisterOnPageChangeCallback(pageChangeCallBack)
             adapter = null
         }
+        profileViewModel.cleanUpFolders()
+    }
+
+    private fun setScrollPosition() {
+        with(binding) {
+            ViewCompat.requestApplyInsets(layoutMyPage)
+            ViewCompat.requestApplyInsets(layoutMyPageAppBar)
+        }
     }
 
     private fun setProfileDescription() {
         profileViewModel.requestMyProfile()
         profileViewModel.profileInfo.observe(viewLifecycleOwner) {
             it?.let { profile ->
-                binding.profile = profile
+                binding.profile = profile.data
                 glideRequestManager?.let { requestManager ->
-                    loadImageViewProfile(
-                        requestManager = requestManager,
-                        width = PROFILE_USER_THUMBNAIL_SIZE,
-                        height = PROFILE_USER_THUMBNAIL_SIZE,
-                        imgName = profile.profileImg,
-                        imgView = binding.imgMyPageUserProfile
-                    )
+                    profile.data?.profileImg?.let { profileImg ->
+                        loadImageViewProfile(
+                            requestManager = requestManager,
+                            width = PROFILE_USER_THUMBNAIL_SIZE,
+                            height = PROFILE_USER_THUMBNAIL_SIZE,
+                            imgName = profileImg,
+                            imgView = binding.imgMyPageUserProfile
+                        )
+                    }
                 }
 
-                profile.memberId?.let {
-                    setFollowerCountButtonClickListener(
-                        memberId = profile.memberId,
-                        nickname = profile.nickname
-                    )
-                    setFollowingCountButtonClickListener(
-                        memberId = profile.memberId,
-                        nickname = profile.nickname
-                    )
+                profile.data?.let { profile ->
+                    profile.memberId?.let {
+                        setFollowerCountButtonClickListener(
+                            memberId = profile.memberId,
+                            nickname = profile.nickname
+                        )
+                        setFollowingCountButtonClickListener(
+                            memberId = profile.memberId,
+                            nickname = profile.nickname
+                        )
+                    }
                 }
             }
         }

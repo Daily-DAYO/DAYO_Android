@@ -94,7 +94,7 @@ class FolderSettingAddFragment : Fragment() {
             }
 
             folderViewModel.requestCreateFolder(name, privacy, subheading, thumbnailImg)
-            folderViewModel.folderAddAccess.observe(viewLifecycleOwner) {
+            folderViewModel.folderAddSuccess.observe(viewLifecycleOwner) {
                 if (it.getContentIfNotHandled() == true) {
                     findNavController().popBackStack()
                 } else if (it.getContentIfNotHandled() == false) {
