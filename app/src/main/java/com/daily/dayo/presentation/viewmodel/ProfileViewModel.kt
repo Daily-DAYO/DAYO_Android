@@ -43,8 +43,8 @@ class ProfileViewModel @Inject constructor(
 
     lateinit var profileMemberId: String
 
-    private val _profileInfo = MutableLiveData<Profile>()
-    val profileInfo: LiveData<Profile> get() = _profileInfo
+    private val _profileInfo = MutableLiveData<Resource<Profile>>()
+    val profileInfo: LiveData<Resource<Profile>> get() = _profileInfo
 
     private val _followSuccess = MutableLiveData<Event<Boolean>>()
     val followSuccess: LiveData<Event<Boolean>> get() = _followSuccess
@@ -71,7 +71,7 @@ class ProfileViewModel @Inject constructor(
         requestMyProfileUseCase().let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _profileInfo.postValue(ApiResponse.body?.toProfile())
+                    _profileInfo.postValue(Resource.success(ApiResponse.body?.toProfile()))
                 }
 
                 is NetworkResponse.NetworkError -> {
@@ -93,7 +93,7 @@ class ProfileViewModel @Inject constructor(
         requestOtherProfileUseCase(memberId = memberId).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _profileInfo.postValue(ApiResponse.body?.toProfile())
+                    _profileInfo.postValue(Resource.success(ApiResponse.body?.toProfile()))
                 }
 
                 is NetworkResponse.NetworkError -> {
@@ -256,5 +256,10 @@ class ProfileViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun cleanUpFolders() {
+        _profileInfo.postValue(Resource.loading(null))
+        _folderList.postValue(Resource.loading(null))
     }
 }
