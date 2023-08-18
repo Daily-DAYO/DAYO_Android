@@ -45,7 +45,7 @@ class FolderViewModel @Inject constructor(
     val orderFolderSuccess: LiveData<Event<Boolean>> get() = _orderFolderSuccess
 
     private val _folderAddSuccess = MutableLiveData<Event<Boolean>>()
-    val folderAddAccess: LiveData<Event<Boolean>> get() = _folderAddSuccess
+    val folderAddSuccess: LiveData<Event<Boolean>> get() = _folderAddSuccess
 
     private val _folderInfo = MutableLiveData<Resource<Folder>>()
     val folderInfo: LiveData<Resource<Folder>> get() = _folderInfo

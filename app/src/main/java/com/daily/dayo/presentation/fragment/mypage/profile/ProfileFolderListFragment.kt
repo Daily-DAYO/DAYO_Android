@@ -23,11 +23,6 @@ class ProfileFolderListFragment : Fragment() {
     private val profileViewModel by activityViewModels<ProfileViewModel>()
     private var profileFolderListAdapter: ProfileFolderListAdapter?= null
     private var glideRequestManager: RequestManager?= null
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (savedInstanceState == null)
-            getProfileFolderList()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,6 +30,7 @@ class ProfileFolderListFragment : Fragment() {
     ): View {
         binding = FragmentProfileFolderListBinding.inflate(inflater, container, false)
         glideRequestManager = Glide.with(this)
+        getProfileFolderList()
         return binding.root
     }
 
