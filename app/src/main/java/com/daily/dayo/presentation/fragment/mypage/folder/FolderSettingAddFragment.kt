@@ -60,6 +60,7 @@ class FolderSettingAddFragment : Fragment() {
         setConfirmButtonClickListener()
         setFolderSettingThumbnailOptionClickListener()
         observeNavigationFolderSettingImageCallBack()
+        confirmFolderSubheading()
         verifyFolderName()
         return binding.root
     }
@@ -185,6 +186,22 @@ class FolderSettingAddFragment : Fragment() {
                         requireContext(),
                         binding.tvFolderSettingAddConfirm
                     )
+                }
+            }
+        })
+    }
+
+    private fun confirmFolderSubheading() {
+        val subheadingMaxLength = 20
+        binding.etFolderSettingAddSetSubheading.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val text = s.toString()
+                val newText = TextLimitUtil.trimToMaxLength(text, subheadingMaxLength)
+                if (text != newText) {
+                    binding.etFolderSettingAddSetSubheading.setText(newText)
+                    binding.etFolderSettingAddSetSubheading.setSelection(newText.length)
                 }
             }
         })
