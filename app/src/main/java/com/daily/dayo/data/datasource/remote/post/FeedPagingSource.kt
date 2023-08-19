@@ -21,7 +21,7 @@ class FeedPagingSource(
                     is NetworkResponse.Success -> {
                         return LoadResult.Page(
                             data = ApiResponse.body!!.data.map { it.toPost() },
-                            prevKey = null,
+                            prevKey = if (nextPageNumber == 0) null else nextPageNumber - size,
                             nextKey = if (ApiResponse.body.last || ApiResponse.body.count == 0) null else nextPageNumber + size
                         )
                     }
