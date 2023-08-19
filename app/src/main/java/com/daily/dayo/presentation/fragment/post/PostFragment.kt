@@ -191,7 +191,7 @@ class PostFragment : Fragment() {
                                     setOnUserProfileClickListener(memberId)
                                     setPostOptionClickListener(isMine = isMine, memberId = memberId)
                                 }
-                                post.postImages?.let { it1 -> setupIndicators(it1.size) }
+                                post.postImages?.let { it1 -> if (it1.size > 1) setupIndicators(it1.size) }
                                 post.bookmark?.let { it1 -> setPostBookmarkClickListener(it1) }
                                 post.hashtags?.let { it1 -> setTagList(it1) }
                             }
@@ -346,7 +346,7 @@ class PostFragment : Fragment() {
 
     // TODO: Indicator Setup 코드 개선 필요
     private fun setupIndicators(count: Int) {
-        indicators = arrayOfNulls<ImageView>(count)
+        indicators = arrayOfNulls(count)
         val params = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
