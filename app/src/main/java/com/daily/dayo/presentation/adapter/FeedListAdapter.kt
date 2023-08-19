@@ -176,13 +176,12 @@ class FeedListAdapter(private val requestManager: RequestManager) :
                     if (!post.heart) {
                         lottieAnimationView.visibility = View.VISIBLE
                         lottieAnimationView.playAnimation()
+                        listener?.likePostClick(
+                            button = binding.btnFeedPostLike,
+                            post = post,
+                            position = bindingAdapterPosition
+                        )
                     }
-
-                    listener?.likePostClick(
-                        button = binding.btnFeedPostLike,
-                        post = post,
-                        position = bindingAdapterPosition
-                    )
                 }
             })
 
