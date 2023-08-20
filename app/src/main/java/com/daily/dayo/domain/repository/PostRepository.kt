@@ -1,11 +1,16 @@
 package com.daily.dayo.domain.repository
 
 import androidx.paging.PagingData
-import com.daily.dayo.data.datasource.remote.heart.DeleteHeartResponse
-import com.daily.dayo.data.datasource.remote.post.*
 import com.daily.dayo.domain.model.Category
+import com.daily.dayo.domain.model.LikePostDeleteResponse
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Post
+import com.daily.dayo.domain.model.PostCreateResponse
+import com.daily.dayo.domain.model.PostDetail
+import com.daily.dayo.domain.model.PostEditResponse
+import com.daily.dayo.domain.model.Posts
+import com.daily.dayo.domain.model.PostsCategorized
+import com.daily.dayo.domain.model.PostsDayoPick
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 
@@ -17,14 +22,21 @@ interface PostRepository {
         files: List<MultipartBody.Part>,
         folderId: Int,
         tags: Array<String>
-    ): NetworkResponse<CreatePostResponse>
+    ): NetworkResponse<PostCreateResponse>
 
-    suspend fun requestNewPostList(): NetworkResponse<ListAllPostResponse>
-    suspend fun requestNewPostListCategory(category: Category): NetworkResponse<ListCategoryPostResponse>
-    suspend fun requestDayoPickPostList(): NetworkResponse<DayoPickPostListResponse>
-    suspend fun requestDayoPickPostListCategory(category: Category): NetworkResponse<DayoPickPostListResponse>
-    suspend fun requestPostDetail(postId: Int): NetworkResponse<DetailPostResponse>
-    suspend fun requestDeletePost(postId: Int): NetworkResponse<DeleteHeartResponse>
-    suspend fun requestEditPost(postId: Int, request: EditPostRequest): NetworkResponse<EditPostResponse>
+    suspend fun requestNewPostList(): NetworkResponse<Posts>
+    suspend fun requestNewPostListCategory(category: Category): NetworkResponse<PostsCategorized>
+    suspend fun requestDayoPickPostList(): NetworkResponse<PostsDayoPick>
+    suspend fun requestDayoPickPostListCategory(category: Category): NetworkResponse<PostsDayoPick>
+    suspend fun requestPostDetail(postId: Int): NetworkResponse<PostDetail>
+    suspend fun requestDeletePost(postId: Int): NetworkResponse<LikePostDeleteResponse>
+    suspend fun requestEditPost(
+        postId: Int,
+        category: Category,
+        contents: String,
+        folderId: Int,
+        hashtags: List<String>
+    ): NetworkResponse<PostEditResponse>
+
     suspend fun requestFeedList(): Flow<PagingData<Post>>
 }

@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daily.dayo.data.datasource.remote.member.ChangeReceiveAlarmRequest
-import com.daily.dayo.data.datasource.remote.member.DeviceTokenRequest
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.usecase.member.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +27,9 @@ class SettingNotificationViewModel @Inject constructor(
         requestReceiveAlarmUseCase().let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _notiReactionPermit.postValue(ApiResponse.body?.onReceiveAlarm)
+                    ApiResponse.body?.let {
+                        _notiReactionPermit.postValue(it)
+                    }
                 }
                 else -> {
 
@@ -40,12 +40,12 @@ class SettingNotificationViewModel @Inject constructor(
 
     fun requestReceiveChangeReceiveAlarm(onReceiveAlarm: Boolean) = viewModelScope.launch {
         val response =
-            requestChangeReceiveAlarmUseCase(ChangeReceiveAlarmRequest(onReceiveAlarm = onReceiveAlarm))
+            requestChangeReceiveAlarmUseCase(onReceiveAlarm = onReceiveAlarm)
     }
 
     fun registerDeviceToken() = viewModelScope.launch {
         registerFcmTokenUseCase()
-        requestDeviceTokenUseCase(DeviceTokenRequest(deviceToken = getCurrentFcmTokenUseCase()))
+        requestDeviceTokenUseCase(deviceToken = getCurrentFcmTokenUseCase())
     }
 
     fun unregisterFcmToken() = unregisterFcmTokenUseCase()

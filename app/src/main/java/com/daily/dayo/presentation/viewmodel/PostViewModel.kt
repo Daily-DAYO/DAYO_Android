@@ -8,17 +8,12 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.daily.dayo.common.Event
 import com.daily.dayo.common.Resource
-import com.daily.dayo.data.datasource.remote.bookmark.CreateBookmarkRequest
-import com.daily.dayo.data.datasource.remote.bookmark.CreateBookmarkResponse
-import com.daily.dayo.data.datasource.remote.comment.CreateCommentRequest
-import com.daily.dayo.data.datasource.remote.heart.CreateHeartRequest
-import com.daily.dayo.data.datasource.remote.heart.CreateHeartResponse
-import com.daily.dayo.data.mapper.toComment
-import com.daily.dayo.data.mapper.toPost
+import com.daily.dayo.domain.model.BookmarkPostResponse
 import com.daily.dayo.domain.model.Comment
+import com.daily.dayo.domain.model.LikePostResponse
 import com.daily.dayo.domain.model.LikeUser
 import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.model.Post
+import com.daily.dayo.domain.model.PostDetail
 import com.daily.dayo.domain.usecase.block.RequestBlockMemberUseCase
 import com.daily.dayo.domain.usecase.bookmark.RequestBookmarkPostUseCase
 import com.daily.dayo.domain.usecase.bookmark.RequestDeleteBookmarkPostUseCase
@@ -53,14 +48,14 @@ class PostViewModel @Inject constructor(
     private val requestPostLikeUsersUseCase: RequestPostLikeUsersUseCase
 ) : ViewModel() {
 
-    private val _postDetail = MutableLiveData<Resource<Post>>()
-    val postDetail: LiveData<Resource<Post>> get() = _postDetail
+    private val _postDetail = MutableLiveData<Resource<PostDetail>>()
+    val postDetail: LiveData<Resource<PostDetail>> get() = _postDetail
 
-    private val _postLiked = MutableLiveData<Resource<CreateHeartResponse>>()
-    val postLiked: LiveData<Resource<CreateHeartResponse>> get() = _postLiked
+    private val _postLiked = MutableLiveData<Resource<LikePostResponse>>()
+    val postLiked: LiveData<Resource<LikePostResponse>> get() = _postLiked
 
-    private val _postBookmarked = MutableLiveData<Resource<CreateBookmarkResponse>>()
-    val postBookmarked: LiveData<Resource<CreateBookmarkResponse>> get() = _postBookmarked
+    private val _postBookmarked = MutableLiveData<Resource<BookmarkPostResponse>>()
+    val postBookmarked: LiveData<Resource<BookmarkPostResponse>> get() = _postBookmarked
 
     private val _postCommentCreateSuccess = MutableLiveData<Event<Boolean>>()
     val postCommentCreateSuccess get() = _postCommentCreateSuccess
@@ -86,7 +81,7 @@ class PostViewModel @Inject constructor(
         _postDetail.postValue(Resource.loading(null))
         requestPostDetailUseCase(postId)?.let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success -> { _postDetail.postValue(Resource.success(ApiResponse.body?.toPost())) }
+                is NetworkResponse.Success -> { _postDetail.postValue(Resource.success(ApiResponse.body)) }
                 is NetworkResponse.NetworkError -> { _postDetail.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
                 is NetworkResponse.ApiError -> { _postDetail.postValue(Resource.error(ApiResponse.error.toString(), null)) }
                 is NetworkResponse.UnknownError -> { _postDetail.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
@@ -99,7 +94,7 @@ class PostViewModel @Inject constructor(
     }
 
     fun requestLikePost(postId: Int) = viewModelScope.launch {
-        requestLikePostUseCase(CreateHeartRequest(postId = postId))?.let { ApiResponse ->
+        requestLikePostUseCase(postId = postId)?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     _postDetail.postValue(
@@ -140,7 +135,7 @@ class PostViewModel @Inject constructor(
     }
 
     fun requestBookmarkPost(postId: Int) = viewModelScope.launch {
-        requestBookmarkPostUseCase(CreateBookmarkRequest(postId = postId)).let { ApiResponse ->
+        requestBookmarkPostUseCase(postId = postId).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> { _postBookmarked.postValue(Resource.success(ApiResponse.body)) }
                 is NetworkResponse.NetworkError -> { _postBookmarked.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
@@ -158,7 +153,7 @@ class PostViewModel @Inject constructor(
         _postComment.postValue(Resource.loading(null))
         requestPostCommentUseCase(postId)?.let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success -> { _postComment.postValue(Resource.success(ApiResponse.body?.data?.map { it.toComment() })) }
+                is NetworkResponse.Success -> { _postComment.postValue(Resource.success(ApiResponse.body?.data)) }
                 is NetworkResponse.NetworkError -> { _postComment.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
                 is NetworkResponse.ApiError -> { _postComment.postValue(Resource.error(ApiResponse.error.toString(), null)) }
                 is NetworkResponse.UnknownError -> { _postComment.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
@@ -167,7 +162,7 @@ class PostViewModel @Inject constructor(
     }
 
     fun requestCreatePostComment(contents: String, postId: Int) = viewModelScope.launch {
-        requestCreatePostCommentUseCase(CreateCommentRequest(contents = contents, postId = postId))?.let { ApiResponse ->
+        requestCreatePostCommentUseCase(contents = contents, postId = postId)?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> { _postCommentCreateSuccess.postValue(Event(true)) }
                 else -> { _postCommentCreateSuccess.postValue(Event(false)) }

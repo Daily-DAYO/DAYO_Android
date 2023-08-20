@@ -2,7 +2,14 @@ package com.daily.dayo.data.repository
 
 import com.daily.dayo.data.datasource.remote.firebase.FirebaseMessagingService
 import com.daily.dayo.data.datasource.remote.member.*
+import com.daily.dayo.data.mapper.toProfile
+import com.daily.dayo.data.mapper.toUserTokenResponse
+import com.daily.dayo.data.mapper.toUsersBlocked
 import com.daily.dayo.domain.model.NetworkResponse
+import com.daily.dayo.domain.model.Profile
+import com.daily.dayo.domain.model.User
+import com.daily.dayo.domain.model.UserTokens
+import com.daily.dayo.domain.model.UsersBlocked
 import com.daily.dayo.domain.repository.MemberRepository
 import okhttp3.MultipartBody
 import javax.inject.Inject
@@ -16,13 +23,18 @@ class MemberRepositoryImpl @Inject constructor(
         nickname: String,
         password: String,
         profileImg: MultipartBody.Part?
-    ): NetworkResponse<MemberSignupResponse> =
-        memberApiService.requestSignupEmail(
+    ): NetworkResponse<String> =
+        when (val response = memberApiService.requestSignupEmail(
             email,
             nickname,
             password,
             profileImg
-        )
+        )) {
+            is NetworkResponse.Success -> NetworkResponse.Success(response.body?.memberId)
+            is NetworkResponse.NetworkError -> response
+            is NetworkResponse.ApiError -> response
+            is NetworkResponse.UnknownError -> response
+        }
 
     override suspend fun requestUpdateMyProfile(
         nickname: String?,
@@ -31,14 +43,43 @@ class MemberRepositoryImpl @Inject constructor(
     ): NetworkResponse<Void> =
         memberApiService.requestUpdateMyProfile(nickname, profileImg, onBasicProfileImg)
 
-    override suspend fun requestLoginKakao(body: MemberOAuthRequest): NetworkResponse<MemberOAuthResponse> =
-        memberApiService.requestLoginKakao(body)
+    override suspend fun requestLoginKakao(accessToken: String): NetworkResponse<UserTokens> =
+        when (val response = memberApiService.requestLoginKakao(MemberOAuthRequest(accessToken))) {
+            is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toUserTokenResponse())
+            is NetworkResponse.NetworkError -> response
+            is NetworkResponse.ApiError -> response
+            is NetworkResponse.UnknownError -> response
+        }
 
-    override suspend fun requestLoginEmail(body: MemberSignInRequest): NetworkResponse<MemberSignInResponse> =
-        memberApiService.requestLoginEmail(body)
+    override suspend fun requestLoginEmail(
+        email: String,
+        password: String
+    ): NetworkResponse<UserTokens> =
+        when (val response = memberApiService.requestLoginEmail(MemberSignInRequest(email = email, password = password))) {
+            is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toUserTokenResponse())
+            is NetworkResponse.NetworkError -> response
+            is NetworkResponse.ApiError -> response
+            is NetworkResponse.UnknownError -> response
+        }
 
-    override suspend fun requestMemberInfo(): NetworkResponse<MemberInfoResponse> =
-        memberApiService.requestMemberInfo()
+    override suspend fun requestMemberInfo(): NetworkResponse<User> =
+        when (val response = memberApiService.requestMemberInfo()) {
+            is NetworkResponse.Success -> NetworkResponse.Success(
+                response.body?.let { info ->
+                    User(
+                        email = info.email,
+                        memberId = info.memberId,
+                        nickname = info.nickname,
+                        profileImg = info.profileImg
+                    )
+                }
+            )
+            is NetworkResponse.NetworkError -> response
+            is NetworkResponse.ApiError -> response
+            is NetworkResponse.UnknownError -> response
+        }
+
+
 
     override suspend fun requestCheckEmailDuplicate(email: String): NetworkResponse<Void> =
         memberApiService.requestCheckEmailDuplicate(email)
@@ -46,29 +87,55 @@ class MemberRepositoryImpl @Inject constructor(
     override suspend fun requestCheckNicknameDuplicate(nickname: String): NetworkResponse<Void> =
         memberApiService.requestCheckNicknameDuplicate(nickname)
 
-    override suspend fun requestCertificateEmail(email: String): NetworkResponse<MemberAuthCodeResponse> =
-        memberApiService.requestCertificateEmail(email)
+    override suspend fun requestCertificateEmail(email: String): NetworkResponse<String> =
+        when (val response = memberApiService.requestCertificateEmail(email)) {
+            is NetworkResponse.Success -> NetworkResponse.Success(response.body?.authCode)
+            is NetworkResponse.NetworkError -> response
+            is NetworkResponse.ApiError -> response
+            is NetworkResponse.UnknownError -> response
+        }
 
-    override suspend fun requestRefreshToken(): NetworkResponse<RefreshTokenResponse> =
-        memberApiService.requestRefreshToken()
 
-    override suspend fun requestDeviceToken(body: DeviceTokenRequest): NetworkResponse<Void> =
-        memberApiService.requestDeviceToken(body)
+    override suspend fun requestRefreshToken(): NetworkResponse<String> =
+        when (val response = memberApiService.requestRefreshToken()) {
+            is NetworkResponse.Success -> NetworkResponse.Success(response.body?.accessToken)
+            is NetworkResponse.NetworkError -> response
+            is NetworkResponse.ApiError -> response
+            is NetworkResponse.UnknownError -> response
+        }
 
-    override suspend fun requestMyProfile(): NetworkResponse<MemberMyProfileResponse> =
-        memberApiService.requestMyProfile()
+    override suspend fun requestDeviceToken(deviceToken: String?): NetworkResponse<Void> =
+        memberApiService.requestDeviceToken(DeviceTokenRequest(deviceToken = deviceToken))
 
-    override suspend fun requestOtherProfile(memberId: String): NetworkResponse<MemberOtherProfileResponse> =
-        memberApiService.requestOtherProfile(memberId)
+    override suspend fun requestMyProfile(): NetworkResponse<Profile> =
+        when (val response = memberApiService.requestMyProfile()) {
+            is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toProfile())
+            is NetworkResponse.NetworkError -> response
+            is NetworkResponse.ApiError -> response
+            is NetworkResponse.UnknownError -> response
+        }
+
+    override suspend fun requestOtherProfile(memberId: String): NetworkResponse<Profile> =
+        when (val response = memberApiService.requestOtherProfile(memberId)) {
+            is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toProfile())
+            is NetworkResponse.NetworkError -> response
+            is NetworkResponse.ApiError -> response
+            is NetworkResponse.UnknownError -> response
+        }
 
     override suspend fun requestResign(content: String): NetworkResponse<Void> =
         memberApiService.requestResign(content)
 
-    override suspend fun requestReceiveAlarm(): NetworkResponse<ReceiveAlarmResponse> =
-        memberApiService.requestReceiveAlarm()
+    override suspend fun requestReceiveAlarm(): NetworkResponse<Boolean> =
+        when (val response = memberApiService.requestReceiveAlarm()) {
+            is NetworkResponse.Success -> NetworkResponse.Success(response.body?.onReceiveAlarm)
+            is NetworkResponse.NetworkError -> response
+            is NetworkResponse.ApiError -> response
+            is NetworkResponse.UnknownError -> response
+        }
 
-    override suspend fun requestChangeReceiveAlarm(body: ChangeReceiveAlarmRequest): NetworkResponse<Void> =
-        memberApiService.requestChangeReceiveAlarm(body)
+    override suspend fun requestChangeReceiveAlarm(onReceiveAlarm: Boolean): NetworkResponse<Void> =
+        memberApiService.requestChangeReceiveAlarm(ChangeReceiveAlarmRequest(onReceiveAlarm))
 
     override suspend fun requestLogout(): NetworkResponse<Void> =
         memberApiService.requestLogout()
@@ -76,20 +143,36 @@ class MemberRepositoryImpl @Inject constructor(
     override suspend fun requestCheckEmail(email: String): NetworkResponse<Void> =
         memberApiService.requestCheckEmail(email)
 
-    override suspend fun requestCheckEmailAuth(email: String): NetworkResponse<MemberAuthCodeResponse> =
-        memberApiService.requestCheckEmailAuth(email)
+    override suspend fun requestCheckEmailAuth(email: String): NetworkResponse<String> =
+        when (val response = memberApiService.requestCheckEmailAuth(email)) {
+            is NetworkResponse.Success -> NetworkResponse.Success(response.body?.authCode)
+            is NetworkResponse.NetworkError -> response
+            is NetworkResponse.ApiError -> response
+            is NetworkResponse.UnknownError -> response
+        }
 
-    override suspend fun requestCheckCurrentPassword(body: CheckPasswordRequest): NetworkResponse<Void> =
-        memberApiService.requestCheckCurrentPassword(body)
+    override suspend fun requestCheckCurrentPassword(password: String): NetworkResponse<Void> =
+        memberApiService.requestCheckCurrentPassword(CheckPasswordRequest(password = password))
 
-    override suspend fun requestChangePassword(body: ChangePasswordRequest): NetworkResponse<Void> =
-        memberApiService.requestChangePassword(body)
+    override suspend fun requestChangePassword(
+        email: String,
+        password: String
+    ): NetworkResponse<Void> =
+        memberApiService.requestChangePassword(ChangePasswordRequest(email = email, password = password))
 
-    override suspend fun requestSettingChangePassword(body: ChangePasswordRequest): NetworkResponse<Void> =
-        memberApiService.requestSettingChangePassword(body)
+    override suspend fun requestSettingChangePassword(
+        email: String,
+        password: String
+    ): NetworkResponse<Void> =
+        memberApiService.requestSettingChangePassword(ChangePasswordRequest(email = email, password = password))
 
-    override suspend fun requestBlockList(): NetworkResponse<MemberBlockResponse> =
-        memberApiService.requestBlockList()
+    override suspend fun requestBlockList(): NetworkResponse<UsersBlocked> =
+        when (val response = memberApiService.requestBlockList()) {
+            is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toUsersBlocked())
+            is NetworkResponse.NetworkError -> response
+            is NetworkResponse.ApiError -> response
+            is NetworkResponse.UnknownError -> response
+        }
 
     // Firebase Messaging Service
     override suspend fun getCurrentFcmToken(): String =

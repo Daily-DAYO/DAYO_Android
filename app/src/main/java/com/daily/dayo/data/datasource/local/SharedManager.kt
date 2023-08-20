@@ -5,10 +5,8 @@ import android.content.SharedPreferences
 import com.daily.dayo.common.PreferenceHelper
 import com.daily.dayo.common.PreferenceHelper.get
 import com.daily.dayo.common.PreferenceHelper.set
-import com.daily.dayo.data.datasource.remote.member.MemberInfoResponse
-import com.daily.dayo.data.datasource.remote.member.MemberOAuthResponse
-import com.daily.dayo.data.datasource.remote.member.MemberSignInResponse
 import com.daily.dayo.domain.model.User
+import com.daily.dayo.domain.model.UserTokens
 import com.google.gson.JsonArray
 import org.json.JSONArray
 import javax.inject.Inject
@@ -19,15 +17,11 @@ class SharedManager @Inject constructor(context: Context) {
     private val prefs: SharedPreferences = PreferenceHelper.defaultPrefs(context)
 
     fun saveCurrentUser(userInfo: Any?) = when (userInfo) {
-        is MemberOAuthResponse -> {
+        is UserTokens -> {
             prefs["accessToken"] = userInfo.accessToken
             prefs["refreshToken"] = userInfo.refreshToken
         }
-        is MemberSignInResponse -> {
-            prefs["accessToken"] = userInfo.accessToken
-            prefs["refreshToken"] = userInfo.refreshToken
-        }
-        is MemberInfoResponse -> {
+        is User -> {
             prefs["email"] = userInfo.email
             prefs["memberId"] = userInfo.memberId
             prefs["nickname"] = userInfo.nickname

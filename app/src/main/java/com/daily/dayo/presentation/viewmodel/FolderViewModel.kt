@@ -8,8 +8,6 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.daily.dayo.common.Event
 import com.daily.dayo.common.Resource
-import com.daily.dayo.data.mapper.toEditOrderDto
-import com.daily.dayo.data.mapper.toFolder
 import com.daily.dayo.domain.model.*
 import com.daily.dayo.domain.usecase.folder.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,8 +45,8 @@ class FolderViewModel @Inject constructor(
     private val _folderAddSuccess = MutableLiveData<Event<Boolean>>()
     val folderAddSuccess: LiveData<Event<Boolean>> get() = _folderAddSuccess
 
-    private val _folderInfo = MutableLiveData<Resource<Folder>>()
-    val folderInfo: LiveData<Resource<Folder>> get() = _folderInfo
+    private val _folderInfo = MutableLiveData<Resource<FolderInfo>>()
+    val folderInfo: LiveData<Resource<FolderInfo>> get() = _folderInfo
 
     private val _folderPostList = MutableLiveData<PagingData<FolderPost>>()
     val folderPostList: LiveData<PagingData<FolderPost>> get() = _folderPostList
@@ -93,7 +91,7 @@ class FolderViewModel @Inject constructor(
     }
 
     fun requestOrderFolder(folderOrder: List<FolderOrder>) = viewModelScope.launch {
-        requestOrderFolderUseCase(folderOrder = folderOrder.map { it.toEditOrderDto() }).let { ApiResponse ->
+        requestOrderFolderUseCase(folderOrder = folderOrder).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     _orderFolderSuccess.postValue(Event(true))
@@ -110,7 +108,7 @@ class FolderViewModel @Inject constructor(
         requestAllMyFolderListUseCase().let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _folderList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toFolder() }))
+                    _folderList.postValue(Resource.success(ApiResponse.body?.data))
                 }
                 is NetworkResponse.NetworkError -> {
                     _folderList.postValue(Resource.error(ApiResponse.exception.toString(), null))
@@ -129,7 +127,7 @@ class FolderViewModel @Inject constructor(
         requestFolderInfoUseCase(folderId).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _folderInfo.postValue(Resource.success(ApiResponse.body?.toFolder()))
+                    _folderInfo.postValue(Resource.success(ApiResponse.body))
                 }
                 is NetworkResponse.NetworkError -> {
                     _folderInfo.postValue(Resource.error(ApiResponse.exception.toString(), null))

@@ -11,23 +11,23 @@ import com.daily.dayo.common.GlideLoadUtil.BLOCK_USER_THUMBNAIL_SIZE
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemBlockBinding
-import com.daily.dayo.domain.model.BlockUser
+import com.daily.dayo.domain.model.UserBlocked
 
 class BlockListAdapter(private val requestManager: RequestManager) :
     RecyclerView.Adapter<BlockListAdapter.BlockListViewHolder>() {
 
     companion object {
-        private val diffCallback = object : DiffUtil.ItemCallback<BlockUser>() {
-            override fun areItemsTheSame(oldItem: BlockUser, newItem: BlockUser) =
+        private val diffCallback = object : DiffUtil.ItemCallback<UserBlocked>() {
+            override fun areItemsTheSame(oldItem: UserBlocked, newItem: UserBlocked) =
                 oldItem.memberId == newItem.memberId
 
-            override fun areContentsTheSame(oldItem: BlockUser, newItem: BlockUser): Boolean =
+            override fun areContentsTheSame(oldItem: UserBlocked, newItem: UserBlocked): Boolean =
                 oldItem == newItem
         }
     }
 
     private val differ = AsyncListDiffer(this, diffCallback)
-    fun submitList(list: List<BlockUser>) = differ.submitList(list)
+    fun submitList(list: List<UserBlocked>) = differ.submitList(list)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BlockListViewHolder {
         return BlockListViewHolder(
@@ -45,7 +45,7 @@ class BlockListAdapter(private val requestManager: RequestManager) :
     }
 
     interface OnItemClickListener {
-        fun onItemClick(checkbox: CheckBox, blockUser: BlockUser, position: Int)
+        fun onItemClick(checkbox: CheckBox, blockUser: UserBlocked, position: Int)
     }
 
     private var listener: OnItemClickListener? = null
@@ -56,7 +56,7 @@ class BlockListAdapter(private val requestManager: RequestManager) :
     inner class BlockListViewHolder(private val binding: ItemBlockBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(blockUser: BlockUser) {
+        fun bind(blockUser: UserBlocked) {
             binding.blockUser = blockUser.nickname
             loadImageView(
                 requestManager = requestManager,
@@ -68,7 +68,7 @@ class BlockListAdapter(private val requestManager: RequestManager) :
             setUnblockButtonClickListener(blockUser)
         }
 
-        private fun setUnblockButtonClickListener(blockUser: BlockUser) {
+        private fun setUnblockButtonClickListener(blockUser: UserBlocked) {
             val pos = adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
                 binding.btnBlockUserCancel.setOnDebounceClickListener {

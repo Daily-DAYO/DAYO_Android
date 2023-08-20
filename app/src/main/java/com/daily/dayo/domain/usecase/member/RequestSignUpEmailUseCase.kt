@@ -1,6 +1,5 @@
 package com.daily.dayo.domain.usecase.member
 
-import com.daily.dayo.data.datasource.remote.member.MemberSignupResponse
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.repository.MemberRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -17,7 +16,7 @@ class RequestSignUpEmailUseCase @Inject constructor(
         nickname: String,
         password: String,
         profileImg: File?
-    ): NetworkResponse<MemberSignupResponse> {
+    ): NetworkResponse<String> {
         val uploadFile: MultipartBody.Part?
         val fileNameDivideList: List<String> = profileImg.toString().split("/")
         val requestBodyFile: RequestBody? = if (profileImg != null) {

@@ -8,10 +8,8 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.daily.dayo.common.Resource
-import com.daily.dayo.data.datasource.remote.bookmark.CreateBookmarkRequest
-import com.daily.dayo.data.datasource.remote.bookmark.CreateBookmarkResponse
-import com.daily.dayo.data.datasource.remote.heart.CreateHeartRequest
-import com.daily.dayo.data.datasource.remote.heart.CreateHeartResponse
+import com.daily.dayo.domain.model.BookmarkPostResponse
+import com.daily.dayo.domain.model.LikePostResponse
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.domain.usecase.bookmark.RequestBookmarkPostUseCase
@@ -37,11 +35,11 @@ class FeedViewModel @Inject constructor(
     private val _feedList = MutableLiveData<PagingData<Post>>()
     val feedList: LiveData<PagingData<Post>> get() = _feedList
 
-    private val _postLiked = MutableLiveData<Resource<CreateHeartResponse>>()
-    val postLiked: LiveData<Resource<CreateHeartResponse>> get() = _postLiked
+    private val _postLiked = MutableLiveData<Resource<LikePostResponse>>()
+    val postLiked: LiveData<Resource<LikePostResponse>> get() = _postLiked
 
-    private val _postBookmarked = MutableLiveData<Resource<CreateBookmarkResponse>>()
-    val postBookmarked: LiveData<Resource<CreateBookmarkResponse>> get() = _postBookmarked
+    private val _postBookmarked = MutableLiveData<Resource<BookmarkPostResponse>>()
+    val postBookmarked: LiveData<Resource<BookmarkPostResponse>> get() = _postBookmarked
 
     fun requestFeedList() = viewModelScope.launch(Dispatchers.IO) {
         requestFeedListUseCase()
@@ -50,7 +48,7 @@ class FeedViewModel @Inject constructor(
     }
 
     fun requestLikePost(postId: Int) = viewModelScope.launch(Dispatchers.IO) {
-        requestLikePostUseCase(CreateHeartRequest(postId = postId))?.let { ApiResponse ->
+        requestLikePostUseCase(postId = postId)?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     _feedList.postValue(
@@ -97,7 +95,7 @@ class FeedViewModel @Inject constructor(
     }
 
     fun requestBookmarkPost(postId: Int) = viewModelScope.launch(Dispatchers.IO) {
-        requestBookmarkPostUseCase(CreateBookmarkRequest(postId = postId)).let { ApiResponse ->
+        requestBookmarkPostUseCase(postId = postId).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     _feedList.postValue(

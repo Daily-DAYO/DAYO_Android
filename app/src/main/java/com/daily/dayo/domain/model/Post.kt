@@ -21,3 +21,46 @@ data class Post(
     var preLoadThumbnail: ByteArray?=null,
     var preLoadUserImg: ByteArray?=null
 )
+
+data class PostDetail(
+    var bookmark: Boolean?,
+    val category: Category,
+    val contents: String,
+    val createDateTime: String,
+    val folderId: Int,
+    val folderName: String,
+    val hashtags: List<String>,
+    var heart: Boolean,
+    var heartCount: Int,
+    val images: List<String>,
+    val memberId: String,
+    val nickname: String,
+    val profileImg: String
+)
+
+data class PostCreateResponse(
+    val id: Int
+)
+
+data class PostEditResponse(
+    val postId: Int
+)
+
+data class Posts(
+    val count: Int,
+    val data: List<Post>
+)
+
+data class PostsCategorized(
+    val count: Int,
+    val data: List<Post>
+)
+
+data class PostsDayoPick(
+    val count: Int,
+    val data: List<Post>
+)
+data class PostsNew(
+    val count: Int,
+    val data: List<Post>
+)

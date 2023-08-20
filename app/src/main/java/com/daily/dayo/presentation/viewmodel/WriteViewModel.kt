@@ -16,14 +16,10 @@ import com.daily.dayo.common.ListLiveData
 import com.daily.dayo.common.Resource
 import com.daily.dayo.common.toBitmap
 import com.daily.dayo.common.toFile
-import com.daily.dayo.data.datasource.remote.folder.CreateFolderInPostRequest
-import com.daily.dayo.data.datasource.remote.post.EditPostRequest
-import com.daily.dayo.data.mapper.toFolder
-import com.daily.dayo.data.mapper.toPost
 import com.daily.dayo.domain.model.Category
 import com.daily.dayo.domain.model.Folder
 import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.model.Post
+import com.daily.dayo.domain.model.PostDetail
 import com.daily.dayo.domain.model.Privacy
 import com.daily.dayo.domain.usecase.folder.RequestAllMyFolderListUseCase
 import com.daily.dayo.domain.usecase.folder.RequestCreateFolderInPostUseCase
@@ -73,8 +69,8 @@ class WriteViewModel @Inject constructor(
     val writePostId: LiveData<Event<Int>> get() = _writePostId
     private val _writeSuccess = MutableLiveData<Event<Boolean>>()
     val writeSuccess: LiveData<Event<Boolean>> get() = _writeSuccess
-    private val _writeCurrentPostDetail = MutableLiveData<Post>()
-    val writeCurrentPostDetail: LiveData<Post> get() = _writeCurrentPostDetail
+    private val _writeCurrentPostDetail = MutableLiveData<PostDetail>()
+    val writeCurrentPostDetail: LiveData<PostDetail> get() = _writeCurrentPostDetail
     private val _writeEditSuccess = MutableLiveData<Event<Boolean>>()
     val writeEditSuccess: LiveData<Event<Boolean>> get() = _writeEditSuccess
 
@@ -140,12 +136,10 @@ class WriteViewModel @Inject constructor(
     private fun requestUploadEditingPost() = viewModelScope.launch(Dispatchers.IO) {
         requestEditPostUseCase(
             postId = this@WriteViewModel.postId.value!!,
-            EditPostRequest(
-                category = this@WriteViewModel.postCategory.value!!,
-                contents = this@WriteViewModel.postContents.value!!,
-                folderId = this@WriteViewModel.postFolderId.value!!.toInt(),
-                hashtags = this@WriteViewModel.postTagList.value!!.toList()
-            )
+            category = this@WriteViewModel.postCategory.value!!,
+            contents = this@WriteViewModel.postContents.value!!,
+            folderId = this@WriteViewModel.postFolderId.value!!.toInt(),
+            hashtags = this@WriteViewModel.postTagList.value!!.toList()
         ).let { ApiResponse ->
             _writeEditSuccess.postValue(Event(ApiResponse is NetworkResponse.Success))
             if (ApiResponse is NetworkResponse.Success) {
@@ -161,7 +155,7 @@ class WriteViewModel @Inject constructor(
             requestPostDetailUseCase(postId = postId)
         }.let { ApiResponse ->
             if (ApiResponse is NetworkResponse.Success) {
-                ApiResponse.body?.toPost().let { postDetail ->
+                ApiResponse.body.let { postDetail ->
                     postDetail?.let {
                         withContext(Dispatchers.Main) {
                             setOriginalPostDetail(postDetail)
@@ -172,9 +166,9 @@ class WriteViewModel @Inject constructor(
         }
     }
 
-    private fun setOriginalPostDetail(postDetail: Post) {
+    private fun setOriginalPostDetail(postDetail: PostDetail) {
         _writeCurrentPostDetail.postValue(postDetail)
-        postDetail.postImages?.map { element ->
+        postDetail.images.map { element ->
             addUploadImage(
                 Uri.parse("${BuildConfig.BASE_URL}/images/$element")
                     .toString(),
@@ -182,7 +176,7 @@ class WriteViewModel @Inject constructor(
             )
         }
 
-        postDetail.hashtags?.let { _postTagList.addAll(it, false) }
+        postDetail.hashtags.let { _postTagList.addAll(it, false) }
         _postFolderId.postValue(postDetail.folderId.toString())
         _postFolderName.postValue(postDetail.folderName)
     }
@@ -193,7 +187,7 @@ class WriteViewModel @Inject constructor(
             _folderList.postValue(
                 when (ApiResponse) {
                     is NetworkResponse.Success -> {
-                        Resource.success(ApiResponse.body?.data?.map { it.toFolder() })
+                        Resource.success(ApiResponse.body?.data)
                     }
 
                     is NetworkResponse.NetworkError -> {
@@ -214,9 +208,7 @@ class WriteViewModel @Inject constructor(
 
     fun requestCreateFolderInPost(name: String, privacy: Privacy) =
         viewModelScope.launch(Dispatchers.IO) {
-            requestCreateFolderInPostUseCase(
-                CreateFolderInPostRequest(name = name, privacy = privacy)
-            ).let { ApiResponse ->
+            requestCreateFolderInPostUseCase(name = name, privacy = privacy).let { ApiResponse ->
                 _folderAddSuccess.postValue(Event(ApiResponse is NetworkResponse.Success))
             }
         }

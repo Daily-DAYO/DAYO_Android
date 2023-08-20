@@ -3,8 +3,8 @@ package com.daily.dayo.data.datasource.remote.follow
 import com.google.gson.annotations.SerializedName
 
 data class CreateFollowResponse(
-    @SerializedName("followId")
-    val followId: String,
+    @SerializedName("followerId")
+    val followerId: String,
     @SerializedName("isAccept")
     val isAccept: Boolean,
     @SerializedName("memberId")

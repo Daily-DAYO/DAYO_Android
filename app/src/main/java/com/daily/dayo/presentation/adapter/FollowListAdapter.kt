@@ -13,24 +13,24 @@ import com.daily.dayo.common.GlideLoadUtil.FOLLOW_USER_THUMBNAIL_SIZE
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemFollowBinding
-import com.daily.dayo.domain.model.Follow
+import com.daily.dayo.domain.model.MyFollower
 import com.daily.dayo.presentation.fragment.mypage.follow.FollowFragmentDirections
 
 class FollowListAdapter(private val requestManager: RequestManager) :
     RecyclerView.Adapter<FollowListAdapter.FollowListViewHolder>() {
 
     companion object {
-        private val diffCallback = object : DiffUtil.ItemCallback<Follow>() {
-            override fun areItemsTheSame(oldItem: Follow, newItem: Follow) =
+        private val diffCallback = object : DiffUtil.ItemCallback<MyFollower>() {
+            override fun areItemsTheSame(oldItem: MyFollower, newItem: MyFollower) =
                 oldItem.memberId == newItem.memberId
 
-            override fun areContentsTheSame(oldItem: Follow, newItem: Follow): Boolean =
+            override fun areContentsTheSame(oldItem: MyFollower, newItem: MyFollower): Boolean =
                 oldItem == newItem
         }
     }
 
     private val differ = AsyncListDiffer(this, diffCallback)
-    fun submitList(list: List<Follow>) = differ.submitList(list)
+    fun submitList(list: List<MyFollower>) = differ.submitList(list)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FollowListViewHolder {
         return FollowListViewHolder(
@@ -48,7 +48,7 @@ class FollowListAdapter(private val requestManager: RequestManager) :
     }
 
     interface OnItemClickListener {
-        fun onItemClick(button: Button, follow: Follow, position: Int)
+        fun onItemClick(button: Button, follow: MyFollower, position: Int)
     }
 
     private var listener: OnItemClickListener? = null
@@ -59,7 +59,7 @@ class FollowListAdapter(private val requestManager: RequestManager) :
     inner class FollowListViewHolder(private val binding: ItemFollowBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(follow: Follow) {
+        fun bind(follow: MyFollower) {
             binding.follow = follow
             binding.isMine =
                 follow.memberId == DayoApplication.preferences.getCurrentUser().memberId
@@ -83,7 +83,7 @@ class FollowListAdapter(private val requestManager: RequestManager) :
             }
         }
 
-        private fun setFollowButtonClickListener(follow: Follow) {
+        private fun setFollowButtonClickListener(follow: MyFollower) {
             val pos = adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
                 binding.btnFollowUserFollow.setOnDebounceClickListener {

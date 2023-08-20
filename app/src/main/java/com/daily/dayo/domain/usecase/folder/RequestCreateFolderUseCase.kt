@@ -1,6 +1,6 @@
 package com.daily.dayo.domain.usecase.folder
 
-import com.daily.dayo.data.datasource.remote.folder.CreateFolderResponse
+import com.daily.dayo.domain.model.FolderCreateResponse
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Privacy
 import com.daily.dayo.domain.repository.FolderRepository
@@ -18,7 +18,7 @@ class RequestCreateFolderUseCase @Inject constructor(
         privacy: Privacy,
         subheading: String?,
         thumbnailImg: File?
-    ): NetworkResponse<CreateFolderResponse> {
+    ): NetworkResponse<FolderCreateResponse> {
         val requestThumbnailImage : MultipartBody.Part? = if(thumbnailImg!=null) {
             MultipartBody.Part.createFormData("thumbnailImage",thumbnailImg.name, RequestBody.create("image/*".toMediaTypeOrNull(),thumbnailImg) )
         } else null
