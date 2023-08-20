@@ -28,9 +28,7 @@ class FolderPostListAdapter(
                 oldItem.postId == newItem.postId
 
             override fun areContentsTheSame(oldItem: FolderPost, newItem: FolderPost): Boolean =
-                oldItem.apply { preLoadThumbnail = null } == newItem.apply {
-                    preLoadThumbnail = null
-                }
+                oldItem == newItem
         }
     }
 

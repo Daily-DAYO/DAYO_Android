@@ -1,6 +1,5 @@
 package com.daily.dayo.presentation.fragment.home
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,6 +20,7 @@ import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.extension.navigateSafe
 import com.daily.dayo.common.setOnDebounceClickListener
+import com.daily.dayo.common.toByteArray
 import com.daily.dayo.data.di.IoDispatcher
 import com.daily.dayo.databinding.FragmentHomeNewPostListBinding
 import com.daily.dayo.domain.model.Category
@@ -202,8 +202,8 @@ class HomeNewPostListFragment : Fragment() {
     }
 
     private fun loadPostThumbnail(postList: List<Post>, @IoDispatcher ioDispatcher: CoroutineDispatcher) {
-        val thumbnailImgList = emptyList<Bitmap>().toMutableList()
-        val userImgList = emptyList<Bitmap>().toMutableList()
+        val thumbnailImgList = emptyList<ByteArray>().toMutableList()
+        val userImgList = emptyList<ByteArray>().toMutableList()
 
         viewLifecycleOwner.lifecycleScope.launch {
             for (i in 0 until (if (postList.size >= 6) 6 else postList.size)) {
@@ -214,7 +214,7 @@ class HomeNewPostListFragment : Fragment() {
                         width = 158,
                         imgName = postList[i].thumbnailImage ?: ""
                     )
-                })
+                }.toByteArray)
                 userImgList.add(withContext(ioDispatcher) {
                     GlideLoadUtil.loadImageBackground(
                         context = requireContext(),
@@ -222,7 +222,7 @@ class HomeNewPostListFragment : Fragment() {
                         width = 17,
                         imgName = postList[i].userProfileImage ?: ""
                     )
-                })
+                }.toByteArray)
             }
         }.invokeOnCompletion { throwable ->
             when (throwable) {

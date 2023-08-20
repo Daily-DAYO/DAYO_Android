@@ -1,7 +1,5 @@
 package com.daily.dayo.domain.model
 
-import android.graphics.Bitmap
-
 data class Folder(
     val folderId: Int?,
     val title: String,
@@ -15,8 +13,7 @@ data class Folder(
 data class FolderPost(
     val createDate: String,
     val postId: Int,
-    val thumbnailImage: String,
-    var preLoadThumbnail: Bitmap? = null
+    val thumbnailImage: String
 )
 
 data class FolderOrder(
