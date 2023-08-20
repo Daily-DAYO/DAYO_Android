@@ -8,7 +8,7 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.common.Event
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.usecase.member.*
-import com.daily.dayo.presentation.firebase.FirebaseMessagingService
+import com.daily.dayo.presentation.service.firebase.FirebaseMessagingService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
