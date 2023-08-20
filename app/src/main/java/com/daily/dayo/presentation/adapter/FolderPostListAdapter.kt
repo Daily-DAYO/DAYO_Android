@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
-import com.daily.dayo.data.di.MainDispatcher
+import com.daily.dayo.di.MainDispatcher
 import com.daily.dayo.databinding.ItemFolderPostBinding
 import com.daily.dayo.domain.model.FolderPost
 import com.daily.dayo.presentation.fragment.mypage.folder.FolderFragmentDirections

@@ -21,7 +21,7 @@ import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.extension.navigateSafe
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.common.toByteArray
-import com.daily.dayo.data.di.IoDispatcher
+import com.daily.dayo.di.IoDispatcher
 import com.daily.dayo.databinding.FragmentHomeNewPostListBinding
 import com.daily.dayo.domain.model.Category
 import com.daily.dayo.domain.model.Post

@@ -1,4 +1,4 @@
-package com.daily.dayo.data.di
+package com.daily.dayo.di
 
 import dagger.Module
 import dagger.Provides
