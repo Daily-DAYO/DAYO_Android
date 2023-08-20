@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.usecase.member.*
+import com.daily.dayo.presentation.firebase.FirebaseMessagingService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,9 +16,6 @@ class SettingNotificationViewModel @Inject constructor(
     private val requestDeviceTokenUseCase: RequestDeviceTokenUseCase,
     private val requestReceiveAlarmUseCase: RequestReceiveAlarmUseCase,
     private val requestChangeReceiveAlarmUseCase: RequestChangeReceiveAlarmUseCase,
-    private val getCurrentFcmTokenUseCase: GetCurrentFcmTokenUseCase,
-    private val registerFcmTokenUseCase: RegisterFcmTokenUseCase,
-    private val unregisterFcmTokenUseCase: UnregisterFcmTokenUseCase
 ) : ViewModel() {
 
     private val _notiReactionPermit = MutableLiveData<Boolean>()
@@ -44,9 +42,9 @@ class SettingNotificationViewModel @Inject constructor(
     }
 
     fun registerDeviceToken() = viewModelScope.launch {
-        registerFcmTokenUseCase()
-        requestDeviceTokenUseCase(deviceToken = getCurrentFcmTokenUseCase())
+        FirebaseMessagingService().registerFcmToken()
+        requestDeviceTokenUseCase(deviceToken = FirebaseMessagingService().getCurrentToken())
     }
 
-    fun unregisterFcmToken() = unregisterFcmTokenUseCase()
+    fun unregisterFcmToken() = FirebaseMessagingService().unregisterFcmToken()
 }

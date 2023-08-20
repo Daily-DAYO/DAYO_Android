@@ -1,4 +1,4 @@
-package com.daily.dayo.data.datasource.remote.firebase
+package com.daily.dayo.presentation.firebase
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

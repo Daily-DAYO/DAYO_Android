@@ -1,6 +1,5 @@
 package com.daily.dayo.data.repository
 
-import com.daily.dayo.data.datasource.remote.firebase.FirebaseMessagingService
 import com.daily.dayo.data.datasource.remote.member.*
 import com.daily.dayo.data.mapper.toProfile
 import com.daily.dayo.data.mapper.toUserTokenResponse
@@ -173,14 +172,4 @@ class MemberRepositoryImpl @Inject constructor(
             is NetworkResponse.ApiError -> response
             is NetworkResponse.UnknownError -> response
         }
-
-    // Firebase Messaging Service
-    override suspend fun getCurrentFcmToken(): String =
-        FirebaseMessagingService().getCurrentToken()
-
-    override fun registerFcmToken() =
-        FirebaseMessagingService().registerFcmToken()
-
-    override fun unregisterFcmToken() =
-        FirebaseMessagingService().unregisterFcmToken()
 }
