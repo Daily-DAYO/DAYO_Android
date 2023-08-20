@@ -20,6 +20,7 @@ import com.daily.dayo.common.GlideLoadUtil.loadImageBackground
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
+import com.daily.dayo.common.toByteArray
 import com.daily.dayo.databinding.FragmentHomeDayoPickPostListBinding
 import com.daily.dayo.domain.model.Category
 import com.daily.dayo.domain.model.Post
@@ -208,8 +209,8 @@ class HomeDayoPickPostListFragment : Fragment() {
     }
 
     private fun loadInitialPostThumbnail(postList: List<Post>) {
-        val thumbnailImgList = emptyList<Bitmap>().toMutableList()
-        val userImgList = emptyList<Bitmap>().toMutableList()
+        val thumbnailImgList = emptyList<ByteArray>().toMutableList()
+        val userImgList = emptyList<ByteArray>().toMutableList()
 
         viewLifecycleOwner.lifecycleScope.launch {
             for (i in 0 until (if (postList.size >= 6) 6 else postList.size)) {
@@ -220,7 +221,7 @@ class HomeDayoPickPostListFragment : Fragment() {
                         width = 158,
                         imgName = postList[i].thumbnailImage ?: ""
                     )
-                })
+                }.toByteArray)
                 userImgList.add(withContext(Dispatchers.IO) {
                     loadImageBackground(
                         context = requireContext(),
@@ -228,7 +229,7 @@ class HomeDayoPickPostListFragment : Fragment() {
                         width = 17,
                         imgName = postList[i].userProfileImage ?: ""
                     )
-                })
+                }.toByteArray)
             }
         }.invokeOnCompletion { throwable ->
             when (throwable) {

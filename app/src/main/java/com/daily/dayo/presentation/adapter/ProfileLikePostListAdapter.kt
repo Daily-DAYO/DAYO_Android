@@ -29,9 +29,7 @@ class ProfileLikePostListAdapter(
                 oldItem.postId == newItem.postId
 
             override fun areContentsTheSame(oldItem: LikePost, newItem: LikePost): Boolean =
-                oldItem.apply { preLoadThumbnail = null } == newItem.apply {
-                    preLoadThumbnail = null
-                }
+                oldItem == newItem
 
             override fun getChangePayload(oldItem: LikePost, newItem: LikePost): Any? {
                 return if (oldItem.postId != newItem.postId || oldItem.thumbnailImage != newItem.thumbnailImage) true else null

@@ -2,10 +2,12 @@ package com.daily.dayo.common
 
 import android.content.ContentResolver
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -36,3 +38,12 @@ fun Bitmap?.toFile(path: String): File {
     }
     return file
 }
+
+val Bitmap.toByteArray: ByteArray
+    get() {
+        val outputStream = ByteArrayOutputStream()
+        this.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        return outputStream.toByteArray()
+    }
+
+val ByteArray.toBitmap: Bitmap get() = BitmapFactory.decodeByteArray(this, 0, size)

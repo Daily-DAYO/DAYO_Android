@@ -22,6 +22,7 @@ import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.GlideLoadUtil.loadImageViewProfile
 import com.daily.dayo.common.extension.navigateSafe
 import com.daily.dayo.common.setOnDebounceClickListener
+import com.daily.dayo.common.toBitmap
 import com.daily.dayo.data.di.IoDispatcher
 import com.daily.dayo.data.di.MainDispatcher
 import com.daily.dayo.databinding.ItemMainPostBinding
@@ -262,8 +263,8 @@ class HomeDayoPickAdapter(
                         )
                     }
                 } else {
-                    postImgBitmap = postContent.preLoadThumbnail
-                    userThumbnailImgBitmap = postContent.preLoadUserImg
+                    postImgBitmap = postContent.preLoadThumbnail?.toBitmap
+                    userThumbnailImgBitmap = postContent.preLoadUserImg?.toBitmap
                     postContent.preLoadThumbnail = null
                     postContent.preLoadUserImg = null
                 }
