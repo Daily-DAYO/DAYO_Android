@@ -167,7 +167,7 @@ class PostFragment : Fragment() {
                                 binding.post = post
                                 binding.categoryKR = post.category?.let { it1 -> categoryKR(it1) }
                                 binding.executePendingBindings()
-                                postImageSliderAdapter?.submitList(post.postImages)
+                                postImageSliderAdapter?.submitList(post.images)
                                 viewLifecycleOwner.lifecycleScope.launch {
                                     viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                                         glideRequestManager?.let { requestManager ->
@@ -175,7 +175,7 @@ class PostFragment : Fragment() {
                                                 requestManager = requestManager,
                                                 width = COMMENT_USER_THUMBNAIL_SIZE,
                                                 height = COMMENT_USER_THUMBNAIL_SIZE,
-                                                imgName = post.userProfileImage,
+                                                imgName = post.profileImg,
                                                 imgView = binding.imgPostUserProfile
                                             )
                                         }
@@ -191,7 +191,7 @@ class PostFragment : Fragment() {
                                     setOnUserProfileClickListener(memberId)
                                     setPostOptionClickListener(isMine = isMine, memberId = memberId)
                                 }
-                                post.postImages?.let { it1 -> setupIndicators(it1.size) }
+                                post.images?.let { it1 -> setupIndicators(it1.size) }
                                 post.bookmark?.let { it1 -> setPostBookmarkClickListener(it1) }
                                 post.hashtags?.let { it1 -> setTagList(it1) }
                             }

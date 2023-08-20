@@ -14,12 +14,11 @@ import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentSettingBlockBinding
-import com.daily.dayo.domain.model.BlockUser
+import com.daily.dayo.domain.model.UserBlocked
 import com.daily.dayo.presentation.adapter.BlockListAdapter
 import com.daily.dayo.presentation.viewmodel.ProfileSettingViewModel
 import com.daily.dayo.presentation.viewmodel.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 
 @AndroidEntryPoint
 class SettingBlockFragment : Fragment() {
@@ -63,7 +62,7 @@ class SettingBlockFragment : Fragment() {
         binding.rvBlock.adapter = blockListAdapter
         blockListAdapter?.setOnItemClickListener(object :
             BlockListAdapter.OnItemClickListener {
-            override fun onItemClick(checkbox: CheckBox, blockUser: BlockUser, position: Int) {
+            override fun onItemClick(checkbox: CheckBox, blockUser: UserBlocked, position: Int) {
                 unblockUser(blockUser.memberId, position)
             }
         })

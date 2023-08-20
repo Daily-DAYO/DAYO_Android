@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daily.dayo.data.datasource.remote.report.CreateReportMemberRequest
-import com.daily.dayo.data.datasource.remote.report.CreateReportPostRequest
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.usecase.report.RequestSaveMemberReportUseCase
 import com.daily.dayo.domain.usecase.report.RequestSavePostReportUseCase
@@ -26,12 +24,7 @@ class ReportViewModel @Inject constructor(
     val reportPostSuccess: LiveData<Boolean> get() = _reportPostSuccess
 
     fun requestSaveMemberReport(comment: String, memberId: String) = viewModelScope.launch {
-        requestSaveMemberReportUseCase(
-            CreateReportMemberRequest(
-                comment = comment,
-                memberId = memberId
-            )
-        )?.let { ApiResponse ->
+        requestSaveMemberReportUseCase(comment = comment, memberId = memberId)?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> { _reportMemberSuccess.postValue(true) }
                 else -> { _reportMemberSuccess.postValue(false) }
@@ -40,12 +33,7 @@ class ReportViewModel @Inject constructor(
     }
 
     fun requestSavePostReport(comment: String, postId: Int) = viewModelScope.launch {
-        requestSavePostReportUseCase(
-            CreateReportPostRequest(
-                comment = comment,
-                postId = postId
-            )
-        )?.let { ApiResponse ->
+        requestSavePostReportUseCase(comment = comment, postId = postId)?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> { _reportPostSuccess.postValue(true) }
                 else -> { _reportPostSuccess.postValue(false) }

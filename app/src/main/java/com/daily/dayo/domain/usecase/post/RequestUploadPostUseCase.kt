@@ -1,8 +1,8 @@
 package com.daily.dayo.domain.usecase.post
 
-import com.daily.dayo.data.datasource.remote.post.CreatePostResponse
 import com.daily.dayo.domain.model.Category
 import com.daily.dayo.domain.model.NetworkResponse
+import com.daily.dayo.domain.model.PostCreateResponse
 import com.daily.dayo.domain.repository.PostRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -19,7 +19,7 @@ class RequestUploadPostUseCase @Inject constructor(
         files: Array<File>,
         folderId: Int,
         tags: Array<String>
-    ): NetworkResponse<CreatePostResponse> {
+    ): NetworkResponse<PostCreateResponse> {
         val uploadFiles: ArrayList<MultipartBody.Part> = ArrayList()
         for (i in files.indices) {
             val imageFile = files.get(i)

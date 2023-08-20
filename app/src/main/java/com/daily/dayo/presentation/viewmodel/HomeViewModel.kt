@@ -5,8 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.common.Resource
-import com.daily.dayo.data.datasource.remote.heart.CreateHeartRequest
-import com.daily.dayo.data.mapper.toPost
 import com.daily.dayo.domain.model.Category
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Post
@@ -61,7 +59,7 @@ class HomeViewModel @Inject constructor(
         requestNewPostListUseCase()?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _newPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() }))
+                    _newPostList.postValue(Resource.success(ApiResponse.body?.data))
                 }
                 is NetworkResponse.NetworkError -> {
                     _newPostList.postValue(Resource.error(ApiResponse.exception.toString(), null))
@@ -80,7 +78,7 @@ class HomeViewModel @Inject constructor(
         requestNewPostListCategoryUseCase(category = category)?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _newPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() }))
+                    _newPostList.postValue(Resource.success(ApiResponse.body?.data))
                 }
                 is NetworkResponse.NetworkError -> {
                     _newPostList.postValue(Resource.error(ApiResponse.exception.toString(), null))
@@ -99,7 +97,7 @@ class HomeViewModel @Inject constructor(
         requestHomeDayoPickPostListUseCase()?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _dayoPickPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() }))
+                    _dayoPickPostList.postValue(Resource.success(ApiResponse.body?.data))
                 }
                 is NetworkResponse.NetworkError -> {
                     _dayoPickPostList.postValue(
@@ -128,7 +126,7 @@ class HomeViewModel @Inject constructor(
         requestDayoPickPostListCategoryUseCase(category = category)?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _dayoPickPostList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toPost() }))
+                    _dayoPickPostList.postValue(Resource.success(ApiResponse.body?.data))
                 }
                 is NetworkResponse.NetworkError -> {
                     _dayoPickPostList.postValue(
@@ -156,7 +154,7 @@ class HomeViewModel @Inject constructor(
     fun requestLikePost(postId: Int, isDayoPickLike: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
             val editList = if (isDayoPickLike) _dayoPickPostList else _newPostList
-            requestLikePostUseCase(CreateHeartRequest(postId = postId)).let { ApiResponse ->
+            requestLikePostUseCase(postId = postId).let { ApiResponse ->
                 when (ApiResponse) {
                     is NetworkResponse.Success -> {
                         editList.postValue(

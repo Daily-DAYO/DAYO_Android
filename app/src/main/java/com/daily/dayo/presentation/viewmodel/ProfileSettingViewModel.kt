@@ -6,11 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.common.Event
 import com.daily.dayo.common.Resource
-import com.daily.dayo.data.mapper.toBlockUser
-import com.daily.dayo.data.mapper.toProfile
-import com.daily.dayo.domain.model.BlockUser
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Profile
+import com.daily.dayo.domain.model.UserBlocked
 import com.daily.dayo.domain.usecase.block.RequestBlockListUseCase
 import com.daily.dayo.domain.usecase.member.RequestCheckNicknameDuplicateUseCase
 import com.daily.dayo.domain.usecase.member.RequestOtherProfileUseCase
@@ -34,8 +32,8 @@ class ProfileSettingViewModel @Inject constructor(
     private val _updateSuccess = MutableLiveData<Event<Boolean>>()
     val updateSuccess: LiveData<Event<Boolean>> get() = _updateSuccess
 
-    private val _blockList = MutableLiveData<Resource<List<BlockUser>>>()
-    val blockList: LiveData<Resource<List<BlockUser>>> get() = _blockList
+    private val _blockList = MutableLiveData<Resource<List<UserBlocked>>>()
+    val blockList: LiveData<Resource<List<UserBlocked>>> get() = _blockList
 
     private val _isNicknameDuplicate = MutableLiveData<Boolean>()
     val isNicknameDuplicate: LiveData<Boolean> get() = _isNicknameDuplicate
@@ -50,7 +48,9 @@ class ProfileSettingViewModel @Inject constructor(
         requestOtherProfileUseCase(memberId = memberId).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _profileInfo.postValue(ApiResponse.body?.toProfile())
+                    ApiResponse.body?.let { profile ->
+                        _profileInfo.postValue(profile)
+                    }
                 }
                 is NetworkResponse.NetworkError -> {
 
@@ -93,7 +93,7 @@ class ProfileSettingViewModel @Inject constructor(
         requestBlockListUseCase().let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _blockList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toBlockUser() }))
+                    _blockList.postValue(Resource.success(ApiResponse.body?.data))
                 }
                 is NetworkResponse.NetworkError -> {
                     _blockList.postValue(Resource.error(ApiResponse.exception.toString(), null))

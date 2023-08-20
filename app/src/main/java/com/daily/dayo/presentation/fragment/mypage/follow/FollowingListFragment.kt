@@ -15,7 +15,7 @@ import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.dialog.DefaultDialogConfirm
 import com.daily.dayo.databinding.FragmentFollowingListBinding
-import com.daily.dayo.domain.model.Follow
+import com.daily.dayo.domain.model.MyFollower
 import com.daily.dayo.presentation.adapter.FollowListAdapter
 import com.daily.dayo.presentation.viewmodel.FollowViewModel
 
@@ -55,7 +55,7 @@ class FollowingListFragment : Fragment() {
         binding.rvFollowing.adapter = followingListAdapter
         followingListAdapter?.setOnItemClickListener(object :
             FollowListAdapter.OnItemClickListener {
-            override fun onItemClick(button: Button, follow: Follow, position: Int) {
+            override fun onItemClick(button: Button, follow: MyFollower, position: Int) {
                 when (follow.isFollow) {
                     false -> { // 클릭 시 팔로우
                         requestFollow(follow.memberId)

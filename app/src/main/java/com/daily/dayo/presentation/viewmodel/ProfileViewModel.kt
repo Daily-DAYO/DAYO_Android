@@ -8,9 +8,6 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.daily.dayo.common.Event
 import com.daily.dayo.common.Resource
-import com.daily.dayo.data.datasource.remote.follow.CreateFollowRequest
-import com.daily.dayo.data.mapper.toFolder
-import com.daily.dayo.data.mapper.toProfile
 import com.daily.dayo.domain.model.*
 import com.daily.dayo.domain.usecase.block.RequestBlockMemberUseCase
 import com.daily.dayo.domain.usecase.block.RequestUnblockMemberUseCase
@@ -71,7 +68,7 @@ class ProfileViewModel @Inject constructor(
         requestMyProfileUseCase().let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _profileInfo.postValue(Resource.success(ApiResponse.body?.toProfile()))
+                    _profileInfo.postValue(Resource.success(ApiResponse.body))
                 }
 
                 is NetworkResponse.NetworkError -> {
@@ -93,7 +90,7 @@ class ProfileViewModel @Inject constructor(
         requestOtherProfileUseCase(memberId = memberId).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _profileInfo.postValue(Resource.success(ApiResponse.body?.toProfile()))
+                    _profileInfo.postValue(Resource.success(ApiResponse.body))
                 }
 
                 is NetworkResponse.NetworkError -> {
@@ -110,7 +107,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun requestCreateFollow(followerId: String) = viewModelScope.launch {
-        requestCreateFollowUseCase(CreateFollowRequest(followerId = followerId))?.let { ApiResponse ->
+        requestCreateFollowUseCase(followerId = followerId)?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     _followSuccess.postValue(Event(true))
@@ -143,7 +140,7 @@ class ProfileViewModel @Inject constructor(
             requestAllMyFolderListUseCase()?.let { ApiResponse ->
                 when (ApiResponse) {
                     is NetworkResponse.Success -> {
-                        _folderList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toFolder() }))
+                        _folderList.postValue(Resource.success(ApiResponse.body?.data))
                     }
 
                     is NetworkResponse.NetworkError -> {
@@ -173,7 +170,7 @@ class ProfileViewModel @Inject constructor(
             requestAllFolderListUseCase(memberId = memberId)?.let { ApiResponse ->
                 when (ApiResponse) {
                     is NetworkResponse.Success -> {
-                        _folderList.postValue(Resource.success(ApiResponse.body?.data?.map { it.toFolder() }))
+                        _folderList.postValue(Resource.success(ApiResponse.body?.data))
                     }
 
                     is NetworkResponse.NetworkError -> {

@@ -1,6 +1,6 @@
 package com.daily.dayo.domain.usecase.folder
 
-import com.daily.dayo.data.datasource.remote.folder.EditFolderResponse
+import com.daily.dayo.domain.model.FolderEditResponse
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.model.Privacy
 import com.daily.dayo.domain.repository.FolderRepository
@@ -20,7 +20,7 @@ class RequestEditFolderUseCase @Inject constructor(
         subheading: String?,
         isFileChange: Boolean,
         thumbnailImg: File?
-    ): NetworkResponse<EditFolderResponse> {
+    ): NetworkResponse<FolderEditResponse> {
         val requestThumbnailImage: MultipartBody.Part? = if (thumbnailImg != null)
             MultipartBody.Part.createFormData(
                 "thumbnailImage",

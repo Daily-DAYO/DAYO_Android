@@ -1,7 +1,10 @@
 package com.daily.dayo.domain.repository
 
-import com.daily.dayo.data.datasource.remote.member.*
 import com.daily.dayo.domain.model.NetworkResponse
+import com.daily.dayo.domain.model.Profile
+import com.daily.dayo.domain.model.User
+import com.daily.dayo.domain.model.UserTokens
+import com.daily.dayo.domain.model.UsersBlocked
 import okhttp3.MultipartBody
 
 interface MemberRepository {
@@ -11,7 +14,7 @@ interface MemberRepository {
         nickname: String,
         password: String,
         profileImg: MultipartBody.Part?
-    ): NetworkResponse<MemberSignupResponse>
+    ): NetworkResponse<String>
 
     suspend fun requestUpdateMyProfile(
         nickname: String?,
@@ -19,26 +22,26 @@ interface MemberRepository {
         onBasicProfileImg: Boolean
     ): NetworkResponse<Void>
 
-    suspend fun requestLoginKakao(body: MemberOAuthRequest): NetworkResponse<MemberOAuthResponse>
-    suspend fun requestLoginEmail(body: MemberSignInRequest): NetworkResponse<MemberSignInResponse>
-    suspend fun requestMemberInfo(): NetworkResponse<MemberInfoResponse>
+    suspend fun requestLoginKakao(accessToken: String): NetworkResponse<UserTokens>
+    suspend fun requestLoginEmail(email: String, password: String): NetworkResponse<UserTokens>
+    suspend fun requestMemberInfo(): NetworkResponse<User>
     suspend fun requestCheckEmailDuplicate(email: String): NetworkResponse<Void>
     suspend fun requestCheckNicknameDuplicate(nickname: String): NetworkResponse<Void>
-    suspend fun requestCertificateEmail(email: String): NetworkResponse<MemberAuthCodeResponse>
-    suspend fun requestRefreshToken(): NetworkResponse<RefreshTokenResponse>
-    suspend fun requestDeviceToken(body: DeviceTokenRequest): NetworkResponse<Void>
-    suspend fun requestMyProfile(): NetworkResponse<MemberMyProfileResponse>
-    suspend fun requestOtherProfile(memberId: String): NetworkResponse<MemberOtherProfileResponse>
+    suspend fun requestCertificateEmail(email: String): NetworkResponse<String>
+    suspend fun requestRefreshToken(): NetworkResponse<String>
+    suspend fun requestDeviceToken(deviceToken: String?): NetworkResponse<Void>
+    suspend fun requestMyProfile(): NetworkResponse<Profile>
+    suspend fun requestOtherProfile(memberId: String): NetworkResponse<Profile>
     suspend fun requestResign(content: String): NetworkResponse<Void>
-    suspend fun requestReceiveAlarm(): NetworkResponse<ReceiveAlarmResponse>
-    suspend fun requestChangeReceiveAlarm(body: ChangeReceiveAlarmRequest): NetworkResponse<Void>
+    suspend fun requestReceiveAlarm(): NetworkResponse<Boolean>
+    suspend fun requestChangeReceiveAlarm(onReceiveAlarm: Boolean): NetworkResponse<Void>
     suspend fun requestLogout(): NetworkResponse<Void>
     suspend fun requestCheckEmail(email: String): NetworkResponse<Void>
-    suspend fun requestCheckEmailAuth(email: String): NetworkResponse<MemberAuthCodeResponse>
-    suspend fun requestCheckCurrentPassword(body: CheckPasswordRequest): NetworkResponse<Void>
-    suspend fun requestChangePassword(body: ChangePasswordRequest): NetworkResponse<Void>
-    suspend fun requestSettingChangePassword(body: ChangePasswordRequest): NetworkResponse<Void>
-    suspend fun requestBlockList(): NetworkResponse<MemberBlockResponse>
+    suspend fun requestCheckEmailAuth(email: String): NetworkResponse<String>
+    suspend fun requestCheckCurrentPassword(password: String): NetworkResponse<Void>
+    suspend fun requestChangePassword(email: String, password: String): NetworkResponse<Void>
+    suspend fun requestSettingChangePassword(email: String, password: String): NetworkResponse<Void>
+    suspend fun requestBlockList(): NetworkResponse<UsersBlocked>
 
     // Firebase Messaging Service
     suspend fun getCurrentFcmToken(): String

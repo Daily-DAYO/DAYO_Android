@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.common.Event
-import com.daily.dayo.data.datasource.remote.member.*
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.usecase.member.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -80,7 +79,7 @@ class AccountViewModel @Inject constructor(
     val isApiErrorExceptionOccurred get() = _isApiErrorExceptionOccurred
 
     fun requestLoginKakao(accessToken: String) = viewModelScope.launch {
-        requestLoginKakaoUseCase(MemberOAuthRequest(accessToken = accessToken)).let { ApiResponse ->
+        requestLoginKakaoUseCase(accessToken = accessToken).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     DayoApplication.preferences.saveCurrentUser(ApiResponse.body)
@@ -105,7 +104,7 @@ class AccountViewModel @Inject constructor(
     }
 
     fun requestLoginEmail(email: String, password: String) = viewModelScope.launch {
-        requestLoginEmailUseCase(MemberSignInRequest(email = email, password = password)).let { ApiResponse ->
+        requestLoginEmailUseCase(email = email, password = password).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     DayoApplication.preferences.saveCurrentUser(ApiResponse.body)
@@ -132,7 +131,7 @@ class AccountViewModel @Inject constructor(
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     ApiResponse.body?.let { response ->
-                        DayoApplication.preferences.setAccessToken(response.accessToken)
+                        DayoApplication.preferences.setAccessToken(accessToken = response)
                     }
                     requestMemberInfo()
                     _loginSuccess.postValue(Event(true))
@@ -232,7 +231,7 @@ class AccountViewModel @Inject constructor(
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     _isCertificateEmailSend.postValue(true)
-                    certificateEmailAuthCode.postValue(ApiResponse.body?.authCode)
+                    certificateEmailAuthCode.postValue(ApiResponse.body)
                 }
                 is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
@@ -249,7 +248,7 @@ class AccountViewModel @Inject constructor(
 
     suspend fun requestDeviceToken(deviceToken: String) = coroutineScope {
         if (DayoApplication.preferences.notiDevicePermit) registerFcmTokenUseCase()
-        requestDeviceTokenUseCase(DeviceTokenRequest(deviceToken = deviceToken))
+        requestDeviceTokenUseCase(deviceToken = deviceToken)
     }
 
     suspend fun getCurrentFcmToken() = getCurrentFcmTokenUseCase()
@@ -316,7 +315,7 @@ class AccountViewModel @Inject constructor(
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     _isCertificateEmailSend.postValue(true)
-                    certificateEmailAuthCode.postValue(ApiResponse.body?.authCode)
+                    certificateEmailAuthCode.postValue(ApiResponse.body)
                 }
                 is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
@@ -332,7 +331,7 @@ class AccountViewModel @Inject constructor(
     }
 
     fun requestCheckCurrentPassword(inputPassword: String) = viewModelScope.launch {
-        requestCheckCurrentPasswordUseCase(CheckPasswordRequest(password = inputPassword)).let { ApiResponse ->
+        requestCheckCurrentPasswordUseCase(password = inputPassword).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     _checkCurrentPasswordSuccess.postValue(true)
@@ -351,12 +350,7 @@ class AccountViewModel @Inject constructor(
     }
 
     fun requestChangePassword(email: String, newPassword: String) = viewModelScope.launch {
-        requestChangePasswordUseCase(
-            ChangePasswordRequest(
-                email = email,
-                password = newPassword
-            )
-        ).let { ApiResponse ->
+        requestChangePasswordUseCase(email = email, password = newPassword).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     _changePasswordSuccess.postValue(true)
@@ -376,10 +370,8 @@ class AccountViewModel @Inject constructor(
 
     fun requestChangePassword(newPassword: String) = viewModelScope.launch {
         requestSettingChangePasswordUseCase(
-            ChangePasswordRequest(
-                email = DayoApplication.preferences.getCurrentUser().email!!,
-                password = newPassword
-            )
+            email = DayoApplication.preferences.getCurrentUser().email!!,
+            password = newPassword
         ).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {

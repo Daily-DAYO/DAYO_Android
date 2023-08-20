@@ -10,11 +10,25 @@ import javax.inject.Inject
 class ReportRepositoryImpl @Inject constructor(
     private val reportApiService: ReportApiService
 ) : ReportRepository {
+    override suspend fun requestSaveMemberReport(
+        comment: String,
+        memberId: String
+    ): NetworkResponse<Void> =
+        reportApiService.requestSaveMemberReport(
+            CreateReportMemberRequest(
+                comment = comment,
+                memberId = memberId
+            )
+        )
 
-    override suspend fun requestSaveMemberReport(body: CreateReportMemberRequest): NetworkResponse<Void> =
-        reportApiService.requestSaveMemberReport(body)
-
-    override suspend fun requestSavePostReport(body: CreateReportPostRequest): NetworkResponse<Void> =
-        reportApiService.requestSavePostReport(body)
-
+    override suspend fun requestSavePostReport(
+        comment: String,
+        postId: Int
+    ): NetworkResponse<Void> =
+        reportApiService.requestSavePostReport(
+            CreateReportPostRequest(
+                comment = comment,
+                postId = postId
+            )
+        )
 }

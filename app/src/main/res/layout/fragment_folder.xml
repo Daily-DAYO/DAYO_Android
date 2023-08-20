@@ -17,7 +17,7 @@
 
         <variable
             name="folder"
-            type="com.daily.dayo.domain.model.Folder" />
+            type="com.daily.dayo.domain.model.FolderInfo" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -90,7 +90,7 @@
                             android:id="@+id/tv_folder_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{folder.title}"
+                            android:text="@{folder.name}"
                             android:textColor="@color/white_FFFFFF"
                             android:textSize="15dp"
                             android:textStyle="bold"

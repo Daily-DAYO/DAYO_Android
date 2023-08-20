@@ -8,3 +8,8 @@ data class Comment(
     val nickname: String,
     val profileImg: String
 )
+
+data class Comments(
+    val count: Int,
+    val data: List<Comment>
+)
