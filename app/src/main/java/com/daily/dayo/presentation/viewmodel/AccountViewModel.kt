@@ -8,6 +8,7 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.common.Event
 import com.daily.dayo.domain.model.NetworkResponse
 import com.daily.dayo.domain.usecase.member.*
+import com.daily.dayo.presentation.firebase.FirebaseMessagingService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -25,8 +26,6 @@ class AccountViewModel @Inject constructor(
     private val requestCheckNicknameDuplicateUseCase: RequestCheckNicknameDuplicateUseCase,
     private val requestCertificateEmailUseCase: RequestCertificateEmailUseCase,
     private val requestDeviceTokenUseCase: RequestDeviceTokenUseCase,
-    private val registerFcmTokenUseCase: RegisterFcmTokenUseCase,
-    private val getCurrentFcmTokenUseCase: GetCurrentFcmTokenUseCase,
     private val requestResignUseCase: RequestResignUseCase,
     private val requestLogoutUseCase: RequestLogoutUseCase,
     private val requestCheckEmailUseCase: RequestCheckEmailUseCase,
@@ -247,11 +246,11 @@ class AccountViewModel @Inject constructor(
     }
 
     suspend fun requestDeviceToken(deviceToken: String) = coroutineScope {
-        if (DayoApplication.preferences.notiDevicePermit) registerFcmTokenUseCase()
+        if (DayoApplication.preferences.notiDevicePermit) FirebaseMessagingService().registerFcmToken()
         requestDeviceTokenUseCase(deviceToken = deviceToken)
     }
 
-    suspend fun getCurrentFcmToken() = getCurrentFcmTokenUseCase()
+    suspend fun getCurrentFcmToken() = FirebaseMessagingService().getCurrentToken()
 
     fun requestWithdraw(content: String) = viewModelScope.launch {
         requestResignUseCase(content).let { ApiResponse ->

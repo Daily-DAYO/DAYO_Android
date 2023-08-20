@@ -42,9 +42,4 @@ interface MemberRepository {
     suspend fun requestChangePassword(email: String, password: String): NetworkResponse<Void>
     suspend fun requestSettingChangePassword(email: String, password: String): NetworkResponse<Void>
     suspend fun requestBlockList(): NetworkResponse<UsersBlocked>
-
-    // Firebase Messaging Service
-    suspend fun getCurrentFcmToken(): String
-    fun registerFcmToken()
-    fun unregisterFcmToken()
 }
