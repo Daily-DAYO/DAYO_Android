@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
-import com.daily.dayo.data.di.MainDispatcher
+import com.daily.dayo.di.MainDispatcher
 import com.daily.dayo.databinding.ItemProfilePostBinding
 import com.daily.dayo.domain.model.LikePost
 import kotlinx.coroutines.*

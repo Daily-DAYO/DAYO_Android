@@ -24,8 +24,8 @@ import com.daily.dayo.common.GlideLoadUtil.loadImageViewProfile
 import com.daily.dayo.common.extension.navigateSafe
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.common.toBitmap
-import com.daily.dayo.data.di.IoDispatcher
-import com.daily.dayo.data.di.MainDispatcher
+import com.daily.dayo.di.IoDispatcher
+import com.daily.dayo.di.MainDispatcher
 import com.daily.dayo.databinding.ItemMainPostBinding
 import com.daily.dayo.domain.model.Post
 import com.daily.dayo.presentation.fragment.home.HomeFragmentDirections

@@ -14,7 +14,7 @@ import com.bumptech.glide.RequestManager
 import com.daily.dayo.R
 import com.daily.dayo.common.GlideLoadUtil
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
-import com.daily.dayo.data.di.MainDispatcher
+import com.daily.dayo.di.MainDispatcher
 import com.daily.dayo.databinding.ItemPostImageSliderBinding
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

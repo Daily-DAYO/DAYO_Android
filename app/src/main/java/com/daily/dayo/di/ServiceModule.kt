@@ -1,4 +1,4 @@
-package com.daily.dayo.data.di
+package com.daily.dayo.di
 
 import com.daily.dayo.data.datasource.remote.alarm.AlarmApiService
 import com.daily.dayo.data.datasource.remote.block.BlockApiService
