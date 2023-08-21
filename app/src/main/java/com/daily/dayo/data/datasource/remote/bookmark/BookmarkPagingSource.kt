@@ -3,8 +3,8 @@ package com.daily.dayo.data.datasource.remote.bookmark
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.daily.dayo.data.mapper.toBookmarkPost
-import com.daily.dayo.domain.model.BookmarkPost
-import com.daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.BookmarkPost
+import daily.dayo.domain.model.NetworkResponse
 
 class BookmarkPagingSource(
     private val apiService: BookmarkApiService,
@@ -22,7 +22,7 @@ class BookmarkPagingSource(
                         return LoadResult.Page(
                             data = ApiResponse.body!!.data.map { it.toBookmarkPost() },
                             prevKey = if (nextPageNumber == 0) null else nextPageNumber - size,
-                            nextKey = if (ApiResponse.body.last || ApiResponse.body.count == 0) null else nextPageNumber + size
+                            nextKey = if (ApiResponse.body!!.last || ApiResponse.body!!.count == 0) null else nextPageNumber + size
                         )
                     }
                     else -> {
