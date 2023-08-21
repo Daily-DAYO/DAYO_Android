@@ -6,9 +6,9 @@ import com.daily.dayo.data.datasource.remote.bookmark.BookmarkApiService
 import com.daily.dayo.data.datasource.remote.bookmark.BookmarkPagingSource
 import com.daily.dayo.data.datasource.remote.bookmark.CreateBookmarkRequest
 import com.daily.dayo.data.mapper.toBookmarkPostResponse
-import com.daily.dayo.domain.model.BookmarkPostResponse
-import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.repository.BookmarkRepository
+import daily.dayo.domain.model.BookmarkPostResponse
+import daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.repository.BookmarkRepository
 import javax.inject.Inject
 
 class BookmarkRepositoryImpl @Inject constructor(

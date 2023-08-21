@@ -1,6 +1,6 @@
 package com.daily.dayo.data.datasource.remote.alarm
 
-import com.daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.NetworkResponse
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path

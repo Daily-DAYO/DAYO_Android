@@ -1,6 +1,6 @@
 package com.daily.dayo.data.datasource.remote.folder
 
-import com.daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.NetworkResponse
 import okhttp3.MultipartBody
 import retrofit2.http.*
 

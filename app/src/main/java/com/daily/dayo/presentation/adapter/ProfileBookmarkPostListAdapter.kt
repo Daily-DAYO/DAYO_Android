@@ -12,7 +12,7 @@ import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.di.MainDispatcher
 import com.daily.dayo.databinding.ItemProfilePostBinding
-import com.daily.dayo.domain.model.BookmarkPost
+import daily.dayo.domain.model.BookmarkPost
 import kotlinx.coroutines.*
 
 class ProfileBookmarkPostListAdapter(

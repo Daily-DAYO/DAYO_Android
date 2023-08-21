@@ -4,8 +4,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.daily.dayo.data.datasource.remote.alarm.AlarmApiService
 import com.daily.dayo.data.datasource.remote.alarm.AlarmPagingSource
-import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.repository.AlarmRepository
+import daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.repository.AlarmRepository
 import javax.inject.Inject
 
 class AlarmRepositoryImpl @Inject constructor(

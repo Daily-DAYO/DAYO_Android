@@ -4,11 +4,11 @@
     <data>
 
         <import type="android.view.View" />
-        <import type="com.daily.dayo.domain.model.Privacy" />
+        <import type="daily.dayo.domain.model.Privacy" />
 
         <variable
             name="folder"
-            type="com.daily.dayo.domain.model.Folder" />
+            type="daily.dayo.domain.model.Folder" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"

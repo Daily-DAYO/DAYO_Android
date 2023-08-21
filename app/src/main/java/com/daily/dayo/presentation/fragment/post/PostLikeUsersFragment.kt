@@ -65,12 +65,12 @@ import com.daily.dayo.common.Event
 import com.daily.dayo.common.extension.clickableSingle
 import com.daily.dayo.common.extension.navigateSafe
 import com.daily.dayo.common.toSp
-import com.daily.dayo.domain.model.LikeUser
 import com.daily.dayo.presentation.viewmodel.FollowViewModel
 import com.daily.dayo.presentation.viewmodel.PostViewModel
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.domain.model.LikeUser
 
 @AndroidEntryPoint
 class PostLikeUsersFragment : Fragment() {

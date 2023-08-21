@@ -11,13 +11,13 @@ import com.daily.dayo.data.datasource.remote.post.FeedDto
 import com.daily.dayo.data.datasource.remote.post.ListAllPostResponse
 import com.daily.dayo.data.datasource.remote.post.ListCategoryPostResponse
 import com.daily.dayo.data.datasource.remote.post.PostDto
-import com.daily.dayo.domain.model.Post
-import com.daily.dayo.domain.model.PostCreateResponse
-import com.daily.dayo.domain.model.PostDetail
-import com.daily.dayo.domain.model.PostEditResponse
-import com.daily.dayo.domain.model.Posts
-import com.daily.dayo.domain.model.PostsCategorized
-import com.daily.dayo.domain.model.PostsDayoPick
+import daily.dayo.domain.model.Post
+import daily.dayo.domain.model.PostCreateResponse
+import daily.dayo.domain.model.PostDetail
+import daily.dayo.domain.model.PostEditResponse
+import daily.dayo.domain.model.Posts
+import daily.dayo.domain.model.PostsCategorized
+import daily.dayo.domain.model.PostsDayoPick
 
 fun CreatePostResponse.toPostCreateResponse(): PostCreateResponse =
     PostCreateResponse(id = id)

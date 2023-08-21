@@ -1,6 +1,6 @@
 package com.daily.dayo.data.datasource.remote.report
 
-import com.daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.NetworkResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 

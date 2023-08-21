@@ -3,8 +3,8 @@ package com.daily.dayo.data.datasource.remote.post
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.daily.dayo.data.mapper.toPost
-import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.model.Post
+import daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.Post
 
 class FeedPagingSource(
     private val apiService: PostApiService,
@@ -22,7 +22,7 @@ class FeedPagingSource(
                         return LoadResult.Page(
                             data = ApiResponse.body!!.data.map { it.toPost() },
                             prevKey = if (nextPageNumber == 0) null else nextPageNumber - size,
-                            nextKey = if (ApiResponse.body.last || ApiResponse.body.count == 0) null else nextPageNumber + size
+                            nextKey = if (ApiResponse.body!!.last || ApiResponse.body!!.count == 0) null else nextPageNumber + size
                         )
                     }
                     else -> {

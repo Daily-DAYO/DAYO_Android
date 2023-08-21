@@ -6,10 +6,10 @@
     <data>
 
         <import type="android.view.View" />
-        <import type="com.daily.dayo.domain.model.Topic" />
+        <import type="daily.dayo.domain.model.Topic" />
         <variable
             name="notification"
-            type="com.daily.dayo.domain.model.Notification" />
+            type="daily.dayo.domain.model.Notification" />
     </data>
 
     <LinearLayout

@@ -15,7 +15,7 @@ import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.DefaultDialogConfigure
 import com.daily.dayo.common.dialog.DefaultDialogConfirm
 import com.daily.dayo.databinding.FragmentFollowerListBinding
-import com.daily.dayo.domain.model.MyFollower
+import daily.dayo.domain.model.MyFollower
 import com.daily.dayo.presentation.adapter.FollowListAdapter
 import com.daily.dayo.presentation.viewmodel.FollowViewModel
 

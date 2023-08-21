@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemFolderListBinding
-import com.daily.dayo.domain.model.Folder
+import daily.dayo.domain.model.Folder
 
 class WriteFolderAdapter(
     private val onFolderClicked: (Folder) -> Unit,

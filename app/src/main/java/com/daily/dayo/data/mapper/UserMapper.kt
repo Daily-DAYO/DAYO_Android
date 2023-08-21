@@ -4,9 +4,9 @@ import com.daily.dayo.data.datasource.remote.member.BlockDto
 import com.daily.dayo.data.datasource.remote.member.MemberBlockResponse
 import com.daily.dayo.data.datasource.remote.member.MemberOAuthResponse
 import com.daily.dayo.data.datasource.remote.member.MemberSignInResponse
-import com.daily.dayo.domain.model.UserBlocked
-import com.daily.dayo.domain.model.UserTokens
-import com.daily.dayo.domain.model.UsersBlocked
+import daily.dayo.domain.model.UserBlocked
+import daily.dayo.domain.model.UserTokens
+import daily.dayo.domain.model.UsersBlocked
 
 fun MemberOAuthResponse.toUserTokenResponse(): UserTokens =
     UserTokens(accessToken = accessToken, refreshToken = refreshToken)

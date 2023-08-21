@@ -8,7 +8,7 @@
 
         <variable
             name="notice"
-            type="com.daily.dayo.domain.model.Notice" />
+            type="daily.dayo.domain.model.Notice" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

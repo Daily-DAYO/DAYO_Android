@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentProfileLikePostListBinding
-import com.daily.dayo.domain.model.LikePost
+import daily.dayo.domain.model.LikePost
 import com.daily.dayo.presentation.adapter.ProfileLikePostListAdapter
 import com.daily.dayo.presentation.viewmodel.ProfileViewModel
 import kotlinx.coroutines.Dispatchers

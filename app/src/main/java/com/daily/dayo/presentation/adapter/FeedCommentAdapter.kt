@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemFeedPostCommentBinding
-import com.daily.dayo.domain.model.Comment
+import daily.dayo.domain.model.Comment
 import com.daily.dayo.presentation.fragment.feed.FeedFragmentDirections
 
 class FeedCommentAdapter : ListAdapter<Comment, FeedCommentAdapter.FeedCommentViewHolder>(

@@ -15,9 +15,9 @@ import com.daily.dayo.R
 import com.daily.dayo.common.*
 import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.databinding.FragmentWriteFolderBinding
-import com.daily.dayo.domain.model.Folder
 import com.daily.dayo.presentation.adapter.WriteFolderAdapter
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
+import daily.dayo.domain.model.Folder
 import kotlinx.coroutines.launch
 
 class WriteFolderFragment : Fragment() {

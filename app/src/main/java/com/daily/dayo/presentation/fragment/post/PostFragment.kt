@@ -38,8 +38,6 @@ import com.daily.dayo.common.dialog.DefaultDialogConfirm
 import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.extension.navigateSafe
 import com.daily.dayo.databinding.FragmentPostBinding
-import com.daily.dayo.domain.model.Comment
-import com.daily.dayo.domain.model.categoryKR
 import com.daily.dayo.presentation.adapter.PostCommentAdapter
 import com.daily.dayo.presentation.adapter.PostImageSliderAdapter
 import com.daily.dayo.presentation.viewmodel.HomeViewModel
@@ -47,6 +45,8 @@ import com.daily.dayo.presentation.viewmodel.PostViewModel
 import com.daily.dayo.presentation.viewmodel.SearchViewModel
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.domain.model.Comment
+import daily.dayo.domain.model.categoryKR
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -165,7 +165,7 @@ class PostFragment : Fragment() {
                             it.data?.let { post ->
                                 updatePostStatus(post.heart, post.heartCount, null)
                                 binding.post = post
-                                binding.categoryKR = post.category?.let { it1 -> categoryKR(it1) }
+                                binding.categoryKR = post.category?.let { category -> categoryKR(category) }
                                 binding.executePendingBindings()
                                 postImageSliderAdapter?.submitList(post.images)
                                 viewLifecycleOwner.lifecycleScope.launch {

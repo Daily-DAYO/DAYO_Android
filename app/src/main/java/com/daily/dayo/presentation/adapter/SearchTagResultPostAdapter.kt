@@ -13,7 +13,7 @@ import com.daily.dayo.common.GlideLoadUtil.HOME_POST_THUMBNAIL_SIZE
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemSearchResultPostBinding
-import com.daily.dayo.domain.model.Search
+import daily.dayo.domain.model.Search
 import kotlinx.coroutines.*
 
 class SearchTagResultPostAdapter(private val requestManager: RequestManager) :

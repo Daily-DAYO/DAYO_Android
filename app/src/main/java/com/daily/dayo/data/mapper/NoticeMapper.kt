@@ -2,8 +2,8 @@ package com.daily.dayo.data.mapper
 
 import com.daily.dayo.data.datasource.remote.notice.NoticeDetailResponse
 import com.daily.dayo.data.datasource.remote.notice.NoticeDto
-import com.daily.dayo.domain.model.Notice
-import com.daily.dayo.domain.model.NoticeDetail
+import daily.dayo.domain.model.Notice
+import daily.dayo.domain.model.NoticeDetail
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 

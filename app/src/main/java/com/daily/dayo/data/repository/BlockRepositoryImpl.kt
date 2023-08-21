@@ -3,8 +3,8 @@ package com.daily.dayo.data.repository
 import com.daily.dayo.data.datasource.remote.block.BlockApiService
 import com.daily.dayo.data.datasource.remote.block.BlockRequest
 import com.daily.dayo.data.datasource.remote.block.UnblockRequest
-import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.repository.BlockRepository
+import daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.repository.BlockRepository
 import javax.inject.Inject
 
 class BlockRepositoryImpl @Inject constructor(

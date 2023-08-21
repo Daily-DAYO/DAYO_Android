@@ -1,6 +1,6 @@
 package com.daily.dayo.data.datasource.remote.post
 
-import com.daily.dayo.domain.model.Category
+import daily.dayo.domain.model.Category
 import com.google.gson.annotations.SerializedName
 
 data class ListFeedResponse(

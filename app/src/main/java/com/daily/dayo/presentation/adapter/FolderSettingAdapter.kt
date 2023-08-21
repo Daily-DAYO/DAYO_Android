@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.daily.dayo.common.ItemTouchHelperCallback
 import com.daily.dayo.databinding.ItemFolderListBinding
-import com.daily.dayo.domain.model.Folder
-import com.daily.dayo.domain.model.FolderOrder
+import daily.dayo.domain.model.Folder
+import daily.dayo.domain.model.FolderOrder
 import java.util.*
 
 class FolderSettingAdapter(private val isChange: Boolean) :

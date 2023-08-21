@@ -28,8 +28,8 @@ import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFolderSettingAddBinding
-import com.daily.dayo.domain.model.Privacy
 import com.daily.dayo.presentation.viewmodel.FolderViewModel
+import daily.dayo.domain.model.Privacy
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream

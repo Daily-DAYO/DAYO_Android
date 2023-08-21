@@ -1,6 +1,6 @@
 package com.daily.dayo.data.datasource.remote.search
 
-import com.daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.NetworkResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

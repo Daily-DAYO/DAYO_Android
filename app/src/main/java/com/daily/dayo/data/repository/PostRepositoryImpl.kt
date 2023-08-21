@@ -10,16 +10,16 @@ import com.daily.dayo.data.mapper.toPostEditResponse
 import com.daily.dayo.data.mapper.toPosts
 import com.daily.dayo.data.mapper.toPostsCategorized
 import com.daily.dayo.data.mapper.toPostsDayoPick
-import com.daily.dayo.domain.model.Category
-import com.daily.dayo.domain.model.LikePostDeleteResponse
-import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.model.PostCreateResponse
-import com.daily.dayo.domain.model.PostDetail
-import com.daily.dayo.domain.model.PostEditResponse
-import com.daily.dayo.domain.model.Posts
-import com.daily.dayo.domain.model.PostsCategorized
-import com.daily.dayo.domain.model.PostsDayoPick
-import com.daily.dayo.domain.repository.PostRepository
+import daily.dayo.domain.model.Category
+import daily.dayo.domain.model.LikePostDeleteResponse
+import daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.PostCreateResponse
+import daily.dayo.domain.model.PostDetail
+import daily.dayo.domain.model.PostEditResponse
+import daily.dayo.domain.model.Posts
+import daily.dayo.domain.model.PostsCategorized
+import daily.dayo.domain.model.PostsDayoPick
+import daily.dayo.domain.repository.PostRepository
 import okhttp3.MultipartBody
 import javax.inject.Inject
 

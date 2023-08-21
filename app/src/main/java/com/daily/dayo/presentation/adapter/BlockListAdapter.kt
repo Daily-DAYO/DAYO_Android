@@ -11,7 +11,7 @@ import com.daily.dayo.common.GlideLoadUtil.BLOCK_USER_THUMBNAIL_SIZE
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemBlockBinding
-import com.daily.dayo.domain.model.UserBlocked
+import daily.dayo.domain.model.UserBlocked
 
 class BlockListAdapter(private val requestManager: RequestManager) :
     RecyclerView.Adapter<BlockListAdapter.BlockListViewHolder>() {

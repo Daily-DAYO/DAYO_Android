@@ -4,8 +4,8 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.common.TimeChangerUtil
 import com.daily.dayo.data.datasource.remote.comment.CommentDto
 import com.daily.dayo.data.datasource.remote.comment.ListAllCommentResponse
-import com.daily.dayo.domain.model.Comment
-import com.daily.dayo.domain.model.Comments
+import daily.dayo.domain.model.Comment
+import daily.dayo.domain.model.Comments
 
 fun CommentDto.toComment(): Comment {
     val createDateTime = TimeChangerUtil.timeChange(
