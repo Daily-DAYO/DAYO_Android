@@ -6,7 +6,7 @@
     <data>
         <variable
             name="comment"
-            type="com.daily.dayo.domain.model.Comment" />
+            type="daily.dayo.domain.model.Comment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

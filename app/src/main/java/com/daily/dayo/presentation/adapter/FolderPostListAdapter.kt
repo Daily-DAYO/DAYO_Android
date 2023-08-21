@@ -13,7 +13,7 @@ import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.di.MainDispatcher
 import com.daily.dayo.databinding.ItemFolderPostBinding
-import com.daily.dayo.domain.model.FolderPost
+import daily.dayo.domain.model.FolderPost
 import com.daily.dayo.presentation.fragment.mypage.folder.FolderFragmentDirections
 import kotlinx.coroutines.*
 

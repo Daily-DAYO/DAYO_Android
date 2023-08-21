@@ -3,8 +3,8 @@ package com.daily.dayo.data.datasource.remote.alarm
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.daily.dayo.data.mapper.toNotification
-import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.model.Notification
+import daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.Notification
 
 class AlarmPagingSource(
     private val apiService: AlarmApiService,
@@ -22,7 +22,7 @@ class AlarmPagingSource(
                         return LoadResult.Page(
                             data = ApiResponse.body!!.data.map { it.toNotification() },
                             prevKey = if (nextPageNumber == 0) null else nextPageNumber - size,
-                            nextKey = if (ApiResponse.body.last || ApiResponse.body.count == 0) null else nextPageNumber + size
+                            nextKey = if (ApiResponse.body!!.last || ApiResponse.body!!.count == 0) null else nextPageNumber + size
                         )
                     }
                     else -> {

@@ -5,9 +5,9 @@ import androidx.paging.PagingConfig
 import com.daily.dayo.data.datasource.remote.notice.NoticeApiService
 import com.daily.dayo.data.datasource.remote.notice.NoticePagingSource
 import com.daily.dayo.data.mapper.toNoticeDetail
-import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.model.NoticeDetail
-import com.daily.dayo.domain.repository.NoticeRepository
+import daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.NoticeDetail
+import daily.dayo.domain.repository.NoticeRepository
 import javax.inject.Inject
 
 class NoticeRepositoryImpl @Inject constructor(

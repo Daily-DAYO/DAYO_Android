@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="android.view.View"/>
-        <import type="com.daily.dayo.domain.model.Privacy"/>
+        <import type="daily.dayo.domain.model.Privacy"/>
         <variable
             name="folder"
-            type="com.daily.dayo.domain.model.Folder" />
+            type="daily.dayo.domain.model.Folder" />
         <variable
             name="isChangeEnable"
             type="Boolean" />

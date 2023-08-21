@@ -1,8 +1,8 @@
 package com.daily.dayo.data.repository
 
 import com.daily.dayo.data.datasource.remote.image.ImageApiService
-import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.repository.ImageRepository
+import daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.repository.ImageRepository
 import javax.inject.Inject
 
 class ImageRepositoryImpl @Inject constructor(

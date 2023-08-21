@@ -14,11 +14,24 @@ import com.daily.dayo.data.datasource.remote.post.PostApiService
 import com.daily.dayo.data.datasource.remote.report.ReportApiService
 import com.daily.dayo.data.datasource.remote.search.SearchApiService
 import com.daily.dayo.data.repository.*
-import com.daily.dayo.domain.repository.*
+import daily.dayo.domain.repository.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import daily.dayo.domain.repository.AlarmRepository
+import daily.dayo.domain.repository.BlockRepository
+import daily.dayo.domain.repository.BookmarkRepository
+import daily.dayo.domain.repository.CommentRepository
+import daily.dayo.domain.repository.FolderRepository
+import daily.dayo.domain.repository.FollowRepository
+import daily.dayo.domain.repository.HeartRepository
+import daily.dayo.domain.repository.ImageRepository
+import daily.dayo.domain.repository.MemberRepository
+import daily.dayo.domain.repository.NoticeRepository
+import daily.dayo.domain.repository.PostRepository
+import daily.dayo.domain.repository.ReportRepository
+import daily.dayo.domain.repository.SearchRepository
 import retrofit2.Retrofit
 import javax.inject.Singleton
 

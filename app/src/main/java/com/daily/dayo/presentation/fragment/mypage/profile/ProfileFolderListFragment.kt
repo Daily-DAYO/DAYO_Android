@@ -13,9 +13,10 @@ import com.daily.dayo.DayoApplication
 import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentProfileFolderListBinding
-import com.daily.dayo.domain.model.Folder
 import com.daily.dayo.presentation.adapter.ProfileFolderListAdapter
 import com.daily.dayo.presentation.viewmodel.ProfileViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import daily.dayo.domain.model.Folder
 import kotlinx.coroutines.Dispatchers
 
 class ProfileFolderListFragment : Fragment() {

@@ -1,6 +1,6 @@
 package com.daily.dayo.data.datasource.remote.retrofit.factory
 
-import com.daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.NetworkResponse
 import retrofit2.Call
 import retrofit2.CallAdapter
 import retrofit2.Retrofit

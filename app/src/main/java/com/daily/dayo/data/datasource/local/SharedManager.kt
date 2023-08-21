@@ -5,9 +5,9 @@ import android.content.SharedPreferences
 import com.daily.dayo.common.PreferenceHelper
 import com.daily.dayo.common.PreferenceHelper.get
 import com.daily.dayo.common.PreferenceHelper.set
-import com.daily.dayo.domain.model.User
-import com.daily.dayo.domain.model.UserTokens
 import com.google.gson.JsonArray
+import daily.dayo.domain.model.User
+import daily.dayo.domain.model.UserTokens
 import org.json.JSONArray
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -26,10 +26,10 @@ import com.daily.dayo.common.*
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.extension.navigateSafe
 import com.daily.dayo.databinding.FragmentWriteBinding
-import com.daily.dayo.domain.model.Category
 import com.daily.dayo.presentation.adapter.WriteUploadImageListAdapter
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.domain.model.Category
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch

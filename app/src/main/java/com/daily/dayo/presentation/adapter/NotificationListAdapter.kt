@@ -19,8 +19,8 @@ import com.daily.dayo.R
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemNotificationBinding
-import com.daily.dayo.domain.model.Notification
-import com.daily.dayo.domain.model.Topic
+import daily.dayo.domain.model.Notification
+import daily.dayo.domain.model.Topic
 import com.daily.dayo.presentation.fragment.notification.NotificationFragmentDirections
 
 class NotificationListAdapter(private val requestManager: RequestManager) :
@@ -61,7 +61,7 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
         fun bind(notification: Notification?) {
             binding.notification = notification
 
-            if (notification?.image != null) {
+            notification?.image?.let {notificationImage ->
                 val layoutParams = ViewGroup.MarginLayoutParams(
                     ViewGroup.MarginLayoutParams.MATCH_PARENT,
                     ViewGroup.MarginLayoutParams.MATCH_PARENT
@@ -70,7 +70,7 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
                     requestManager = requestManager,
                     width = layoutParams.width,
                     height = layoutParams.width,
-                    imgName = notification.image,
+                    imgName = notificationImage,
                     imgView = binding.ivNotificationThumbnail
                 )
             }

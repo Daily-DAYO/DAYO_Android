@@ -1,6 +1,6 @@
 package com.daily.dayo.data.datasource.remote.folder
 
-import com.daily.dayo.domain.model.Privacy
+import daily.dayo.domain.model.Privacy
 import com.google.gson.annotations.SerializedName
 
 data class CreateFolderResponse(

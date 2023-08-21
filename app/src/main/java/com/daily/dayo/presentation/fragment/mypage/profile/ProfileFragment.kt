@@ -23,11 +23,11 @@ import com.daily.dayo.common.Status
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentProfileBinding
-import com.daily.dayo.domain.model.Folder
 import com.daily.dayo.presentation.adapter.ProfileFolderListAdapter
 import com.daily.dayo.presentation.adapter.ProfileFragmentPagerStateAdapter
 import com.daily.dayo.presentation.viewmodel.ProfileViewModel
 import com.google.android.material.tabs.TabLayoutMediator
+import daily.dayo.domain.model.Folder
 import kotlinx.coroutines.Dispatchers
 
 class ProfileFragment : Fragment() {
@@ -147,13 +147,13 @@ class ProfileFragment : Fragment() {
 
                 setFollowButtonClickListener()
                 profile.data?.let { profile ->
-                    profile.memberId?.let {
+                    profile.memberId?.let { memberId ->
                         setFollowerCountButtonClickListener(
-                            memberId = profile.memberId,
+                            memberId = memberId,
                             nickname = profile.nickname
                         )
                         setFollowingCountButtonClickListener(
-                            memberId = profile.memberId,
+                            memberId = memberId,
                             nickname = profile.nickname
                         )
                     }

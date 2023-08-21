@@ -6,10 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.model.Notification
-import com.daily.dayo.domain.usecase.notification.RequestAllAlarmListUseCase
-import com.daily.dayo.domain.usecase.notification.RequestIsCheckAlarmUseCase
+import daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.Notification
+import daily.dayo.domain.usecase.notification.RequestAllAlarmListUseCase
+import daily.dayo.domain.usecase.notification.RequestIsCheckAlarmUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

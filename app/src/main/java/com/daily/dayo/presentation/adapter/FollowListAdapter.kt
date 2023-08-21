@@ -13,7 +13,7 @@ import com.daily.dayo.common.GlideLoadUtil.FOLLOW_USER_THUMBNAIL_SIZE
 import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemFollowBinding
-import com.daily.dayo.domain.model.MyFollower
+import daily.dayo.domain.model.MyFollower
 import com.daily.dayo.presentation.fragment.mypage.follow.FollowFragmentDirections
 
 class FollowListAdapter(private val requestManager: RequestManager) :

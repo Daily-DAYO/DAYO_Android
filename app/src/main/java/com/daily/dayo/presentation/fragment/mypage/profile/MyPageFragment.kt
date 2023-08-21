@@ -93,13 +93,13 @@ class MyPageFragment : Fragment() {
                 }
 
                 profile.data?.let { profile ->
-                    profile.memberId?.let {
+                    profile.memberId?.let { memberId ->
                         setFollowerCountButtonClickListener(
-                            memberId = profile.memberId,
+                            memberId = memberId,
                             nickname = profile.nickname
                         )
                         setFollowingCountButtonClickListener(
-                            memberId = profile.memberId,
+                            memberId = memberId,
                             nickname = profile.nickname
                         )
                     }

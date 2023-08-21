@@ -6,15 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.databinding.FragmentProfileBookmarkPostListBinding
-import com.daily.dayo.domain.model.BookmarkPost
 import com.daily.dayo.presentation.adapter.ProfileBookmarkPostListAdapter
 import com.daily.dayo.presentation.viewmodel.ProfileViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import daily.dayo.domain.model.BookmarkPost
 import kotlinx.coroutines.Dispatchers
 
 class ProfileBookmarkPostListFragment : Fragment() {

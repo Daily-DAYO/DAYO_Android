@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemNoticePostBinding
-import com.daily.dayo.domain.model.Notice
+import daily.dayo.domain.model.Notice
 import com.daily.dayo.presentation.fragment.setting.notice.NoticeListFragmentDirections
 
 class NoticeListAdapter :

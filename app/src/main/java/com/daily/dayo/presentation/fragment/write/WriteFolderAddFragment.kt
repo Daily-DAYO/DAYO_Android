@@ -19,7 +19,7 @@ import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentWriteFolderAddBinding
-import com.daily.dayo.domain.model.Privacy
+import daily.dayo.domain.model.Privacy
 import com.daily.dayo.presentation.viewmodel.WriteViewModel
 
 class WriteFolderAddFragment : Fragment() {

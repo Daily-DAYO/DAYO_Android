@@ -1,8 +1,8 @@
 package com.daily.dayo.data.datasource.remote.post
 
 import com.daily.dayo.data.datasource.remote.heart.DeleteHeartResponse
-import com.daily.dayo.domain.model.Category
-import com.daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.Category
+import daily.dayo.domain.model.NetworkResponse
 import okhttp3.MultipartBody
 import retrofit2.http.*
 

@@ -11,7 +11,7 @@ import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.di.MainDispatcher
 import com.daily.dayo.databinding.ItemProfileFolderBinding
-import com.daily.dayo.domain.model.Folder
+import daily.dayo.domain.model.Folder
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

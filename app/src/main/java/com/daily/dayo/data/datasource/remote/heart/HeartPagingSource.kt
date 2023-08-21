@@ -3,8 +3,8 @@ package com.daily.dayo.data.datasource.remote.heart
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.daily.dayo.data.mapper.toLikePost
-import com.daily.dayo.domain.model.LikePost
-import com.daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.LikePost
+import daily.dayo.domain.model.NetworkResponse
 
 class HeartPagingSource(
     private val apiService: HeartApiService,
@@ -23,7 +23,7 @@ class HeartPagingSource(
                         return LoadResult.Page(
                             data = ApiResponse.body!!.data.map { it.toLikePost() },
                             prevKey = if(nextPageNumber == 0) null else nextPageNumber - size,
-                            nextKey = if (ApiResponse.body.last || ApiResponse.body.count == 0) null else nextPageNumber + size
+                            nextKey = if (ApiResponse.body!!.last || ApiResponse.body!!.count == 0) null else nextPageNumber + size
                         )
                     }
                     else -> {

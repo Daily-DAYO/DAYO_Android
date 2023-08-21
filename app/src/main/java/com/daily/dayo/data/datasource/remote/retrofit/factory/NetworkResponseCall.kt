@@ -1,6 +1,6 @@
 package com.daily.dayo.data.datasource.remote.retrofit.factory
 
-import com.daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.NetworkResponse
 import okhttp3.Request
 import okio.Timeout
 import retrofit2.Call

@@ -23,8 +23,8 @@ import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.common.toByteArray
 import com.daily.dayo.di.IoDispatcher
 import com.daily.dayo.databinding.FragmentHomeNewPostListBinding
-import com.daily.dayo.domain.model.Category
-import com.daily.dayo.domain.model.Post
+import daily.dayo.domain.model.Category
+import daily.dayo.domain.model.Post
 import com.daily.dayo.presentation.adapter.HomeNewAdapter
 import com.daily.dayo.presentation.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint

@@ -6,9 +6,9 @@ import androidx.paging.PagingData
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.data.datasource.remote.search.SearchApiService
 import com.daily.dayo.data.datasource.remote.search.SearchPagingSource
-import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.model.Search
-import com.daily.dayo.domain.repository.SearchRepository
+import daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.Search
+import daily.dayo.domain.repository.SearchRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

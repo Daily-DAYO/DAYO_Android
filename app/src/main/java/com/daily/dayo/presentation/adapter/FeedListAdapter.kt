@@ -18,8 +18,8 @@ import com.daily.dayo.common.GlideLoadUtil.loadImageView
 import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemFeedPostBinding
-import com.daily.dayo.domain.model.Post
-import com.daily.dayo.domain.model.categoryKR
+import daily.dayo.domain.model.Post
+import daily.dayo.domain.model.categoryKR
 import com.daily.dayo.presentation.fragment.feed.FeedFragmentDirections
 import com.google.android.material.chip.Chip
 
@@ -130,13 +130,19 @@ class FeedListAdapter(private val requestManager: RequestManager) :
                 postId = post?.postId!!,
                 memberId = post.memberId!!
             )
-            setOnUserProfileClickListener(postMemberId = post.memberId)
-            setOnPostClickListener(postId = post.postId, nickname = post.nickname)
+            post.memberId?.let {memberId ->
+                setOnUserProfileClickListener(postMemberId = memberId)
+            }
+            post.postId?.let { postId ->
+                setOnPostClickListener(postId = postId, nickname = post.nickname)
+            }
 
             // 해시태그
             if (post.hashtags?.isNotEmpty() == true) {
                 binding.layoutFeedPostTagList.visibility = View.VISIBLE
-                setTagList(post.hashtags)
+                post.hashtags?.let { hashTags ->
+                    setTagList(hashTags)
+                }
             } else {
                 binding.layoutFeedPostTagList.visibility = View.GONE
             }

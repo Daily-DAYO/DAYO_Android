@@ -3,8 +3,8 @@ package com.daily.dayo.data.datasource.remote.search
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.daily.dayo.data.mapper.toSearch
-import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.model.Search
+import daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.Search
 
 class SearchPagingSource(
     private val apiService: SearchApiService,
@@ -23,7 +23,7 @@ class SearchPagingSource(
                         return LoadResult.Page(
                             data = ApiResponse.body!!.data.map { it.toSearch() },
                             prevKey = if (nextPageNumber == 0) null else nextPageNumber - size,
-                            nextKey = if (ApiResponse.body.last || ApiResponse.body.count == 0) null else nextPageNumber + size
+                            nextKey = if (ApiResponse.body!!.last || ApiResponse.body!!.count == 0) null else nextPageNumber + size
                         )
                     }
                     else -> {

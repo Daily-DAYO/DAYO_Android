@@ -753,6 +753,6 @@
         tools:layout="@layout/fragment_notice_detail">
         <argument
             android:name="notice"
-            app:argType="com.daily.dayo.domain.model.Notice" />
+            app:argType="daily.dayo.domain.model.Notice" />
     </fragment>
 </navigation>

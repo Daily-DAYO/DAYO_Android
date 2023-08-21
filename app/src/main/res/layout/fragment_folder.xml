@@ -17,7 +17,7 @@
 
         <variable
             name="folder"
-            type="com.daily.dayo.domain.model.FolderInfo" />
+            type="daily.dayo.domain.model.FolderInfo" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

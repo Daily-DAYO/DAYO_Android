@@ -1,6 +1,5 @@
 package com.daily.dayo.presentation.fragment.home
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,11 +21,11 @@ import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.common.toByteArray
 import com.daily.dayo.databinding.FragmentHomeDayoPickPostListBinding
-import com.daily.dayo.domain.model.Category
-import com.daily.dayo.domain.model.Post
 import com.daily.dayo.presentation.adapter.HomeDayoPickAdapter
 import com.daily.dayo.presentation.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.domain.model.Category
+import daily.dayo.domain.model.Post
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -18,10 +18,10 @@ import com.daily.dayo.common.ReplaceUnicode
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentSearchResultBinding
-import com.daily.dayo.domain.model.Search
 import com.daily.dayo.presentation.adapter.SearchTagResultPostAdapter
 import com.daily.dayo.presentation.viewmodel.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.domain.model.Search
 
 @AndroidEntryPoint
 class SearchResultFragment : Fragment() {

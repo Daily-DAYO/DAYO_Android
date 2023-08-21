@@ -9,15 +9,15 @@ import com.daily.dayo.data.datasource.remote.folder.FolderInfoResponse
 import com.daily.dayo.data.datasource.remote.folder.FolderPostDto
 import com.daily.dayo.data.datasource.remote.folder.ListAllFolderResponse
 import com.daily.dayo.data.datasource.remote.folder.ListAllMyFolderResponse
-import com.daily.dayo.domain.model.Folder
-import com.daily.dayo.domain.model.FolderCreateInPostResponse
-import com.daily.dayo.domain.model.FolderCreateResponse
-import com.daily.dayo.domain.model.FolderEditResponse
-import com.daily.dayo.domain.model.FolderInfo
-import com.daily.dayo.domain.model.FolderOrder
-import com.daily.dayo.domain.model.FolderPost
-import com.daily.dayo.domain.model.Folders
-import com.daily.dayo.domain.model.FoldersMine
+import daily.dayo.domain.model.Folder
+import daily.dayo.domain.model.FolderCreateInPostResponse
+import daily.dayo.domain.model.FolderCreateResponse
+import daily.dayo.domain.model.FolderEditResponse
+import daily.dayo.domain.model.FolderInfo
+import daily.dayo.domain.model.FolderOrder
+import daily.dayo.domain.model.FolderPost
+import daily.dayo.domain.model.Folders
+import daily.dayo.domain.model.FoldersMine
 
 fun CreateFolderResponse.toFolderCreateResponse(): FolderCreateResponse =
     FolderCreateResponse(folderId = id)

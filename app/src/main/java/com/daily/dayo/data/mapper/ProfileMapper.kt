@@ -3,7 +3,7 @@ package com.daily.dayo.data.mapper
 import com.daily.dayo.DayoApplication
 import com.daily.dayo.data.datasource.remote.member.MemberMyProfileResponse
 import com.daily.dayo.data.datasource.remote.member.MemberOtherProfileResponse
-import com.daily.dayo.domain.model.Profile
+import daily.dayo.domain.model.Profile
 
 fun MemberMyProfileResponse.toProfile(): Profile =
     Profile(

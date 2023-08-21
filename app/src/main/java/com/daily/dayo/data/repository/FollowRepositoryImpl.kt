@@ -5,12 +5,12 @@ import com.daily.dayo.data.mapper.toFollowCreateResponse
 import com.daily.dayo.data.mapper.toFollowUpCreateResponse
 import com.daily.dayo.data.mapper.toFollowers
 import com.daily.dayo.data.mapper.toFollowings
-import com.daily.dayo.domain.model.FollowCreateResponse
-import com.daily.dayo.domain.model.FollowUpCreateResponse
-import com.daily.dayo.domain.model.Followers
-import com.daily.dayo.domain.model.Followings
-import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.repository.FollowRepository
+import daily.dayo.domain.model.FollowCreateResponse
+import daily.dayo.domain.model.FollowUpCreateResponse
+import daily.dayo.domain.model.Followers
+import daily.dayo.domain.model.Followings
+import daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.repository.FollowRepository
 import javax.inject.Inject
 
 class FollowRepositoryImpl @Inject constructor(

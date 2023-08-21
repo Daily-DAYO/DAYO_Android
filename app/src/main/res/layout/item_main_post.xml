@@ -7,7 +7,7 @@
 
         <variable
             name="post"
-            type="com.daily.dayo.domain.model.Post" />
+            type="daily.dayo.domain.model.Post" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

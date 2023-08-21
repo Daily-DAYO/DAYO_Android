@@ -8,10 +8,10 @@ import com.daily.dayo.data.datasource.remote.heart.HeartPagingSource
 import com.daily.dayo.data.datasource.remote.heart.HeartPostUsersPagingSource
 import com.daily.dayo.data.mapper.toLikePostDeleteResponse
 import com.daily.dayo.data.mapper.toLikePostResponse
-import com.daily.dayo.domain.model.LikePostDeleteResponse
-import com.daily.dayo.domain.model.LikePostResponse
-import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.repository.HeartRepository
+import daily.dayo.domain.model.LikePostDeleteResponse
+import daily.dayo.domain.model.LikePostResponse
+import daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.repository.HeartRepository
 import javax.inject.Inject
 
 class HeartRepositoryImpl @Inject constructor(

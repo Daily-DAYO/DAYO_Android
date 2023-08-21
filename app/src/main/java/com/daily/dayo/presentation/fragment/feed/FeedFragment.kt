@@ -8,6 +8,9 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
@@ -18,12 +21,13 @@ import com.daily.dayo.common.ReplaceUnicode.trimBlankText
 import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFeedBinding
-import com.daily.dayo.domain.model.Post
 import com.daily.dayo.presentation.adapter.FeedListAdapter
 import com.daily.dayo.presentation.viewmodel.FeedViewModel
 import com.daily.dayo.presentation.viewmodel.SearchViewModel
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.domain.model.Post
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FeedFragment : Fragment() {

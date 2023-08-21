@@ -14,7 +14,7 @@ import com.daily.dayo.common.GlideLoadUtil.COMMENT_USER_THUMBNAIL_SIZE
 import com.daily.dayo.common.GlideLoadUtil.loadImageViewProfile
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.ItemPostCommentBinding
-import com.daily.dayo.domain.model.Comment
+import daily.dayo.domain.model.Comment
 import com.daily.dayo.presentation.fragment.post.PostFragmentDirections
 import com.google.android.material.snackbar.Snackbar
 

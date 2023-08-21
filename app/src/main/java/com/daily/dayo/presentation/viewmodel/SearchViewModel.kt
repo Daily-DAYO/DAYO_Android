@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.daily.dayo.domain.model.Search
-import com.daily.dayo.domain.usecase.search.*
+import daily.dayo.domain.model.Search
+import daily.dayo.domain.usecase.search.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

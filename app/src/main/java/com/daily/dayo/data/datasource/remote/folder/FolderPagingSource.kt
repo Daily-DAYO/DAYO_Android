@@ -2,13 +2,9 @@ package com.daily.dayo.data.datasource.remote.folder
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.daily.dayo.data.datasource.remote.search.SearchApiService
 import com.daily.dayo.data.mapper.toFolderPost
-import com.daily.dayo.data.mapper.toSearch
-import com.daily.dayo.domain.model.Folder
-import com.daily.dayo.domain.model.FolderPost
-import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.model.Search
+import daily.dayo.domain.model.FolderPost
+import daily.dayo.domain.model.NetworkResponse
 
 class FolderPagingSource(
     private val apiService: FolderApiService,
@@ -27,7 +23,7 @@ class FolderPagingSource(
                         return LoadResult.Page(
                             data = ApiResponse.body!!.posts.map { it.toFolderPost() },
                             prevKey = if (nextPageNumber == 0) null else nextPageNumber - size,
-                            nextKey = if (ApiResponse.body.last || ApiResponse.body.count == 0) null else nextPageNumber + size
+                            nextKey = if (ApiResponse.body!!.last || ApiResponse.body!!.count == 0) null else nextPageNumber + size
                         )
                     }
                     else -> {

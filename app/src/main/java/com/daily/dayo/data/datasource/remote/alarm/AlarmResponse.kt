@@ -1,7 +1,7 @@
 package com.daily.dayo.data.datasource.remote.alarm
 
-import com.daily.dayo.domain.model.Topic
 import com.google.gson.annotations.SerializedName
+import daily.dayo.domain.model.Topic
 
 data class ListAllAlarmResponse(
     @SerializedName("count")

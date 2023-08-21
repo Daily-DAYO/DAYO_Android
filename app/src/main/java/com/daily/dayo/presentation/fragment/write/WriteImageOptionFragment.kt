@@ -26,6 +26,8 @@ import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.dialog.LoadingAlertDialog.resizeDialogFragment
 import com.daily.dayo.common.dialog.LoadingAlertDialog.showLoadingDialog
+import com.daily.dayo.common.extension.makeToast
+import com.daily.dayo.common.extension.showToast
 import com.daily.dayo.common.image.ImageUploadUtil.extension
 import com.daily.dayo.common.image.ImageUploadUtil.isPermitExtension
 import com.daily.dayo.common.setOnDebounceClickListener
@@ -46,6 +48,7 @@ class WriteImageOptionFragment : DialogFragment() {
     private val writeViewModel by activityViewModels<WriteViewModel>()
     private lateinit var currentTakenPhotoPath: String
     private val loadingAlertDialog by lazy { LoadingAlertDialog.createLoadingDialog(requireContext()) }
+    private var warningToast: Toast? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -101,11 +104,9 @@ class WriteImageOptionFragment : DialogFragment() {
                     }
                     map[getString(R.string.permission_fail_second)]?.let {
                         // request denied , request again
-                        Toast.makeText(
-                            requireContext(),
-                            getString(R.string.permission_fail_message_gallery),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        warningToast = requireContext()
+                            .makeToast(getString(R.string.permission_fail_message_gallery))
+                        warningToast.showToast()
                         ActivityCompat.requestPermissions(
                             requireActivity(),
                             PERMISSIONS_GALLERY,
@@ -118,14 +119,13 @@ class WriteImageOptionFragment : DialogFragment() {
                             it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             it.data = uri
                         }
-                        Toast.makeText(
-                            requireContext(),
-                            getString(R.string.permission_fail_final_message_gallery),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        warningToast = requireContext()
+                            .makeToast(getString(R.string.permission_fail_final_message_gallery))
+                        warningToast.showToast()
                         //request denied ,send to settings
                     }
                 }
+
                 else -> {
                     //All request are permitted
                     openGallery()
@@ -150,11 +150,9 @@ class WriteImageOptionFragment : DialogFragment() {
                     var uriIdx = 0
                     var count = data.clipData!!.itemCount
                     if (count >= remainingNum) {
-                        Toast.makeText(
-                            requireContext(),
-                            getString(R.string.write_post_upload_alert_message_image_fail_max),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        warningToast = requireContext()
+                            .makeToast(getString(R.string.write_post_upload_alert_message_image_fail_max))
+                        warningToast.showToast()
                     }
                     // 선택한 갯수 만큼 loop
                     while (count > 0) {
@@ -164,11 +162,9 @@ class WriteImageOptionFragment : DialogFragment() {
                             if (imageUri.extension.isPermitExtension) {
                                 writeViewModel.addUploadImage(imageUri.toString(), true)
                             } else {
-                                Toast.makeText(
-                                    requireContext(),
-                                    getString(R.string.write_post_upload_alert_message_image_fail_file_extension),
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                warningToast = requireContext()
+                                    .makeToast(getString(R.string.write_post_upload_alert_message_image_fail_file_extension))
+                                warningToast.showToast()
                             }
                         } else break
 
@@ -195,11 +191,9 @@ class WriteImageOptionFragment : DialogFragment() {
                                     showLoadingDialog(loadingAlertDialog)
                                     resizeDialogFragment(requireContext(), loadingAlertDialog, 0.8f)
                                 } else {
-                                    Toast.makeText(
-                                        requireContext(),
-                                        getString(R.string.write_post_upload_alert_message_image_fail_file_extension),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    warningToast = requireContext()
+                                        .makeToast(getString(R.string.write_post_upload_alert_message_image_fail_file_extension))
+                                    warningToast.showToast()
                                 }
                             }
                         }

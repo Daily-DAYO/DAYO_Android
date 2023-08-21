@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.usecase.report.RequestSaveMemberReportUseCase
-import com.daily.dayo.domain.usecase.report.RequestSavePostReportUseCase
+import daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.usecase.report.RequestSaveMemberReportUseCase
+import daily.dayo.domain.usecase.report.RequestSavePostReportUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

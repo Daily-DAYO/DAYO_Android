@@ -22,9 +22,9 @@ import com.daily.dayo.common.autoCleared
 import com.daily.dayo.common.dialog.LoadingAlertDialog
 import com.daily.dayo.common.setOnDebounceClickListener
 import com.daily.dayo.databinding.FragmentFolderSettingBinding
-import com.daily.dayo.domain.model.FolderOrder
 import com.daily.dayo.presentation.adapter.FolderSettingAdapter
 import com.daily.dayo.presentation.viewmodel.FolderViewModel
+import daily.dayo.domain.model.FolderOrder
 import kotlinx.coroutines.launch
 
 class FolderSettingFragment : Fragment() {
@@ -113,7 +113,12 @@ class FolderSettingFragment : Fragment() {
                         val size = folderList.size
                         folderOrderList = mutableListOf()
                         for (i in 0 until size) {
-                            folderOrderList.add(FolderOrder(folderList[i].folderId!!, i))
+                            folderOrderList.add(
+                                FolderOrder(
+                                    folderList[i].folderId!!,
+                                    i
+                                )
+                            )
                         }
                         folderSettingAdapter?.submitList(folderList)
                     }

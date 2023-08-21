@@ -4,12 +4,12 @@ import com.daily.dayo.data.datasource.remote.member.*
 import com.daily.dayo.data.mapper.toProfile
 import com.daily.dayo.data.mapper.toUserTokenResponse
 import com.daily.dayo.data.mapper.toUsersBlocked
-import com.daily.dayo.domain.model.NetworkResponse
-import com.daily.dayo.domain.model.Profile
-import com.daily.dayo.domain.model.User
-import com.daily.dayo.domain.model.UserTokens
-import com.daily.dayo.domain.model.UsersBlocked
-import com.daily.dayo.domain.repository.MemberRepository
+import daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.Profile
+import daily.dayo.domain.model.User
+import daily.dayo.domain.model.UserTokens
+import daily.dayo.domain.model.UsersBlocked
+import daily.dayo.domain.repository.MemberRepository
 import okhttp3.MultipartBody
 import javax.inject.Inject
 

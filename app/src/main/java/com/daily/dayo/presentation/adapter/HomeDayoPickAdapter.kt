@@ -26,7 +26,7 @@ import com.daily.dayo.common.toBitmap
 import com.daily.dayo.di.IoDispatcher
 import com.daily.dayo.di.MainDispatcher
 import com.daily.dayo.databinding.ItemMainPostBinding
-import com.daily.dayo.domain.model.Post
+import daily.dayo.domain.model.Post
 import com.daily.dayo.presentation.fragment.home.HomeFragmentDirections
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher

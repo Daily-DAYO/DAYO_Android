@@ -5,11 +5,11 @@ import com.daily.dayo.data.datasource.remote.follow.CreateFollowUpResponse
 import com.daily.dayo.data.datasource.remote.follow.ListAllFollowerResponse
 import com.daily.dayo.data.datasource.remote.follow.ListAllFollowingResponse
 import com.daily.dayo.data.datasource.remote.follow.MyFollowerDto
-import com.daily.dayo.domain.model.FollowCreateResponse
-import com.daily.dayo.domain.model.FollowUpCreateResponse
-import com.daily.dayo.domain.model.Followers
-import com.daily.dayo.domain.model.Followings
-import com.daily.dayo.domain.model.MyFollower
+import daily.dayo.domain.model.FollowCreateResponse
+import daily.dayo.domain.model.FollowUpCreateResponse
+import daily.dayo.domain.model.Followers
+import daily.dayo.domain.model.Followings
+import daily.dayo.domain.model.MyFollower
 
 fun CreateFollowResponse.toFollowCreateResponse(): FollowCreateResponse =
     FollowCreateResponse(followerId = followerId, isAccept = isAccept, memberId = memberId)
