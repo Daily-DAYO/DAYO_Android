@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".presentation.fragment.post.PostOptionFragment"
+    tools:context="daily.dayo.presentation.fragment.post.PostOptionFragment"
     android:orientation="vertical"
     android:paddingBottom="18dp">
 

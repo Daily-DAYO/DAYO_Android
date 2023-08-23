@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white_FFFFFF"
-    tools:context=".presentation.fragment.account.signup.SignupEmailSetEmailAddressFragment">
+    tools:context="daily.dayo.presentation.fragment.account.signup.SignupEmailSetEmailAddressFragment">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_signup_email_set_email_address_action_bar"
         android:layout_width="match_parent"

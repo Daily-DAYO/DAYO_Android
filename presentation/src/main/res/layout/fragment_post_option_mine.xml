@@ -5,7 +5,7 @@
     android:id="@+id/layout_post_option_mine"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".presentation.fragment.post.PostOptionMineFragment"
+    tools:context="daily.dayo.presentation.fragment.post.PostOptionMineFragment"
     android:paddingBottom="18dp" >
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_post_option_mine_modify"

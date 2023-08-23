@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.fragment.mypage.profile.ProfileEditFragment"
+    tools:context="daily.dayo.presentation.fragment.mypage.profile.ProfileEditFragment"
     android:background="@color/white_FFFFFF">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_profile_edit_action_bar"

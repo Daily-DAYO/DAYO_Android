@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white_FFFFFF"
-    tools:context=".presentation.fragment.write.WriteFolderFragment">
+    tools:context="daily.dayo.presentation.fragment.mypage.folder.FolderSettingFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_write_folder_action_bar"
@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/btn_write_folder_back"
+            android:id="@+id/btn_folder_setting_back"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
@@ -29,17 +29,29 @@
             tools:ignore="ContentDescription" />
 
         <TextView
-            android:id="@+id/tv_write_post_folder_title"
+            android:id="@+id/tv_folder_setting_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/write_post_folder_title"
             android:textColor="@color/gray_1_313131"
             android:textSize="16dp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/btn_write_folder_back"
+            app:layout_constraintBottom_toBottomOf="@id/btn_folder_setting_back"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@id/btn_write_folder_back" />
+            app:layout_constraintTop_toTopOf="@id/btn_folder_setting_back" />
+
+        <ImageButton
+            android:id="@+id/btn_folder_setting_change_order_option"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="8dp"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:src="@drawable/ic_change_order_option"
+            app:layout_constraintBottom_toBottomOf="@id/btn_folder_setting_back"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btn_folder_setting_back" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -51,10 +63,9 @@
         app:layout_constraintTop_toBottomOf="@id/layout_write_folder_action_bar">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_write_folder_list_saved"
+            android:id="@+id/rv_folder_setting_list_saved"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:overScrollMode="never"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -63,7 +74,7 @@
             tools:listitem="@layout/item_folder_list" />
 
         <TextView
-            android:id="@+id/tv_write_folder_add"
+            android:id="@+id/tv_folder_setting_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="19dp"
@@ -72,6 +83,24 @@
             android:textColor="@color/primary_green_23C882"
             android:textSize="15dp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rv_write_folder_list_saved" />
+            app:layout_constraintTop_toBottomOf="@id/rv_folder_setting_list_saved" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_folder_setting_save"
+        android:layout_width="match_parent"
+        android:layout_height="53dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/button_default_green"
+        android:stateListAnimator="@null"
+        android:text="저장"
+        android:textColor="@color/white_FFFFFF"
+        android:textSize="16dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

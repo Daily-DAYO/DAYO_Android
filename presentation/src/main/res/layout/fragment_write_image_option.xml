@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".presentation.fragment.account.signup.SignupEmailSetProfileImageOptionFragment"
+    tools:context="daily.dayo.presentation.fragment.write.WriteImageOptionFragment"
     android:paddingBottom="18dp">
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_signup_email_set_profile_image_option_select_gallery"
+        android:id="@+id/layout_write_image_option_select_gallery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/dialog_option_default_top"
@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
         <TextView
-            android:id="@+id/tv_signup_email_set_profile_image_option_select_gallery"
+            android:id="@+id/tv_write_image_option_select_gallery"
             android:text="@string/image_option_gallery"
             android:textSize="14dp"
             android:textColor="@color/primary_green_23C882"
@@ -31,30 +31,30 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_signup_email_set_profile_image_option_take_photo"
+        android:id="@+id/layout_write_image_option_take_photo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/dialog_option_default_bottom"
         android:backgroundTint="@color/white_FFFFFF"
-        app:layout_constraintTop_toBottomOf="@id/layout_signup_email_set_profile_image_option_select_gallery"
+        app:layout_constraintTop_toBottomOf="@id/layout_write_image_option_select_gallery"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
         <View
-            android:id="@+id/view_signup_email_set_profile_image_option_take_photo_horizontal_line"
+            android:id="@+id/view_write_image_option_take_photo_horizontal_line"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/gray_5_E8EAEE"
+            android:layout_height="0.5dp"
+            android:background="@color/gray_4_C5CAD2"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
         <TextView
-            android:id="@+id/tv_signup_email_set_profile_image_option_take_photo"
+            android:id="@+id/tv_write_image_option_take_photo"
             android:text="@string/image_option_camera"
             android:textSize="14dp"
             android:textColor="@color/gray_1_313131"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/view_signup_email_set_profile_image_option_take_photo_horizontal_line"
+            app:layout_constraintTop_toBottomOf="@id/view_write_image_option_take_photo_horizontal_line"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

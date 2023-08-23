@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.fragment.policy.PolicyFragment">
+    tools:context="daily.dayo.presentation.fragment.policy.PolicyFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_policy_action_bar"
