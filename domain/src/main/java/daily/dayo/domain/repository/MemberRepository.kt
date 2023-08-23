@@ -42,4 +42,12 @@ interface MemberRepository {
     suspend fun requestChangePassword(email: String, password: String): NetworkResponse<Void>
     suspend fun requestSettingChangePassword(email: String, password: String): NetworkResponse<Void>
     suspend fun requestBlockList(): NetworkResponse<UsersBlocked>
+    fun clearClearCurrentUser()
+    fun requestCurrentUserInfo(): User
+    fun saveCurrentUserInfo(userInfo: Any?)
+    fun saveCurrentUserAccessToken(accessToken: String)
+    fun requestCurrentUserNotiDevicePermit(): Boolean
+    fun requestCurrentUserNotiDevicePermit(isPermit: Boolean)
+    fun requestCurrentUserNotiNoticePermit(): Boolean
+    fun requestCurrentUserNotiNoticePermit(isPermit: Boolean)
 }
