@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.fragment.mypage.folder.FolderSettingAddFragment"
+    tools:context="daily.dayo.presentation.fragment.mypage.folder.FolderSettingAddFragment"
     android:background="@color/white_FFFFFF">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_folder_setting_add_action_bar"

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white_FFFFFF"
-    tools:context=".presentation.fragment.account.signin.LoginFragment">
+    tools:context="daily.dayo.presentation.fragment.account.signin.LoginFragment">
     <ImageView
         android:id= "@+id/img_login_dayo_logo"
         android:layout_width="wrap_content"

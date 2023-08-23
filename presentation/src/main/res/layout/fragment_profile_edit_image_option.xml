@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="16dp"
-    tools:context=".presentation.fragment.mypage.profile.ProfileEditImageOptionFragment">
+    tools:context="daily.dayo.presentation.fragment.mypage.profile.ProfileEditImageOptionFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_my_profile_edit_image_option_select_gallery"
