@@ -113,30 +113,41 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageView
-            android:id="@+id/img_feed_post"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_feed_post_content"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintDimensionRatio="1"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layout_feed_post_info" />
+            app:layout_constraintTop_toBottomOf="@+id/layout_feed_post_info">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/view_feed_post_image_indicators"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="14dp"
-            app:layout_constraintBottom_toBottomOf="@id/img_feed_post"
-            app:layout_constraintEnd_toEndOf="@+id/img_feed_post"
-            app:layout_constraintStart_toStartOf="@+id/img_feed_post" />
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/vp_feed_post_image"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/view_feed_post_image_indicators"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="@id/vp_feed_post_image"
+                app:layout_constraintEnd_toEndOf="@+id/vp_feed_post_image"
+                app:layout_constraintStart_toStartOf="@+id/vp_feed_post_image" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_feed_post_reaction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/img_feed_post"
+            app:layout_constraintTop_toBottomOf="@id/layout_feed_post_content"
             tools:layout_editor_absoluteX="0dp">
 
             <ImageButton
