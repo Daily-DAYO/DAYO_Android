@@ -209,10 +209,7 @@ class FeedListAdapter(private val requestManager: RequestManager, private val cu
         private fun setImageSlider() {
             glideRequestManager = Glide.with(binding.root)
             postImageSliderAdapter = glideRequestManager?.let { requestManager ->
-                PostImageSliderAdapter(
-                    requestManager = requestManager,
-                    mainDispatcher = Dispatchers.Main
-                )
+                PostImageSliderAdapter(requestManager = requestManager)
             }
 
             with(binding.vpFeedPostImage) {
