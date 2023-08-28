@@ -133,8 +133,8 @@ data class FeedDto(
     val memberId: String,
     @SerializedName("nickname")
     val nickname: String?,
-    @SerializedName("thumbnailImage")
-    val thumbnailImage: String,
+    @SerializedName("images")
+    val images: List<String>,
     @SerializedName("userProfileImage")
     val userProfileImage: String
 )

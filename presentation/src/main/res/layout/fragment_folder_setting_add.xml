@@ -140,7 +140,6 @@
             android:hint="@string/hint_folder_setting_add_set_subheading"
             android:singleLine="true"
             android:textSize="16dp"
-            android:maxLength="20"
             android:backgroundTint="@drawable/selector_edittext_background_stroke"
             android:textColor="@color/gray_1_313131"
             android:textColorHint="@color/gray_4_C5CAD2"
