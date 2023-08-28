@@ -1,4 +1,4 @@
-package com.daily.dayo.presentation.fragment.account.signin
+package daily.dayo.presentation.fragment.account.signin
 
 import android.app.AlertDialog
 import android.content.ContentValues

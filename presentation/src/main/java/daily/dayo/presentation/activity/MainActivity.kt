@@ -1,4 +1,4 @@
-package com.daily.dayo.presentation.activity
+package daily.dayo.presentation.activity
 
 import android.Manifest
 import android.content.Intent

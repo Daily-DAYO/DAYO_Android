@@ -1,4 +1,4 @@
-package com.daily.dayo.presentation.fragment.setting.information
+package daily.dayo.presentation.fragment.setting.information
 
 import android.os.Bundle
 import android.view.LayoutInflater
