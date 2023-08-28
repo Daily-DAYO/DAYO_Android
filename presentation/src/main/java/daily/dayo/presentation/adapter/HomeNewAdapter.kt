@@ -1,4 +1,4 @@
-package com.daily.dayo.presentation.adapter
+package daily.dayo.presentation.adapter
 
 import android.animation.Animator
 import android.graphics.Bitmap
