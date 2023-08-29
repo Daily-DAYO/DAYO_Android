@@ -1,2 +1,5 @@
 rootProject.name = "DAYO"
 include ':app'
+include ':domain'
+include ':data'
+include ':presentation'

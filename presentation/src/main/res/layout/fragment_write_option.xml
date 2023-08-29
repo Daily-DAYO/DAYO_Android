@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_bottom_sheet_default"
+    tools:context="daily.dayo.presentation.fragment.write.WriteOptionFragment">
+
+    <ImageView
+        android:id="@+id/img_write_option_swipe_top_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="9dp"
+        android:src="@drawable/ic_swipe_top_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_write_option_folder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="18dp"
+        android:paddingTop="31dp"
+        android:paddingBottom="23dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/img_write_option_swipe_top_bar">
+
+        <TextView
+            android:id="@+id/tv_write_option_title_folder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/write_option_title_folder"
+            android:textColor="@color/gray_1_313131"
+            android:textSize="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/img_write_option_icon_folder"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingStart="15dp"
+            android:src="@drawable/ic_right_sign_light_gray"
+            app:layout_constraintBottom_toBottomOf="@id/tv_write_option_title_folder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_write_option_title_folder" />
+
+        <TextView
+            android:id="@+id/tv_write_option_description_folder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/write_option_description_folder"
+            android:textColor="@color/gray_3_9FA5AE"
+            android:textSize="15dp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_write_option_title_folder"
+            app:layout_constraintEnd_toStartOf="@id/img_write_option_icon_folder"
+            app:layout_constraintTop_toTopOf="@id/tv_write_option_title_folder" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/view_folder_horizontal_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray_5_E8EAEE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_write_option_folder" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_write_option_tag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="18dp"
+        android:paddingTop="18dp"
+        android:paddingBottom="23dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view_folder_horizontal_line">
+
+        <TextView
+            android:id="@+id/tv_write_option_title_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="@string/write_option_title_tag"
+            android:textColor="@color/gray_1_313131"
+            android:textSize="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_write_option_description_tag"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="21dp"
+            android:layout_marginTop="5dp"
+            android:breakStrategy="high_quality"
+            android:gravity="end"
+            android:hint="@string/write_option_description_tag"
+            android:textColorHint="@color/gray_3_9FA5AE"
+            android:textSize="15dp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toStartOf="@id/img_write_option_icon_tag"
+            app:layout_constraintStart_toEndOf="@+id/tv_write_option_title_tag"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/layout_write_option_tag_list_saved"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="21dp"
+            app:alignContent="stretch"
+            app:alignItems="stretch"
+            app:flexWrap="wrap"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/img_write_option_icon_tag"
+            app:layout_constraintStart_toEndOf="@+id/tv_write_option_title_tag"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipgroup_write_option_tag_list_saved"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </com.google.android.flexbox.FlexboxLayout>
+
+        <ImageView
+            android:id="@+id/img_write_option_icon_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:paddingStart="15dp"
+            android:paddingBottom="5dp"
+            android:src="@drawable/ic_right_sign_light_gray"
+            app:layout_constraintBottom_toBottomOf="@id/tv_write_option_title_tag"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_write_option_title_tag" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_write_option_confirm"
+        style="@style/Animation.Design.BottomSheetDialog"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="18dp"
+        android:background="@drawable/button_default_green"
+        android:stateListAnimator="@null"
+        android:text="@string/upload"
+        android:textColor="@color/white_FFFFFF"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_write_option_tag" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
