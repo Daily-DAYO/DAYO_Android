@@ -41,14 +41,8 @@ jobs:
           echo '${{ secrets.KEY_STORE_ENCODED }}' | base64 -d > ./dayo_keystore
           echo '${{ secrets.LOCAL_PROPERTIES }}' > ./local.properties
           echo '${{ secrets.GRADLE_PROPERTIES }}' > ./gradle.properties
-
-      - name: Decrypt secrets.tar.gpg
-        run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase="$SECRET_GPG_PASSWORD" --output secrets.tar secrets.tar.gpg
-        env:
-          SECRET_GPG_PASSWORD: ${{ secrets.SECRET_GPG_PASSWORD }}
-
-      - name: Unzip secrets.tar
-        run: tar xvf secrets.tar
+          echo '${{ secrets.SENTRY_PROPERTIES }}' > ./sentry.properties
+          echo '${{ secrets.SENTRY_PROPERTIES }}' > ./app/src/main/resources/sentry.properties
 
       - name: Build assemble release apk
         run: ./gradlew assembleRelease
