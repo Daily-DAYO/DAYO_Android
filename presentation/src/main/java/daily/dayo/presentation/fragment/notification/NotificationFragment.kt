@@ -15,9 +15,8 @@ import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.databinding.FragmentNotificationBinding
 import daily.dayo.presentation.adapter.NotificationListAdapter
 import daily.dayo.presentation.viewmodel.NotificationViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
+import daily.dayo.presentation.activity.MainActivity
 
 @AndroidEntryPoint
 class NotificationFragment : Fragment() {
@@ -40,6 +39,7 @@ class NotificationFragment : Fragment() {
         setNotificationListAdapter()
         setAdapterLoadStateListener()
         setAlarmList()
+        setBottomNavigationIconClickListener()
     }
 
     override fun onResume() {
@@ -92,6 +92,20 @@ class NotificationFragment : Fragment() {
                     isInitialLoad = true
                 }
             }
+        }
+    }
+
+    private fun setBottomNavigationIconClickListener() {
+        (requireActivity() as MainActivity).setBottomNavigationIconClickListener(reselectedIconId = R.id.NotificationFragment) {
+            getAlarmList()
+            setScrollToTop(isSmoothScroll = true)
+        }
+    }
+
+    private fun setScrollToTop(isSmoothScroll: Boolean = false) {
+        with(binding.rvNotificationList) {
+            if (isSmoothScroll) this.smoothScrollToPosition(0)
+            else this.scrollToPosition(0)
         }
     }
 }

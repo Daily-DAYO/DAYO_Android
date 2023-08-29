@@ -27,6 +27,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.domain.model.Category
 import daily.dayo.domain.model.Post
+import daily.dayo.presentation.activity.MainActivity
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -67,6 +68,7 @@ class HomeDayoPickPostListFragment : Fragment() {
 
     override fun onResume() {
         binding.swipeRefreshLayoutDayoPickPost.isEnabled = true
+        setBottomNavigationIconClickListener()
         super.onResume()
     }
 
@@ -160,14 +162,16 @@ class HomeDayoPickPostListFragment : Fragment() {
         }
     }
 
-    private fun loadPosts(selectCategory: Category) {
+    private fun loadPosts(selectCategory: Category, isSmoothScroll: Boolean = false) {
         with(homeViewModel) {
             currentDayoPickCategory = selectCategory
             requestDayoPickPostList()
         }
 
-        if (this.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED))
-            binding.rvDayopickPost.scrollToPosition(0)
+        if (this.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+            if (isSmoothScroll) binding.rvDayopickPost.smoothScrollToPosition(0)
+            else binding.rvDayopickPost.scrollToPosition(0)
+        }
     }
 
     private fun setPostLikeClickListener() {
@@ -244,6 +248,20 @@ class HomeDayoPickPostListFragment : Fragment() {
                     thumbnailImgList.clear()
                     userImgList.clear()
                 }
+            }
+        }
+    }
+
+    private fun setBottomNavigationIconClickListener() {
+        val currentViewPagerPosition =
+            requireParentFragment().requireView()
+                .findViewById<ViewPager2>(R.id.pager_home_post)
+                .currentItem
+
+        (requireActivity() as MainActivity).setBottomNavigationIconClickListener(reselectedIconId = R.id.HomeFragment) {
+            if (currentViewPagerPosition == HOME_DAYOPICK_PAGE_TAB_ID) {
+                binding.swipeRefreshLayoutDayoPickPost.isRefreshing = true
+                loadPosts(homeViewModel.currentDayoPickCategory, isSmoothScroll = true)
             }
         }
     }
