@@ -217,6 +217,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun setBottomNavigationIconClickListener(reselectedIconId: Int, reselectAction: () -> Unit) {
+        binding.bottomNavigationMainBar.setOnItemReselectedListener {
+            when (it.itemId) {
+                reselectedIconId -> reselectAction()
+            }
+        }
+    }
+
     companion object {
         val notificationPermission = arrayOf(Manifest.permission.POST_NOTIFICATIONS)
     }
