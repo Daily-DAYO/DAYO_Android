@@ -10,6 +10,7 @@ plugins {
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 def NATIVE_APP_KEY = properties.getProperty('NATIVE_APP_KEY')
+def keystorePropertiesFile = rootProject.file("app/keystore-release.properties")
 
 sentry {
     setIncludeProguardMapping(true)
@@ -41,10 +42,13 @@ android {
 
     signingConfigs {
         release {
-            storePassword SIGNED_STORE_PASSWORD
-            keyAlias SIGNED_KEY_ALIAS
-            keyPassword SIGNED_KEY_PASSWORD
-            storeFile file(SIGNED_STORE_FILE)
+            def keystoreProperties = new Properties()
+            keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+            storeFile file(keystoreProperties['storeFile'])
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storePassword keystoreProperties['storePassword']
         }
     }
 
