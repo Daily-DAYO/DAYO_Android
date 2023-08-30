@@ -24,12 +24,11 @@ import daily.dayo.presentation.databinding.FragmentFeedBinding
 import daily.dayo.presentation.adapter.FeedListAdapter
 import daily.dayo.presentation.viewmodel.FeedViewModel
 import daily.dayo.presentation.viewmodel.SearchViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.domain.model.Post
+import daily.dayo.presentation.activity.MainActivity
 import daily.dayo.presentation.viewmodel.AccountViewModel
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FeedFragment : Fragment() {
@@ -63,6 +62,7 @@ class FeedFragment : Fragment() {
         setFeedPostClickListener()
         setFeedEmptyButtonClickListener()
         setFeedRefreshListener()
+        setBottomNavigationIconClickListener()
     }
 
     override fun onResume() {
@@ -165,6 +165,21 @@ class FeedFragment : Fragment() {
                 Log.e(this@FeedFragment.tag, "PostId Null Exception Occurred")
                 getFeedPostList()
             }
+        }
+    }
+
+    private fun setBottomNavigationIconClickListener() {
+        (requireActivity() as MainActivity).setBottomNavigationIconClickListener(R.id.FeedFragment) {
+            binding.swipeRefreshLayoutFeed.isRefreshing = true
+            getFeedPostList()
+            setScrollToTop(isSmoothScroll = true)
+        }
+    }
+
+    private fun setScrollToTop(isSmoothScroll:Boolean = false) {
+        with(binding.rvFeedPost) {
+            if (isSmoothScroll) this.smoothScrollToPosition(0)
+            else this.scrollToPosition(0)
         }
     }
 }

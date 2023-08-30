@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import daily.dayo.presentation.R
@@ -28,6 +29,7 @@ import daily.dayo.presentation.adapter.HomeNewAdapter
 import daily.dayo.presentation.viewmodel.HomeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.presentation.activity.MainActivity
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -68,6 +70,7 @@ class HomeNewPostListFragment : Fragment() {
 
     override fun onResume() {
         binding.swipeRefreshLayoutNewPost.isEnabled = true
+        setBottomNavigationIconClickListener()
         super.onResume()
     }
 
@@ -159,14 +162,16 @@ class HomeNewPostListFragment : Fragment() {
         }
     }
 
-    private fun loadPosts(selectCategory: Category) {
+    private fun loadPosts(selectCategory: Category, isSmoothScroll: Boolean = false) {
         with(homeViewModel) {
             currentNewCategory = selectCategory
             requestNewPostList()
         }
 
-        if (this.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED))
-            binding.rvNewPost.scrollToPosition(0)
+        if (this.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+            if (isSmoothScroll) binding.rvNewPost.smoothScrollToPosition(0)
+            else binding.rvNewPost.scrollToPosition(0)
+        }
     }
 
     private fun setPostLikeClickListener() {
@@ -235,6 +240,20 @@ class HomeNewPostListFragment : Fragment() {
                     thumbnailImgList.clear()
                     userImgList.clear()
                 }
+            }
+        }
+    }
+
+    private fun setBottomNavigationIconClickListener() {
+        val currentViewPagerPosition =
+            requireParentFragment().requireView()
+                .findViewById<ViewPager2>(R.id.pager_home_post)
+                .currentItem
+
+        (requireActivity() as MainActivity).setBottomNavigationIconClickListener(reselectedIconId = R.id.HomeFragment) {
+            if (currentViewPagerPosition == HOME_NEW_PAGE_TAB_ID) {
+                binding.swipeRefreshLayoutNewPost.isRefreshing = true
+                loadPosts(homeViewModel.currentNewCategory, isSmoothScroll = true)
             }
         }
     }

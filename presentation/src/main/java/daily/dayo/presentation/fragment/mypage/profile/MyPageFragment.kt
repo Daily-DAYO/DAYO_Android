@@ -22,6 +22,10 @@ import daily.dayo.presentation.viewmodel.ProfileViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import daily.dayo.presentation.viewmodel.AccountViewModel
 
+const val FOLDERS_TAB_ID = 0
+const val LIKES_TAB_ID = 1
+const val BOOKMARKS_TAB_ID = 2
+
 class MyPageFragment : Fragment() {
     private var binding by autoCleared<FragmentMyPageBinding> { onDestroyBindingView() }
     private val accountViewModel by activityViewModels<AccountViewModel>()
@@ -75,6 +79,12 @@ class MyPageFragment : Fragment() {
             ViewCompat.requestApplyInsets(layoutMyPageAppBar)
         }
     }
+    
+    fun resetAppBarScrollPosition() {
+        with(binding) {
+            layoutMyPageAppBar.setExpanded(true, true)
+        }
+    }
 
     private fun setProfileDescription() {
         profileViewModel.requestMyProfile()
@@ -123,9 +133,9 @@ class MyPageFragment : Fragment() {
 
         mediator = TabLayoutMediator(binding.tabsMyPage, binding.pagerMyPage) { tab, position ->
             when (position) {
-                0 -> tab.text = "작성한 글"
-                1 -> tab.text = "좋아요"
-                2 -> tab.text = "북마크"
+                FOLDERS_TAB_ID -> tab.text = "작성한 글"
+                LIKES_TAB_ID -> tab.text = "좋아요"
+                BOOKMARKS_TAB_ID -> tab.text = "북마크"
             }
         }
         mediator?.attach()
