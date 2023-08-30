@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import daily.dayo.presentation.R
@@ -15,10 +16,9 @@ import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.databinding.FragmentProfileFolderListBinding
 import daily.dayo.presentation.adapter.ProfileFolderListAdapter
 import daily.dayo.presentation.viewmodel.ProfileViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import daily.dayo.domain.model.Folder
+import daily.dayo.presentation.activity.MainActivity
 import daily.dayo.presentation.viewmodel.AccountViewModel
-import kotlinx.coroutines.Dispatchers
 
 class ProfileFolderListFragment : Fragment() {
     private var binding by autoCleared<FragmentProfileFolderListBinding> { onDestroyBindingView() }
@@ -41,6 +41,11 @@ class ProfileFolderListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setRvProfileFolderListAdapter()
         setProfileFolderList()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setBottomNavigationIconClickListener()
     }
 
     private fun onDestroyBindingView() {
@@ -84,6 +89,28 @@ class ProfileFolderListFragment : Fragment() {
                 }
                 else -> {}
             }
+        }
+    }
+
+    private fun setBottomNavigationIconClickListener() {
+        val currentViewPagerPosition =
+            requireParentFragment().requireView()
+                .findViewById<ViewPager2>(R.id.pager_my_page)
+                .currentItem
+
+        (requireActivity() as MainActivity).setBottomNavigationIconClickListener(reselectedIconId = R.id.MyPageFragment) {
+            if (currentViewPagerPosition == FOLDERS_TAB_ID) {
+                getProfileFolderList()
+                setScrollToTop(isSmoothScroll = true)
+            }
+        }
+    }
+
+    private fun setScrollToTop(isSmoothScroll: Boolean = false) {
+        (requireParentFragment() as MyPageFragment).resetAppBarScrollPosition()
+        with(binding.rvProfileFolder) {
+            if (isSmoothScroll) this.smoothScrollToPosition(0)
+            else this.scrollToPosition(0)
         }
     }
 }

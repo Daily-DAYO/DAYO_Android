@@ -28,7 +28,6 @@ import daily.dayo.presentation.viewmodel.ProfileViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import daily.dayo.domain.model.Folder
 import daily.dayo.presentation.viewmodel.AccountViewModel
-import kotlinx.coroutines.Dispatchers
 
 class ProfileFragment : Fragment() {
     private var binding by autoCleared<FragmentProfileBinding> {
