@@ -37,25 +37,28 @@ jobs:
            echo '${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}' > ./app/google-services.json
 
       - name: Download Android keystore
-        id: android_keystore_dev
+        id: android_keystore_release
         uses: timheuer/base64-to-file@v1.2
         with:
-          fileName: keystore-dev.jks
-          fileDir: '/home/runner/work/DAYO_Android/DAYO_Android/app/android'
-          encodedString: ${{ secrets.KEY_STORE_ENCODED }} 
+          fileName: keystore-release.jks
+          fileDir: '/home/runner/work/DAYO_Android/DAYO_Android/app'
+          encodedString: ${{ secrets.KEY_STORE_ENCODED }}
 
-      - name: Create key-dev.properties
+      - name: Create key-release.properties
         run: |
-          echo "storeFile=${{ steps.android_keystore_dev.outputs.filePath }}" > ./app/android/keystore-dev.properties
-          echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> ./app/android/keystore-dev.properties
-          echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> ./app/android/keystore-dev.properties
-          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> ./app/android/keystore-dev.properties
+          echo "storeFile=${{ steps.android_keystore_release.outputs.filePath }}" > ./app/keystore-release.properties
+          echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> ./app/keystore-release.properties
+          echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> ./app/keystore-release.properties
+          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> ./app/keystore-release.properties
 
       - name: Create Properties
         run: |
           echo '${{ secrets.LOCAL_PROPERTIES }}' > ./local.properties
           echo '${{ secrets.SENTRY_PROPERTIES }}' > ./sentry.properties
           echo '${{ secrets.SENTRY_PROPERTIES }}' > ./app/src/main/resources/sentry.properties
+
+      - name: Build assemble release apk
+        run: ./gradlew assembleRelease
 
       - name: Create android test report
         uses: asadmansr/android-test-report-action@v1.2.0
