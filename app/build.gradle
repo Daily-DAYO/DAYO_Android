@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
     id 'io.sentry.android.gradle'
 }
 
@@ -93,4 +94,7 @@ dependencies {
     // Sentry
     implementation "io.sentry:sentry-android:$sentry_version"
     implementation 'org.slf4j:slf4j-nop:1.7.25'
+    // Firebase
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 }
