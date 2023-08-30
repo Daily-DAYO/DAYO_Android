@@ -15,6 +15,9 @@ import daily.dayo.presentation.adapter.HomeFragmentPagerStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
+const val HOME_DAYOPICK_PAGE_TAB_ID = 0
+const val HOME_NEW_PAGE_TAB_ID = 1
+
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
     private var binding by autoCleared<FragmentHomeBinding>(onDestroy = {
@@ -83,10 +86,8 @@ class HomeFragment : Fragment() {
             binding.pagerHomePost
         ) { tab, position ->
             when (position) {
-                0 ->
-                    tab.text = "DAYO PICK"
-                1 ->
-                    tab.text = "NEW"
+                HOME_DAYOPICK_PAGE_TAB_ID -> tab.text = "DAYO PICK"
+                HOME_NEW_PAGE_TAB_ID -> tab.text = "NEW"
             }
         }
         mediator?.attach()

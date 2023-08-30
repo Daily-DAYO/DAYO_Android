@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import daily.dayo.presentation.R
@@ -16,9 +17,7 @@ import daily.dayo.presentation.databinding.FragmentProfileLikePostListBinding
 import daily.dayo.domain.model.LikePost
 import daily.dayo.presentation.adapter.ProfileLikePostListAdapter
 import daily.dayo.presentation.viewmodel.ProfileViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import daily.dayo.presentation.activity.MainActivity
 
 class ProfileLikePostListFragment : Fragment() {
     private var binding by autoCleared<FragmentProfileLikePostListBinding>{ onDestroyBindingView() }
@@ -46,6 +45,11 @@ class ProfileLikePostListFragment : Fragment() {
         setRvProfileLikePostListAdapter()
         setProfileLikePostList()
         setAdapterLoadStateListener()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setBottomNavigationIconClickListener()
     }
 
     private fun onDestroyBindingView() {
@@ -105,5 +109,27 @@ class ProfileLikePostListFragment : Fragment() {
         binding.layoutProfileLikePostShimmer.stopShimmer()
         binding.layoutProfileLikePostShimmer.visibility = View.GONE
         binding.rvProfileLikePost.visibility = View.VISIBLE
+    }
+
+    private fun setBottomNavigationIconClickListener() {
+        val currentViewPagerPosition =
+            requireParentFragment().requireView()
+                .findViewById<ViewPager2>(R.id.pager_my_page)
+                .currentItem
+
+        (requireActivity() as MainActivity).setBottomNavigationIconClickListener(reselectedIconId = R.id.MyPageFragment) {
+            if (currentViewPagerPosition == LIKES_TAB_ID) {
+                getProfileLikePostList()
+                setScrollToTop(isSmoothScroll = true)
+            }
+        }
+    }
+
+    private fun setScrollToTop(isSmoothScroll: Boolean = false) {
+        (requireParentFragment() as MyPageFragment).resetAppBarScrollPosition()
+        with(binding.rvProfileLikePost) {
+            if (isSmoothScroll) this.smoothScrollToPosition(0)
+            else this.scrollToPosition(0)
+        }
     }
 }

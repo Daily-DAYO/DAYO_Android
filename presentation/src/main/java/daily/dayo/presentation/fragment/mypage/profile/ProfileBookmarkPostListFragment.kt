@@ -6,11 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import daily.dayo.presentation.R
@@ -18,9 +16,8 @@ import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.databinding.FragmentProfileBookmarkPostListBinding
 import daily.dayo.presentation.adapter.ProfileBookmarkPostListAdapter
 import daily.dayo.presentation.viewmodel.ProfileViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import daily.dayo.domain.model.BookmarkPost
-import kotlinx.coroutines.Dispatchers
+import daily.dayo.presentation.activity.MainActivity
 
 class ProfileBookmarkPostListFragment : Fragment() {
     private var binding by autoCleared<FragmentProfileBookmarkPostListBinding> { onDestroyBindingView() }
@@ -48,6 +45,11 @@ class ProfileBookmarkPostListFragment : Fragment() {
         setRvProfileBookmarkPostListAdapter()
         setProfileBookmarkPostList()
         setAdapterLoadStateListener()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setBottomNavigationIconClickListener()
     }
 
     private fun onDestroyBindingView() {
@@ -111,5 +113,27 @@ class ProfileBookmarkPostListFragment : Fragment() {
         binding.layoutProfileBookmarkPostShimmer.stopShimmer()
         binding.layoutProfileBookmarkPostShimmer.visibility = View.GONE
         binding.rvProfileBookmarkPost.visibility = View.VISIBLE
+    }
+
+    private fun setBottomNavigationIconClickListener() {
+        val currentViewPagerPosition =
+            requireParentFragment().requireView()
+                .findViewById<ViewPager2>(R.id.pager_my_page)
+                .currentItem
+
+        (requireActivity() as MainActivity).setBottomNavigationIconClickListener(reselectedIconId = R.id.MyPageFragment) {
+            if (currentViewPagerPosition == BOOKMARKS_TAB_ID) {
+                getProfileBookmarkPostList()
+                setScrollToTop(isSmoothScroll = true)
+            }
+        }
+    }
+
+    private fun setScrollToTop(isSmoothScroll: Boolean = false) {
+        (requireParentFragment() as MyPageFragment).resetAppBarScrollPosition()
+        with(binding.rvProfileBookmarkPost) {
+            if (isSmoothScroll) this.smoothScrollToPosition(0)
+            else this.scrollToPosition(0)
+        }
     }
 }
