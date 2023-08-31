@@ -36,11 +36,24 @@ jobs:
         run:
            echo '${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}' > ./app/google-services.json
 
-      - name: Create KeyStore File and Properties
+      - name: Download Android keystore
+        id: android_keystore_release
+        uses: timheuer/base64-to-file@v1.2
+        with:
+          fileName: keystore-release.jks
+          fileDir: '/home/runner/work/DAYO_Android/DAYO_Android/app'
+          encodedString: ${{ secrets.KEY_STORE_ENCODED }}
+
+      - name: Create key-release.properties
         run: |
-          echo '${{ secrets.KEY_STORE_ENCODED }}' | base64 -d > ./dayo_keystore
+          echo "storeFile=${{ steps.android_keystore_release.outputs.filePath }}" > ./app/keystore-release.properties
+          echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> ./app/keystore-release.properties
+          echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> ./app/keystore-release.properties
+          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> ./app/keystore-release.properties
+
+      - name: Create Properties
+        run: |
           echo '${{ secrets.LOCAL_PROPERTIES }}' > ./local.properties
-          echo '${{ secrets.GRADLE_PROPERTIES }}' > ./gradle.properties
           echo '${{ secrets.SENTRY_PROPERTIES }}' > ./sentry.properties
           echo '${{ secrets.SENTRY_PROPERTIES }}' > ./app/src/main/resources/sentry.properties
 
