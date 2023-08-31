@@ -41,6 +41,13 @@
 # ==================================
 # Retrofit
 # ==================================
+
+#ParametrizedType ClassCastException error fix
+-keep,allowobfuscation,allowshrinking interface retrofit2.Call
+-keep,allowobfuscation,allowshrinking class retrofit2.Response
+-keep,allowobfuscation,allowshrinking class kotlin.coroutines.** { *; }
+-keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
+
 -keepclasseswithmembers class * {
     @retrofit2.http.* <methods>;
 }
@@ -99,6 +106,8 @@
 -keep class com.kakao.sdk.**.model.* { <fields>; }
 -keep class * extends com.google.gson.TypeAdapter
 
--keep class com.daily.dayo.data.datasource.remote.**.* { *; }
+-keepattributes Signature #
 -keep class * implements java.io.Serializable { *; }
 -keepclassmembers enum * { *; }
+-keep class daily.dayo.data.datasource.remote.**.* { *; }
+-keep class daily.dayo.domain.model.* { *; }
