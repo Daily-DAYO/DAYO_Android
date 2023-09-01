@@ -10,22 +10,22 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import daily.dayo.domain.model.Folder
 import daily.dayo.presentation.R
+import daily.dayo.presentation.activity.MainActivity
+import daily.dayo.presentation.adapter.ProfileFolderListAdapter
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.databinding.FragmentProfileFolderListBinding
-import daily.dayo.presentation.adapter.ProfileFolderListAdapter
-import daily.dayo.presentation.viewmodel.ProfileViewModel
-import daily.dayo.domain.model.Folder
-import daily.dayo.presentation.activity.MainActivity
 import daily.dayo.presentation.viewmodel.AccountViewModel
+import daily.dayo.presentation.viewmodel.ProfileViewModel
 
 class ProfileFolderListFragment : Fragment() {
     private var binding by autoCleared<FragmentProfileFolderListBinding> { onDestroyBindingView() }
     private val accountViewModel by activityViewModels<AccountViewModel>()
     private val profileViewModel by activityViewModels<ProfileViewModel>()
-    private var profileFolderListAdapter: ProfileFolderListAdapter?= null
-    private var glideRequestManager: RequestManager?= null
+    private var profileFolderListAdapter: ProfileFolderListAdapter? = null
+    private var glideRequestManager: RequestManager? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,18 +87,19 @@ class ProfileFolderListFragment : Fragment() {
                         profileFolderListAdapter?.submitList(folderList)
                     }
                 }
+
                 else -> {}
             }
         }
     }
 
     private fun setBottomNavigationIconClickListener() {
-        val currentViewPagerPosition =
-            requireParentFragment().requireView()
-                .findViewById<ViewPager2>(R.id.pager_my_page)
-                .currentItem
-
         (requireActivity() as MainActivity).setBottomNavigationIconClickListener(reselectedIconId = R.id.MyPageFragment) {
+            val currentViewPagerPosition =
+                requireParentFragment().requireView()
+                    .findViewById<ViewPager2>(R.id.pager_my_page)
+                    .currentItem
+
             if (currentViewPagerPosition == FOLDERS_TAB_ID) {
                 getProfileFolderList()
                 setScrollToTop(isSmoothScroll = true)
