@@ -11,16 +11,16 @@ import androidx.paging.LoadState
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import daily.dayo.domain.model.LikePost
 import daily.dayo.presentation.R
+import daily.dayo.presentation.activity.MainActivity
+import daily.dayo.presentation.adapter.ProfileLikePostListAdapter
 import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.databinding.FragmentProfileLikePostListBinding
-import daily.dayo.domain.model.LikePost
-import daily.dayo.presentation.adapter.ProfileLikePostListAdapter
 import daily.dayo.presentation.viewmodel.ProfileViewModel
-import daily.dayo.presentation.activity.MainActivity
 
 class ProfileLikePostListFragment : Fragment() {
-    private var binding by autoCleared<FragmentProfileLikePostListBinding>{ onDestroyBindingView() }
+    private var binding by autoCleared<FragmentProfileLikePostListBinding> { onDestroyBindingView() }
     private val profileViewModel by activityViewModels<ProfileViewModel>()
     private var profileLikePostListAdapter: ProfileLikePostListAdapter? = null
     private var glideRequestManager: RequestManager? = null
@@ -112,12 +112,12 @@ class ProfileLikePostListFragment : Fragment() {
     }
 
     private fun setBottomNavigationIconClickListener() {
-        val currentViewPagerPosition =
-            requireParentFragment().requireView()
-                .findViewById<ViewPager2>(R.id.pager_my_page)
-                .currentItem
-
         (requireActivity() as MainActivity).setBottomNavigationIconClickListener(reselectedIconId = R.id.MyPageFragment) {
+            val currentViewPagerPosition =
+                requireParentFragment().requireView()
+                    .findViewById<ViewPager2>(R.id.pager_my_page)
+                    .currentItem
+
             if (currentViewPagerPosition == LIKES_TAB_ID) {
                 getProfileLikePostList()
                 setScrollToTop(isSmoothScroll = true)
