@@ -11,13 +11,13 @@ import androidx.paging.LoadState
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import daily.dayo.domain.model.BookmarkPost
 import daily.dayo.presentation.R
+import daily.dayo.presentation.activity.MainActivity
+import daily.dayo.presentation.adapter.ProfileBookmarkPostListAdapter
 import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.databinding.FragmentProfileBookmarkPostListBinding
-import daily.dayo.presentation.adapter.ProfileBookmarkPostListAdapter
 import daily.dayo.presentation.viewmodel.ProfileViewModel
-import daily.dayo.domain.model.BookmarkPost
-import daily.dayo.presentation.activity.MainActivity
 
 class ProfileBookmarkPostListFragment : Fragment() {
     private var binding by autoCleared<FragmentProfileBookmarkPostListBinding> { onDestroyBindingView() }
@@ -72,9 +72,11 @@ class ProfileBookmarkPostListFragment : Fragment() {
                     is MyPageFragment -> MyPageFragmentDirections.actionMyPageFragmentToPostFragment(
                         bookmarkPost.postId
                     )
+
                     is ProfileFragment -> ProfileFragmentDirections.actionProfileFragmentToPostFragment(
                         bookmarkPost.postId
                     )
+
                     else -> null
                 }?.let {
                     findNavController().navigate(it)
@@ -116,12 +118,12 @@ class ProfileBookmarkPostListFragment : Fragment() {
     }
 
     private fun setBottomNavigationIconClickListener() {
-        val currentViewPagerPosition =
-            requireParentFragment().requireView()
-                .findViewById<ViewPager2>(R.id.pager_my_page)
-                .currentItem
-
         (requireActivity() as MainActivity).setBottomNavigationIconClickListener(reselectedIconId = R.id.MyPageFragment) {
+            val currentViewPagerPosition =
+                requireParentFragment().requireView()
+                    .findViewById<ViewPager2>(R.id.pager_my_page)
+                    .currentItem
+
             if (currentViewPagerPosition == BOOKMARKS_TAB_ID) {
                 getProfileBookmarkPostList()
                 setScrollToTop(isSmoothScroll = true)
