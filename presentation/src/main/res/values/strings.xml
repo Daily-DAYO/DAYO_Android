@@ -1,0 +1,344 @@
+<resources>
+    <string name="app_name">DAYO</string>
+
+    <string name="home">홈</string>
+    <string name="feed">피드</string>
+    <string name="write">글쓰기</string>
+    <string name="notification">알림</string>
+    <string name="my_page">마이 페이지</string>
+    <string name="next">다음</string>
+    <string name="confirm">확인</string>
+    <string name="complete">완료</string>
+    <string name="cancel">취소</string>
+    <string name="delete">삭제</string>
+    <string name="delete_all">전체삭제</string>
+    <string name="modify">수정</string>
+    <string name="close">닫기</string>
+    <string name="login">로그인</string>
+    <string name="like">좋아요</string>
+    <string name="comment">댓글</string>
+    <string name="app_version">버전 정보</string>
+
+    <!-- Time -->
+    <string name="time_format">%d%s</string>
+    <string name="time_now">방금 전</string>
+    <string name="time_minute_ago">분 전</string>
+    <string name="time_hour_ago">시간 전</string>
+    <string name="time_day_ago">일 전</string>
+    <string name="time_month_ago">달 전</string>
+    <string name="time_year_ago">년 전</string>
+
+    <!-- Device Permission -->
+    <string name="permission_fail_message_camera">카메라 권한을 허용하지 않으면 사진을 등록할 수 없습니다</string>
+    <string name="permission_fail_final_message_camera">카메라를 통해 사진을 등록하려면 설정에서 카메라 권한을 허용으로 변경해주세요</string>
+    <string name="permission_fail_message_gallery">파일 권한을 허용하지 않으면 사진을 등록할 수 없습니다</string>
+    <string name="permission_fail_final_message_gallery">갤러리를 통해 사진을 등록하려면 설정에서 파일 권한을 허용으로 변경해주세요</string>
+    <string name="permission_fail_message_notification">알림 권한을 허용하지 않으면 정상적 사용이 불가능할 수 있습니다</string>
+    <string name="permission_fail_final_message_notification">설정에서 알림을 허용으로 변경해주세요</string>
+    <string name="permission_fail_second">DENIED</string>
+    <string name="permission_fail_final">EXPLAINED</string>
+
+    <!-- OnBoarding -->
+    <string name="onboarding_first_message">인기가 많은 다꾸들을 구경할 수 있어요</string>
+    <string name="onboarding_second_message">내 취향의 다꾸러들을 팔로우하고 모아볼 수 있어요</string>
+    <string name="onboarding_third_message">내 다꾸들을 폴더를 만들어 분류할 수 있어요</string>
+    <string name="onboarding_fourth_message_1">내가 열심히 꾸민 다이어리,</string>
+    <string name="onboarding_fourth_message_2">에 공유하러 가볼까요?</string>
+
+    <!-- Login -->
+    <string name="signup_guide_message_email">아직 계정이 없으신가요? <u>회원가입</u>하기</string>
+    <string name="login_select_method_kakao">카카오톡으로 시작하기</string>
+    <string name="login_select_method_email">이메일로 시작하기</string>
+    <string name="hint_login_email_address">이메일을 입력해주세요.</string>
+    <string name="hint_login_email_password">비밀번호를 입력해주세요.</string>
+    <string name="login_email_alert_message_fail">이메일 주소 또는 비밀번호를 잘못 입력했어요.</string>
+    <string name="login_email_forget"><u>비밀번호</u>를 잊어버렸어요</string>
+    <string name="login_email_signup">아직 계정이 없으신가요? <u>회원가입</u>하기</string>
+    <string name="login_policy_guide_message">가입 시 DAYO의 이용약관 및 개인정보 취급방침에 동의하게 됩니다.</string>
+
+    <!-- Policy -->
+    <string name="policy_terms">이용약관</string>
+    <string name="policy_privacy">개인정보 취급방침</string>
+
+    <!-- Home -->
+    <string name="DayoPick">DAYO PICK</string>
+    <string name="New">New</string>
+    <string name="home_dayopick_empty_title">인기있는 다꾸가 아직 없어요</string>
+    <string name="home_dayopick_empty_detail">다꾸들을 구경하고 반응을 남겨보세요</string>
+    <string name="home_dayopick_empty_action">구경하러 가기</string>
+    <string name="home_new_empty_title">새로운 다꾸가 아직 없어요</string>
+    <string name="home_new_empty_detail">여러분의 다꾸를 공유해보세요</string>
+    <string name="home_new_empty_action">공유하러 가기</string>
+
+    <!-- Category -->
+    <string name="all">전체</string>
+    <string name="scheduler">스케줄러</string>
+    <string name="studyplanner">스터디 플래너</string>
+    <string name="pocketbook">포켓북</string>
+    <string name="sixHoleDiary">6공 다이어리</string>
+    <string name="digital">굿노트</string>
+    <string name="etc">기타</string>
+    <string name="all_eng">ALL</string>
+    <string name="scheduler_eng">SCHEDULER</string>
+    <string name="studyplanner_eng">STUDY_PLANNER</string>
+    <string name="pocketbook_eng">POCKET_BOOK</string>
+    <string name="sixHoleDiary_eng">SIX_DIARY</string>
+    <string name="digital_eng">GOOD_NOTE</string>
+    <string name="etc_eng">ETC</string>
+
+    <!-- Privacy -->
+    <string name="privacy_all">전체공개</string>
+    <string name="privacy_following">팔로잉</string>
+    <string name="privacy_private">나만보기</string>
+    <string name="privacy_all_eng">ALL</string>
+    <string name="privacy_following_eng">FOLLOWING</string>
+    <string name="privacy_private_eng">ONLY_ME</string>
+
+    <!-- Feed -->
+    <string name="feed_empty_title">아직 피드에 게시물이 없어요.</string>
+    <string name="feed_empty_description">사람들을 팔로우하면\n이곳에서 게시물을 모아볼 수 있어요.</string>
+    <string name="feed_empty_button">팔로우하러 가기</string>
+
+    <!-- Write -->
+    <string name="hint_write_description">내용을 작성해주세요.</string>
+    <string name="write_post_description_count_limit"> / 최대 200자</string>
+    <string name="upload">올리기</string>
+    <string name="write_post_tag_add">태그 추가</string>
+    <string name="hint_write_post_tag_add"># 키워드를 입력해주세요.</string>
+    <string name="write_option_title_folder">폴더 설정</string>
+    <string name="write_option_description_folder">폴더를 선택해 주세요.</string>
+    <string name="write_option_title_private">공개 설정</string>
+    <string name="write_option_title_tag">태그 추가</string>
+    <string name="write_option_description_tag">기록에 관한 키워드를 추가해보세요.</string>
+    <string name="write_post_tag_count_limit"> / %d</string>
+    <string name="write_post_tag_alert_message_tag_size_fail_max">태그는 %d개까지 등록 가능해요.</string>
+    <string name="write_post_tag_alert_message_tag_length_fail_max">태그는 %d자 까지만 입력할 수 있어요!</string>
+    <string name="write_post_folder_title">폴더 설정</string>
+    <string name="write_post_folder_new_title">폴더 추가</string>
+    <string name="write_post_upload_alert_message_empty_content">내용을 입력해 주세요.</string>
+    <string name="write_post_upload_alert_message_empty_image">사진을 추가해 주세요.</string>
+    <string name="write_post_upload_alert_message_empty_category">카테고리를 선택해 주세요.</string>
+    <string name="write_post_upload_alert_message_empty_folder">폴더를 선택해 주세요</string>
+    <string name="write_post_upload_alert_message_edittext_length_fail_max">내용은 200자까지 작성할 수 있어요.</string>
+    <string name="write_post_upload_alert_message_image_fail_max">사진은 5장까지만 선택 가능합니다.</string>
+    <string name="write_post_upload_alert_message_image_fail_file_extension">jpg, jpeg, png, webp 형식의 이미지 파일만 업로드 가능합니다.</string>
+    <string name="write_post_upload_alert_message_image_fail_null">사진 가져오기에 실패했습니다. 다시 선택해주세요</string>
+    <string name="write_post_upload_alert_message_loading">게시글을 올리고 있어요! 잠시만 기다려주세요.</string>
+    <string name="write_post_upload_alert_message_fail">게시글을 업로드 할 수 없어요. 다시 시도해주세요.</string>
+
+    <!-- Post -->
+    <string name="hint_post_comment_write_description">댓글을 남겨주세요</string>
+    <string name="post_comment_write_upload">게시</string>
+    <string name="post_option_block_user">사용자 차단</string>
+    <string name="post_block_message">사용자를 차단할까요?</string>
+    <string name="post_block_explanation_message">사용자를 차단하면\n 서로 게시물을 볼 수 없어요.</string>
+    <string name="post_block_success_message">사용자가 차단되었어요.</string>
+    <string name="post_option_report_user">사용자 신고</string>
+    <string name="post_option_report_post">게시물 신고</string>
+    <string name="post_option_hide">이 게시물 숨기기</string>
+    <string name="post_comment_empty">아직 작성된 댓글이 없습니다.</string>
+    <string name="post_comment_delete_alert_message">댓글을 삭제할까요?</string>
+    <string name="post_comment_delete_alert_message_success">댓글이 삭제되었습니다.</string>
+    <string name="post_comment_delete_alert_message_fail">댓글 삭제를 실패하였습니다. 다시 시도해주세요.</string>
+    <string name="post_option_hide_alert_message_description">게시물을 숨길까요?</string>
+    <string name="post_option_hide_alert_message_explanation">게시물을 숨기면 다시 피드에서 볼 수 없어요.</string>
+    <string name="post_option_hide_alert_message_success">게시물을 숨겼습니다.</string>
+    <string name="post_option_mine_modify">게시물 수정</string>
+    <string name="post_option_mine_delete">게시물 삭제</string>
+    <string name="post_option_mine_delete_alert_message">게시물을 삭제할까요?</string>
+
+    <!-- Report -->
+    <string name="report_post_title">신고하기</string>
+    <string name="report_post_button">신고하기</string>
+    <string name="report_post_subtitle">게시글을 신고하시겠어요?</string>
+    <string name="report_post_description">게시글을 신고하는 이유에 대해 알려주세요.</string>
+    <string name="report_post_reason_1">성적인 내용이 포함돼있어요.</string>
+    <string name="report_post_reason_2">폭력적이거나 심한 욕설을 사용해요.</string>
+    <string name="report_post_reason_3">잘못된 정보를 제공해요.</string>
+    <string name="report_post_reason_4">유해하거나 위험한 내용이에요.</string>
+    <string name="report_post_reason_5">불법적인 내용이 포함돼있어요.</string>
+    <string name="report_post_reason_6">너무 많은 광고를 해요.</string>
+    <string name="report_post_reason_7">같은 내용으로 도배가 돼있어요.</string>
+    <string name="report_post_reason_other">기타</string>
+    <string name="report_post_reason_other_hint">신고 사유를 작성해주세요. (100자 이내)</string>
+    <string name="report_post_alert_message">신고가 접수되었어요.</string>
+
+    <string name="report_user_title">신고하기</string>
+    <string name="report_user_button">신고하기</string>
+    <string name="report_user_subtitle">사용자를 신고하시겠어요?</string>
+    <string name="report_user_description">사용자를 신고하는 이유에 대해 알려주세요.</string>
+    <string name="report_user_reason_1">성적인 내용을 게시해요.</string>
+    <string name="report_user_reason_2">폭력적이거나 심한 욕설을 사용해요.</string>
+    <string name="report_user_reason_3">잘못된 정보를 제공해요.</string>
+    <string name="report_user_reason_4">유해하거나 위험한 내용을 게시해요.</string>
+    <string name="report_user_reason_5">불법적인 내용을 게시해요.</string>
+    <string name="report_user_reason_6">너무 많은 광고를 해요.</string>
+    <string name="report_user_reason_7">같은 내용으로 도배가 돼있어요.</string>
+    <string name="report_user_reason_other">기타</string>
+    <string name="report_user_reason_other_hint">신고 사유를 작성해주세요. (100자 이내)</string>
+    <string name="report_user_alert_message">신고가 접수되었어요.</string>
+
+    <!-- Post Like Users -->
+    <string name="post_like_users_title">좋아요</string>
+
+    <!-- Folder -->
+    <string name="post_folder_add_title">폴더 추가</string>
+    <string name="folder_edit_title">폴더 편집</string>
+    <string name="post_folder_add_set_title">폴더 이름</string>
+    <string name="folder_setting_add_set_title">폴더 이름</string>
+    <string name="folder_setting_add_set_subheading">폴더 소개</string>
+    <string name="folder_setting_add_set_private">공개설정</string>
+    <string name="hint_post_folder_add_set_title">15자 이내로 입력해주세요.</string>
+    <string name="hint_folder_setting_add_set_title">15자 이내로 입력해주세요.</string>
+    <string name="hint_folder_setting_add_set_subheading">20자 이내로 입력해주세요.</string>
+    <string name="post_folder_add_set_private_title">공개 설정</string>
+    <string name="post_folder_add_set_private_all">전체공개</string>
+    <string name="post_folder_add_set_private_following">팔로잉</string>
+    <string name="post_folder_add_set_private_only_me">나만보기</string>
+    <string name="folder_cover_image_reset">커버 사진 초기화</string>
+    <string name="folder_delete_description_message">폴더를 삭제할까요?</string>
+    <string name="folder_delete_explanation_message">해당 폴더에 등록된 게시물도 함께 삭제됩니다.</string>
+    <string name="folder_add_message_length_fail_min">폴더 이름을 입력해주세요.</string>
+    <string name="folder_add_message_format_fail">폴더 이름에는 한글, 영문, 숫자만 사용할 수 있어요.</string>
+    <string name="folder_add_message_fail">폴더를 생성 할 수 없어요. 다시 시도해주세요.</string>
+    <string name="folder_post_empty_description">아직 게시물이 없어요.</string>
+
+    <!-- Follow -->
+    <string name="follower">팔로워</string>
+    <string name="following">팔로잉</string>
+    <string name="follow_already">팔로잉</string>
+    <string name="follow_yet">팔로우</string>
+    <string name="follow_delete_description_message">팔로우를 취소할까요?</string>
+    <string name="follower_empty_description">아직 회원님을\n팔로우하는 사람이 없어요</string>
+    <string name="following_empty_description">관심이 가는 사람들을 팔로우해보세요</string>
+
+    <!-- My Profile -->
+    <string name="my_profile_edit_title">프로필 수정</string>
+    <string name="my_profile_edit_nickname_edittext_hint">닉네임을 입력해 주세요.</string>
+    <string name="my_profile_edit_nickname_edittext_count"> / 10</string>
+    <string name="my_profile_edit_nickname_message_success">사용할 수 있는 닉네임이에요.</string>
+    <string name="my_profile_edit_nickname_message_format_fail">닉네임에는 한글, 영문, 숫자만 사용할 수 있어요.</string>
+    <string name="my_profile_edit_nickname_message_length_fail_min">닉네임을 2글자 이상 입력해주세요.</string>
+    <string name="my_profile_edit_nickname_message_length_fail_max">닉네임은 10글자 이하로 가능해요.</string>
+    <string name="my_profile_edit_nickname_message_duplicate_fail">이미 사용중인 닉네임이에요.</string>
+    <string name="my_profile_edit_image_select_gallery">앨범에서 선택</string>
+    <string name="my_profile_edit_image_reset">프로필 사진 초기화</string>
+    <string name="my_profile_option_setting_folder">폴더설정</string>
+    <string name="my_profile_option_setting_profile">프로필 수정</string>
+    <string name="other_profile_option_block_user">사용자 차단</string>
+    <string name="other_profile_block_message">사용자를 차단할까요?</string>
+    <string name="other_profile_block_explanation_message">사용자를 차단하면\n 서로 게시물을 볼 수 없어요.</string>
+    <string name="other_profile_block_success_message">사용자가 차단되었어요.</string>
+    <string name="other_profile_option_report_user">사용자 신고</string>
+    <string name="my_profile_option_my_info">로그인 정보</string>
+    <string name="my_profile_option_setting_env">환경설정</string>
+    <string name="my_profile_bookmark_empty_description">아직 북마크한 게시물이 없어요.</string>
+    <string name="my_profile_like_empty_description">아직 좋아요한 게시물이 없어요.</string>
+    <string name="my_profile_folder_empty_description">아직 폴더가 없어요.</string>
+
+    <!-- Search -->
+    <string name="hint_search_keyword_input">검색어를 입력해주세요.</string>
+    <string name="search_recent">최근 검색어</string>
+    <string name="search_recommend">추천 검색어</string>
+    <string name="search_result_empty">앗! 찾으시는 검색 결과가 없어요.</string>
+
+    <!-- Certificate-->
+    <string name="get_certificate_code">인증번호 받기</string>
+    <string name="email_address_certificate">인증하기</string>
+    <string name="email_address_certificate_title">인증번호를 입력해주세요.</string>
+    <string name="email_address_certificate_description">메일로 인증번호가 발송되었어요!</string>
+    <string name="email_address_certificate_resend"><u>인증번호 재발송</u></string>
+    <string name="email_address_certificate_alert_message_resend">인증번호가 발송되었습니다.</string>
+    <string name="email_address_certificate_alert_message_match_fail">잘못된 인증번호입니다. 다시 확인해보세요.</string>
+    <string name="email_address_certificate_alert_message_match_fail_toast">인증 실패 하였습니다.</string>
+    <string name="email_address_certificate_alert_message_time_fail">제한 시간을 초과했어요.</string>
+
+    <!-- Signup -->
+    <!-- Signup Email Set Address -->
+    <string name="email">이메일</string>
+    <string name="email_address">이메일 주소</string>
+    <string name="email_address_example">email@example.com</string>
+    <string name="email_address_certification">이메일 인증</string>
+    <string name="signup_email_set_email_address_title">이메일을 입력해주세요.</string>
+    <string name="signup_email_set_email_address_message_format_fail">올바른 이메일 주소를 입력해주세요.</string>
+    <string name="signup_email_set_email_address_message_duplicate_fail">이미 사용중인 이메일 주소예요.</string>
+    <!-- Signup Email Set Password -->
+    <string name="password">비밀번호</string>
+    <string name="signup_email_set_password_title">비밀번호를 입력해주세요.</string>
+    <string name="signup_email_set_password_message_format_fail">영문 소문자와 숫자만 사용할 수 있어요.</string>
+    <string name="signup_email_set_password_message_length_fail_min">8자리 이상을 입력해주세요</string>
+    <string name="signup_email_set_password_message_length_fail_max">16자까지만 입력할 수 있어요.</string>
+    <string name="password_confirmation">비밀번호 확인</string>
+    <string name="signup_email_set_password_confirmation_edittext_hint">다시 한번 입력해주세요</string>
+    <string name="signup_email_set_password_confirmation_title">비밀번호를 확인해주세요.</string>
+    <string name="signup_email_set_password_confirmation_message_fail">비밀번호가 일치하지 않아요.</string>
+    <!-- Select Image  -->
+    <string name="image_option_gallery">앨범에서 선택</string>
+    <string name="image_option_camera">사진 직접촬영</string>
+    <!-- Signup Email Complete -->
+    <string name="signup_email_alert_message_loading">가입을 완료하는 중입니다. 잠시만 기다려주세요!</string>
+    <string name="signup_email_complete_guide_message"><b>%s</b>님,\n가입을 축하드려요!</string>
+    <string name="signup_email_alert_message_fail_network">가입을 완료할 수 없어요. 다시 시도해주세요.</string>
+
+    <!-- Find Account -->
+    <string name="find_account_password_title">비밀번호 찾기</string>
+    <string name="find_account_password_check_email_description">가입할 때 사용한 이메일을 입력해주세요.</string>
+    <string name="find_account_password_check_email_message_exist_fail">등록된 이메일이 없어요</string>
+    <string name="find_account_password_new_password_title">새로운 비밀번호를 \n입력해주세요.</string>
+    <string name="find_account_password_complete">새로운 비밀번호가\n 설정되었어요.</string>
+    <string name="find_account_password_next">로그인하러 가기</string>
+
+    <!-- Setting -->
+    <string name="setting_logout_message">계정을 로그아웃 할까요?</string>
+    <string name="setting_withdraw_message">계정을 삭제할까요?</string>
+    <string name="setting_withdraw_explanation_message">모든 정보가 삭제되며, 복구가 불가능합니다.</string>
+    <string name="setting_contact_message">메일 주소 복사 완료</string>
+    <string name="setting_contact_explanation_message">클립보드에 저장된 메일 주소로 문의 주세요</string>
+
+    <!-- Change Password -->
+    <string name="setting_change_password_current_fail_message">비밀번호를 정확히 입력해주세요.</string>
+    <string name="setting_change_password_current_title">현재 비밀번호를\n입력해주세요.</string>
+    <string name="setting_change_password_new_title">새로운 비밀번호를\n입력해주세요.</string>
+    <string name="change_password">비밀번호 변경</string>
+    <string name="change_password_success_message">비밀번호가 변경되었습니다.</string>
+
+    <!-- Notification Setting -->
+    <string name="setting_notification_title">알림 설정</string>
+    <string name="setting_notification_device">기기 알림 설정</string>
+    <string name="setting_notification_device_explanation">앱에서 보내는 알림을 받아요.</string>
+    <string name="setting_notification_notice">공지 알림</string>
+    <string name="setting_notification_notice_explanation">앱에서 보내는 공지사항 알림을 받아요.</string>
+    <string name="setting_notification_reaction">반응 알림</string>
+    <string name="notification_channel_id">REACTION</string>
+    <string name="notification_channel_name">반응 알림</string>
+    <string name="notification_topic_notice">NOTICE</string>
+    <string name="notification_empty_title">아직 받은 알림이 없어요.</string>
+    <string name="notification_empty_description">새로운 소식들을\n이곳에서 알려드릴게요.</string>
+
+    <!-- Withdraw -->
+    <string name="withdraw_title">계정 삭제하기</string>
+    <string name="withdraw_subheading">정말 계정을 삭제하시겠어요?</string>
+    <string name="withdraw_subheading_explanation">계정을 삭제하는 이유에 대해 알려주세요. 적어주신 내용은 좀 더 나은 서비스를 제공하는데 사용됩니다.</string>
+    <string name="withdraw_button">계정 삭제</string>
+    <string name="withdraw_reason_1">이용이 불편해요.</string>
+    <string name="withdraw_reason_2">기록을 삭제하고 싶어요.</string>
+    <string name="withdraw_reason_3">자주 사용하지 않아요.</string>
+    <string name="withdraw_reason_4">개인정보 유출이 우려돼요.</string>
+    <string name="withdraw_reason_5">콘텐츠가 마음에 들지않아요.</string>
+    <string name="withdraw_reason_other">기타</string>
+    <string name="withdraw_reason_other_hint">탈퇴 사유를 작성해주세요. (100자 이내)</string>
+    <string name="withdraw_final_message">계정 삭제시 정보가 회원님의 모든 콘텐츠와 활동기록이 함께 삭제됩니다. 삭제된 정보는 복구할 수 없습니다.</string>
+
+    <!-- Information -->
+    <string name="information_title">정보</string>
+
+    <!-- Notice -->
+    <string name="notice_actionbar_title">공지사항</string>
+
+    <!-- Dialog -->
+    <string name="dialog_loading_wait">잠시만 기다려주세요</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>

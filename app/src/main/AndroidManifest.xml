@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.daily.dayo">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -40,7 +39,7 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <activity android:name=".presentation.activity.LoginActivity"
+        <activity android:name="daily.dayo.presentation.activity.LoginActivity"
             android:theme="@style/Theme.DAYO.Splash"
             android:screenOrientation="portrait"
             android:exported="true">
@@ -62,11 +61,11 @@
                     android:scheme="kakao${NATIVE_APP_KEY}" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.activity.MainActivity"
+        <activity android:name="daily.dayo.presentation.activity.MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing" />
         <service
-            android:name=".data.datasource.remote.firebase.FirebaseMessagingService"
+            android:name="daily.dayo.presentation.service.firebase.FirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
