@@ -1,0 +1,99 @@
+name: Android-release CD.yml
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup JDK 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: "adopt"
+        java-version: '17'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/buildSrc/**/*.kt') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Create google-services
+      run:
+        echo '${{ secrets.GOOGLE_SERVICES_JSON_RELEASE }}' > ./app/google-services.json
+
+    - name: Download Android keystore
+      id: android_keystore_release
+      uses: timheuer/base64-to-file@v1.2
+      with:
+        fileName: keystore-release.jks
+        fileDir: '/home/runner/work/DAYO_Android/DAYO_Android/app'
+        encodedString: ${{ secrets.KEY_STORE_ENCODED }}
+
+    - name: Create key-release.properties
+      run: |
+        echo "storeFile=${{ steps.android_keystore_release.outputs.filePath }}" > ./app/keystore-release.properties
+        echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> ./app/keystore-release.properties
+        echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> ./app/keystore-release.properties
+        echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> ./app/keystore-release.properties
+
+    - name: Create Properties
+      run: |
+        echo '${{ secrets.LOCAL_PROPERTIES }}' > ./local.properties
+        echo '${{ secrets.SENTRY_PROPERTIES }}' > ./sentry.properties
+        echo '${{ secrets.SENTRY_PROPERTIES }}' > ./app/src/main/resources/sentry.properties
+
+    # Build APK Release
+    - name: Build release Apk
+      run: ./gradlew clean assembleRelease
+
+    # Build AAB Release
+    - name: Build release Bundle
+      run: ./gradlew clean bundleRelease
+
+    # Upload AAB
+    - name: Upload a Build AAB Artifact
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        # Artifact name
+        name: app-release.aab
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ./app/build/outputs/bundle/release/app-release.aab
+        retention-days: 14
+
+    # Upload APK
+    - name: Upload a Build APK Artifact
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        # Artifact name
+        name: app-release.apk
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ./app/build/outputs/apk/release/app-release.apk
+        retention-days: 14
+
+    - name: Deploy to Play Store (INTERNAL) 🚀
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJsonPlainText: ${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }}
+        packageName: ${{secrets.AOS_PACKAGE_NAME}}
+        releaseFiles: ./app/build/outputs/bundle/release/app-release.aab
+        track: internal
+        status: draft
