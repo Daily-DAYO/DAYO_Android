@@ -18,18 +18,17 @@ import androidx.viewpager2.widget.ViewPager2
 import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import com.google.android.material.chip.Chip
+import daily.dayo.domain.model.Post
+import daily.dayo.domain.model.User
+import daily.dayo.domain.model.categoryKR
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.GlideLoadUtil.loadImageView
 import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
+import daily.dayo.presentation.common.TimeChangerUtil.timeChange
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.ItemFeedPostBinding
-import daily.dayo.domain.model.Post
-import daily.dayo.domain.model.categoryKR
 import daily.dayo.presentation.fragment.feed.FeedFragmentDirections
-import com.google.android.material.chip.Chip
-import daily.dayo.domain.model.User
-import daily.dayo.presentation.common.TimeChangerUtil.timeChange
-import kotlinx.coroutines.Dispatchers
 
 class FeedListAdapter(private val requestManager: RequestManager, private val currentUserInfo: User) :
     PagingDataAdapter<Post, FeedListAdapter.FeedListViewHolder>(diffCallback) {
@@ -65,6 +64,7 @@ class FeedListAdapter(private val requestManager: RequestManager, private val cu
 
     interface OnItemClickListener {
         fun likePostClick(button: ImageButton, post: Post, position: Int)
+        fun likeCountClick(postId: Int)
         fun bookmarkPostClick(button: ImageButton, post: Post, position: Int)
         fun tagPostClick(chip: Chip)
     }
@@ -179,6 +179,12 @@ class FeedListAdapter(private val requestManager: RequestManager, private val cu
                     post = post,
                     position = bindingAdapterPosition
                 )
+            }
+
+            binding.tvFeedPostLikeCount.setOnDebounceClickListener {
+                post.postId?.let { postId ->
+                    if (post.heartCount > 0) listener?.likeCountClick(postId = postId)
+                }
             }
 
             postImageSliderAdapter?.setOnItemClickListener(object :
