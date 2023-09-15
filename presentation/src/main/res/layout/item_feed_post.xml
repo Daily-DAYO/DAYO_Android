@@ -166,8 +166,9 @@
             <TextView
                 android:id="@+id/tv_feed_post_like_count"
                 android:layout_width="40dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:ellipsize="end"
+                android:gravity="center|start"
                 android:maxLines="1"
                 android:text="@{heartCountStr}"
                 android:textColor="@color/gray_2_767B83"
@@ -191,8 +192,9 @@
             <TextView
                 android:id="@+id/tv_feed_post_comment_count"
                 android:layout_width="40dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:ellipsize="end"
+                android:gravity="center|start"
                 android:maxLines="1"
                 android:text="@{commentCountStr}"
                 android:textColor="@color/gray_2_767B83"
