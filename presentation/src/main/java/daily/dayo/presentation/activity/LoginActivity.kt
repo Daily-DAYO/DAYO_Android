@@ -6,12 +6,14 @@ import android.os.Bundle
 import android.util.Log
 import android.view.ViewTreeObserver
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import daily.dayo.presentation.databinding.ActivityLoginBinding
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.presentation.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -27,11 +29,32 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSystemBackClickListener()
         observeNetworkException()
         observeApiException()
         autoLogin()
         loginSuccess()
         setSplash()
+    }
+
+    private fun setSystemBackClickListener() {
+        this.onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val navHostFragment =
+                        supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+                    val backStackEntryCount =
+                        navHostFragment?.childFragmentManager?.backStackEntryCount
+
+                    if (backStackEntryCount == 0) {
+                        this@LoginActivity.finish()
+                    } else {
+                        navHostFragment?.childFragmentManager?.popBackStack()
+                    }
+                }
+            }
+        )
     }
 
     private fun setFCM() {
