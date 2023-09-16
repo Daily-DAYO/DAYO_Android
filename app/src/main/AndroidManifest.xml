@@ -18,7 +18,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.DAYO">
+        android:theme="@style/Theme.DAYO"
+        android:enableOnBackInvokedCallback="true">
         <meta-data android:name="io.sentry.dsn" android:value="https://7f03a2b5d1c24582bfca11c28231a45f@o4504230448136192.ingest.sentry.io/4504230448988160" />
         <!-- Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
            We recommend adjusting this value in production. -->
