@@ -10,6 +10,7 @@ import android.provider.Settings
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -36,13 +37,33 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        setSystemBackClickListener()
         checkCurrentNotification()
         initBottomNavigation()
         setBottomNaviVisibility()
         disableBottomNaviTooltip()
         getNotificationData()
         askNotificationPermission()
+    }
+
+    private fun setSystemBackClickListener() {
+        this.onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val navHostFragment =
+                        supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+                    val backStackEntryCount =
+                        navHostFragment?.childFragmentManager?.backStackEntryCount
+
+                    if (backStackEntryCount == 0) {
+                        this@MainActivity.finish()
+                    } else {
+                        findNavController().popBackStack()
+                    }
+                }
+            }
+        )
     }
 
     private fun checkCurrentNotification() {
