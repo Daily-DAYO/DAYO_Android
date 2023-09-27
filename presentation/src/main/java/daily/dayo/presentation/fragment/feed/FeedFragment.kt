@@ -8,27 +8,25 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
-import daily.dayo.presentation.R
-import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
-import daily.dayo.presentation.common.autoCleared
-import daily.dayo.presentation.common.setOnDebounceClickListener
-import daily.dayo.presentation.databinding.FragmentFeedBinding
-import daily.dayo.presentation.adapter.FeedListAdapter
-import daily.dayo.presentation.viewmodel.FeedViewModel
-import daily.dayo.presentation.viewmodel.SearchViewModel
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.domain.model.Post
+import daily.dayo.presentation.R
 import daily.dayo.presentation.activity.MainActivity
+import daily.dayo.presentation.adapter.FeedListAdapter
+import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
+import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.extension.navigateSafe
+import daily.dayo.presentation.common.setOnDebounceClickListener
+import daily.dayo.presentation.databinding.FragmentFeedBinding
 import daily.dayo.presentation.viewmodel.AccountViewModel
+import daily.dayo.presentation.viewmodel.FeedViewModel
+import daily.dayo.presentation.viewmodel.SearchViewModel
 
 @AndroidEntryPoint
 class FeedFragment : Fragment() {
@@ -127,6 +125,10 @@ class FeedFragment : Fragment() {
                 setFeedPostLikeClickListener(button, post, position)
             }
 
+            override fun likeCountClick(postId: Int) {
+                setLikeCountClickListener(postId)
+            }
+
             override fun bookmarkPostClick(button: ImageButton, post: Post, position: Int) {
                 setFeedPostBookmarkClickListener(button, post, position)
             }
@@ -153,6 +155,13 @@ class FeedFragment : Fragment() {
         }
     }
 
+    fun setLikeCountClickListener(postId: Int) {
+        findNavController().navigateSafe(
+            currentDestinationId = R.id.FeedFragment,
+            action = FeedFragmentDirections.actionFeedFragmentToPostLikeUsersFragment(postId = postId)
+        )
+    }
+
     private fun setFeedPostBookmarkClickListener(button: ImageButton, post: Post, position: Int) {
         with(post) {
             try {
@@ -176,7 +185,7 @@ class FeedFragment : Fragment() {
         }
     }
 
-    private fun setScrollToTop(isSmoothScroll:Boolean = false) {
+    private fun setScrollToTop(isSmoothScroll: Boolean = false) {
         with(binding.rvFeedPost) {
             if (isSmoothScroll) this.smoothScrollToPosition(0)
             else this.scrollToPosition(0)
