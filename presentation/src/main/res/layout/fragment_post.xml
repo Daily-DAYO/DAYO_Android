@@ -199,7 +199,7 @@
                             android:layout_marginVertical="6dp"
                             android:layout_marginStart="9dp"
                             android:background="@android:color/transparent"
-                            android:src="@drawable/selector_button_post_like"
+                            android:src="@drawable/selector_button_post_like_outlined"
                             app:layout_constraintBottom_toTopOf="@id/view_post_horizontal_line"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
