@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray5_E8EAEE
 import daily.dayo.presentation.theme.Gray6_F0F1F3
@@ -160,7 +161,7 @@ fun FilledTimerField(
         isError = isError,
         supportingText = { if (isError) Text(text = errorMessage) else Text(text = "") },
         textStyle = TextStyle(textAlign = textAlign, color = Gray1_313131),
-        trailingIcon = { Text(text = "${String.format("%02d", (timeLeft / 60) % 60)}:${String.format("%02d", timeLeft % 60)}") },
+        trailingIcon = { Text(text = "${String.format("%02d", (timeLeft / 60) % 60)}:${String.format("%02d", timeLeft % 60)}", color = Gray2_767B83) },
         colors = TextFieldDefaults.colors(
             errorSupportingTextColor = Red_FF4545,
             focusedIndicatorColor = PrimaryGreen_23C882,
