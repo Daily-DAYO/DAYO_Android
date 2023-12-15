@@ -16,6 +16,7 @@ import daily.dayo.presentation.R
 import daily.dayo.presentation.activity.MainActivity
 import daily.dayo.presentation.adapter.ProfileBookmarkPostListAdapter
 import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.databinding.FragmentProfileBookmarkPostListBinding
 import daily.dayo.presentation.viewmodel.ProfileViewModel
 
@@ -69,17 +70,23 @@ class ProfileBookmarkPostListFragment : Fragment() {
             ProfileBookmarkPostListAdapter.OnItemClickListener {
             override fun onItemClick(v: View, bookmarkPost: BookmarkPost, pos: Int) {
                 when (requireParentFragment()) {
-                    is MyPageFragment -> MyPageFragmentDirections.actionMyPageFragmentToPostFragment(
-                        bookmarkPost.postId
-                    )
+                    is MyPageFragment ->
+                        findNavController().navigateSafe(
+                            currentDestinationId = R.id.MyPageFragment,
+                            action = R.id.action_myPageFragment_to_postFragment,
+                            args = MyPageFragmentDirections.actionMyPageFragmentToPostFragment(
+                                bookmarkPost.postId
+                            ).arguments
+                        )
 
-                    is ProfileFragment -> ProfileFragmentDirections.actionProfileFragmentToPostFragment(
-                        bookmarkPost.postId
-                    )
+                    is ProfileFragment ->
+                        findNavController().navigateSafe(
+                            currentDestinationId = R.id.ProfileFragment,
+                            action = R.id.action_profileFragment_to_postFragment,
+                            args = ProfileFragmentDirections.actionProfileFragmentToPostFragment(bookmarkPost.postId).arguments
+                        )
 
-                    else -> null
-                }?.let {
-                    findNavController().navigate(it)
+                    else -> {}
                 }
             }
         })

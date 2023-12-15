@@ -115,7 +115,10 @@ class FeedFragment : Fragment() {
 
     private fun setFeedEmptyButtonClickListener() {
         binding.btnFeedEmpty.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_feedFragment_to_homeFragment)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.FeedFragment,
+                action = R.id.action_feedFragment_to_homeFragment
+            )
         }
     }
 
@@ -135,7 +138,10 @@ class FeedFragment : Fragment() {
 
             override fun tagPostClick(chip: Chip) {
                 searchViewModel.searchKeyword = trimBlankText(chip.text.toString().substringAfter("#"))
-                findNavController().navigate(FeedFragmentDirections.actionFeedFragmentToSearchResultFragment())
+                findNavController().navigateSafe(
+                    currentDestinationId = R.id.FeedFragment,
+                    action = R.id.action_feedFragment_to_searchResultFragment
+                )
             }
         })
     }

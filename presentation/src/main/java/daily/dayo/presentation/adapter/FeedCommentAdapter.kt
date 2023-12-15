@@ -7,9 +7,11 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import daily.dayo.domain.model.Comment
+import daily.dayo.presentation.R
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.ItemFeedPostCommentBinding
-import daily.dayo.domain.model.Comment
 import daily.dayo.presentation.fragment.feed.FeedFragmentDirections
 
 class FeedCommentAdapter : ListAdapter<Comment, FeedCommentAdapter.FeedCommentViewHolder>(
@@ -34,8 +36,8 @@ class FeedCommentAdapter : ListAdapter<Comment, FeedCommentAdapter.FeedCommentVi
         this.listener = listener
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedCommentViewHolder
-            = FeedCommentViewHolder (ItemFeedPostCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedCommentViewHolder =
+        FeedCommentViewHolder(ItemFeedPostCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: FeedCommentViewHolder, position: Int) {
         holder.bind(getItem(position))
@@ -57,9 +59,14 @@ class FeedCommentAdapter : ListAdapter<Comment, FeedCommentAdapter.FeedCommentVi
                 }
             }
         }
-        private fun setOnNicknameClickListener(commentMemberId: String){
+
+        private fun setOnNicknameClickListener(commentMemberId: String) {
             binding.tvFeedPostCommentUserNickname.setOnDebounceClickListener {
-                Navigation.findNavController(it).navigate(FeedFragmentDirections.actionFeedFragmentToProfileFragment(memberId = commentMemberId))
+                Navigation.findNavController(it).navigateSafe(
+                    currentDestinationId = R.id.FeedFragment,
+                    action = R.id.action_feedFragment_to_profileFragment,
+                    args = FeedFragmentDirections.actionFeedFragmentToProfileFragment(memberId = commentMemberId).arguments
+                )
             }
         }
     }

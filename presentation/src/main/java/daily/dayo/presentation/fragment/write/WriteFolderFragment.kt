@@ -11,13 +11,18 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import daily.dayo.presentation.R
-import daily.dayo.presentation.common.*
-import daily.dayo.presentation.common.dialog.LoadingAlertDialog
-import daily.dayo.presentation.databinding.FragmentWriteFolderBinding
-import daily.dayo.presentation.adapter.WriteFolderAdapter
-import daily.dayo.presentation.viewmodel.WriteViewModel
 import daily.dayo.domain.model.Folder
+import daily.dayo.presentation.R
+import daily.dayo.presentation.adapter.WriteFolderAdapter
+import daily.dayo.presentation.common.ButtonActivation
+import daily.dayo.presentation.common.Event
+import daily.dayo.presentation.common.Status
+import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.dialog.LoadingAlertDialog
+import daily.dayo.presentation.common.extension.navigateSafe
+import daily.dayo.presentation.common.setOnDebounceClickListener
+import daily.dayo.presentation.databinding.FragmentWriteFolderBinding
+import daily.dayo.presentation.viewmodel.WriteViewModel
 import kotlinx.coroutines.launch
 
 class WriteFolderFragment : Fragment() {
@@ -77,7 +82,10 @@ class WriteFolderFragment : Fragment() {
 
     private fun setFolderAddButtonClickListener() {
         binding.tvWriteFolderAdd.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_writeFolderFragment_to_folderAddFragment)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.WriteFolderFragment,
+                action = R.id.action_writeFolderFragment_to_folderAddFragment
+            )
         }
     }
 
@@ -114,6 +122,7 @@ class WriteFolderFragment : Fragment() {
                                 }
                             }
                         }
+
                         else -> {}
                     }
                 }

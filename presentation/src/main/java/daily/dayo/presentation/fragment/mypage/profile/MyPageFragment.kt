@@ -12,15 +12,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import com.google.android.material.tabs.TabLayoutMediator
+import daily.dayo.presentation.R
+import daily.dayo.presentation.adapter.ProfileFragmentPagerStateAdapter
 import daily.dayo.presentation.common.GlideLoadUtil.PROFILE_USER_THUMBNAIL_SIZE
 import daily.dayo.presentation.common.GlideLoadUtil.loadImageViewProfile
 import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.FragmentMyPageBinding
-import daily.dayo.presentation.adapter.ProfileFragmentPagerStateAdapter
-import daily.dayo.presentation.viewmodel.ProfileViewModel
-import com.google.android.material.tabs.TabLayoutMediator
 import daily.dayo.presentation.viewmodel.AccountViewModel
+import daily.dayo.presentation.viewmodel.ProfileViewModel
 
 const val FOLDERS_TAB_ID = 0
 const val LIKES_TAB_ID = 1
@@ -79,7 +81,7 @@ class MyPageFragment : Fragment() {
             ViewCompat.requestApplyInsets(layoutMyPageAppBar)
         }
     }
-    
+
     fun resetAppBarScrollPosition() {
         with(binding) {
             layoutMyPageAppBar.setExpanded(true, true)
@@ -143,35 +145,41 @@ class MyPageFragment : Fragment() {
 
     private fun setMyProfileOptionClickListener() {
         binding.btnMyPageOption.setOnDebounceClickListener {
-            findNavController().navigate(
-                MyPageFragmentDirections.actionMyPageFragmentToProfileOptionFragment(
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.MyPageFragment,
+                action = R.id.action_myPageFragment_to_profileOptionFragment,
+                args = MyPageFragmentDirections.actionMyPageFragmentToProfileOptionFragment(
                     isMine = true,
                     memberId = accountViewModel.getCurrentUserInfo().memberId!!
-                )
+                ).arguments
             )
         }
     }
 
     private fun setFollowerCountButtonClickListener(memberId: String, nickname: String) {
         binding.layoutMyPageFollowerCount.setOnDebounceClickListener { v ->
-            Navigation.findNavController(v).navigate(
-                MyPageFragmentDirections.actionMyPageFragmentToFollowFragment(
+            Navigation.findNavController(v).navigateSafe(
+                currentDestinationId = R.id.MyPageFragment,
+                action = R.id.action_myPageFragment_to_followFragment,
+                args = MyPageFragmentDirections.actionMyPageFragmentToFollowFragment(
                     memberId = memberId,
                     nickname = nickname,
                     initPosition = 0
-                )
+                ).arguments
             )
         }
     }
 
     private fun setFollowingCountButtonClickListener(memberId: String, nickname: String) {
         binding.layoutMyPageFollowingCount.setOnDebounceClickListener { v ->
-            Navigation.findNavController(v).navigate(
-                MyPageFragmentDirections.actionMyPageFragmentToFollowFragment(
+            Navigation.findNavController(v).navigateSafe(
+                currentDestinationId = R.id.MyPageFragment,
+                action = R.id.action_myPageFragment_to_followFragment,
+                args = MyPageFragmentDirections.actionMyPageFragmentToFollowFragment(
                     memberId = memberId,
                     nickname = nickname,
                     initPosition = 1
-                )
+                ).arguments
             )
         }
     }

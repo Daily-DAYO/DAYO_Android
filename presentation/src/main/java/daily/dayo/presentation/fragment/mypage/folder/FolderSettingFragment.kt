@@ -14,17 +14,18 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import daily.dayo.domain.model.FolderOrder
 import daily.dayo.presentation.R
+import daily.dayo.presentation.adapter.FolderSettingAdapter
 import daily.dayo.presentation.common.ButtonActivation
 import daily.dayo.presentation.common.ItemTouchHelperCallback
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.FragmentFolderSettingBinding
-import daily.dayo.presentation.adapter.FolderSettingAdapter
 import daily.dayo.presentation.viewmodel.FolderViewModel
-import daily.dayo.domain.model.FolderOrder
 import kotlinx.coroutines.launch
 
 class FolderSettingFragment : Fragment() {
@@ -67,7 +68,10 @@ class FolderSettingFragment : Fragment() {
 
     private fun setFolderAddButtonClickListener() {
         binding.tvFolderSettingAdd.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_folderSettingFragment_to_folderSettingAddFragment)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.FolderSettingFragment,
+                action = R.id.action_folderSettingFragment_to_folderSettingAddFragment
+            )
         }
     }
 
@@ -98,6 +102,7 @@ class FolderSettingFragment : Fragment() {
                                 }
                             }
                         }
+
                         else -> {}
                     }
                 })
@@ -123,6 +128,7 @@ class FolderSettingFragment : Fragment() {
                         folderSettingAdapter?.submitList(folderList)
                     }
                 }
+
                 else -> {}
             }
         })

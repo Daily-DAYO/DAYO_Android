@@ -3,20 +3,26 @@ package daily.dayo.presentation.fragment.post
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.dialog.DefaultDialogConfigure
 import daily.dayo.presentation.common.dialog.DefaultDialogExplanationConfirm
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.FragmentPostOptionBinding
 import daily.dayo.presentation.viewmodel.PostViewModel
-import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PostOptionFragment : DialogFragment() {
@@ -95,20 +101,24 @@ class PostOptionFragment : DialogFragment() {
 
     private fun setReportUserClickListener() {
         binding.layoutPostOptionReportUser.setOnDebounceClickListener {
-            findNavController().navigate(
-                PostOptionFragmentDirections.actionPostOptionFragmentToReportUserFragment(
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.PostOptionFragment,
+                action = R.id.action_postOptionFragment_to_reportUserFragment,
+                args = PostOptionFragmentDirections.actionPostOptionFragmentToReportUserFragment(
                     memberId = args.memberId
-                )
+                ).arguments
             )
         }
     }
 
     private fun setReportPostClickListener() {
         binding.layoutPostOptionReportPost.setOnDebounceClickListener {
-            findNavController().navigate(
-                PostOptionFragmentDirections.actionPostOptionFragmentToReportPostFragment(
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.PostOptionFragment,
+                action = R.id.action_postOptionFragment_to_reportPostFragment,
+                args = PostOptionFragmentDirections.actionPostOptionFragmentToReportPostFragment(
                     postId = args.postId
-                )
+                ).arguments
             )
         }
     }
