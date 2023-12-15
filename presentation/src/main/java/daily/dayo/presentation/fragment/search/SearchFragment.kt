@@ -10,15 +10,16 @@ import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
+import daily.dayo.presentation.adapter.SearchKeywordRecentAdapter
 import daily.dayo.presentation.common.HideKeyBoardUtil
 import daily.dayo.presentation.common.ReplaceUnicode
 import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.FragmentSearchBinding
-import daily.dayo.presentation.adapter.SearchKeywordRecentAdapter
 import daily.dayo.presentation.viewmodel.SearchViewModel
-import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
@@ -90,6 +91,7 @@ class SearchFragment : Fragment() {
                     }
                     true
                 }
+
                 else -> false
             }
         }
@@ -129,6 +131,9 @@ class SearchFragment : Fragment() {
 
     private fun searchKeyword(keyword: String) {
         searchViewModel.searchKeyword = keyword
-        findNavController().navigate(R.id.action_searchFragment_to_searchResultFragment)
+        findNavController().navigateSafe(
+            currentDestinationId = R.id.SearchFragment,
+            action = R.id.action_searchFragment_to_searchResultFragment
+        )
     }
 }

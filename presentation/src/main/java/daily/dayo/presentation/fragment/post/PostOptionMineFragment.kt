@@ -4,20 +4,26 @@ import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.dialog.DefaultDialogConfigure
 import daily.dayo.presentation.common.dialog.DefaultDialogConfirm
-import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.FragmentPostOptionMineBinding
 import daily.dayo.presentation.viewmodel.PostViewModel
-import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PostOptionMineFragment : DialogFragment() {
@@ -67,8 +73,12 @@ class PostOptionMineFragment : DialogFragment() {
         val deletePost = {
             LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
             postViewModel.requestDeletePost(postId = args.postId)
-            findNavController().navigate(R.id.action_postOptionMineFragment_to_HomeFragment)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.PostOptionMineFragment,
+                action = R.id.action_postOptionMineFragment_to_HomeFragment
+            )
         }
+
         mAlertDialog = DefaultDialogConfirm.createDialog(
             requireContext(),
             R.string.post_option_mine_delete_alert_message,
@@ -76,7 +86,7 @@ class PostOptionMineFragment : DialogFragment() {
             true,
             null,
             null,
-            deletePost
+            { deletePost() }
         ) {
             binding.layoutPostOptionMine.visibility = View.VISIBLE
             this.mAlertDialog.dismiss()
@@ -96,7 +106,10 @@ class PostOptionMineFragment : DialogFragment() {
         binding.layoutPostOptionMineModify.setOnDebounceClickListener {
             val navigateWithDataPassAction =
                 PostOptionMineFragmentDirections.actionPostOptionMineFragmentToWriteFragment(postId = args.postId)
-            findNavController().navigate(navigateWithDataPassAction)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.PostOptionMineFragment,
+                action = navigateWithDataPassAction
+            )
         }
     }
 }
