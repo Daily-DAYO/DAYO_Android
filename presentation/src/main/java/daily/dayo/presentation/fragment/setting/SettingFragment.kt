@@ -13,15 +13,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import daily.dayo.presentation.R
+import daily.dayo.presentation.activity.LoginActivity
+import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.dialog.DefaultDialogConfigure
 import daily.dayo.presentation.common.dialog.DefaultDialogConfirm
 import daily.dayo.presentation.common.dialog.DefaultDialogExplanationConfirm
-import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog
 import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.FragmentSettingBinding
-import daily.dayo.presentation.activity.LoginActivity
 import daily.dayo.presentation.viewmodel.AccountViewModel
 
 class SettingFragment : Fragment() {
@@ -56,7 +56,10 @@ class SettingFragment : Fragment() {
 
     private fun setChangePasswordClickListener() {
         binding.layoutSettingPasswordChange.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_settingFragment_to_settingChangePasswordCurrentFragment)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.SettingFragment,
+                action = R.id.action_settingFragment_to_settingChangePasswordCurrentFragment
+            )
         }
     }
 
@@ -68,13 +71,19 @@ class SettingFragment : Fragment() {
 
     private fun setNotificationButtonClickListener() {
         binding.layoutSettingNotification.setOnDebounceClickListener {
-            findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToSettingNotificationFragment())
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.SettingFragment,
+                action = R.id.action_settingFragment_to_settingNotificationFragment
+            )
         }
     }
 
     private fun setBlockButtonClickListener() {
         binding.layoutSettingBlock.setOnDebounceClickListener {
-            findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToSettingBlockFragment())
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.SettingFragment,
+                action = R.id.action_settingFragment_to_settingBlockFragment
+            )
         }
     }
 
@@ -173,7 +182,10 @@ class SettingFragment : Fragment() {
     }
 
     private fun doWithdraw() {
-        findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToWithdrawFragment())
+        findNavController().navigateSafe(
+            currentDestinationId = R.id.SettingFragment,
+            action = R.id.action_settingFragment_to_withdrawFragment
+        )
     }
 
     private fun doLogout() {

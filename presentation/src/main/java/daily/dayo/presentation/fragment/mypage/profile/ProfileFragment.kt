@@ -15,19 +15,20 @@ import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import com.google.android.material.tabs.TabLayoutMediator
+import daily.dayo.domain.model.Folder
 import daily.dayo.presentation.R
+import daily.dayo.presentation.adapter.ProfileFolderListAdapter
+import daily.dayo.presentation.adapter.ProfileFragmentPagerStateAdapter
 import daily.dayo.presentation.common.GlideLoadUtil.PROFILE_USER_THUMBNAIL_SIZE
 import daily.dayo.presentation.common.GlideLoadUtil.loadImageViewProfile
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.FragmentProfileBinding
-import daily.dayo.presentation.adapter.ProfileFolderListAdapter
-import daily.dayo.presentation.adapter.ProfileFragmentPagerStateAdapter
-import daily.dayo.presentation.viewmodel.ProfileViewModel
-import com.google.android.material.tabs.TabLayoutMediator
-import daily.dayo.domain.model.Folder
 import daily.dayo.presentation.viewmodel.AccountViewModel
+import daily.dayo.presentation.viewmodel.ProfileViewModel
 
 class ProfileFragment : Fragment() {
     private var binding by autoCleared<FragmentProfileBinding> {
@@ -238,10 +239,12 @@ class ProfileFragment : Fragment() {
         profileFolderListAdapter?.setOnItemClickListener(object :
             ProfileFolderListAdapter.OnItemClickListener {
             override fun onItemClick(v: View, folder: Folder, pos: Int) {
-                findNavController().navigate(
-                    ProfileFragmentDirections.actionProfileFragmentToFolderFragment(
+                findNavController().navigateSafe(
+                    currentDestinationId = R.id.ProfileFragment,
+                    action = R.id.action_profileFragment_to_folderFragment,
+                    args = ProfileFragmentDirections.actionProfileFragmentToFolderFragment(
                         folderId = folder.folderId!!
-                    )
+                    ).arguments
                 )
             }
         })
@@ -270,46 +273,54 @@ class ProfileFragment : Fragment() {
 
     private fun setMyProfileOptionClickListener() {
         binding.btnProfileOption.setOnDebounceClickListener {
-            findNavController().navigate(
-                ProfileFragmentDirections.actionProfileFragmentToProfileOptionFragment(
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.ProfileFragment,
+                action = R.id.action_profileFragment_to_profileOptionFragment,
+                args = ProfileFragmentDirections.actionProfileFragmentToProfileOptionFragment(
                     isMine = true,
                     memberId = profileViewModel.profileMemberId
-                )
+                ).arguments
             )
         }
     }
 
     private fun setOtherProfileOptionClickListener() {
         binding.btnProfileOption.setOnDebounceClickListener {
-            findNavController().navigate(
-                ProfileFragmentDirections.actionProfileFragmentToProfileOptionFragment(
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.ProfileFragment,
+                action = R.id.action_profileFragment_to_profileOptionFragment,
+                args = ProfileFragmentDirections.actionProfileFragmentToProfileOptionFragment(
                     isMine = false,
                     memberId = profileViewModel.profileMemberId
-                )
+                ).arguments
             )
         }
     }
 
     private fun setFollowerCountButtonClickListener(memberId: String, nickname: String) {
         binding.layoutProfileFollowerCount.setOnDebounceClickListener { v ->
-            Navigation.findNavController(v).navigate(
-                ProfileFragmentDirections.actionProfileFragmentToFollowFragment(
+            Navigation.findNavController(v).navigateSafe(
+                currentDestinationId = R.id.ProfileFragment,
+                action = R.id.action_profileFragment_to_followFragment,
+                args = ProfileFragmentDirections.actionProfileFragmentToFollowFragment(
                     memberId = memberId,
                     nickname = nickname,
                     initPosition = 0
-                )
+                ).arguments
             )
         }
     }
 
     private fun setFollowingCountButtonClickListener(memberId: String, nickname: String) {
         binding.layoutProfileFollowingCount.setOnDebounceClickListener { v ->
-            Navigation.findNavController(v).navigate(
-                ProfileFragmentDirections.actionProfileFragmentToFollowFragment(
+            Navigation.findNavController(v).navigateSafe(
+                currentDestinationId = R.id.ProfileFragment,
+                action = R.id.action_profileFragment_to_followFragment,
+                args = ProfileFragmentDirections.actionProfileFragmentToFollowFragment(
                     memberId = memberId,
                     nickname = nickname,
                     initPosition = 1
-                )
+                ).arguments
             )
         }
     }
