@@ -4,23 +4,24 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.ButtonActivation
 import daily.dayo.presentation.common.HideKeyBoardUtil
 import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
 import daily.dayo.presentation.common.SetTextInputLayout
 import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.FragmentSettingChangePasswordCurrentBinding
 import daily.dayo.presentation.viewmodel.AccountViewModel
-import dagger.hilt.android.AndroidEntryPoint
 import java.util.regex.Pattern
 
 @AndroidEntryPoint
@@ -59,7 +60,7 @@ class SettingChangePasswordCurrentFragment : Fragment() {
     }
 
     override fun onResume() {
-        if(binding.etSettingChangePasswordCurrentUserInput.text.isNullOrEmpty())
+        if (binding.etSettingChangePasswordCurrentUserInput.text.isNullOrEmpty())
             ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSettingChangePasswordCurrentNext)
         super.onResume()
     }
@@ -72,7 +73,10 @@ class SettingChangePasswordCurrentFragment : Fragment() {
 
     private fun setNextClickListener() {
         binding.btnSettingChangePasswordCurrentNext.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_settingChangePasswordCurrentFragment_to_settingChangePasswordNewFragment)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.SettingChangePasswordCurrentFragment,
+                action = R.id.action_settingChangePasswordCurrentFragment_to_settingChangePasswordNewFragment
+            )
         }
     }
 
@@ -206,6 +210,7 @@ class SettingChangePasswordCurrentFragment : Fragment() {
                     )
                     true
                 }
+
                 else -> false
             }
         }

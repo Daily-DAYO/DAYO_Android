@@ -28,23 +28,28 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
-import daily.dayo.presentation.common.*
+import daily.dayo.presentation.common.ButtonActivation
+import daily.dayo.presentation.common.HideKeyBoardUtil
+import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
+import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog
+import daily.dayo.presentation.common.extension.navigateSafe
+import daily.dayo.presentation.common.image.ImageResizeUtil
+import daily.dayo.presentation.common.image.ImageResizeUtil.USER_PROFILE_THUMBNAIL_RESIZE_SIZE
+import daily.dayo.presentation.common.image.ImageResizeUtil.cropCenterBitmap
+import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.FragmentSignupEmailSetProfileBinding
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.ProfileSettingViewModel
-import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import java.util.regex.Pattern
-import daily.dayo.presentation.common.image.ImageResizeUtil
-import daily.dayo.presentation.common.image.ImageResizeUtil.USER_PROFILE_THUMBNAIL_RESIZE_SIZE
-import daily.dayo.presentation.common.image.ImageResizeUtil.cropCenterBitmap
-import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
 
 @AndroidEntryPoint
 class SignupEmailSetProfileFragment : Fragment() {
@@ -212,7 +217,10 @@ class SignupEmailSetProfileFragment : Fragment() {
 
     private fun setProfilePhotoClickListener() {
         binding.layoutSignupEmailSetProfileUserImg.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_signupEmailSetProfileFragment_to_signupEmailSetProfileImageOptionFragment)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.SignupEmailSetProfileFragment,
+                action = R.id.action_signupEmailSetProfileFragment_to_signupEmailSetProfileImageOptionFragment
+            )
         }
     }
 
@@ -341,10 +349,12 @@ class SignupEmailSetProfileFragment : Fragment() {
     private fun observeSignupCallback() {
         loginViewModel.signupSuccess.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess.getContentIfNotHandled() == true) {
-                Navigation.findNavController(requireView()).navigate(
-                    SignupEmailSetProfileFragmentDirections.actionSignupEmailSetProfileFragmentToSignupEmailCompleteFragment(
+                Navigation.findNavController(requireView()).navigateSafe(
+                    currentDestinationId = R.id.SignupEmailSetProfileFragment,
+                    action = R.id.action_signupEmailSetProfileFragment_to_signupEmailCompleteFragment,
+                    args = SignupEmailSetProfileFragmentDirections.actionSignupEmailSetProfileFragmentToSignupEmailCompleteFragment(
                         trimBlankText(binding.etSignupEmailSetProfileNickname.text)
-                    )
+                    ).arguments
                 )
             } else if (isSuccess.getContentIfNotHandled() == false) {
                 LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
@@ -360,10 +370,12 @@ class SignupEmailSetProfileFragment : Fragment() {
     private fun observeKakaoSignupCallback() {
         profileSettingViewModel.updateSuccess.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess.getContentIfNotHandled() == true) {
-                Navigation.findNavController(requireView()).navigate(
-                    SignupEmailSetProfileFragmentDirections.actionSignupEmailSetProfileFragmentToSignupEmailCompleteFragment(
+                Navigation.findNavController(requireView()).navigateSafe(
+                    currentDestinationId = R.id.SignupEmailSetProfileFragment,
+                    action = R.id.action_signupEmailSetProfileFragment_to_signupEmailCompleteFragment,
+                    args = SignupEmailSetProfileFragmentDirections.actionSignupEmailSetProfileFragmentToSignupEmailCompleteFragment(
                         trimBlankText(binding.etSignupEmailSetProfileNickname.text)
-                    )
+                    ).arguments
                 )
             } else if (isSuccess.getContentIfNotHandled() == false) {
                 LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)

@@ -27,11 +27,12 @@ import com.bumptech.glide.RequestManager
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.*
 import daily.dayo.presentation.common.GlideLoadUtil.PROFILE_EDIT_USER_THUMBNAIL_SIZE
-import daily.dayo.presentation.common.image.ImageResizeUtil.USER_PROFILE_THUMBNAIL_RESIZE_SIZE
-import daily.dayo.presentation.common.image.ImageResizeUtil.cropCenterBitmap
 import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.image.ImageResizeUtil
+import daily.dayo.presentation.common.image.ImageResizeUtil.USER_PROFILE_THUMBNAIL_RESIZE_SIZE
+import daily.dayo.presentation.common.image.ImageResizeUtil.cropCenterBitmap
 import daily.dayo.presentation.databinding.FragmentProfileEditBinding
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.ProfileSettingViewModel
@@ -261,7 +262,10 @@ class ProfileEditFragment : Fragment() {
 
     private fun setProfileImageOptionClickListener() {
         binding.layoutProfileEditUserImg.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_profileEditFragment_to_profileEditImageOptionFragment)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.ProfileEditFragment,
+                action = R.id.action_profileEditFragment_to_profileEditImageOptionFragment
+            )
         }
     }
 

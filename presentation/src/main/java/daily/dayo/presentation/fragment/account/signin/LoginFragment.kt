@@ -24,18 +24,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import daily.dayo.presentation.R
-import daily.dayo.presentation.common.autoCleared
-import daily.dayo.presentation.common.dialog.LoadingAlertDialog
-import daily.dayo.presentation.common.setOnDebounceClickListener
-import daily.dayo.presentation.databinding.FragmentLoginBinding
-import daily.dayo.presentation.activity.MainActivity
-import daily.dayo.presentation.adapter.OnBoardingPagerStateAdapter
-import daily.dayo.presentation.fragment.onboarding.OnBoardingFirstFragment
-import daily.dayo.presentation.fragment.onboarding.OnBoardingFourthFragment
-import daily.dayo.presentation.fragment.onboarding.OnBoardingSecondFragment
-import daily.dayo.presentation.fragment.onboarding.OnBoardingThirdFragment
-import daily.dayo.presentation.viewmodel.AccountViewModel
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.AuthError
@@ -44,6 +32,19 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.presentation.R
+import daily.dayo.presentation.activity.MainActivity
+import daily.dayo.presentation.adapter.OnBoardingPagerStateAdapter
+import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.dialog.LoadingAlertDialog
+import daily.dayo.presentation.common.extension.navigateSafe
+import daily.dayo.presentation.common.setOnDebounceClickListener
+import daily.dayo.presentation.databinding.FragmentLoginBinding
+import daily.dayo.presentation.fragment.onboarding.OnBoardingFirstFragment
+import daily.dayo.presentation.fragment.onboarding.OnBoardingFourthFragment
+import daily.dayo.presentation.fragment.onboarding.OnBoardingSecondFragment
+import daily.dayo.presentation.fragment.onboarding.OnBoardingThirdFragment
+import daily.dayo.presentation.viewmodel.AccountViewModel
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -121,24 +122,30 @@ class LoginFragment : Fragment() {
                     when (error.reason) {
                         ClientErrorCause.Cancelled ->
                             Log.d("kakao login", "취소됨 (back button)", error)
+
                         ClientErrorCause.NotSupported ->
                             Log.e("kakao login", "지원되지 않음 (카톡 미설치)", error)
+
                         else ->
                             Log.e("kakao login", "기타 클라이언트 에러", error)
                     }
+
                 is AuthError ->
                     when (error.reason) {
                         AuthErrorCause.AccessDenied ->
                             Log.d("kakao login", "취소됨 (동의 취소)", error)
+
                         AuthErrorCause.Misconfigured ->
                             Log.e(
                                 "kakao login",
                                 "개발자사이트 앱 설정에 키해시를 등록하세요. 현재 값: ${KakaoSdk.keyHash}",
                                 error
                             )
+
                         else ->
                             Log.e("kakao login", "기타 인증 에러", error)
                     }
+
                 else ->
                     Log.e("kakao login", "기타 에러 (네트워크 장애 등..)", error)
             }
@@ -154,11 +161,13 @@ class LoginFragment : Fragment() {
             if (isSuccess.getContentIfNotHandled() == true) {
                 // 카카오 로그인 첫 시도 시 닉네임 설정 화면으로 이동
                 if (loginViewModel.getCurrentUserInfo().nickname == "") {
-                    findNavController().navigate(
-                        LoginFragmentDirections.actionLoginFragmentToSignupEmailSetProfileFragment(
+                    findNavController().navigateSafe(
+                        currentDestinationId = R.id.LoginFragment,
+                        action = R.id.action_loginFragment_to_signupEmailSetProfileFragment,
+                        args = LoginFragmentDirections.actionLoginFragmentToSignupEmailSetProfileFragment(
                             loginViewModel.getCurrentUserInfo().email.toString(),
                             null
-                        )
+                        ).arguments
                     )
                 } else {
                     val intent = Intent(requireContext(), MainActivity::class.java)
@@ -175,7 +184,10 @@ class LoginFragment : Fragment() {
 
     private fun setEmailLoginButtonClickListener() {
         binding.btnLoginEmail.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_loginEmailFragment)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.LoginFragment,
+                action = R.id.action_loginFragment_to_loginEmailFragment
+            )
         }
     }
 
@@ -260,10 +272,12 @@ class LoginFragment : Fragment() {
                         if (currentDestination?.id == R.id.LoginFragment) {
                             currentDestination?.getAction(R.id.action_loginFragment_to_policyFragment)
                                 ?.let {
-                                    navigate(
-                                        LoginFragmentDirections.actionLoginFragmentToPolicyFragment(
+                                    navigateSafe(
+                                        currentDestinationId = R.id.LoginFragment,
+                                        action = R.id.action_loginFragment_to_policyFragment,
+                                        args = LoginFragmentDirections.actionLoginFragmentToPolicyFragment(
                                             informationType = type
-                                        )
+                                        ).arguments
                                     )
                                 }
                         }

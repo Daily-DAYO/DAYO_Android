@@ -47,7 +47,7 @@
         tools:layout="@layout/fragment_login_email">
         <action
             android:id="@+id/action_loginEmailFragment_to_findAccountPasswordCheckEmail"
-            app:destination="@+id/FindAccountPasswordCheckEmail"
+            app:destination="@+id/FindAccountPasswordCheckEmailFragment"
             app:enterAnim="@anim/translate_bottom_up"
             app:exitAnim="@anim/translate_nothing"
             app:popEnterAnim="@anim/translate_nothing"
@@ -62,7 +62,7 @@
     </fragment>
 
     <fragment
-        android:id="@+id/FindAccountPasswordCheckEmail"
+        android:id="@+id/FindAccountPasswordCheckEmailFragment"
         android:name="daily.dayo.presentation.fragment.account.findAccount.FindAccountPasswordCheckEmailFragment"
         android:label="fragment_find_account_password_check_email"
         tools:layout="@layout/fragment_find_account_password_check_email">
