@@ -1,5 +1,6 @@
 package daily.dayo.presentation.view
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -16,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -41,7 +43,8 @@ fun FilledTextField(
     isError: Boolean = false,
     errorMessage: String = "",
     trailingIcon: (@Composable () -> Unit)? = null,
-    textAlign: TextAlign = TextAlign.Left
+    textAlign: TextAlign = TextAlign.Left,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
 ) {
     TextField(
         value = value,
@@ -51,6 +54,7 @@ fun FilledTextField(
             { Text(text = label) }
         } else null,
         placeholder = { Text(text = placeholder) },
+        modifier = modifier,
         isError = isError,
         supportingText = { if (isError) Text(text = errorMessage) else Text(text = "") },
         textStyle = TextStyle(textAlign = textAlign, color = Gray1_313131),
@@ -84,7 +88,8 @@ fun FilledPasswordField(
     placeholder: String = "",
     isError: Boolean = false,
     errorMessage: String = "",
-    textAlign: TextAlign = TextAlign.Left
+    textAlign: TextAlign = TextAlign.Left,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
 ) {
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
     TextField(
@@ -95,6 +100,7 @@ fun FilledPasswordField(
             { Text(text = label) }
         } else null,
         placeholder = { Text(text = placeholder) },
+        modifier = modifier,
         isError = isError,
         supportingText = { if (isError) Text(text = errorMessage) else Text(text = "") },
         textStyle = TextStyle(textAlign = textAlign, color = Gray1_313131),
@@ -141,6 +147,7 @@ fun FilledTimerField(
     isError: Boolean = false,
     errorMessage: String = "",
     textAlign: TextAlign = TextAlign.Left,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
 ) {
     var timeLeft by rememberSaveable { mutableStateOf(seconds) }
     LaunchedEffect(key1 = timeLeft, key2 = isPaused) {
@@ -158,6 +165,7 @@ fun FilledTimerField(
             { Text(text = label) }
         } else null,
         placeholder = { Text(text = placeholder) },
+        modifier = modifier,
         isError = isError,
         supportingText = { if (isError) Text(text = errorMessage) else Text(text = "") },
         textStyle = TextStyle(textAlign = textAlign, color = Gray1_313131),

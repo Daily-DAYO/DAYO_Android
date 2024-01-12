@@ -1,5 +1,6 @@
 package daily.dayo.presentation.view
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.util.Size
 import androidx.compose.foundation.BorderStroke
@@ -46,7 +47,7 @@ fun FilledButton(
     icon: @Composable (() -> Unit)? = null,
     enabled: Boolean = true,
     isTonal: Boolean = false,
-    size: Size? = null
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     val buttonColors = if (isTonal)
         ButtonDefaults.buttonColors(
@@ -68,7 +69,7 @@ fun FilledButton(
         onClick = { onClick() },
         colors = buttonColors,
         enabled = enabled,
-        modifier = if (size != null) Modifier.size(size.width.dp, size.height.dp) else Modifier,
+        modifier = modifier,
         content = {
             if (icon != null) icon()
             Text(text = label, style = MaterialTheme.typography.b6)
@@ -83,7 +84,7 @@ fun FilledRoundedCornerButton(
     icon: @Composable (() -> Unit)? = null,
     enabled: Boolean = true,
     textStyle: TextStyle = MaterialTheme.typography.b3,
-    size: Size? = null,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
     color: ButtonColors? = null
 ) {
     val buttonColors = color
@@ -99,7 +100,7 @@ fun FilledRoundedCornerButton(
         colors = buttonColors,
         enabled = enabled,
         shape = RoundedCornerShape(8.dp),
-        modifier = if (size != null) Modifier.size(size.width.dp, size.height.dp) else Modifier,
+        modifier = modifier,
         content = {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -109,7 +110,7 @@ fun FilledRoundedCornerButton(
                     text = label,
                     textAlign = TextAlign.Center,
                     style = textStyle,
-                    modifier = if (size != null) Modifier.fillMaxWidth() else Modifier
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         },
@@ -122,7 +123,7 @@ fun OutlinedButton(
     onClick: () -> Unit,
     label: String,
     icon: @Composable (() -> Unit)? = null,
-    size: Size? = null
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     androidx.compose.material3.OutlinedButton(
         onClick = { onClick() },
@@ -131,7 +132,7 @@ fun OutlinedButton(
             containerColor = White_FFFFFF,
             contentColor = Gray2_767B83
         ),
-        modifier = if (size != null) Modifier.size(size.width.dp, size.height.dp) else Modifier,
+        modifier = modifier,
         content = {
             if (icon != null) icon()
             Text(text = label, style = MaterialTheme.typography.b6)
@@ -175,7 +176,7 @@ fun PreviewFilledRoundedButton() {
         FilledRoundedCornerButton(
             onClick = {},
             label = "Email",
-            size = Size(300, 44),
+            modifier = Modifier.size(300.dp, 44.dp),
             color = ButtonDefaults.buttonColors(containerColor = Gray1_313131, contentColor = White_FFFFFF),
             icon = { Icon(Icons.Filled.Email, "Email") },
             textStyle = MaterialTheme.typography.b5
