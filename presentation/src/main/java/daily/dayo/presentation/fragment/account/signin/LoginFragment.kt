@@ -3,21 +3,11 @@ package daily.dayo.presentation.fragment.account.signin
 import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
-import android.text.style.ForegroundColorSpan
-import android.text.style.StyleSpan
-import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -58,12 +48,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -78,15 +65,7 @@ import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
 import daily.dayo.presentation.activity.MainActivity
-import daily.dayo.presentation.adapter.OnBoardingPagerStateAdapter
-import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog
-import daily.dayo.presentation.common.setOnDebounceClickListener
-import daily.dayo.presentation.databinding.FragmentLoginBinding
-import daily.dayo.presentation.fragment.onboarding.OnBoardingFirstFragment
-import daily.dayo.presentation.fragment.onboarding.OnBoardingFourthFragment
-import daily.dayo.presentation.fragment.onboarding.OnBoardingSecondFragment
-import daily.dayo.presentation.fragment.onboarding.OnBoardingThirdFragment
 import daily.dayo.presentation.theme.Gray1_313131
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray6_F0F1F3
@@ -101,34 +80,15 @@ import daily.dayo.presentation.viewmodel.AccountViewModel
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
-    private var binding by autoCleared<FragmentLoginBinding> {
-        onDestroyBindingView()
-        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
-    }
     private val loginViewModel by activityViewModels<AccountViewModel>()
-    private lateinit var indicators: Array<ImageView?>
-    private var pagerAdapter: OnBoardingPagerStateAdapter? = null
     private lateinit var loadingAlertDialog: AlertDialog
-    private val pageChangeCallBack = object : ViewPager2.OnPageChangeCallback() {
-        override fun onPageSelected(position: Int) {
-            super.onPageSelected(position)
-            setCurrentIndicator(position)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentLoginBinding.inflate(inflater, container, false)
         loadingAlertDialog = LoadingAlertDialog.createLoadingDialog(requireContext())
-
         loginSuccess()
-        setPolicy()
-        setKakaoLoginButtonClickListener()
-        setEmailLoginButtonClickListener()
-        setViewPager()
-        setViewPagerChangeEvent()
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
@@ -137,6 +97,11 @@ class LoginFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
     @OptIn(ExperimentalFoundationApi::class)
@@ -192,7 +157,7 @@ class LoginFragment : Fragment() {
             Column {
                 // Login
                 FilledRoundedCornerButton(
-                    onClick = {},
+                    onClick = { onClickKakaoLoginButton() },
                     label = stringResource(id = R.string.login_select_method_kakao),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -206,7 +171,7 @@ class LoginFragment : Fragment() {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 FilledRoundedCornerButton(
-                    onClick = {},
+                    onClick = { onClickEmailLoginButton() },
                     label = stringResource(id = R.string.login_select_method_email),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -225,9 +190,9 @@ class LoginFragment : Fragment() {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(text = "가입 시 DAYO의 ", style = MaterialTheme.typography.caption3.copy(Gray4_C5CAD2))
-                    TextButton(onClick = {}, text = "이용약관", textStyle = MaterialTheme.typography.caption3.copy(Gray4_C5CAD2), underline = true)
+                    TextButton(onClick = { onClickPolicyMessage(type = "terms") }, text = "이용약관", textStyle = MaterialTheme.typography.caption3.copy(Gray4_C5CAD2), underline = true)
                     Text(text = " 및 ", style = MaterialTheme.typography.caption3.copy(Gray4_C5CAD2))
-                    TextButton(onClick = {}, text = "개인정보", textStyle = MaterialTheme.typography.caption3.copy(Gray4_C5CAD2), underline = true)
+                    TextButton(onClick = { onClickPolicyMessage(type = "privacy") }, text = "개인정보", textStyle = MaterialTheme.typography.caption3.copy(Gray4_C5CAD2), underline = true)
                     Text(text = " 취급방침에 동의하게 됩니다.", style = MaterialTheme.typography.caption3.copy(Gray4_C5CAD2))
                 }
             }
@@ -305,39 +270,29 @@ class LoginFragment : Fragment() {
         )
     }
 
-    private fun onDestroyBindingView() {
-        pagerAdapter = null
-        with(binding.vpLoginOnboarding) {
-            unregisterOnPageChangeCallback(pageChangeCallBack)
-            adapter = null
-        }
-    }
-
-    private fun setKakaoLoginButtonClickListener() {
-        binding.btnLoginKakao.setOnDebounceClickListener {
-            LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
-            if (UserApiClient.instance.isKakaoTalkLoginAvailable(requireContext())) {
-                UserApiClient.instance.loginWithKakaoTalk(requireContext()) { token, error ->
-                    if (error != null) {
-                        Log.e("kakao login", "카카오톡으로 로그인 실패", error)
-                        if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
-                            LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
-                            return@loginWithKakaoTalk
-                        }
-
-                        UserApiClient.instance.loginWithKakaoAccount(
-                            requireContext(),
-                            callback = callback
-                        )
-                    } else if (token != null) {
-                        Log.i("kakao login", "카카오톡으로 로그인 성공 ${token.accessToken}")
-                        loginViewModel.requestLoginKakao(accessToken = token.accessToken)
+    private fun onClickKakaoLoginButton() {
+        LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(requireContext())) {
+            UserApiClient.instance.loginWithKakaoTalk(requireContext()) { token, error ->
+                if (error != null) {
+                    Log.e("kakao login", "카카오톡으로 로그인 실패", error)
+                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
                         LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
+                        return@loginWithKakaoTalk
                     }
+
+                    UserApiClient.instance.loginWithKakaoAccount(
+                        requireContext(),
+                        callback = callback
+                    )
+                } else if (token != null) {
+                    Log.i("kakao login", "카카오톡으로 로그인 성공 ${token.accessToken}")
+                    loginViewModel.requestLoginKakao(accessToken = token.accessToken)
+                    LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
                 }
-            } else {
-                UserApiClient.instance.loginWithKakaoAccount(requireContext(), callback = callback)
             }
+        } else {
+            UserApiClient.instance.loginWithKakaoAccount(requireContext(), callback = callback)
         }
     }
 
@@ -406,117 +361,23 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun setEmailLoginButtonClickListener() {
-        binding.btnLoginEmail.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_loginEmailFragment)
-        }
+    private fun onClickEmailLoginButton() {
+        findNavController().navigate(R.id.action_loginFragment_to_loginEmailFragment)
     }
 
-    private fun setViewPager() {
-        binding.vpLoginOnboarding.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
-        pagerAdapter =
-            OnBoardingPagerStateAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
-        pagerAdapter?.addFragment(OnBoardingFirstFragment())
-        pagerAdapter?.addFragment(OnBoardingSecondFragment())
-        pagerAdapter?.addFragment(OnBoardingThirdFragment())
-        pagerAdapter?.addFragment(OnBoardingFourthFragment())
-        binding.vpLoginOnboarding.adapter = pagerAdapter
-        setupIndicators(pagerAdapter?.itemCount ?: 0)
-    }
-
-    private fun setViewPagerChangeEvent() {
-        binding.vpLoginOnboarding.registerOnPageChangeCallback(pageChangeCallBack)
-    }
-
-    private fun setupIndicators(count: Int) {
-        indicators = arrayOfNulls(count)
-        val params = LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        params.setMargins(16, 8, 16, 8)
-        for (i in indicators.indices) {
-            indicators[i] = ImageView(requireContext())
-            indicators[i]!!.setImageDrawable(
-                ContextCompat.getDrawable(requireContext(), R.drawable.ic_indicator_inactive_gray)
-            )
-            indicators[i]!!.layoutParams = params
-            binding.viewLoginOnboardingIndicators.addView(indicators[i])
-        }
-        setCurrentIndicator(0)
-    }
-
-    private fun setCurrentIndicator(position: Int) {
-        with(binding.viewLoginOnboardingIndicators) {
-            for (i in 0 until this.childCount) {
-                val imageView = this.getChildAt(i) as ImageView
-                if (i == position) {
-                    imageView.setImageDrawable(
-                        ContextCompat.getDrawable(requireContext(), R.drawable.ic_indicator_active)
-                    )
-                } else {
-                    imageView.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            requireContext(),
-                            R.drawable.ic_indicator_inactive_gray
+    private fun onClickPolicyMessage(type: String) {
+        with(findNavController()) {
+            if (currentDestination?.id == R.id.LoginFragment) {
+                currentDestination?.getAction(R.id.action_loginFragment_to_policyFragment)
+                    ?.let {
+                        navigate(
+                            LoginFragmentDirections.actionLoginFragmentToPolicyFragment(
+                                informationType = type
+                            )
                         )
-                    )
-                }
+                    }
             }
         }
-    }
-
-    private fun setPolicy() {
-        var span = SpannableString(getString(R.string.login_policy_guide_message))
-        setPolicyMessage(span = span, type = "terms", text = getString(R.string.policy_terms))
-        setPolicyMessage(span = span, type = "privacy", text = getString(R.string.policy_privacy))
-        span.setSpan(
-            ForegroundColorSpan(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.gray_4_C5CAD2
-                )
-            ),
-            0,
-            span.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        binding.tvLoginUseGuideMessage.movementMethod = LinkMovementMethod.getInstance()
-        binding.tvLoginUseGuideMessage.text = span
-    }
-
-    private fun setPolicyMessage(span: SpannableString, type: String, text: String) {
-        span.setSpan(
-            object : ClickableSpan() {
-                override fun onClick(widget: View) {
-                    with(findNavController()) {
-                        if (currentDestination?.id == R.id.LoginFragment) {
-                            currentDestination?.getAction(R.id.action_loginFragment_to_policyFragment)
-                                ?.let {
-                                    navigate(
-                                        LoginFragmentDirections.actionLoginFragmentToPolicyFragment(
-                                            informationType = type
-                                        )
-                                    )
-                                }
-                        }
-                    }
-                }
-            },
-            span.indexOf(text), span.indexOf(text) + text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        span.setSpan(
-            StyleSpan(Typeface.BOLD),
-            span.indexOf(text),
-            span.indexOf(text) + text.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        span.setSpan(
-            UnderlineSpan(),
-            span.indexOf(text),
-            span.indexOf(text) + text.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
     }
 
     @Composable
