@@ -5,6 +5,23 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -14,20 +31,20 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.domain.model.Category
+import daily.dayo.domain.model.Post
 import daily.dayo.presentation.R
+import daily.dayo.presentation.activity.MainActivity
+import daily.dayo.presentation.adapter.HomeDayoPickAdapter
 import daily.dayo.presentation.common.GlideLoadUtil.loadImageBackground
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.common.toByteArray
 import daily.dayo.presentation.databinding.FragmentHomeDayoPickPostListBinding
-import daily.dayo.presentation.adapter.HomeDayoPickAdapter
+import daily.dayo.presentation.view.EmojiView
 import daily.dayo.presentation.viewmodel.HomeViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import dagger.hilt.android.AndroidEntryPoint
-import daily.dayo.domain.model.Category
-import daily.dayo.domain.model.Post
-import daily.dayo.presentation.activity.MainActivity
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,7 +69,14 @@ class HomeDayoPickPostListFragment : Fragment() {
     ): View? {
         binding = FragmentHomeDayoPickPostListBinding.inflate(inflater, container, false)
         glideRequestManager = Glide.with(this)
-        return binding.root
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                MaterialTheme {
+                    HomeDayoPickScreen()
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -81,6 +105,31 @@ class HomeDayoPickPostListFragment : Fragment() {
         glideRequestManager = null
         homeDayoPickAdapter = null
         binding.rvDayopickPost.adapter = null
+    }
+
+    @Composable
+    private fun HomeDayoPickScreen() {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth()
+            ) {
+                EmojiView(
+                    emoji = "\uD83D\uDCA1",
+                    emojiSize = MaterialTheme.typography.bodyMedium.fontSize,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+
+                Text(
+                    text = stringResource(id = R.string.home_dayopick_description),
+                    style = MaterialTheme.typography.bodyMedium.copy(Color(0xFF73777C)),
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .align(Alignment.CenterVertically)
+                )
+            }
+        }
     }
 
     private fun setDayoPickPostListRefreshListener() {
@@ -129,8 +178,10 @@ class HomeDayoPickPostListFragment : Fragment() {
                             binding.layoutDayopickPostEmpty.isVisible = postList.isEmpty()
                         }
                     }
+
                     Status.LOADING -> {
                     }
+
                     Status.ERROR -> {
 
                     }
@@ -283,6 +334,14 @@ class HomeDayoPickPostListFragment : Fragment() {
                 visibility = View.GONE
             }
             rvDayopickPost.visibility = View.VISIBLE
+        }
+    }
+
+    @Composable
+    @Preview(showBackground = true)
+    private fun PreviewHomeDayoPickScreen() {
+        MaterialTheme {
+            HomeDayoPickScreen()
         }
     }
 }
