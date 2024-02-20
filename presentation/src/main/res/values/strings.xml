@@ -72,12 +72,13 @@
     <string name="home_new_empty_action">공유하러 가기</string>
 
     <!-- Category -->
+    <string name="filter">필터</string>
     <string name="all">전체</string>
     <string name="scheduler">스케줄러</string>
     <string name="studyplanner">스터디 플래너</string>
     <string name="pocketbook">포켓북</string>
     <string name="sixHoleDiary">6공 다이어리</string>
-    <string name="digital">굿노트</string>
+    <string name="digital">모바일 다이어리</string>
     <string name="etc">기타</string>
     <string name="all_eng">ALL</string>
     <string name="scheduler_eng">SCHEDULER</string>
