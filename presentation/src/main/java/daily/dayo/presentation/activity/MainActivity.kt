@@ -1,6 +1,7 @@
 package daily.dayo.presentation.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Rect
@@ -32,7 +33,10 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -87,20 +91,30 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     fun MainScreen() {
         val navController = rememberNavController()
         val coroutineScope = rememberCoroutineScope()
         val bottomSheetState = getBottomSheetDialogState()
+        var bottomSheet: (@Composable () -> Unit)? by remember { mutableStateOf(null) }
+        val bottomSheetContent: (@Composable () -> Unit) -> Unit = {
+            bottomSheet = it
+        }
 
         Scaffold(
-            bottomBar = {
-                MainBottomNavigation(navController = navController)
-            }
-        ) { innerPadding ->
-            Box(Modifier.padding(innerPadding)) {
-                NavigationGraph(navController = navController, coroutineScope, bottomSheetState)
+            bottomBar = { bottomSheet?.let { it() } }
+        ) {
+            Scaffold(
+                bottomBar = {
+                    MainBottomNavigation(navController = navController)
+
+                }
+            ) { innerPadding ->
+                Box(Modifier.padding(innerPadding)) {
+                    NavigationGraph(navController = navController, coroutineScope, bottomSheetState, bottomSheetContent)
+                }
             }
         }
     }
@@ -162,14 +176,15 @@ class MainActivity : AppCompatActivity() {
     fun NavigationGraph(
         navController: NavHostController,
         coroutineScope: CoroutineScope,
-        bottomSheetState: ModalBottomSheetState
+        bottomSheetState: ModalBottomSheetState,
+        bottomSheetContent: (@Composable () -> Unit) -> Unit
     ) {
         NavHost(
             navController = navController,
             startDestination = Screen.Home.route
         ) {
             composable(Screen.Home.route) {
-                HomeScreen(navController, coroutineScope, bottomSheetState)
+                HomeScreen(navController, coroutineScope, bottomSheetState, bottomSheetContent)
             }
             composable(Screen.Feed.route) {
 
