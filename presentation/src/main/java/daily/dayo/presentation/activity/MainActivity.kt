@@ -11,22 +11,60 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
 import daily.dayo.presentation.databinding.ActivityMainBinding
 import daily.dayo.presentation.fragment.home.HomeFragmentDirections
-import daily.dayo.presentation.viewmodel.SettingNotificationViewModel
-import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.presentation.screen.home.HomeScreen
+import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Gray2_767B83
+import daily.dayo.presentation.theme.White_FFFFFF
+import daily.dayo.presentation.view.getBottomSheetDialogState
 import daily.dayo.presentation.viewmodel.AccountViewModel
+import daily.dayo.presentation.viewmodel.SettingNotificationViewModel
+import kotlinx.coroutines.CoroutineScope
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -36,7 +74,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        // setContentView(binding.root)
         setSystemBackClickListener()
         checkCurrentNotification()
         initBottomNavigation()
@@ -44,6 +82,108 @@ class MainActivity : AppCompatActivity() {
         disableBottomNaviTooltip()
         getNotificationData()
         askNotificationPermission()
+        setContent {
+            MainScreen()
+        }
+    }
+
+    @OptIn(ExperimentalMaterialApi::class)
+    @Composable
+    fun MainScreen() {
+        val navController = rememberNavController()
+        val coroutineScope = rememberCoroutineScope()
+        val bottomSheetState = getBottomSheetDialogState()
+
+        Scaffold(
+            bottomBar = {
+                MainBottomNavigation(navController = navController)
+            }
+        ) { innerPadding ->
+            Box(Modifier.padding(innerPadding)) {
+                NavigationGraph(navController = navController, coroutineScope, bottomSheetState)
+            }
+        }
+    }
+
+    @Composable
+    fun MainBottomNavigation(navController: NavController) {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
+        val items = listOf(
+            Screen.Home,
+            Screen.Feed,
+            Screen.Write,
+            Screen.Notification,
+            Screen.MyPage
+        )
+
+        BottomNavigation(
+            backgroundColor = White_FFFFFF,
+            contentColor = Gray2_767B83,
+            modifier = Modifier.height(73.dp)
+        ) {
+            items.forEach { screen ->
+                val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
+                BottomNavigationItem(
+                    icon = {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = if (selected) screen.selectedIcon else screen.defaultIcon),
+                                contentDescription = stringResource(id = screen.resourceId),
+                                modifier = Modifier
+                                    .size(if (screen.route != Screen.Write.route) 24.dp else 36.dp)
+                            )
+
+                            if (screen.route != Screen.Write.route) {
+                                Text(text = stringResource(screen.resourceId), style = MaterialTheme.typography.caption)
+                            }
+                        }
+                    },
+                    selected = selected,
+                    selectedContentColor = Gray1_313131,
+                    onClick = {
+                        navController.navigate(screen.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
+            }
+        }
+    }
+
+    @OptIn(ExperimentalMaterialApi::class)
+    @Composable
+    fun NavigationGraph(
+        navController: NavHostController,
+        coroutineScope: CoroutineScope,
+        bottomSheetState: ModalBottomSheetState
+    ) {
+        NavHost(
+            navController = navController,
+            startDestination = Screen.Home.route
+        ) {
+            composable(Screen.Home.route) {
+                HomeScreen(navController, coroutineScope, bottomSheetState)
+            }
+            composable(Screen.Feed.route) {
+
+            }
+            composable(Screen.Write.route) {
+
+            }
+            composable(Screen.Notification.route) {
+
+            }
+            composable(Screen.MyPage.route) {
+
+            }
+        }
     }
 
     private fun setSystemBackClickListener() {
@@ -137,6 +277,7 @@ class MainActivity : AppCompatActivity() {
                         ).show()
                     }
                 }
+
                 else -> {
                     //All request are permitted
                     // 알림 최초 허용시에 모든 알림 허용처리
@@ -204,12 +345,14 @@ class MainActivity : AppCompatActivity() {
                             isInside = true
                             return true
                         }
+
                         MotionEvent.ACTION_MOVE -> {
                             isInside =
                                 rect.contains(v!!.left + event.x.toInt(), v.top + event.y.toInt())
                             binding.bottomNavigationMainBar.clearFocus()
                             return false
                         }
+
                         MotionEvent.ACTION_UP -> {
                             binding.bottomNavigationMainBar.menu.findItem(R.id.WriteFragment)
                                 .setIcon(R.drawable.ic_write)
@@ -223,6 +366,7 @@ class MainActivity : AppCompatActivity() {
                             }
                             return true
                         }
+
                         else -> return true
                     }
                 }
@@ -248,5 +392,13 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         val notificationPermission = arrayOf(Manifest.permission.POST_NOTIFICATIONS)
+    }
+
+    sealed class Screen(val route: String, @StringRes val resourceId: Int, @DrawableRes val defaultIcon: Int, @DrawableRes val selectedIcon: Int) {
+        object Home : Screen("home", R.string.home, R.drawable.ic_home, R.drawable.ic_home_filled)
+        object Feed : Screen("feed", R.string.feed, R.drawable.ic_feed, R.drawable.ic_feed_filled)
+        object Write : Screen("write", R.string.write, R.drawable.ic_write, R.drawable.ic_write_filled)
+        object Notification : Screen("notification", R.string.notification, R.drawable.ic_notification, R.drawable.ic_notification_filled)
+        object MyPage : Screen("mypage", R.string.my_page, R.drawable.ic_my_page, R.drawable.ic_my_page_filled)
     }
 }
