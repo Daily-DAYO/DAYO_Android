@@ -37,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -64,6 +65,8 @@ fun BottomSheetDialog(
     buttons: List<Pair<String, () -> Unit>>,
     leftIconButtons: List<ImageVector>? = null,
     isFirstButtonColored: Boolean = false,
+    normalColor: Color = Gray1_313131,
+    checkedColor: Color = PrimaryGreen_23C882,
     title: String = "",
     titleButtonAction: () -> Unit = {},
     rightIcon: ImageVector = ImageVector.vectorResource(id = R.drawable.ic_check_mark),
@@ -146,7 +149,7 @@ fun BottomSheetDialog(
                                     imageVector = leftIconButtons[index],
                                     contentDescription = "",
                                     modifier = Modifier.align(Alignment.CenterVertically),
-                                    tint = if (checkedButtonIndex == index) PrimaryGreen_23C882 else LocalContentColor.current
+                                    tint = if (checkedButtonIndex == index) checkedColor else normalColor
                                 )
                             }
                             Text(
@@ -155,7 +158,7 @@ fun BottomSheetDialog(
                                     if (leftIconButtons == null) 0.dp else 8.dp,
                                     0.dp
                                 ),
-                                color = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) PrimaryGreen_23C882 else Gray1_313131,
+                                color = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) checkedColor else normalColor,
                                 fontSize = 16.sp,
                                 style = MaterialTheme.typography.b4
                             )
