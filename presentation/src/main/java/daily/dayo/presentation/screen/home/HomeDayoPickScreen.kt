@@ -8,13 +8,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
@@ -72,7 +70,7 @@ fun HomeDayoPickScreen(
                 modifier = Modifier
                     .wrapContentHeight()
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(top = 8.dp, bottom = 12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -95,16 +93,12 @@ fun HomeDayoPickScreen(
             }
         }
 
-        item(span = { GridItemSpan(2) }) {
-            Spacer(modifier = Modifier.size(12.dp))
-        }
-
         // dayo pick list
         when (dayoPickPostList.value?.status) {
             Status.SUCCESS -> {
-                dayoPickPostList.value?.data?.let {
-                    items(it) { post ->
-                        HomePostView(post)
+                dayoPickPostList.value?.data?.mapIndexed { index, post ->
+                    item {
+                        HomePostView(post = post, isDayoPick = index in 0..4, modifier = Modifier.padding(bottom = 20.dp))
                     }
                 }
             }
