@@ -1,7 +1,6 @@
 package daily.dayo.presentation.view
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,7 +43,14 @@ import daily.dayo.presentation.theme.caption3
 import java.text.DecimalFormat
 
 @Composable
-fun HomePostView(post: Post, modifier: Modifier = Modifier, isDayoPick: Boolean = false) {
+fun HomePostView(
+    post: Post,
+    modifier: Modifier = Modifier,
+    isDayoPick: Boolean = false,
+    onClickPost: () -> Unit,
+    onClickLikePost: () -> Unit,
+    onClickNickname: () -> Unit
+) {
     val imageInteractionSource = remember { MutableInteractionSource() }
     Column(modifier = modifier) {
         Box(
@@ -51,7 +58,7 @@ fun HomePostView(post: Post, modifier: Modifier = Modifier, isDayoPick: Boolean 
                 .fillMaxWidth()
                 .aspectRatio(1f)
         ) {
-            // Thumbnail Image
+            // thumbnail image
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data("${BuildConfig.BASE_URL}/images/${post.thumbnailImage}")
@@ -64,11 +71,11 @@ fun HomePostView(post: Post, modifier: Modifier = Modifier, isDayoPick: Boolean 
                     .clickableSingle(
                         interactionSource = imageInteractionSource,
                         indication = null,
-                        onClick = { }
+                        onClick = { onClickPost() }
                     )
             )
 
-            // Dayo Pick Icon
+            // dayo pick icon
             if (isDayoPick) {
                 Image(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_dayo_pick),
@@ -79,23 +86,33 @@ fun HomePostView(post: Post, modifier: Modifier = Modifier, isDayoPick: Boolean 
                 )
             }
 
-            // Like Button
+            // like button
             Image(
                 imageVector = ImageVector.vectorResource(id = if (post.heart) R.drawable.ic_heart_filled else R.drawable.ic_heart),
                 modifier = Modifier
                     .padding(bottom = 12.dp, end = 11.dp)
                     .align(Alignment.BottomEnd)
-                    .clickable { },
+                    .clickableSingle(
+                        indication = rememberRipple(bounded = false),
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = { onClickLikePost() }
+                    ),
                 contentDescription = "like Button",
             )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Publisher Info
+        // publisher info
         Row(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.wrapContentHeight()
+            modifier = Modifier
+                .wrapContentHeight()
+                .clickableSingle(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = { onClickNickname() }
+                )
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -107,18 +124,13 @@ fun HomePostView(post: Post, modifier: Modifier = Modifier, isDayoPick: Boolean 
                     .size(16.dp)
                     .clip(shape = CircleShape)
                     .align(Alignment.CenterVertically)
-                    .clickableSingle(
-                        interactionSource = imageInteractionSource,
-                        indication = null,
-                        onClick = { }
-                    )
             )
             Text(text = post.nickname, style = MaterialTheme.typography.b5.copy(Gray1_313131))
         }
 
         Spacer(modifier = Modifier.height(2.dp))
 
-        // Post Info
+        // post info
         val dec = DecimalFormat("#,###")
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(text = stringResource(id = R.string.like) + " ${dec.format(post.heartCount)}", style = MaterialTheme.typography.caption3.copy(Gray3_9FA5AE))
@@ -152,7 +164,10 @@ private fun PreviewHomePostView() {
                 hashtags = null,
                 bookmark = null
             ),
-            isDayoPick = true
+            isDayoPick = true,
+            onClickPost = {},
+            onClickLikePost = {},
+            onClickNickname = {}
         )
     }
 }
