@@ -1,44 +1,10 @@
 package daily.dayo.presentation.fragment.home
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -60,12 +26,8 @@ import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.common.toByteArray
 import daily.dayo.presentation.databinding.FragmentHomeDayoPickPostListBinding
-import daily.dayo.presentation.view.BottomSheetDialog
-import daily.dayo.presentation.view.EmojiView
-import daily.dayo.presentation.view.getBottomSheetDialogState
 import daily.dayo.presentation.viewmodel.HomeViewModel
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -79,8 +41,10 @@ class HomeDayoPickPostListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        /*
         if (savedInstanceState == null)
             loadPosts(homeViewModel.currentDayoPickCategory)
+         */
     }
 
     override fun onCreateView(
@@ -89,14 +53,7 @@ class HomeDayoPickPostListFragment : Fragment() {
     ): View? {
         binding = FragmentHomeDayoPickPostListBinding.inflate(inflater, container, false)
         glideRequestManager = Glide.with(this)
-        return ComposeView(requireContext()).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                MaterialTheme {
-                    HomeDayoPickScreen()
-                }
-            }
-        }
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -127,112 +84,14 @@ class HomeDayoPickPostListFragment : Fragment() {
         binding.rvDayopickPost.adapter = null
     }
 
-    @SuppressLint("CoroutineCreationDuringComposition")
-    @OptIn(ExperimentalMaterialApi::class)
-    @Composable
-    private fun HomeDayoPickScreen() {
-        var selectedCategory by rememberSaveable { mutableStateOf(Pair(getString(R.string.all), 0)) }
-        val coroutineScope = rememberCoroutineScope()
-        val bottomSheetState = getBottomSheetDialogState()
-
-        Box(modifier = Modifier.fillMaxSize()) {
-            Row(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth()
-            ) {
-                EmojiView(
-                    emoji = "\uD83D\uDCA1",
-                    emojiSize = MaterialTheme.typography.bodyMedium.fontSize,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
-
-                Text(
-                    text = stringResource(id = R.string.home_dayopick_description),
-                    style = MaterialTheme.typography.bodyMedium.copy(Color(0xFF73777C)),
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp)
-                        .align(Alignment.CenterVertically)
-                )
-
-                CategoryMenu(selectedCategory.first, coroutineScope, bottomSheetState)
-            }
-
-            BottomSheetDialog(
-                sheetState = bottomSheetState,
-                buttons = listOf(
-                    Pair(stringResource(id = R.string.all)) {
-                        selectedCategory = Pair(getString(R.string.all), 0)
-                        coroutineScope.launch { bottomSheetState.hide() }
-                    },
-                    Pair(stringResource(id = R.string.scheduler)) {
-                        selectedCategory = Pair(getString(R.string.scheduler), 1)
-                        coroutineScope.launch { bottomSheetState.hide() }
-                    },
-                    Pair(stringResource(id = R.string.studyplanner)) {
-                        selectedCategory = Pair(getString(R.string.studyplanner), 2)
-                        coroutineScope.launch { bottomSheetState.hide() }
-                    },
-                    Pair(stringResource(id = R.string.pocketbook)) {
-                        selectedCategory = Pair(getString(R.string.pocketbook), 3)
-                        coroutineScope.launch { bottomSheetState.hide() }
-                    },
-                    Pair(stringResource(id = R.string.sixHoleDiary)) {
-                        selectedCategory = Pair(getString(R.string.sixHoleDiary), 4)
-                        coroutineScope.launch { bottomSheetState.hide() }
-                    },
-                    Pair(stringResource(id = R.string.digital)) {
-                        selectedCategory = Pair(getString(R.string.digital), 5)
-                        coroutineScope.launch { bottomSheetState.hide() }
-                    },
-                    Pair(stringResource(id = R.string.etc)) {
-                        selectedCategory = Pair(getString(R.string.etc), 6)
-                        coroutineScope.launch { bottomSheetState.hide() }
-                    }
-                ),
-                title = stringResource(id = R.string.filter),
-                leftIconButtons = listOf(
-                    ImageVector.vectorResource(R.drawable.ic_category_all),
-                    ImageVector.vectorResource(R.drawable.ic_category_scheduler),
-                    ImageVector.vectorResource(R.drawable.ic_category_studyplanner),
-                    ImageVector.vectorResource(R.drawable.ic_category_pocketbook),
-                    ImageVector.vectorResource(R.drawable.ic_category_sixholediary),
-                    ImageVector.vectorResource(R.drawable.ic_category_digital),
-                    ImageVector.vectorResource(R.drawable.ic_category_etc),
-                ),
-                checkedButtonIndex = selectedCategory.second,
-                closeButtonAction = { coroutineScope.launch { bottomSheetState.hide() } }
-            )
-        }
-    }
-
-    @OptIn(ExperimentalMaterialApi::class)
-    @Composable
-    private fun CategoryMenu(
-        selectedCategory: String,
-        coroutineScope: CoroutineScope,
-        bottomSheetState: ModalBottomSheetState
-    ) {
-        OutlinedTextField(
-            value = selectedCategory,
-            onValueChange = { },
-            trailingIcon = { Icon(Icons.Filled.ArrowDropDown, "category menu") },
-            readOnly = true,
-            enabled = false,
-            modifier = Modifier.clickable(
-                onClick = { coroutineScope.launch { bottomSheetState.show() } },
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }),
-        )
-    }
-
     private fun setDayoPickPostListRefreshListener() {
         binding.swipeRefreshLayoutDayoPickPost.setOnRefreshListener {
-            loadPosts(homeViewModel.currentDayoPickCategory)
+            // loadPosts(homeViewModel.currentDayoPickCategory)
         }
     }
 
     private fun setInitialCategory() {
+        /*
         with(binding) {
             radiogroupDayopickPostCategory.check(
                 when (homeViewModel.currentDayoPickCategory) {
@@ -246,6 +105,7 @@ class HomeDayoPickPostListFragment : Fragment() {
                 }
             )
         }
+        */
     }
 
     private fun setRvDayoPickPostAdapter() {
@@ -309,7 +169,7 @@ class HomeDayoPickPostListFragment : Fragment() {
 
     private fun loadPosts(selectCategory: Category, isSmoothScroll: Boolean = false) {
         with(homeViewModel) {
-            currentDayoPickCategory = selectCategory
+            // currentDayoPickCategory = selectCategory
             requestDayoPickPostList()
         }
 
@@ -335,7 +195,7 @@ class HomeDayoPickPostListFragment : Fragment() {
                             this@HomeDayoPickPostListFragment.tag,
                             "PostId Null Exception Occurred"
                         )
-                        loadPosts(homeViewModel.currentDayoPickCategory)
+                        // loadPosts(homeViewModel.currentDayoPickCategory)
                     }
                 }
             }
@@ -406,7 +266,7 @@ class HomeDayoPickPostListFragment : Fragment() {
         (requireActivity() as MainActivity).setBottomNavigationIconClickListener(reselectedIconId = R.id.HomeFragment) {
             if (currentViewPagerPosition == HOME_DAYOPICK_PAGE_TAB_ID) {
                 binding.swipeRefreshLayoutDayoPickPost.isRefreshing = true
-                loadPosts(homeViewModel.currentDayoPickCategory, isSmoothScroll = true)
+                // loadPosts(homeViewModel.currentDayoPickCategory, isSmoothScroll = true)
             }
         }
     }
@@ -428,14 +288,6 @@ class HomeDayoPickPostListFragment : Fragment() {
                 visibility = View.GONE
             }
             rvDayopickPost.visibility = View.VISIBLE
-        }
-    }
-
-    @Composable
-    @Preview(showBackground = true)
-    private fun PreviewHomeDayoPickScreen() {
-        MaterialTheme {
-            HomeDayoPickScreen()
         }
     }
 }
