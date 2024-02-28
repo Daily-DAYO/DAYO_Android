@@ -25,19 +25,23 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import daily.dayo.domain.model.Category
 import daily.dayo.presentation.R
-import daily.dayo.presentation.fragment.home.HOME_DAYOPICK_PAGE_TAB_ID
-import daily.dayo.presentation.fragment.home.HOME_NEW_PAGE_TAB_ID
 import daily.dayo.presentation.theme.Gray1_313131
 import daily.dayo.presentation.theme.Gray5_E8EAEE
 import daily.dayo.presentation.view.BottomSheetDialog
 import daily.dayo.presentation.view.TextButton
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.getBottomSheetDialogState
+import daily.dayo.presentation.viewmodel.HomeViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
+const val HOME_DAYOPICK_PAGE_TAB_ID = 0
+const val HOME_NEW_PAGE_TAB_ID = 1
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -45,12 +49,14 @@ fun HomeScreen(
     navController: NavController,
     coroutineScope: CoroutineScope,
     bottomSheetState: ModalBottomSheetState,
-    bottomSheetContent: (@Composable () -> Unit) -> Unit
+    bottomSheetContent: (@Composable () -> Unit) -> Unit,
+    homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     var homeTabState by rememberSaveable { mutableIntStateOf(HOME_DAYOPICK_PAGE_TAB_ID) }
     var selectedCategory by rememberSaveable { mutableStateOf(Pair(CategoryMenu.All.name, 0)) } // name, index
-    val onCategorySelected: (String, Int) -> Unit = { category, index ->
-        selectedCategory = Pair(category, index)
+    val onClickCategory: (CategoryMenu, Int) -> Unit = { categoryMenu, index ->
+        selectedCategory = Pair(categoryMenu.name, index)
+        homeViewModel.setCategory(categoryMenu.category)
         coroutineScope.launch { bottomSheetState.hide() }
     }
 
@@ -101,19 +107,29 @@ fun HomeScreen(
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
-            HomeDayoPickScreen(selectedCategory.first, coroutineScope, bottomSheetState)
+            when (homeTabState) {
+                HOME_DAYOPICK_PAGE_TAB_ID -> {
+                    HomeDayoPickScreen(selectedCategory.first, coroutineScope, bottomSheetState, homeViewModel)
+                    homeViewModel.loadDayoPickPosts()
+                }
+
+                HOME_NEW_PAGE_TAB_ID -> {
+                    HomeNewScreen(selectedCategory.first, coroutineScope, bottomSheetState, homeViewModel)
+                    homeViewModel.loadNewPosts()
+                }
+            }
         }
     }
 
     bottomSheetContent {
-        CategoryBottomSheetDialog(onCategorySelected, selectedCategory, coroutineScope, bottomSheetState)
+        CategoryBottomSheetDialog(onClickCategory, selectedCategory, coroutineScope, bottomSheetState)
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun CategoryBottomSheetDialog(
-    onCategorySelected: (String, Int) -> Unit,
+    onCategorySelected: (CategoryMenu, Int) -> Unit,
     selectedCategory: Pair<String, Int>,
     coroutineScope: CoroutineScope,
     bottomSheetState: ModalBottomSheetState
@@ -132,7 +148,7 @@ private fun CategoryBottomSheetDialog(
         sheetState = bottomSheetState,
         buttons = categoryMenus.mapIndexed { index, category ->
             Pair(category.name) {
-                onCategorySelected(category.name, index)
+                onCategorySelected(category, index)
             }
         },
         title = stringResource(id = R.string.filter),
@@ -154,12 +170,12 @@ private fun PreviewHomeScreen() {
 }
 
 
-sealed class CategoryMenu(val name: String, @DrawableRes val defaultIcon: Int) {
-    object All : CategoryMenu("전체", R.drawable.ic_category_all)
-    object Scheduler : CategoryMenu("스케줄러", R.drawable.ic_category_scheduler)
-    object StudyPlanner : CategoryMenu("스터디 플래너", R.drawable.ic_category_studyplanner)
-    object PocketBook : CategoryMenu("포켓북", R.drawable.ic_category_pocketbook)
-    object SixHoleDiary : CategoryMenu("6공 다이어리", R.drawable.ic_category_sixholediary)
-    object Digital : CategoryMenu("모바일 다이어리", R.drawable.ic_category_digital)
-    object ETC : CategoryMenu("기타", R.drawable.ic_category_etc)
+sealed class CategoryMenu(val name: String, @DrawableRes val defaultIcon: Int, val category: Category) {
+    object All : CategoryMenu("전체", R.drawable.ic_category_all, Category.ALL)
+    object Scheduler : CategoryMenu("스케줄러", R.drawable.ic_category_scheduler, Category.SCHEDULER)
+    object StudyPlanner : CategoryMenu("스터디 플래너", R.drawable.ic_category_studyplanner, Category.STUDY_PLANNER)
+    object PocketBook : CategoryMenu("포켓북", R.drawable.ic_category_pocketbook, Category.POCKET_BOOK)
+    object SixHoleDiary : CategoryMenu("6공 다이어리", R.drawable.ic_category_sixholediary, Category.SIX_DIARY)
+    object Digital : CategoryMenu("모바일 다이어리", R.drawable.ic_category_digital, Category.GOOD_NOTE)
+    object ETC : CategoryMenu("기타", R.drawable.ic_category_etc, Category.STUDY_PLANNER)
 }

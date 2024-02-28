@@ -67,6 +67,7 @@
     <string name="home_dayopick_empty_title">인기있는 다꾸가 아직 없어요</string>
     <string name="home_dayopick_empty_detail">다꾸들을 구경하고 반응을 남겨보세요</string>
     <string name="home_dayopick_empty_action">구경하러 가기</string>
+    <string name="home_new_description">실시간으로 올라온 게시글이에요!</string>
     <string name="home_new_empty_title">새로운 다꾸가 아직 없어요</string>
     <string name="home_new_empty_detail">여러분의 다꾸를 공유해보세요</string>
     <string name="home_new_empty_action">공유하러 가기</string>
