@@ -2,9 +2,9 @@ package daily.dayo.presentation.view
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import android.util.Size
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -145,10 +146,15 @@ fun TextButton(
     onClick: () -> Unit,
     text: String = "",
     textStyle: TextStyle = MaterialTheme.typography.b6.copy(color = PrimaryGreen_23C882),
-    underline: Boolean = false
+    underline: Boolean = false,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     Text(
-        modifier = Modifier.clickable { onClick() },
+        modifier = modifier.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = { onClick() }
+        ),
         text = text,
         style = textStyle,
         textDecoration = if (underline) TextDecoration.Underline else null
