@@ -189,8 +189,8 @@ fun BottomSheetDialog(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun getBottomSheetDialogState(
-    disableFullExpanded: Boolean = true,
-    skipHalfExpanded: Boolean = false
+    disableFullExpanded: Boolean = false,
+    skipHalfExpanded: Boolean = true
 ): ModalBottomSheetState {
     val bottomSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
