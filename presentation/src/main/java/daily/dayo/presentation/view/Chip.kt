@@ -1,5 +1,6 @@
 package daily.dayo.presentation.view
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,11 +22,11 @@ import daily.dayo.presentation.theme.caption2
 
 @Composable
 fun Chip(
-    modifier: Modifier = Modifier,
     onClickChip: (() -> Unit) = {},
     text: String,
     color: Color = PrimaryGreen_23C882,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     AssistChip(
         onClick = onClickChip,
