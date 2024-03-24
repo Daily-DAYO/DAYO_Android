@@ -20,13 +20,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.LocalContentColor
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.ImageSearch
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -64,6 +64,7 @@ fun BottomSheetDialog(
     sheetState: ModalBottomSheetState,
     buttons: List<Pair<String, () -> Unit>>,
     leftIconButtons: List<ImageVector>? = null,
+    leftIconCheckedButtons: List<ImageVector>? = null,
     isFirstButtonColored: Boolean = false,
     normalColor: Color = Gray1_313131,
     checkedColor: Color = PrimaryGreen_23C882,
@@ -144,12 +145,11 @@ fun BottomSheetDialog(
                                 ),
                             horizontalArrangement = if (leftIconButtons == null) Arrangement.Center else Arrangement.SpaceBetween,
                         ) {
-                            if (leftIconButtons != null) {
+                            if (leftIconButtons != null && leftIconCheckedButtons != null) {
                                 Icon(
-                                    imageVector = leftIconButtons[index],
+                                    imageVector = if (checkedButtonIndex == index) leftIconCheckedButtons[index] else leftIconButtons[index],
                                     contentDescription = "",
-                                    modifier = Modifier.align(Alignment.CenterVertically),
-                                    tint = if (checkedButtonIndex == index) checkedColor else normalColor
+                                    modifier = Modifier.align(Alignment.CenterVertically)
                                 )
                             }
                             Text(
@@ -295,6 +295,7 @@ fun PreviewMyBottomSheetDialog() {
             buttons = listOf(Pair("contents") { }, Pair("contents") { }, Pair("contents") { }),
             title = "title",
             leftIconButtons = listOf(Icons.Default.Image, Icons.Default.Image, Icons.Default.Image),
+            leftIconCheckedButtons = listOf(Icons.Default.ImageSearch, Icons.Default.ImageSearch, Icons.Default.ImageSearch),
             checkedButtonIndex = 0,
         )
     }
