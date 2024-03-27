@@ -20,13 +20,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.LocalContentColor
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.ImageSearch
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -63,7 +64,10 @@ fun BottomSheetDialog(
     sheetState: ModalBottomSheetState,
     buttons: List<Pair<String, () -> Unit>>,
     leftIconButtons: List<ImageVector>? = null,
+    leftIconCheckedButtons: List<ImageVector>? = null,
     isFirstButtonColored: Boolean = false,
+    normalColor: Color = Gray1_313131,
+    checkedColor: Color = PrimaryGreen_23C882,
     title: String = "",
     titleButtonAction: () -> Unit = {},
     rightIcon: ImageVector = ImageVector.vectorResource(id = R.drawable.ic_check_mark),
@@ -141,12 +145,12 @@ fun BottomSheetDialog(
                                 ),
                             horizontalArrangement = if (leftIconButtons == null) Arrangement.Center else Arrangement.SpaceBetween,
                         ) {
-                            if (leftIconButtons != null) {
+                            if (leftIconButtons != null && leftIconCheckedButtons != null) {
                                 Icon(
-                                    imageVector = leftIconButtons[index],
+                                    imageVector = if (checkedButtonIndex == index) leftIconCheckedButtons[index] else leftIconButtons[index],
                                     contentDescription = "",
                                     modifier = Modifier.align(Alignment.CenterVertically),
-                                    tint = if (checkedButtonIndex == index) PrimaryGreen_23C882 else LocalContentColor.current
+                                    tint = Color.Unspecified
                                 )
                             }
                             Text(
@@ -155,7 +159,7 @@ fun BottomSheetDialog(
                                     if (leftIconButtons == null) 0.dp else 8.dp,
                                     0.dp
                                 ),
-                                color = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) PrimaryGreen_23C882 else Gray1_313131,
+                                color = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) checkedColor else normalColor,
                                 fontSize = 16.sp,
                                 style = MaterialTheme.typography.b4
                             )
@@ -165,7 +169,8 @@ fun BottomSheetDialog(
                                     Icon(
                                         imageVector = rightIcon,
                                         contentDescription = "",
-                                        modifier = Modifier.align(Alignment.CenterVertically)
+                                        modifier = Modifier.align(Alignment.CenterVertically),
+                                        tint = Color.Unspecified
                                     )
                                 }
                             }
@@ -292,6 +297,7 @@ fun PreviewMyBottomSheetDialog() {
             buttons = listOf(Pair("contents") { }, Pair("contents") { }, Pair("contents") { }),
             title = "title",
             leftIconButtons = listOf(Icons.Default.Image, Icons.Default.Image, Icons.Default.Image),
+            leftIconCheckedButtons = listOf(Icons.Default.ImageSearch, Icons.Default.ImageSearch, Icons.Default.ImageSearch),
             checkedButtonIndex = 0,
         )
     }
