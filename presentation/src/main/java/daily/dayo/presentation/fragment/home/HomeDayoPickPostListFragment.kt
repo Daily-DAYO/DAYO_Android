@@ -14,20 +14,19 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.domain.model.Category
+import daily.dayo.domain.model.Post
 import daily.dayo.presentation.R
+import daily.dayo.presentation.activity.MainActivity
+import daily.dayo.presentation.adapter.HomeDayoPickAdapter
 import daily.dayo.presentation.common.GlideLoadUtil.loadImageBackground
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.common.toByteArray
 import daily.dayo.presentation.databinding.FragmentHomeDayoPickPostListBinding
-import daily.dayo.presentation.adapter.HomeDayoPickAdapter
 import daily.dayo.presentation.viewmodel.HomeViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import dagger.hilt.android.AndroidEntryPoint
-import daily.dayo.domain.model.Category
-import daily.dayo.domain.model.Post
-import daily.dayo.presentation.activity.MainActivity
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,8 +41,10 @@ class HomeDayoPickPostListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        /*
         if (savedInstanceState == null)
             loadPosts(homeViewModel.currentDayoPickCategory)
+         */
     }
 
     override fun onCreateView(
@@ -85,11 +86,12 @@ class HomeDayoPickPostListFragment : Fragment() {
 
     private fun setDayoPickPostListRefreshListener() {
         binding.swipeRefreshLayoutDayoPickPost.setOnRefreshListener {
-            loadPosts(homeViewModel.currentDayoPickCategory)
+            // loadPosts(homeViewModel.currentDayoPickCategory)
         }
     }
 
     private fun setInitialCategory() {
+        /*
         with(binding) {
             radiogroupDayopickPostCategory.check(
                 when (homeViewModel.currentDayoPickCategory) {
@@ -103,6 +105,7 @@ class HomeDayoPickPostListFragment : Fragment() {
                 }
             )
         }
+        */
     }
 
     private fun setRvDayoPickPostAdapter() {
@@ -129,8 +132,10 @@ class HomeDayoPickPostListFragment : Fragment() {
                             binding.layoutDayopickPostEmpty.isVisible = postList.isEmpty()
                         }
                     }
+
                     Status.LOADING -> {
                     }
+
                     Status.ERROR -> {
 
                     }
@@ -164,7 +169,7 @@ class HomeDayoPickPostListFragment : Fragment() {
 
     private fun loadPosts(selectCategory: Category, isSmoothScroll: Boolean = false) {
         with(homeViewModel) {
-            currentDayoPickCategory = selectCategory
+            // currentDayoPickCategory = selectCategory
             requestDayoPickPostList()
         }
 
@@ -190,7 +195,7 @@ class HomeDayoPickPostListFragment : Fragment() {
                             this@HomeDayoPickPostListFragment.tag,
                             "PostId Null Exception Occurred"
                         )
-                        loadPosts(homeViewModel.currentDayoPickCategory)
+                        // loadPosts(homeViewModel.currentDayoPickCategory)
                     }
                 }
             }
@@ -261,7 +266,7 @@ class HomeDayoPickPostListFragment : Fragment() {
         (requireActivity() as MainActivity).setBottomNavigationIconClickListener(reselectedIconId = R.id.HomeFragment) {
             if (currentViewPagerPosition == HOME_DAYOPICK_PAGE_TAB_ID) {
                 binding.swipeRefreshLayoutDayoPickPost.isRefreshing = true
-                loadPosts(homeViewModel.currentDayoPickCategory, isSmoothScroll = true)
+                // loadPosts(homeViewModel.currentDayoPickCategory, isSmoothScroll = true)
             }
         }
     }

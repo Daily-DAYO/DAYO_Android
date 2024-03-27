@@ -44,8 +44,10 @@ class HomeNewPostListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        /*
         if (savedInstanceState == null)
             loadPosts(homeViewModel.currentNewCategory)
+         */
     }
 
     override fun onCreateView(
@@ -87,11 +89,12 @@ class HomeNewPostListFragment : Fragment() {
 
     private fun setNewPostListRefreshListener() {
         binding.swipeRefreshLayoutNewPost.setOnRefreshListener {
-            loadPosts(homeViewModel.currentNewCategory)
+            // loadPosts(homeViewModel.currentNewCategory)
         }
     }
 
     private fun setInitialCategory() {
+        /*
         with(binding) {
             radiogroupNewPostCategory.check(
                 when (homeViewModel.currentNewCategory) {
@@ -105,6 +108,7 @@ class HomeNewPostListFragment : Fragment() {
                 }
             )
         }
+         */
     }
 
     private fun setRvNewPostAdapter() {
@@ -164,7 +168,7 @@ class HomeNewPostListFragment : Fragment() {
 
     private fun loadPosts(selectCategory: Category, isSmoothScroll: Boolean = false) {
         with(homeViewModel) {
-            currentNewCategory = selectCategory
+            // currentNewCategory = selectCategory
             requestNewPostList()
         }
 
@@ -187,7 +191,7 @@ class HomeNewPostListFragment : Fragment() {
                         }
                     } catch (postIdNullException: NullPointerException) {
                         Log.e(this@HomeNewPostListFragment.tag, "PostId Null Exception Occurred")
-                        loadPosts(homeViewModel.currentNewCategory)
+                        // loadPosts(homeViewModel.currentNewCategory)
                     }
                 }
             }
@@ -253,7 +257,7 @@ class HomeNewPostListFragment : Fragment() {
         (requireActivity() as MainActivity).setBottomNavigationIconClickListener(reselectedIconId = R.id.HomeFragment) {
             if (currentViewPagerPosition == HOME_NEW_PAGE_TAB_ID) {
                 binding.swipeRefreshLayoutNewPost.isRefreshing = true
-                loadPosts(homeViewModel.currentNewCategory, isSmoothScroll = true)
+                // loadPosts(homeViewModel.currentNewCategory, isSmoothScroll = true)
             }
         }
     }

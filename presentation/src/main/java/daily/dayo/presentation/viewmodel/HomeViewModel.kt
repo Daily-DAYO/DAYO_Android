@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import daily.dayo.presentation.common.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import daily.dayo.domain.model.Category
 import daily.dayo.domain.model.NetworkResponse
 import daily.dayo.domain.model.Post
@@ -14,8 +14,11 @@ import daily.dayo.domain.usecase.post.RequestDayoPickPostListCategoryUseCase
 import daily.dayo.domain.usecase.post.RequestDayoPickPostListUseCase
 import daily.dayo.domain.usecase.post.RequestNewPostListCategoryUseCase
 import daily.dayo.domain.usecase.post.RequestNewPostListUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
+import daily.dayo.presentation.common.Resource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,8 +31,13 @@ class HomeViewModel @Inject constructor(
     private val requestLikePostUseCase: RequestLikePostUseCase,
     private val requestUnlikePostUseCase: RequestUnlikePostUseCase
 ) : ViewModel() {
-    var currentDayoPickCategory = Category.ALL
-    var currentNewCategory = Category.ALL
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean>
+        get() = _isRefreshing.asStateFlow()
+
+    private val _currentCategory = MutableStateFlow(Category.ALL)
+    val currentCategory: StateFlow<Category>
+        get() = _currentCategory.asStateFlow()
 
     private val _dayoPickPostList = MutableLiveData<Resource<List<Post>>>()
     val dayoPickPostList: LiveData<Resource<List<Post>>> get() = _dayoPickPostList
@@ -37,21 +45,41 @@ class HomeViewModel @Inject constructor(
     private val _newPostList = MutableLiveData<Resource<List<Post>>>()
     val newPostList: LiveData<Resource<List<Post>>> get() = _newPostList
 
+    fun setCategory(category: Category) {
+        viewModelScope.launch {
+            _currentCategory.emit(category)
+        }
+    }
+
+    fun loadDayoPickPosts() {
+        viewModelScope.launch {
+            _isRefreshing.emit(true)
+            requestDayoPickPostList()
+            _isRefreshing.emit(false)
+        }
+    }
+
+    fun loadNewPosts() {
+        viewModelScope.launch {
+            _isRefreshing.emit(true)
+            requestNewPostList()
+            _isRefreshing.emit(false)
+        }
+    }
+
     fun requestDayoPickPostList() = viewModelScope.launch {
         _dayoPickPostList.postValue(Resource.loading(null))
-        if (currentDayoPickCategory == Category.ALL) {
-            requestHomeDayoPickPostList()
-        } else {
-            requestHomeDayoPickPostListCategory(currentDayoPickCategory)
+        when (currentCategory.value) {
+            Category.ALL -> requestHomeDayoPickPostList()
+            else -> requestHomeDayoPickPostListCategory(currentCategory.value)
         }
     }
 
     fun requestNewPostList() = viewModelScope.launch {
         _newPostList.postValue(Resource.loading(null))
-        if (currentNewCategory == Category.ALL) {
-            requestHomeNewPostList()
-        } else {
-            requestHomeNewPostListCategory(currentNewCategory)
+        when (currentCategory.value) {
+            Category.ALL -> requestHomeNewPostList()
+            else -> requestHomeNewPostListCategory(currentCategory.value)
         }
     }
 
@@ -61,12 +89,15 @@ class HomeViewModel @Inject constructor(
                 is NetworkResponse.Success -> {
                     _newPostList.postValue(Resource.success(ApiResponse.body?.data))
                 }
+
                 is NetworkResponse.NetworkError -> {
                     _newPostList.postValue(Resource.error(ApiResponse.exception.toString(), null))
                 }
+
                 is NetworkResponse.ApiError -> {
                     _newPostList.postValue(Resource.error(ApiResponse.error.toString(), null))
                 }
+
                 is NetworkResponse.UnknownError -> {
                     _newPostList.postValue(Resource.error(ApiResponse.throwable.toString(), null))
                 }
@@ -80,12 +111,15 @@ class HomeViewModel @Inject constructor(
                 is NetworkResponse.Success -> {
                     _newPostList.postValue(Resource.success(ApiResponse.body?.data))
                 }
+
                 is NetworkResponse.NetworkError -> {
                     _newPostList.postValue(Resource.error(ApiResponse.exception.toString(), null))
                 }
+
                 is NetworkResponse.ApiError -> {
                     _newPostList.postValue(Resource.error(ApiResponse.error.toString(), null))
                 }
+
                 is NetworkResponse.UnknownError -> {
                     _newPostList.postValue(Resource.error(ApiResponse.throwable.toString(), null))
                 }
@@ -99,6 +133,7 @@ class HomeViewModel @Inject constructor(
                 is NetworkResponse.Success -> {
                     _dayoPickPostList.postValue(Resource.success(ApiResponse.body?.data))
                 }
+
                 is NetworkResponse.NetworkError -> {
                     _dayoPickPostList.postValue(
                         Resource.error(
@@ -107,9 +142,11 @@ class HomeViewModel @Inject constructor(
                         )
                     )
                 }
+
                 is NetworkResponse.ApiError -> {
                     _dayoPickPostList.postValue(Resource.error(ApiResponse.error.toString(), null))
                 }
+
                 is NetworkResponse.UnknownError -> {
                     _dayoPickPostList.postValue(
                         Resource.error(
@@ -128,6 +165,7 @@ class HomeViewModel @Inject constructor(
                 is NetworkResponse.Success -> {
                     _dayoPickPostList.postValue(Resource.success(ApiResponse.body?.data))
                 }
+
                 is NetworkResponse.NetworkError -> {
                     _dayoPickPostList.postValue(
                         Resource.error(
@@ -136,9 +174,11 @@ class HomeViewModel @Inject constructor(
                         )
                     )
                 }
+
                 is NetworkResponse.ApiError -> {
                     _dayoPickPostList.postValue(Resource.error(ApiResponse.error.toString(), null))
                 }
+
                 is NetworkResponse.UnknownError -> {
                     _dayoPickPostList.postValue(
                         Resource.error(
@@ -172,6 +212,7 @@ class HomeViewModel @Inject constructor(
                             )
                         )
                     }
+
                     is NetworkResponse.NetworkError -> {}
                     is NetworkResponse.ApiError -> {}
                     is NetworkResponse.UnknownError -> {}
@@ -200,6 +241,7 @@ class HomeViewModel @Inject constructor(
                             )
                         )
                     }
+
                     is NetworkResponse.NetworkError -> {}
                     is NetworkResponse.ApiError -> {}
                     is NetworkResponse.UnknownError -> {}
