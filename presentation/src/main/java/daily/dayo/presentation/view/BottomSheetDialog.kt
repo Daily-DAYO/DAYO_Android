@@ -149,7 +149,8 @@ fun BottomSheetDialog(
                                 Icon(
                                     imageVector = if (checkedButtonIndex == index) leftIconCheckedButtons[index] else leftIconButtons[index],
                                     contentDescription = "",
-                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                    modifier = Modifier.align(Alignment.CenterVertically),
+                                    tint = Color.Unspecified
                                 )
                             }
                             Text(
@@ -168,7 +169,8 @@ fun BottomSheetDialog(
                                     Icon(
                                         imageVector = rightIcon,
                                         contentDescription = "",
-                                        modifier = Modifier.align(Alignment.CenterVertically)
+                                        modifier = Modifier.align(Alignment.CenterVertically),
+                                        tint = Color.Unspecified
                                     )
                                 }
                             }
