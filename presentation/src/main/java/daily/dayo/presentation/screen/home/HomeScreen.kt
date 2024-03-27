@@ -31,7 +31,9 @@ import androidx.navigation.compose.rememberNavController
 import daily.dayo.domain.model.Category
 import daily.dayo.presentation.R
 import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray5_E8EAEE
+import daily.dayo.presentation.theme.PrimaryGreen_23C882
 import daily.dayo.presentation.view.BottomSheetDialog
 import daily.dayo.presentation.view.TextButton
 import daily.dayo.presentation.view.TopNavigation
@@ -155,6 +157,11 @@ private fun CategoryBottomSheetDialog(
         leftIconButtons = categoryMenus.map {
             ImageVector.vectorResource(it.defaultIcon)
         },
+        leftIconCheckedButtons = categoryMenus.map {
+            ImageVector.vectorResource(it.checkedIcon)
+        },
+        normalColor = Gray2_767B83,
+        checkedColor = PrimaryGreen_23C882,
         checkedButtonIndex = selectedCategory.second,
         closeButtonAction = { coroutineScope.launch { bottomSheetState.hide() } }
     )
@@ -170,12 +177,12 @@ private fun PreviewHomeScreen() {
 }
 
 
-sealed class CategoryMenu(val name: String, @DrawableRes val defaultIcon: Int, val category: Category) {
-    object All : CategoryMenu("전체", R.drawable.ic_category_all, Category.ALL)
-    object Scheduler : CategoryMenu("스케줄러", R.drawable.ic_category_scheduler, Category.SCHEDULER)
-    object StudyPlanner : CategoryMenu("스터디 플래너", R.drawable.ic_category_studyplanner, Category.STUDY_PLANNER)
-    object PocketBook : CategoryMenu("포켓북", R.drawable.ic_category_pocketbook, Category.POCKET_BOOK)
-    object SixHoleDiary : CategoryMenu("6공 다이어리", R.drawable.ic_category_sixholediary, Category.SIX_DIARY)
-    object Digital : CategoryMenu("모바일 다이어리", R.drawable.ic_category_digital, Category.GOOD_NOTE)
-    object ETC : CategoryMenu("기타", R.drawable.ic_category_etc, Category.STUDY_PLANNER)
+sealed class CategoryMenu(val name: String, @DrawableRes val defaultIcon: Int, @DrawableRes val checkedIcon: Int, val category: Category) {
+    object All : CategoryMenu("전체", R.drawable.ic_category_all, R.drawable.ic_category_all_checked, Category.ALL)
+    object Scheduler : CategoryMenu("스케줄러", R.drawable.ic_category_scheduler, R.drawable.ic_category_scheduler_checked, Category.SCHEDULER)
+    object StudyPlanner : CategoryMenu("스터디 플래너", R.drawable.ic_category_studyplanner, R.drawable.ic_category_studyplanner_checked, Category.STUDY_PLANNER)
+    object PocketBook : CategoryMenu("포켓북", R.drawable.ic_category_pocketbook, R.drawable.ic_category_pocketbook_checked, Category.POCKET_BOOK)
+    object SixHoleDiary : CategoryMenu("6공 다이어리", R.drawable.ic_category_sixholediary, R.drawable.ic_category_sixholediary_checked, Category.SIX_DIARY)
+    object Digital : CategoryMenu("모바일 다이어리", R.drawable.ic_category_digital, R.drawable.ic_category_digital_checked, Category.GOOD_NOTE)
+    object ETC : CategoryMenu("기타", R.drawable.ic_category_etc, R.drawable.ic_category_etc_checked, Category.STUDY_PLANNER)
 }
