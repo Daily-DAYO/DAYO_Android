@@ -6,7 +6,7 @@
     <string name="feed">피드</string>
     <string name="write">글쓰기</string>
     <string name="notification">알림</string>
-    <string name="my_page">마이 페이지</string>
+    <string name="my_page">MY</string>
     <string name="next">다음</string>
     <string name="confirm">확인</string>
     <string name="complete">완료</string>
@@ -64,20 +64,23 @@
     <!-- Home -->
     <string name="DayoPick">DAYO PICK</string>
     <string name="New">New</string>
+    <string name="home_dayopick_description">지금 인기있는 게시글이에요!</string>
     <string name="home_dayopick_empty_title">인기있는 다꾸가 아직 없어요</string>
     <string name="home_dayopick_empty_detail">다꾸들을 구경하고 반응을 남겨보세요</string>
     <string name="home_dayopick_empty_action">구경하러 가기</string>
+    <string name="home_new_description">실시간으로 올라온 게시글이에요!</string>
     <string name="home_new_empty_title">새로운 다꾸가 아직 없어요</string>
     <string name="home_new_empty_detail">여러분의 다꾸를 공유해보세요</string>
     <string name="home_new_empty_action">공유하러 가기</string>
 
     <!-- Category -->
+    <string name="filter">필터</string>
     <string name="all">전체</string>
     <string name="scheduler">스케줄러</string>
     <string name="studyplanner">스터디 플래너</string>
     <string name="pocketbook">포켓북</string>
     <string name="sixHoleDiary">6공 다이어리</string>
-    <string name="digital">굿노트</string>
+    <string name="digital">모바일 다이어리</string>
     <string name="etc">기타</string>
     <string name="all_eng">ALL</string>
     <string name="scheduler_eng">SCHEDULER</string>
