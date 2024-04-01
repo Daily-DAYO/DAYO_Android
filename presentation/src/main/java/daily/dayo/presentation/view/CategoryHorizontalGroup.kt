@@ -54,7 +54,6 @@ fun CategoryHorizontalGroup(
                     ButtonDefaults.buttonColors(
                         containerColor = PrimaryL3_F2FBF7,
                         contentColor = PrimaryGreen_23C882
-
                     )
                 else
                     ButtonDefaults.buttonColors(
@@ -65,6 +64,7 @@ fun CategoryHorizontalGroup(
                 Button(
                     onClick = { onOptionSelected(category) },
                     shape = RoundedCornerShape(12.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp),
                     colors = buttonColors,
                     interactionSource = interactionSource,
                     modifier = Modifier
