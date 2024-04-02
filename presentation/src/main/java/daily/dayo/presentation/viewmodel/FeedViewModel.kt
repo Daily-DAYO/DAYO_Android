@@ -19,6 +19,9 @@ import daily.dayo.domain.usecase.like.RequestUnlikePostUseCase
 import daily.dayo.domain.usecase.post.RequestFeedListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,6 +34,9 @@ class FeedViewModel @Inject constructor(
     private val requestBookmarkPostUseCase: RequestBookmarkPostUseCase,
     private val requestDeleteBookmarkPostUseCase: RequestDeleteBookmarkPostUseCase
 ) : ViewModel() {
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean>
+        get() = _isRefreshing.asStateFlow()
 
     private val _feedList = MutableLiveData<PagingData<Post>>()
     val feedList: LiveData<PagingData<Post>> get() = _feedList
@@ -40,6 +46,14 @@ class FeedViewModel @Inject constructor(
 
     private val _postBookmarked = MutableLiveData<Resource<BookmarkPostResponse>>()
     val postBookmarked: LiveData<Resource<BookmarkPostResponse>> get() = _postBookmarked
+
+    fun loadFeedPosts() {
+        viewModelScope.launch {
+            _isRefreshing.emit(true)
+            requestFeedList()
+            _isRefreshing.emit(false)
+        }
+    }
 
     fun requestFeedList() = viewModelScope.launch(Dispatchers.IO) {
         requestFeedListUseCase()
