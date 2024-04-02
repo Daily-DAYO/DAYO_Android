@@ -9,6 +9,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -39,6 +41,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -254,6 +257,47 @@ fun FeedPostView(
         if (!post.contents.isNullOrEmpty()) {
             SeeMoreText(text = post.contents!!, minimizedMaxLines = 2, modifier = Modifier.padding(top = 12.dp), onClickPost = onClickPost)
         }
+
+        // hashtags
+        if (!post.hashtags.isNullOrEmpty()) {
+            HashtagHorizontalGroup(hashtags = post.hashtags!!)
+        }
+    }
+}
+
+@Composable
+fun HashtagHorizontalGroup(
+    hashtags: List<String>
+) {
+    LazyRow(contentPadding = PaddingValues(vertical = 4.dp)) {
+        hashtags.forEach { hashtag ->
+            item {
+                Row(
+                    modifier = Modifier.padding(end = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .size(20.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFE4F7ED))
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_hashtag),
+                            contentDescription = null,
+                            modifier = Modifier.align(Alignment.Center),
+                            tint = PrimaryGreen_23C882
+                        )
+                    }
+                    Text(
+                        text = hashtag,
+                        style = MaterialTheme.typography.caption1.copy(PrimaryGreen_23C882),
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -342,7 +386,7 @@ private fun PreviewFeedPostView() {
                 folderId = null,
                 folderName = null,
                 comments = null,
-                hashtags = null,
+                hashtags = listOf("태그", "다요다요"),
                 bookmark = null
             ),
             onClickPost = {},
