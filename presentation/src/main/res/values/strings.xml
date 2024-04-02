@@ -140,6 +140,9 @@
     <string name="post_option_report_user">사용자 신고</string>
     <string name="post_option_report_post">게시물 신고</string>
     <string name="post_option_hide">이 게시물 숨기기</string>
+    <string name="post_like_count_message_1">이 글을</string>
+    <string name="post_like_count_message_2">명이 좋아해요</string>
+    <string name="post_comment_count_message">개의 댓글</string>
     <string name="post_comment_empty">아직 작성된 댓글이 없습니다.</string>
     <string name="post_comment_delete_alert_message">댓글을 삭제할까요?</string>
     <string name="post_comment_delete_alert_message_success">댓글이 삭제되었습니다.</string>

@@ -1,0 +1,268 @@
+package daily.dayo.presentation.view
+
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import daily.dayo.domain.model.Category
+import daily.dayo.domain.model.Post
+import daily.dayo.domain.model.categoryKR
+import daily.dayo.presentation.BuildConfig
+import daily.dayo.presentation.R
+import daily.dayo.presentation.common.TimeChangerUtil
+import daily.dayo.presentation.common.extension.clickableSingle
+import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Gray2_767B83
+import daily.dayo.presentation.theme.Gray3_9FA5AE
+import daily.dayo.presentation.theme.PrimaryGreen_23C882
+import daily.dayo.presentation.theme.White_Alpha30_FFFFFF
+import daily.dayo.presentation.theme.White_FFFFFF
+import daily.dayo.presentation.theme.b5
+import daily.dayo.presentation.theme.caption1
+import daily.dayo.presentation.theme.caption3
+import java.text.DecimalFormat
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun FeedPostView(
+    post: Post,
+    modifier: Modifier = Modifier,
+    onClickPost: () -> Unit,
+    onClickLikePost: () -> Unit,
+    onClickNickname: () -> Unit
+) {
+    val imageInteractionSource = remember { MutableInteractionSource() }
+    Column(modifier = modifier) {
+        // publisher info
+        Row(
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth()
+                .clickableSingle(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = { onClickNickname() }
+                ),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data("${BuildConfig.BASE_URL}/images/${post.userProfileImage}")
+                    .build(),
+                contentDescription = "${post.nickname} + profile",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(shape = CircleShape)
+                    .align(Alignment.CenterVertically)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(text = post.nickname, style = MaterialTheme.typography.b5.copy(Gray1_313131))
+                Text(
+                    text = categoryKR(post.category ?: Category.ETC) + " ･ " +
+                            post.createDateTime?.let { TimeChangerUtil.timeChange(context = LocalContext.current, time = it) },
+                    style = MaterialTheme.typography.caption3.copy(Gray3_9FA5AE)
+                )
+            }
+            Icon(
+                modifier = Modifier.padding(8.dp),
+                painter = painterResource(id = R.drawable.ic_option_horizontal),
+                tint = Gray2_767B83,
+                contentDescription = "post option"
+            )
+        }
+
+        // post images
+        Box(
+            modifier = Modifier
+                .padding(top = 8.dp, bottom = 4.dp)
+                .fillMaxWidth()
+                .aspectRatio(1f)
+        ) {
+            post.postImages?.let { postImages ->
+                val pagerState = rememberPagerState(pageCount = { postImages.size })
+                HorizontalPager(state = pagerState) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data("${BuildConfig.BASE_URL}/images/${postImages[it]}")
+                            .build(),
+                        contentDescription = "post images",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .clip(RoundedCornerShape(size = 16.dp))
+                            .clickableSingle(
+                                interactionSource = imageInteractionSource,
+                                indication = null,
+                                onClick = { onClickPost() }
+                            )
+                    )
+                }
+
+                // indicator
+                Row(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space = 4.dp,
+                        alignment = Alignment.CenterHorizontally
+                    ),
+                ) {
+                    repeat(pagerState.pageCount) { iteration ->
+                        val color = if (pagerState.currentPage == iteration) White_FFFFFF else White_Alpha30_FFFFFF
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(color)
+                                .width(if (pagerState.currentPage == iteration) 12.dp else 6.dp)
+                                .height(6.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+        // reaction
+        Row(
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // like button
+            Image(
+                imageVector = ImageVector.vectorResource(id = if (post.heart) R.drawable.ic_heart_filled else R.drawable.ic_heart_outlined),
+                modifier = Modifier
+                    .padding(end = 8.dp)
+                    .padding(vertical = 8.dp)
+                    .clickableSingle(
+                        indication = rememberRipple(bounded = false),
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = { onClickLikePost() }
+                    ),
+                contentDescription = "like",
+            )
+
+            // comment
+            Image(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_comment),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .clickableSingle(
+                        indication = rememberRipple(bounded = false),
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = { onClickLikePost() }
+                    ),
+                contentDescription = "comment",
+            )
+            Spacer(modifier = Modifier.weight(1f))
+
+            // bookmark
+            Image(
+                imageVector = ImageVector.vectorResource(id = if (post.bookmark == true) R.drawable.ic_bookmark_checked else R.drawable.ic_bookmark_default),
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .clickableSingle(
+                        indication = rememberRipple(bounded = false),
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = { onClickLikePost() }
+                    ),
+                contentDescription = "bookmark",
+            )
+        }
+
+        // post info
+        Row(
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // like count
+            val dec = DecimalFormat("#,###")
+            Row(modifier = Modifier.weight(1f)) {
+                Text(text = stringResource(id = R.string.post_like_count_message_1), style = MaterialTheme.typography.caption1.copy(Gray2_767B83))
+                Text(text = " ${dec.format(post.heartCount)} ", style = MaterialTheme.typography.caption1.copy(PrimaryGreen_23C882))
+                Text(text = stringResource(id = R.string.post_like_count_message_2), style = MaterialTheme.typography.caption1.copy(Gray2_767B83))
+            }
+
+            // comment count
+            Row {
+                Text(text = " ${dec.format(post.commentCount)} ", style = MaterialTheme.typography.caption1.copy(PrimaryGreen_23C882))
+                Text(text = stringResource(id = R.string.post_comment_count_message), style = MaterialTheme.typography.caption1.copy(Gray2_767B83))
+            }
+        }
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun PreviewFeedPostView() {
+    MaterialTheme {
+        FeedPostView(
+            post = Post(
+                postId = 0,
+                thumbnailImage = "",
+                memberId = "",
+                nickname = "nickname",
+                userProfileImage = "",
+                heartCount = 123456,
+                commentCount = 8100,
+                heart = true,
+                category = Category.SCHEDULER,
+                postImages = null,
+                contents = null,
+                createDateTime = "2024-02-21T21:54:56",
+                folderId = null,
+                folderName = null,
+                comments = null,
+                hashtags = null,
+                bookmark = null
+            ),
+            onClickPost = {},
+            onClickLikePost = {},
+            onClickNickname = {}
+        )
+    }
+}
