@@ -103,7 +103,7 @@ fun FeedScreen(
                 // feed post list
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(32.dp),
-                    contentPadding = PaddingValues(horizontal = 18.dp, vertical = 8.dp)
+                    contentPadding = PaddingValues(vertical = 8.dp)
                 ) {
                     items(
                         count = feedPostList.itemCount,
