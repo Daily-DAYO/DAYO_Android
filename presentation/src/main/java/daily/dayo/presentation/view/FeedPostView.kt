@@ -92,6 +92,7 @@ fun FeedPostView(
             modifier = Modifier
                 .wrapContentHeight()
                 .fillMaxWidth()
+                .padding(horizontal = 18.dp)
                 .clickableSingle(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },
@@ -131,6 +132,7 @@ fun FeedPostView(
         Box(
             modifier = Modifier
                 .padding(top = 8.dp, bottom = 4.dp)
+                .padding(horizontal = 18.dp)
                 .fillMaxWidth()
                 .aspectRatio(1f)
         ) {
@@ -156,26 +158,28 @@ fun FeedPostView(
                 }
 
                 // indicator
-                Row(
-                    modifier = Modifier
-                        .wrapContentHeight()
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(
-                        space = 4.dp,
-                        alignment = Alignment.CenterHorizontally
-                    ),
-                ) {
-                    repeat(pagerState.pageCount) { iteration ->
-                        val color = if (pagerState.currentPage == iteration) White_FFFFFF else White_Alpha30_FFFFFF
-                        Box(
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .background(color)
-                                .width(if (pagerState.currentPage == iteration) 12.dp else 6.dp)
-                                .height(6.dp)
-                        )
+                if (postImages.size > 1) {
+                    Row(
+                        modifier = Modifier
+                            .wrapContentHeight()
+                            .fillMaxWidth()
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(
+                            space = 4.dp,
+                            alignment = Alignment.CenterHorizontally
+                        ),
+                    ) {
+                        repeat(pagerState.pageCount) { iteration ->
+                            val color = if (pagerState.currentPage == iteration) White_FFFFFF else White_Alpha30_FFFFFF
+                            Box(
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .background(color)
+                                    .width(if (pagerState.currentPage == iteration) 12.dp else 6.dp)
+                                    .height(6.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -185,7 +189,8 @@ fun FeedPostView(
         Row(
             modifier = Modifier
                 .wrapContentHeight()
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // like button
@@ -233,8 +238,9 @@ fun FeedPostView(
         // post info
         Row(
             modifier = Modifier
-                .padding(top = 4.dp)
                 .fillMaxWidth()
+                .padding(top = 4.dp)
+                .padding(horizontal = 18.dp)
                 .wrapContentHeight(),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -255,7 +261,14 @@ fun FeedPostView(
 
         // post content
         if (!post.contents.isNullOrEmpty()) {
-            SeeMoreText(text = post.contents!!, minimizedMaxLines = 2, modifier = Modifier.padding(top = 12.dp), onClickPost = onClickPost)
+            SeeMoreText(
+                text = post.contents!!,
+                minimizedMaxLines = 2,
+                modifier = Modifier
+                    .padding(top = 12.dp)
+                    .padding(horizontal = 18.dp),
+                onClickPost = onClickPost
+            )
         }
 
         // hashtags
@@ -269,7 +282,7 @@ fun FeedPostView(
 fun HashtagHorizontalGroup(
     hashtags: List<String>
 ) {
-    LazyRow(contentPadding = PaddingValues(vertical = 4.dp)) {
+    LazyRow(contentPadding = PaddingValues(vertical = 4.dp, horizontal = 18.dp)) {
         hashtags.forEach { hashtag ->
             item {
                 Row(
