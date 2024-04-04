@@ -100,7 +100,7 @@
 
     <!-- Feed -->
     <string name="feed_empty_title">아직 피드에 게시물이 없어요.</string>
-    <string name="feed_empty_description">사람들을 팔로우하면\n이곳에서 게시물을 모아볼 수 있어요.</string>
+    <string name="feed_empty_description">팔로우하고 내 취향의 다꾸들을 모아보세요</string>
     <string name="feed_empty_button">팔로우하러 가기</string>
 
     <!-- Write -->

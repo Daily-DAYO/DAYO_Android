@@ -1,10 +1,13 @@
 package daily.dayo.presentation.screen.feed
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
@@ -21,20 +24,29 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import daily.dayo.presentation.R
+import daily.dayo.presentation.activity.MainActivity
 import daily.dayo.presentation.screen.home.CategoryMenu
 import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Gray3_9FA5AE
+import daily.dayo.presentation.theme.Gray4_C5CAD2
+import daily.dayo.presentation.theme.b3
+import daily.dayo.presentation.theme.caption1
 import daily.dayo.presentation.theme.h1
 import daily.dayo.presentation.view.CategoryHorizontalGroup
 import daily.dayo.presentation.view.FeedPostView
+import daily.dayo.presentation.view.FilledButton
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.viewmodel.FeedViewModel
 
@@ -103,10 +115,39 @@ fun FeedScreen(
                         }
                     }
                 }
+
+                // empty view
+                if (feedPostList.loadState.refresh is LoadState.NotLoading && feedPostList.itemCount == 0) {
+                    FeedEmptyView(navController)
+                }
             }
         }
 
         // refresh indicator
         PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
+    }
+}
+
+@Composable
+private fun FeedEmptyView(navController: NavController) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(imageVector = ImageVector.vectorResource(id = R.drawable.ic_feed_empty), contentDescription = null)
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Text(text = stringResource(id = R.string.feed_empty_title), style = MaterialTheme.typography.b3.copy(Gray3_9FA5AE))
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(text = stringResource(id = R.string.feed_empty_description), style = MaterialTheme.typography.caption1.copy(Gray4_C5CAD2))
+
+        Spacer(modifier = Modifier.height(36.dp))
+        FilledButton(onClick = {
+            navController.navigate(MainActivity.Screen.Home.route) {
+                popUpTo(navController.graph.id)
+            }
+        }, label = stringResource(id = R.string.feed_empty_button))
     }
 }
