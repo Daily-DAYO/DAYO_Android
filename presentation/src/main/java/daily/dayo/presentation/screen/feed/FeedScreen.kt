@@ -111,7 +111,29 @@ fun FeedScreen(
                     ) { index ->
                         val feedPost = feedPostList[index]
                         feedPost?.let { post ->
-                            FeedPostView(post = post, onClickPost = { }, onClickLikePost = { }, onClickNickname = {})
+                            FeedPostView(
+                                post = post,
+                                onClickProfile = {
+                                    // todo move to profile
+                                },
+                                onClickPost = {
+                                    // todo move to post
+                                },
+                                onClickLikePost = {
+                                    if (!post.heart) {
+                                        feedViewModel.requestLikePost(postId = post.postId!!)
+                                    } else {
+                                        feedViewModel.requestUnlikePost(postId = post.postId!!)
+                                    }
+                                },
+                                onClickBookmark = {
+                                    if (!post.bookmark!!) {
+                                        feedViewModel.requestBookmarkPost(postId = post.postId!!)
+                                    } else {
+                                        feedViewModel.requestDeleteBookmarkPost(postId = post.postId!!)
+                                    }
+                                }
+                            )
                         }
                     }
                 }

@@ -81,9 +81,10 @@ import java.text.DecimalFormat
 fun FeedPostView(
     post: Post,
     modifier: Modifier = Modifier,
+    onClickProfile: () -> Unit,
     onClickPost: () -> Unit,
     onClickLikePost: () -> Unit,
-    onClickNickname: () -> Unit
+    onClickBookmark: () -> Unit
 ) {
     val imageInteractionSource = remember { MutableInteractionSource() }
     Column(modifier = modifier) {
@@ -92,12 +93,7 @@ fun FeedPostView(
             modifier = Modifier
                 .wrapContentHeight()
                 .fillMaxWidth()
-                .padding(horizontal = 18.dp)
-                .clickableSingle(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() },
-                    onClick = { onClickNickname() }
-                ),
+                .padding(horizontal = 18.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
@@ -110,10 +106,23 @@ fun FeedPostView(
                     .size(36.dp)
                     .clip(shape = CircleShape)
                     .align(Alignment.CenterVertically)
+                    .clickableSingle(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = onClickProfile
+                    )
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
-                Text(text = post.nickname, style = MaterialTheme.typography.b5.copy(Gray1_313131))
+                Text(
+                    text = post.nickname,
+                    style = MaterialTheme.typography.b5.copy(Gray1_313131),
+                    modifier = Modifier.clickableSingle(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = onClickProfile
+                    )
+                )
                 Text(
                     text = categoryKR(post.category ?: Category.ETC) + " ･ " +
                             post.createDateTime?.let { TimeChangerUtil.timeChange(context = LocalContext.current, time = it) },
@@ -152,7 +161,7 @@ fun FeedPostView(
                             .clickableSingle(
                                 interactionSource = imageInteractionSource,
                                 indication = null,
-                                onClick = { onClickPost() }
+                                onClick = onClickPost
                             )
                     )
                 }
@@ -202,7 +211,7 @@ fun FeedPostView(
                     .clickableSingle(
                         indication = rememberRipple(bounded = false),
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = { onClickLikePost() }
+                        onClick = onClickLikePost
                     ),
                 contentDescription = "like",
             )
@@ -215,7 +224,7 @@ fun FeedPostView(
                     .clickableSingle(
                         indication = rememberRipple(bounded = false),
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = { onClickLikePost() }
+                        onClick = onClickPost
                     ),
                 contentDescription = "comment",
             )
@@ -229,7 +238,7 @@ fun FeedPostView(
                     .clickableSingle(
                         indication = rememberRipple(bounded = false),
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = { onClickLikePost() }
+                        onClick = onClickBookmark
                     ),
                 contentDescription = "bookmark",
             )
@@ -372,7 +381,7 @@ fun SeeMoreText(
                         )
                     else Modifier
                 )
-                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = onClickPost)
+                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = { onClickPost() })
                 .alpha(if (seeMoreOffset != null) 1f else 0f)
         )
     }
@@ -404,7 +413,8 @@ private fun PreviewFeedPostView() {
             ),
             onClickPost = {},
             onClickLikePost = {},
-            onClickNickname = {}
+            onClickProfile = {},
+            onClickBookmark = {}
         )
     }
 }
