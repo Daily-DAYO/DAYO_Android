@@ -61,6 +61,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
 import daily.dayo.presentation.databinding.ActivityMainBinding
 import daily.dayo.presentation.fragment.home.HomeFragmentDirections
+import daily.dayo.presentation.screen.feed.FeedScreen
 import daily.dayo.presentation.screen.home.HomeScreen
 import daily.dayo.presentation.theme.Gray1_313131
 import daily.dayo.presentation.theme.Gray2_767B83
@@ -187,7 +188,7 @@ class MainActivity : AppCompatActivity() {
                 HomeScreen(navController, coroutineScope, bottomSheetState, bottomSheetContent)
             }
             composable(Screen.Feed.route) {
-
+                FeedScreen(navController)
             }
             composable(Screen.Write.route) {
 
