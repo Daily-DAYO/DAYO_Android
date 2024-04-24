@@ -52,6 +52,7 @@ import daily.dayo.presentation.viewmodel.FeedViewModel
 @Composable
 fun FeedScreen(
     onEmptyViewClick: () -> Unit,
+    onPostClick: (String) -> Unit,
     feedViewModel: FeedViewModel = hiltViewModel()
 ) {
     val feedPostList = feedViewModel.feedList.asFlow().collectAsLazyPagingItems()
@@ -115,7 +116,7 @@ fun FeedScreen(
                                     // todo move to profile
                                 },
                                 onClickPost = {
-                                    // todo move to post
+                                    post.postId?.let { onPostClick(it.toString()) }
                                 },
                                 onClickLikePost = {
                                     if (!post.heart) {

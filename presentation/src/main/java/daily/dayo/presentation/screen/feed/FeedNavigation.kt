@@ -4,10 +4,14 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 
 fun NavGraphBuilder.feedNavGraph(
-    onEmptyViewClick: () -> Unit
+    onEmptyViewClick: () -> Unit,
+    onPostClick: (String) -> Unit
 ) {
     composable(FeedRoute.route) {
-        FeedScreen(onEmptyViewClick = onEmptyViewClick)
+        FeedScreen(
+            onEmptyViewClick = onEmptyViewClick,
+            onPostClick = onPostClick
+        )
     }
 }
 
