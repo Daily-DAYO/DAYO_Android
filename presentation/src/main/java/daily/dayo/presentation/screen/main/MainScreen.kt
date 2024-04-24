@@ -35,7 +35,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import daily.dayo.presentation.R
 import daily.dayo.presentation.screen.feed.feedNavGraph
+import daily.dayo.presentation.screen.home.HomeRoute
 import daily.dayo.presentation.screen.home.homeNavGraph
+import daily.dayo.presentation.screen.post.postNavGraph
 import daily.dayo.presentation.theme.Gray1_313131
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.White_FFFFFF
@@ -66,7 +68,7 @@ internal fun MainScreen(
                         startDestination = Screen.Home.route
                     ) {
                         homeNavGraph(coroutineScope, bottomSheetState, bottomSheetContent)
-                        feedNavGraph()
+                        feedNavGraph(onEmptyViewClick = { navigator.navigateHome() })
                     }
                 }
             },
@@ -139,7 +141,7 @@ fun MainBottomNavigation(
 }
 
 sealed class Screen(val route: String, @StringRes val resourceId: Int, @DrawableRes val defaultIcon: Int, @DrawableRes val selectedIcon: Int) {
-    object Home : Screen("home", R.string.home, R.drawable.ic_home, R.drawable.ic_home_filled)
+    object Home : Screen(HomeRoute.route, R.string.home, R.drawable.ic_home, R.drawable.ic_home_filled)
     object Feed : Screen("feed", R.string.feed, R.drawable.ic_feed, R.drawable.ic_feed_filled)
     object Write : Screen("write", R.string.write, R.drawable.ic_write, R.drawable.ic_write_filled)
     object Notification : Screen("notification", R.string.notification, R.drawable.ic_notification, R.drawable.ic_notification_filled)
