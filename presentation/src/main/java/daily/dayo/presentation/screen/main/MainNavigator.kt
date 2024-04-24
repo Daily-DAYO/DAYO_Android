@@ -6,6 +6,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import daily.dayo.presentation.screen.home.navigateHome
 
 internal class MainNavigator(
     val navController: NavHostController,
@@ -13,6 +14,10 @@ internal class MainNavigator(
     private val currentDestination: NavDestination?
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
+
+    fun navigateHome() {
+        navController.navigateHome()
+    }
 
     @Composable
     fun shouldShowBottomBar(): Boolean {
