@@ -38,6 +38,7 @@ import androidx.paging.compose.itemKey
 import daily.dayo.presentation.R
 import daily.dayo.presentation.activity.MainActivity
 import daily.dayo.presentation.screen.home.CategoryMenu
+import daily.dayo.presentation.screen.main.Screen
 import daily.dayo.presentation.theme.Gray1_313131
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
@@ -167,7 +168,7 @@ private fun FeedEmptyView(navController: NavController) {
 
         Spacer(modifier = Modifier.height(36.dp))
         FilledButton(onClick = {
-            navController.navigate(MainActivity.Screen.Home.route) {
+            navController.navigate(Screen.Home.route) {
                 popUpTo(navController.graph.id)
             }
         }, label = stringResource(id = R.string.feed_empty_button))
