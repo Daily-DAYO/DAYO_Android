@@ -63,6 +63,7 @@ import daily.dayo.presentation.databinding.ActivityMainBinding
 import daily.dayo.presentation.fragment.home.HomeFragmentDirections
 import daily.dayo.presentation.screen.feed.FeedScreen
 import daily.dayo.presentation.screen.home.HomeScreen
+import daily.dayo.presentation.screen.main.MainScreen
 import daily.dayo.presentation.theme.Gray1_313131
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.White_FFFFFF
@@ -89,116 +90,6 @@ class MainActivity : AppCompatActivity() {
         askNotificationPermission()
         setContent {
             MainScreen()
-        }
-    }
-
-    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-    @OptIn(ExperimentalMaterialApi::class)
-    @Composable
-    fun MainScreen() {
-        val navController = rememberNavController()
-        val coroutineScope = rememberCoroutineScope()
-        val bottomSheetState = getBottomSheetDialogState()
-        var bottomSheet: (@Composable () -> Unit)? by remember { mutableStateOf(null) }
-        val bottomSheetContent: (@Composable () -> Unit) -> Unit = {
-            bottomSheet = it
-        }
-
-        Scaffold(
-            bottomBar = { bottomSheet?.let { it() } }
-        ) {
-            Scaffold(
-                bottomBar = {
-                    MainBottomNavigation(navController = navController)
-
-                }
-            ) { innerPadding ->
-                Box(Modifier.padding(innerPadding)) {
-                    NavigationGraph(navController = navController, coroutineScope, bottomSheetState, bottomSheetContent)
-                }
-            }
-        }
-    }
-
-    @Composable
-    fun MainBottomNavigation(navController: NavController) {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
-        val items = listOf(
-            Screen.Home,
-            Screen.Feed,
-            Screen.Write,
-            Screen.Notification,
-            Screen.MyPage
-        )
-
-        BottomNavigation(
-            backgroundColor = White_FFFFFF,
-            contentColor = Gray2_767B83,
-            modifier = Modifier.height(73.dp)
-        ) {
-            items.forEach { screen ->
-                val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
-                BottomNavigationItem(
-                    icon = {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = if (selected) screen.selectedIcon else screen.defaultIcon),
-                                contentDescription = stringResource(id = screen.resourceId),
-                                modifier = Modifier
-                                    .size(if (screen.route != Screen.Write.route) 24.dp else 36.dp)
-                            )
-
-                            if (screen.route != Screen.Write.route) {
-                                Text(text = stringResource(screen.resourceId), style = MaterialTheme.typography.caption)
-                            }
-                        }
-                    },
-                    selected = selected,
-                    selectedContentColor = Gray1_313131,
-                    onClick = {
-                        navController.navigate(screen.route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                )
-            }
-        }
-    }
-
-    @OptIn(ExperimentalMaterialApi::class)
-    @Composable
-    fun NavigationGraph(
-        navController: NavHostController,
-        coroutineScope: CoroutineScope,
-        bottomSheetState: ModalBottomSheetState,
-        bottomSheetContent: (@Composable () -> Unit) -> Unit
-    ) {
-        NavHost(
-            navController = navController,
-            startDestination = Screen.Home.route
-        ) {
-            composable(Screen.Home.route) {
-                HomeScreen(navController, coroutineScope, bottomSheetState, bottomSheetContent)
-            }
-            composable(Screen.Feed.route) {
-                FeedScreen(navController)
-            }
-            composable(Screen.Write.route) {
-
-            }
-            composable(Screen.Notification.route) {
-
-            }
-            composable(Screen.MyPage.route) {
-
-            }
         }
     }
 
@@ -408,13 +299,5 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         val notificationPermission = arrayOf(Manifest.permission.POST_NOTIFICATIONS)
-    }
-
-    sealed class Screen(val route: String, @StringRes val resourceId: Int, @DrawableRes val defaultIcon: Int, @DrawableRes val selectedIcon: Int) {
-        object Home : Screen("home", R.string.home, R.drawable.ic_home, R.drawable.ic_home_filled)
-        object Feed : Screen("feed", R.string.feed, R.drawable.ic_feed, R.drawable.ic_feed_filled)
-        object Write : Screen("write", R.string.write, R.drawable.ic_write, R.drawable.ic_write_filled)
-        object Notification : Screen("notification", R.string.notification, R.drawable.ic_notification, R.drawable.ic_notification_filled)
-        object MyPage : Screen("mypage", R.string.my_page, R.drawable.ic_my_page, R.drawable.ic_my_page_filled)
     }
 }
