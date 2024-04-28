@@ -48,7 +48,6 @@ const val HOME_NEW_PAGE_TAB_ID = 1
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
-    navController: NavController,
     coroutineScope: CoroutineScope,
     bottomSheetState: ModalBottomSheetState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
@@ -172,7 +171,7 @@ private fun CategoryBottomSheetDialog(
 @Preview(showBackground = true)
 private fun PreviewHomeScreen() {
     MaterialTheme {
-        HomeScreen(rememberNavController(), rememberCoroutineScope(), getBottomSheetDialogState(), {})
+        HomeScreen(rememberCoroutineScope(), getBottomSheetDialogState(), {})
     }
 }
 

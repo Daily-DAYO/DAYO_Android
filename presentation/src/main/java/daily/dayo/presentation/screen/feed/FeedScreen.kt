@@ -31,12 +31,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import daily.dayo.presentation.R
-import daily.dayo.presentation.activity.MainActivity
 import daily.dayo.presentation.screen.home.CategoryMenu
 import daily.dayo.presentation.theme.Gray1_313131
 import daily.dayo.presentation.theme.Gray3_9FA5AE
@@ -53,7 +51,8 @@ import daily.dayo.presentation.viewmodel.FeedViewModel
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FeedScreen(
-    navController: NavController,
+    onEmptyViewClick: () -> Unit,
+    onPostClick: (String) -> Unit,
     feedViewModel: FeedViewModel = hiltViewModel()
 ) {
     val feedPostList = feedViewModel.feedList.asFlow().collectAsLazyPagingItems()
@@ -117,7 +116,7 @@ fun FeedScreen(
                                     // todo move to profile
                                 },
                                 onClickPost = {
-                                    // todo move to post
+                                    post.postId?.let { onPostClick(it.toString()) }
                                 },
                                 onClickLikePost = {
                                     if (!post.heart) {
@@ -140,7 +139,7 @@ fun FeedScreen(
 
                 // empty view
                 if (feedPostList.loadState.refresh is LoadState.NotLoading && feedPostList.itemCount == 0) {
-                    FeedEmptyView(navController)
+                    FeedEmptyView(onEmptyViewClick)
                 }
             }
         }
@@ -151,7 +150,7 @@ fun FeedScreen(
 }
 
 @Composable
-private fun FeedEmptyView(navController: NavController) {
+private fun FeedEmptyView(onEmptyViewClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -166,10 +165,6 @@ private fun FeedEmptyView(navController: NavController) {
         Text(text = stringResource(id = R.string.feed_empty_description), style = MaterialTheme.typography.caption1.copy(Gray4_C5CAD2))
 
         Spacer(modifier = Modifier.height(36.dp))
-        FilledButton(onClick = {
-            navController.navigate(MainActivity.Screen.Home.route) {
-                popUpTo(navController.graph.id)
-            }
-        }, label = stringResource(id = R.string.feed_empty_button))
+        FilledButton(onClick = onEmptyViewClick, label = stringResource(id = R.string.feed_empty_button))
     }
 }
