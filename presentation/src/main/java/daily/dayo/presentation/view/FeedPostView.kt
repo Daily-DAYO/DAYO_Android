@@ -84,7 +84,8 @@ fun FeedPostView(
     onClickProfile: () -> Unit,
     onClickPost: () -> Unit,
     onClickLikePost: () -> Unit,
-    onClickBookmark: () -> Unit
+    onClickBookmark: () -> Unit,
+    onPostLikeUsersClick: (String) -> Unit
 ) {
     val imageInteractionSource = remember { MutableInteractionSource() }
     Column(modifier = modifier) {
@@ -257,7 +258,10 @@ fun FeedPostView(
             val dec = DecimalFormat("#,###")
             Row(modifier = Modifier.weight(1f)) {
                 Text(text = stringResource(id = R.string.post_like_count_message_1), style = MaterialTheme.typography.caption1.copy(Gray2_767B83))
-                Text(text = " ${dec.format(post.heartCount)} ", style = MaterialTheme.typography.caption1, color = if (post.heartCount != 0) PrimaryGreen_23C882 else Gray4_C5CAD2)
+                Text(text = " ${dec.format(post.heartCount)} ",
+                    style = MaterialTheme.typography.caption1,
+                    modifier = if (post.heartCount != 0) Modifier.clickableSingle { onPostLikeUsersClick(post.postId.toString())  } else Modifier,
+                    color = if (post.heartCount != 0) PrimaryGreen_23C882 else Gray4_C5CAD2)
                 Text(text = stringResource(id = R.string.post_like_count_message_2), style = MaterialTheme.typography.caption1.copy(Gray2_767B83))
             }
 
@@ -414,7 +418,8 @@ private fun PreviewFeedPostView() {
             onClickPost = {},
             onClickLikePost = {},
             onClickProfile = {},
-            onClickBookmark = {}
+            onClickBookmark = {},
+            onPostLikeUsersClick = {}
         )
     }
 }

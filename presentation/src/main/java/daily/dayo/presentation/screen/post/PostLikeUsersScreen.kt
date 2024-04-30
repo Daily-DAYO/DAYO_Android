@@ -16,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
@@ -47,12 +49,18 @@ import java.text.DecimalFormat
 
 @Composable
 fun PostLikeUsersScreen(
-    likeCount: Int,
+    postId: String,
     onClickProfile: (String) -> Unit,
     onClickFollow: (LikeUser) -> Unit,
     postViewModel: PostViewModel = hiltViewModel()
 ) {
+    val likeCount = postViewModel.postLikeCountUiState.collectAsStateWithLifecycle()
     val likeUserList = postViewModel.postLikeUsers.collectAsLazyPagingItems() // TODO 수정
+
+    LaunchedEffect(key1 = likeCount) {
+        postViewModel.requestPostDetail(postId = postId.toInt())
+        postViewModel.requestPostLikeUsers(postId = postId.toInt())
+    }
 
     Scaffold(
         topBar = {
@@ -76,7 +84,7 @@ fun PostLikeUsersScreen(
             // like count
             item {
                 val dec = DecimalFormat("#,###")
-                Text(text = " ${dec.format(likeCount)} ", style = MaterialTheme.typography.caption1, color = PrimaryGreen_23C882)
+                Text(text = " ${dec.format(likeCount.value)} ", style = MaterialTheme.typography.caption1, color = PrimaryGreen_23C882)
                 Text(text = stringResource(id = R.string.post_like_count_message_2), style = MaterialTheme.typography.caption1.copy(Gray2_767B83))
             }
 

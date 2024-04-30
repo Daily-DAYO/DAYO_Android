@@ -36,7 +36,7 @@ fun NavGraphBuilder.postNavGraph() {
         )
     ) { navBackStackEntry ->
         val postId = navBackStackEntry.arguments?.getString("postId") ?: ""
-        // PostLikeUsersScreen(postId)
+        PostLikeUsersScreen(postId = postId, {}, {})
     }
 }
 

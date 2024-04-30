@@ -71,7 +71,8 @@ internal fun MainScreen(
                         homeNavGraph(coroutineScope, bottomSheetState, bottomSheetContent)
                         feedNavGraph(
                             onEmptyViewClick = { navigator.navigateHome() },
-                            onPostClick = { navigator.navigatePost(it) }
+                            onPostClick = { navigator.navigatePost(it) },
+                            onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) }
                         )
                         postNavGraph()
                     }
