@@ -1,22 +1,31 @@
 package daily.dayo.presentation.screen.post
 
+import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,24 +49,31 @@ import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Gray1_313131
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.PrimaryGreen_23C882
-import daily.dayo.presentation.theme.b5
+import daily.dayo.presentation.theme.b6
 import daily.dayo.presentation.theme.caption1
+import daily.dayo.presentation.view.FilledButton
+import daily.dayo.presentation.view.OutlinedButton
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
+import daily.dayo.presentation.viewmodel.FollowViewModel
 import daily.dayo.presentation.viewmodel.PostViewModel
 import java.text.DecimalFormat
 
 @Composable
 fun PostLikeUsersScreen(
     postId: String,
-    onClickProfile: (String) -> Unit,
-    onClickFollow: (LikeUser) -> Unit,
-    postViewModel: PostViewModel = hiltViewModel()
+    onBackSignClick: () -> Unit,
+    onProfileClick: (String) -> Unit,
+    postViewModel: PostViewModel = hiltViewModel(),
+    followViewModel: FollowViewModel = hiltViewModel()
 ) {
     val likeCount = postViewModel.postLikeCountUiState.collectAsStateWithLifecycle()
-    val likeUserList = postViewModel.postLikeUsers.collectAsLazyPagingItems() // TODO 수정
+    val likeUserList = postViewModel.postLikeUsers.collectAsLazyPagingItems()
 
-    LaunchedEffect(key1 = likeCount) {
+    val followSuccess by followViewModel.followingFollowSuccess.observeAsState()
+    val unFollowSuccess by followViewModel.followerUnfollowSuccess.observeAsState()
+
+    LaunchedEffect(likeCount, followSuccess, unFollowSuccess) {
         postViewModel.requestPostDetail(postId = postId.toInt())
         postViewModel.requestPostLikeUsers(postId = postId.toInt())
     }
@@ -66,12 +82,18 @@ fun PostLikeUsersScreen(
         topBar = {
             TopNavigation(
                 leftIcon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_back_sign),
-                        contentDescription = "back sign",
-                        tint = Gray1_313131,
-                        modifier = Modifier.padding(12.dp)
-                    )
+                    IconButton(
+                        onClick = { onBackSignClick() },
+                        modifier = Modifier
+                            .indication(interactionSource = remember { MutableInteractionSource() }, indication = null)
+                            .padding(12.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_back_sign),
+                            contentDescription = "back sign",
+                            tint = Gray1_313131
+                        )
+                    }
                 },
                 title = stringResource(id = R.string.like),
                 titleAlignment = TopNavigationAlign.CENTER
@@ -79,13 +101,21 @@ fun PostLikeUsersScreen(
         }
     ) { innerPadding ->
         LazyColumn(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
+            contentPadding = PaddingValues(horizontal = 18.dp)
         ) {
             // like count
             item {
-                val dec = DecimalFormat("#,###")
-                Text(text = " ${dec.format(likeCount.value)} ", style = MaterialTheme.typography.caption1, color = PrimaryGreen_23C882)
-                Text(text = stringResource(id = R.string.post_like_count_message_2), style = MaterialTheme.typography.caption1.copy(Gray2_767B83))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(72.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val dec = DecimalFormat("#,###")
+                    Text(text = " ${dec.format(likeCount.value)} ", style = MaterialTheme.typography.caption1, color = PrimaryGreen_23C882)
+                    Text(text = stringResource(id = R.string.post_like_count_message_2), style = MaterialTheme.typography.caption1.copy(Gray2_767B83))
+                }
             }
 
             // users
@@ -94,7 +124,23 @@ fun PostLikeUsersScreen(
                 key = likeUserList.itemKey()
             ) { index ->
                 likeUserList[index]?.let { user ->
-                    LikeUserItem(likeUser = user, onClickProfile = onClickProfile, onClickFollow = onClickFollow)
+                    LikeUserItem(
+                        likeUser = user,
+                        onProfileClick = onProfileClick,
+                        onFollowClick = {
+                            if (!user.follow) {
+                                followViewModel.requestCreateFollow(
+                                    followerId = user.memberId,
+                                    isFollower = false
+                                )
+                            } else {
+                                followViewModel.requestDeleteFollow(
+                                    followerId = user.memberId,
+                                    isFollower = true
+                                )
+                            }
+                        }
+                    )
                 }
             }
         }
@@ -104,17 +150,19 @@ fun PostLikeUsersScreen(
 @Composable
 private fun LikeUserItem(
     likeUser: LikeUser,
-    onClickProfile: (String) -> Unit,
-    onClickFollow: (LikeUser) -> Unit
+    onProfileClick: (String) -> Unit,
+    onFollowClick: (LikeUser) -> Unit
 ) {
     Surface(
         color = colorResource(id = R.color.white_FFFFFF),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 20.dp)
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier
-                .wrapContentHeight()
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.wrapContentHeight()
         ) {
             // profile
             AsyncImage(
@@ -124,30 +172,43 @@ private fun LikeUserItem(
                 contentDescription = "${likeUser.nickname} + profile",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(16.dp)
+                    .size(36.dp)
                     .clip(shape = CircleShape)
                     .align(Alignment.CenterVertically)
                     .clickableSingle(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = { onClickProfile(likeUser.memberId) }
+                        onClick = { onProfileClick(likeUser.memberId) }
                     )
             )
 
             // nickname
             Text(text = likeUser.nickname,
-                style = MaterialTheme.typography.b5.copy(Gray1_313131),
+                style = MaterialTheme.typography.b6.copy(Gray1_313131),
                 modifier = Modifier.clickableSingle(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },
-                    onClick = { onClickProfile(likeUser.memberId) }
+                    onClick = { onProfileClick(likeUser.memberId) }
                 )
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // follow button
-
+            if (!likeUser.follow) {
+                FilledButton(
+                    onClick = { onFollowClick(likeUser) },
+                    modifier = Modifier.height(36.dp),
+                    label = stringResource(id = R.string.follow_yet),
+                    icon = { Icon(Icons.Filled.Add, stringResource(id = R.string.follow_yet)) },
+                    isTonal = true
+                )
+            } else {
+                OutlinedButton(
+                    onClick = { onFollowClick(likeUser) },
+                    modifier = Modifier.height(36.dp),
+                    label = stringResource(id = R.string.follow_already),
+                    icon = { Icon(Icons.Filled.Check, stringResource(id = R.string.follow_already)) })
+            }
         }
     }
 }
