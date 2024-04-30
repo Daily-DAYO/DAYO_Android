@@ -14,7 +14,7 @@ fun NavController.navigatePostLikeUsers(postId: String) {
     navigate(PostRoute.postLikeUsers(postId))
 }
 
-fun NavGraphBuilder.postNavGraph() {
+fun NavGraphBuilder.postNavGraph(onBackSignClick: () -> (Unit)) {
     composable(
         route = PostRoute.postDetail("{postId}"),
         arguments = listOf(
@@ -36,7 +36,7 @@ fun NavGraphBuilder.postNavGraph() {
         )
     ) { navBackStackEntry ->
         val postId = navBackStackEntry.arguments?.getString("postId") ?: ""
-        PostLikeUsersScreen(postId = postId, {}, {})
+        PostLikeUsersScreen(postId = postId, onBackSignClick = { onBackSignClick() }, onProfileClick = {})
     }
 }
 

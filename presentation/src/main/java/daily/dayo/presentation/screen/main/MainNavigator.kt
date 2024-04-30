@@ -29,6 +29,10 @@ internal class MainNavigator(
         navController.navigatePostLikeUsers(postId = postId)
     }
 
+    fun navigateUp() {
+        navController.navigateUp()
+    }
+
     @Composable
     fun shouldShowBottomBar(): Boolean {
         val currentRoute = currentDestination?.route ?: return false

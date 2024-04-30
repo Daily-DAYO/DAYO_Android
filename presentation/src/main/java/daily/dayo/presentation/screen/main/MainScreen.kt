@@ -74,7 +74,9 @@ internal fun MainScreen(
                             onPostClick = { navigator.navigatePost(it) },
                             onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) }
                         )
-                        postNavGraph()
+                        postNavGraph(
+                            onBackSignClick = { navigator.navigateUp() }
+                        )
                     }
                 }
             },
