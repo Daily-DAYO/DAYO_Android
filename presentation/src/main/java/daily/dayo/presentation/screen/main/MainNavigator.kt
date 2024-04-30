@@ -8,6 +8,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import daily.dayo.presentation.screen.home.navigateHome
 import daily.dayo.presentation.screen.post.navigatePost
+import daily.dayo.presentation.screen.post.navigatePostLikeUsers
 
 internal class MainNavigator(
     val navController: NavHostController,
@@ -22,6 +23,14 @@ internal class MainNavigator(
 
     fun navigatePost(postId: String) {
         navController.navigatePost(postId = postId)
+    }
+
+    fun navigatePostLikeUsers(postId: String) {
+        navController.navigatePostLikeUsers(postId = postId)
+    }
+
+    fun navigateUp() {
+        navController.navigateUp()
     }
 
     @Composable
