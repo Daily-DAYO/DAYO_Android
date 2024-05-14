@@ -6,6 +6,5 @@ import javax.inject.Inject
 class RequestSearchTagUseCase @Inject constructor(
     private val searchRepository: SearchRepository
 ) {
-    suspend operator fun invoke(tag: String) =
-        searchRepository.requestSearchTag(tag)
+    operator fun invoke(tag: String) = searchRepository.requestSearchTag(tag)
 }

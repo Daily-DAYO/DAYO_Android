@@ -141,15 +141,15 @@ class SearchResultFragment : Fragment() {
     }
 
     private fun observeSearchTagList() {
-        searchViewModel.searchTagList.observe(viewLifecycleOwner) {
-            searchTagResultPostAdapter?.submitData(viewLifecycleOwner.lifecycle, it)
-        }
+//        searchViewModel.searchTagList.observe(viewLifecycleOwner) {
+//            searchTagResultPostAdapter?.submitData(viewLifecycleOwner.lifecycle, it)
+//        }
     }
 
     private fun observeSearchTagCount() {
-        searchViewModel.searchTotalCount.observe(viewLifecycleOwner) {
-            binding.resultCount = it
-        }
+//        searchViewModel.searchTotalCount.observe(viewLifecycleOwner) {
+//            binding.resultCount = it
+//        }
     }
 
     private fun setAdapterLoadStateListener() {
