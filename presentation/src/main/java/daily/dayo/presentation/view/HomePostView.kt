@@ -59,15 +59,12 @@ fun HomePostView(
                 .aspectRatio(1f)
         ) {
             // thumbnail image
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data("${BuildConfig.BASE_URL}/images/${post.thumbnailImage}")
-                    .build(),
-                contentDescription = "dayo pick image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
+            RoundImageView(
+                context = LocalContext.current,
+                imageUrl = "${BuildConfig.BASE_URL}/images/${post.thumbnailImage}",
+                imageDescription = "dayo pick image",
+                customModifier = Modifier
                     .matchParentSize()
-                    .clip(RoundedCornerShape(size = 8.dp))
                     .clickableSingle(
                         interactionSource = imageInteractionSource,
                         indication = null,
