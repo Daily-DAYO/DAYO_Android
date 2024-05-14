@@ -80,7 +80,7 @@ internal fun MainScreen(
                             onPostClick = { navigator.navigatePost(it) },
                             onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) }
                         )
-                        postNavGraph()
+                        postNavGraph(onBackSignClick = { navigator.popBackStack() })
                         searchNavGraph(
                             onBackClick = { navigator.popBackStack() },
                             onSearch = { navigator.navigateSearchResult(it) },
