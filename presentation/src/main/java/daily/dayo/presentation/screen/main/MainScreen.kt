@@ -77,13 +77,17 @@ internal fun MainScreen(
                         )
                         feedNavGraph(
                             onEmptyViewClick = { navigator.navigateHome() },
-                            onPostClick = { navigator.navigatePost(it) }
+                            onPostClick = { navigator.navigatePost(it) },
+                            onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) }
                         )
                         postNavGraph()
                         searchNavGraph(
                             onBackClick = { navigator.popBackStack() },
                             onSearch = { navigator.navigateSearchResult(it) },
                             onPostClick = { navigator.navigatePost(it) }
+                        )
+                        postNavGraph(
+                            onBackSignClick = { navigator.navigateUp() }
                         )
                     }
                 }
