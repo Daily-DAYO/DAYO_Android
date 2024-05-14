@@ -6,8 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import daily.dayo.presentation.common.Event
-import daily.dayo.presentation.common.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import daily.dayo.domain.model.BookmarkPostResponse
 import daily.dayo.domain.model.Comment
 import daily.dayo.domain.model.LikePostResponse
@@ -25,7 +24,8 @@ import daily.dayo.domain.usecase.like.RequestPostLikeUsersUseCase
 import daily.dayo.domain.usecase.like.RequestUnlikePostUseCase
 import daily.dayo.domain.usecase.post.RequestDeletePostUseCase
 import daily.dayo.domain.usecase.post.RequestPostDetailUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
+import daily.dayo.presentation.common.Event
+import daily.dayo.presentation.common.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -72,6 +72,8 @@ class PostViewModel @Inject constructor(
     private val _postLikeUsers = MutableStateFlow<PagingData<LikeUser>>(PagingData.empty())
     val postLikeUsers = _postLikeUsers.asStateFlow()
 
+    val postLikeCountUiState: MutableStateFlow<Int> = MutableStateFlow(0)
+
     fun cleanUpPostDetail() {
         _postDetail.postValue(Resource.loading(null))
         _postComment.postValue(Resource.loading(null))
@@ -81,10 +83,22 @@ class PostViewModel @Inject constructor(
         _postDetail.postValue(Resource.loading(null))
         requestPostDetailUseCase(postId)?.let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success -> { _postDetail.postValue(Resource.success(ApiResponse.body)) }
-                is NetworkResponse.NetworkError -> { _postDetail.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                is NetworkResponse.ApiError -> { _postDetail.postValue(Resource.error(ApiResponse.error.toString(), null)) }
-                is NetworkResponse.UnknownError -> { _postDetail.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+                is NetworkResponse.Success -> {
+                    _postDetail.postValue(Resource.success(ApiResponse.body))
+                    postLikeCountUiState.value = ApiResponse.body?.heartCount ?: 0
+                }
+
+                is NetworkResponse.NetworkError -> {
+                    _postDetail.postValue(Resource.error(ApiResponse.exception.toString(), null))
+                }
+
+                is NetworkResponse.ApiError -> {
+                    _postDetail.postValue(Resource.error(ApiResponse.error.toString(), null))
+                }
+
+                is NetworkResponse.UnknownError -> {
+                    _postDetail.postValue(Resource.error(ApiResponse.throwable.toString(), null))
+                }
             }
         }
     }
@@ -101,14 +115,23 @@ class PostViewModel @Inject constructor(
                         Resource.success(
                             _postDetail.value?.data?.apply {
                                 heart = true
-                                heartCount = ApiResponse.body?.allCount?: 0
+                                heartCount = ApiResponse.body?.allCount ?: 0
                             }
                         )
                     )
                 }
-                is NetworkResponse.NetworkError -> { _postLiked.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                is NetworkResponse.ApiError -> { _postLiked.postValue(Resource.error(ApiResponse.error.toString(), null)) }
-                is NetworkResponse.UnknownError -> { _postLiked.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+
+                is NetworkResponse.NetworkError -> {
+                    _postLiked.postValue(Resource.error(ApiResponse.exception.toString(), null))
+                }
+
+                is NetworkResponse.ApiError -> {
+                    _postLiked.postValue(Resource.error(ApiResponse.error.toString(), null))
+                }
+
+                is NetworkResponse.UnknownError -> {
+                    _postLiked.postValue(Resource.error(ApiResponse.throwable.toString(), null))
+                }
             }
         }
     }
@@ -121,11 +144,12 @@ class PostViewModel @Inject constructor(
                         Resource.success(
                             _postDetail.value?.data?.apply {
                                 heart = false
-                                heartCount = ApiResponse.body?.allCount?: 0
+                                heartCount = ApiResponse.body?.allCount ?: 0
                             }
                         )
                     )
                 }
+
                 is NetworkResponse.NetworkError -> {}
                 is NetworkResponse.ApiError -> {}
                 is NetworkResponse.UnknownError -> {}
@@ -137,10 +161,21 @@ class PostViewModel @Inject constructor(
     fun requestBookmarkPost(postId: Int) = viewModelScope.launch {
         requestBookmarkPostUseCase(postId = postId).let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success -> { _postBookmarked.postValue(Resource.success(ApiResponse.body)) }
-                is NetworkResponse.NetworkError -> { _postBookmarked.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                is NetworkResponse.ApiError -> { _postBookmarked.postValue(Resource.error(ApiResponse.error.toString(), null)) }
-                is NetworkResponse.UnknownError -> { _postBookmarked.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+                is NetworkResponse.Success -> {
+                    _postBookmarked.postValue(Resource.success(ApiResponse.body))
+                }
+
+                is NetworkResponse.NetworkError -> {
+                    _postBookmarked.postValue(Resource.error(ApiResponse.exception.toString(), null))
+                }
+
+                is NetworkResponse.ApiError -> {
+                    _postBookmarked.postValue(Resource.error(ApiResponse.error.toString(), null))
+                }
+
+                is NetworkResponse.UnknownError -> {
+                    _postBookmarked.postValue(Resource.error(ApiResponse.throwable.toString(), null))
+                }
             }
         }
     }
@@ -153,10 +188,21 @@ class PostViewModel @Inject constructor(
         _postComment.postValue(Resource.loading(null))
         requestPostCommentUseCase(postId)?.let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success -> { _postComment.postValue(Resource.success(ApiResponse.body?.data)) }
-                is NetworkResponse.NetworkError -> { _postComment.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                is NetworkResponse.ApiError -> { _postComment.postValue(Resource.error(ApiResponse.error.toString(), null)) }
-                is NetworkResponse.UnknownError -> { _postComment.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
+                is NetworkResponse.Success -> {
+                    _postComment.postValue(Resource.success(ApiResponse.body?.data))
+                }
+
+                is NetworkResponse.NetworkError -> {
+                    _postComment.postValue(Resource.error(ApiResponse.exception.toString(), null))
+                }
+
+                is NetworkResponse.ApiError -> {
+                    _postComment.postValue(Resource.error(ApiResponse.error.toString(), null))
+                }
+
+                is NetworkResponse.UnknownError -> {
+                    _postComment.postValue(Resource.error(ApiResponse.throwable.toString(), null))
+                }
             }
         }
     }
@@ -164,8 +210,13 @@ class PostViewModel @Inject constructor(
     fun requestCreatePostComment(contents: String, postId: Int) = viewModelScope.launch {
         requestCreatePostCommentUseCase(contents = contents, postId = postId)?.let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success -> { _postCommentCreateSuccess.postValue(Event(true)) }
-                else -> { _postCommentCreateSuccess.postValue(Event(false)) }
+                is NetworkResponse.Success -> {
+                    _postCommentCreateSuccess.postValue(Event(true))
+                }
+
+                else -> {
+                    _postCommentCreateSuccess.postValue(Event(false))
+                }
             }
         }
     }
@@ -173,8 +224,13 @@ class PostViewModel @Inject constructor(
     fun requestDeletePostComment(commentId: Int) = viewModelScope.launch {
         requestDeletePostCommentUseCase(commentId)?.let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success -> { _postCommentDeleteSuccess.postValue(Event(true)) }
-                else -> { _postCommentDeleteSuccess.postValue(Event(false)) }
+                is NetworkResponse.Success -> {
+                    _postCommentDeleteSuccess.postValue(Event(true))
+                }
+
+                else -> {
+                    _postCommentDeleteSuccess.postValue(Event(false))
+                }
             }
         }
     }
@@ -182,8 +238,13 @@ class PostViewModel @Inject constructor(
     fun requestBlockMember(memberId: String) = viewModelScope.launch {
         requestBlockMemberUseCase(memberId)?.let { ApiResponse ->
             when (ApiResponse) {
-                is NetworkResponse.Success -> { _blockSuccess.postValue(Event(true)) }
-                else -> { _blockSuccess.postValue(Event(false)) }
+                is NetworkResponse.Success -> {
+                    _blockSuccess.postValue(Event(true))
+                }
+
+                else -> {
+                    _blockSuccess.postValue(Event(false))
+                }
             }
         }
     }

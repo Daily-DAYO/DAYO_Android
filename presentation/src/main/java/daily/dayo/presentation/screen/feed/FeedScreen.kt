@@ -53,6 +53,7 @@ import daily.dayo.presentation.viewmodel.FeedViewModel
 fun FeedScreen(
     onEmptyViewClick: () -> Unit,
     onPostClick: (String) -> Unit,
+    onPostLikeUsersClick: (String) -> Unit,
     feedViewModel: FeedViewModel = hiltViewModel()
 ) {
     val feedPostList = feedViewModel.feedList.asFlow().collectAsLazyPagingItems()
@@ -131,7 +132,8 @@ fun FeedScreen(
                                     } else {
                                         feedViewModel.requestDeleteBookmarkPost(postId = post.postId!!)
                                     }
-                                }
+                                },
+                                onPostLikeUsersClick = onPostLikeUsersClick
                             )
                         }
                     }
