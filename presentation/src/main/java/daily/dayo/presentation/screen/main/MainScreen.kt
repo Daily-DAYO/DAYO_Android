@@ -39,6 +39,7 @@ import daily.dayo.presentation.screen.feed.feedNavGraph
 import daily.dayo.presentation.screen.home.HomeRoute
 import daily.dayo.presentation.screen.home.homeNavGraph
 import daily.dayo.presentation.screen.post.postNavGraph
+import daily.dayo.presentation.screen.search.searchNavGraph
 import daily.dayo.presentation.theme.Gray1_313131
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.White_FFFFFF
@@ -68,11 +69,22 @@ internal fun MainScreen(
                         navController = navigator.navController,
                         startDestination = Screen.Home.route
                     ) {
-                        homeNavGraph(coroutineScope, bottomSheetState, bottomSheetContent)
+                        homeNavGraph(
+                            coroutineScope,
+                            bottomSheetState,
+                            bottomSheetContent,
+                            onSearchClick = { navigator.navigateSearch() }
+                        )
                         feedNavGraph(
                             onEmptyViewClick = { navigator.navigateHome() },
                             onPostClick = { navigator.navigatePost(it) },
                             onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) }
+                        )
+                        postNavGraph(onBackSignClick = { navigator.popBackStack() })
+                        searchNavGraph(
+                            onBackClick = { navigator.popBackStack() },
+                            onSearch = { navigator.navigateSearchResult(it) },
+                            onPostClick = { navigator.navigatePost(it) }
                         )
                         postNavGraph(
                             onBackSignClick = { navigator.navigateUp() }

@@ -20,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +36,7 @@ import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray5_E8EAEE
 import daily.dayo.presentation.theme.PrimaryGreen_23C882
 import daily.dayo.presentation.view.BottomSheetDialog
+import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.TextButton
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.getBottomSheetDialogState
@@ -51,6 +53,7 @@ fun HomeScreen(
     coroutineScope: CoroutineScope,
     bottomSheetState: ModalBottomSheetState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
+    onSearchClick: () -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     var homeTabState by rememberSaveable { mutableIntStateOf(HOME_DAYOPICK_PAGE_TAB_ID) }
@@ -93,13 +96,14 @@ fun HomeScreen(
                     }
                 },
                 rightIcon = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_search),
-                        contentDescription = "search",
-                        tint = Gray1_313131,
-                        modifier = Modifier
+                    NoRippleIconButton(
+                        onClick = { onSearchClick() },
+                        iconContentDescription = "search button",
+                        iconPainter = painterResource(id = R.drawable.ic_search),
+                        iconModifier = Modifier
                             .padding(end = 12.dp)
-                            .size(24.dp)
+                            .size(24.dp),
+                        iconTintColor = Gray1_313131
                     )
                 }
             )
@@ -171,7 +175,7 @@ private fun CategoryBottomSheetDialog(
 @Preview(showBackground = true)
 private fun PreviewHomeScreen() {
     MaterialTheme {
-        HomeScreen(rememberCoroutineScope(), getBottomSheetDialogState(), {})
+        HomeScreen(rememberCoroutineScope(), getBottomSheetDialogState(), {}, onSearchClick = {})
     }
 }
 
