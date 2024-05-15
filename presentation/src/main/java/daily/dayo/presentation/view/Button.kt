@@ -1,19 +1,27 @@
 package daily.dayo.presentation.view
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.IconButton
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -21,9 +29,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -161,6 +172,64 @@ fun TextButton(
     )
 }
 
+@Composable
+fun NoRippleIconButton(
+    onClick: () -> Unit,
+    iconContentDescription: String,
+    iconPainter: Painter,
+    iconButtonModifier: Modifier = Modifier,
+    iconModifier: Modifier = Modifier,
+    iconTintColor: Color = Color.Unspecified,
+    interactionSource: MutableInteractionSource = MutableInteractionSource(),
+    additionalComponent: @Composable (() -> Unit)? = null
+) {
+    CompositionLocalProvider(
+        LocalRippleTheme provides object : RippleTheme {
+            @Composable
+            override fun defaultColor(): Color {
+                return RippleTheme.defaultRippleColor(
+                    contentColor = LocalContentColor.current,
+                    lightTheme = !isSystemInDarkTheme()
+                )
+            }
+
+            @Composable
+            override fun rippleAlpha(): RippleAlpha {
+                val defaultAlpha = RippleTheme.defaultRippleAlpha(
+                    contentColor = LocalContentColor.current,
+                    lightTheme = !isSystemInDarkTheme()
+                )
+                return RippleAlpha(
+                    pressedAlpha = defaultAlpha.pressedAlpha,
+                    focusedAlpha = 0f,
+                    draggedAlpha = defaultAlpha.draggedAlpha,
+                    hoveredAlpha = defaultAlpha.hoveredAlpha
+                )
+            }
+        }
+    ) {
+        IconButton(
+            onClick = onClick,
+            modifier = iconButtonModifier
+                .defaultMinSize(1.dp, 1.dp)
+                .indication(interactionSource = interactionSource, indication = null)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    modifier = iconModifier,
+                    painter = iconPainter,
+                    contentDescription = iconContentDescription,
+                    tint = iconTintColor
+                )
+                additionalComponent?.invoke()
+            }
+        }
+    }
+}
+
 @Preview
 @Composable
 fun PreviewFilledButton() {
@@ -200,7 +269,7 @@ fun PreviewOutlinedButton() {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = Color.WHITE.toLong())
+@Preview(showBackground = true, backgroundColor = android.graphics.Color.WHITE.toLong())
 @Composable
 fun PreviewTextButton() {
     Column {

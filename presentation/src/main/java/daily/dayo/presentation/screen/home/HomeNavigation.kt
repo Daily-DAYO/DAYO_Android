@@ -18,10 +18,11 @@ fun NavController.navigateHome() {
 fun NavGraphBuilder.homeNavGraph(
     coroutineScope: CoroutineScope,
     bottomSheetState: ModalBottomSheetState,
-    bottomSheetContent: (@Composable () -> Unit) -> Unit
+    bottomSheetContent: (@Composable () -> Unit) -> Unit,
+    onSearchClick: () -> Unit
 ) {
     composable(HomeRoute.route) {
-        HomeScreen(coroutineScope, bottomSheetState, bottomSheetContent)
+        HomeScreen(coroutineScope, bottomSheetState, bottomSheetContent, onSearchClick)
     }
 }
 
