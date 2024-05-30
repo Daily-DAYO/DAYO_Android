@@ -14,6 +14,10 @@ fun NavController.navigateSearchResult(searchKeyword: String) {
     navigate(SearchRoute.resultSearch(searchKeyword))
 }
 
+fun NavController.navigateSearchPostHashtag(hashtag: String) {
+    navigate(SearchRoute.searchHashtag(hashtag))
+}
+
 fun NavGraphBuilder.searchNavGraph(
     onBackClick: () -> Unit,
     onSearch: (String) -> Unit,
@@ -37,10 +41,27 @@ fun NavGraphBuilder.searchNavGraph(
             onPostClick = onPostClick
         )
     }
+
+    composable(
+        route = SearchRoute.searchHashtag("{hashtag}"),
+        arguments = listOf(
+            navArgument("hashtag") {
+                type = NavType.StringType
+            }
+        )
+    ) { navBackStackEntry ->
+        val hashtag = navBackStackEntry.arguments?.getString("hashtag") ?: ""
+        SearchPostHashtagScreen(
+            hashtag = hashtag,
+            onBackClick = onBackClick,
+            onPostClick = onPostClick
+        )
+    }
 }
 
 object SearchRoute {
     const val route = "search"
 
     fun resultSearch(searchKeyword: String) = "$route/$searchKeyword"
+    fun searchHashtag(hashtag: String) = "$route/hashtag/$hashtag"
 }
