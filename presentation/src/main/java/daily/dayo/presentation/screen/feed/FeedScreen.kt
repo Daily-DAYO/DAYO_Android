@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -22,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -54,14 +56,18 @@ fun FeedScreen(
     onEmptyViewClick: () -> Unit,
     onPostClick: (String) -> Unit,
     onPostLikeUsersClick: (String) -> Unit,
+    onPostHashtagClick: (String) -> Unit,
     feedViewModel: FeedViewModel = hiltViewModel()
 ) {
-    val feedPostList = feedViewModel.feedList.asFlow().collectAsLazyPagingItems()
+    val feedPostList = feedViewModel.feedState.collectAsLazyPagingItems()
     val refreshing by feedViewModel.isRefreshing.collectAsStateWithLifecycle()
     val pullRefreshState = rememberPullRefreshState(refreshing, { feedViewModel.loadFeedPosts() })
+    val listState = rememberSaveable(saver = LazyListState.Saver) { feedViewModel.listState }
 
     LaunchedEffect(true) {
-        feedViewModel.loadFeedPosts()
+        with(feedViewModel) {
+            loadFeedPosts()
+        }
     }
 
     Box(
@@ -103,7 +109,8 @@ fun FeedScreen(
                 // feed post list
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(32.dp),
-                    contentPadding = PaddingValues(vertical = 8.dp)
+                    contentPadding = PaddingValues(vertical = 8.dp),
+                    state = listState
                 ) {
                     items(
                         count = feedPostList.itemCount,
@@ -133,7 +140,8 @@ fun FeedScreen(
                                         feedViewModel.requestDeleteBookmarkPost(postId = post.postId!!)
                                     }
                                 },
-                                onPostLikeUsersClick = onPostLikeUsersClick
+                                onPostLikeUsersClick = onPostLikeUsersClick,
+                                onPostHashtagClick = onPostHashtagClick
                             )
                         }
                     }

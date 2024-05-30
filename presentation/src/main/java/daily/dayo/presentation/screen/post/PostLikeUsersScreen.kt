@@ -1,11 +1,13 @@
 package daily.dayo.presentation.screen.post
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -49,6 +51,7 @@ import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Gray1_313131
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.PrimaryGreen_23C882
+import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.b6
 import daily.dayo.presentation.theme.caption1
 import daily.dayo.presentation.view.FilledButton
@@ -62,7 +65,7 @@ import java.text.DecimalFormat
 @Composable
 fun PostLikeUsersScreen(
     postId: String,
-    onBackSignClick: () -> Unit,
+    onBackClick: () -> Unit,
     onProfileClick: (String) -> Unit,
     postViewModel: PostViewModel = hiltViewModel(),
     followViewModel: FollowViewModel = hiltViewModel()
@@ -83,10 +86,9 @@ fun PostLikeUsersScreen(
             TopNavigation(
                 leftIcon = {
                     IconButton(
-                        onClick = { onBackSignClick() },
+                        onClick = { onBackClick() },
                         modifier = Modifier
                             .indication(interactionSource = remember { MutableInteractionSource() }, indication = null)
-                            .padding(12.dp)
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_back_sign),
@@ -101,7 +103,10 @@ fun PostLikeUsersScreen(
         }
     ) { innerPadding ->
         LazyColumn(
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier
+                .background(White_FFFFFF)
+                .fillMaxSize()
+                .padding(innerPadding),
             contentPadding = PaddingValues(horizontal = 18.dp)
         ) {
             // like count
@@ -109,12 +114,20 @@ fun PostLikeUsersScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(72.dp),
+                        .padding(bottom = 4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     val dec = DecimalFormat("#,###")
-                    Text(text = " ${dec.format(likeCount.value)} ", style = MaterialTheme.typography.caption1, color = PrimaryGreen_23C882)
-                    Text(text = stringResource(id = R.string.post_like_count_message_2), style = MaterialTheme.typography.caption1.copy(Gray2_767B83))
+                    Text(
+                        text = " ${dec.format(likeCount.value)} ",
+                        style = MaterialTheme.typography.caption1.copy(PrimaryGreen_23C882),
+                        modifier = Modifier.padding(vertical = 12.dp)
+                    )
+                    Text(
+                        text = "개의 좋아요",
+                        style = MaterialTheme.typography.caption1.copy(Gray2_767B83),
+                        modifier = Modifier.padding(vertical = 12.dp)
+                    )
                 }
             }
 

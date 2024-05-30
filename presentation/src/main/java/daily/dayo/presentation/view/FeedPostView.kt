@@ -85,7 +85,8 @@ fun FeedPostView(
     onClickPost: () -> Unit,
     onClickLikePost: () -> Unit,
     onClickBookmark: () -> Unit,
-    onPostLikeUsersClick: (String) -> Unit
+    onPostLikeUsersClick: (String) -> Unit,
+    onPostHashtagClick: (String) -> Unit
 ) {
     val imageInteractionSource = remember { MutableInteractionSource() }
     Column(modifier = modifier) {
@@ -260,7 +261,7 @@ fun FeedPostView(
                 Text(text = stringResource(id = R.string.post_like_count_message_1), style = MaterialTheme.typography.caption1.copy(Gray2_767B83))
                 Text(text = " ${dec.format(post.heartCount)} ",
                     style = MaterialTheme.typography.caption1,
-                    modifier = if (post.heartCount != 0) Modifier.clickableSingle { onPostLikeUsersClick(post.postId.toString())  } else Modifier,
+                    modifier = if (post.heartCount != 0) Modifier.clickableSingle { onPostLikeUsersClick(post.postId.toString()) } else Modifier,
                     color = if (post.heartCount != 0) PrimaryGreen_23C882 else Gray4_C5CAD2)
                 Text(text = stringResource(id = R.string.post_like_count_message_2), style = MaterialTheme.typography.caption1.copy(Gray2_767B83))
             }
@@ -286,20 +287,30 @@ fun FeedPostView(
 
         // hashtags
         if (!post.hashtags.isNullOrEmpty()) {
-            HashtagHorizontalGroup(hashtags = post.hashtags!!)
+            HashtagHorizontalGroup(
+                hashtags = post.hashtags!!,
+                onPostHashtagClick = onPostHashtagClick
+            )
         }
     }
 }
 
 @Composable
 fun HashtagHorizontalGroup(
-    hashtags: List<String>
+    hashtags: List<String>,
+    onPostHashtagClick: (String) -> Unit
 ) {
     LazyRow(contentPadding = PaddingValues(vertical = 4.dp, horizontal = 18.dp)) {
         hashtags.forEach { hashtag ->
             item {
                 Row(
-                    modifier = Modifier.padding(end = 8.dp),
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .clickableSingle(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = { onPostHashtagClick(hashtag) }
+                        ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
@@ -419,7 +430,8 @@ private fun PreviewFeedPostView() {
             onClickLikePost = {},
             onClickProfile = {},
             onClickBookmark = {},
-            onPostLikeUsersClick = {}
+            onPostLikeUsersClick = {},
+            onPostHashtagClick = {}
         )
     }
 }
