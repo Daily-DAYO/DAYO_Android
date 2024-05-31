@@ -26,7 +26,10 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -89,6 +92,8 @@ fun FeedPostView(
     onPostHashtagClick: (String) -> Unit
 ) {
     val imageInteractionSource = remember { MutableInteractionSource() }
+    var expanded by remember { mutableStateOf(false) }
+
     Column(modifier = modifier) {
         // publisher info
         Row(
@@ -98,6 +103,7 @@ fun FeedPostView(
                 .padding(horizontal = 18.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // user profile image
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data("${BuildConfig.BASE_URL}/images/${post.userProfileImage}")
@@ -115,6 +121,7 @@ fun FeedPostView(
                     )
             )
             Spacer(modifier = Modifier.width(12.dp))
+            // post info text
             Column(Modifier.weight(1f)) {
                 Text(
                     text = post.nickname,
@@ -131,12 +138,23 @@ fun FeedPostView(
                     style = MaterialTheme.typography.caption3.copy(Gray3_9FA5AE)
                 )
             }
-            Icon(
-                modifier = Modifier.padding(8.dp),
-                painter = painterResource(id = R.drawable.ic_option_horizontal),
-                tint = Gray2_767B83,
-                contentDescription = "post option"
-            )
+            // post option
+            Box {
+                IconButton(
+                    onClick = { expanded = true }
+                ) {
+                    Icon(
+                        modifier = Modifier.padding(8.dp),
+                        painter = painterResource(id = R.drawable.ic_option_horizontal),
+                        tint = Gray2_767B83,
+                        contentDescription = "post option"
+                    )
+                }
+                OthersPostDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = !expanded }
+                )
+            }
         }
 
         // post images
@@ -290,6 +308,38 @@ fun FeedPostView(
             HashtagHorizontalGroup(
                 hashtags = post.hashtags!!,
                 onPostHashtagClick = onPostHashtagClick
+            )
+        }
+    }
+}
+
+@Composable
+fun OthersPostDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit) {
+    MaterialTheme(shapes = MaterialTheme.shapes.copy(extraSmall = RoundedCornerShape(16.dp))) {
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = onDismissRequest,
+            modifier = Modifier
+                .background(White_FFFFFF)
+        ) {
+            DropdownMenuItem(
+                modifier = Modifier
+                    .padding(horizontal = 6.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+                text = {
+                    Text(
+                        text = "게시물 신고",
+                        style = MaterialTheme.typography.b6.copy(Gray1_313131)
+                    )
+                },
+                onClick = { /* report dialog */ },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_menu_report),
+                        contentDescription = "report post",
+                        tint = Gray1_313131
+                    )
+                }
             )
         }
     }
