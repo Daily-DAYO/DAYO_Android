@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -57,6 +58,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import daily.dayo.domain.model.Category
@@ -77,6 +79,8 @@ import daily.dayo.presentation.theme.b5
 import daily.dayo.presentation.theme.b6
 import daily.dayo.presentation.theme.caption1
 import daily.dayo.presentation.theme.caption3
+import daily.dayo.presentation.view.dialog.RadioButtonDialog
+import daily.dayo.presentation.viewmodel.ReportViewModel
 import java.text.DecimalFormat
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -89,10 +93,23 @@ fun FeedPostView(
     onClickLikePost: () -> Unit,
     onClickBookmark: () -> Unit,
     onPostLikeUsersClick: (String) -> Unit,
-    onPostHashtagClick: (String) -> Unit
+    onPostHashtagClick: (String) -> Unit,
+    reportViewModel: ReportViewModel = hiltViewModel()
 ) {
     val imageInteractionSource = remember { MutableInteractionSource() }
-    var expanded by remember { mutableStateOf(false) }
+    var showPostOption by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
+    val reportReasons = arrayListOf(
+        stringResource(id = R.string.report_post_reason_1),
+        stringResource(id = R.string.report_post_reason_2),
+        stringResource(id = R.string.report_post_reason_3),
+        stringResource(id = R.string.report_post_reason_4),
+        stringResource(id = R.string.report_post_reason_5),
+        stringResource(id = R.string.report_post_reason_6),
+        stringResource(id = R.string.report_post_reason_7),
+        stringResource(id = R.string.report_post_reason_other),
+    )
+
 
     Column(modifier = modifier) {
         // publisher info
@@ -141,7 +158,7 @@ fun FeedPostView(
             // post option
             Box {
                 IconButton(
-                    onClick = { expanded = true }
+                    onClick = { showPostOption = true }
                 ) {
                     Icon(
                         modifier = Modifier.padding(8.dp),
@@ -151,8 +168,12 @@ fun FeedPostView(
                     )
                 }
                 OthersPostDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = !expanded }
+                    expanded = showPostOption,
+                    onDismissRequest = { showPostOption = !showPostOption },
+                    onPostReportClick = {
+                        showDialog = !showDialog
+                        showPostOption = !showPostOption
+                    }
                 )
             }
         }
@@ -311,10 +332,23 @@ fun FeedPostView(
             )
         }
     }
+
+    if (showDialog) {
+        RadioButtonDialog(
+            radioItems = reportReasons,
+            lastInputEnabled = true,
+            onClickCancel = { showDialog = !showDialog },
+            onClickConfirm = { reason -> reportViewModel.requestSavePostReport(reason, post.postId!!) },
+            modifier = Modifier
+                .fillMaxHeight(0.6f)
+                .clip(RoundedCornerShape(28.dp))
+                .background(White_FFFFFF)
+        )
+    }
 }
 
 @Composable
-fun OthersPostDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit) {
+fun OthersPostDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit, onPostReportClick: () -> Unit) {
     MaterialTheme(shapes = MaterialTheme.shapes.copy(extraSmall = RoundedCornerShape(16.dp))) {
         DropdownMenu(
             expanded = expanded,
@@ -327,19 +361,24 @@ fun OthersPostDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit) {
                     .padding(horizontal = 6.dp)
                     .clip(RoundedCornerShape(12.dp)),
                 text = {
-                    Text(
-                        text = "게시물 신고",
-                        style = MaterialTheme.typography.b6.copy(Gray1_313131)
-                    )
+                    Row(
+                        modifier = Modifier.width(128.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_menu_report),
+                            contentDescription = "report post",
+                            tint = Gray1_313131,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text(
+                            text = "게시물 신고",
+                            style = MaterialTheme.typography.b6.copy(Gray1_313131)
+                        )
+                    }
+
                 },
-                onClick = { /* report dialog */ },
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_menu_report),
-                        contentDescription = "report post",
-                        tint = Gray1_313131
-                    )
-                }
+                onClick = onPostReportClick
             )
         }
     }

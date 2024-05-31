@@ -1,4 +1,4 @@
-package daily.dayo.presentation.view
+package daily.dayo.presentation.view.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

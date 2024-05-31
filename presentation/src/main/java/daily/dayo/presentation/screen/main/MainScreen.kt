@@ -43,7 +43,7 @@ import daily.dayo.presentation.screen.search.searchNavGraph
 import daily.dayo.presentation.theme.Gray1_313131
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.view.getBottomSheetDialogState
+import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 
 @OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
