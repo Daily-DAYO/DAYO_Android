@@ -2,14 +2,19 @@ package daily.dayo.presentation.view
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,13 +30,17 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import daily.dayo.presentation.theme.Gray1_313131
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray5_E8EAEE
 import daily.dayo.presentation.theme.Gray6_F0F1F3
+import daily.dayo.presentation.theme.Gray7_F6F6F7
 import daily.dayo.presentation.theme.PrimaryGreen_23C882
 import daily.dayo.presentation.theme.Red_FF4545
+import daily.dayo.presentation.theme.b6
 import kotlinx.coroutines.delay
 
 @Composable
@@ -189,9 +198,39 @@ fun FilledTimerField(
     )
 }
 
-@Preview
 @Composable
-fun PreviewTextField() {
+fun CharacterLimitOutlinedTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    singleLine: Boolean = false,
+    cornerSize: Dp = 8.dp,
+    placeholder: String = "",
+    outlinedTextFieldColors: TextFieldColors? = null,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
+) {
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        placeholder = { Text(text = placeholder, style = MaterialTheme.typography.b6.copy(Gray2_767B83)) },
+        singleLine = singleLine,
+        shape = RoundedCornerShape(cornerSize),
+        colors = outlinedTextFieldColors
+            ?: OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Gray7_F6F6F7,
+                unfocusedContainerColor = Gray7_F6F6F7,
+                focusedBorderColor = PrimaryGreen_23C882,
+                unfocusedBorderColor = Color.Transparent,
+                cursorColor = PrimaryGreen_23C882
+            ),
+        textStyle = MaterialTheme.typography.b6.copy(Gray1_313131),
+        modifier = modifier
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewTextField() {
     Column {
         // Default 사용 예시
         val text = rememberSaveable { mutableStateOf("") }
@@ -224,6 +263,14 @@ fun PreviewTextField() {
             label = "Number",
             isError = isError,
             errorMessage = "error",
+        )
+
+        // 글자수 제한 text field 사용 예시
+        val limitText = rememberSaveable { mutableStateOf("") }
+        CharacterLimitOutlinedTextField(
+            value = limitText.value,
+            onValueChange = { textValue -> limitText.value = textValue },
+            placeholder = "게시물을 신고하는 기타 사유는 무엇인가요?"
         )
     }
 }

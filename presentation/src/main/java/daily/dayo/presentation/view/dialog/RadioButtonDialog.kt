@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
@@ -13,10 +14,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,17 +37,20 @@ import daily.dayo.presentation.theme.b1
 import daily.dayo.presentation.theme.b4
 import daily.dayo.presentation.theme.b6
 import daily.dayo.presentation.theme.caption1
+import daily.dayo.presentation.view.CharacterLimitOutlinedTextField
 
 @Composable
 fun RadioButtonDialog(
     radioItems: ArrayList<String>,
     lastInputEnabled: Boolean = false, // 마지막 아이템 선택 시 edit text 입력창 여부
+    lastTextPlaceholder: String = "",
     onClickCancel: () -> Unit,
     onClickConfirm: (String) -> Unit,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
     val selectedIndex = remember { mutableStateOf<Int?>(null) }
+    val lastText = rememberSaveable { mutableStateOf("") }
 
     Dialog(
         onDismissRequest = onClickCancel,
@@ -92,7 +98,11 @@ fun RadioButtonDialog(
                             ) {
                                 RadioButton(
                                     selected = selectedIndex.value != null && selectedIndex.value == index,
-                                    onClick = { selectedIndex.value = index }
+                                    onClick = { selectedIndex.value = index },
+                                    colors = RadioButtonDefaults.colors(
+                                        selectedColor = PrimaryGreen_23C882,
+                                        unselectedColor = Gray3_9FA5AE
+                                    )
                                 )
                                 Text(
                                     text = text,
@@ -103,7 +113,14 @@ fun RadioButtonDialog(
                         }
 
                         if (lastInputEnabled && selectedIndex.value == radioItems.lastIndex) {
-                            // todo
+                            CharacterLimitOutlinedTextField(
+                                value = lastText.value,
+                                onValueChange = { textValue -> lastText.value = textValue },
+                                placeholder = lastTextPlaceholder,
+                                modifier = Modifier
+                                    .padding(horizontal = 18.dp)
+                                    .height(144.dp)
+                            )
                         }
                     }
                 }
@@ -124,19 +141,25 @@ fun RadioButtonDialog(
                         modifier = Modifier.padding(vertical = 10.dp, horizontal = 12.dp)
                     )
 
+                    val canSubmit = selectedIndex.value != null && (
+                            if (selectedIndex.value == radioItems.lastIndex) lastInputEnabled && lastText.value.isNotBlank() || !lastInputEnabled
+                            else true
+                            )
+
                     daily.dayo.presentation.view.TextButton(
                         onClick = {
-                            if (selectedIndex.value != null) {
-                                if (lastInputEnabled && selectedIndex.value == radioItems.lastIndex) {
-                                    onClickConfirm("input text") // todo
+                            selectedIndex.value?.let { index ->
+                                val item = if (index == radioItems.lastIndex && lastInputEnabled) {
+                                    lastText.value.ifBlank { return@let }
                                 } else {
-                                    onClickConfirm(radioItems[selectedIndex.value!!])
+                                    radioItems[index]
                                 }
+                                onClickConfirm(item)
                             }
                         },
                         text = stringResource(id = R.string.submit),
                         textStyle = MaterialTheme.typography.b6.copy(
-                            color = if (selectedIndex.value != null) PrimaryGreen_23C882 else Gray4_C5CAD2
+                            color = if (canSubmit) PrimaryGreen_23C882 else Gray4_C5CAD2
                         ),
                         modifier = Modifier.padding(vertical = 10.dp, horizontal = 12.dp)
                     )
