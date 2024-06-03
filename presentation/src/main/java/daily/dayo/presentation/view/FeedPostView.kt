@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -337,10 +336,13 @@ fun FeedPostView(
         RadioButtonDialog(
             radioItems = reportReasons,
             lastInputEnabled = true,
+            lastTextPlaceholder = "게시물을 신고하는 기타 사유는 무엇인가요?",
             onClickCancel = { showDialog = !showDialog },
-            onClickConfirm = { reason -> reportViewModel.requestSavePostReport(reason, post.postId!!) },
+            onClickConfirm = { reason ->
+                reportViewModel.requestSavePostReport(reason, post.postId!!)
+                showDialog = !showDialog
+            },
             modifier = Modifier
-                .fillMaxHeight(0.6f)
                 .clip(RoundedCornerShape(28.dp))
                 .background(White_FFFFFF)
         )
