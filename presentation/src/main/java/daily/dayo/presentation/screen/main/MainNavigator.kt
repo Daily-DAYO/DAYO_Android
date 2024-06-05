@@ -9,9 +9,10 @@ import androidx.navigation.compose.rememberNavController
 import daily.dayo.presentation.screen.home.HomeRoute
 import daily.dayo.presentation.screen.home.navigateHome
 import daily.dayo.presentation.screen.post.navigatePost
-import daily.dayo.presentation.screen.search.navigateSearch
-import daily.dayo.presentation.screen.search.navigateSearchResult
 import daily.dayo.presentation.screen.post.navigatePostLikeUsers
+import daily.dayo.presentation.screen.search.navigateSearch
+import daily.dayo.presentation.screen.search.navigateSearchPostHashtag
+import daily.dayo.presentation.screen.search.navigateSearchResult
 
 internal class MainNavigator(
     val navController: NavHostController,
@@ -34,6 +35,10 @@ internal class MainNavigator(
 
     fun navigateSearchResult(searchKeyword: String) {
         navController.navigateSearchResult(searchKeyword)
+    }
+
+    fun navigateSearchPostHashtag(hashtag: String) {
+        navController.navigateSearchPostHashtag(hashtag = hashtag)
     }
 
     fun popBackStack() {
