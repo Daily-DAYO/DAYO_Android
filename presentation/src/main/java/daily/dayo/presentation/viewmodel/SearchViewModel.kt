@@ -4,12 +4,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import daily.dayo.domain.model.Search
-import daily.dayo.domain.usecase.search.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import daily.dayo.domain.model.Search
 import daily.dayo.domain.model.SearchHistory
 import daily.dayo.domain.model.SearchHistoryType
 import daily.dayo.domain.model.SearchUser
+import daily.dayo.domain.usecase.search.ClearSearchKeywordRecentUseCase
+import daily.dayo.domain.usecase.search.DeleteSearchKeywordRecentUseCase
+import daily.dayo.domain.usecase.search.RequestSearchKeywordRecentUseCase
+import daily.dayo.domain.usecase.search.RequestSearchKeywordUserUseCase
+import daily.dayo.domain.usecase.search.RequestSearchTagUseCase
+import daily.dayo.domain.usecase.search.RequestSearchTotalCountUseCase
+import daily.dayo.domain.usecase.search.UpdateSearchKeywordRecentUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -92,6 +98,20 @@ class SearchViewModel @Inject constructor(
     suspend fun clearSearchKeywordRecent() {
         clearSearchKeywordRecentUseCase().let {
             _searchHistory.emit(it)
+        }
+    }
+
+    fun searchHashtag(hashtag: String) {
+        viewModelScope.launch {
+            requestSearchTotalCountUseCase(tag = hashtag, SearchHistoryType.TAG).let {
+                _searchTagTotalCount.emit(it)
+            }
+
+            requestSearchTagUseCase(tag = hashtag)
+                .cachedIn(viewModelScope)
+                .collectLatest {
+                    _searchTagList.emit(it)
+                }
         }
     }
 }
