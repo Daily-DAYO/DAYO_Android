@@ -338,6 +338,8 @@ fun FeedPostView(
 
     if (showDialog) {
         RadioButtonDialog(
+            title = stringResource(id = R.string.report_post_title),
+            description = stringResource(id = R.string.report_post_description),
             radioItems = reportReasons,
             lastInputEnabled = true,
             lastTextPlaceholder = "게시물을 신고하는 기타 사유는 무엇인가요?",
