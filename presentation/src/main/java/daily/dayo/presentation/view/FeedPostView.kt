@@ -32,15 +32,16 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -56,7 +57,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -82,13 +82,15 @@ import daily.dayo.presentation.theme.caption1
 import daily.dayo.presentation.theme.caption3
 import daily.dayo.presentation.view.dialog.RadioButtonDialog
 import daily.dayo.presentation.viewmodel.ReportViewModel
+import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FeedPostView(
     post: Post,
     modifier: Modifier = Modifier,
+    snackBarHostState: SnackbarHostState,
     onClickProfile: () -> Unit,
     onClickPost: () -> Unit,
     onClickLikePost: () -> Unit,
@@ -100,6 +102,7 @@ fun FeedPostView(
     val imageInteractionSource = remember { MutableInteractionSource() }
     var showPostOption by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
     val reportReasons = arrayListOf(
         stringResource(id = R.string.report_post_reason_1),
         stringResource(id = R.string.report_post_reason_2),
@@ -338,10 +341,14 @@ fun FeedPostView(
             radioItems = reportReasons,
             lastInputEnabled = true,
             lastTextPlaceholder = "게시물을 신고하는 기타 사유는 무엇인가요?",
+            lastTextMaxLength = 100,
             onClickCancel = { showDialog = !showDialog },
             onClickConfirm = { reason ->
                 reportViewModel.requestSavePostReport(reason, post.postId!!)
                 showDialog = !showDialog
+                coroutineScope.launch {
+                    snackBarHostState.showSnackbar("신고가 접수되었어요.")
+                }
             },
             modifier = Modifier
                 .height(400.dp)
@@ -492,40 +499,6 @@ fun SeeMoreText(
                 )
                 .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = { onClickPost() })
                 .alpha(if (seeMoreOffset != null) 1f else 0f)
-        )
-    }
-}
-
-@Composable
-@Preview(showBackground = true)
-private fun PreviewFeedPostView() {
-    MaterialTheme {
-        FeedPostView(
-            post = Post(
-                postId = 0,
-                thumbnailImage = "",
-                memberId = "",
-                nickname = "nickname",
-                userProfileImage = "",
-                heartCount = 123456,
-                commentCount = 8100,
-                heart = true,
-                category = Category.SCHEDULER,
-                postImages = null,
-                contents = "힘차게 달려 신나게 어디든지 갈 수 있어",
-                createDateTime = "2024-02-21T21:54:56",
-                folderId = null,
-                folderName = null,
-                comments = null,
-                hashtags = listOf("태그", "다요다요"),
-                bookmark = null
-            ),
-            onClickPost = {},
-            onClickLikePost = {},
-            onClickProfile = {},
-            onClickBookmark = {},
-            onPostLikeUsersClick = {},
-            onPostHashtagClick = {}
         )
     }
 }
