@@ -48,6 +48,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun RadioButtonDialog(
+    title: String,
+    description: String,
     radioItems: ArrayList<String>,
     lastInputEnabled: Boolean = false, // 마지막 아이템 선택 시 edit text 입력창 여부
     lastTextPlaceholder: String = "",
@@ -77,7 +79,7 @@ fun RadioButtonDialog(
                         .padding(horizontal = 24.dp)
                 ) {
                     Text(
-                        text = stringResource(id = R.string.report_post_title),
+                        text = title,
                         style = MaterialTheme.typography.b1.copy(
                             color = Gray1_313131,
                             fontWeight = FontWeight.SemiBold
@@ -85,7 +87,7 @@ fun RadioButtonDialog(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Text(
-                        text = stringResource(id = R.string.report_post_description),
+                        text = description,
                         style = MaterialTheme.typography.caption1.copy(
                             color = Gray3_9FA5AE
                         ),
