@@ -80,7 +80,7 @@ dependencies {
     implementation project(':domain')
     implementation project(':data')
 
-    def sentry_version = "6.11.0"
+    def sentry_version = "6.16.0"
     def glide_version = "4.15.1"
 
     // Hilt
