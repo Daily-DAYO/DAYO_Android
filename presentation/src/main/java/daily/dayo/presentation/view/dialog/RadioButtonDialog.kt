@@ -51,6 +51,7 @@ fun RadioButtonDialog(
     radioItems: ArrayList<String>,
     lastInputEnabled: Boolean = false, // 마지막 아이템 선택 시 edit text 입력창 여부
     lastTextPlaceholder: String = "",
+    lastTextMaxLength: Int = 100,
     onClickCancel: () -> Unit,
     onClickConfirm: (String) -> Unit,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
@@ -156,7 +157,7 @@ fun RadioButtonDialog(
                                 CharacterLimitOutlinedTextField(
                                     value = lastTextValue,
                                     placeholder = lastTextPlaceholder,
-                                    maxLength = 100,
+                                    maxLength = lastTextMaxLength,
                                     modifier = Modifier
                                         .padding(horizontal = 18.dp)
                                         .height(144.dp)
