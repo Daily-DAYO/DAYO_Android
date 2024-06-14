@@ -26,6 +26,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -80,12 +82,14 @@ import daily.dayo.presentation.theme.b5
 import daily.dayo.presentation.theme.b6
 import daily.dayo.presentation.theme.caption1
 import daily.dayo.presentation.theme.caption3
+import daily.dayo.presentation.view.dialog.CommentBottomSheetDialog
 import daily.dayo.presentation.view.dialog.RadioButtonDialog
+import daily.dayo.presentation.viewmodel.PostViewModel
 import daily.dayo.presentation.viewmodel.ReportViewModel
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun FeedPostView(
     post: Post,
@@ -97,7 +101,10 @@ fun FeedPostView(
     onClickBookmark: () -> Unit,
     onPostLikeUsersClick: (String) -> Unit,
     onPostHashtagClick: (String) -> Unit,
-    reportViewModel: ReportViewModel = hiltViewModel()
+    bottomSheetState: ModalBottomSheetState,
+    bottomSheetContent: (@Composable () -> Unit) -> Unit,
+    reportViewModel: ReportViewModel = hiltViewModel(),
+    postViewModel: PostViewModel = hiltViewModel()
 ) {
     val imageInteractionSource = remember { MutableInteractionSource() }
     var showPostOption by remember { mutableStateOf(false) }
@@ -268,7 +275,7 @@ fun FeedPostView(
                     .clickableSingle(
                         indication = rememberRipple(bounded = false),
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = onClickPost
+                        onClick = { coroutineScope.launch { bottomSheetState.show() } }
                     ),
                 contentDescription = "comment",
             )
@@ -357,6 +364,14 @@ fun FeedPostView(
                 .imePadding()
                 .clip(RoundedCornerShape(28.dp))
                 .background(White_FFFFFF)
+        )
+    }
+
+    bottomSheetContent {
+        CommentBottomSheetDialog(
+            sheetState = bottomSheetState,
+            onClickClose = { coroutineScope.launch { bottomSheetState.hide() } },
+            postViewModel = postViewModel
         )
     }
 }
