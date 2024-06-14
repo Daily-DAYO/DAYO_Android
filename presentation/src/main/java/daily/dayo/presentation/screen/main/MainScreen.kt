@@ -81,7 +81,9 @@ internal fun MainScreen(
                             onEmptyViewClick = { navigator.navigateHome() },
                             onPostClick = { navigator.navigatePost(it) },
                             onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
-                            onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) }
+                            onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) },
+                            bottomSheetState = bottomSheetState,
+                            bottomSheetContent = bottomSheetContent
                         )
                         postNavGraph(onBackClick = { navigator.popBackStack() })
                         searchNavGraph(
