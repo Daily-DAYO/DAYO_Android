@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -58,6 +59,8 @@ fun FeedScreen(
     onPostClick: (String) -> Unit,
     onPostLikeUsersClick: (String) -> Unit,
     onPostHashtagClick: (String) -> Unit,
+    bottomSheetState: ModalBottomSheetState,
+    bottomSheetContent: (@Composable () -> Unit) -> Unit,
     feedViewModel: FeedViewModel = hiltViewModel()
 ) {
     val feedPostList = feedViewModel.feedState.collectAsLazyPagingItems()
@@ -143,7 +146,9 @@ fun FeedScreen(
                                     }
                                 },
                                 onPostLikeUsersClick = onPostLikeUsersClick,
-                                onPostHashtagClick = onPostHashtagClick
+                                onPostHashtagClick = onPostHashtagClick,
+                                bottomSheetState = bottomSheetState,
+                                bottomSheetContent = bottomSheetContent
                             )
                         }
                     }
