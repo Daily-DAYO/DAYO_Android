@@ -123,7 +123,7 @@ class AccountViewModel @Inject constructor(
                     _loginSuccess.postValue(Event(false))
                 }
                 is NetworkResponse.ApiError -> {
-                    if (ApiResponse.code != 404 && ApiResponse.code != 400) _isApiErrorExceptionOccurred.postValue(Event(true))
+                    if (ApiResponse.code != 404) _isApiErrorExceptionOccurred.postValue(Event(true))
                     else isLoginFailByUncorrected.postValue(Event(true))
                     _loginSuccess.postValue(Event(false))
                 }
