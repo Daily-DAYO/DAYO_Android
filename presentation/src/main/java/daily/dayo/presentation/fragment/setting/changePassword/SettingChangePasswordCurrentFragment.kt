@@ -39,24 +39,13 @@ class SettingChangePasswordCurrentFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setBackClickListener()
-        setNextClickListener()
         initEditText()
+        setBackClickListener()
+        setTextChangeListener()
+        setNextClickListener()
         setLimitEditTextInputType()
         setTextEditorActionListener()
         verifyPassword()
-        view.setOnTouchListener { _, _ ->
-            HideKeyBoardUtil.hide(requireContext(), binding.etSettingChangePasswordCurrentUserInput)
-            changeEditTextTitle()
-            SetTextInputLayout.setEditTextTheme(
-                requireContext(),
-                binding.layoutSettingChangePasswordCurrentUserInput,
-                binding.etSettingChangePasswordCurrentUserInput,
-                binding.etSettingChangePasswordCurrentUserInput.text.isNullOrEmpty()
-            )
-            checkPassword()
-            true
-        }
     }
 
     override fun onResume() {
@@ -73,10 +62,7 @@ class SettingChangePasswordCurrentFragment : Fragment() {
 
     private fun setNextClickListener() {
         binding.btnSettingChangePasswordCurrentNext.setOnDebounceClickListener {
-            findNavController().navigateSafe(
-                currentDestinationId = R.id.SettingChangePasswordCurrentFragment,
-                action = R.id.action_settingChangePasswordCurrentFragment_to_settingChangePasswordNewFragment
-            )
+            checkPassword()
         }
     }
 
@@ -87,28 +73,10 @@ class SettingChangePasswordCurrentFragment : Fragment() {
             binding.etSettingChangePasswordCurrentUserInput,
             binding.etSettingChangePasswordCurrentUserInput.text.isNullOrEmpty()
         )
+    }
+
+    private fun setTextChangeListener() {
         with(binding.etSettingChangePasswordCurrentUserInput) {
-            setOnFocusChangeListener { _, hasFocus -> // Title
-                with(binding.layoutSettingChangePasswordCurrentUserInput) {
-                    if (hasFocus) {
-                        hint = getString(R.string.password)
-                        SetTextInputLayout.setEditTextTheme(
-                            requireContext(),
-                            binding.layoutSettingChangePasswordCurrentUserInput,
-                            binding.etSettingChangePasswordCurrentUserInput,
-                            false
-                        )
-                    } else {
-                        hint = getString(R.string.signup_email_set_password_message_length_fail_min)
-                        SetTextInputLayout.setEditTextTheme(
-                            requireContext(),
-                            binding.layoutSettingChangePasswordCurrentUserInput,
-                            binding.etSettingChangePasswordCurrentUserInput,
-                            true
-                        )
-                    }
-                }
-            }
             addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,
@@ -120,6 +88,7 @@ class SettingChangePasswordCurrentFragment : Fragment() {
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
+                    // Edit Text 상태
                     with(binding.layoutSettingChangePasswordCurrentUserInput) {
                         isErrorEnabled = false
                         SetTextInputLayout.setEditTextTheme(
@@ -129,18 +98,21 @@ class SettingChangePasswordCurrentFragment : Fragment() {
                             false
                         )
                     }
+
+                    // 버튼 활성 상태
+                    if (s.toString().isNotEmpty()) {
+                        ButtonActivation.setSignupButtonActive(
+                            requireContext(),
+                            binding.btnSettingChangePasswordCurrentNext
+                        )
+                    } else {
+                        ButtonActivation.setSignupButtonInactive(
+                            requireContext(),
+                            binding.btnSettingChangePasswordCurrentNext
+                        )
+                    }
                 }
             })
-        }
-    }
-
-    private fun changeEditTextTitle() {
-        with(binding.layoutSettingChangePasswordCurrentUserInput) {
-            if (binding.etSettingChangePasswordCurrentUserInput.text.isNullOrEmpty()) {
-                hint = getString(R.string.signup_email_set_password_message_length_fail_min)
-            } else {
-                hint = getString(R.string.password)
-            }
         }
     }
 
@@ -151,24 +123,15 @@ class SettingChangePasswordCurrentFragment : Fragment() {
     }
 
     private fun verifyPassword() {
-        accountViewModel.checkCurrentPasswordSuccess.observe(viewLifecycleOwner) { isCorrect ->
-            if (isCorrect) {
-                ButtonActivation.setSignupButtonActive(
-                    requireContext(),
-                    binding.btnSettingChangePasswordCurrentNext
+        accountViewModel.checkCurrentPasswordSuccess.observe(viewLifecycleOwner) {
+            if (it.getContentIfNotHandled() == true) {
+                // 로그인 성공 시 다름 화면으로 이동
+                findNavController().navigateSafe(
+                    currentDestinationId = R.id.SettingChangePasswordCurrentFragment,
+                    action = R.id.action_settingChangePasswordCurrentFragment_to_settingChangePasswordNewFragment
                 )
-                SetTextInputLayout.setEditTextErrorTheme(
-                    requireContext(),
-                    binding.layoutSettingChangePasswordCurrentUserInput,
-                    binding.etSettingChangePasswordCurrentUserInput,
-                    null,
-                    true
-                )
-            } else {
-                ButtonActivation.setSignupButtonInactive(
-                    requireContext(),
-                    binding.btnSettingChangePasswordCurrentNext
-                )
+            } else if (it.getContentIfNotHandled() == false) {
+                // 실패 시
                 SetTextInputLayout.setEditTextErrorTheme(
                     requireContext(),
                     binding.layoutSettingChangePasswordCurrentUserInput,
@@ -196,17 +159,9 @@ class SettingChangePasswordCurrentFragment : Fragment() {
         binding.etSettingChangePasswordCurrentUserInput.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-                    checkPassword()
                     HideKeyBoardUtil.hide(
                         requireContext(),
                         binding.etSettingChangePasswordCurrentUserInput
-                    )
-                    changeEditTextTitle()
-                    SetTextInputLayout.setEditTextTheme(
-                        requireContext(),
-                        binding.layoutSettingChangePasswordCurrentUserInput,
-                        binding.etSettingChangePasswordCurrentUserInput,
-                        binding.etSettingChangePasswordCurrentUserInput.text.isNullOrEmpty()
                     )
                     true
                 }

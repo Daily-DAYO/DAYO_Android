@@ -33,7 +33,7 @@ class FindAccountPasswordCompleteFragment : Fragment() {
     private fun setNextClickListener() {
         binding.btnFindAccountPasswordCompleteNext.setOnDebounceClickListener {
             findNavController().navigateSafe(
-                currentDestinationId = R.id.FindAccountPasswordCheckEmailFragment,
+                currentDestinationId = R.id.FindAccountPasswordCompleteFragment,
                 action = R.id.action_findAccountPasswordCompleteFragment_to_loginEmailFragment
             )
         }
