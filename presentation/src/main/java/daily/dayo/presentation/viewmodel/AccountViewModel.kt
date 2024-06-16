@@ -82,6 +82,9 @@ class AccountViewModel @Inject constructor(
     private val _isApiErrorExceptionOccurred = MutableLiveData<Event<Boolean>>()
     val isApiErrorExceptionOccurred get() = _isApiErrorExceptionOccurred
 
+    private val _isLoginFailByUncorrected = MutableLiveData<Event<Boolean>>()
+    val isLoginFailByUncorrected get() = _isLoginFailByUncorrected
+
     fun requestLoginKakao(accessToken: String) = viewModelScope.launch {
         requestLoginKakaoUseCase(accessToken = accessToken).let { ApiResponse ->
             when (ApiResponse) {
@@ -120,7 +123,8 @@ class AccountViewModel @Inject constructor(
                     _loginSuccess.postValue(Event(false))
                 }
                 is NetworkResponse.ApiError -> {
-                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                    if (ApiResponse.code != 404 && ApiResponse.code != 400) _isApiErrorExceptionOccurred.postValue(Event(true))
+                    else isLoginFailByUncorrected.postValue(Event(true))
                     _loginSuccess.postValue(Event(false))
                 }
                 is NetworkResponse.UnknownError -> {
