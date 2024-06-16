@@ -18,6 +18,7 @@
     <string name="like">좋아요</string>
     <string name="comment">댓글</string>
     <string name="app_version">버전 정보</string>
+    <string name="app_version_force_update">업데이트가 필요합니다</string>
 
     <!-- Time -->
     <string name="time_format">%d%s</string>
