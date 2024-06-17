@@ -20,7 +20,6 @@ import daily.dayo.domain.model.Folder
 import daily.dayo.presentation.R
 import daily.dayo.presentation.adapter.ProfileFolderListAdapter
 import daily.dayo.presentation.adapter.ProfileFragmentPagerStateAdapter
-import daily.dayo.presentation.common.GlideLoadUtil.PROFILE_USER_THUMBNAIL_SIZE
 import daily.dayo.presentation.common.GlideLoadUtil.loadImageViewProfile
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.autoCleared
@@ -138,8 +137,8 @@ class ProfileFragment : Fragment() {
                     profile.data?.let { profile ->
                         loadImageViewProfile(
                             requestManager = requestManager,
-                            width = PROFILE_USER_THUMBNAIL_SIZE,
-                            height = PROFILE_USER_THUMBNAIL_SIZE,
+                            width = binding.imgProfileUserProfile.width,
+                            height = binding.imgProfileUserProfile.height,
                             imgName = profile.profileImg,
                             imgView = binding.imgProfileUserProfile
                         )

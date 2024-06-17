@@ -9,12 +9,14 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
-import daily.dayo.presentation.common.GlideLoadUtil.HOME_POST_THUMBNAIL_SIZE
+import daily.dayo.domain.model.Search
 import daily.dayo.presentation.common.GlideLoadUtil.loadImageView
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.ItemSearchResultPostBinding
-import daily.dayo.domain.model.Search
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SearchTagResultPostAdapter(private val requestManager: RequestManager) :
     PagingDataAdapter<Search, SearchTagResultPostAdapter.SearchTagResultPostViewHolder>(diffCallback) {
@@ -62,8 +64,8 @@ class SearchTagResultPostAdapter(private val requestManager: RequestManager) :
             CoroutineScope(Dispatchers.Main).launch {
                 loadImageView(
                     requestManager = requestManager,
-                    width = HOME_POST_THUMBNAIL_SIZE,
-                    height = HOME_POST_THUMBNAIL_SIZE,
+                    width = binding.imgSearchResultPost.width,
+                    height = binding.imgSearchResultPost.height,
                     imgName = postContent?.thumbnailImage ?: "",
                     imgView = binding.imgSearchResultPost
                 )
