@@ -36,7 +36,6 @@ import daily.dayo.presentation.R
 import daily.dayo.presentation.adapter.PostCommentAdapter
 import daily.dayo.presentation.adapter.PostImageSliderAdapter
 import daily.dayo.presentation.common.GlideLoadUtil
-import daily.dayo.presentation.common.GlideLoadUtil.COMMENT_USER_THUMBNAIL_SIZE
 import daily.dayo.presentation.common.HideKeyBoardUtil
 import daily.dayo.presentation.common.KeyboardVisibilityUtils
 import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
@@ -192,8 +191,8 @@ class PostFragment : Fragment() {
                                         glideRequestManager?.let { requestManager ->
                                             GlideLoadUtil.loadImageViewProfile(
                                                 requestManager = requestManager,
-                                                width = COMMENT_USER_THUMBNAIL_SIZE,
-                                                height = COMMENT_USER_THUMBNAIL_SIZE,
+                                                width = binding.imgPostUserProfile.width,
+                                                height = binding.imgPostUserProfile.height,
                                                 imgName = post.profileImg,
                                                 imgView = binding.imgPostUserProfile
                                             )
@@ -469,8 +468,8 @@ class PostFragment : Fragment() {
                 glideRequestManager?.let { requestManager ->
                     GlideLoadUtil.loadImageViewProfile(
                         requestManager = requestManager,
-                        width = COMMENT_USER_THUMBNAIL_SIZE,
-                        height = COMMENT_USER_THUMBNAIL_SIZE,
+                        width = binding.imgPostCommentMyProfile.width,
+                        height = binding.imgPostCommentMyProfile.height,
                         imgName = accountViewModel.getCurrentUserInfo().profileImg ?: "",
                         imgView = binding.imgPostCommentMyProfile
                     )

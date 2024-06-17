@@ -15,7 +15,6 @@ import com.bumptech.glide.RequestManager
 import com.google.android.material.tabs.TabLayoutMediator
 import daily.dayo.presentation.R
 import daily.dayo.presentation.adapter.ProfileFragmentPagerStateAdapter
-import daily.dayo.presentation.common.GlideLoadUtil.PROFILE_USER_THUMBNAIL_SIZE
 import daily.dayo.presentation.common.GlideLoadUtil.loadImageViewProfile
 import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.extension.navigateSafe
@@ -97,8 +96,8 @@ class MyPageFragment : Fragment() {
                     profile.data?.profileImg?.let { profileImg ->
                         loadImageViewProfile(
                             requestManager = requestManager,
-                            width = PROFILE_USER_THUMBNAIL_SIZE,
-                            height = PROFILE_USER_THUMBNAIL_SIZE,
+                            width = binding.imgMyPageUserProfile.width,
+                            height = binding.imgMyPageUserProfile.height,
                             imgName = profileImg,
                             imgView = binding.imgMyPageUserProfile
                         )
