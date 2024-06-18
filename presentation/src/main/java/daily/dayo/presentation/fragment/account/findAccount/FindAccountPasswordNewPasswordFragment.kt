@@ -208,7 +208,7 @@ class FindAccountPasswordNewPasswordFragment : Fragment() {
         binding.btnFindAccountPasswordNewPasswordNext.setOnDebounceClickListener {
             Navigation.findNavController(it).navigateSafe(
                 currentDestinationId = R.id.FindAccountPasswordNewPasswordFragment,
-                action = R.id.action_findAccountPasswordNewPasswordConfirmationFragment_to_findAccountPasswordCompleteFragment,
+                action = R.id.action_findAccountPasswordNewPasswordFragment_to_findAccountPasswordNewPasswordConfirmationFragment,
                 args = FindAccountPasswordNewPasswordFragmentDirections.actionFindAccountPasswordNewPasswordFragmentToFindAccountPasswordNewPasswordConfirmationFragment(
                     args.email,
                     trimBlankText(binding.etFindAccountPasswordNewPasswordUserPassword.text)

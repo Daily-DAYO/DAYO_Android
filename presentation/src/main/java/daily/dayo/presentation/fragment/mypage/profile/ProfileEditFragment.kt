@@ -16,6 +16,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
@@ -64,6 +65,7 @@ class ProfileEditFragment : Fragment() {
     ): View? {
         binding = FragmentProfileEditBinding.inflate(inflater, container, false)
         glideRequestManager = Glide.with(this)
+        setKeyboardMode()
         initializeLoadingDialog()
         return binding.root
     }
@@ -86,6 +88,10 @@ class ProfileEditFragment : Fragment() {
 
     private fun onDestroyBindingView() {
         glideRequestManager = null
+    }
+
+    private fun setKeyboardMode() {
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
 
     private fun setHideKeyboard() {
