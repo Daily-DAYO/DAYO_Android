@@ -32,7 +32,7 @@
             android:resource="@drawable/ic_dayo_logo" />
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.daily.dayo.fileprovider"
+            android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
