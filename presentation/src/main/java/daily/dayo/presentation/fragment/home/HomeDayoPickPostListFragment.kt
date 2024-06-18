@@ -14,20 +14,21 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.domain.model.Category
+import daily.dayo.domain.model.Post
 import daily.dayo.presentation.R
+import daily.dayo.presentation.activity.MainActivity
+import daily.dayo.presentation.adapter.HomeDayoPickAdapter
+import daily.dayo.presentation.common.GlideLoadUtil.HOME_POST_THUMBNAIL_SIZE
+import daily.dayo.presentation.common.GlideLoadUtil.HOME_USER_THUMBNAIL_SIZE
 import daily.dayo.presentation.common.GlideLoadUtil.loadImageBackground
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.common.toByteArray
 import daily.dayo.presentation.databinding.FragmentHomeDayoPickPostListBinding
-import daily.dayo.presentation.adapter.HomeDayoPickAdapter
 import daily.dayo.presentation.viewmodel.HomeViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import dagger.hilt.android.AndroidEntryPoint
-import daily.dayo.domain.model.Category
-import daily.dayo.domain.model.Post
-import daily.dayo.presentation.activity.MainActivity
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -219,16 +220,16 @@ class HomeDayoPickPostListFragment : Fragment() {
                 thumbnailImgList.add(withContext(Dispatchers.IO) {
                     loadImageBackground(
                         context = requireContext(),
-                        height = 158,
-                        width = 158,
+                        height = HOME_POST_THUMBNAIL_SIZE,
+                        width = HOME_POST_THUMBNAIL_SIZE,
                         imgName = postList[i].thumbnailImage ?: ""
                     )
                 }.toByteArray)
                 userImgList.add(withContext(Dispatchers.IO) {
                     loadImageBackground(
                         context = requireContext(),
-                        height = 17,
-                        width = 17,
+                        height = HOME_USER_THUMBNAIL_SIZE,
+                        width = HOME_USER_THUMBNAIL_SIZE,
                         imgName = postList[i].userProfileImage ?: ""
                     )
                 }.toByteArray)
