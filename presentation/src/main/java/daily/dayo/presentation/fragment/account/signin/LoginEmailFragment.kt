@@ -108,11 +108,13 @@ class LoginEmailFragment : Fragment() {
                 if (isLoginButtonClick) {
                     Log.e(ContentValues.TAG, "로그인 실패")
                     LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.login_email_alert_message_fail),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    if (loginViewModel.isLoginFailByUncorrected.value?.getContentIfNotHandled() == true) {
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.login_email_alert_message_fail),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
         }
