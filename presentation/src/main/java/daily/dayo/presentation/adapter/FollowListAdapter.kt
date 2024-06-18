@@ -11,7 +11,6 @@ import com.bumptech.glide.RequestManager
 import daily.dayo.domain.model.MyFollower
 import daily.dayo.domain.model.User
 import daily.dayo.presentation.R
-import daily.dayo.presentation.common.GlideLoadUtil.FOLLOW_USER_THUMBNAIL_SIZE
 import daily.dayo.presentation.common.GlideLoadUtil.loadImageView
 import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
@@ -67,8 +66,8 @@ class FollowListAdapter(private val requestManager: RequestManager, private val 
                 follow.memberId == userInfo.memberId
             loadImageView(
                 requestManager = requestManager,
-                width = FOLLOW_USER_THUMBNAIL_SIZE,
-                height = FOLLOW_USER_THUMBNAIL_SIZE,
+                width = binding.imgFollowUserProfile.width,
+                height = binding.imgFollowUserProfile.height,
                 imgName = follow.profileImg ?: "",
                 imgView = binding.imgFollowUserProfile
             )

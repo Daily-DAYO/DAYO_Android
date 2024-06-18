@@ -13,7 +13,6 @@ import daily.dayo.domain.model.Comment
 import daily.dayo.domain.model.User
 import daily.dayo.presentation.BR
 import daily.dayo.presentation.R
-import daily.dayo.presentation.common.GlideLoadUtil.COMMENT_USER_THUMBNAIL_SIZE
 import daily.dayo.presentation.common.GlideLoadUtil.loadImageViewProfile
 import daily.dayo.presentation.common.TimeChangerUtil.timeChange
 import daily.dayo.presentation.common.extension.navigateSafe
@@ -78,8 +77,8 @@ class PostCommentAdapter(private val requestManager: RequestManager, private val
                 }
                 loadImageViewProfile(
                     requestManager = requestManager,
-                    width = COMMENT_USER_THUMBNAIL_SIZE,
-                    height = COMMENT_USER_THUMBNAIL_SIZE,
+                    width = imgPostCommentUserProfile.width,
+                    height = imgPostCommentUserProfile.height,
                     imgName = comment.profileImg,
                     imgView = imgPostCommentUserProfile
                 )
