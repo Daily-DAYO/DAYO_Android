@@ -70,7 +70,7 @@ class AccountViewModel @Inject constructor(
     private val _checkEmailSuccess = MutableLiveData<Boolean>()
     val checkEmailSuccess get() = _checkEmailSuccess
 
-    private val _checkCurrentPasswordSuccess = MutableLiveData<Boolean>()
+    private val _checkCurrentPasswordSuccess = MutableLiveData<Event<Boolean>>()
     val checkCurrentPasswordSuccess get() = _checkCurrentPasswordSuccess
 
     private val _changePasswordSuccess = MutableLiveData<Boolean>()
@@ -342,15 +342,15 @@ class AccountViewModel @Inject constructor(
         requestCheckCurrentPasswordUseCase(password = inputPassword).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _checkCurrentPasswordSuccess.postValue(true)
+                    _checkCurrentPasswordSuccess.postValue(Event(true))
                 }
                 is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
-                    _checkCurrentPasswordSuccess.postValue(false)
+                    _checkCurrentPasswordSuccess.postValue(Event(false))
                 }
                 is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
-                    _checkCurrentPasswordSuccess.postValue(false)
+                    _checkCurrentPasswordSuccess.postValue(Event(false))
                 }
                 else -> {}
             }
