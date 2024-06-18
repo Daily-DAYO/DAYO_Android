@@ -7,13 +7,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
-import daily.dayo.presentation.R
-import daily.dayo.presentation.common.autoCleared
-import daily.dayo.presentation.common.setOnDebounceClickListener
-import daily.dayo.presentation.databinding.FragmentHomeBinding
-import daily.dayo.presentation.adapter.HomeFragmentPagerStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.presentation.R
+import daily.dayo.presentation.adapter.HomeFragmentPagerStateAdapter
+import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.extension.navigateSafe
+import daily.dayo.presentation.common.setOnDebounceClickListener
+import daily.dayo.presentation.databinding.FragmentHomeBinding
 
 const val HOME_DAYOPICK_PAGE_TAB_ID = 0
 const val HOME_NEW_PAGE_TAB_ID = 1
@@ -50,7 +51,7 @@ class HomeFragment : Fragment() {
         mediator?.detach()
         mediator = null
         pagerAdapter = null
-        with (binding.pagerHomePost) {
+        with(binding.pagerHomePost) {
             unregisterOnPageChangeCallback(pageChangeCallBack)
             adapter = null
         }
@@ -58,7 +59,10 @@ class HomeFragment : Fragment() {
 
     private fun setSearchClickListener() {
         binding.btnPostSearch.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_searchFragment)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.HomeFragment,
+                action = R.id.action_homeFragment_to_searchFragment
+            )
         }
     }
 

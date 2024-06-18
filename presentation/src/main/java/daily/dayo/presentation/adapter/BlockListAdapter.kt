@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
-import daily.dayo.presentation.common.GlideLoadUtil.BLOCK_USER_THUMBNAIL_SIZE
 import daily.dayo.presentation.common.GlideLoadUtil.loadImageView
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.ItemBlockBinding
@@ -60,8 +59,8 @@ class BlockListAdapter(private val requestManager: RequestManager) :
             binding.blockUser = blockUser.nickname
             loadImageView(
                 requestManager = requestManager,
-                width = BLOCK_USER_THUMBNAIL_SIZE,
-                height = BLOCK_USER_THUMBNAIL_SIZE,
+                width = binding.imgBlockUserProfile.width,
+                height = binding.imgBlockUserProfile.height,
                 imgName = blockUser.profileImg ?: "",
                 imgView = binding.imgBlockUserProfile
             )

@@ -13,15 +13,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.domain.model.Search
+import daily.dayo.presentation.R
+import daily.dayo.presentation.adapter.SearchTagResultPostAdapter
 import daily.dayo.presentation.common.HideKeyBoardUtil
 import daily.dayo.presentation.common.ReplaceUnicode
 import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.FragmentSearchResultBinding
-import daily.dayo.presentation.adapter.SearchTagResultPostAdapter
 import daily.dayo.presentation.viewmodel.SearchViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import daily.dayo.domain.model.Search
 
 @AndroidEntryPoint
 class SearchResultFragment : Fragment() {
@@ -104,10 +106,12 @@ class SearchResultFragment : Fragment() {
         searchTagResultPostAdapter?.setOnItemClickListener(object :
             SearchTagResultPostAdapter.OnItemClickListener {
             override fun onItemClick(v: View, search: Search, position: Int) {
-                findNavController().navigate(
-                    SearchResultFragmentDirections.actionSearchResultFragmentToPostFragment(
+                findNavController().navigateSafe(
+                    currentDestinationId = R.id.SearchResultFragment,
+                    action = R.id.action_searchResultFragment_to_postFragment,
+                    args = SearchResultFragmentDirections.actionSearchResultFragmentToPostFragment(
                         search.postId
-                    )
+                    ).arguments
                 )
             }
         })
@@ -125,6 +129,7 @@ class SearchResultFragment : Fragment() {
                     }
                     true
                 }
+
                 else -> false
             }
         }
