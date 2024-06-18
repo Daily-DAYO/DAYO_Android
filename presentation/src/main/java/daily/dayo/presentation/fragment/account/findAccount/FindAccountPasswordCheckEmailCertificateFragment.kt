@@ -5,28 +5,27 @@ import android.os.CountDownTimer
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
-import daily.dayo.presentation.databinding.FragmentFindAccountPasswordCheckEmailCertificateBinding
-import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.common.ButtonActivation
 import daily.dayo.presentation.common.HideKeyBoardUtil
 import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
 import daily.dayo.presentation.common.SetTextInputLayout
 import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
-import daily.dayo.presentation.fragment.account.findAccount.FindAccountPasswordCheckEmailCertificateFragmentArgs
-import daily.dayo.presentation.fragment.account.findAccount.FindAccountPasswordCheckEmailCertificateFragmentDirections
-import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.presentation.databinding.FragmentFindAccountPasswordCheckEmailCertificateBinding
+import daily.dayo.presentation.viewmodel.AccountViewModel
 import java.util.regex.Pattern
 
 @AndroidEntryPoint
@@ -96,6 +95,7 @@ class FindAccountPasswordCheckEmailCertificateFragment : Fragment() {
                     )
                     true
                 }
+
                 else -> false
             }
         }
@@ -181,10 +181,11 @@ class FindAccountPasswordCheckEmailCertificateFragment : Fragment() {
                 currentCountDownTimer?.cancel()
                 currentCountDownTimer = null
                 binding.tvLoginEmailFindPasswordCertificateResend.isEnabled = false
-                Navigation.findNavController(it).navigate(
-                    FindAccountPasswordCheckEmailCertificateFragmentDirections.actionFindAccountPasswordCheckEmailCertificateFragmentToFindAccountPasswordNewPasswordFragment(
-                        args.email
-                    )
+                Navigation.findNavController(it).navigateSafe(
+                    currentDestinationId = R.id.FindAccountPasswordCheckEmailCertificateFragment,
+                    action = R.id.action_findAccountPasswordCheckEmailCertificateFragment_to_findAccountPasswordNewPasswordFragment,
+                    args = FindAccountPasswordCheckEmailCertificateFragmentDirections
+                        .actionFindAccountPasswordCheckEmailCertificateFragmentToFindAccountPasswordNewPasswordFragment(args.email).arguments
                 )
             } else {
                 ButtonActivation.setSignupButtonInactive(
@@ -283,10 +284,12 @@ class FindAccountPasswordCheckEmailCertificateFragment : Fragment() {
 
     private fun setNextClickListener() {
         binding.btnLoginEmailFindPasswordCertificateNext.setOnDebounceClickListener {
-            Navigation.findNavController(it).navigate(
-                FindAccountPasswordCheckEmailCertificateFragmentDirections.actionFindAccountPasswordCheckEmailCertificateFragmentToFindAccountPasswordNewPasswordFragment(
+            Navigation.findNavController(it).navigateSafe(
+                currentDestinationId = R.id.FindAccountPasswordCheckEmailCertificateFragment,
+                action = R.id.action_findAccountPasswordCheckEmailCertificateFragment_to_findAccountPasswordNewPasswordFragment,
+                args = FindAccountPasswordCheckEmailCertificateFragmentDirections.actionFindAccountPasswordCheckEmailCertificateFragmentToFindAccountPasswordNewPasswordFragment(
                     trimBlankText(binding.etLoginEmailFindPasswordCertificateUserInput.text)
-                )
+                ).arguments
             )
         }
     }

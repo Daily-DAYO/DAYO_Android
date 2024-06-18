@@ -10,6 +10,7 @@ import android.provider.Settings
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -20,12 +21,13 @@ import androidx.core.view.forEach
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.databinding.ActivityMainBinding
 import daily.dayo.presentation.fragment.home.HomeFragmentDirections
-import daily.dayo.presentation.viewmodel.SettingNotificationViewModel
-import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.viewmodel.AccountViewModel
+import daily.dayo.presentation.viewmodel.SettingNotificationViewModel
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -36,13 +38,33 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        setSystemBackClickListener()
         checkCurrentNotification()
         initBottomNavigation()
         setBottomNaviVisibility()
         disableBottomNaviTooltip()
         getNotificationData()
         askNotificationPermission()
+    }
+
+    private fun setSystemBackClickListener() {
+        this.onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val navHostFragment =
+                        supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+                    val backStackEntryCount =
+                        navHostFragment?.childFragmentManager?.backStackEntryCount
+
+                    if (backStackEntryCount == 0) {
+                        this@MainActivity.finish()
+                    } else {
+                        findNavController().popBackStack()
+                    }
+                }
+            }
+        )
     }
 
     private fun checkCurrentNotification() {
@@ -60,17 +82,24 @@ class MainActivity : AppCompatActivity() {
         if (extraFragment != null && extraFragment == "Notification") {
             val postId = intent.getStringExtra("PostId")?.toInt()
             val memberId = intent.getStringExtra("MemberId")
-            if (postId != null) findNavController().navigate(
-                HomeFragmentDirections.actionHomeFragmentToPostFragment(
+            if (postId != null) findNavController().navigateSafe(
+                currentDestinationId = R.id.HomeFragment,
+                action = R.id.action_homeFragment_to_postFragment,
+                args = HomeFragmentDirections.actionHomeFragmentToPostFragment(
                     postId = postId
-                )
+                ).arguments
             )
-            else if (memberId != null) findNavController().navigate(
-                HomeFragmentDirections.actionHomeFragmentToProfileFragment(
+            else if (memberId != null) findNavController().navigateSafe(
+                currentDestinationId = R.id.HomeFragment,
+                action = R.id.action_homeFragment_to_profileFragment,
+                args = HomeFragmentDirections.actionHomeFragmentToProfileFragment(
                     memberId = memberId
-                )
+                ).arguments
             )
-            else findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToNotificationFragment())
+            else findNavController().navigateSafe(
+                currentDestinationId = R.id.HomeFragment,
+                action = R.id.action_homeFragment_to_notificationFragment
+            )
         }
     }
 
@@ -116,6 +145,7 @@ class MainActivity : AppCompatActivity() {
                         ).show()
                     }
                 }
+
                 else -> {
                     //All request are permitted
                     // 알림 최초 허용시에 모든 알림 허용처리
@@ -183,12 +213,14 @@ class MainActivity : AppCompatActivity() {
                             isInside = true
                             return true
                         }
+
                         MotionEvent.ACTION_MOVE -> {
                             isInside =
                                 rect.contains(v!!.left + event.x.toInt(), v.top + event.y.toInt())
                             binding.bottomNavigationMainBar.clearFocus()
                             return false
                         }
+
                         MotionEvent.ACTION_UP -> {
                             binding.bottomNavigationMainBar.menu.findItem(R.id.WriteFragment)
                                 .setIcon(R.drawable.ic_write)
@@ -202,6 +234,7 @@ class MainActivity : AppCompatActivity() {
                             }
                             return true
                         }
+
                         else -> return true
                     }
                 }

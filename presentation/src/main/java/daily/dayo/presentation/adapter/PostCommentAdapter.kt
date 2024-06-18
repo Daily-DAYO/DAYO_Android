@@ -8,16 +8,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
+import com.google.android.material.snackbar.Snackbar
+import daily.dayo.domain.model.Comment
+import daily.dayo.domain.model.User
 import daily.dayo.presentation.BR
-import daily.dayo.presentation.common.GlideLoadUtil.COMMENT_USER_THUMBNAIL_SIZE
+import daily.dayo.presentation.R
 import daily.dayo.presentation.common.GlideLoadUtil.loadImageViewProfile
+import daily.dayo.presentation.common.TimeChangerUtil.timeChange
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.ItemPostCommentBinding
-import daily.dayo.domain.model.Comment
 import daily.dayo.presentation.fragment.post.PostFragmentDirections
-import com.google.android.material.snackbar.Snackbar
-import daily.dayo.domain.model.User
-import daily.dayo.presentation.common.TimeChangerUtil.timeChange
 
 class PostCommentAdapter(private val requestManager: RequestManager, private val userInfo: User) :
     ListAdapter<Comment, PostCommentAdapter.PostCommentViewHolder>(
@@ -76,8 +77,8 @@ class PostCommentAdapter(private val requestManager: RequestManager, private val
                 }
                 loadImageViewProfile(
                     requestManager = requestManager,
-                    width = COMMENT_USER_THUMBNAIL_SIZE,
-                    height = COMMENT_USER_THUMBNAIL_SIZE,
+                    width = imgPostCommentUserProfile.width,
+                    height = imgPostCommentUserProfile.height,
                     imgName = comment.profileImg,
                     imgView = imgPostCommentUserProfile
                 )
@@ -100,11 +101,19 @@ class PostCommentAdapter(private val requestManager: RequestManager, private val
         private fun setOnProfileClickListener(commentMemberId: String) {
             binding.imgPostCommentUserProfile.setOnDebounceClickListener {
                 Navigation.findNavController(it)
-                    .navigate(PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = commentMemberId))
+                    .navigateSafe(
+                        currentDestinationId = R.id.PostFragment,
+                        action = R.id.action_postFragment_to_profileFragment,
+                        args = PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = commentMemberId).arguments
+                    )
             }
             binding.tvPostCommentUserNickname.setOnDebounceClickListener {
                 Navigation.findNavController(it)
-                    .navigate(PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = commentMemberId))
+                    .navigateSafe(
+                        currentDestinationId = R.id.PostFragment,
+                        action = R.id.action_postFragment_to_profileFragment,
+                        args = PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = commentMemberId).arguments
+                    )
             }
         }
 

@@ -16,6 +16,7 @@ import daily.dayo.presentation.activity.MainActivity
 import daily.dayo.presentation.adapter.ProfileFolderListAdapter
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.databinding.FragmentProfileFolderListBinding
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.ProfileViewModel
@@ -64,11 +65,23 @@ class ProfileFolderListFragment : Fragment() {
         profileFolderListAdapter?.setOnItemClickListener(object : ProfileFolderListAdapter.OnItemClickListener {
             override fun onItemClick(v: View, folder: Folder, pos: Int) {
                 when (requireParentFragment()) {
-                    is MyPageFragment -> MyPageFragmentDirections.actionMyPageFragmentToFolderFragment(folderId = folder.folderId!!)
-                    is ProfileFragment -> ProfileFragmentDirections.actionProfileFragmentToFolderFragment(folderId = folder.folderId!!)
-                    else -> null
-                }?.let {
-                    findNavController().navigate(it)
+                    is MyPageFragment -> {
+                        findNavController().navigateSafe(
+                            currentDestinationId = R.id.MyPageFragment,
+                            action = R.id.action_myPageFragment_to_folderFragment,
+                            args = MyPageFragmentDirections.actionMyPageFragmentToFolderFragment(folderId = folder.folderId!!).arguments
+                        )
+                    }
+
+                    is ProfileFragment -> {
+                        findNavController().navigateSafe(
+                            currentDestinationId = R.id.ProfileFragment,
+                            action = R.id.action_profileFragment_to_folderFragment,
+                            args = ProfileFragmentDirections.actionProfileFragmentToFolderFragment(folderId = folder.folderId!!).arguments
+                        )
+                    }
+
+                    else -> {}
                 }
             }
         })

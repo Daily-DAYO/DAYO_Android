@@ -11,15 +11,16 @@ import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import daily.dayo.presentation.R
+import daily.dayo.presentation.adapter.FolderPostListAdapter
 import daily.dayo.presentation.common.GlideLoadUtil.loadImageView
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.FragmentFolderBinding
-import daily.dayo.presentation.adapter.FolderPostListAdapter
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.FolderViewModel
-import kotlinx.coroutines.Dispatchers
 
 class FolderFragment : Fragment() {
     private var binding by autoCleared<FragmentFolderBinding> { onDestroyBindingView() }
@@ -69,10 +70,12 @@ class FolderFragment : Fragment() {
 
     private fun setFolderOptionClickListener() {
         binding.btnFolderOption.setOnDebounceClickListener {
-            findNavController().navigate(
-                FolderFragmentDirections.actionFolderFragmentToFolderOptionFragment(
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.FolderFragment,
+                action = R.id.action_folderFragment_to_folderOptionFragment,
+                args = FolderFragmentDirections.actionFolderFragmentToFolderOptionFragment(
                     args.folderId
-                )
+                ).arguments
             )
         }
     }
@@ -101,6 +104,7 @@ class FolderFragment : Fragment() {
                         }
                     }
                 }
+
                 else -> {}
             }
         }

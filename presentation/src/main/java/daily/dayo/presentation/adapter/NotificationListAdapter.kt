@@ -15,13 +15,14 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
-import daily.dayo.presentation.R
-import daily.dayo.presentation.common.GlideLoadUtil.loadImageView
-import daily.dayo.presentation.common.setOnDebounceClickListener
-import daily.dayo.presentation.databinding.ItemNotificationBinding
 import daily.dayo.domain.model.Notification
 import daily.dayo.domain.model.Topic
+import daily.dayo.presentation.R
+import daily.dayo.presentation.common.GlideLoadUtil.loadImageView
 import daily.dayo.presentation.common.TimeChangerUtil.timeChange
+import daily.dayo.presentation.common.extension.navigateSafe
+import daily.dayo.presentation.common.setOnDebounceClickListener
+import daily.dayo.presentation.databinding.ItemNotificationBinding
 import daily.dayo.presentation.fragment.notification.NotificationFragmentDirections
 
 class NotificationListAdapter(private val requestManager: RequestManager) :
@@ -65,7 +66,7 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
                 binding.createdTime = timeChange(context = binding.tvNotificationTime.context, time = time)
             }
 
-            notification?.image?.let {notificationImage ->
+            notification?.image?.let { notificationImage ->
                 val layoutParams = ViewGroup.MarginLayoutParams(
                     ViewGroup.MarginLayoutParams.MATCH_PARENT,
                     ViewGroup.MarginLayoutParams.MATCH_PARENT
@@ -84,10 +85,12 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
             spanContent.setSpan(
                 object : ClickableSpan() {
                     override fun onClick(v: View) {
-                        Navigation.findNavController(v).navigate(
-                            NotificationFragmentDirections.actionNotificationFragmentToProfileFragment(
+                        Navigation.findNavController(v).navigateSafe(
+                            currentDestinationId = R.id.NotificationFragment,
+                            action = R.id.action_notificationFragment_to_profileFragment,
+                            args = NotificationFragmentDirections.actionNotificationFragmentToProfileFragment(
                                 memberId = notification?.memberId
-                            )
+                            ).arguments
                         )
                     }
 
@@ -119,22 +122,29 @@ class NotificationListAdapter(private val requestManager: RequestManager) :
                 when (notification?.topic) {
                     Topic.COMMENT, Topic.HEART -> {
                         notification.postId?.let { postId ->
-                            Navigation.findNavController(it).navigate(
-                                NotificationFragmentDirections.actionNotificationFragmentToPostFragment(
+                            Navigation.findNavController(it).navigateSafe(
+                                currentDestinationId = R.id.NotificationFragment,
+                                action = R.id.action_notificationFragment_to_postFragment,
+                                args = NotificationFragmentDirections.actionNotificationFragmentToPostFragment(
                                     postId = postId
-                                )
+                                ).arguments
                             )
                         }
                     }
+
                     Topic.FOLLOW ->
-                        Navigation.findNavController(it).navigate(
-                            NotificationFragmentDirections.actionNotificationFragmentToProfileFragment(
+                        Navigation.findNavController(it).navigateSafe(
+                            currentDestinationId = R.id.NotificationFragment,
+                            action = R.id.action_notificationFragment_to_profileFragment,
+                            args = NotificationFragmentDirections.actionNotificationFragmentToProfileFragment(
                                 memberId = notification.memberId
-                            )
+                            ).arguments
                         )
+
                     Topic.NOTICE -> {
 
                     }
+
                     else -> {}
                 }
             }

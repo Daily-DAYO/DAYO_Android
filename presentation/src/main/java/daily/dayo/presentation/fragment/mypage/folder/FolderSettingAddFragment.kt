@@ -19,17 +19,18 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import daily.dayo.domain.model.Privacy
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.ButtonActivation
-import daily.dayo.presentation.common.image.ImageResizeUtil
 import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
 import daily.dayo.presentation.common.TextLimitUtil
 import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog
+import daily.dayo.presentation.common.extension.navigateSafe
+import daily.dayo.presentation.common.image.ImageResizeUtil
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.FragmentFolderSettingAddBinding
 import daily.dayo.presentation.viewmodel.FolderViewModel
-import daily.dayo.domain.model.Privacy
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -113,7 +114,10 @@ class FolderSettingAddFragment : Fragment() {
 
     private fun setFolderSettingThumbnailOptionClickListener() {
         binding.ivFolderSettingThumbnail.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_folderSettingAddFragment_to_folderSettingAddImageOptionFragment)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.FolderSettingAddFragment,
+                action = R.id.action_folderSettingAddFragment_to_folderSettingAddImageOptionFragment
+            )
         }
     }
 

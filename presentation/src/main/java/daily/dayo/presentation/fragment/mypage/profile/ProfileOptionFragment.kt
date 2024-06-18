@@ -3,20 +3,26 @@ package daily.dayo.presentation.fragment.mypage.profile
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.dialog.DefaultDialogConfigure
 import daily.dayo.presentation.common.dialog.DefaultDialogExplanationConfirm
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.FragmentProfileOptionBinding
 import daily.dayo.presentation.viewmodel.ProfileViewModel
-import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ProfileOptionFragment : DialogFragment() {
@@ -66,19 +72,28 @@ class ProfileOptionFragment : DialogFragment() {
 
     private fun setOptionFolderSettingClickListener() {
         binding.layoutProfileOptionFolderSetting.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_profileOptionFragment_to_folderSettingFragment)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.ProfileOptionFragment,
+                action = R.id.action_profileOptionFragment_to_folderSettingFragment
+            )
         }
     }
 
     private fun setOptionProfileEditClickListener() {
         binding.layoutProfileOptionEditProfile.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_profileOptionFragment_to_profileEditFragment)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.ProfileOptionFragment,
+                action = R.id.action_profileOptionFragment_to_profileEditFragment
+            )
         }
     }
 
     private fun setOptionSettingClickListener() {
         binding.layoutProfileOptionSetting.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_profileOptionFragment_to_settingFragment)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.ProfileOptionFragment,
+                action = R.id.action_profileOptionFragment_to_settingFragment
+            )
         }
     }
 
@@ -122,10 +137,12 @@ class ProfileOptionFragment : DialogFragment() {
 
     private fun setOptionReportUserClickListener() {
         binding.layoutOtherProfileOptionReportUser.setOnDebounceClickListener {
-            findNavController().navigate(
-                ProfileOptionFragmentDirections.actionProfileOptionFragmentToReportUserFragment(
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.ProfileOptionFragment,
+                action = R.id.action_profileOptionFragment_to_reportUserFragment,
+                args = ProfileOptionFragmentDirections.actionProfileOptionFragmentToReportUserFragment(
                     memberId = args.memberId
-                )
+                ).arguments
             )
         }
     }
