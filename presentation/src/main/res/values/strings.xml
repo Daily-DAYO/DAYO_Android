@@ -145,7 +145,8 @@
     <string name="post_like_count_message_2">명이 좋아해요</string>
     <string name="post_comment_count_message">개의 댓글</string>
     <string name="post_contents_more">더보기</string>
-    <string name="post_comment_empty">아직 작성된 댓글이 없습니다.</string>
+    <string name="post_comment_empty">아직 댓글이 없어요</string>
+    <string name="post_comment_empty_description">이 게시글에 대해 댓글을 남겨주세요</string>
     <string name="post_comment_delete_alert_message">댓글을 삭제할까요?</string>
     <string name="post_comment_delete_alert_message_success">댓글이 삭제되었습니다.</string>
     <string name="post_comment_delete_alert_message_fail">댓글 삭제를 실패하였습니다. 다시 시도해주세요.</string>
