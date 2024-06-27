@@ -43,10 +43,17 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField("String", "BASE_URL", properties['BASE_URL_RELEASE'])
         }
-        debug {
-            buildConfigField("String", "BASE_URL", properties['BASE_URL_DEBUG'])
+    }
+    flavorDimensions = ["environment"]
+    productFlavors {
+        dev {
+            dimension "environment"
+            buildConfigField("String", "BASE_URL", properties['BASE_URL_DEV'])
+        }
+        prod {
+            dimension "environment"
+            buildConfigField("String", "BASE_URL", properties['BASE_URL_PROD'])
         }
     }
     compileOptions {
