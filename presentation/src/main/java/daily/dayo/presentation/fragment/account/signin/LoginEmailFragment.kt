@@ -14,18 +14,19 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import daily.dayo.presentation.common.setOnDebounceClickListener
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
+import daily.dayo.presentation.activity.MainActivity
 import daily.dayo.presentation.common.ButtonActivation
 import daily.dayo.presentation.common.HideKeyBoardUtil
 import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
 import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog
+import daily.dayo.presentation.common.extension.navigateSafe
+import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.FragmentLoginEmailBinding
-import daily.dayo.presentation.activity.MainActivity
 import daily.dayo.presentation.viewmodel.AccountViewModel
-import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class LoginEmailFragment : Fragment() {
@@ -72,6 +73,7 @@ class LoginEmailFragment : Fragment() {
                     HideKeyBoardUtil.hide(requireContext(), binding.etLoginEmailPassword)
                     true
                 }
+
                 else -> false
             }
         }
@@ -106,11 +108,13 @@ class LoginEmailFragment : Fragment() {
                 if (isLoginButtonClick) {
                     Log.e(ContentValues.TAG, "로그인 실패")
                     LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.login_email_alert_message_fail),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    if (loginViewModel.isLoginFailByUncorrected.value?.getContentIfNotHandled() == true) {
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.login_email_alert_message_fail),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
         }
@@ -252,13 +256,19 @@ class LoginEmailFragment : Fragment() {
 
     private fun setForgetAccountClickListener() {
         binding.tvLoginEmailForgotPassword.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_loginEmailFragment_to_findAccountPasswordCheckEmail)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.LoginEmailFragment,
+                action = R.id.action_loginEmailFragment_to_findAccountPasswordCheckEmail
+            )
         }
     }
 
     private fun setSignupClickListener() {
         binding.tvLoginEmailSignup.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_loginEmailFragment_to_signupEmailSetEmailAddressFragment)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.LoginEmailFragment,
+                action = R.id.action_loginEmailFragment_to_signupEmailSetEmailAddressFragment
+            )
         }
     }
 }

@@ -5,16 +5,19 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.ButtonActivation
 import daily.dayo.presentation.common.HideKeyBoardUtil
@@ -22,12 +25,10 @@ import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
 import daily.dayo.presentation.common.SetTextInputLayout
 import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.FragmentSettingChangePasswordNewBinding
 import daily.dayo.presentation.viewmodel.AccountViewModel
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import dagger.hilt.android.AndroidEntryPoint
 import java.util.regex.Pattern
 
 @AndroidEntryPoint
@@ -117,7 +118,10 @@ class SettingChangePasswordNewFragment : Fragment() {
                                 getString(R.string.change_password_success_message),
                                 Toast.LENGTH_SHORT
                             ).show()
-                            findNavController().navigate(R.id.action_settingChangePasswordNewFragment_to_settingFragment)
+                            findNavController().navigateSafe(
+                                currentDestinationId = R.id.SettingChangePasswordNewFragment,
+                                action = R.id.action_settingChangePasswordNewFragment_to_settingFragment
+                            )
                         }
                     }
                 }
@@ -330,6 +334,7 @@ class SettingChangePasswordNewFragment : Fragment() {
                     )
                     true
                 }
+
                 else -> false
             }
         }

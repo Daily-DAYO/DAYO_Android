@@ -30,6 +30,8 @@ import daily.dayo.presentation.viewmodel.HomeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.activity.MainActivity
+import daily.dayo.presentation.common.GlideLoadUtil.HOME_POST_THUMBNAIL_SIZE
+import daily.dayo.presentation.common.GlideLoadUtil.HOME_USER_THUMBNAIL_SIZE
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -133,8 +135,10 @@ class HomeNewPostListFragment : Fragment() {
                             binding.layoutNewPostEmpty.isVisible = postList.isEmpty()
                         }
                     }
+
                     Status.LOADING -> {
                     }
+
                     Status.ERROR -> {
 
                     }
@@ -216,16 +220,16 @@ class HomeNewPostListFragment : Fragment() {
                 thumbnailImgList.add(withContext(Dispatchers.IO) {
                     GlideLoadUtil.loadImageBackground(
                         context = requireContext(),
-                        height = 158,
-                        width = 158,
+                        height = HOME_POST_THUMBNAIL_SIZE,
+                        width = HOME_POST_THUMBNAIL_SIZE,
                         imgName = postList[i].thumbnailImage ?: ""
                     )
                 }.toByteArray)
                 userImgList.add(withContext(Dispatchers.IO) {
                     GlideLoadUtil.loadImageBackground(
                         context = requireContext(),
-                        height = 17,
-                        width = 17,
+                        height = HOME_USER_THUMBNAIL_SIZE,
+                        width = HOME_USER_THUMBNAIL_SIZE,
                         imgName = postList[i].userProfileImage ?: ""
                     )
                 }.toByteArray)

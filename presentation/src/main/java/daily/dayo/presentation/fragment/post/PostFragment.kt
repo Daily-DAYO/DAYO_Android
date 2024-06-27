@@ -28,27 +28,31 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
-import daily.dayo.presentation.R
-import daily.dayo.presentation.common.*
-import daily.dayo.presentation.common.GlideLoadUtil.COMMENT_USER_THUMBNAIL_SIZE
-import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
-import daily.dayo.presentation.common.dialog.DefaultDialogConfigure
-import daily.dayo.presentation.common.dialog.DefaultDialogConfirm
-import daily.dayo.presentation.common.dialog.LoadingAlertDialog
-import daily.dayo.presentation.common.extension.navigateSafe
-import daily.dayo.presentation.databinding.FragmentPostBinding
-import daily.dayo.presentation.adapter.PostCommentAdapter
-import daily.dayo.presentation.adapter.PostImageSliderAdapter
-import daily.dayo.presentation.viewmodel.HomeViewModel
-import daily.dayo.presentation.viewmodel.PostViewModel
-import daily.dayo.presentation.viewmodel.SearchViewModel
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.domain.model.Comment
 import daily.dayo.domain.model.categoryKR
+import daily.dayo.presentation.R
+import daily.dayo.presentation.adapter.PostCommentAdapter
+import daily.dayo.presentation.adapter.PostImageSliderAdapter
+import daily.dayo.presentation.common.GlideLoadUtil
+import daily.dayo.presentation.common.HideKeyBoardUtil
+import daily.dayo.presentation.common.KeyboardVisibilityUtils
+import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
+import daily.dayo.presentation.common.Status
+import daily.dayo.presentation.common.TimeChangerUtil
+import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.dialog.DefaultDialogConfigure
+import daily.dayo.presentation.common.dialog.DefaultDialogConfirm
+import daily.dayo.presentation.common.dialog.LoadingAlertDialog
+import daily.dayo.presentation.common.extension.navigateSafe
+import daily.dayo.presentation.common.setOnDebounceClickListener
+import daily.dayo.presentation.databinding.FragmentPostBinding
 import daily.dayo.presentation.viewmodel.AccountViewModel
+import daily.dayo.presentation.viewmodel.HomeViewModel
+import daily.dayo.presentation.viewmodel.PostViewModel
+import daily.dayo.presentation.viewmodel.SearchViewModel
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -120,11 +124,19 @@ class PostFragment : Fragment() {
     private fun setOnUserProfileClickListener(memberId: String) {
         binding.imgPostUserProfile.setOnDebounceClickListener {
             Navigation.findNavController(it)
-                .navigate(PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = memberId))
+                .navigateSafe(
+                    currentDestinationId = R.id.PostFragment,
+                    action = R.id.action_postFragment_to_profileFragment,
+                    args = PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = memberId).arguments
+                )
         }
         binding.tvPostUserNickname.setOnDebounceClickListener {
             Navigation.findNavController(it)
-                .navigate(PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = memberId))
+                .navigateSafe(
+                    currentDestinationId = R.id.PostFragment,
+                    action = R.id.action_postFragment_to_profileFragment,
+                    args = PostFragmentDirections.actionPostFragmentToProfileFragment(memberId = memberId).arguments
+                )
         }
     }
 
@@ -140,18 +152,22 @@ class PostFragment : Fragment() {
         binding.btnPostOption.setOnDebounceClickListener {
             if (isMine) {
                 Navigation.findNavController(it)
-                    .navigate(
-                        PostFragmentDirections.actionPostFragmentToPostOptionMineFragment(
+                    .navigateSafe(
+                        currentDestinationId = R.id.PostFragment,
+                        action = R.id.action_postFragment_to_postOptionMineFragment,
+                        args = PostFragmentDirections.actionPostFragmentToPostOptionMineFragment(
                             postId = args.postId
-                        )
+                        ).arguments
                     )
             } else {
                 Navigation.findNavController(it)
-                    .navigate(
-                        PostFragmentDirections.actionPostFragmentToPostOptionFragment(
+                    .navigateSafe(
+                        currentDestinationId = R.id.PostFragment,
+                        action = R.id.action_postFragment_to_postOptionFragment,
+                        args = PostFragmentDirections.actionPostFragmentToPostOptionFragment(
                             postId = args.postId,
                             memberId = memberId
-                        )
+                        ).arguments
                     )
             }
         }
@@ -175,8 +191,8 @@ class PostFragment : Fragment() {
                                         glideRequestManager?.let { requestManager ->
                                             GlideLoadUtil.loadImageViewProfile(
                                                 requestManager = requestManager,
-                                                width = COMMENT_USER_THUMBNAIL_SIZE,
-                                                height = COMMENT_USER_THUMBNAIL_SIZE,
+                                                width = binding.imgPostUserProfile.width,
+                                                height = binding.imgPostUserProfile.height,
                                                 imgName = post.profileImg,
                                                 imgView = binding.imgPostUserProfile
                                             )
@@ -198,6 +214,7 @@ class PostFragment : Fragment() {
                                 post.hashtags?.let { it1 -> setTagList(it1) }
                             }
                         }
+
                         Status.LOADING -> {}
                         Status.ERROR -> {}
                     }
@@ -221,6 +238,7 @@ class PostFragment : Fragment() {
                                 binding.commentCountStr = postComment.size.toString()
                             }
                         }
+
                         Status.LOADING -> {}
                         Status.ERROR -> {}
                     }
@@ -314,8 +332,9 @@ class PostFragment : Fragment() {
                     text = "# ${trimBlankText(tagList[index])}"
                     setOnDebounceClickListener {
                         searchViewModel.searchKeyword = trimBlankText(tagList[index])
-                        Navigation.findNavController(it).navigate(
-                            PostFragmentDirections.actionPostFragmentToSearchResultFragment()
+                        Navigation.findNavController(it).navigateSafe(
+                            currentDestinationId = R.id.PostFragment,
+                            action = R.id.action_postFragment_to_searchResultFragment
                         )
                     }
                 }
@@ -449,8 +468,8 @@ class PostFragment : Fragment() {
                 glideRequestManager?.let { requestManager ->
                     GlideLoadUtil.loadImageViewProfile(
                         requestManager = requestManager,
-                        width = COMMENT_USER_THUMBNAIL_SIZE,
-                        height = COMMENT_USER_THUMBNAIL_SIZE,
+                        width = binding.imgPostCommentMyProfile.width,
+                        height = binding.imgPostCommentMyProfile.height,
                         imgName = accountViewModel.getCurrentUserInfo().profileImg ?: "",
                         imgView = binding.imgPostCommentMyProfile
                     )

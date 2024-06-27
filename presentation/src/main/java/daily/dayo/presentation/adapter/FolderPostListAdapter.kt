@@ -9,12 +9,17 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
+import daily.dayo.domain.model.FolderPost
+import daily.dayo.presentation.R
 import daily.dayo.presentation.common.GlideLoadUtil.loadImageView
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.ItemFolderPostBinding
-import daily.dayo.domain.model.FolderPost
 import daily.dayo.presentation.fragment.mypage.folder.FolderFragmentDirections
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class FolderPostListAdapter(private val requestManager: RequestManager) :
     PagingDataAdapter<FolderPost, FolderPostListAdapter.FolderPostListViewHolder>(diffCallback) {
@@ -73,7 +78,11 @@ class FolderPostListAdapter(private val requestManager: RequestManager) :
 
             binding.root.setOnDebounceClickListener {
                 Navigation.findNavController(it)
-                    .navigate(FolderFragmentDirections.actionFolderFragmentToPostFragment(folderPost!!.postId))
+                    .navigateSafe(
+                        currentDestinationId = R.id.FolderFragment,
+                        action = R.id.action_folderFragment_to_postFragment,
+                        args = FolderFragmentDirections.actionFolderFragmentToPostFragment(folderPost!!.postId).arguments
+                    )
             }
         }
     }

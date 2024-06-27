@@ -23,6 +23,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import daily.dayo.domain.model.Privacy
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.ButtonActivation
 import daily.dayo.presentation.common.GlideLoadUtil.loadImageView
@@ -31,9 +32,9 @@ import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.TextLimitUtil
 import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.FragmentFolderSettingAddBinding
-import daily.dayo.domain.model.Privacy
 import daily.dayo.presentation.viewmodel.FolderViewModel
 import kotlinx.coroutines.launch
 import java.io.File
@@ -192,7 +193,10 @@ class FolderEditFragment : Fragment() {
 
     private fun setFolderSettingThumbnailOptionClickListener() {
         binding.ivFolderSettingThumbnail.setOnDebounceClickListener {
-            findNavController().navigate(R.id.action_folderEditFragment_to_folderSettingAddImageOptionFragment)
+            findNavController().navigateSafe(
+                currentDestinationId = R.id.FolderEditFragment,
+                action = R.id.action_folderEditFragment_to_folderSettingAddImageOptionFragment
+            )
         }
     }
 
