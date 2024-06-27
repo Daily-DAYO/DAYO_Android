@@ -60,6 +60,7 @@ android {
 
     buildTypes {
         debug {
+            minifyEnabled false
             applicationIdSuffix ".debug"
             versionNameSuffix "-debug"
             resValue "string", "app_name", "DAYO (Debug)"
@@ -69,6 +70,17 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+        }
+    }
+    flavorDimensions = ["environment"]
+    productFlavors {
+        dev {
+            dimension "environment"
+            buildConfigField("String", "BASE_URL", properties['BASE_URL_DEV'])
+        }
+        prod {
+            dimension "environment"
+            buildConfigField("String", "BASE_URL", properties['BASE_URL_PROD'])
         }
     }
     kotlinOptions {
