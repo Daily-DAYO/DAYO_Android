@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
+import daily.dayo.domain.model.Post
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.GlideLoadUtil.HOME_POST_THUMBNAIL_SIZE
 import daily.dayo.presentation.common.GlideLoadUtil.HOME_USER_THUMBNAIL_SIZE
@@ -25,7 +26,6 @@ import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.common.toBitmap
 import daily.dayo.presentation.databinding.ItemMainPostBinding
-import daily.dayo.domain.model.Post
 import daily.dayo.presentation.fragment.home.HomeFragmentDirections
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -195,7 +195,11 @@ class HomeNewAdapter(val rankingShowing: Boolean, private val requestManager: Re
         private fun setNicknameClickListener(memberId: String) {
             binding.tvMainPostUserNickname.setOnDebounceClickListener {
                 Navigation.findNavController(it)
-                    .navigate(HomeFragmentDirections.actionHomeFragmentToProfileFragment(memberId = memberId))
+                    .navigateSafe(
+                        currentDestinationId = R.id.HomeFragment,
+                        action = R.id.action_homeFragment_to_profileFragment,
+                        args = HomeFragmentDirections.actionHomeFragmentToProfileFragment(memberId = memberId).arguments
+                    )
             }
         }
 

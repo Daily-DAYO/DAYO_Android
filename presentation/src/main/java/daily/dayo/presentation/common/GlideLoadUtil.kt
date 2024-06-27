@@ -20,13 +20,8 @@ import daily.dayo.presentation.R
 
 object GlideLoadUtil {
     private const val BASE_URL_IMG = "${BuildConfig.BASE_URL}/images/"
-    const val HOME_POST_THUMBNAIL_SIZE = 158
-    const val HOME_USER_THUMBNAIL_SIZE = 17
-    const val COMMENT_USER_THUMBNAIL_SIZE = 40
-    const val PROFILE_USER_THUMBNAIL_SIZE = 70
-    const val PROFILE_EDIT_USER_THUMBNAIL_SIZE = 100
-    const val BLOCK_USER_THUMBNAIL_SIZE = 45
-    const val FOLLOW_USER_THUMBNAIL_SIZE = 40
+    const val HOME_POST_THUMBNAIL_SIZE = 500
+    const val HOME_USER_THUMBNAIL_SIZE = 40
 
     fun loadImageView(
         requestManager: RequestManager,

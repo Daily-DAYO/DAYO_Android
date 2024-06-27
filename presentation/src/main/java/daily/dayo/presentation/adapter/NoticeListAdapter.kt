@@ -6,9 +6,11 @@ import androidx.navigation.Navigation
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import daily.dayo.domain.model.Notice
+import daily.dayo.presentation.R
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.ItemNoticePostBinding
-import daily.dayo.domain.model.Notice
 import daily.dayo.presentation.fragment.setting.notice.NoticeListFragmentDirections
 
 class NoticeListAdapter :
@@ -38,7 +40,11 @@ class NoticeListAdapter :
         fun bind(notice: Notice) {
             binding.notice = notice
             binding.root.setOnDebounceClickListener {
-                Navigation.findNavController(it).navigate(NoticeListFragmentDirections.actionNoticeListFragmentToNoticeDetailFragment(notice))
+                Navigation.findNavController(it).navigateSafe(
+                    currentDestinationId = R.id.NoticeListFragment,
+                    action = R.id.action_noticeListFragment_to_noticeDetailFragment,
+                    args = NoticeListFragmentDirections.actionNoticeListFragmentToNoticeDetailFragment(notice).arguments
+                )
             }
         }
     }

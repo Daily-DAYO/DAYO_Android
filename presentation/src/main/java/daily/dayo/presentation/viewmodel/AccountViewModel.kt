@@ -70,7 +70,7 @@ class AccountViewModel @Inject constructor(
     private val _checkEmailSuccess = MutableLiveData<Boolean>()
     val checkEmailSuccess get() = _checkEmailSuccess
 
-    private val _checkCurrentPasswordSuccess = MutableLiveData<Boolean>()
+    private val _checkCurrentPasswordSuccess = MutableLiveData<Event<Boolean>>()
     val checkCurrentPasswordSuccess get() = _checkCurrentPasswordSuccess
 
     private val _changePasswordSuccess = MutableLiveData<Boolean>()
@@ -81,6 +81,9 @@ class AccountViewModel @Inject constructor(
 
     private val _isApiErrorExceptionOccurred = MutableLiveData<Event<Boolean>>()
     val isApiErrorExceptionOccurred get() = _isApiErrorExceptionOccurred
+
+    private val _isLoginFailByUncorrected = MutableLiveData<Event<Boolean>>()
+    val isLoginFailByUncorrected get() = _isLoginFailByUncorrected
 
     fun requestLoginKakao(accessToken: String) = viewModelScope.launch {
         requestLoginKakaoUseCase(accessToken = accessToken).let { ApiResponse ->
@@ -120,7 +123,8 @@ class AccountViewModel @Inject constructor(
                     _loginSuccess.postValue(Event(false))
                 }
                 is NetworkResponse.ApiError -> {
-                    _isApiErrorExceptionOccurred.postValue(Event(true))
+                    if (ApiResponse.code != 404) _isApiErrorExceptionOccurred.postValue(Event(true))
+                    else isLoginFailByUncorrected.postValue(Event(true))
                     _loginSuccess.postValue(Event(false))
                 }
                 is NetworkResponse.UnknownError -> {
@@ -338,15 +342,15 @@ class AccountViewModel @Inject constructor(
         requestCheckCurrentPasswordUseCase(password = inputPassword).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _checkCurrentPasswordSuccess.postValue(true)
+                    _checkCurrentPasswordSuccess.postValue(Event(true))
                 }
                 is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
-                    _checkCurrentPasswordSuccess.postValue(false)
+                    _checkCurrentPasswordSuccess.postValue(Event(false))
                 }
                 is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
-                    _checkCurrentPasswordSuccess.postValue(false)
+                    _checkCurrentPasswordSuccess.postValue(Event(false))
                 }
                 else -> {}
             }
