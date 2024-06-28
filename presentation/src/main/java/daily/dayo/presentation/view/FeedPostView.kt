@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,14 +27,19 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,9 +57,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import daily.dayo.domain.model.Category
@@ -74,6 +80,9 @@ import daily.dayo.presentation.theme.b5
 import daily.dayo.presentation.theme.b6
 import daily.dayo.presentation.theme.caption1
 import daily.dayo.presentation.theme.caption3
+import daily.dayo.presentation.view.dialog.RadioButtonDialog
+import daily.dayo.presentation.viewmodel.ReportViewModel
+import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -81,14 +90,30 @@ import java.text.DecimalFormat
 fun FeedPostView(
     post: Post,
     modifier: Modifier = Modifier,
+    snackBarHostState: SnackbarHostState,
     onClickProfile: () -> Unit,
     onClickPost: () -> Unit,
     onClickLikePost: () -> Unit,
     onClickBookmark: () -> Unit,
     onPostLikeUsersClick: (String) -> Unit,
-    onPostHashtagClick: (String) -> Unit
+    onPostHashtagClick: (String) -> Unit,
+    reportViewModel: ReportViewModel = hiltViewModel()
 ) {
     val imageInteractionSource = remember { MutableInteractionSource() }
+    var showPostOption by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    val reportReasons = arrayListOf(
+        stringResource(id = R.string.report_post_reason_1),
+        stringResource(id = R.string.report_post_reason_2),
+        stringResource(id = R.string.report_post_reason_3),
+        stringResource(id = R.string.report_post_reason_4),
+        stringResource(id = R.string.report_post_reason_5),
+        stringResource(id = R.string.report_post_reason_6),
+        stringResource(id = R.string.report_post_reason_7),
+        stringResource(id = R.string.report_post_reason_other),
+    )
+
     Column(modifier = modifier) {
         // publisher info
         Row(
@@ -98,6 +123,7 @@ fun FeedPostView(
                 .padding(horizontal = 18.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // user profile image
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data("${BuildConfig.BASE_URL}/images/${post.userProfileImage}")
@@ -115,6 +141,7 @@ fun FeedPostView(
                     )
             )
             Spacer(modifier = Modifier.width(12.dp))
+            // post info text
             Column(Modifier.weight(1f)) {
                 Text(
                     text = post.nickname,
@@ -131,12 +158,27 @@ fun FeedPostView(
                     style = MaterialTheme.typography.caption3.copy(Gray3_9FA5AE)
                 )
             }
-            Icon(
-                modifier = Modifier.padding(8.dp),
-                painter = painterResource(id = R.drawable.ic_option_horizontal),
-                tint = Gray2_767B83,
-                contentDescription = "post option"
-            )
+            // post option
+            Box {
+                IconButton(
+                    onClick = { showPostOption = true }
+                ) {
+                    Icon(
+                        modifier = Modifier.padding(8.dp),
+                        painter = painterResource(id = R.drawable.ic_option_horizontal),
+                        tint = Gray2_767B83,
+                        contentDescription = "post option"
+                    )
+                }
+                OthersPostDropdownMenu(
+                    expanded = showPostOption,
+                    onDismissRequest = { showPostOption = !showPostOption },
+                    onPostReportClick = {
+                        showDialog = !showDialog
+                        showPostOption = !showPostOption
+                    }
+                )
+            }
         }
 
         // post images
@@ -293,6 +335,67 @@ fun FeedPostView(
             )
         }
     }
+
+    if (showDialog) {
+        RadioButtonDialog(
+            title = stringResource(id = R.string.report_post_title),
+            description = stringResource(id = R.string.report_post_description),
+            radioItems = reportReasons,
+            lastInputEnabled = true,
+            lastTextPlaceholder = "게시물을 신고하는 기타 사유는 무엇인가요?",
+            lastTextMaxLength = 100,
+            onClickCancel = { showDialog = !showDialog },
+            onClickConfirm = { reason ->
+                reportViewModel.requestSavePostReport(reason, post.postId!!)
+                showDialog = !showDialog
+                coroutineScope.launch {
+                    snackBarHostState.showSnackbar("신고가 접수되었어요.")
+                }
+            },
+            modifier = Modifier
+                .height(400.dp)
+                .imePadding()
+                .clip(RoundedCornerShape(28.dp))
+                .background(White_FFFFFF)
+        )
+    }
+}
+
+@Composable
+fun OthersPostDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit, onPostReportClick: () -> Unit) {
+    MaterialTheme(shapes = MaterialTheme.shapes.copy(extraSmall = RoundedCornerShape(16.dp))) {
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = onDismissRequest,
+            modifier = Modifier
+                .background(White_FFFFFF)
+        ) {
+            DropdownMenuItem(
+                modifier = Modifier
+                    .padding(horizontal = 6.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+                text = {
+                    Row(
+                        modifier = Modifier.width(128.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_menu_report),
+                            contentDescription = "report post",
+                            tint = Gray1_313131,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text(
+                            text = "게시물 신고",
+                            style = MaterialTheme.typography.b6.copy(Gray1_313131)
+                        )
+                    }
+
+                },
+                onClick = onPostReportClick
+            )
+        }
+    }
 }
 
 @Composable
@@ -398,40 +501,6 @@ fun SeeMoreText(
                 )
                 .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = { onClickPost() })
                 .alpha(if (seeMoreOffset != null) 1f else 0f)
-        )
-    }
-}
-
-@Composable
-@Preview(showBackground = true)
-private fun PreviewFeedPostView() {
-    MaterialTheme {
-        FeedPostView(
-            post = Post(
-                postId = 0,
-                thumbnailImage = "",
-                memberId = "",
-                nickname = "nickname",
-                userProfileImage = "",
-                heartCount = 123456,
-                commentCount = 8100,
-                heart = true,
-                category = Category.SCHEDULER,
-                postImages = null,
-                contents = "힘차게 달려 신나게 어디든지 갈 수 있어",
-                createDateTime = "2024-02-21T21:54:56",
-                folderId = null,
-                folderName = null,
-                comments = null,
-                hashtags = listOf("태그", "다요다요"),
-                bookmark = null
-            ),
-            onClickPost = {},
-            onClickLikePost = {},
-            onClickProfile = {},
-            onClickBookmark = {},
-            onPostLikeUsersClick = {},
-            onPostHashtagClick = {}
         )
     }
 }

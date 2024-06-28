@@ -17,6 +17,7 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,7 +32,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -53,6 +53,7 @@ import daily.dayo.presentation.viewmodel.FeedViewModel
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FeedScreen(
+    snackBarHostState: SnackbarHostState,
     onEmptyViewClick: () -> Unit,
     onPostClick: (String) -> Unit,
     onPostLikeUsersClick: (String) -> Unit,
@@ -120,6 +121,7 @@ fun FeedScreen(
                         feedPost?.let { post ->
                             FeedPostView(
                                 post = post,
+                                snackBarHostState = snackBarHostState,
                                 onClickProfile = {
                                     // todo move to profile
                                 },
