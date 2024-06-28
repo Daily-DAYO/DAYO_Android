@@ -15,6 +15,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,7 +44,7 @@ import daily.dayo.presentation.screen.search.searchNavGraph
 import daily.dayo.presentation.theme.Gray1_313131
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.view.getBottomSheetDialogState
+import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 
 @OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -76,6 +77,7 @@ internal fun MainScreen(
                             onSearchClick = { navigator.navigateSearch() }
                         )
                         feedNavGraph(
+                            snackBarHostState = snackBarHostState,
                             onEmptyViewClick = { navigator.navigateHome() },
                             onPostClick = { navigator.navigatePost(it) },
                             onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
@@ -96,7 +98,7 @@ internal fun MainScreen(
                     navController = navigator.navController
                 )
             },
-            snackbarHost = { }
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
         )
     }
 }
