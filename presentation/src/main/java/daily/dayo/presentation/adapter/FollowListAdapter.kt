@@ -8,12 +8,13 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
-import daily.dayo.presentation.common.GlideLoadUtil.FOLLOW_USER_THUMBNAIL_SIZE
-import daily.dayo.presentation.common.GlideLoadUtil.loadImageView
-import daily.dayo.presentation.common.setOnDebounceClickListener
-import daily.dayo.presentation.databinding.ItemFollowBinding
 import daily.dayo.domain.model.MyFollower
 import daily.dayo.domain.model.User
+import daily.dayo.presentation.R
+import daily.dayo.presentation.common.GlideLoadUtil.loadImageView
+import daily.dayo.presentation.common.extension.navigateSafe
+import daily.dayo.presentation.common.setOnDebounceClickListener
+import daily.dayo.presentation.databinding.ItemFollowBinding
 import daily.dayo.presentation.fragment.mypage.follow.FollowFragmentDirections
 
 class FollowListAdapter(private val requestManager: RequestManager, private val userInfo: User) :
@@ -65,8 +66,8 @@ class FollowListAdapter(private val requestManager: RequestManager, private val 
                 follow.memberId == userInfo.memberId
             loadImageView(
                 requestManager = requestManager,
-                width = FOLLOW_USER_THUMBNAIL_SIZE,
-                height = FOLLOW_USER_THUMBNAIL_SIZE,
+                width = binding.imgFollowUserProfile.width,
+                height = binding.imgFollowUserProfile.height,
                 imgName = follow.profileImg ?: "",
                 imgView = binding.imgFollowUserProfile
             )
@@ -77,8 +78,10 @@ class FollowListAdapter(private val requestManager: RequestManager, private val 
 
         private fun setRootClickListener(memberId: String) {
             binding.root.setOnDebounceClickListener {
-                Navigation.findNavController(it).navigate(
-                    FollowFragmentDirections.actionFollowFragmentToProfileFragment(memberId = memberId)
+                Navigation.findNavController(it).navigateSafe(
+                    currentDestinationId = R.id.FollowFragment,
+                    action = R.id.action_followFragment_to_profileFragment,
+                    args = FollowFragmentDirections.actionFollowFragmentToProfileFragment(memberId = memberId).arguments
                 )
             }
         }

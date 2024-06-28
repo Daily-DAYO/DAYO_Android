@@ -4,23 +4,24 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
-import daily.dayo.presentation.databinding.FragmentSignupEmailSetPasswordBinding
 import daily.dayo.presentation.common.ButtonActivation
 import daily.dayo.presentation.common.HideKeyBoardUtil
 import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
 import daily.dayo.presentation.common.SetTextInputLayout
 import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
-import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.presentation.databinding.FragmentSignupEmailSetPasswordBinding
 import java.util.regex.Pattern
 
 @AndroidEntryPoint
@@ -74,6 +75,7 @@ class SignupEmailSetPasswordFragment : Fragment() {
                     )
                     true
                 }
+
                 else -> false
             }
         }
@@ -200,11 +202,13 @@ class SignupEmailSetPasswordFragment : Fragment() {
 
     private fun setNextClickListener() {
         binding.btnSignupEmailSetPasswordNext.setOnDebounceClickListener {
-            Navigation.findNavController(it).navigate(
-                SignupEmailSetPasswordFragmentDirections.actionSignupEmailSetPasswordFragmentToSignupEmailSetPasswordConfirmationFragment(
+            Navigation.findNavController(it).navigateSafe(
+                currentDestinationId = R.id.SignupEmailSetPasswordFragment,
+                action = R.id.action_signupEmailSetPasswordFragment_to_signupEmailSetPasswordConfirmationFragment,
+                args = SignupEmailSetPasswordFragmentDirections.actionSignupEmailSetPasswordFragmentToSignupEmailSetPasswordConfirmationFragment(
                     args.email,
                     trimBlankText(binding.etSignupEmailSetPasswordUserPassword.text)
-                )
+                ).arguments
             )
         }
     }
