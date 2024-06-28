@@ -4,23 +4,24 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
-import daily.dayo.presentation.databinding.FragmentSignupEmailSetPasswordConfirmationBinding
 import daily.dayo.presentation.common.ButtonActivation
 import daily.dayo.presentation.common.HideKeyBoardUtil
 import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
 import daily.dayo.presentation.common.SetTextInputLayout
 import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
-import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.presentation.databinding.FragmentSignupEmailSetPasswordConfirmationBinding
 import java.util.regex.Pattern
 
 @AndroidEntryPoint
@@ -42,34 +43,52 @@ class SignupEmailSetPasswordConfirmationFragment : Fragment() {
         setUserPasswordEditText()
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.setOnTouchListener { _, _ ->
             HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetPasswordConfirmationUserInput)
             changeEditTextTitle()
-            SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordConfirmationUserInput, binding.etSignupEmailSetPasswordConfirmationUserInput, binding.etSignupEmailSetPasswordConfirmationUserInput.text.isNullOrEmpty())
+            SetTextInputLayout.setEditTextTheme(
+                requireContext(),
+                binding.layoutSignupEmailSetPasswordConfirmationUserInput,
+                binding.etSignupEmailSetPasswordConfirmationUserInput,
+                binding.etSignupEmailSetPasswordConfirmationUserInput.text.isNullOrEmpty()
+            )
             true
         }
     }
 
     private fun setTextEditorActionListener() {
-        binding.etSignupEmailSetPasswordConfirmationUserInput.setOnEditorActionListener {  _, actionId, _ ->
-            when(actionId) {
+        binding.etSignupEmailSetPasswordConfirmationUserInput.setOnEditorActionListener { _, actionId, _ ->
+            when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
                     HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetPasswordConfirmationUserInput)
                     changeEditTextTitle()
-                    SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordConfirmationUserInput, binding.etSignupEmailSetPasswordConfirmationUserInput, binding.etSignupEmailSetPasswordConfirmationUserInput.text.isNullOrEmpty())
+                    SetTextInputLayout.setEditTextTheme(
+                        requireContext(),
+                        binding.layoutSignupEmailSetPasswordConfirmationUserInput,
+                        binding.etSignupEmailSetPasswordConfirmationUserInput,
+                        binding.etSignupEmailSetPasswordConfirmationUserInput.text.isNullOrEmpty()
+                    )
                     true
-                } else -> false
+                }
+
+                else -> false
             }
         }
     }
 
     private fun initEditText() {
-        SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordConfirmationUserInput, binding.etSignupEmailSetPasswordConfirmationUserInput, binding.etSignupEmailSetPasswordConfirmationUserInput.text.isNullOrEmpty())
+        SetTextInputLayout.setEditTextTheme(
+            requireContext(),
+            binding.layoutSignupEmailSetPasswordConfirmationUserInput,
+            binding.etSignupEmailSetPasswordConfirmationUserInput,
+            binding.etSignupEmailSetPasswordConfirmationUserInput.text.isNullOrEmpty()
+        )
         binding.etSignupEmailSetPasswordConfirmationUserInput.setOnFocusChangeListener { _, hasFocus ->
             with(binding.layoutSignupEmailSetPasswordConfirmationUserInput) {
-                if(hasFocus){
+                if (hasFocus) {
                     hint = getString(R.string.password_confirmation)
                     SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetPasswordConfirmationUserInput, binding.etSignupEmailSetPasswordConfirmationUserInput, false)
                 } else {
@@ -82,7 +101,7 @@ class SignupEmailSetPasswordConfirmationFragment : Fragment() {
 
     private fun changeEditTextTitle() {
         with(binding.layoutSignupEmailSetPasswordConfirmationUserInput) {
-            if(binding.etSignupEmailSetPasswordConfirmationUserInput.text.isNullOrEmpty()) {
+            if (binding.etSignupEmailSetPasswordConfirmationUserInput.text.isNullOrEmpty()) {
                 hint = getString(R.string.signup_email_set_password_confirmation_edittext_hint)
             } else {
                 hint = getString(R.string.password_confirmation)
@@ -92,15 +111,27 @@ class SignupEmailSetPasswordConfirmationFragment : Fragment() {
 
     private fun verifyPassword() {
         binding.etSignupEmailSetPasswordConfirmationUserInput.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                if(args.password != trimBlankText(binding.etSignupEmailSetPasswordConfirmationUserInput.text)){ // 동일 비밀번호 검사
+                if (args.password != trimBlankText(binding.etSignupEmailSetPasswordConfirmationUserInput.text)) { // 동일 비밀번호 검사
                     ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetPasswordConfirmationNext)
-                    SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetPasswordConfirmationUserInput, binding.etSignupEmailSetPasswordConfirmationUserInput, getString(R.string.signup_email_set_password_confirmation_message_fail), false)
+                    SetTextInputLayout.setEditTextErrorTheme(
+                        requireContext(),
+                        binding.layoutSignupEmailSetPasswordConfirmationUserInput,
+                        binding.etSignupEmailSetPasswordConfirmationUserInput,
+                        getString(R.string.signup_email_set_password_confirmation_message_fail),
+                        false
+                    )
                 } else {
                     ButtonActivation.setSignupButtonActive(requireContext(), binding.btnSignupEmailSetPasswordConfirmationNext)
-                    SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetPasswordConfirmationUserInput, binding.etSignupEmailSetPasswordConfirmationUserInput, null, true)
+                    SetTextInputLayout.setEditTextErrorTheme(
+                        requireContext(),
+                        binding.layoutSignupEmailSetPasswordConfirmationUserInput,
+                        binding.etSignupEmailSetPasswordConfirmationUserInput,
+                        null,
+                        true
+                    )
                 }
             }
         })
@@ -122,7 +153,7 @@ class SignupEmailSetPasswordConfirmationFragment : Fragment() {
         binding.password = args.password
     }
 
-    private fun setBackClickListener(){
+    private fun setBackClickListener() {
         binding.btnSignupEmailSetPasswordConfirmationBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
@@ -130,7 +161,11 @@ class SignupEmailSetPasswordConfirmationFragment : Fragment() {
 
     private fun setNextClickListener() {
         binding.btnSignupEmailSetPasswordConfirmationNext.setOnDebounceClickListener {
-            Navigation.findNavController(it).navigate(SignupEmailSetPasswordConfirmationFragmentDirections.actionSignupEmailSetPasswordConfirmationFragmentToSignupEmailSetProfileFragment(args.email,args.password))
+            Navigation.findNavController(it).navigateSafe(
+                currentDestinationId = R.id.SignupEmailSetPasswordConfirmationFragment,
+                action = R.id.action_signupEmailSetPasswordConfirmationFragment_to_signupEmailSetProfileFragment,
+                args = SignupEmailSetPasswordConfirmationFragmentDirections.actionSignupEmailSetPasswordConfirmationFragmentToSignupEmailSetProfileFragment(args.email, args.password).arguments
+            )
         }
     }
 }

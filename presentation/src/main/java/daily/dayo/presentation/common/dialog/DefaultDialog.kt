@@ -18,7 +18,10 @@ import daily.dayo.presentation.databinding.DialogDefaultAlertBinding
 import daily.dayo.presentation.databinding.DialogDefaultConfirmBinding
 
 object DefaultDialogAlert {
-    fun createDialog(context: Context, dialogDescriptionResId: Int) : AlertDialog {
+    fun createDialog(context: Context,
+                     dialogDescriptionResId: Int,
+                     confirmButtonFunction: (() -> Unit)? = null
+    ) : AlertDialog {
         val binding = DialogDefaultAlertBinding.inflate(LayoutInflater.from(context))
         val dialogBuilder = AlertDialog.Builder(context).setView(binding.root)
         val mAlertDialog = dialogBuilder.create()
@@ -30,6 +33,7 @@ object DefaultDialogAlert {
         with(binding) {
             tvDefaultDialogDescription.setText(dialogDescriptionResId)
             tvDefaultDialogConfirm.setOnDebounceClickListener {
+                confirmButtonFunction?.invoke()
                 mAlertDialog.dismiss()
             }
         }

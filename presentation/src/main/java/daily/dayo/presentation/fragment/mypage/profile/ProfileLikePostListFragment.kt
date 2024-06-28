@@ -16,6 +16,7 @@ import daily.dayo.presentation.R
 import daily.dayo.presentation.activity.MainActivity
 import daily.dayo.presentation.adapter.ProfileLikePostListAdapter
 import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.databinding.FragmentProfileLikePostListBinding
 import daily.dayo.presentation.viewmodel.ProfileViewModel
 
@@ -69,11 +70,23 @@ class ProfileLikePostListFragment : Fragment() {
             ProfileLikePostListAdapter.OnItemClickListener {
             override fun onItemClick(v: View, likePost: LikePost, pos: Int) {
                 when (requireParentFragment()) {
-                    is MyPageFragment -> MyPageFragmentDirections.actionMyPageFragmentToPostFragment(likePost.postId)
-                    is ProfileFragment -> ProfileFragmentDirections.actionProfileFragmentToPostFragment(likePost.postId)
-                    else -> null
-                }?.let {
-                    findNavController().navigate(it)
+                    is MyPageFragment -> {
+                        findNavController().navigateSafe(
+                            currentDestinationId = R.id.MyPageFragment,
+                            action = R.id.action_myPageFragment_to_postFragment,
+                            args = MyPageFragmentDirections.actionMyPageFragmentToPostFragment(likePost.postId).arguments
+                        )
+                    }
+
+                    is ProfileFragment -> {
+                        findNavController().navigateSafe(
+                            currentDestinationId = R.id.ProfileFragment,
+                            action = R.id.action_profileFragment_to_postFragment,
+                            args = ProfileFragmentDirections.actionProfileFragmentToPostFragment(likePost.postId).arguments
+                        )
+                    }
+
+                    else -> {}
                 }
             }
         })

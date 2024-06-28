@@ -15,15 +15,16 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.ButtonActivation
 import daily.dayo.presentation.common.HideKeyBoardUtil
 import daily.dayo.presentation.common.SetTextInputLayout
 import daily.dayo.presentation.common.autoCleared
+import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.FragmentSignupEmailSetEmailAddressCertificateBinding
 import daily.dayo.presentation.viewmodel.AccountViewModel
-import dagger.hilt.android.AndroidEntryPoint
 import java.util.regex.Pattern
 
 @AndroidEntryPoint
@@ -34,7 +35,7 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
     }
     private val loginViewModel by activityViewModels<AccountViewModel>()
     private val args by navArgs<SignupEmailSetEmailAddressCertificateFragmentArgs>()
-    private var currentCountDownTimer: CountDownTimer?= null
+    private var currentCountDownTimer: CountDownTimer? = null
     private var isCountDownDone: Boolean = false
 
     override fun onCreateView(
@@ -53,33 +54,52 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
 
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.setOnTouchListener { _, _ ->
             HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetEmailAddressCertificateUserInput)
             changeEditTextTitle()
-            SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty())
+            SetTextInputLayout.setEditTextTheme(
+                requireContext(),
+                binding.layoutSignupEmailSetEmailAddressCertificateUserInput,
+                binding.etSignupEmailSetEmailAddressCertificateUserInput,
+                binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty()
+            )
             true
         }
     }
+
     private fun setTextEditorActionListener() {
-        binding.etSignupEmailSetEmailAddressCertificateUserInput.setOnEditorActionListener {  _, actionId, _ ->
-            when(actionId) {
+        binding.etSignupEmailSetEmailAddressCertificateUserInput.setOnEditorActionListener { _, actionId, _ ->
+            when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
                     HideKeyBoardUtil.hide(requireContext(), binding.etSignupEmailSetEmailAddressCertificateUserInput)
                     changeEditTextTitle()
-                    SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty())
+                    SetTextInputLayout.setEditTextTheme(
+                        requireContext(),
+                        binding.layoutSignupEmailSetEmailAddressCertificateUserInput,
+                        binding.etSignupEmailSetEmailAddressCertificateUserInput,
+                        binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty()
+                    )
                     true
-                } else -> false
+                }
+
+                else -> false
             }
         }
     }
 
     private fun initEditText() {
-        SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty())
+        SetTextInputLayout.setEditTextTheme(
+            requireContext(),
+            binding.layoutSignupEmailSetEmailAddressCertificateUserInput,
+            binding.etSignupEmailSetEmailAddressCertificateUserInput,
+            binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty()
+        )
         binding.etSignupEmailSetEmailAddressCertificateUserInput.setOnFocusChangeListener { _, hasFocus ->
             with(binding.layoutSignupEmailSetEmailAddressCertificateUserInput) {
-                if(hasFocus){
+                if (hasFocus) {
                     hint = getString(R.string.email_address_certification)
                     SetTextInputLayout.setEditTextTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, false)
                 } else {
@@ -94,7 +114,7 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
 
     private fun changeEditTextTitle() {
         with(binding.layoutSignupEmailSetEmailAddressCertificateUserInput) {
-            if(binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty()) {
+            if (binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty()) {
                 hint = getString(R.string.email_address_certificate_title)
             } else {
                 hint = getString(R.string.email_address_certification)
@@ -106,11 +126,11 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
         // 인증번호가 담긴 이메일 최초 발송
         loginViewModel.requestCertificateEmail(args.email)
 
-        binding.etSignupEmailSetEmailAddressCertificateUserInput.addTextChangedListener(object : TextWatcher{
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+        binding.etSignupEmailSetEmailAddressCertificateUserInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                if(!binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty() && !isCountDownDone) {
+                if (!binding.etSignupEmailSetEmailAddressCertificateUserInput.text.isNullOrEmpty() && !isCountDownDone) {
                     ButtonActivation.setSignupButtonActive(requireContext(), binding.btnSignupEmailSetEmailAddressCertificateNext)
                 } else {
                     ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetEmailAddressCertificateNext)
@@ -118,16 +138,32 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
             }
         })
         binding.btnSignupEmailSetEmailAddressCertificateNext.setOnDebounceClickListener {
-            if(binding.etSignupEmailSetEmailAddressCertificateUserInput.text.toString() == loginViewModel.certificateEmailAuthCode.value) {
+            if (binding.etSignupEmailSetEmailAddressCertificateUserInput.text.toString() == loginViewModel.certificateEmailAuthCode.value) {
                 ButtonActivation.setSignupButtonActive(requireContext(), binding.btnSignupEmailSetEmailAddressCertificateNext)
-                SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, null, true)
+                SetTextInputLayout.setEditTextErrorTheme(
+                    requireContext(),
+                    binding.layoutSignupEmailSetEmailAddressCertificateUserInput,
+                    binding.etSignupEmailSetEmailAddressCertificateUserInput,
+                    null,
+                    true
+                )
                 currentCountDownTimer?.cancel()
                 currentCountDownTimer = null
                 binding.tvSignupEmailSetEmailAddressCertificateResend.isEnabled = false
-                Navigation.findNavController(it).navigate(SignupEmailSetEmailAddressCertificateFragmentDirections.actionSignupEmailSetEmailAddressCertificateFragmentToSignupEmailSetPasswordFragment(args.email))
+                Navigation.findNavController(it).navigateSafe(
+                    currentDestinationId = R.id.SignupEmailSetEmailAddressCertificateFragment,
+                    action = R.id.action_signupEmailSetEmailAddressCertificateFragment_to_signupEmailSetPasswordFragment,
+                    args = SignupEmailSetEmailAddressCertificateFragmentDirections.actionSignupEmailSetEmailAddressCertificateFragmentToSignupEmailSetPasswordFragment(args.email).arguments
+                )
             } else {
                 ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetEmailAddressCertificateNext)
-                SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, getString(R.string.email_address_certificate_alert_message_match_fail), false)
+                SetTextInputLayout.setEditTextErrorTheme(
+                    requireContext(),
+                    binding.layoutSignupEmailSetEmailAddressCertificateUserInput,
+                    binding.etSignupEmailSetEmailAddressCertificateUserInput,
+                    getString(R.string.email_address_certificate_alert_message_match_fail),
+                    false
+                )
                 Toast.makeText(requireContext(), "인증 실패 하였습니다.", Toast.LENGTH_SHORT).show()
             }
         }
@@ -152,10 +188,17 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
             var remainSeconds = millisUntilFinished / 1000 % 60
             binding.tvSignupEmailSetEmailAddressCertificateTimer.text = "${"%02d".format(remainMinutes)}:${"%02d".format(remainSeconds)}"
         }
+
         override fun onFinish() {
             isCountDownDone = true
             ButtonActivation.setSignupButtonInactive(requireContext(), binding.btnSignupEmailSetEmailAddressCertificateNext)
-            SetTextInputLayout.setEditTextErrorTheme(requireContext(), binding.layoutSignupEmailSetEmailAddressCertificateUserInput, binding.etSignupEmailSetEmailAddressCertificateUserInput, getString(R.string.email_address_certificate_alert_message_time_fail),false)
+            SetTextInputLayout.setEditTextErrorTheme(
+                requireContext(),
+                binding.layoutSignupEmailSetEmailAddressCertificateUserInput,
+                binding.etSignupEmailSetEmailAddressCertificateUserInput,
+                getString(R.string.email_address_certificate_alert_message_time_fail),
+                false
+            )
         }
     }
 
@@ -178,7 +221,7 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
         binding.email = args.email
     }
 
-    private fun setBackClickListener(){
+    private fun setBackClickListener() {
         binding.btnSignupEmailSetEmailAddressCertificateBack.setOnDebounceClickListener {
             findNavController().navigateUp()
         }
@@ -186,7 +229,12 @@ class SignupEmailSetEmailAddressCertificateFragment : Fragment() {
 
     private fun setNextClickListener() {
         binding.btnSignupEmailSetEmailAddressCertificateNext.setOnDebounceClickListener {
-            Navigation.findNavController(it).navigate(SignupEmailSetEmailAddressCertificateFragmentDirections.actionSignupEmailSetEmailAddressCertificateFragmentToSignupEmailSetPasswordFragment(args.email))
+            Navigation.findNavController(it)
+                .navigateSafe(
+                    currentDestinationId = R.id.SignupEmailSetEmailAddressCertificateFragment,
+                    action = R.id.action_signupEmailSetEmailAddressCertificateFragment_to_signupEmailSetPasswordFragment,
+                    args = SignupEmailSetEmailAddressCertificateFragmentDirections.actionSignupEmailSetEmailAddressCertificateFragmentToSignupEmailSetPasswordFragment(args.email).arguments
+                )
         }
     }
 }
