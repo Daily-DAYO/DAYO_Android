@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import daily.dayo.domain.model.Search
+import daily.dayo.presentation.common.GlideLoadUtil.HOME_POST_THUMBNAIL_SIZE
 import daily.dayo.presentation.common.GlideLoadUtil.loadImageView
 import daily.dayo.presentation.common.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.ItemSearchResultPostBinding
@@ -64,8 +65,8 @@ class SearchTagResultPostAdapter(private val requestManager: RequestManager) :
             CoroutineScope(Dispatchers.Main).launch {
                 loadImageView(
                     requestManager = requestManager,
-                    width = binding.imgSearchResultPost.width,
-                    height = binding.imgSearchResultPost.height,
+                    width = HOME_POST_THUMBNAIL_SIZE,
+                    height = HOME_POST_THUMBNAIL_SIZE,
                     imgName = postContent?.thumbnailImage ?: "",
                     imgView = binding.imgSearchResultPost
                 )
