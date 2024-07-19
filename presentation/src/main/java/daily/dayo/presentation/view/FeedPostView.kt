@@ -371,7 +371,8 @@ fun FeedPostView(
         CommentBottomSheetDialog(
             sheetState = bottomSheetState,
             onClickClose = { coroutineScope.launch { bottomSheetState.hide() } },
-            postViewModel = postViewModel
+            postId = post.postId!!,
+            postViewModel = postViewModel,
         )
     }
 }
