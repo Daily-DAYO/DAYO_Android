@@ -96,7 +96,8 @@ fun FilledRoundedCornerButton(
     icon: @Composable (() -> Unit)? = null,
     enabled: Boolean = true,
     textStyle: TextStyle = MaterialTheme.typography.b3,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
+    @SuppressLint("ModifierParameter") modifier: Modifier? = null,
+    @SuppressLint("ModifierParameter") contentModifier: Modifier? = null,
     color: ButtonColors? = null
 ) {
     val buttonColors = color
@@ -112,7 +113,7 @@ fun FilledRoundedCornerButton(
         colors = buttonColors,
         enabled = enabled,
         shape = RoundedCornerShape(8.dp),
-        modifier = modifier,
+        modifier = modifier ?: Modifier.fillMaxWidth(),
         content = {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -122,7 +123,7 @@ fun FilledRoundedCornerButton(
                     text = label,
                     textAlign = TextAlign.Center,
                     style = textStyle,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = contentModifier ?: Modifier.fillMaxWidth()
                 )
             }
         },
