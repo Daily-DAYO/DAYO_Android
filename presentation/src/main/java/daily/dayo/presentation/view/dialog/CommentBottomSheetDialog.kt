@@ -1,6 +1,7 @@
 package daily.dayo.presentation.view.dialog
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -42,6 +43,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -84,6 +86,7 @@ import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.PostViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -95,10 +98,15 @@ fun CommentBottomSheetDialog(
     postViewModel: PostViewModel,
     accountViewModel: AccountViewModel = hiltViewModel()
 ) {
-    // todo 뒤로 가기 버튼 처리하기
     val currentMemberId = accountViewModel.getCurrentUserInfo().memberId
     val scrollState = rememberScrollState()
     val commentText = remember { mutableStateOf(TextFieldValue("")) }
+    val coroutineScope = rememberCoroutineScope()
+    BackHandler(enabled = sheetState.isVisible) {
+        coroutineScope.launch {
+            sheetState.hide()
+        }
+    }
 
     // show comments
     val postComments by postViewModel.postComment.observeAsState(initial = Resource.loading(emptyList()))
