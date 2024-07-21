@@ -1,21 +1,31 @@
 package daily.dayo.presentation.view.dialog
 
 import android.annotation.SuppressLint
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -26,6 +36,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -33,15 +44,27 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import daily.dayo.domain.model.Comment
+import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Event
+import daily.dayo.presentation.common.Resource
+import daily.dayo.presentation.common.Status
+import daily.dayo.presentation.common.TimeChangerUtil
+import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Gray1_313131
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
@@ -51,10 +74,15 @@ import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.b1
 import daily.dayo.presentation.theme.b3
 import daily.dayo.presentation.theme.b5
+import daily.dayo.presentation.theme.b6
 import daily.dayo.presentation.theme.caption1
+import daily.dayo.presentation.theme.caption2
+import daily.dayo.presentation.theme.caption5
 import daily.dayo.presentation.view.CharacterLimitOutlinedTextField
 import daily.dayo.presentation.view.FilledRoundedCornerButton
 import daily.dayo.presentation.view.NoRippleIconButton
+import daily.dayo.presentation.view.RoundImageView
+import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.PostViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -64,11 +92,19 @@ fun CommentBottomSheetDialog(
     onClickClose: () -> Unit,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
     postId: Int,
-    postViewModel: PostViewModel
+    postViewModel: PostViewModel,
+    accountViewModel: AccountViewModel = hiltViewModel()
 ) {
     // todo 뒤로 가기 버튼 처리하기
+    val currentMemberId = accountViewModel.getCurrentUserInfo().memberId
     val scrollState = rememberScrollState()
     val commentText = remember { mutableStateOf(TextFieldValue("")) }
+
+    // show comments
+    val postComments by postViewModel.postComment.observeAsState(initial = Resource.loading(emptyList()))
+    LaunchedEffect(Unit) {
+        postViewModel.requestPostComment(postId)
+    }
 
     // create comment
     val onClickPostComment: (String) -> Unit = { contents -> postViewModel.requestCreatePostComment(contents, postId) }
@@ -94,7 +130,7 @@ fun CommentBottomSheetDialog(
                         .wrapContentHeight()
                 ) {
                     CommentBottomSheetDialogTitle(onClickClose)
-                    CommentBottomSheetDialogContent(true, scrollState)
+                    CommentBottomSheetDialogContent(postComments, currentMemberId, scrollState)
                     CommentTextField(commentText, onClickPostComment)
                 }
             }
@@ -130,41 +166,159 @@ private fun CommentBottomSheetDialogTitle(onClickClose: () -> Unit) {
 }
 
 @Composable
-private fun CommentBottomSheetDialogContent(isEmpty: Boolean, scrollState: ScrollState) {
-    if (isEmpty) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .background(White_FFFFFF)
-                .fillMaxWidth()
-                .fillMaxHeight(0.5f)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_comment_empty),
-                contentDescription = "empty",
-                tint = Color.Unspecified
-            )
-            Text(
-                text = stringResource(id = R.string.post_comment_empty),
-                style = MaterialTheme.typography.b3.copy(Gray3_9FA5AE),
-                modifier = Modifier.padding(top = 12.dp, bottom = 2.dp)
-            )
-            Text(
-                text = stringResource(id = R.string.post_comment_empty_description),
-                style = MaterialTheme.typography.caption1.copy(Gray4_C5CAD2)
-            )
-        }
-    } else {
-        LazyColumn(
-            modifier = Modifier
-                .background(White_FFFFFF)
-                .fillMaxWidth()
-                .fillMaxHeight(0.5f)
-        ) {
+private fun CommentBottomSheetDialogContent(
+    postComments: Resource<List<Comment>>,
+    currentMemberId: String?,
+    scrollState: ScrollState
+) {
+    with(postComments) {
+        when (status) {
+            Status.SUCCESS -> {
+                data?.let { postComments ->
+                    if (postComments.isEmpty()) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier
+                                .background(White_FFFFFF)
+                                .fillMaxWidth()
+                                .fillMaxHeight(0.5f)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_comment_empty),
+                                contentDescription = "empty",
+                                tint = Color.Unspecified
+                            )
+                            Text(
+                                text = stringResource(id = R.string.post_comment_empty),
+                                style = MaterialTheme.typography.b3.copy(Gray3_9FA5AE),
+                                modifier = Modifier.padding(top = 12.dp, bottom = 2.dp)
+                            )
+                            Text(
+                                text = stringResource(id = R.string.post_comment_empty_description),
+                                style = MaterialTheme.typography.caption1.copy(Gray4_C5CAD2)
+                            )
+                        }
+                    } else {
+                        LazyColumn(
+                            contentPadding = PaddingValues(horizontal = 18.dp),
+                            modifier = Modifier
+                                .background(White_FFFFFF)
+                                .fillMaxWidth()
+                                .fillMaxHeight(0.5f)
+                        ) {
+                            items(postComments) { comment ->
+                                CommentView(comment, currentMemberId == comment.memberId)
+                            }
+                        }
+                    }
+                }
+            }
 
+            Status.LOADING -> {}
+            Status.ERROR -> {}
         }
     }
+}
+
+@Composable
+private fun CommentView(comment: Comment, isMine: Boolean) {
+    Column(
+        modifier = Modifier
+            .padding(bottom = 12.dp)
+            .background(color = White_FFFFFF, shape = RoundedCornerShape(20.dp))
+            .border(width = 1.dp, color = Gray7_F6F6F7, shape = RoundedCornerShape(20.dp))
+            .padding(12.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            val placeholder = AppCompatResources.getDrawable(LocalContext.current, R.drawable.ic_profile_default_user_profile)
+            RoundImageView(context = LocalContext.current,
+                imageUrl = "${BuildConfig.BASE_URL}/images/${comment.profileImg}",
+                imageDescription = "comment profile image",
+                placeholder = placeholder,
+                customModifier = Modifier
+                    .clip(CircleShape)
+                    .size(36.dp)
+                    .clickableSingle(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = { }
+                    )
+            )
+            Column {
+                Row(
+                    modifier = Modifier.padding(bottom = 2.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // comment nickname
+                    Text(text = comment.nickname,
+                        style = MaterialTheme.typography.caption2.copy(Gray1_313131),
+                        modifier = Modifier
+                            .clickableSingle(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() },
+                                onClick = { }
+                            )
+                    )
+                    Spacer(Modifier.width(4.dp))
+
+                    // comment create time
+                    Text(
+                        text = TimeChangerUtil.timeChange(context = LocalContext.current, time = comment.createTime),
+                        style = MaterialTheme.typography.caption5.copy(Gray4_C5CAD2)
+                    )
+                }
+
+                // comment content
+                Spacer(Modifier.height(2.dp))
+                Text(
+                    text = comment.contents,
+                    style = MaterialTheme.typography.b6.copy(Gray1_313131)
+                )
+                Spacer(Modifier.height(4.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                ) {
+                    // reply comment
+                    Image(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_comment),
+                        colorFilter = ColorFilter.tint(Gray3_9FA5AE),
+                        modifier = Modifier
+                            .size(12.dp)
+                            .clickableSingle(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() },
+                                onClick = { }
+                            ),
+                        contentDescription = "reply comment",
+                    )
+                    Spacer(Modifier.width(3.dp))
+                    Text(
+                        text = "답글쓰기",
+                        style = MaterialTheme.typography.b6.copy(Gray3_9FA5AE),
+                    )
+
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = "•",
+                        style = MaterialTheme.typography.b6.copy(Gray3_9FA5AE)
+                    )
+                    Spacer(Modifier.width(8.dp))
+
+                    // comment option
+                    Text(
+                        text = if (isMine) "삭제" else "신고",
+                        style = MaterialTheme.typography.b6.copy(Gray3_9FA5AE)
+                    )
+                }
+            }
+        }
+    }
+
 }
 
 @Composable
@@ -220,7 +374,7 @@ private fun PreviewCommentBottomSheetDialogTitle() {
 @Preview
 @Composable
 private fun PreviewCommentBottomSheetDialogContent() {
-    CommentBottomSheetDialogContent(isEmpty = false, rememberScrollState())
+    CommentBottomSheetDialogContent(Resource.success(emptyList()), "", rememberScrollState())
 }
 
 @Preview
@@ -228,4 +382,10 @@ private fun PreviewCommentBottomSheetDialogContent() {
 private fun PreviewCommentTextField() {
     val commentText = remember { mutableStateOf(TextFieldValue("")) }
     CommentTextField(commentText, { })
+}
+
+@Preview
+@Composable
+private fun PreviewCommentView() {
+    CommentView(comment = Comment(0, "댓글", "2024-07-20T00:58:45.162925", "", "닉네임", ""), true)
 }

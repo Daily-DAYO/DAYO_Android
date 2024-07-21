@@ -372,7 +372,7 @@ fun FeedPostView(
             sheetState = bottomSheetState,
             onClickClose = { coroutineScope.launch { bottomSheetState.hide() } },
             postId = post.postId!!,
-            postViewModel = postViewModel,
+            postViewModel = postViewModel
         )
     }
 }
