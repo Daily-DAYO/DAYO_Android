@@ -34,6 +34,7 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -44,6 +45,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,8 +56,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -80,7 +89,6 @@ import daily.dayo.presentation.theme.b6
 import daily.dayo.presentation.theme.caption1
 import daily.dayo.presentation.theme.caption2
 import daily.dayo.presentation.theme.caption5
-import daily.dayo.presentation.view.CharacterLimitOutlinedTextField
 import daily.dayo.presentation.view.FilledRoundedCornerButton
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.RoundImageView
@@ -101,6 +109,7 @@ fun CommentBottomSheetDialog(
     val currentMemberId = accountViewModel.getCurrentUserInfo().memberId
     val scrollState = rememberScrollState()
     val commentText = remember { mutableStateOf(TextFieldValue("")) }
+    val showMentionSearchView = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     BackHandler(enabled = sheetState.isVisible) {
         coroutineScope.launch {
@@ -138,8 +147,9 @@ fun CommentBottomSheetDialog(
                         .wrapContentHeight()
                 ) {
                     CommentBottomSheetDialogTitle(onClickClose)
+                    if (showMentionSearchView.value) CommentMentionSearchView()
                     CommentBottomSheetDialogContent(postComments, currentMemberId, scrollState)
-                    CommentTextField(commentText, onClickPostComment)
+                    CommentTextField(commentText, showMentionSearchView, onClickPostComment)
                 }
             }
         }
@@ -330,7 +340,12 @@ private fun CommentView(comment: Comment, isMine: Boolean) {
 }
 
 @Composable
-private fun CommentTextField(commentText: MutableState<TextFieldValue>, onClickPostComment: (String) -> Unit) {
+private fun CommentMentionSearchView() {
+
+}
+
+@Composable
+private fun CommentTextField(commentText: MutableState<TextFieldValue>, showMentionSearchView: MutableState<Boolean>, onClickPostComment: (String) -> Unit) {
     Row(
         modifier = Modifier
             .background(White_FFFFFF)
@@ -339,13 +354,27 @@ private fun CommentTextField(commentText: MutableState<TextFieldValue>, onClickP
             .padding(horizontal = 18.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CharacterLimitOutlinedTextField(
-            value = commentText,
-            placeholder = "댓글을 남겨주세요",
-            maxLength = 150,
+        var commentInfo by remember { mutableStateOf<List<Pair<String, Boolean>>>(emptyList()) }
+        OutlinedTextField(
+            value = commentText.value,
+            onValueChange = { inputText ->
+                commentText.value = inputText
+
+                // search user
+                commentInfo = inputText.text.split(" ").map {
+                    it to it.startsWith("@")
+                }
+            },
+            visualTransformation = MentionVisualTransformation(commentInfo),
+            modifier = Modifier
+                .wrapContentHeight()
+                .padding(end = 8.dp)
+                .padding(top = 12.dp, bottom = 16.dp),
+            textStyle = MaterialTheme.typography.b6,
+            placeholder = { Text(text = "댓글을 남겨주세요", style = MaterialTheme.typography.b6.copy(Gray4_C5CAD2)) },
             singleLine = true,
-            cornerSize = 12.dp,
-            outlinedTextFieldColors = OutlinedTextFieldDefaults.colors(
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = Gray7_F6F6F7,
                 unfocusedContainerColor = Gray7_F6F6F7,
                 focusedBorderColor = White_FFFFFF,
@@ -353,12 +382,9 @@ private fun CommentTextField(commentText: MutableState<TextFieldValue>, onClickP
                 cursorColor = PrimaryGreen_23C882,
                 focusedPlaceholderColor = Gray4_C5CAD2,
                 unfocusedPlaceholderColor = Gray4_C5CAD2
-            ),
-            modifier = Modifier
-                .wrapContentHeight()
-                .padding(end = 8.dp)
-                .padding(top = 12.dp, bottom = 16.dp)
+            )
         )
+
         FilledRoundedCornerButton(
             onClick = { onClickPostComment(commentText.value.text) },
             label = "남기기",
@@ -369,6 +395,26 @@ private fun CommentTextField(commentText: MutableState<TextFieldValue>, onClickP
                 .padding(top = 12.dp, bottom = 16.dp),
             contentModifier = Modifier.wrapContentWidth()
         )
+    }
+}
+
+class MentionVisualTransformation(
+    private val commentInfo: List<Pair<String, Boolean>>
+) : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        val annotatedString = buildAnnotatedString {
+            commentInfo.forEach {
+                if (it.second) {
+                    withStyle(style = SpanStyle(color = PrimaryGreen_23C882)) {
+                        append(it.first)
+                    }
+                } else {
+                    append(it.first)
+                }
+                append(" ")
+            }
+        }
+        return TransformedText(annotatedString, OffsetMapping.Identity)
     }
 }
 
@@ -389,7 +435,8 @@ private fun PreviewCommentBottomSheetDialogContent() {
 @Composable
 private fun PreviewCommentTextField() {
     val commentText = remember { mutableStateOf(TextFieldValue("")) }
-    CommentTextField(commentText, { })
+    val showMentionSearchView = remember { mutableStateOf(false) }
+    CommentTextField(commentText, showMentionSearchView, { })
 }
 
 @Preview
