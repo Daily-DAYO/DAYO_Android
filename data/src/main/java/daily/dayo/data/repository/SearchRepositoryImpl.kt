@@ -6,6 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import daily.dayo.data.datasource.local.SharedManager
 import daily.dayo.data.datasource.remote.search.SearchApiService
+import daily.dayo.data.datasource.remote.search.SearchFollowUserPagingSource
 import daily.dayo.data.datasource.remote.search.SearchUserPagingSource
 import daily.dayo.data.datasource.remote.search.SearchPagingSource
 import daily.dayo.domain.model.NetworkResponse
@@ -54,6 +55,10 @@ class SearchRepositoryImpl @Inject constructor(
 
     override fun requestSearchUser(nickname: String): Flow<PagingData<SearchUser>> = Pager(PagingConfig(pageSize = SEARCH_PAGE_SIZE)) {
         SearchUserPagingSource(searchApiService, SEARCH_PAGE_SIZE, nickname)
+    }.flow
+
+    override fun requestSearchFollowUser(nickname: String): Flow<PagingData<SearchUser>> = Pager(PagingConfig(pageSize = SEARCH_PAGE_SIZE)) {
+        SearchFollowUserPagingSource(searchApiService, SEARCH_PAGE_SIZE, nickname)
     }.flow
 
     override fun requestSearchTag(tag: String): Flow<PagingData<Search>> = Pager(PagingConfig(pageSize = SEARCH_PAGE_SIZE)) {

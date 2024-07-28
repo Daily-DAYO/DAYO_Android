@@ -32,6 +32,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -68,7 +69,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import daily.dayo.domain.model.Comment
+import daily.dayo.domain.model.SearchUser
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Event
@@ -94,6 +98,7 @@ import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.PostViewModel
+import daily.dayo.presentation.viewmodel.SearchViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -104,7 +109,8 @@ fun CommentBottomSheetDialog(
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
     postId: Int,
     postViewModel: PostViewModel,
-    accountViewModel: AccountViewModel = hiltViewModel()
+    accountViewModel: AccountViewModel = hiltViewModel(),
+    searchViewModel: SearchViewModel = hiltViewModel()
 ) {
     val currentMemberId = accountViewModel.getCurrentUserInfo().memberId
     val scrollState = rememberScrollState()
@@ -126,9 +132,21 @@ fun CommentBottomSheetDialog(
     // create comment
     val onClickPostComment: (String) -> Unit = { contents -> postViewModel.requestCreatePostComment(contents, postId) }
     val postCommentCreateSuccess by postViewModel.postCommentCreateSuccess.observeAsState(Event(true))
-    if (postCommentCreateSuccess.peekContent()) {
+    if (postCommentCreateSuccess.getContentIfNotHandled() == true) {
         postViewModel.requestPostComment(postId)
         commentText.value = TextFieldValue("")
+    }
+
+    // search follow user
+    val userResults = searchViewModel.searchFollowUserList.collectAsLazyPagingItems()
+    val userSearchKeyword = remember { mutableStateOf("") }
+    LaunchedEffect(userSearchKeyword) {
+        searchViewModel.searchFollowUser(userSearchKeyword.value)
+    }
+
+    val onClickFollowUser: (String) -> Unit = {
+        userSearchKeyword.value = it
+        showMentionSearchView.value = false
     }
 
     ModalBottomSheetLayout(
@@ -147,9 +165,9 @@ fun CommentBottomSheetDialog(
                         .wrapContentHeight()
                 ) {
                     CommentBottomSheetDialogTitle(onClickClose)
-                    if (showMentionSearchView.value) CommentMentionSearchView()
                     CommentBottomSheetDialogContent(postComments, currentMemberId, scrollState)
-                    CommentTextField(commentText, showMentionSearchView, onClickPostComment)
+                    if (showMentionSearchView.value) CommentMentionSearchView(userResults, onClickFollowUser)
+                    CommentTextField(commentText, userSearchKeyword, showMentionSearchView, onClickPostComment)
                 }
             }
         }
@@ -340,12 +358,56 @@ private fun CommentView(comment: Comment, isMine: Boolean) {
 }
 
 @Composable
-private fun CommentMentionSearchView() {
-
+private fun CommentMentionSearchView(userResults: LazyPagingItems<SearchUser>, onClickFollowUser: (String) -> Unit) {
+    val placeholder = AppCompatResources.getDrawable(LocalContext.current, R.drawable.ic_profile_default_user_profile)
+    LazyColumn(
+        modifier = Modifier
+            .background(White_FFFFFF)
+            .fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 18.dp)
+    ) {
+        items(userResults.itemCount) { index ->
+            userResults[index]?.let { user ->
+                Row(
+                    modifier = Modifier
+                        .background(White_FFFFFF)
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .clickableSingle(
+                            indication = rememberRipple(bounded = false, radius = 8.dp, color = Gray7_F6F6F7),
+                            interactionSource = remember { MutableInteractionSource() },
+                            onClick = { onClickFollowUser(user.nickname) }
+                        ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RoundImageView(context = LocalContext.current,
+                        imageUrl = "${BuildConfig.BASE_URL}/images/${user.profileImg}",
+                        imageDescription = "search users profile image",
+                        placeholder = placeholder,
+                        customModifier = Modifier
+                            .clip(CircleShape)
+                            .size(24.dp)
+                            .clickableSingle(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = { }
+                            )
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(text = user.nickname)
+                }
+            }
+        }
+    }
 }
 
 @Composable
-private fun CommentTextField(commentText: MutableState<TextFieldValue>, showMentionSearchView: MutableState<Boolean>, onClickPostComment: (String) -> Unit) {
+private fun CommentTextField(
+    commentText: MutableState<TextFieldValue>,
+    userSearchKeyword: MutableState<String>,
+    showMentionSearchView: MutableState<Boolean>,
+    onClickPostComment: (String) -> Unit
+) {
     Row(
         modifier = Modifier
             .background(White_FFFFFF)
@@ -355,17 +417,38 @@ private fun CommentTextField(commentText: MutableState<TextFieldValue>, showMent
         verticalAlignment = Alignment.CenterVertically
     ) {
         var commentInfo by remember { mutableStateOf<List<Pair<String, Boolean>>>(emptyList()) }
+        val nearestMentionPosition = remember { mutableStateOf<Int?>(null) }
         OutlinedTextField(
             value = commentText.value,
             onValueChange = { inputText ->
                 commentText.value = inputText
 
-                // search user
+                // search user keyword
+                val position = commentText.value.selection.min
+                if (commentText.value.text.isEmpty() || commentText.value.text[position - 1] == ' ') {
+                    nearestMentionPosition.value = null
+                    showMentionSearchView.value = false
+                } else if (commentText.value.text[position - 1] == '@') {
+                    nearestMentionPosition.value = position
+                    showMentionSearchView.value = true
+                }
+
+                nearestMentionPosition.value?.let { start ->
+                    if (start < commentText.value.text.length) {
+                        userSearchKeyword.value = if (commentText.value.text.substring(start).length == commentText.value.text.length) {
+                            commentText.value.text.substring(start)
+                        } else {
+                            commentText.value.text.substring(start).substringBefore(" ")
+                        }
+                    }
+                }
+
+                // mention user
                 commentInfo = inputText.text.split(" ").map {
                     it to it.startsWith("@")
                 }
             },
-            visualTransformation = MentionVisualTransformation(commentInfo),
+            visualTransformation = MentionVisualTransformation(commentText.value.text, commentInfo),
             modifier = Modifier
                 .wrapContentHeight()
                 .padding(end = 8.dp)
@@ -399,6 +482,7 @@ private fun CommentTextField(commentText: MutableState<TextFieldValue>, showMent
 }
 
 class MentionVisualTransformation(
+    private val originalText: String,
     private val commentInfo: List<Pair<String, Boolean>>
 ) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
@@ -411,7 +495,7 @@ class MentionVisualTransformation(
                 } else {
                     append(it.first)
                 }
-                append(" ")
+                if (originalText.length > this.length) append(" ")
             }
         }
         return TransformedText(annotatedString, OffsetMapping.Identity)
@@ -436,7 +520,8 @@ private fun PreviewCommentBottomSheetDialogContent() {
 private fun PreviewCommentTextField() {
     val commentText = remember { mutableStateOf(TextFieldValue("")) }
     val showMentionSearchView = remember { mutableStateOf(false) }
-    CommentTextField(commentText, showMentionSearchView, { })
+    val keyword = remember { mutableStateOf("") }
+    CommentTextField(commentText, keyword, showMentionSearchView, { })
 }
 
 @Preview
