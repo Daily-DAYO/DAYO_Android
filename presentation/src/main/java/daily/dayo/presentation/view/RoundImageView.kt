@@ -10,18 +10,22 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import coil.size.Size
 
 @Composable
 fun RoundImageView(
     context: Context,
-    imageUrl: String,
+    imageUrl: Any,
     imageDescription: String = "default image view",
     roundSize: Dp = 8.dp,
-    customModifier: Modifier = Modifier
+    customModifier: Modifier = Modifier,
+    imageSize: Size = Size.ORIGINAL
 ) {
     AsyncImage(
         model = ImageRequest.Builder(context)
+            .crossfade(true)
             .data(imageUrl)
+            .size(imageSize)
             .build(),
         contentDescription = imageDescription,
         contentScale = ContentScale.Crop,
