@@ -56,13 +56,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -135,21 +131,24 @@ fun CommentBottomSheetDialog(
     }
 
     // search follow user
-    val nearestMentionPosition = remember { mutableStateOf<Int?>(null) }
     val userResults = searchViewModel.searchFollowUserList.collectAsLazyPagingItems()
     val userSearchKeyword = remember { mutableStateOf("") }
     LaunchedEffect(userSearchKeyword.value) {
         searchViewModel.searchFollowUser(userSearchKeyword.value)
     }
     val onClickFollowUser: (String) -> Unit = { mentionUser ->
-        nearestMentionPosition.value?.let { start ->
+        with(commentText.value) {
+            val cursorPos = selection.start
+            val start = text.lastIndexOf('@', cursorPos - 1)
+            val end = text.indexOf(' ', start).let { if (it == -1) text.length else it }
+            val newText = text.replaceRange(start, end, "@$mentionUser ")
             commentText.value = TextFieldValue(
-                annotatedString = setAnnotatedCommentString(commentText, mentionUser, start),
-                selection = TextRange(start + mentionUser.length + 1)
+                text = newText,
+                selection = TextRange(start + mentionUser.length + 2)
             )
+            userSearchKeyword.value = ""
+            showMentionSearchView.value = false
         }
-        userSearchKeyword.value = mentionUser
-        showMentionSearchView.value = false
     }
 
     ModalBottomSheetLayout(
@@ -170,42 +169,11 @@ fun CommentBottomSheetDialog(
                     CommentBottomSheetDialogTitle(onClickClose)
                     CommentBottomSheetDialogContent(postComments, currentMemberId, scrollState)
                     if (showMentionSearchView.value) CommentMentionSearchView(userResults, onClickFollowUser)
-                    CommentTextField(commentText, userSearchKeyword, nearestMentionPosition, showMentionSearchView, onClickPostComment)
+                    CommentTextField(commentText, userSearchKeyword, showMentionSearchView, onClickPostComment)
                 }
             }
         }
     ) {}
-}
-
-private fun setAnnotatedCommentString(commentText: MutableState<TextFieldValue>, mentionUser: String, start: Int): AnnotatedString {
-    return buildAnnotatedString {
-        var currentIndex = 0
-        commentText.value.annotatedString.spanStyles.forEach { spanStyleRange ->
-            // 스타일이 적용되지 않은 부분 추가
-            if (currentIndex < spanStyleRange.start) {
-                append(commentText.value.annotatedString.substring(currentIndex, spanStyleRange.start))
-            }
-
-            // 스타일이 적용된 부분 추가
-            withStyle(spanStyleRange.item) {
-                append(commentText.value.annotatedString.substring(spanStyleRange.start, spanStyleRange.end))
-            }
-            currentIndex = spanStyleRange.end
-        }
-
-        // 마지막 스타일 적용되지 않은 부분 추가
-        if (currentIndex < commentText.value.annotatedString.length) {
-            append(commentText.value.annotatedString.substring(currentIndex, commentText.value.annotatedString.length))
-        }
-
-        // 새로운 스타일의 텍스트 추가
-        withStyle(SpanStyle(color = PrimaryGreen_23C882)) {
-            append("$mentionUser ")
-        }
-
-        // 남은 기존 텍스트 추가
-        append(commentText.value.annotatedString.substring(start))
-    }
 }
 
 @Composable
@@ -392,7 +360,10 @@ private fun CommentView(comment: Comment, isMine: Boolean) {
 }
 
 @Composable
-private fun CommentMentionSearchView(userResults: LazyPagingItems<SearchUser>, onClickFollowUser: (String) -> Unit) {
+private fun CommentMentionSearchView(
+    userResults: LazyPagingItems<SearchUser>,
+    onClickFollowUser: (String) -> Unit
+) {
     val placeholder = AppCompatResources.getDrawable(LocalContext.current, R.drawable.ic_profile_default_user_profile)
     LazyColumn(
         modifier = Modifier
@@ -439,7 +410,6 @@ private fun CommentMentionSearchView(userResults: LazyPagingItems<SearchUser>, o
 private fun CommentTextField(
     commentText: MutableState<TextFieldValue>,
     userSearchKeyword: MutableState<String>,
-    nearestMentionPosition: MutableState<Int?>,
     showMentionSearchView: MutableState<Boolean>,
     onClickPostComment: (String) -> Unit
 ) {
@@ -455,27 +425,26 @@ private fun CommentTextField(
             value = commentText.value,
             onValueChange = { inputText ->
                 commentText.value = inputText
+                val cursorPos = commentText.value.selection.start
+                val text = inputText.text
 
-                // search user keyword
-                val position = commentText.value.selection.min
-                if (commentText.value.text.isEmpty() || position < 1) {
-                    nearestMentionPosition.value = null
-                    showMentionSearchView.value = false
-                } else if (commentText.value.text[position - 1] == ' ') {
-                    nearestMentionPosition.value = null
-                    showMentionSearchView.value = false
-                } else if (commentText.value.text[position - 1] == '@') {
-                    nearestMentionPosition.value = position
+                // 언급할 사용자 검색
+                if (cursorPos > 0 && text.getOrNull(cursorPos - 1) == '@') {
                     showMentionSearchView.value = true
-                }
-
-                nearestMentionPosition.value?.let { start ->
-                    if (start < commentText.value.text.length) {
-                        userSearchKeyword.value = if (commentText.value.text.substring(start).length == commentText.value.text.length) {
-                            commentText.value.text.substring(start)
+                    userSearchKeyword.value = ""
+                } else {
+                    // 커서 위치가 @와 공백 사이에 있을 경우에만 검색 키워드를 업데이트
+                    val start = text.lastIndexOf('@', cursorPos - 1)
+                    if (start >= 0) {
+                        val end = text.indexOf(' ', start).let { if (it == -1) text.length else it }
+                        if (cursorPos <= end) {
+                            userSearchKeyword.value = text.substring(start + 1, cursorPos)
+                            showMentionSearchView.value = userSearchKeyword.value.isNotEmpty()
                         } else {
-                            commentText.value.text.substring(start).substringBefore(" ")
+                            showMentionSearchView.value = false
                         }
+                    } else {
+                        showMentionSearchView.value = false
                     }
                 }
             },
