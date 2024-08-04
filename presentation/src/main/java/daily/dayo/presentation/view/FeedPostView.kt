@@ -121,6 +121,18 @@ fun FeedPostView(
         stringResource(id = R.string.report_post_reason_other),
     )
 
+    val onClickComment: (Int) -> Unit = { postId ->
+        coroutineScope.launch { bottomSheetState.show() }
+        bottomSheetContent {
+            CommentBottomSheetDialog(
+                sheetState = bottomSheetState,
+                onClickClose = { coroutineScope.launch { bottomSheetState.hide() } },
+                postId = postId,
+                postViewModel = postViewModel
+            )
+        }
+    }
+
     Column(modifier = modifier) {
         // publisher info
         Row(
@@ -275,7 +287,7 @@ fun FeedPostView(
                     .clickableSingle(
                         indication = rememberRipple(bounded = false),
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = { coroutineScope.launch { bottomSheetState.show() } }
+                        onClick = { onClickComment(post.postId!!) }
                     ),
                 contentDescription = "comment",
             )
@@ -364,15 +376,6 @@ fun FeedPostView(
                 .imePadding()
                 .clip(RoundedCornerShape(28.dp))
                 .background(White_FFFFFF)
-        )
-    }
-
-    bottomSheetContent {
-        CommentBottomSheetDialog(
-            sheetState = bottomSheetState,
-            onClickClose = { coroutineScope.launch { bottomSheetState.hide() } },
-            postId = post.postId!!,
-            postViewModel = postViewModel
         )
     }
 }
