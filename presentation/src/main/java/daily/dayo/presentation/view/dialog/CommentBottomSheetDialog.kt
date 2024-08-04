@@ -37,10 +37,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
@@ -107,6 +109,7 @@ fun CommentBottomSheetDialog(
     onClickClose: () -> Unit,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
     postId: Int,
+    snackBarHostState: SnackbarHostState,
     postViewModel: PostViewModel,
     accountViewModel: AccountViewModel = hiltViewModel(),
     searchViewModel: SearchViewModel = hiltViewModel()
@@ -126,6 +129,23 @@ fun CommentBottomSheetDialog(
     val postComments by postViewModel.postComment.observeAsState(initial = Resource.loading(emptyList()))
     LaunchedEffect(postId) {
         postViewModel.requestPostComment(postId)
+    }
+
+    // comment option
+    val onClickDelete: (Int) -> Unit = { commentId ->
+        postViewModel.requestDeletePostComment(commentId)
+    }
+    val postCommentDeleteSuccess by postViewModel.postCommentDeleteSuccess.observeAsState(Event(false))
+    if (postCommentDeleteSuccess.getContentIfNotHandled() == true) {
+        postViewModel.requestPostComment(postId)
+        SideEffect {
+            coroutineScope.launch {
+                snackBarHostState.showSnackbar("댓글이 삭제되었어요.")
+            }
+        }
+    }
+    val onClickReport: (Int) -> Unit = { commentId ->
+
     }
 
     // search follow user
@@ -155,7 +175,7 @@ fun CommentBottomSheetDialog(
     val onClickPostComment: (String) -> Unit = { contents ->
         postViewModel.requestCreatePostComment(contents, postId, mentionedMemberIds)
     }
-    val postCommentCreateSuccess by postViewModel.postCommentCreateSuccess.observeAsState(Event(true))
+    val postCommentCreateSuccess by postViewModel.postCommentCreateSuccess.observeAsState(Event(false))
     if (postCommentCreateSuccess.getContentIfNotHandled() == true) {
         postViewModel.requestPostComment(postId)
         commentText.value = TextFieldValue("")
@@ -178,7 +198,7 @@ fun CommentBottomSheetDialog(
                         .wrapContentHeight()
                 ) {
                     CommentBottomSheetDialogTitle(onClickClose)
-                    CommentBottomSheetDialogContent(postComments, currentMemberId, scrollState)
+                    CommentBottomSheetDialogContent(postComments, onClickDelete, onClickReport, currentMemberId, scrollState)
                     if (showMentionSearchView.value) CommentMentionSearchView(userResults, onClickFollowUser)
                     CommentTextField(commentText, userSearchKeyword, showMentionSearchView, onClickPostComment)
                 }
@@ -217,6 +237,8 @@ private fun CommentBottomSheetDialogTitle(onClickClose: () -> Unit) {
 @Composable
 private fun CommentBottomSheetDialogContent(
     postComments: Resource<List<Comment>>,
+    onClickDelete: (Int) -> Unit,
+    onClickReport: (Int) -> Unit,
     currentMemberId: String?,
     scrollState: ScrollState
 ) {
@@ -257,7 +279,12 @@ private fun CommentBottomSheetDialogContent(
                                 .fillMaxHeight(0.5f)
                         ) {
                             items(postComments) { comment ->
-                                CommentView(comment, currentMemberId == comment.memberId)
+                                CommentView(
+                                    comment = comment,
+                                    isMine = currentMemberId == comment.memberId,
+                                    onClickDelete = onClickDelete,
+                                    onClickReport = onClickReport
+                                )
                             }
                         }
                     }
@@ -300,7 +327,12 @@ fun getAnnotatedCommentContent(content: String, mentionList: List<MentionUser>):
 }
 
 @Composable
-private fun CommentView(comment: Comment, isMine: Boolean) {
+private fun CommentView(
+    comment: Comment,
+    isMine: Boolean,
+    onClickDelete: (Int) -> Unit,
+    onClickReport: (Int) -> Unit
+) {
     Column(
         modifier = Modifier
             .padding(bottom = 12.dp)
@@ -390,7 +422,17 @@ private fun CommentView(comment: Comment, isMine: Boolean) {
                     // comment option
                     Text(
                         text = if (isMine) "삭제" else "신고",
-                        style = MaterialTheme.typography.b6.copy(Gray3_9FA5AE)
+                        style = MaterialTheme.typography.b6.copy(Gray3_9FA5AE),
+                        modifier = Modifier
+                            .clickableSingle(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() },
+                                onClick = if (isMine) {
+                                    { onClickDelete(comment.commentId) }
+                                } else {
+                                    { onClickReport(comment.commentId) }
+                                }
+                            ),
                     )
                 }
             }
@@ -530,11 +572,16 @@ private fun PreviewCommentBottomSheetDialogTitle() {
 @Preview
 @Composable
 private fun PreviewCommentBottomSheetDialogContent() {
-    CommentBottomSheetDialogContent(Resource.success(emptyList()), "", rememberScrollState())
+    CommentBottomSheetDialogContent(Resource.success(emptyList()), {}, {}, "", rememberScrollState())
 }
 
 @Preview
 @Composable
 private fun PreviewCommentView() {
-    CommentView(comment = Comment(0, "댓글", "2024-07-20T00:58:45.162925", "", emptyList(), "닉네임", ""), true)
+    CommentView(
+        comment = Comment(0, "댓글", "2024-07-20T00:58:45.162925", "", emptyList(), "닉네임", ""),
+        onClickReport = {},
+        onClickDelete = {},
+        isMine = true
+    )
 }
