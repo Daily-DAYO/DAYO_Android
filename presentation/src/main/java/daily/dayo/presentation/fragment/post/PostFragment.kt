@@ -483,7 +483,8 @@ class PostFragment : Fragment() {
                 LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
                 postViewModel.requestCreatePostComment(
                     contents = currentCommentEditText,
-                    postId = args.postId
+                    postId = args.postId,
+                    mentionedUser = emptyList()
                 )
                 with(binding.etPostCommentDescription) {
                     setText("")

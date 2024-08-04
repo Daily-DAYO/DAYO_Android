@@ -13,3 +13,9 @@ data class Comments(
     val count: Int,
     val data: List<Comment>
 )
+
+data class MentionUser(
+    val memberId: String,
+    val nickname: String,
+    val order: Int
+)
