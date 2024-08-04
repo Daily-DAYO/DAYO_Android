@@ -128,6 +128,7 @@ fun FeedPostView(
                 sheetState = bottomSheetState,
                 onClickClose = { coroutineScope.launch { bottomSheetState.hide() } },
                 postId = postId,
+                snackBarHostState = snackBarHostState,
                 postViewModel = postViewModel
             )
         }
