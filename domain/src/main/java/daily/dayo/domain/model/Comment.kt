@@ -5,6 +5,7 @@ data class Comment(
     val contents: String,
     val createTime: String,
     val memberId: String,
+    val mentionList: List<MentionUser>,
     val nickname: String,
     val profileImg: String
 )

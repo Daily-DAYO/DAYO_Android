@@ -57,15 +57,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import daily.dayo.domain.model.Comment
+import daily.dayo.domain.model.MentionUser
 import daily.dayo.domain.model.SearchUser
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
@@ -119,7 +124,7 @@ fun CommentBottomSheetDialog(
 
     // show comments
     val postComments by postViewModel.postComment.observeAsState(initial = Resource.loading(emptyList()))
-    LaunchedEffect(Unit) {
+    LaunchedEffect(postId) {
         postViewModel.requestPostComment(postId)
     }
 
@@ -265,6 +270,35 @@ private fun CommentBottomSheetDialogContent(
     }
 }
 
+fun getAnnotatedCommentContent(content: String, mentionList: List<MentionUser>): AnnotatedString = buildAnnotatedString {
+    var currentIndex = 0
+    val regex = "@\\w+".toRegex()
+
+    regex.findAll(content).forEach { matchResult ->
+        val start = matchResult.range.first
+        val end = matchResult.range.last + 1
+        val matchedText = matchResult.value
+
+        // 일반 텍스트 추가
+        append(content.substring(currentIndex, start))
+
+        // 매칭된 @유저명
+        if (mentionList.any { it.nickname == matchedText.substring(1) }) {
+            withStyle(style = SpanStyle(color = PrimaryGreen_23C882)) {
+                append(matchedText)
+            }
+        } else {
+            append(matchedText)
+        }
+        currentIndex = end
+    }
+
+    // 남은 일반 텍스트 추가
+    if (currentIndex < content.length) {
+        append(content.substring(currentIndex))
+    }
+}
+
 @Composable
 private fun CommentView(comment: Comment, isMine: Boolean) {
     Column(
@@ -318,7 +352,7 @@ private fun CommentView(comment: Comment, isMine: Boolean) {
                 // comment content
                 Spacer(Modifier.height(2.dp))
                 Text(
-                    text = comment.contents,
+                    text = getAnnotatedCommentContent(comment.contents, comment.mentionList),
                     style = MaterialTheme.typography.b6.copy(Gray1_313131)
                 )
                 Spacer(Modifier.height(4.dp))
@@ -502,5 +536,5 @@ private fun PreviewCommentBottomSheetDialogContent() {
 @Preview
 @Composable
 private fun PreviewCommentView() {
-    CommentView(comment = Comment(0, "댓글", "2024-07-20T00:58:45.162925", "", "닉네임", ""), true)
+    CommentView(comment = Comment(0, "댓글", "2024-07-20T00:58:45.162925", "", emptyList(), "닉네임", ""), true)
 }

@@ -12,6 +12,7 @@ fun CommentDto.toComment(): Comment = Comment(
     contents = contents,
     createTime = createTime,
     memberId = memberId,
+    mentionList = mentionList.map { it.toMentionUser() },
     nickname = nickname,
     profileImg = profileImg
 )
