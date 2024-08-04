@@ -43,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -122,33 +123,38 @@ fun CommentBottomSheetDialog(
         postViewModel.requestPostComment(postId)
     }
 
-    // create comment
-    val onClickPostComment: (String) -> Unit = { contents -> postViewModel.requestCreatePostComment(contents, postId) }
-    val postCommentCreateSuccess by postViewModel.postCommentCreateSuccess.observeAsState(Event(true))
-    if (postCommentCreateSuccess.getContentIfNotHandled() == true) {
-        postViewModel.requestPostComment(postId)
-        commentText.value = TextFieldValue("")
-    }
-
     // search follow user
     val userResults = searchViewModel.searchFollowUserList.collectAsLazyPagingItems()
     val userSearchKeyword = remember { mutableStateOf("") }
+    val mentionedMemberIds = remember { mutableStateListOf<SearchUser>() }
     LaunchedEffect(userSearchKeyword.value) {
         searchViewModel.searchFollowUser(userSearchKeyword.value)
     }
-    val onClickFollowUser: (String) -> Unit = { mentionUser ->
+    val onClickFollowUser: (SearchUser) -> Unit = { mentionUser ->
         with(commentText.value) {
             val cursorPos = selection.start
             val start = text.lastIndexOf('@', cursorPos - 1)
             val end = text.indexOf(' ', start).let { if (it == -1) text.length else it }
-            val newText = text.replaceRange(start, end, "@$mentionUser ")
+            val newText = text.replaceRange(start, end, "@${mentionUser.nickname} ")
             commentText.value = TextFieldValue(
                 text = newText,
-                selection = TextRange(start + mentionUser.length + 2)
+                selection = TextRange(start + mentionUser.nickname.length + 2)
             )
             userSearchKeyword.value = ""
+            mentionedMemberIds.add(mentionUser)
             showMentionSearchView.value = false
         }
+    }
+
+    // create comment
+    val onClickPostComment: (String) -> Unit = { contents ->
+        postViewModel.requestCreatePostComment(contents, postId, mentionedMemberIds)
+    }
+    val postCommentCreateSuccess by postViewModel.postCommentCreateSuccess.observeAsState(Event(true))
+    if (postCommentCreateSuccess.getContentIfNotHandled() == true) {
+        postViewModel.requestPostComment(postId)
+        commentText.value = TextFieldValue("")
+        mentionedMemberIds.clear()
     }
 
     ModalBottomSheetLayout(
@@ -362,7 +368,7 @@ private fun CommentView(comment: Comment, isMine: Boolean) {
 @Composable
 private fun CommentMentionSearchView(
     userResults: LazyPagingItems<SearchUser>,
-    onClickFollowUser: (String) -> Unit
+    onClickFollowUser: (SearchUser) -> Unit
 ) {
     val placeholder = AppCompatResources.getDrawable(LocalContext.current, R.drawable.ic_profile_default_user_profile)
     LazyColumn(
@@ -381,7 +387,7 @@ private fun CommentMentionSearchView(
                         .clickableSingle(
                             indication = rememberRipple(bounded = false, radius = 8.dp, color = Gray7_F6F6F7),
                             interactionSource = remember { MutableInteractionSource() },
-                            onClick = { onClickFollowUser(user.nickname) }
+                            onClick = { onClickFollowUser(user) }
                         ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {

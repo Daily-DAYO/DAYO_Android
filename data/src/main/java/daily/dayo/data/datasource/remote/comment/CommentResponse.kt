@@ -23,8 +23,19 @@ data class CommentDto(
     val createTime: String,
     @SerializedName("memberId")
     val memberId: String,
+    @SerializedName("mentionList")
+    val mentionList: List<MentionUserDto>,
     @SerializedName("nickname")
     val nickname: String,
     @SerializedName("profileImg")
     val profileImg: String
+)
+
+data class MentionUserDto(
+    @SerializedName("memberId")
+    val memberId: String,
+    @SerializedName("nickname")
+    val nickname: String,
+    @SerializedName("order")
+    val order: Int
 )

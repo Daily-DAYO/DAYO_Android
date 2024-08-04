@@ -11,8 +11,10 @@ import daily.dayo.domain.model.BookmarkPostResponse
 import daily.dayo.domain.model.Comment
 import daily.dayo.domain.model.LikePostResponse
 import daily.dayo.domain.model.LikeUser
+import daily.dayo.domain.model.MentionUser
 import daily.dayo.domain.model.NetworkResponse
 import daily.dayo.domain.model.PostDetail
+import daily.dayo.domain.model.SearchUser
 import daily.dayo.domain.usecase.block.RequestBlockMemberUseCase
 import daily.dayo.domain.usecase.bookmark.RequestBookmarkPostUseCase
 import daily.dayo.domain.usecase.bookmark.RequestDeleteBookmarkPostUseCase
@@ -31,6 +33,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -207,8 +210,27 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun requestCreatePostComment(contents: String, postId: Int) = viewModelScope.launch {
-        requestCreatePostCommentUseCase(contents = contents, postId = postId)?.let { ApiResponse ->
+    fun requestCreatePostComment(contents: String, postId: Int, mentionedUser: List<SearchUser>) = viewModelScope.launch {
+        val pattern = Pattern.compile("@\\w+")
+        val matcher = pattern.matcher(contents)
+        val usernames = mutableListOf<String>()
+        while (matcher.find()) {
+            usernames.add(matcher.group())
+        }
+
+        val mentionList = mentionedUser.filter { user ->
+            usernames.any {
+                user.nickname == it.drop(1)
+            }
+        }.map {
+            MentionUser(
+                memberId = it.memberId,
+                nickname = it.nickname,
+                order = 0 // 요구사항 변경으로 사용하지 않음
+            )
+        }
+
+        requestCreatePostCommentUseCase(contents = contents, postId = postId, mentionList = mentionList).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     _postCommentCreateSuccess.postValue(Event(true))
