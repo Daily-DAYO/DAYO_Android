@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -49,6 +50,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -99,6 +101,7 @@ import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.PostViewModel
+import daily.dayo.presentation.viewmodel.ReportViewModel
 import daily.dayo.presentation.viewmodel.SearchViewModel
 import kotlinx.coroutines.launch
 
@@ -112,7 +115,8 @@ fun CommentBottomSheetDialog(
     snackBarHostState: SnackbarHostState,
     postViewModel: PostViewModel,
     accountViewModel: AccountViewModel = hiltViewModel(),
-    searchViewModel: SearchViewModel = hiltViewModel()
+    searchViewModel: SearchViewModel = hiltViewModel(),
+    reportViewModel: ReportViewModel = hiltViewModel()
 ) {
     val currentMemberId = accountViewModel.getCurrentUserInfo().memberId
     val scrollState = rememberScrollState()
@@ -144,8 +148,11 @@ fun CommentBottomSheetDialog(
             }
         }
     }
+    var showReportDialog by remember { mutableStateOf(false) }
+    var reportCommentId by remember { mutableStateOf<Int?>(null) }
     val onClickReport: (Int) -> Unit = { commentId ->
-
+        reportCommentId = commentId
+        showReportDialog = true
     }
 
     // search follow user
@@ -204,7 +211,22 @@ fun CommentBottomSheetDialog(
                 }
             }
         }
-    ) {}
+    ) {
+        reportCommentId?.let { id ->
+            if (showReportDialog) {
+                CommentReportDialog(
+                    onClickClose = { showReportDialog = !showReportDialog },
+                    onClickConfirm = {
+                        reportViewModel.requestSaveCommentReport(it, id)
+                        showReportDialog = !showReportDialog
+                        coroutineScope.launch {
+                            snackBarHostState.showSnackbar("신고가 접수되었어요.")
+                        }
+                    }
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -560,6 +582,32 @@ private fun CommentTextField(
             contentModifier = Modifier.wrapContentWidth()
         )
     }
+}
+
+@Composable
+private fun CommentReportDialog(onClickClose: () -> Unit, onClickConfirm: (String) -> Unit) {
+    val reportReasons = arrayListOf(
+        stringResource(id = R.string.report_comment_reason_1),
+        stringResource(id = R.string.report_comment_reason_2),
+        stringResource(id = R.string.report_comment_reason_3),
+        stringResource(id = R.string.report_comment_reason_4),
+        stringResource(id = R.string.report_comment_reason_5),
+        stringResource(id = R.string.report_comment_reason_6),
+        stringResource(id = R.string.report_comment_reason_7)
+    )
+
+    RadioButtonDialog(
+        title = stringResource(id = R.string.report_comment_title),
+        description = stringResource(id = R.string.report_comment_description),
+        radioItems = reportReasons,
+        onClickCancel = onClickClose,
+        onClickConfirm = onClickConfirm,
+        modifier = Modifier
+            .height(400.dp)
+            .imePadding()
+            .clip(RoundedCornerShape(28.dp))
+            .background(White_FFFFFF)
+    )
 }
 
 // Preview
