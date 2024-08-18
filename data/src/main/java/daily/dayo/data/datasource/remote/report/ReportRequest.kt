@@ -20,5 +20,5 @@ data class CreateReportCommentRequest(
     @SerializedName("comment")
     val comment: String,
     @SerializedName("commentId")
-    val commentId: Int
+    val commentId: Long
 )

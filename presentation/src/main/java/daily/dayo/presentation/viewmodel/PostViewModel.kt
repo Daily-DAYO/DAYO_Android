@@ -226,8 +226,7 @@ class PostViewModel @Inject constructor(
         }.map {
             MentionUser(
                 memberId = it.memberId,
-                nickname = it.nickname,
-                order = 0 // 요구사항 변경으로 사용하지 않음
+                nickname = it.nickname
             )
         }
     }
@@ -249,7 +248,7 @@ class PostViewModel @Inject constructor(
 
     fun requestCreatePostCommentReply(comment: Comment, contents: String, postId: Int, mentionedUser: List<SearchUser>) = viewModelScope.launch {
         val mentionList = getMentionList(contents, mentionedUser).toMutableList()
-        mentionList.add(MentionUser(comment.memberId, comment.nickname, 0)) // 언급된 유저 리스트에 원본 댓글 유저 추가 (팔로우하지 않아도 답글 가능하므로 따로 추가)
+        mentionList.add(MentionUser(comment.memberId, comment.nickname)) // 언급된 유저 리스트에 원본 댓글 유저 추가 (팔로우하지 않아도 답글 가능하므로 따로 추가)
         requestCreatePostCommentReplyUseCase(commentId = comment.commentId, contents = contents, postId = postId, mentionList = mentionList).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
@@ -263,7 +262,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun requestDeletePostComment(commentId: Int) = viewModelScope.launch {
+    fun requestDeletePostComment(commentId: Long) = viewModelScope.launch {
         requestDeletePostCommentUseCase(commentId)?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {

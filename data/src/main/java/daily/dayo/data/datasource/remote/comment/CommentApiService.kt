@@ -20,5 +20,5 @@ interface CommentApiService {
 
     /*** v1 ***/
     @POST("/api/v1/comments/delete/{commentId}")
-    suspend fun requestDeletePostComment(@Path("commentId") commentId: Int): NetworkResponse<Void>
+    suspend fun requestDeletePostComment(@Path("commentId") commentId: Long): NetworkResponse<Void>
 }

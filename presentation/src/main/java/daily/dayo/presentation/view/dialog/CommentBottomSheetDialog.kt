@@ -134,7 +134,7 @@ fun CommentBottomSheetDialog(
     }
 
     // comment option
-    val onClickDelete: (Int) -> Unit = { commentId ->
+    val onClickDelete: (Long) -> Unit = { commentId ->
         postViewModel.requestDeletePostComment(commentId)
     }
     val postCommentDeleteSuccess by postViewModel.postCommentDeleteSuccess.observeAsState(Event(false))
@@ -147,8 +147,8 @@ fun CommentBottomSheetDialog(
         }
     }
     var showReportDialog by remember { mutableStateOf(false) }
-    var reportCommentId by remember { mutableStateOf<Int?>(null) }
-    val onClickReport: (Int) -> Unit = { commentId ->
+    var reportCommentId by remember { mutableStateOf<Long?>(null) }
+    val onClickReport: (Long) -> Unit = { commentId ->
         reportCommentId = commentId
         showReportDialog = true
     }
@@ -284,8 +284,8 @@ private fun CommentBottomSheetDialogTitle(onClickClose: () -> Unit) {
 private fun CommentBottomSheetDialogContent(
     postComments: Resource<List<Comment>>,
     onClickReply: (Comment?) -> Unit,
-    onClickDelete: (Int) -> Unit,
-    onClickReport: (Int) -> Unit,
+    onClickDelete: (Long) -> Unit,
+    onClickReport: (Long) -> Unit,
     currentMemberId: String?,
     scrollState: ScrollState
 ) {
@@ -379,8 +379,8 @@ private fun CommentView(
     comment: Comment,
     isMine: Boolean,
     onClickReply: (Comment) -> Unit,
-    onClickDelete: (Int) -> Unit,
-    onClickReport: (Int) -> Unit
+    onClickDelete: (Long) -> Unit,
+    onClickReport: (Long) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -699,7 +699,7 @@ private fun PreviewCommentBottomSheetDialogContent() {
 @Composable
 private fun PreviewCommentView() {
     CommentView(
-        comment = Comment(0, "댓글", "2024-07-20T00:58:45.162925", "", emptyList(), "닉네임", ""),
+        comment = Comment(0, "", "닉네임", "", "댓글", "2024-07-20T00:58:45.162925", emptyList(), emptyList()),
         onClickReply = {},
         onClickReport = {},
         onClickDelete = {},

@@ -35,7 +35,7 @@ class ReportRepositoryImpl @Inject constructor(
 
     override suspend fun requestSaveCommentReport(
         comment: String,
-        commentId: Int
+        commentId: Long
     ): NetworkResponse<Void> =
         reportApiService.requestSaveCommentReport(
             CreateReportCommentRequest(
