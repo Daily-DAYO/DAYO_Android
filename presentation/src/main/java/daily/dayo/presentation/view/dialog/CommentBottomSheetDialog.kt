@@ -84,6 +84,7 @@ import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.TimeChangerUtil
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray7_F6F6F7
@@ -95,10 +96,12 @@ import daily.dayo.presentation.theme.b5
 import daily.dayo.presentation.theme.b6
 import daily.dayo.presentation.theme.caption1
 import daily.dayo.presentation.theme.caption2
+import daily.dayo.presentation.theme.caption4
 import daily.dayo.presentation.theme.caption5
 import daily.dayo.presentation.view.FilledRoundedCornerButton
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.RoundImageView
+import daily.dayo.presentation.view.TextButton
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.PostViewModel
 import daily.dayo.presentation.viewmodel.ReportViewModel
@@ -123,11 +126,6 @@ fun CommentBottomSheetDialog(
     val commentText = remember { mutableStateOf(TextFieldValue("")) }
     val showMentionSearchView = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    BackHandler(enabled = sheetState.isVisible) {
-        coroutineScope.launch {
-            sheetState.hide()
-        }
-    }
 
     // show comments
     val postComments by postViewModel.postComment.observeAsState(initial = Resource.loading(emptyList()))
@@ -179,14 +177,39 @@ fun CommentBottomSheetDialog(
     }
 
     // create comment
-    val onClickPostComment: (String) -> Unit = { contents ->
-        postViewModel.requestCreatePostComment(contents, postId, mentionedMemberIds)
+    val replyCommentState = remember { mutableStateOf<Comment?>(null) } // origin comment
+    val onClickPostComment: () -> Unit = {
+        if (replyCommentState.value == null) postViewModel.requestCreatePostComment(commentText.value.text, postId, mentionedMemberIds)
+        else postViewModel.requestCreatePostCommentReply(replyCommentState.value!!, commentText.value.text, postId, mentionedMemberIds)
+    }
+    val onClickReply: (Comment?) -> Unit = { reply ->
+        // set reply comment state
+        replyCommentState.value = reply
+
+        // show mention user name
+        val replyUsername = "@${replyCommentState.value?.nickname} "
+        commentText.value = TextFieldValue(text = replyUsername, selection = TextRange(replyUsername.length))
+    }
+
+    // clear comment
+    val clearComment = {
+        commentText.value = TextFieldValue("")
+        replyCommentState.value = null
+        mentionedMemberIds.clear()
+    }
+    val onClickCancelReply: () -> Unit = {
+        clearComment()
     }
     val postCommentCreateSuccess by postViewModel.postCommentCreateSuccess.observeAsState(Event(false))
     if (postCommentCreateSuccess.getContentIfNotHandled() == true) {
+        clearComment()
         postViewModel.requestPostComment(postId)
-        commentText.value = TextFieldValue("")
-        mentionedMemberIds.clear()
+    }
+    BackHandler(enabled = sheetState.isVisible) {
+        coroutineScope.launch {
+            clearComment()
+            sheetState.hide()
+        }
     }
 
     ModalBottomSheetLayout(
@@ -205,9 +228,10 @@ fun CommentBottomSheetDialog(
                         .wrapContentHeight()
                 ) {
                     CommentBottomSheetDialogTitle(onClickClose)
-                    CommentBottomSheetDialogContent(postComments, onClickDelete, onClickReport, currentMemberId, scrollState)
+                    CommentBottomSheetDialogContent(postComments, onClickReply, onClickDelete, onClickReport, currentMemberId, scrollState)
                     if (showMentionSearchView.value) CommentMentionSearchView(userResults, onClickFollowUser)
-                    CommentTextField(commentText, userSearchKeyword, showMentionSearchView, onClickPostComment)
+                    if (replyCommentState.value != null) CommentReplyView(replyCommentState, onClickCancelReply)
+                    CommentTextField(commentText, replyCommentState, userSearchKeyword, showMentionSearchView, onClickPostComment)
                 }
             }
         }
@@ -259,6 +283,7 @@ private fun CommentBottomSheetDialogTitle(onClickClose: () -> Unit) {
 @Composable
 private fun CommentBottomSheetDialogContent(
     postComments: Resource<List<Comment>>,
+    onClickReply: (Comment?) -> Unit,
     onClickDelete: (Int) -> Unit,
     onClickReport: (Int) -> Unit,
     currentMemberId: String?,
@@ -304,6 +329,7 @@ private fun CommentBottomSheetDialogContent(
                                 CommentView(
                                     comment = comment,
                                     isMine = currentMemberId == comment.memberId,
+                                    onClickReply = onClickReply,
                                     onClickDelete = onClickDelete,
                                     onClickReport = onClickReport
                                 )
@@ -352,6 +378,7 @@ fun getAnnotatedCommentContent(content: String, mentionList: List<MentionUser>):
 private fun CommentView(
     comment: Comment,
     isMine: Boolean,
+    onClickReply: (Comment) -> Unit,
     onClickDelete: (Int) -> Unit,
     onClickReport: (Int) -> Unit
 ) {
@@ -376,7 +403,7 @@ private fun CommentView(
                     .clickableSingle(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
-                        onClick = { }
+                        onClick = { } // todo onClickProfile
                     )
             )
             Column {
@@ -391,7 +418,7 @@ private fun CommentView(
                             .clickableSingle(
                                 indication = null,
                                 interactionSource = remember { MutableInteractionSource() },
-                                onClick = { }
+                                onClick = { } // todo onClickProfile
                             )
                     )
                     Spacer(Modifier.width(4.dp))
@@ -416,25 +443,27 @@ private fun CommentView(
                     modifier = Modifier.padding(vertical = 8.dp)
                 ) {
                     // reply comment
-                    Image(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_comment),
-                        colorFilter = ColorFilter.tint(Gray3_9FA5AE),
-                        modifier = Modifier
-                            .size(12.dp)
-                            .clickableSingle(
-                                indication = null,
-                                interactionSource = remember { MutableInteractionSource() },
-                                onClick = { }
-                            ),
-                        contentDescription = "reply comment",
-                    )
-                    Spacer(Modifier.width(3.dp))
-                    Text(
-                        text = "답글쓰기",
-                        style = MaterialTheme.typography.b6.copy(Gray3_9FA5AE),
-                    )
+                    Row(
+                        modifier = Modifier.clickableSingle(
+                            indication = rememberRipple(bounded = false, radius = 8.dp),
+                            interactionSource = remember { MutableInteractionSource() },
+                            onClick = { onClickReply(comment) }),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_comment),
+                            colorFilter = ColorFilter.tint(Gray3_9FA5AE),
+                            modifier = Modifier.size(12.dp),
+                            contentDescription = "reply comment",
+                        )
+                        Spacer(Modifier.width(3.dp))
+                        Text(
+                            text = "답글쓰기",
+                            style = MaterialTheme.typography.b6.copy(Gray3_9FA5AE),
+                        )
+                        Spacer(Modifier.width(8.dp))
+                    }
 
-                    Spacer(Modifier.width(8.dp))
                     Text(
                         text = "•",
                         style = MaterialTheme.typography.b6.copy(Gray3_9FA5AE)
@@ -447,7 +476,7 @@ private fun CommentView(
                         style = MaterialTheme.typography.b6.copy(Gray3_9FA5AE),
                         modifier = Modifier
                             .clickableSingle(
-                                indication = null,
+                                indication = rememberRipple(bounded = false, radius = 8.dp),
                                 interactionSource = remember { MutableInteractionSource() },
                                 onClick = if (isMine) {
                                     { onClickDelete(comment.commentId) }
@@ -511,11 +540,42 @@ private fun CommentMentionSearchView(
 }
 
 @Composable
+private fun CommentReplyView(replyCommentState: MutableState<Comment?>, onClickCancelReply: () -> Unit) {
+    replyCommentState.value?.let { replyComment ->
+        Row(
+            modifier = Modifier
+                .background(color = Color(0xFFE8EAEE))
+                .fillMaxWidth()
+                .padding(vertical = 8.dp, horizontal = 18.dp)
+                .wrapContentHeight(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = replyComment.nickname,
+                style = MaterialTheme.typography.caption4.copy(Gray1_313131)
+            )
+            Text(
+                text = "님에게 답글 남기는 중",
+                style = MaterialTheme.typography.caption4.copy(Color(0xFF50545B))
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            TextButton(
+                onClick = onClickCancelReply,
+                text = "취소",
+                textStyle = MaterialTheme.typography.caption4.copy(Gray2_767B83)
+            )
+        }
+    }
+}
+
+@Composable
 private fun CommentTextField(
     commentText: MutableState<TextFieldValue>,
+    replyCommentState: MutableState<Comment?>,
     userSearchKeyword: MutableState<String>,
     showMentionSearchView: MutableState<Boolean>,
-    onClickPostComment: (String) -> Unit
+    onClickPostComment: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -528,7 +588,19 @@ private fun CommentTextField(
         OutlinedTextField(
             value = commentText.value,
             onValueChange = { inputText ->
-                commentText.value = inputText
+                if (replyCommentState.value != null) {
+                    val replyUsername = "@${replyCommentState.value?.nickname} "
+                    if (inputText.selection.start < replyUsername.length) {
+                        commentText.value = commentText.value.copy(
+                            selection = TextRange(replyUsername.length)
+                        )
+                    } else {
+                        commentText.value = inputText
+                    }
+                } else {
+                    commentText.value = inputText
+                }
+
                 val cursorPos = commentText.value.selection.start
                 val text = inputText.text
 
@@ -572,7 +644,7 @@ private fun CommentTextField(
         )
 
         FilledRoundedCornerButton(
-            onClick = { onClickPostComment(commentText.value.text) },
+            onClick = { onClickPostComment() },
             label = "남기기",
             textStyle = MaterialTheme.typography.b5,
             modifier = Modifier
@@ -620,7 +692,7 @@ private fun PreviewCommentBottomSheetDialogTitle() {
 @Preview
 @Composable
 private fun PreviewCommentBottomSheetDialogContent() {
-    CommentBottomSheetDialogContent(Resource.success(emptyList()), {}, {}, "", rememberScrollState())
+    CommentBottomSheetDialogContent(Resource.success(emptyList()), {}, {}, {}, "", rememberScrollState())
 }
 
 @Preview
@@ -628,6 +700,7 @@ private fun PreviewCommentBottomSheetDialogContent() {
 private fun PreviewCommentView() {
     CommentView(
         comment = Comment(0, "댓글", "2024-07-20T00:58:45.162925", "", emptyList(), "닉네임", ""),
+        onClickReply = {},
         onClickReport = {},
         onClickDelete = {},
         isMine = true

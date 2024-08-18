@@ -9,6 +9,9 @@ import retrofit2.http.Path
 interface CommentApiService {
 
     /*** v2 ***/
+    @GET("/api/v2/comments/{postId}")
+    suspend fun requestPostComment(@Path("postId") postId: Int): NetworkResponse<ListAllCommentResponse>
+
     @POST("/api/v2/comments")
     suspend fun requestCreatePostComment(@Body body: CreateCommentRequest): NetworkResponse<CreateCommentResponse>
 
@@ -16,10 +19,6 @@ interface CommentApiService {
     suspend fun requestCreatePostCommentReply(@Body body: CreateCommentReplyRequest): NetworkResponse<CreateCommentResponse>
 
     /*** v1 ***/
-    @GET("/api/v1/comments/{postId}")
-    suspend fun requestPostComment(@Path("postId") postId: Int): NetworkResponse<ListAllCommentResponse>
-
     @POST("/api/v1/comments/delete/{commentId}")
     suspend fun requestDeletePostComment(@Path("commentId") commentId: Int): NetworkResponse<Void>
-
 }
