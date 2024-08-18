@@ -230,7 +230,7 @@ fun CommentBottomSheetDialog(
                     CommentBottomSheetDialogTitle(onClickClose)
                     CommentBottomSheetDialogContent(postComments, onClickReply, onClickDelete, onClickReport, currentMemberId, scrollState)
                     if (showMentionSearchView.value) CommentMentionSearchView(userResults, onClickFollowUser)
-                    if (replyCommentState.value != null) CommentReplyView(replyCommentState, onClickCancelReply)
+                    if (replyCommentState.value != null) CommentReplyDescriptionView(replyCommentState, onClickCancelReply)
                     CommentTextField(commentText, replyCommentState, userSearchKeyword, showMentionSearchView, onClickPostComment)
                 }
             }
@@ -326,13 +326,43 @@ private fun CommentBottomSheetDialogContent(
                                 .fillMaxHeight(0.5f)
                         ) {
                             items(postComments) { comment ->
-                                CommentView(
-                                    comment = comment,
-                                    isMine = currentMemberId == comment.memberId,
-                                    onClickReply = onClickReply,
-                                    onClickDelete = onClickDelete,
-                                    onClickReport = onClickReport
-                                )
+                                Column(
+                                    modifier = Modifier
+                                        .padding(bottom = 8.dp)
+                                        .background(color = White_FFFFFF, shape = RoundedCornerShape(20.dp))
+                                        .border(width = 1.dp, color = Gray7_F6F6F7, shape = RoundedCornerShape(20.dp))
+                                        .padding(12.dp),
+                                    horizontalAlignment = Alignment.End,
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    // comment
+                                    CommentView(
+                                        comment = comment,
+                                        isMine = currentMemberId == comment.memberId,
+                                        onClickReply = onClickReply,
+                                        onClickDelete = onClickDelete,
+                                        onClickReport = onClickReport,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .wrapContentHeight()
+                                    )
+                                    // reply
+                                    // TODO 답글의 답글 리스트는 논의 후 구현하기
+                                    comment.replyList.forEach { reply ->
+                                        CommentView(
+                                            comment = reply,
+                                            isMine = currentMemberId == reply.memberId,
+                                            onClickReply = onClickReply,
+                                            onClickDelete = onClickDelete,
+                                            onClickReport = onClickReport,
+                                            modifier = Modifier
+                                                .background(color = Gray7_F6F6F7, shape = RoundedCornerShape(20.dp))
+                                                .padding(12.dp)
+                                                .fillMaxWidth(0.9f)
+                                                .wrapContentHeight()
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -380,16 +410,11 @@ private fun CommentView(
     isMine: Boolean,
     onClickReply: (Comment) -> Unit,
     onClickDelete: (Long) -> Unit,
-    onClickReport: (Long) -> Unit
+    onClickReport: (Long) -> Unit,
+    modifier: Modifier
 ) {
     Column(
-        modifier = Modifier
-            .padding(bottom = 12.dp)
-            .background(color = White_FFFFFF, shape = RoundedCornerShape(20.dp))
-            .border(width = 1.dp, color = Gray7_F6F6F7, shape = RoundedCornerShape(20.dp))
-            .padding(12.dp)
-            .fillMaxWidth()
-            .wrapContentHeight()
+        modifier = modifier,
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             val placeholder = AppCompatResources.getDrawable(LocalContext.current, R.drawable.ic_profile_default_user_profile)
@@ -440,7 +465,7 @@ private fun CommentView(
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    modifier = Modifier.padding(top = 4.dp)
                 ) {
                     // reply comment
                     Row(
@@ -540,7 +565,7 @@ private fun CommentMentionSearchView(
 }
 
 @Composable
-private fun CommentReplyView(replyCommentState: MutableState<Comment?>, onClickCancelReply: () -> Unit) {
+private fun CommentReplyDescriptionView(replyCommentState: MutableState<Comment?>, onClickCancelReply: () -> Unit) {
     replyCommentState.value?.let { replyComment ->
         Row(
             modifier = Modifier
@@ -703,6 +728,13 @@ private fun PreviewCommentView() {
         onClickReply = {},
         onClickReport = {},
         onClickDelete = {},
-        isMine = true
+        isMine = true,
+        modifier = Modifier
+            .padding(bottom = 12.dp)
+            .background(color = White_FFFFFF, shape = RoundedCornerShape(20.dp))
+            .border(width = 1.dp, color = Gray7_F6F6F7, shape = RoundedCornerShape(20.dp))
+            .padding(12.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
     )
 }
