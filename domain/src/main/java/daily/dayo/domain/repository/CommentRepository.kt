@@ -7,6 +7,7 @@ import daily.dayo.domain.model.NetworkResponse
 interface CommentRepository {
 
     suspend fun requestCreatePostComment(contents: String, postId: Int, mentionList: List<MentionUser>): NetworkResponse<Int>
+    suspend fun requestCreatePostCommentReply(commentId: Int, contents: String, postId: Int, mentionList: List<MentionUser>): NetworkResponse<Int>
     suspend fun requestPostComment(postId: Int): NetworkResponse<Comments>
     suspend fun requestDeletePostComment(commentId: Int): NetworkResponse<Void>
 }

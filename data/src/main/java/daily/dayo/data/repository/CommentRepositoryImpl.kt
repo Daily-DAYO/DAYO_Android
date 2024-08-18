@@ -1,6 +1,7 @@
 package daily.dayo.data.repository
 
 import daily.dayo.data.datasource.remote.comment.CommentApiService
+import daily.dayo.data.datasource.remote.comment.CreateCommentReplyRequest
 import daily.dayo.data.datasource.remote.comment.CreateCommentRequest
 import daily.dayo.data.datasource.remote.comment.MentionUserDto
 import daily.dayo.data.mapper.toComments
@@ -31,6 +32,31 @@ class CommentRepositoryImpl @Inject constructor(
         when (val response =
             commentApiService.requestCreatePostComment(
                 CreateCommentRequest(
+                    contents = contents,
+                    postId = postId,
+                    mentionList = mentionList.map {
+                        MentionUserDto(
+                            memberId = it.memberId, nickname = it.nickname, order = it.order
+                        )
+                    }
+                )
+            )) {
+            is NetworkResponse.Success -> NetworkResponse.Success(response.body?.commentId)
+            is NetworkResponse.NetworkError -> response
+            is NetworkResponse.ApiError -> response
+            is NetworkResponse.UnknownError -> response
+        }
+
+    override suspend fun requestCreatePostCommentReply(
+        commentId: Int,
+        contents: String,
+        postId: Int,
+        mentionList: List<MentionUser>
+    ): NetworkResponse<Int> =
+        when (val response =
+            commentApiService.requestCreatePostCommentReply(
+                CreateCommentReplyRequest(
+                    commentId = commentId,
                     contents = contents,
                     postId = postId,
                     mentionList = mentionList.map {

@@ -18,6 +18,7 @@ import daily.dayo.domain.model.SearchUser
 import daily.dayo.domain.usecase.block.RequestBlockMemberUseCase
 import daily.dayo.domain.usecase.bookmark.RequestBookmarkPostUseCase
 import daily.dayo.domain.usecase.bookmark.RequestDeleteBookmarkPostUseCase
+import daily.dayo.domain.usecase.comment.RequestCreatePostCommentReplyUseCase
 import daily.dayo.domain.usecase.comment.RequestCreatePostCommentUseCase
 import daily.dayo.domain.usecase.comment.RequestDeletePostCommentUseCase
 import daily.dayo.domain.usecase.comment.RequestPostCommentUseCase
@@ -46,6 +47,7 @@ class PostViewModel @Inject constructor(
     private val requestDeleteBookmarkPostUseCase: RequestDeleteBookmarkPostUseCase,
     private val requestPostCommentUseCase: RequestPostCommentUseCase,
     private val requestCreatePostCommentUseCase: RequestCreatePostCommentUseCase,
+    private val requestCreatePostCommentReplyUseCase: RequestCreatePostCommentReplyUseCase,
     private val requestDeletePostCommentUseCase: RequestDeletePostCommentUseCase,
     private val requestBlockMemberUseCase: RequestBlockMemberUseCase,
     private val requestPostLikeUsersUseCase: RequestPostLikeUsersUseCase
@@ -210,15 +212,14 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun requestCreatePostComment(contents: String, postId: Int, mentionedUser: List<SearchUser>) = viewModelScope.launch {
+    private fun getMentionList(contents: String, mentionedUser: List<SearchUser>): List<MentionUser> {
         val pattern = Pattern.compile("@\\w+")
         val matcher = pattern.matcher(contents)
         val usernames = mutableListOf<String>()
         while (matcher.find()) {
             usernames.add(matcher.group())
         }
-
-        val mentionList = mentionedUser.filter { user ->
+        return mentionedUser.filter { user ->
             usernames.any {
                 user.nickname == it.drop(1)
             }
@@ -229,8 +230,27 @@ class PostViewModel @Inject constructor(
                 order = 0 // 요구사항 변경으로 사용하지 않음
             )
         }
+    }
 
+    fun requestCreatePostComment(contents: String, postId: Int, mentionedUser: List<SearchUser>) = viewModelScope.launch {
+        val mentionList = getMentionList(contents, mentionedUser)
         requestCreatePostCommentUseCase(contents = contents, postId = postId, mentionList = mentionList).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _postCommentCreateSuccess.postValue(Event(true))
+                }
+
+                else -> {
+                    _postCommentCreateSuccess.postValue(Event(false))
+                }
+            }
+        }
+    }
+
+    fun requestCreatePostCommentReply(comment: Comment, contents: String, postId: Int, mentionedUser: List<SearchUser>) = viewModelScope.launch {
+        val mentionList = getMentionList(contents, mentionedUser).toMutableList()
+        mentionList.add(MentionUser(comment.memberId, comment.nickname, 0)) // 언급된 유저 리스트에 원본 댓글 유저 추가 (팔로우하지 않아도 답글 가능하므로 따로 추가)
+        requestCreatePostCommentReplyUseCase(commentId = comment.commentId, contents = contents, postId = postId, mentionList = mentionList).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     _postCommentCreateSuccess.postValue(Event(true))
