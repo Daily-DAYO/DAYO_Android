@@ -7,6 +7,6 @@ import javax.inject.Inject
 class RequestSaveCommentReportUseCase @Inject constructor(
     private val reportRepository: ReportRepository
 ) {
-    suspend operator fun invoke(comment: String, commentId: Int): NetworkResponse<Void> =
+    suspend operator fun invoke(comment: String, commentId: Long): NetworkResponse<Void> =
         reportRepository.requestSaveCommentReport(comment = comment, commentId = commentId)
 }

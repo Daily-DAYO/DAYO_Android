@@ -35,9 +35,7 @@ class CommentRepositoryImpl @Inject constructor(
                     contents = contents,
                     postId = postId,
                     mentionList = mentionList.map {
-                        MentionUserDto(
-                            memberId = it.memberId, nickname = it.nickname, order = it.order
-                        )
+                        MentionUserDto(memberId = it.memberId, nickname = it.nickname)
                     }
                 )
             )) {
@@ -48,7 +46,7 @@ class CommentRepositoryImpl @Inject constructor(
         }
 
     override suspend fun requestCreatePostCommentReply(
-        commentId: Int,
+        commentId: Long,
         contents: String,
         postId: Int,
         mentionList: List<MentionUser>
@@ -60,9 +58,7 @@ class CommentRepositoryImpl @Inject constructor(
                     contents = contents,
                     postId = postId,
                     mentionList = mentionList.map {
-                        MentionUserDto(
-                            memberId = it.memberId, nickname = it.nickname, order = it.order
-                        )
+                        MentionUserDto(memberId = it.memberId, nickname = it.nickname)
                     }
                 )
             )) {
@@ -72,6 +68,6 @@ class CommentRepositoryImpl @Inject constructor(
             is NetworkResponse.UnknownError -> response
         }
 
-    override suspend fun requestDeletePostComment(commentId: Int): NetworkResponse<Void> =
+    override suspend fun requestDeletePostComment(commentId: Long): NetworkResponse<Void> =
         commentApiService.requestDeletePostComment(commentId)
 }

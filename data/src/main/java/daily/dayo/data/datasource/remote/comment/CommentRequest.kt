@@ -13,7 +13,7 @@ data class CreateCommentRequest(
 
 data class CreateCommentReplyRequest(
     @SerializedName("commentId")
-    val commentId: Int,
+    val commentId: Long,
     @SerializedName("contents")
     val contents: String,
     @SerializedName("postId")

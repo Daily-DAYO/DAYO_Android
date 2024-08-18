@@ -9,12 +9,13 @@ import daily.dayo.domain.model.MentionUser
 
 fun CommentDto.toComment(): Comment = Comment(
     commentId = commentId,
+    memberId = memberId,
+    nickname = nickname,
+    profileImg = profileImg,
     contents = contents,
     createTime = createTime,
-    memberId = memberId,
+    replyList = replyList.map { it.toComment() },
     mentionList = mentionList.map { it.toMentionUser() },
-    nickname = nickname,
-    profileImg = profileImg
 )
 
 fun ListAllCommentResponse.toComments(): Comments {
@@ -27,7 +28,6 @@ fun ListAllCommentResponse.toComments(): Comments {
 fun MentionUserDto.toMentionUser(): MentionUser {
     return MentionUser(
         memberId = memberId,
-        nickname = nickname,
-        order = order
+        nickname = nickname
     )
 }
