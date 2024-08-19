@@ -177,17 +177,17 @@ fun CommentBottomSheetDialog(
     }
 
     // create comment
-    val replyCommentState = remember { mutableStateOf<Comment?>(null) } // origin comment
+    val replyCommentState = remember { mutableStateOf<Pair<Long, Comment>?>(null) } // parent comment Id, reply comment
     val onClickPostComment: () -> Unit = {
         if (replyCommentState.value == null) postViewModel.requestCreatePostComment(commentText.value.text, postId, mentionedMemberIds)
         else postViewModel.requestCreatePostCommentReply(replyCommentState.value!!, commentText.value.text, postId, mentionedMemberIds)
     }
-    val onClickReply: (Comment?) -> Unit = { reply ->
+    val onClickReply: (Pair<Long, Comment>?) -> Unit = { reply ->
         // set reply comment state
         replyCommentState.value = reply
 
         // show mention user name
-        val replyUsername = "@${replyCommentState.value?.nickname} "
+        val replyUsername = "@${replyCommentState.value?.second?.nickname} "
         commentText.value = TextFieldValue(text = replyUsername, selection = TextRange(replyUsername.length))
     }
 
@@ -283,7 +283,7 @@ private fun CommentBottomSheetDialogTitle(onClickClose: () -> Unit) {
 @Composable
 private fun CommentBottomSheetDialogContent(
     postComments: Resource<List<Comment>>,
-    onClickReply: (Comment?) -> Unit,
+    onClickReply: (Pair<Long, Comment>) -> Unit,
     onClickDelete: (Long) -> Unit,
     onClickReport: (Long) -> Unit,
     currentMemberId: String?,
@@ -337,6 +337,7 @@ private fun CommentBottomSheetDialogContent(
                                 ) {
                                     // comment
                                     CommentView(
+                                        parentCommentId = comment.commentId,
                                         comment = comment,
                                         isMine = currentMemberId == comment.memberId,
                                         onClickReply = onClickReply,
@@ -347,9 +348,9 @@ private fun CommentBottomSheetDialogContent(
                                             .wrapContentHeight()
                                     )
                                     // reply
-                                    // TODO 답글의 답글 리스트는 논의 후 구현하기
                                     comment.replyList.forEach { reply ->
                                         CommentView(
+                                            parentCommentId = comment.commentId,
                                             comment = reply,
                                             isMine = currentMemberId == reply.memberId,
                                             onClickReply = onClickReply,
@@ -406,9 +407,10 @@ fun getAnnotatedCommentContent(content: String, mentionList: List<MentionUser>):
 
 @Composable
 private fun CommentView(
+    parentCommentId: Long,
     comment: Comment,
     isMine: Boolean,
-    onClickReply: (Comment) -> Unit,
+    onClickReply: (Pair<Long, Comment>) -> Unit,
     onClickDelete: (Long) -> Unit,
     onClickReport: (Long) -> Unit,
     modifier: Modifier
@@ -472,7 +474,7 @@ private fun CommentView(
                         modifier = Modifier.clickableSingle(
                             indication = rememberRipple(bounded = false, radius = 8.dp),
                             interactionSource = remember { MutableInteractionSource() },
-                            onClick = { onClickReply(comment) }),
+                            onClick = { onClickReply(Pair(parentCommentId, comment)) }),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Image(
@@ -565,7 +567,7 @@ private fun CommentMentionSearchView(
 }
 
 @Composable
-private fun CommentReplyDescriptionView(replyCommentState: MutableState<Comment?>, onClickCancelReply: () -> Unit) {
+private fun CommentReplyDescriptionView(replyCommentState: MutableState<Pair<Long, Comment>?>, onClickCancelReply: () -> Unit) {
     replyCommentState.value?.let { replyComment ->
         Row(
             modifier = Modifier
@@ -577,7 +579,7 @@ private fun CommentReplyDescriptionView(replyCommentState: MutableState<Comment?
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = replyComment.nickname,
+                text = replyComment.second.nickname,
                 style = MaterialTheme.typography.caption4.copy(Gray1_313131)
             )
             Text(
@@ -597,7 +599,7 @@ private fun CommentReplyDescriptionView(replyCommentState: MutableState<Comment?
 @Composable
 private fun CommentTextField(
     commentText: MutableState<TextFieldValue>,
-    replyCommentState: MutableState<Comment?>,
+    replyCommentState: MutableState<Pair<Long, Comment>?>,
     userSearchKeyword: MutableState<String>,
     showMentionSearchView: MutableState<Boolean>,
     onClickPostComment: () -> Unit
@@ -614,7 +616,7 @@ private fun CommentTextField(
             value = commentText.value,
             onValueChange = { inputText ->
                 if (replyCommentState.value != null) {
-                    val replyUsername = "@${replyCommentState.value?.nickname} "
+                    val replyUsername = "@${replyCommentState.value?.second?.nickname} "
                     if (inputText.selection.start < replyUsername.length) {
                         commentText.value = commentText.value.copy(
                             selection = TextRange(replyUsername.length)
@@ -724,6 +726,7 @@ private fun PreviewCommentBottomSheetDialogContent() {
 @Composable
 private fun PreviewCommentView() {
     CommentView(
+        parentCommentId = 0,
         comment = Comment(0, "", "닉네임", "", "댓글", "2024-07-20T00:58:45.162925", emptyList(), emptyList()),
         onClickReply = {},
         onClickReport = {},

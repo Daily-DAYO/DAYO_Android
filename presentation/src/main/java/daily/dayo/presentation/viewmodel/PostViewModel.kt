@@ -246,10 +246,11 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun requestCreatePostCommentReply(comment: Comment, contents: String, postId: Int, mentionedUser: List<SearchUser>) = viewModelScope.launch {
+    fun requestCreatePostCommentReply(reply: Pair<Long, Comment>, contents: String, postId: Int, mentionedUser: List<SearchUser>) = viewModelScope.launch {
         val mentionList = getMentionList(contents, mentionedUser).toMutableList()
+        val (parentCommentId, comment) = reply
         mentionList.add(MentionUser(comment.memberId, comment.nickname)) // 언급된 유저 리스트에 원본 댓글 유저 추가 (팔로우하지 않아도 답글 가능하므로 따로 추가)
-        requestCreatePostCommentReplyUseCase(commentId = comment.commentId, contents = contents, postId = postId, mentionList = mentionList).let { ApiResponse ->
+        requestCreatePostCommentReplyUseCase(commentId = parentCommentId, contents = contents, postId = postId, mentionList = mentionList).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     _postCommentCreateSuccess.postValue(Event(true))
