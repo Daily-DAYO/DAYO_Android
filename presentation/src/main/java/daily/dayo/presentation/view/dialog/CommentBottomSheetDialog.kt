@@ -11,13 +11,13 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -29,15 +29,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.TextFieldDefaults.TextFieldDecorationBox
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -56,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -65,7 +69,9 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -87,6 +93,7 @@ import daily.dayo.presentation.theme.Gray1_313131
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
+import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.Gray7_F6F6F7
 import daily.dayo.presentation.theme.PrimaryGreen_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
@@ -98,7 +105,6 @@ import daily.dayo.presentation.theme.caption1
 import daily.dayo.presentation.theme.caption2
 import daily.dayo.presentation.theme.caption4
 import daily.dayo.presentation.theme.caption5
-import daily.dayo.presentation.view.FilledRoundedCornerButton
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TextButton
@@ -596,6 +602,7 @@ private fun CommentReplyDescriptionView(replyCommentState: MutableState<Pair<Lon
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun CommentTextField(
     commentText: MutableState<TextFieldValue>,
@@ -604,15 +611,23 @@ private fun CommentTextField(
     showMentionSearchView: MutableState<Boolean>,
     onClickPostComment: () -> Unit
 ) {
+    Spacer(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(Gray6_F0F1F3)
+    )
     Row(
         modifier = Modifier
             .background(White_FFFFFF)
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(horizontal = 18.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 18.dp)
+            .padding(top = 12.dp, bottom = 16.dp),
+        verticalAlignment = Alignment.Bottom
     ) {
-        OutlinedTextField(
+        val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+        BasicTextField(
             value = commentText.value,
             onValueChange = { inputText ->
                 if (replyCommentState.value != null) {
@@ -652,33 +667,39 @@ private fun CommentTextField(
                 }
             },
             modifier = Modifier
-                .wrapContentHeight()
                 .padding(end = 8.dp)
-                .padding(top = 12.dp, bottom = 16.dp),
+                .heightIn(min = 36.dp)
+                .background(
+                    color = Gray7_F6F6F7,
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .weight(1f),
             textStyle = MaterialTheme.typography.b6,
-            placeholder = { Text(text = "댓글을 남겨주세요", style = MaterialTheme.typography.b6.copy(Gray4_C5CAD2)) },
-            singleLine = true,
-            shape = RoundedCornerShape(12.dp),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Gray7_F6F6F7,
-                unfocusedContainerColor = Gray7_F6F6F7,
-                focusedBorderColor = White_FFFFFF,
-                unfocusedBorderColor = White_FFFFFF,
-                cursorColor = PrimaryGreen_23C882,
-                focusedPlaceholderColor = Gray4_C5CAD2,
-                unfocusedPlaceholderColor = Gray4_C5CAD2
-            )
+            interactionSource = interactionSource,
+            cursorBrush = SolidColor(PrimaryGreen_23C882),
+            decorationBox = @Composable { innerTextField ->
+                TextFieldDecorationBox(
+                    value = commentText.value.text,
+                    innerTextField = innerTextField,
+                    enabled = true,
+                    singleLine = false,
+                    visualTransformation = VisualTransformation.None,
+                    interactionSource = interactionSource,
+                    placeholder = { Text(text = "댓글을 남겨주세요", style = MaterialTheme.typography.b6.copy(Gray4_C5CAD2)) },
+                    contentPadding = TextFieldDefaults.textFieldWithLabelPadding(top = 8.dp, bottom = 8.dp, start = 12.dp)
+                )
+            }
         )
 
-        FilledRoundedCornerButton(
+        Button(
             onClick = { onClickPostComment() },
-            label = "남기기",
-            textStyle = MaterialTheme.typography.b5,
+            colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen_23C882),
+            shape = RoundedCornerShape(8.dp),
             modifier = Modifier
                 .wrapContentWidth()
-                .height(IntrinsicSize.Min)
-                .padding(top = 12.dp, bottom = 16.dp),
-            contentModifier = Modifier.wrapContentWidth()
+                .height(36.dp),
+            content = { Text(text = "남기기", style = MaterialTheme.typography.b5.copy(color = White_FFFFFF, fontWeight = FontWeight.SemiBold)) },
+            contentPadding = PaddingValues(vertical = 8.dp, horizontal = 12.dp)
         )
     }
 }
