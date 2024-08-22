@@ -231,7 +231,8 @@ fun CommentBottomSheetDialog(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight()
+                        .padding(top = 12.dp)
+                        .wrapContentHeight(),
                 ) {
                     CommentBottomSheetDialogTitle(onClickClose)
                     CommentBottomSheetDialogContent(postComments, onClickReply, onClickDelete, onClickReport, currentMemberId, scrollState)
@@ -269,12 +270,9 @@ private fun CommentBottomSheetDialogTitle(onClickClose: () -> Unit) {
     ) {
         Text(
             text = stringResource(id = R.string.comment),
-            modifier = Modifier
-                .matchParentSize()
-                .padding(top = 12.dp, bottom = 6.dp),
+            modifier = Modifier.align(Alignment.Center),
             textAlign = TextAlign.Center,
-            color = Gray1_313131,
-            style = MaterialTheme.typography.b1.copy(Gray1_313131)
+            style = MaterialTheme.typography.b1.copy(color = Gray1_313131, fontWeight = FontWeight.SemiBold)
         )
 
         NoRippleIconButton(
