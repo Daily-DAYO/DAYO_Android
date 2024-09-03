@@ -39,6 +39,8 @@ import daily.dayo.presentation.screen.feed.FeedRoute
 import daily.dayo.presentation.screen.feed.feedNavGraph
 import daily.dayo.presentation.screen.home.HomeRoute
 import daily.dayo.presentation.screen.home.homeNavGraph
+import daily.dayo.presentation.screen.mypage.MyPageRoute
+import daily.dayo.presentation.screen.mypage.myPageNavGraph
 import daily.dayo.presentation.screen.post.postNavGraph
 import daily.dayo.presentation.screen.search.searchNavGraph
 import daily.dayo.presentation.theme.Gray1_313131
@@ -61,50 +63,46 @@ internal fun MainScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
+        bottomBar = { bottomSheet?.let { it() } }
     ) {
         Scaffold(
-            bottomBar = { bottomSheet?.let { it() } }
-        ) {
-            Scaffold(
-                content = { innerPadding ->
-                    Box(Modifier.padding(innerPadding)) {
-                        NavHost(
-                            navController = navigator.navController,
-                            startDestination = Screen.Home.route
-                        ) {
-                            homeNavGraph(
-                                coroutineScope,
-                                bottomSheetState,
-                                bottomSheetContent,
-                                onSearchClick = { navigator.navigateSearch() }
-                            )
-                            feedNavGraph(
-                                snackBarHostState = snackBarHostState,
-                                onEmptyViewClick = { navigator.navigateHome() },
-                                onPostClick = { navigator.navigatePost(it) },
-                                onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
-                                onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) },
-                                bottomSheetState = bottomSheetState,
-                                bottomSheetContent = bottomSheetContent
-                            )
-                            postNavGraph(onBackClick = { navigator.popBackStack() })
-                            searchNavGraph(
-                                onBackClick = { navigator.popBackStack() },
-                                onSearch = { navigator.navigateSearchResult(it) },
-                                onPostClick = { navigator.navigatePost(it) }
-                            )
-                        }
+            content = { innerPadding ->
+                Box(Modifier.padding(innerPadding)) {
+                    NavHost(
+                        navController = navigator.navController,
+                        startDestination = Screen.Home.route
+                    ) {
+                        homeNavGraph(
+                            coroutineScope,
+                            bottomSheetState,
+                            bottomSheetContent,
+                            onSearchClick = { navigator.navigateSearch() }
+                        )
+                        feedNavGraph(
+                            snackBarHostState = snackBarHostState,
+                            onEmptyViewClick = { navigator.navigateHome() },
+                            onPostClick = { navigator.navigatePost(it) },
+                            onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
+                            onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) }
+                        )
+                        postNavGraph(onBackClick = { navigator.popBackStack() })
+                        searchNavGraph(
+                            onBackClick = { navigator.popBackStack() },
+                            onSearch = { navigator.navigateSearchResult(it) },
+                            onPostClick = { navigator.navigatePost(it) }
+                        )
+                        myPageNavGraph()
                     }
-                },
-                bottomBar = {
-                    MainBottomNavigation(
-                        visible = navigator.shouldShowBottomBar(),
-                        navController = navigator.navController
-                    )
                 }
-            )
-        }
+            },
+            bottomBar = {
+                MainBottomNavigation(
+                    visible = navigator.shouldShowBottomBar(),
+                    navController = navigator.navController
+                )
+            },
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
+        )
     }
 }
 
@@ -170,7 +168,7 @@ sealed class Screen(val route: String, @StringRes val resourceId: Int, @Drawable
     object Feed : Screen(FeedRoute.route, R.string.feed, R.drawable.ic_feed, R.drawable.ic_feed_filled)
     object Write : Screen("write", R.string.write, R.drawable.ic_write, R.drawable.ic_write_filled)
     object Notification : Screen("notification", R.string.notification, R.drawable.ic_notification, R.drawable.ic_notification_filled)
-    object MyPage : Screen("mypage", R.string.my_page, R.drawable.ic_my_page, R.drawable.ic_my_page_filled)
+    object MyPage : Screen(MyPageRoute.route, R.string.my_page, R.drawable.ic_my_page, R.drawable.ic_my_page_filled)
 
     companion object {
         operator fun contains(route: String): Boolean {
