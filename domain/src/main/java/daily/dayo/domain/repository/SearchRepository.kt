@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface SearchRepository {
     fun requestSearchTag(tag: String): Flow<PagingData<Search>>
     fun requestSearchUser(nickname: String): Flow<PagingData<SearchUser>>
+    fun requestSearchFollowUser(nickname: String): Flow<PagingData<SearchUser>>
     fun requestSearchKeywordRecentList(): SearchHistory
     fun updateSearchKeywordRecentList(keyword: String, requestSearchType: SearchHistoryType)
     fun clearSearchKeywordRecent(): SearchHistory
@@ -17,6 +18,7 @@ interface SearchRepository {
         keyword: String,
         deleteKeywordType: SearchHistoryType
     ): SearchHistory
+
     suspend fun requestSearchTotalCount(
         tag: String,
         end: Int,
