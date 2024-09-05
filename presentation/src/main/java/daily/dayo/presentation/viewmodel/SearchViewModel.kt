@@ -11,6 +11,7 @@ import daily.dayo.domain.model.SearchHistoryType
 import daily.dayo.domain.model.SearchUser
 import daily.dayo.domain.usecase.search.ClearSearchKeywordRecentUseCase
 import daily.dayo.domain.usecase.search.DeleteSearchKeywordRecentUseCase
+import daily.dayo.domain.usecase.search.RequestSearchFollowUserUseCase
 import daily.dayo.domain.usecase.search.RequestSearchKeywordRecentUseCase
 import daily.dayo.domain.usecase.search.RequestSearchKeywordUserUseCase
 import daily.dayo.domain.usecase.search.RequestSearchTagUseCase
@@ -30,6 +31,7 @@ class SearchViewModel @Inject constructor(
     private val updateSearchKeywordRecentUseCase: UpdateSearchKeywordRecentUseCase,
     private val requestSearchTagUseCase: RequestSearchTagUseCase,
     private val requestSearchUserUseCase: RequestSearchKeywordUserUseCase,
+    private val requestSearchFollowUserUseCase: RequestSearchFollowUserUseCase,
     private val requestSearchTotalCountUseCase: RequestSearchTotalCountUseCase
 ) : ViewModel() {
 
@@ -46,6 +48,9 @@ class SearchViewModel @Inject constructor(
 
     private val _searchUserList = MutableStateFlow<PagingData<SearchUser>>(PagingData.empty())
     val searchUserList get() = _searchUserList.asStateFlow()
+
+    private val _searchFollowUserList = MutableStateFlow<PagingData<SearchUser>>(PagingData.empty())
+    val searchFollowUserList get() = _searchFollowUserList.asStateFlow()
 
     private val _searchHistory = MutableStateFlow<SearchHistory>(SearchHistory(0, emptyList()))
     val searchHistory get() = _searchHistory
@@ -88,6 +93,14 @@ class SearchViewModel @Inject constructor(
                 }
             }
         }
+
+    suspend fun searchFollowUser(keyword: String) {
+        requestSearchFollowUserUseCase(nickname = keyword)
+            .cachedIn(viewModelScope)
+            .collectLatest {
+                _searchFollowUserList.emit(it)
+            }
+    }
 
     suspend fun deleteSearchKeywordRecent(keyword: String, deleteKeywordType: SearchHistoryType) {
         deleteSearchKeywordRecentUseCase(keyword, deleteKeywordType).let {
