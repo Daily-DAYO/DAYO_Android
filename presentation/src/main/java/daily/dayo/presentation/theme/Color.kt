@@ -25,3 +25,8 @@ val Gray4_C5CAD2 = Color(0xFFC5CAD2)
 val Gray5_E8EAEE = Color(0xFFE8EAEE)
 val Gray6_F0F1F3 = Color(0xFFF0F1F3)
 val Gray7_F6F6F7 = Color(0xFFF6F6F7)
+
+// todo edit colors
+val Dark = Color(0xFF313131)
+val Gray200 = Color(0xFFF0F1F3)
+val Gray700 = Color(0xFF50545B)
