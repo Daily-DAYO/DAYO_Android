@@ -63,46 +63,51 @@ internal fun MainScreen(
     }
 
     Scaffold(
-        bottomBar = { bottomSheet?.let { it() } }
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
     ) {
         Scaffold(
-            content = { innerPadding ->
-                Box(Modifier.padding(innerPadding)) {
-                    NavHost(
-                        navController = navigator.navController,
-                        startDestination = Screen.Home.route
-                    ) {
-                        homeNavGraph(
-                            coroutineScope,
-                            bottomSheetState,
-                            bottomSheetContent,
-                            onSearchClick = { navigator.navigateSearch() }
-                        )
-                        feedNavGraph(
-                            snackBarHostState = snackBarHostState,
-                            onEmptyViewClick = { navigator.navigateHome() },
-                            onPostClick = { navigator.navigatePost(it) },
-                            onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
-                            onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) }
-                        )
-                        postNavGraph(onBackClick = { navigator.popBackStack() })
-                        searchNavGraph(
-                            onBackClick = { navigator.popBackStack() },
-                            onSearch = { navigator.navigateSearchResult(it) },
-                            onPostClick = { navigator.navigatePost(it) }
-                        )
-                        myPageNavGraph()
+            bottomBar = { bottomSheet?.let { it() } }
+        ) {
+            Scaffold(
+                content = { innerPadding ->
+                    Box(Modifier.padding(innerPadding)) {
+                        NavHost(
+                            navController = navigator.navController,
+                            startDestination = Screen.Home.route
+                        ) {
+                            homeNavGraph(
+                                coroutineScope,
+                                bottomSheetState,
+                                bottomSheetContent,
+                                onSearchClick = { navigator.navigateSearch() }
+                            )
+                            feedNavGraph(
+                                snackBarHostState = snackBarHostState,
+                                onEmptyViewClick = { navigator.navigateHome() },
+                                onPostClick = { navigator.navigatePost(it) },
+                                onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
+                                onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) },
+                                bottomSheetState = bottomSheetState,
+                                bottomSheetContent = bottomSheetContent
+                            )
+                            postNavGraph(onBackClick = { navigator.popBackStack() })
+                            searchNavGraph(
+                                onBackClick = { navigator.popBackStack() },
+                                onSearch = { navigator.navigateSearchResult(it) },
+                                onPostClick = { navigator.navigatePost(it) }
+                            )
+                            myPageNavGraph()
+                        }
                     }
+                },
+                bottomBar = {
+                    MainBottomNavigation(
+                        visible = navigator.shouldShowBottomBar(),
+                        navController = navigator.navController
+                    )
                 }
-            },
-            bottomBar = {
-                MainBottomNavigation(
-                    visible = navigator.shouldShowBottomBar(),
-                    navController = navigator.navController
-                )
-            },
-            snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
-        )
+            )
+        }
     }
 }
 
