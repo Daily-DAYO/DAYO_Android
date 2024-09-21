@@ -256,9 +256,13 @@
     <string name="other_profile_option_report_user">사용자 신고</string>
     <string name="my_profile_option_my_info">로그인 정보</string>
     <string name="my_profile_option_setting_env">환경설정</string>
+
+    <string name="bookmark">북마크</string>
     <string name="my_profile_bookmark_empty_description">아직 북마크한 게시물이 없어요.</string>
     <string name="my_profile_like_empty_description">아직 좋아요한 게시물이 없어요.</string>
     <string name="my_profile_folder_empty_description">아직 폴더가 없어요.</string>
+    <string name="my_profile_my_diary">나의 다이어리</string>
+    <string name="my_profile_new_folder">새 폴더</string>
 
     <!-- Search -->
     <string name="hint_search_keyword_input">검색어를 입력해주세요.</string>
