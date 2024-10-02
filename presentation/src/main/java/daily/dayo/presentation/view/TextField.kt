@@ -220,7 +220,7 @@ fun CharacterLimitOutlinedTextField(
                 text = TextLimitUtil.trimToMaxLength(textValue, maxLength)
             )
         },
-        placeholder = { Text(text = placeholder, style = MaterialTheme.typography.b6.copy(Gray2_767B83)) },
+        placeholder = { Text(text = placeholder, style = MaterialTheme.typography.b6) },
         singleLine = singleLine,
         shape = RoundedCornerShape(cornerSize),
         colors = outlinedTextFieldColors
@@ -231,7 +231,7 @@ fun CharacterLimitOutlinedTextField(
                 unfocusedBorderColor = Color.Transparent,
                 cursorColor = PrimaryGreen_23C882
             ),
-        textStyle = MaterialTheme.typography.b6.copy(Gray1_313131),
+        textStyle = MaterialTheme.typography.b6,
         modifier = modifier
     )
 }

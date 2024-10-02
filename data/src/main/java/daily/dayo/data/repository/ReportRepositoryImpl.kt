@@ -1,5 +1,6 @@
 package daily.dayo.data.repository
 
+import daily.dayo.data.datasource.remote.report.CreateReportCommentRequest
 import daily.dayo.data.datasource.remote.report.CreateReportMemberRequest
 import daily.dayo.data.datasource.remote.report.CreateReportPostRequest
 import daily.dayo.data.datasource.remote.report.ReportApiService
@@ -29,6 +30,17 @@ class ReportRepositoryImpl @Inject constructor(
             CreateReportPostRequest(
                 comment = comment,
                 postId = postId
+            )
+        )
+
+    override suspend fun requestSaveCommentReport(
+        comment: String,
+        commentId: Long
+    ): NetworkResponse<Void> =
+        reportApiService.requestSaveCommentReport(
+            CreateReportCommentRequest(
+                comment = comment,
+                commentId = commentId
             )
         )
 }

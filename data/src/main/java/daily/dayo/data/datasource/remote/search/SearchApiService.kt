@@ -17,4 +17,10 @@ interface SearchApiService {
         @Query("nickname") nickname: String,
         @Query("end") end: Int
     ): NetworkResponse<SearchUserResponse>
+
+    @GET("/api/v1/search/comment/member")
+    suspend fun requestSearchFollowUser(
+        @Query("nickname") nickname: String,
+        @Query("end") end: Int
+    ): NetworkResponse<SearchUserResponse>
 }
