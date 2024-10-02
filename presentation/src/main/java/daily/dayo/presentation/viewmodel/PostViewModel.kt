@@ -11,11 +11,14 @@ import daily.dayo.domain.model.BookmarkPostResponse
 import daily.dayo.domain.model.Comment
 import daily.dayo.domain.model.LikePostResponse
 import daily.dayo.domain.model.LikeUser
+import daily.dayo.domain.model.MentionUser
 import daily.dayo.domain.model.NetworkResponse
 import daily.dayo.domain.model.PostDetail
+import daily.dayo.domain.model.SearchUser
 import daily.dayo.domain.usecase.block.RequestBlockMemberUseCase
 import daily.dayo.domain.usecase.bookmark.RequestBookmarkPostUseCase
 import daily.dayo.domain.usecase.bookmark.RequestDeleteBookmarkPostUseCase
+import daily.dayo.domain.usecase.comment.RequestCreatePostCommentReplyUseCase
 import daily.dayo.domain.usecase.comment.RequestCreatePostCommentUseCase
 import daily.dayo.domain.usecase.comment.RequestDeletePostCommentUseCase
 import daily.dayo.domain.usecase.comment.RequestPostCommentUseCase
@@ -31,6 +34,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,6 +47,7 @@ class PostViewModel @Inject constructor(
     private val requestDeleteBookmarkPostUseCase: RequestDeleteBookmarkPostUseCase,
     private val requestPostCommentUseCase: RequestPostCommentUseCase,
     private val requestCreatePostCommentUseCase: RequestCreatePostCommentUseCase,
+    private val requestCreatePostCommentReplyUseCase: RequestCreatePostCommentReplyUseCase,
     private val requestDeletePostCommentUseCase: RequestDeletePostCommentUseCase,
     private val requestBlockMemberUseCase: RequestBlockMemberUseCase,
     private val requestPostLikeUsersUseCase: RequestPostLikeUsersUseCase
@@ -207,8 +212,28 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun requestCreatePostComment(contents: String, postId: Int) = viewModelScope.launch {
-        requestCreatePostCommentUseCase(contents = contents, postId = postId)?.let { ApiResponse ->
+    private fun getMentionList(contents: String, mentionedUser: List<SearchUser>): List<MentionUser> {
+        val pattern = Pattern.compile("@\\w+")
+        val matcher = pattern.matcher(contents)
+        val usernames = mutableListOf<String>()
+        while (matcher.find()) {
+            usernames.add(matcher.group())
+        }
+        return mentionedUser.filter { user ->
+            usernames.any {
+                user.nickname == it.drop(1)
+            }
+        }.map {
+            MentionUser(
+                memberId = it.memberId,
+                nickname = it.nickname
+            )
+        }
+    }
+
+    fun requestCreatePostComment(contents: String, postId: Int, mentionedUser: List<SearchUser>) = viewModelScope.launch {
+        val mentionList = getMentionList(contents, mentionedUser)
+        requestCreatePostCommentUseCase(contents = contents, postId = postId, mentionList = mentionList).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     _postCommentCreateSuccess.postValue(Event(true))
@@ -221,7 +246,24 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun requestDeletePostComment(commentId: Int) = viewModelScope.launch {
+    fun requestCreatePostCommentReply(reply: Pair<Long, Comment>, contents: String, postId: Int, mentionedUser: List<SearchUser>) = viewModelScope.launch {
+        val mentionList = getMentionList(contents, mentionedUser).toMutableList()
+        val (parentCommentId, comment) = reply
+        mentionList.add(MentionUser(comment.memberId, comment.nickname)) // 언급된 유저 리스트에 원본 댓글 유저 추가 (팔로우하지 않아도 답글 가능하므로 따로 추가)
+        requestCreatePostCommentReplyUseCase(commentId = parentCommentId, contents = contents, postId = postId, mentionList = mentionList).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _postCommentCreateSuccess.postValue(Event(true))
+                }
+
+                else -> {
+                    _postCommentCreateSuccess.postValue(Event(false))
+                }
+            }
+        }
+    }
+
+    fun requestDeletePostComment(commentId: Long) = viewModelScope.launch {
         requestDeletePostCommentUseCase(commentId)?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {

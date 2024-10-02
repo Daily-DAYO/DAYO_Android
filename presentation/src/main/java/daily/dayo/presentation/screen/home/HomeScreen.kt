@@ -1,5 +1,6 @@
 package daily.dayo.presentation.screen.home
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -59,6 +60,12 @@ fun HomeScreen(
         selectedCategory = Pair(categoryMenu.name, index)
         homeViewModel.setCategory(categoryMenu.category)
         coroutineScope.launch { bottomSheetState.hide() }
+    }
+
+    BackHandler(enabled = bottomSheetState.isVisible) {
+        coroutineScope.launch {
+            bottomSheetState.hide()
+        }
     }
 
     Scaffold(
