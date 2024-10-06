@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,7 +35,7 @@ import daily.dayo.domain.model.Post
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.extension.clickableSingle
-import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.b5
 import daily.dayo.presentation.theme.caption3
@@ -122,7 +121,7 @@ fun HomePostView(
                     .clip(shape = CircleShape)
                     .align(Alignment.CenterVertically)
             )
-            Text(text = post.nickname, style = MaterialTheme.typography.b5.copy(Gray1_313131))
+            Text(text = post.nickname, style = MaterialTheme.typography.b5.copy(Dark))
         }
 
         Spacer(modifier = Modifier.height(2.dp))
