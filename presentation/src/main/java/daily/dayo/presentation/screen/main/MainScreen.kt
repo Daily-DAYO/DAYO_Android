@@ -96,7 +96,10 @@ internal fun MainScreen(
                                 onSearch = { navigator.navigateSearchResult(it) },
                                 onPostClick = { navigator.navigatePost(it) }
                             )
-                            myPageNavGraph()
+                            myPageNavGraph(
+                                onBackClick = { navigator.popBackStack() },
+                                onBookmarkClick = { navigator.navigateBookmark() }
+                            )
                         }
                     }
                 },
