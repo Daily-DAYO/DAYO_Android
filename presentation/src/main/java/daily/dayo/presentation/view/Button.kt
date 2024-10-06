@@ -40,12 +40,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray5_E8EAEE
-import daily.dayo.presentation.theme.PrimaryGreen_23C882
 import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
+import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.b3
 import daily.dayo.presentation.theme.b5
@@ -64,14 +64,14 @@ fun FilledButton(
     val buttonColors = if (isTonal)
         ButtonDefaults.buttonColors(
             containerColor = PrimaryL3_F2FBF7,
-            contentColor = PrimaryGreen_23C882,
+            contentColor = Primary_23C882,
             disabledContainerColor = Gray5_E8EAEE,
             disabledContentColor = Gray4_C5CAD2
 
         )
     else
         ButtonDefaults.buttonColors(
-            containerColor = PrimaryGreen_23C882,
+            containerColor = Primary_23C882,
             contentColor = White_FFFFFF,
             disabledContainerColor = Gray5_E8EAEE,
             disabledContentColor = Gray4_C5CAD2
@@ -102,7 +102,7 @@ fun FilledRoundedCornerButton(
 ) {
     val buttonColors = color
         ?: ButtonDefaults.buttonColors(
-            containerColor = PrimaryGreen_23C882,
+            containerColor = Primary_23C882,
             contentColor = White_FFFFFF,
             disabledContainerColor = Gray5_E8EAEE,
             disabledContentColor = Gray4_C5CAD2
@@ -157,7 +157,7 @@ fun OutlinedButton(
 fun TextButton(
     onClick: () -> Unit,
     text: String = "",
-    textStyle: TextStyle = MaterialTheme.typography.b6.copy(color = PrimaryGreen_23C882),
+    textStyle: TextStyle = MaterialTheme.typography.b6.copy(color = Primary_23C882),
     underline: Boolean = false,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
@@ -253,7 +253,7 @@ fun PreviewFilledRoundedButton() {
             onClick = {},
             label = "Email",
             modifier = Modifier.size(300.dp, 44.dp),
-            color = ButtonDefaults.buttonColors(containerColor = Gray1_313131, contentColor = White_FFFFFF),
+            color = ButtonDefaults.buttonColors(containerColor = Dark, contentColor = White_FFFFFF),
             icon = { Icon(Icons.Filled.Email, "Email") },
             textStyle = MaterialTheme.typography.b5
         )

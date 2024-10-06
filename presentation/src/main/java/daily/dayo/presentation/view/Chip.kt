@@ -13,10 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.Gray5_E8EAEE
 import daily.dayo.presentation.theme.Gray6_F0F1F3
-import daily.dayo.presentation.theme.PrimaryGreen_23C882
+import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.caption2
 
@@ -24,7 +24,7 @@ import daily.dayo.presentation.theme.caption2
 fun Chip(
     onClickChip: (() -> Unit) = {},
     text: String,
-    color: Color = PrimaryGreen_23C882,
+    color: Color = Primary_23C882,
     enabled: Boolean = true,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
@@ -59,7 +59,7 @@ fun PreviewChip() {
         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             Chip(text = "Text")
             Chip(text = "Text", enabled = false)
-            Chip(text = "Text", color = Gray1_313131)
+            Chip(text = "Text", color = Dark)
         }
     }
 }

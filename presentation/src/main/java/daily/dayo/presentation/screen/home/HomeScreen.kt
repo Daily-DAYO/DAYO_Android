@@ -29,14 +29,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import daily.dayo.domain.model.Category
 import daily.dayo.presentation.R
-import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray5_E8EAEE
-import daily.dayo.presentation.theme.PrimaryGreen_23C882
-import daily.dayo.presentation.view.dialog.BottomSheetDialog
+import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.TextButton
 import daily.dayo.presentation.view.TopNavigation
+import daily.dayo.presentation.view.dialog.BottomSheetDialog
 import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 import daily.dayo.presentation.viewmodel.HomeViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -82,7 +82,7 @@ fun HomeScreen(
                             },
                             text = stringResource(id = R.string.DayoPick),
                             textStyle = MaterialTheme.typography.titleLarge.copy(
-                                color = if (homeTabState == HOME_DAYOPICK_PAGE_TAB_ID) Gray1_313131 else Gray5_E8EAEE,
+                                color = if (homeTabState == HOME_DAYOPICK_PAGE_TAB_ID) Dark else Gray5_E8EAEE,
                                 fontWeight = FontWeight.ExtraBold
                             )
                         )
@@ -93,7 +93,7 @@ fun HomeScreen(
                             },
                             text = stringResource(id = R.string.New),
                             textStyle = MaterialTheme.typography.titleLarge.copy(
-                                color = if (homeTabState == HOME_NEW_PAGE_TAB_ID) Gray1_313131 else Gray5_E8EAEE,
+                                color = if (homeTabState == HOME_NEW_PAGE_TAB_ID) Dark else Gray5_E8EAEE,
                                 fontWeight = FontWeight.ExtraBold
                             )
                         )
@@ -107,7 +107,7 @@ fun HomeScreen(
                         iconModifier = Modifier
                             .padding(end = 12.dp)
                             .size(24.dp),
-                        iconTintColor = Gray1_313131
+                        iconTintColor = Dark
                     )
                 }
             )
@@ -168,7 +168,7 @@ private fun CategoryBottomSheetDialog(
             ImageVector.vectorResource(it.checkedIcon)
         },
         normalColor = Gray2_767B83,
-        checkedColor = PrimaryGreen_23C882,
+        checkedColor = Primary_23C882,
         checkedButtonIndex = selectedCategory.second,
         closeButtonAction = { coroutineScope.launch { bottomSheetState.hide() } }
     )

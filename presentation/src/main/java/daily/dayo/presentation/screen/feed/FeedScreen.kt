@@ -39,7 +39,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import daily.dayo.presentation.R
 import daily.dayo.presentation.screen.home.CategoryMenu
-import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.b3
@@ -87,7 +87,7 @@ fun FeedScreen(
                             text = stringResource(id = R.string.feed),
                             modifier = Modifier.padding(start = 18.dp),
                             style = MaterialTheme.typography.h1.copy(
-                                color = Gray1_313131
+                                color = Dark
                             )
                         )
                     }

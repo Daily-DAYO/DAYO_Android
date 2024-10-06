@@ -66,10 +66,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
 import daily.dayo.presentation.activity.MainActivity
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog
-import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray6_F0F1F3
-import daily.dayo.presentation.theme.PrimaryGreen_23C882
+import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.b2
 import daily.dayo.presentation.theme.b5
@@ -142,7 +142,7 @@ class LoginFragment : Fragment() {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     repeat(pagerState.pageCount) { iteration ->
-                        val color = if (pagerState.currentPage == iteration) Gray1_313131 else Gray6_F0F1F3
+                        val color = if (pagerState.currentPage == iteration) Dark else Gray6_F0F1F3
                         Box(
                             modifier = Modifier
                                 .padding(horizontal = 4.5.dp)
@@ -177,7 +177,7 @@ class LoginFragment : Fragment() {
                         .fillMaxWidth()
                         .height(44.dp)
                         .padding(horizontal = 18.dp),
-                    color = ButtonDefaults.buttonColors(containerColor = Gray1_313131, contentColor = White_FFFFFF),
+                    color = ButtonDefaults.buttonColors(containerColor = Dark, contentColor = White_FFFFFF),
                     icon = { Icon(Icons.Filled.Email, "Email") },
                     textStyle = MaterialTheme.typography.b5
                 )
@@ -253,7 +253,7 @@ class LoginFragment : Fragment() {
 
             3 -> buildAnnotatedString {
                 append("내가 열심히 꾸민 다이어리,\n")
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, color = PrimaryGreen_23C882)) {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, color = Primary_23C882)) {
                     append("DAYO")
                 }
                 append("에 공유하러 가볼까요?")

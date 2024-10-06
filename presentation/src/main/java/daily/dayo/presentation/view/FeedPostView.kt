@@ -71,12 +71,12 @@ import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.TimeChangerUtil
 import daily.dayo.presentation.common.extension.clickableSingle
-import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
-import daily.dayo.presentation.theme.PrimaryGreen_23C882
-import daily.dayo.presentation.theme.White_Alpha30_FFFFFF
+import daily.dayo.presentation.theme.Primary_23C882
+import daily.dayo.presentation.theme.Transparent_White30
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.b5
 import daily.dayo.presentation.theme.b6
@@ -165,7 +165,7 @@ fun FeedPostView(
             Column(Modifier.weight(1f)) {
                 Text(
                     text = post.nickname,
-                    style = MaterialTheme.typography.b5.copy(Gray1_313131),
+                    style = MaterialTheme.typography.b5.copy(Dark),
                     modifier = Modifier.clickableSingle(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
@@ -244,7 +244,7 @@ fun FeedPostView(
                         ),
                     ) {
                         repeat(pagerState.pageCount) { iteration ->
-                            val color = if (pagerState.currentPage == iteration) White_FFFFFF else White_Alpha30_FFFFFF
+                            val color = if (pagerState.currentPage == iteration) White_FFFFFF else Transparent_White30
                             Box(
                                 modifier = Modifier
                                     .clip(CircleShape)
@@ -324,13 +324,13 @@ fun FeedPostView(
                 Text(text = " ${dec.format(post.heartCount)} ",
                     style = MaterialTheme.typography.caption1,
                     modifier = if (post.heartCount != 0) Modifier.clickableSingle { onPostLikeUsersClick(post.postId.toString()) } else Modifier,
-                    color = if (post.heartCount != 0) PrimaryGreen_23C882 else Gray4_C5CAD2)
+                    color = if (post.heartCount != 0) Primary_23C882 else Gray4_C5CAD2)
                 Text(text = stringResource(id = R.string.post_like_count_message_2), style = MaterialTheme.typography.caption1.copy(Gray2_767B83))
             }
 
             // comment count
             Row {
-                Text(text = " ${dec.format(post.commentCount)} ", style = MaterialTheme.typography.caption1, color = if (post.commentCount != 0) PrimaryGreen_23C882 else Gray4_C5CAD2)
+                Text(text = " ${dec.format(post.commentCount)} ", style = MaterialTheme.typography.caption1, color = if (post.commentCount != 0) Primary_23C882 else Gray4_C5CAD2)
                 Text(text = stringResource(id = R.string.post_comment_count_message), style = MaterialTheme.typography.caption1.copy(Gray2_767B83))
             }
         }
@@ -402,12 +402,12 @@ fun OthersPostDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit, onPo
                         Icon(
                             painter = painterResource(id = R.drawable.ic_menu_report),
                             contentDescription = "report post",
-                            tint = Gray1_313131,
+                            tint = Dark,
                             modifier = Modifier.padding(end = 8.dp)
                         )
                         Text(
                             text = "게시물 신고",
-                            style = MaterialTheme.typography.b6.copy(Gray1_313131)
+                            style = MaterialTheme.typography.b6.copy(Dark)
                         )
                     }
 
@@ -447,12 +447,12 @@ fun HashtagHorizontalGroup(
                             painter = painterResource(id = R.drawable.ic_hashtag),
                             contentDescription = null,
                             modifier = Modifier.align(Alignment.Center),
-                            tint = PrimaryGreen_23C882
+                            tint = Primary_23C882
                         )
                     }
                     Text(
                         text = hashtag,
-                        style = MaterialTheme.typography.caption1.copy(PrimaryGreen_23C882),
+                        style = MaterialTheme.typography.caption1.copy(Primary_23C882),
                         modifier = Modifier.padding(vertical = 4.dp)
                     )
                 }
@@ -499,7 +499,7 @@ fun SeeMoreText(
     Box(modifier) {
         Text(
             text = cutText ?: text,
-            style = MaterialTheme.typography.b6.copy(Gray1_313131),
+            style = MaterialTheme.typography.b6.copy(Dark),
             maxLines = minimizedMaxLines,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = { textLayoutResultState.value = it },
