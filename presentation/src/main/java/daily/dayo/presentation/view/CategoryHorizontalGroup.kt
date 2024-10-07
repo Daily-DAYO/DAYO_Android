@@ -28,8 +28,8 @@ import androidx.compose.ui.unit.dp
 import daily.dayo.presentation.screen.home.CategoryMenu
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray7_F6F6F7
-import daily.dayo.presentation.theme.PrimaryGreen_23C882
 import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
+import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.b5
 
 @Composable
@@ -53,12 +53,12 @@ fun CategoryHorizontalGroup(
                 val buttonColors = if (category == selectedOption)
                     ButtonDefaults.buttonColors(
                         containerColor = PrimaryL3_F2FBF7,
-                        contentColor = PrimaryGreen_23C882
+                        contentColor = Primary_23C882
                     )
                 else
                     ButtonDefaults.buttonColors(
                         containerColor = if (isPressed) Color(0xFFE4F7ED) else Gray7_F6F6F7,
-                        contentColor = if (isPressed) PrimaryGreen_23C882 else Gray4_C5CAD2
+                        contentColor = if (isPressed) Primary_23C882 else Gray4_C5CAD2
                     )
 
                 Button(

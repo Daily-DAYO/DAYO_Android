@@ -34,11 +34,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import daily.dayo.presentation.R
-import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
-import daily.dayo.presentation.theme.PrimaryGreen_23C882
+import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.b1
 import daily.dayo.presentation.theme.b4
 import daily.dayo.presentation.theme.b6
@@ -81,7 +81,7 @@ fun RadioButtonDialog(
                     Text(
                         text = title,
                         style = MaterialTheme.typography.b1.copy(
-                            color = Gray1_313131,
+                            color = Dark,
                             fontWeight = FontWeight.SemiBold
                         ),
                         modifier = Modifier.padding(bottom = 8.dp)
@@ -137,7 +137,7 @@ fun RadioButtonDialog(
                                             }
                                         },
                                         colors = RadioButtonDefaults.colors(
-                                            selectedColor = PrimaryGreen_23C882,
+                                            selectedColor = Primary_23C882,
                                             unselectedColor = Gray3_9FA5AE
                                         )
                                     )
@@ -204,7 +204,7 @@ fun RadioButtonDialog(
                         },
                         text = stringResource(id = R.string.submit),
                         textStyle = MaterialTheme.typography.b6.copy(
-                            color = if (canSubmit) PrimaryGreen_23C882 else Gray4_C5CAD2
+                            color = if (canSubmit) Primary_23C882 else Gray4_C5CAD2
                         ),
                         modifier = Modifier.padding(vertical = 10.dp, horizontal = 12.dp)
                     )

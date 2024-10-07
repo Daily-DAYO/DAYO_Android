@@ -48,9 +48,9 @@ import daily.dayo.domain.model.LikeUser
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.extension.clickableSingle
-import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.Gray2_767B83
-import daily.dayo.presentation.theme.PrimaryGreen_23C882
+import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.b6
 import daily.dayo.presentation.theme.caption1
@@ -93,7 +93,7 @@ fun PostLikeUsersScreen(
                         Icon(
                             painter = painterResource(id = R.drawable.ic_back_sign),
                             contentDescription = "back sign",
-                            tint = Gray1_313131
+                            tint = Dark
                         )
                     }
                 },
@@ -120,7 +120,7 @@ fun PostLikeUsersScreen(
                     val dec = DecimalFormat("#,###")
                     Text(
                         text = " ${dec.format(likeCount.value)} ",
-                        style = MaterialTheme.typography.caption1.copy(PrimaryGreen_23C882),
+                        style = MaterialTheme.typography.caption1.copy(Primary_23C882),
                         modifier = Modifier.padding(vertical = 12.dp)
                     )
                     Text(
@@ -197,7 +197,7 @@ private fun LikeUserItem(
 
             // nickname
             Text(text = likeUser.nickname,
-                style = MaterialTheme.typography.b6.copy(Gray1_313131),
+                style = MaterialTheme.typography.b6.copy(Dark),
                 modifier = Modifier.clickableSingle(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },

@@ -43,7 +43,7 @@ import daily.dayo.presentation.screen.mypage.MyPageRoute
 import daily.dayo.presentation.screen.mypage.myPageNavGraph
 import daily.dayo.presentation.screen.post.postNavGraph
 import daily.dayo.presentation.screen.search.searchNavGraph
-import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
@@ -152,7 +152,7 @@ fun MainBottomNavigation(
                         }
                     },
                     selected = selected,
-                    selectedContentColor = Gray1_313131,
+                    selectedContentColor = Dark,
                     onClick = {
                         navController.navigate(screen.route) {
                             popUpTo(navController.graph.findStartDestination().id) {

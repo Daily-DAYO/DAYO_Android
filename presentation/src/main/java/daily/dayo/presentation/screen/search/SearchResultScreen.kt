@@ -82,11 +82,11 @@ import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Event
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.common.toSp
-import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray5_E8EAEE
-import daily.dayo.presentation.theme.PrimaryGreen_23C882
+import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.b3
@@ -216,7 +216,7 @@ fun SearchResultScreen(
                 indicator = { tabPositions ->
                     TabRowDefaults.Indicator(
                         Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-                        color = PrimaryGreen_23C882,
+                        color = Primary_23C882,
                     )
                 },
                 divider = { Divider(color = Color.Transparent, thickness = 0.dp) },
@@ -237,7 +237,7 @@ fun SearchResultScreen(
                             )
                         },
                         selected = pagerState.currentPage == index,
-                        selectedContentColor = PrimaryGreen_23C882,
+                        selectedContentColor = Primary_23C882,
                         unselectedContentColor = Gray2_767B83,
                         onClick = {
                             coroutineScope.launch {
@@ -356,7 +356,7 @@ fun SearchResultsCount(resultCount: Int = 0) {
                     fontSize = 13.sp,
                     fontFamily = FontFamily(Font(R.font.pretendard_medium)),
                     fontWeight = FontWeight(500),
-                    color = PrimaryGreen_23C882
+                    color = Primary_23C882
                 ),
                 text = "$resultCount",
                 modifier = Modifier.padding(end = 2.dp)
@@ -531,7 +531,7 @@ private fun SearchResultUserImageLayout(user: SearchUser) {
 private fun SearchResultUserNicknameLayout(userNickname: String) {
     Text(
         text = userNickname,
-        style = MaterialTheme.typography.b6.copy(color = Gray1_313131),
+        style = MaterialTheme.typography.b6.copy(color = Gray1_50545B),
         modifier = Modifier
             .fillMaxHeight()
             .padding(start = 12.dp, top = 8.dp, bottom = 8.dp)
@@ -624,14 +624,14 @@ private fun SearchResultUserFollowLayout(
             .padding(1.dp)
             .width(20.dp)
             .height(20.dp),
-        iconTintColor = if (isFollowButton) PrimaryGreen_23C882 else Gray2_767B83,
+        iconTintColor = if (isFollowButton) Primary_23C882 else Gray2_767B83,
         interactionSource = followInteractionSource
     ) {
         Text(
             text = if (isFollowButton) stringResource(id = R.string.follow_yet)
             else stringResource(id = R.string.follow_already),
             style = MaterialTheme.typography.b6.copy(
-                color = if (isFollowButton) PrimaryGreen_23C882 else Gray2_767B83,
+                color = if (isFollowButton) Primary_23C882 else Gray2_767B83,
                 textAlign = TextAlign.Center
             ),
             modifier = Modifier
