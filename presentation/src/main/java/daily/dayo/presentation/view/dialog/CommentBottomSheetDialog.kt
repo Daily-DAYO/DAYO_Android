@@ -89,13 +89,13 @@ import daily.dayo.presentation.common.Resource
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.TimeChangerUtil
 import daily.dayo.presentation.common.extension.clickableSingle
-import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.Gray7_F6F6F7
-import daily.dayo.presentation.theme.PrimaryGreen_23C882
+import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.b1
 import daily.dayo.presentation.theme.b3
@@ -272,7 +272,7 @@ private fun CommentBottomSheetDialogTitle(onClickClose: () -> Unit) {
             text = stringResource(id = R.string.comment),
             modifier = Modifier.align(Alignment.Center),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.b1.copy(color = Gray1_313131, fontWeight = FontWeight.SemiBold)
+            style = MaterialTheme.typography.b1.copy(color = Dark, fontWeight = FontWeight.SemiBold)
         )
 
         NoRippleIconButton(
@@ -394,7 +394,7 @@ fun getAnnotatedCommentContent(content: String, mentionList: List<MentionUser>):
 
         // 매칭된 @유저명
         if (mentionList.any { it.nickname == matchedText.substring(1) }) {
-            withStyle(style = SpanStyle(color = PrimaryGreen_23C882)) {
+            withStyle(style = SpanStyle(color = Primary_23C882)) {
                 append(matchedText)
             }
         } else {
@@ -444,7 +444,7 @@ private fun CommentView(
                 ) {
                     // comment nickname
                     Text(text = comment.nickname,
-                        style = MaterialTheme.typography.caption2.copy(Gray1_313131),
+                        style = MaterialTheme.typography.caption2.copy(Dark),
                         modifier = Modifier
                             .clickableSingle(
                                 indication = null,
@@ -465,7 +465,7 @@ private fun CommentView(
                 Spacer(Modifier.height(2.dp))
                 Text(
                     text = getAnnotatedCommentContent(comment.contents, comment.mentionList),
-                    style = MaterialTheme.typography.b6.copy(Gray1_313131)
+                    style = MaterialTheme.typography.b6.copy(Dark)
                 )
                 Spacer(Modifier.height(4.dp))
 
@@ -584,7 +584,7 @@ private fun CommentReplyDescriptionView(replyCommentState: MutableState<Pair<Lon
         ) {
             Text(
                 text = replyComment.second.nickname,
-                style = MaterialTheme.typography.caption4.copy(Gray1_313131)
+                style = MaterialTheme.typography.caption4.copy(Dark)
             )
             Text(
                 text = "님에게 답글 남기는 중",
@@ -674,7 +674,7 @@ private fun CommentTextField(
                 .weight(1f),
             textStyle = MaterialTheme.typography.b6,
             interactionSource = interactionSource,
-            cursorBrush = SolidColor(PrimaryGreen_23C882),
+            cursorBrush = SolidColor(Primary_23C882),
             decorationBox = @Composable { innerTextField ->
                 TextFieldDecorationBox(
                     value = commentText.value.text,
@@ -691,7 +691,7 @@ private fun CommentTextField(
 
         Button(
             onClick = { onClickPostComment() },
-            colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen_23C882),
+            colors = ButtonDefaults.buttonColors(containerColor = Primary_23C882),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
                 .wrapContentWidth()

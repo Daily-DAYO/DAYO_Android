@@ -45,9 +45,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import daily.dayo.presentation.R
-import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.Gray6_F0F1F3
-import daily.dayo.presentation.theme.PrimaryGreen_23C882
+import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.b1
 import daily.dayo.presentation.theme.b4
@@ -66,8 +66,8 @@ fun BottomSheetDialog(
     leftIconButtons: List<ImageVector>? = null,
     leftIconCheckedButtons: List<ImageVector>? = null,
     isFirstButtonColored: Boolean = false,
-    normalColor: Color = Gray1_313131,
-    checkedColor: Color = PrimaryGreen_23C882,
+    normalColor: Color = Dark,
+    checkedColor: Color = Primary_23C882,
     title: String = "",
     titleButtonAction: () -> Unit = {},
     rightIcon: ImageVector = ImageVector.vectorResource(id = R.drawable.ic_check_mark),
@@ -103,7 +103,7 @@ fun BottomSheetDialog(
                                     .wrapContentHeight()
                                     .padding(12.dp),
                                 textAlign = TextAlign.Center,
-                                color = Gray1_313131,
+                                color = Dark,
                                 style = MaterialTheme.typography.b1
                             )
                             androidx.compose.material3.IconButton(

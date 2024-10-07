@@ -36,13 +36,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import daily.dayo.presentation.common.TextLimitUtil
-import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray5_E8EAEE
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.Gray7_F6F6F7
-import daily.dayo.presentation.theme.PrimaryGreen_23C882
+import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.Red_FF4545
 import daily.dayo.presentation.theme.b6
 import kotlinx.coroutines.delay
@@ -70,10 +70,10 @@ fun FilledTextField(
         modifier = modifier,
         isError = isError,
         supportingText = { if (isError) Text(text = errorMessage) else Text(text = "") },
-        textStyle = TextStyle(textAlign = textAlign, color = Gray1_313131),
+        textStyle = TextStyle(textAlign = textAlign, color = Dark),
         colors = TextFieldDefaults.colors(
             errorSupportingTextColor = Red_FF4545, // 에러 메시지
-            focusedIndicatorColor = PrimaryGreen_23C882, // 밑줄
+            focusedIndicatorColor = Primary_23C882, // 밑줄
             unfocusedIndicatorColor = Gray6_F0F1F3,
             errorIndicatorColor = Red_FF4545,
             unfocusedContainerColor = Color.Transparent, // 배경
@@ -116,10 +116,10 @@ fun FilledPasswordField(
         modifier = modifier,
         isError = isError,
         supportingText = { if (isError) Text(text = errorMessage) else Text(text = "") },
-        textStyle = TextStyle(textAlign = textAlign, color = Gray1_313131),
+        textStyle = TextStyle(textAlign = textAlign, color = Dark),
         colors = TextFieldDefaults.colors(
             errorSupportingTextColor = Red_FF4545,
-            focusedIndicatorColor = PrimaryGreen_23C882,
+            focusedIndicatorColor = Primary_23C882,
             unfocusedIndicatorColor = Gray6_F0F1F3,
             errorIndicatorColor = Red_FF4545,
             unfocusedContainerColor = Color.Transparent,
@@ -140,7 +140,7 @@ fun FilledPasswordField(
                 Icon(imageVector = Icons.Filled.Cancel, contentDescription = "error", tint = Red_FF4545)
             } else {
                 IconButton(onClick = { passwordHidden = !passwordHidden }) {
-                    val iconColor = if (passwordHidden) Gray5_E8EAEE else PrimaryGreen_23C882
+                    val iconColor = if (passwordHidden) Gray5_E8EAEE else Primary_23C882
                     val description = if (passwordHidden) "Show password" else "Hide password"
                     Icon(imageVector = Icons.Filled.Visibility, contentDescription = description, tint = iconColor)
                 }
@@ -181,12 +181,12 @@ fun FilledTimerField(
         modifier = modifier,
         isError = isError,
         supportingText = { if (isError) Text(text = errorMessage) else Text(text = "") },
-        textStyle = TextStyle(textAlign = textAlign, color = Gray1_313131),
+        textStyle = TextStyle(textAlign = textAlign, color = Dark),
         trailingIcon = { Text(text = "${String.format("%02d", (timeLeft / 60) % 60)}:${String.format("%02d", timeLeft % 60)}", color = Gray2_767B83) },
         colors = TextFieldDefaults.colors(
             errorSupportingTextColor = Red_FF4545,
             focusedIndicatorColor =
-            PrimaryGreen_23C882,
+            Primary_23C882,
             unfocusedIndicatorColor = Gray6_F0F1F3,
             errorIndicatorColor = Red_FF4545,
             unfocusedContainerColor = Color.Transparent,
@@ -227,9 +227,9 @@ fun CharacterLimitOutlinedTextField(
             ?: OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = Gray7_F6F6F7,
                 unfocusedContainerColor = Gray7_F6F6F7,
-                focusedBorderColor = PrimaryGreen_23C882,
+                focusedBorderColor = Primary_23C882,
                 unfocusedBorderColor = Color.Transparent,
-                cursorColor = PrimaryGreen_23C882
+                cursorColor = Primary_23C882
             ),
         textStyle = MaterialTheme.typography.b6,
         modifier = modifier
