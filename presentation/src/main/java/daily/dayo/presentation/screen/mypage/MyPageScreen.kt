@@ -51,13 +51,12 @@ import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
-import daily.dayo.presentation.theme.Gray1_313131
-import daily.dayo.presentation.theme.Gray200
+import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray4_C5CAD2
-import daily.dayo.presentation.theme.Gray700
-import daily.dayo.presentation.theme.PrimaryGreen_23C882
+import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
+import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.b3
 import daily.dayo.presentation.theme.b6
@@ -158,7 +157,7 @@ private fun MyPageProfile(profile: Profile?) {
             Text(
                 text = profile?.nickname ?: "",
                 style = MaterialTheme.typography.h1.copy(
-                    color = Gray1_313131,
+                    color = Dark,
                     fontWeight = FontWeight.SemiBold
                 )
             )
@@ -219,7 +218,7 @@ private fun MyPageMenu() {
         androidx.compose.material3.TextButton(
             onClick = { },
             shape = RoundedCornerShape(size = 12.dp),
-            border = BorderStroke(width = 1.dp, color = Gray200),
+            border = BorderStroke(width = 1.dp, color = Gray6_F0F1F3),
             colors = ButtonDefaults.outlinedButtonColors(
                 containerColor = White_FFFFFF,
                 contentColor = Gray2_767B83
@@ -230,7 +229,7 @@ private fun MyPageMenu() {
             content = {
                 Text(
                     text = stringResource(id = R.string.my_profile_edit_title),
-                    style = MaterialTheme.typography.b6.copy(Gray700),
+                    style = MaterialTheme.typography.b6.copy(Gray1_50545B),
                 )
             }
         )
@@ -241,7 +240,7 @@ private fun MyPageMenu() {
             modifier = Modifier
                 .background(color = White_FFFFFF, shape = RoundedCornerShape(12.dp))
                 .border(
-                    border = BorderStroke(width = 1.dp, color = Gray200),
+                    border = BorderStroke(width = 1.dp, color = Gray6_F0F1F3),
                     shape = RoundedCornerShape(size = 12.dp)
                 )
                 .size(36.dp)
@@ -249,7 +248,7 @@ private fun MyPageMenu() {
             Icon(
                 painter = painterResource(R.drawable.ic_bookmark_default),
                 contentDescription = stringResource(id = R.string.bookmark),
-                tint = Gray700
+                tint = Gray1_50545B
             )
         }
     }
@@ -273,7 +272,7 @@ private fun MyPageDiaryHeader() {
             onClick = {},
             colors = ButtonDefaults.buttonColors(
                 containerColor = PrimaryL3_F2FBF7,
-                contentColor = PrimaryGreen_23C882
+                contentColor = Primary_23C882
             ),
             shape = RoundedCornerShape(8.dp),
             contentPadding = PaddingValues(8.dp),
@@ -286,7 +285,7 @@ private fun MyPageDiaryHeader() {
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = stringResource(id = R.string.my_profile_new_folder),
-                style = MaterialTheme.typography.b6.copy(PrimaryGreen_23C882)
+                style = MaterialTheme.typography.b6.copy(Primary_23C882)
             )
         }
     }
@@ -308,7 +307,7 @@ private fun MyPageTopNavigation() {
                 Text(
                     text = stringResource(id = R.string.my_page),
                     style = MaterialTheme.typography.h1.copy(
-                        color = Gray700,
+                        color = Gray1_50545B,
                         fontWeight = FontWeight.SemiBold
                     )
                 )
@@ -322,7 +321,7 @@ private fun MyPageTopNavigation() {
                 iconModifier = Modifier
                     .padding(end = 18.dp)
                     .size(24.dp),
-                iconTintColor = Gray1_313131
+                iconTintColor = Dark
             )
         }
     )
