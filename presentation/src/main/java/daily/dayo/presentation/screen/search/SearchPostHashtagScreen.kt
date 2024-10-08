@@ -36,9 +36,9 @@ import androidx.paging.compose.itemKey
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.extension.clickableSingle
-import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
-import daily.dayo.presentation.theme.PrimaryGreen_23C882
+import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.caption1
 import daily.dayo.presentation.view.RoundImageView
@@ -75,7 +75,7 @@ fun SearchPostHashtagScreen(
                         Icon(
                             painter = painterResource(id = R.drawable.ic_back_sign),
                             contentDescription = "back sign",
-                            tint = Gray1_313131
+                            tint = Gray1_50545B
                         )
                     }
                 },
@@ -136,7 +136,7 @@ private fun SearchResultDescription(resultCount: Int, isLatest: Boolean) {
                 .weight(1f)
         ) {
             Text(
-                style = MaterialTheme.typography.caption1.copy(color = PrimaryGreen_23C882),
+                style = MaterialTheme.typography.caption1.copy(color = Primary_23C882),
                 text = "$resultCount",
                 modifier = Modifier.padding(end = 2.dp)
             )
@@ -156,7 +156,7 @@ private fun SearchResultDescription(resultCount: Int, isLatest: Boolean) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_swap_vertical),
                 contentDescription = if (isLatest) "최신순" else "오래된순",
-                tint = Gray1_313131
+                tint = Gray1_50545B
             )
             Text(
                 style = MaterialTheme.typography.caption1.copy(color = Gray2_767B83),

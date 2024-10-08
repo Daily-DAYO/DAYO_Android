@@ -15,7 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import daily.dayo.presentation.R
-import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.h3
 
@@ -33,7 +33,7 @@ fun TopNavigation(
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = White_FFFFFF,
-                    titleContentColor = Gray1_313131,
+                    titleContentColor = Dark,
                 ),
                 navigationIcon = leftIcon,
                 actions = { rightIcon() },
@@ -47,7 +47,7 @@ fun TopNavigation(
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = White_FFFFFF,
-                    titleContentColor = Gray1_313131,
+                    titleContentColor = Dark,
                 ),
                 navigationIcon = leftIcon,
                 actions = { rightIcon() },
