@@ -20,6 +20,8 @@ import daily.dayo.domain.usecase.like.RequestAllMyLikePostListUseCase
 import daily.dayo.domain.usecase.member.RequestMyProfileUseCase
 import daily.dayo.domain.usecase.member.RequestOtherProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -55,8 +57,8 @@ class ProfileViewModel @Inject constructor(
     private val _likePostList = MutableLiveData<PagingData<LikePost>>()
     val likePostList: LiveData<PagingData<LikePost>> get() = _likePostList
 
-    private val _bookmarkPostList = MutableLiveData<PagingData<BookmarkPost>>()
-    val bookmarkPostList: LiveData<PagingData<BookmarkPost>> get() = _bookmarkPostList
+    private val _bookmarkPostList = MutableStateFlow<PagingData<BookmarkPost>>(PagingData.empty())
+    val bookmarkPostList = _bookmarkPostList.asStateFlow()
 
     private val _blockSuccess = MutableLiveData<Event<Boolean>>()
     val blockSuccess: LiveData<Event<Boolean>> get() = _blockSuccess
@@ -208,7 +210,7 @@ class ProfileViewModel @Inject constructor(
     fun requestAllMyBookmarkPostList() = viewModelScope.launch {
         requestAllMyBookmarkPostListUseCase()
             .cachedIn(viewModelScope)
-            .collectLatest { _bookmarkPostList.postValue(it) }
+            .collectLatest { _bookmarkPostList.emit(it) }
     }
 
     fun requestBlockMember(memberId: String) = viewModelScope.launch {

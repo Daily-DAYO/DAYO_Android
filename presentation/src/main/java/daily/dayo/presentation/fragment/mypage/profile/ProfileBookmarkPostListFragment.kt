@@ -97,9 +97,9 @@ class ProfileBookmarkPostListFragment : Fragment() {
     }
 
     private fun setProfileBookmarkPostList() {
-        profileViewModel.bookmarkPostList.observe(viewLifecycleOwner) {
-            profileBookmarkPostListAdapter?.submitData(viewLifecycleOwner.lifecycle, it)
-        }
+//        profileViewModel.bookmarkPostList.observe(viewLifecycleOwner) {
+//            profileBookmarkPostListAdapter?.submitData(viewLifecycleOwner.lifecycle, it)
+//        }
     }
 
     private fun setAdapterLoadStateListener() {
