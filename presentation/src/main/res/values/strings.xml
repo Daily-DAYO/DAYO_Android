@@ -258,6 +258,8 @@
     <string name="my_profile_option_setting_env">환경설정</string>
 
     <string name="bookmark">북마크</string>
+    <string name="bookmark_edit">편집</string>
+    <string name="bookmark_count">개의 북마크</string>
     <string name="my_profile_bookmark_empty_description">아직 북마크한 게시물이 없어요.</string>
     <string name="my_profile_like_empty_description">아직 좋아요한 게시물이 없어요.</string>
     <string name="my_profile_folder_empty_description">아직 폴더가 없어요.</string>
