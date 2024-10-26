@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,10 +36,12 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import daily.dayo.domain.model.BookmarkPost
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
+import daily.dayo.presentation.theme.b6
 import daily.dayo.presentation.theme.caption2
 import daily.dayo.presentation.theme.caption4
 import daily.dayo.presentation.view.RoundImageView
@@ -55,59 +59,101 @@ fun BookmarkScreen(
     val bookmarkPosts = bookmarkUiState.bookmarks.collectAsLazyPagingItems()
 
     Scaffold(
-        topBar = { BookmarkTopNavigation(onBackClick) },
-        content = { contentPadding ->
-            Column(
-                modifier = Modifier
-                    .background(color = White_FFFFFF)
-                    .fillMaxSize()
-                    .padding(contentPadding)
+        topBar = {
+            BookmarkTopNavigation(
+                isEditMode = bookmarkUiState.isEditMode,
+                onBackClick = onBackClick,
+                onCancelClick = { bookmarkViewModel.toggleEditMode() }
+            )
+        }
+    ) { contentPadding ->
+        Column(
+            modifier = Modifier
+                .background(color = White_FFFFFF)
+                .fillMaxSize()
+                .padding(contentPadding)
+        ) {
+            BookmarkHeader(
+                bookmarkCount = bookmarkUiState.count,
+                isEditMode = bookmarkUiState.isEditMode,
+                selectedCount = bookmarkUiState.selectedBookmarks.size,
+                onEditClick = { bookmarkViewModel.toggleEditMode() }
+            )
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                contentPadding = PaddingValues(bottom = 12.dp, start = 18.dp, end = 18.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                BookmarkHeader(bookmarkUiState.count)
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    contentPadding = PaddingValues(bottom = 12.dp, start = 18.dp, end = 18.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(bookmarkPosts.itemCount) { index ->
-                        bookmarkPosts[index]?.let { post ->
-                            BookmarkPostItem(post)
-                        }
+                items(bookmarkPosts.itemCount) { index ->
+                    bookmarkPosts[index]?.let { post ->
+                        BookmarkPostItem(
+                            post = post,
+                            isEditMode = bookmarkUiState.isEditMode,
+                            isSelected = bookmarkUiState.selectedBookmarks.contains(post.postId),
+                            onBookmarkClick = { bookmarkViewModel.toggleSelection(post.postId) }
+                        )
                     }
                 }
             }
         }
-    )
+    }
 }
 
 @Composable
 private fun BookmarkTopNavigation(
-    onBackClick: () -> Unit
+    isEditMode: Boolean,
+    onBackClick: () -> Unit,
+    onCancelClick: () -> Unit
 ) {
-    TopNavigation(
-        leftIcon = {
-            IconButton(
-                onClick = onBackClick,
-                modifier = Modifier.indication(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                )
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_back_sign),
-                    contentDescription = "back sign",
-                    tint = Gray1_50545B
+    if (isEditMode) {
+        TopNavigation(
+            leftIcon = {
+                Text(
+                    modifier = Modifier
+                        .padding(vertical = 14.dp)
+                        .padding(start = 18.dp, end = 27.dp)
+                        .clickableSingle(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = onCancelClick
+                        ),
+                    text = stringResource(id = R.string.cancel),
+                    style = MaterialTheme.typography.b6.copy(color = Gray1_50545B),
                 )
             }
-        },
-        title = stringResource(id = R.string.bookmark),
-        titleAlignment = TopNavigationAlign.CENTER
-    )
+        )
+    } else {
+        TopNavigation(
+            leftIcon = {
+                IconButton(
+                    onClick = onBackClick,
+                    modifier = Modifier.indication(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_back_sign),
+                        contentDescription = "back sign",
+                        tint = Gray1_50545B
+                    )
+                }
+            },
+            title = stringResource(id = R.string.bookmark),
+            titleAlignment = TopNavigationAlign.CENTER
+        )
+    }
 }
 
 @Composable
-private fun BookmarkHeader(postCount: Int) {
+private fun BookmarkHeader(
+    bookmarkCount: Int,
+    selectedCount: Int,
+    isEditMode: Boolean,
+    onEditClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -122,7 +168,7 @@ private fun BookmarkHeader(postCount: Int) {
         ) {
             val dec = DecimalFormat("#,###")
             Text(
-                text = " ${dec.format(postCount)} ",
+                text = " ${dec.format(bookmarkCount)} ",
                 style = MaterialTheme.typography.caption2.copy(Primary_23C882),
             )
             Text(
@@ -135,29 +181,57 @@ private fun BookmarkHeader(postCount: Int) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
         ) {
-            Text(
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
-                text = stringResource(id = R.string.bookmark_edit),
-                style = MaterialTheme.typography.caption4.copy(color = Gray1_50545B),
-            )
+            if (isEditMode) {
+                Text(
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
+                    text = stringResource(id = R.string.bookmark_selected_count, selectedCount),
+                    style = MaterialTheme.typography.caption4.copy(color = Gray2_767B83),
+                )
+            } else {
+                Text(
+                    modifier = Modifier
+                        .padding(vertical = 8.dp, horizontal = 12.dp)
+                        .clickableSingle(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = onEditClick
+                        ),
+                    text = stringResource(id = R.string.bookmark_edit),
+                    style = MaterialTheme.typography.caption4.copy(color = Gray2_767B83),
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun BookmarkPostItem(post: BookmarkPost) {
-    RoundImageView(
-        context = LocalContext.current,
-        imageUrl = "${BuildConfig.BASE_URL}/images/${post.thumbnailImage}",
-        imageDescription = "bookmark post thumbnail",
-        customModifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(1f)
-    )
+private fun BookmarkPostItem(
+    post: BookmarkPost,
+    isEditMode: Boolean,
+    isSelected: Boolean,
+    onBookmarkClick: () -> Unit
+) {
+    Box {
+        RoundImageView(
+            context = LocalContext.current,
+            imageUrl = "${BuildConfig.BASE_URL}/images/${post.thumbnailImage}",
+            imageDescription = "bookmark post thumbnail",
+            customModifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+        )
+
+        if (isEditMode) {
+            Checkbox(
+                checked = isSelected,
+                onCheckedChange = { onBookmarkClick() }
+            )
+        }
+    }
 }
 
 @Preview
 @Composable
 private fun PreviewBookmarkHeader() {
-    BookmarkHeader(0)
+    BookmarkHeader(0, 0, true, {})
 }
