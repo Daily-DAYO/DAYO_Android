@@ -50,11 +50,27 @@ class BookmarkViewModel @Inject constructor(
             }
         }
     }
+
+    fun toggleEditMode() {
+        _uiState.update { it.copy(isEditMode = !it.isEditMode, selectedBookmarks = emptySet()) }
+    }
+
+    fun toggleSelection(postId: Int) {
+        _uiState.update {
+            val currentSelection = it.selectedBookmarks
+            val newSelection = if (currentSelection.contains(postId)) {
+                currentSelection - postId
+            } else {
+                currentSelection + postId
+            }
+            it.copy(selectedBookmarks = newSelection)
+        }
+    }
 }
 
 data class BookmarkUiState(
     val count: Int = 0,
     val bookmarks: Flow<PagingData<BookmarkPost>> = flow { emit(PagingData.empty()) },
     val isEditMode: Boolean = false,
-    val selectedBookmarks: Set<String> = emptySet()
+    val selectedBookmarks: Set<Int> = emptySet()
 )
