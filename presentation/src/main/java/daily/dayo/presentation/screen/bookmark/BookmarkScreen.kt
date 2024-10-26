@@ -19,7 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.LoadState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import daily.dayo.domain.model.BookmarkPost
 import daily.dayo.presentation.BuildConfig
@@ -43,19 +43,16 @@ import daily.dayo.presentation.theme.caption4
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
-import daily.dayo.presentation.viewmodel.ProfileViewModel
+import daily.dayo.presentation.viewmodel.BookmarkViewModel
 import java.text.DecimalFormat
 
 @Composable
 fun BookmarkScreen(
     onBackClick: () -> Unit,
-    profileViewModel: ProfileViewModel = hiltViewModel()
+    bookmarkViewModel: BookmarkViewModel = hiltViewModel()
 ) {
-    val bookmarkPosts = profileViewModel.bookmarkPostList.collectAsLazyPagingItems()
-
-    LaunchedEffect(true) {
-        profileViewModel.requestAllMyBookmarkPostList()
-    }
+    val bookmarkUiState by bookmarkViewModel.uiState.collectAsStateWithLifecycle()
+    val bookmarkPosts = bookmarkUiState.bookmarks.collectAsLazyPagingItems()
 
     Scaffold(
         topBar = { BookmarkTopNavigation(onBackClick) },
@@ -66,22 +63,16 @@ fun BookmarkScreen(
                     .fillMaxSize()
                     .padding(contentPadding)
             ) {
-                BookmarkHeader(bookmarkPosts.itemCount)
+                BookmarkHeader(bookmarkUiState.count)
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(bottom = 12.dp, start = 18.dp, end = 18.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    when (bookmarkPosts.loadState.refresh) {
-                        is LoadState.Loading -> {}
-                        is LoadState.Error -> {}
-                        is LoadState.NotLoading -> {
-                            items(bookmarkPosts.itemCount) { index ->
-                                bookmarkPosts[index]?.let { post ->
-                                    BookmarkPostItem(post)
-                                }
-                            }
+                    items(bookmarkPosts.itemCount) { index ->
+                        bookmarkPosts[index]?.let { post ->
+                            BookmarkPostItem(post)
                         }
                     }
                 }
