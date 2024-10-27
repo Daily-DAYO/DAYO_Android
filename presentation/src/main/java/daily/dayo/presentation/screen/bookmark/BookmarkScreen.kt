@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,6 +43,8 @@ import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.b6
 import daily.dayo.presentation.theme.caption2
 import daily.dayo.presentation.theme.caption4
+import daily.dayo.presentation.view.DayoCheckbox
+import daily.dayo.presentation.view.FilledRoundedCornerButton
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
@@ -65,6 +66,20 @@ fun BookmarkScreen(
                 onBackClick = onBackClick,
                 onCancelClick = { bookmarkViewModel.toggleEditMode() }
             )
+        },
+        bottomBar = {
+            if (bookmarkUiState.isEditMode) {
+                FilledRoundedCornerButton(
+                    onClick = {
+                        bookmarkViewModel.deleteSelectedBookmarks()
+                    },
+                    label = stringResource(id = R.string.delete),
+                    enabled = bookmarkUiState.selectedBookmarks.isNotEmpty(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp)
+                )
+            }
         }
     ) { contentPadding ->
         Column(
@@ -222,9 +237,10 @@ private fun BookmarkPostItem(
         )
 
         if (isEditMode) {
-            Checkbox(
+            DayoCheckbox(
                 checked = isSelected,
-                onCheckedChange = { onBookmarkClick() }
+                onCheckedChange = { onBookmarkClick() },
+                modifier = Modifier.align(Alignment.TopEnd)
             )
         }
     }
