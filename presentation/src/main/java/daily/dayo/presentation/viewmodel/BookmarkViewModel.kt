@@ -8,6 +8,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import daily.dayo.domain.model.BookmarkPost
 import daily.dayo.domain.repository.BookmarkRepository
 import daily.dayo.domain.usecase.bookmark.RequestAllMyBookmarkPostListUseCase
+import daily.dayo.domain.usecase.bookmark.RequestDeleteBookmarkPostUseCase
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +24,7 @@ import javax.inject.Inject
 class BookmarkViewModel @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
     private val requestAllMyBookmarkPostListUseCase: RequestAllMyBookmarkPostListUseCase,
+    private val requestDeleteBookmarkPostUseCase: RequestDeleteBookmarkPostUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(BookmarkUiState())
     val uiState: StateFlow<BookmarkUiState> = _uiState.asStateFlow()
@@ -28,6 +32,34 @@ class BookmarkViewModel @Inject constructor(
     init {
         requestBookmarkCount()
         requestAllMyBookmarkPostList()
+    }
+
+    fun toggleEditMode() {
+        _uiState.update { it.copy(isEditMode = !it.isEditMode, selectedBookmarks = emptySet()) }
+    }
+
+    fun toggleSelection(postId: Int) {
+        _uiState.update {
+            val currentSelection = it.selectedBookmarks
+            val newSelection = if (currentSelection.contains(postId)) {
+                currentSelection - postId
+            } else {
+                currentSelection + postId
+            }
+            it.copy(selectedBookmarks = newSelection)
+        }
+    }
+
+    fun deleteSelectedBookmarks() {
+        val selectedIds = _uiState.value.selectedBookmarks
+        viewModelScope.launch {
+            selectedIds.map { id ->
+                async { requestDeleteBookmarkPostUseCase(id) }
+            }.awaitAll()
+            toggleEditMode()
+            requestBookmarkCount()
+            requestAllMyBookmarkPostList()
+        }
     }
 
     private fun requestBookmarkCount() {
@@ -48,22 +80,6 @@ class BookmarkViewModel @Inject constructor(
             _uiState.update {
                 it.copy(bookmarks = bookmarkPosts)
             }
-        }
-    }
-
-    fun toggleEditMode() {
-        _uiState.update { it.copy(isEditMode = !it.isEditMode, selectedBookmarks = emptySet()) }
-    }
-
-    fun toggleSelection(postId: Int) {
-        _uiState.update {
-            val currentSelection = it.selectedBookmarks
-            val newSelection = if (currentSelection.contains(postId)) {
-                currentSelection - postId
-            } else {
-                currentSelection + postId
-            }
-            it.copy(selectedBookmarks = newSelection)
         }
     }
 }
