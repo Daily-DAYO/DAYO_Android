@@ -6,9 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import daily.dayo.presentation.common.Event
-import daily.dayo.presentation.common.Resource
-import daily.dayo.domain.model.*
+import dagger.hilt.android.lifecycle.HiltViewModel
+import daily.dayo.domain.model.Folder
+import daily.dayo.domain.model.LikePost
+import daily.dayo.domain.model.NetworkResponse
+import daily.dayo.domain.model.Profile
 import daily.dayo.domain.usecase.block.RequestBlockMemberUseCase
 import daily.dayo.domain.usecase.block.RequestUnblockMemberUseCase
 import daily.dayo.domain.usecase.bookmark.RequestAllMyBookmarkPostListUseCase
@@ -19,7 +21,8 @@ import daily.dayo.domain.usecase.follow.RequestDeleteFollowUseCase
 import daily.dayo.domain.usecase.like.RequestAllMyLikePostListUseCase
 import daily.dayo.domain.usecase.member.RequestMyProfileUseCase
 import daily.dayo.domain.usecase.member.RequestOtherProfileUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
+import daily.dayo.presentation.common.Event
+import daily.dayo.presentation.common.Resource
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,7 +36,6 @@ class ProfileViewModel @Inject constructor(
     private val requestCreateFollowUseCase: RequestCreateFollowUseCase,
     private val requestDeleteFollowUseCase: RequestDeleteFollowUseCase,
     private val requestAllMyLikePostListUseCase: RequestAllMyLikePostListUseCase,
-    private val requestAllMyBookmarkPostListUseCase: RequestAllMyBookmarkPostListUseCase,
     private val requestBlockMemberUseCase: RequestBlockMemberUseCase,
     private val requestUnblockMemberUseCase: RequestUnblockMemberUseCase
 ) : ViewModel() {
@@ -54,9 +56,6 @@ class ProfileViewModel @Inject constructor(
 
     private val _likePostList = MutableLiveData<PagingData<LikePost>>()
     val likePostList: LiveData<PagingData<LikePost>> get() = _likePostList
-
-    private val _bookmarkPostList = MutableLiveData<PagingData<BookmarkPost>>()
-    val bookmarkPostList: LiveData<PagingData<BookmarkPost>> get() = _bookmarkPostList
 
     private val _blockSuccess = MutableLiveData<Event<Boolean>>()
     val blockSuccess: LiveData<Event<Boolean>> get() = _blockSuccess
@@ -203,12 +202,6 @@ class ProfileViewModel @Inject constructor(
         requestAllMyLikePostListUseCase()
             .cachedIn(viewModelScope)
             .collectLatest { _likePostList.postValue(it) }
-    }
-
-    fun requestAllMyBookmarkPostList() = viewModelScope.launch {
-        requestAllMyBookmarkPostListUseCase()
-            .cachedIn(viewModelScope)
-            .collectLatest { _bookmarkPostList.postValue(it) }
     }
 
     fun requestBlockMember(memberId: String) = viewModelScope.launch {
