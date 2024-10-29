@@ -1,12 +1,18 @@
 package daily.dayo.presentation.screen.mypage
 
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material3.Icon
@@ -14,11 +20,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -33,7 +42,9 @@ import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.Gray1_50545B
+import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.b3
+import daily.dayo.presentation.view.FilledTextField
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
@@ -49,6 +60,11 @@ internal fun MyPageEditScreen(
         Status.SUCCESS -> profileUiState.data
         Status.LOADING, Status.ERROR -> null
     }
+
+    LaunchedEffect(Unit) {
+        profileViewModel.requestMyProfile()
+    }
+
     MyPageEditScreen(
         profileInfo = profileInfo,
         onBackClick = onBackClick,
@@ -63,13 +79,21 @@ private fun MyPageEditScreen(
     onConfirmClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
+    val nickname = remember { mutableStateOf("") }
+    val email = remember { mutableStateOf("") }
+
+    LaunchedEffect(profileInfo) {
+        nickname.value = profileInfo?.nickname ?: ""
+        email.value = profileInfo?.email ?: ""
+    }
 
     Scaffold(
         topBar = { MyPageEditTopNavigation(onBackClick = onBackClick, onConfirmClick = onConfirmClick) },
         content = { contentPadding ->
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .background(White_FFFFFF)
+                    .fillMaxSize()
                     .verticalScroll(scrollState)
                     .padding(contentPadding)
                     .padding(vertical = 32.dp),
@@ -80,15 +104,40 @@ private fun MyPageEditScreen(
                     context = LocalContext.current,
                     imageUrl = "${BuildConfig.BASE_URL}/images/${profileInfo?.profileImg}",
                     imageDescription = "my page profile image",
-                    roundSize = 24.dp,
                     placeholder = placeholder,
                     customModifier = Modifier
                         .size(118.dp)
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(percent = 50))
                         .clickableSingle(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
                             onClick = { }
                         )
+                )
+
+                Spacer(modifier = Modifier.height(36.dp))
+
+                // todo textfield 수정
+                FilledTextField(
+                    value = nickname.value,
+                    onValueChange = { textValue -> nickname.value = textValue },
+                    label = stringResource(id = R.string.nickname),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 18.dp)
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // todo 편집 불가능하도록 설정
+                FilledTextField(
+                    value = email.value,
+                    onValueChange = { textValue -> email.value = textValue },
+                    label = stringResource(id = R.string.email),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 18.dp)
                 )
             }
         }
