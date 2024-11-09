@@ -71,6 +71,7 @@ import daily.dayo.presentation.viewmodel.ProfileViewModel
 
 @Composable
 fun MyPageScreen(
+    onBookmarkClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel(),
     folderViewModel: FolderViewModel = hiltViewModel()
 ) {
@@ -99,7 +100,7 @@ fun MyPageScreen(
                 }
 
                 item(span = { GridItemSpan(2) }) {
-                    MyPageMenu()
+                    MyPageMenu(onBookmarkClick)
                 }
 
                 item(span = { GridItemSpan(2) }) {
@@ -208,7 +209,7 @@ private fun MyPageProfile(profile: Profile?) {
 }
 
 @Composable
-private fun MyPageMenu() {
+private fun MyPageMenu(onBookmarkClick: () -> Unit) {
     Row(
         modifier = Modifier.padding(bottom = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -236,7 +237,7 @@ private fun MyPageMenu() {
 
         // bookmark
         IconButton(
-            onClick = { },
+            onClick = { onBookmarkClick() },
             modifier = Modifier
                 .background(color = White_FFFFFF, shape = RoundedCornerShape(12.dp))
                 .border(
@@ -333,7 +334,6 @@ private fun PreviewMyPageTopNavigation() {
     MyPageTopNavigation()
 }
 
-
 @Preview
 @Composable
 private fun PreviewMyPageProfile() {
@@ -343,7 +343,7 @@ private fun PreviewMyPageProfile() {
 @Preview
 @Composable
 private fun PreviewMyPageMenu() {
-    MyPageMenu()
+    MyPageMenu {}
 }
 
 @Preview

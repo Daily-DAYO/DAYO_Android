@@ -102,7 +102,10 @@ internal fun MainScreen(
                             writeNavGraph (
                                 onBackClick = { navigator.popBackStack() },
                             )
-                            myPageNavGraph()
+                            myPageNavGraph(
+                                onBackClick = { navigator.popBackStack() },
+                                onBookmarkClick = { navigator.navigateBookmark() }
+                            )
                         }
                     }
                 },
