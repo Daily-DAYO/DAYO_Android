@@ -2,7 +2,6 @@ package daily.dayo.presentation.view
 
 import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,12 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -76,6 +70,7 @@ fun DayoTextField(
     label: String = "",
     placeholder: String = "",
     @DrawableRes trailingIconId: Int? = null,
+    @DrawableRes errorTrailingIconId: Int = R.drawable.ic_trailing_error,
     isError: Boolean? = null,
     errorMessage: String = "",
     textAlign: TextAlign = TextAlign.Left,
@@ -97,32 +92,6 @@ fun DayoTextField(
         }
 
         Box(modifier = Modifier.fillMaxWidth()) {
-            Box(
-                modifier = Modifier.align(alignment = Alignment.CenterEnd)
-            ) {
-                Column {
-                    if (isError != null && isError == true) {
-                        Icon(
-                            imageVector = Icons.Filled.Cancel,
-                            contentDescription = "error",
-                            modifier = Modifier
-                                .size(20.dp)
-                                .clickable(onClick = onTrailingIconClick),
-                            tint = Red_FF4545
-                        )
-                    } else if (trailingIconId != null) {
-                        Icon(
-                            painter = painterResource(id = trailingIconId),
-                            contentDescription = "error",
-                            modifier = Modifier
-                                .size(20.dp)
-                                .clickable(onClick = onTrailingIconClick),
-                            tint = Color.Unspecified
-                        )
-                    }
-                }
-            }
-
             BasicTextField(
                 value = value,
                 onValueChange = onValueChange,
@@ -170,6 +139,26 @@ fun DayoTextField(
                     )
                 }
             )
+
+            Box(
+                modifier = Modifier.align(alignment = Alignment.CenterEnd)
+            ) {
+                if (isError != null && isError == true) {
+                    NoRippleIconButton(
+                        onClick = onTrailingIconClick,
+                        iconContentDescription = "error icon",
+                        iconPainter = painterResource(id = errorTrailingIconId),
+                        iconButtonModifier = Modifier.size(20.dp)
+                    )
+                } else if (trailingIconId != null) {
+                    NoRippleIconButton(
+                        onClick = onTrailingIconClick,
+                        iconContentDescription = "trailing icon",
+                        iconPainter = painterResource(id = trailingIconId),
+                        iconButtonModifier = Modifier.size(20.dp)
+                    )
+                }
+            }
         }
 
         if (isError != null) {
@@ -182,60 +171,120 @@ fun DayoTextField(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FilledPasswordField(
+fun DayoPasswordTextField(
     value: String,
     onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(top = 0.dp, bottom = 8.dp),
     label: String = "",
     placeholder: String = "",
-    isError: Boolean = false,
+    isError: Boolean? = null,
+    @DrawableRes errorTrailingIconId: Int = R.drawable.ic_trailing_error,
     errorMessage: String = "",
     textAlign: TextAlign = TextAlign.Left,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    onErrorIconClick: (() -> Unit) = { }
 ) {
-    var passwordHidden by rememberSaveable { mutableStateOf(true) }
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        singleLine = true,
-        label = if (label != "") {
-            { Text(text = label) }
-        } else null,
-        placeholder = { Text(text = placeholder) },
+    Column(
         modifier = modifier,
-        isError = isError,
-        supportingText = { if (isError) Text(text = errorMessage) else Text(text = "") },
-        textStyle = TextStyle(textAlign = textAlign, color = Dark),
-        colors = TextFieldDefaults.colors(
-            errorSupportingTextColor = Red_FF4545,
-            focusedIndicatorColor = Primary_23C882,
-            unfocusedIndicatorColor = Gray6_F0F1F3,
-            errorIndicatorColor = Red_FF4545,
-            unfocusedContainerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,
-            errorContainerColor = Color.Transparent,
-            focusedContainerColor = Color.Transparent,
-            unfocusedLabelColor = Color.Transparent,
-            focusedLabelColor = Gray4_C5CAD2,
-            errorLabelColor = Red_FF4545,
-            focusedPlaceholderColor = Gray5_E8EAEE,
-            unfocusedPlaceholderColor = Gray5_E8EAEE,
-            disabledPlaceholderColor = Gray5_E8EAEE
-        ),
-        visualTransformation = if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        trailingIcon = {
-            if (isError) {
-                Icon(imageVector = Icons.Filled.Cancel, contentDescription = "error", tint = Red_FF4545)
-            } else {
-                IconButton(onClick = { passwordHidden = !passwordHidden }) {
-                    val iconColor = if (passwordHidden) Gray5_E8EAEE else Primary_23C882
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        var passwordHidden by remember { mutableStateOf(true) }
+
+        if (label.isNotEmpty()) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.caption3.copy(
+                    color = Gray4_C5CAD2,
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
+        }
+
+        Box(modifier = Modifier.fillMaxWidth()) {
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                textStyle = TextStyle(
+                    textAlign = textAlign,
+                    color = Dark,
+                    fontStyle = MaterialTheme.typography.b4.fontStyle
+                ),
+                visualTransformation = if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                interactionSource = interactionSource,
+                decorationBox = @Composable { innerTextField ->
+                    TextFieldDefaults.DecorationBox(
+                        value = value,
+                        visualTransformation = VisualTransformation.None,
+                        innerTextField = innerTextField,
+                        placeholder = {
+                            Text(
+                                text = placeholder,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.b4.copy(Gray4_C5CAD2)
+                            )
+                        },
+                        singleLine = true,
+                        isError = isError ?: false,
+                        enabled = true,
+                        interactionSource = interactionSource,
+                        contentPadding = contentPadding,
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Primary_23C882, // 밑줄
+                            unfocusedIndicatorColor = Gray6_F0F1F3,
+                            errorIndicatorColor = Red_FF4545,
+                            unfocusedContainerColor = Color.Transparent, // 배경
+                            disabledContainerColor = Color.Transparent,
+                            errorContainerColor = Color.Transparent,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedLabelColor = Color.Transparent, // 라벨
+                            focusedLabelColor = Gray4_C5CAD2,
+                            errorLabelColor = Red_FF4545,
+                            focusedPlaceholderColor = Gray5_E8EAEE, // 힌트
+                            unfocusedPlaceholderColor = Gray5_E8EAEE,
+                            disabledPlaceholderColor = Gray5_E8EAEE
+                        )
+                    )
+                }
+            )
+
+            Box(
+                modifier = Modifier.align(alignment = Alignment.CenterEnd)
+            ) {
+                if (isError != null && isError == true) {
+                    NoRippleIconButton(
+                        onClick = onErrorIconClick,
+                        iconContentDescription = "error icon",
+                        iconPainter = painterResource(id = errorTrailingIconId),
+                        iconButtonModifier = Modifier.size(20.dp)
+                    )
+                } else {
+                    val trailingIconId = if (passwordHidden) R.drawable.ic_trailing_invisible else R.drawable.ic_trailing_visible
                     val description = if (passwordHidden) "Show password" else "Hide password"
-                    Icon(imageVector = Icons.Filled.Visibility, contentDescription = description, tint = iconColor)
+                    NoRippleIconButton(
+                        onClick = { passwordHidden = passwordHidden.not() },
+                        iconContentDescription = description,
+                        iconPainter = painterResource(id = trailingIconId),
+                        iconButtonModifier = Modifier.size(20.dp)
+                    )
                 }
             }
         }
-    )
+
+        if (isError != null) {
+            Text(
+                text = if (isError) errorMessage else "",
+                modifier = Modifier.padding(top = 4.dp),
+                style = MaterialTheme.typography.caption4.copy(Red_FF4545)
+            )
+        }
+    }
 }
 
 @Composable
@@ -338,7 +387,7 @@ private fun PreviewTextField() {
             onValueChange = { textValue -> text.value = textValue },
             modifier = Modifier.padding(horizontal = 16.dp),
             label = "label",
-            trailingIconId = R.drawable.ic_img_delete_gray_5,
+            trailingIconId = R.drawable.ic_trailing_delete,
             isError = isError,
             errorMessage = "error",
             placeholder = "text를 입력하세요"
@@ -346,9 +395,12 @@ private fun PreviewTextField() {
 
         // Password 사용 예시
         val password = rememberSaveable { mutableStateOf("") }
-        FilledPasswordField(
+        val isPasswordError = password.value == "error"
+        DayoPasswordTextField(
             value = password.value,
             onValueChange = { textValue -> password.value = textValue },
+            modifier = Modifier.padding(horizontal = 16.dp),
+            isError = isPasswordError,
             placeholder = "비밀번호를 입력하세요"
         )
 
