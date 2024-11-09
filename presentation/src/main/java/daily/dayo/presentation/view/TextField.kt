@@ -179,52 +179,6 @@ fun DayoTextField(
 }
 
 @Composable
-fun FilledTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String = "",
-    placeholder: String = "",
-    isError: Boolean = false,
-    errorMessage: String = "",
-    trailingIcon: (@Composable () -> Unit)? = null,
-    textAlign: TextAlign = TextAlign.Left,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
-) {
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        singleLine = true,
-        label = if (label != "") {
-            { Text(text = label) }
-        } else null,
-        placeholder = { Text(text = placeholder) },
-        modifier = modifier,
-        isError = isError,
-        supportingText = { if (isError) Text(text = errorMessage) else Text(text = "") },
-        textStyle = TextStyle(textAlign = textAlign, color = Dark),
-        colors = TextFieldDefaults.colors(
-            errorSupportingTextColor = Red_FF4545, // 에러 메시지
-            focusedIndicatorColor = Primary_23C882, // 밑줄
-            unfocusedIndicatorColor = Gray6_F0F1F3,
-            errorIndicatorColor = Red_FF4545,
-            unfocusedContainerColor = Color.Transparent, // 배경
-            disabledContainerColor = Color.Transparent,
-            errorContainerColor = Color.Transparent,
-            focusedContainerColor = Color.Transparent,
-            unfocusedLabelColor = Color.Transparent, // 라벨
-            focusedLabelColor = Gray4_C5CAD2,
-            errorLabelColor = Red_FF4545,
-            focusedPlaceholderColor = Gray5_E8EAEE, // 힌트
-            unfocusedPlaceholderColor = Gray5_E8EAEE,
-            disabledPlaceholderColor = Gray5_E8EAEE
-        ),
-        trailingIcon = if (isError) {
-            { Icon(imageVector = Icons.Filled.Cancel, contentDescription = "error", tint = Red_FF4545) }
-        } else trailingIcon
-    )
-}
-
-@Composable
 fun FilledPasswordField(
     value: String,
     onValueChange: (String) -> Unit,
