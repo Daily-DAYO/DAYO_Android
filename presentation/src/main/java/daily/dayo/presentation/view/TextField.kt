@@ -128,7 +128,11 @@ fun DayoTextField(
                 onValueChange = onValueChange,
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                textStyle = TextStyle(textAlign = textAlign, color = Dark),
+                textStyle = TextStyle(
+                    textAlign = textAlign,
+                    color = Dark,
+                    fontStyle = MaterialTheme.typography.b4.fontStyle
+                ),
                 interactionSource = interactionSource,
                 decorationBox = @Composable { innerTextField ->
                     TextFieldDefaults.DecorationBox(
