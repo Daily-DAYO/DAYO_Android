@@ -1,6 +1,5 @@
 package daily.dayo.presentation.view
 
-import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -18,13 +17,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -33,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -59,6 +59,7 @@ import daily.dayo.presentation.theme.b6
 import daily.dayo.presentation.theme.caption3
 import daily.dayo.presentation.theme.caption4
 import kotlinx.coroutines.delay
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -287,20 +288,25 @@ fun DayoPasswordTextField(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FilledTimerField(
+fun DayoTimerTextField(
     value: String,
     onValueChange: (String) -> Unit,
     seconds: Int,
-    isPaused: Boolean,
+    modifier: Modifier = Modifier,
+    isPaused: Boolean = false,
+    contentPadding: PaddingValues = PaddingValues(top = 0.dp, bottom = 8.dp),
     label: String = "",
     placeholder: String = "",
     isError: Boolean = false,
     errorMessage: String = "",
+    timeOutErrorMessage: String = stringResource(id = R.string.email_address_certificate_alert_message_time_fail),
     textAlign: TextAlign = TextAlign.Left,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
-    var timeLeft by rememberSaveable { mutableStateOf(seconds) }
+    var timeLeft by rememberSaveable { mutableIntStateOf(seconds) }
+
     LaunchedEffect(key1 = timeLeft, key2 = isPaused) {
         while (timeLeft > 0 && !isPaused) {
             delay(1000L)
@@ -308,48 +314,101 @@ fun FilledTimerField(
         }
     }
 
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        singleLine = true,
-        label = if (label != "") {
-            { Text(text = label) }
-        } else null,
-        placeholder = { Text(text = placeholder) },
+    Column(
         modifier = modifier,
-        isError = isError,
-        supportingText = { if (isError) Text(text = errorMessage) else Text(text = "") },
-        textStyle = TextStyle(textAlign = textAlign, color = Dark),
-        trailingIcon = { Text(text = "${String.format("%02d", (timeLeft / 60) % 60)}:${String.format("%02d", timeLeft % 60)}", color = Gray2_767B83) },
-        colors = TextFieldDefaults.colors(
-            errorSupportingTextColor = Red_FF4545,
-            focusedIndicatorColor =
-            Primary_23C882,
-            unfocusedIndicatorColor = Gray6_F0F1F3,
-            errorIndicatorColor = Red_FF4545,
-            unfocusedContainerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,
-            errorContainerColor = Color.Transparent,
-            focusedContainerColor = Color.Transparent,
-            unfocusedLabelColor = Color.Transparent,
-            focusedLabelColor = Gray4_C5CAD2,
-            errorLabelColor = Red_FF4545,
-            focusedPlaceholderColor = Gray5_E8EAEE,
-            unfocusedPlaceholderColor = Gray5_E8EAEE,
-            disabledPlaceholderColor = Gray5_E8EAEE
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        if (label.isNotEmpty()) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.caption3.copy(
+                    color = Gray4_C5CAD2,
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
+        }
+
+        Box(modifier = Modifier.fillMaxWidth()) {
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                textStyle = TextStyle(
+                    textAlign = textAlign,
+                    color = Dark,
+                    fontStyle = MaterialTheme.typography.b4.fontStyle
+                ),
+                interactionSource = interactionSource,
+                decorationBox = @Composable { innerTextField ->
+                    TextFieldDefaults.DecorationBox(
+                        value = value,
+                        visualTransformation = VisualTransformation.None,
+                        innerTextField = innerTextField,
+                        placeholder = {
+                            Text(
+                                text = placeholder,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.b4.copy(Gray4_C5CAD2)
+                            )
+                        },
+                        singleLine = true,
+                        isError = isError || timeLeft == 0,
+                        enabled = true,
+                        interactionSource = interactionSource,
+                        contentPadding = contentPadding,
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Primary_23C882, // 밑줄
+                            unfocusedIndicatorColor = Gray6_F0F1F3,
+                            errorIndicatorColor = Red_FF4545,
+                            unfocusedContainerColor = Color.Transparent, // 배경
+                            disabledContainerColor = Color.Transparent,
+                            errorContainerColor = Color.Transparent,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedLabelColor = Color.Transparent, // 라벨
+                            focusedLabelColor = Gray4_C5CAD2,
+                            errorLabelColor = Red_FF4545,
+                            focusedPlaceholderColor = Gray5_E8EAEE, // 힌트
+                            unfocusedPlaceholderColor = Gray5_E8EAEE,
+                            disabledPlaceholderColor = Gray5_E8EAEE
+                        )
+                    )
+                }
+            )
+
+            Box(
+                modifier = Modifier.align(alignment = Alignment.CenterEnd)
+            ) {
+                Text(
+                    text = String.format(Locale.getDefault(), "%02d", (timeLeft / 60) % 60) +
+                            ":" + String.format(Locale.getDefault(), "%02d", timeLeft % 60),
+                    style = MaterialTheme.typography.b6.copy(Gray2_767B83)
+                )
+            }
+        }
+
+        Text(
+            text = if (timeLeft == 0) {
+                timeOutErrorMessage
+            } else if (isError) {
+                errorMessage
+            } else "",
+            modifier = Modifier.padding(top = 4.dp),
+            style = MaterialTheme.typography.caption4.copy(Red_FF4545)
         )
-    )
+    }
 }
 
 @Composable
 fun CharacterLimitOutlinedTextField(
     value: MutableState<TextFieldValue>,
     maxLength: Int,
+    modifier: Modifier = Modifier,
     singleLine: Boolean = false,
     cornerSize: Dp = 8.dp,
     placeholder: String = "",
     outlinedTextFieldColors: TextFieldColors? = null,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
 ) {
     OutlinedTextField(
         value = value.value.text,
@@ -358,7 +417,7 @@ fun CharacterLimitOutlinedTextField(
                 text = TextLimitUtil.trimToMaxLength(textValue, maxLength)
             )
         },
-        placeholder = { Text(text = placeholder, style = MaterialTheme.typography.b6) },
+        placeholder = { Text(text = placeholder, style = MaterialTheme.typography.b6.copy(Gray2_767B83)) },
         singleLine = singleLine,
         shape = RoundedCornerShape(cornerSize),
         colors = outlinedTextFieldColors
@@ -369,17 +428,17 @@ fun CharacterLimitOutlinedTextField(
                 unfocusedBorderColor = Color.Transparent,
                 cursorColor = Primary_23C882
             ),
-        textStyle = MaterialTheme.typography.b6,
+        textStyle = MaterialTheme.typography.b6.copy(Dark),
         modifier = modifier
     )
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun PreviewTextField() {
+private fun PreviewFilledTextField() {
     Column(Modifier.fillMaxWidth()) {
         // Default 사용 예시
-        val text = rememberSaveable { mutableStateOf("") }
+        val text = remember { mutableStateOf("") }
         val isError = text.value == "error"
 
         DayoTextField(
@@ -394,7 +453,7 @@ private fun PreviewTextField() {
         )
 
         // Password 사용 예시
-        val password = rememberSaveable { mutableStateOf("") }
+        val password = remember { mutableStateOf("") }
         val isPasswordError = password.value == "error"
         DayoPasswordTextField(
             value = password.value,
@@ -405,24 +464,31 @@ private fun PreviewTextField() {
         )
 
         // Timer 사용 예시
-        val timerText = rememberSaveable { mutableStateOf("") }
-        val isPaused by rememberSaveable { mutableStateOf(false) }
-        FilledTimerField(
+        val timerText = remember { mutableStateOf("") }
+        val isTimerError = timerText.value == "error"
+        val isPaused by remember { mutableStateOf(false) }
+        DayoTimerTextField(
             value = timerText.value,
             onValueChange = { textValue -> timerText.value = textValue },
-            seconds = 60,
+            modifier = Modifier.padding(horizontal = 16.dp),
+            seconds = 10,
             isPaused = isPaused,
-            label = "Number",
-            isError = isError,
+            label = "인증번호",
+            placeholder = "인증번호를 입력해주세요",
+            isError = isTimerError,
             errorMessage = "error",
         )
-
-        // 글자수 제한 text field 사용 예시
-        val limitText = remember { mutableStateOf(TextFieldValue("")) }
-        CharacterLimitOutlinedTextField(
-            value = limitText,
-            placeholder = "게시물을 신고하는 기타 사유는 무엇인가요?",
-            maxLength = 5
-        )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewOutlinedTextField() {
+    // 글자수 제한 text field 사용 예시
+    val limitText = remember { mutableStateOf(TextFieldValue("")) }
+    CharacterLimitOutlinedTextField(
+        value = limitText,
+        placeholder = "게시물을 신고하는 기타 사유는 무엇인가요?",
+        maxLength = 5
+    )
 }
