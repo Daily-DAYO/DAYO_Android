@@ -223,7 +223,7 @@ fun DayoPasswordTextField(
                     color = Dark,
                     fontStyle = MaterialTheme.typography.b4.fontStyle
                 ),
-                visualTransformation = if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
+                visualTransformation = if (passwordHidden) PasswordVisualTransformation(mask = '●') else VisualTransformation.None,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 interactionSource = interactionSource,
                 decorationBox = @Composable { innerTextField ->
