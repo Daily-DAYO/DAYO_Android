@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -43,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.TextLimitUtil
@@ -121,7 +124,12 @@ fun DayoTextField(
                         isError = isError ?: false,
                         enabled = true,
                         interactionSource = interactionSource,
-                        contentPadding = contentPadding,
+                        contentPadding = PaddingValues(
+                            start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
+                            top = contentPadding.calculateTopPadding(),
+                            end = contentPadding.calculateEndPadding(LayoutDirection.Ltr) + 20.dp,
+                            bottom = contentPadding.calculateBottomPadding()
+                        ),
                         colors = TextFieldDefaults.colors(
                             focusedIndicatorColor = Primary_23C882, // 밑줄
                             unfocusedIndicatorColor = Gray6_F0F1F3,
@@ -235,7 +243,12 @@ fun DayoPasswordTextField(
                         isError = isError ?: false,
                         enabled = true,
                         interactionSource = interactionSource,
-                        contentPadding = contentPadding,
+                        contentPadding = PaddingValues(
+                            start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
+                            top = contentPadding.calculateTopPadding(),
+                            end = contentPadding.calculateEndPadding(LayoutDirection.Ltr) + 20.dp,
+                            bottom = contentPadding.calculateBottomPadding()
+                        ),
                         colors = TextFieldDefaults.colors(
                             focusedIndicatorColor = Primary_23C882, // 밑줄
                             unfocusedIndicatorColor = Gray6_F0F1F3,
@@ -357,7 +370,12 @@ fun DayoTimerTextField(
                         isError = isError || timeLeft == 0,
                         enabled = true,
                         interactionSource = interactionSource,
-                        contentPadding = contentPadding,
+                        contentPadding = PaddingValues(
+                            start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
+                            top = contentPadding.calculateTopPadding(),
+                            end = contentPadding.calculateEndPadding(LayoutDirection.Ltr) + 40.dp,
+                            bottom = contentPadding.calculateBottomPadding()
+                        ),
                         colors = TextFieldDefaults.colors(
                             focusedIndicatorColor = Primary_23C882, // 밑줄
                             unfocusedIndicatorColor = Gray6_F0F1F3,
