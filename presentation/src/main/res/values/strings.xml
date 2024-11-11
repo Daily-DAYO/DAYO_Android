@@ -285,7 +285,7 @@
     <string name="email_address_certificate_alert_message_resend">인증번호가 발송되었습니다.</string>
     <string name="email_address_certificate_alert_message_match_fail">잘못된 인증번호입니다. 다시 확인해보세요.</string>
     <string name="email_address_certificate_alert_message_match_fail_toast">인증 실패 하였습니다.</string>
-    <string name="email_address_certificate_alert_message_time_fail">제한 시간을 초과했어요.</string>
+    <string name="email_address_certificate_alert_message_time_fail">제한시간을 초과했어요! 인증번호를 다시 받아주세요.</string>
 
     <!-- Signup -->
     <!-- Signup Email Set Address -->
