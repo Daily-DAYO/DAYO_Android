@@ -51,8 +51,8 @@ import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.b3
 import daily.dayo.presentation.theme.b4
 import daily.dayo.presentation.theme.caption3
+import daily.dayo.presentation.view.BadgeRoundImageView
 import daily.dayo.presentation.view.DayoTextField
-import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
 import daily.dayo.presentation.viewmodel.ProfileViewModel
@@ -107,13 +107,13 @@ private fun MyPageEditScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 val placeholder = AppCompatResources.getDrawable(LocalContext.current, R.drawable.ic_profile_default_user_profile)
-                RoundImageView(
+                BadgeRoundImageView(
                     context = LocalContext.current,
                     imageUrl = "${BuildConfig.BASE_URL}/images/${profileInfo?.profileImg}",
                     imageDescription = "my page profile image",
                     placeholder = placeholder,
-                    customModifier = Modifier
-                        .size(118.dp)
+                    contentModifier = Modifier
+                        .size(100.dp)
                         .aspectRatio(1f)
                         .clip(RoundedCornerShape(percent = 50))
                         .clickableSingle(
