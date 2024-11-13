@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,9 +44,14 @@ import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.Gray1_50545B
+import daily.dayo.presentation.theme.Gray2_767B83
+import daily.dayo.presentation.theme.Gray4_C5CAD2
+import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.b3
-import daily.dayo.presentation.view.FilledTextField
+import daily.dayo.presentation.theme.b4
+import daily.dayo.presentation.theme.caption3
+import daily.dayo.presentation.view.DayoTextField
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
@@ -118,8 +125,7 @@ private fun MyPageEditScreen(
 
                 Spacer(modifier = Modifier.height(36.dp))
 
-                // todo textfield 수정
-                FilledTextField(
+                DayoTextField(
                     value = nickname.value,
                     onValueChange = { textValue -> nickname.value = textValue },
                     label = stringResource(id = R.string.nickname),
@@ -128,17 +134,32 @@ private fun MyPageEditScreen(
                         .padding(horizontal = 18.dp)
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
-                // todo 편집 불가능하도록 설정
-                FilledTextField(
-                    value = email.value,
-                    onValueChange = { textValue -> email.value = textValue },
-                    label = stringResource(id = R.string.email),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 18.dp)
-                )
+                Column(modifier = Modifier.padding(horizontal = 18.dp)) {
+                    Text(
+                        text = stringResource(id = R.string.email),
+                        style = MaterialTheme.typography.caption3.copy(
+                            color = Gray4_C5CAD2,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+
+                    Text(
+                        text = email.value,
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        style = MaterialTheme.typography.b4.copy(
+                            color = Gray2_767B83,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+
+                    Divider(
+                        modifier = Modifier.fillMaxWidth(),
+                        thickness = 1.dp,
+                        color = Gray6_F0F1F3
+                    )
+                }
             }
         }
     )
