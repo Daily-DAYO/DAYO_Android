@@ -49,7 +49,7 @@ fun BadgeRoundImageView(
     imageDescription: String = "default image view",
     placeholder: Drawable? = null,
     roundSize: Dp = 8.dp,
-    badgeSize: Dp = 40.dp
+    badgeSize: Dp = 30.dp
 ) {
     Box(modifier = modifier) {
         RoundImageView(
