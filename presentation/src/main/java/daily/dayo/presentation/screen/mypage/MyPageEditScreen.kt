@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -65,6 +66,7 @@ import daily.dayo.presentation.view.dialog.BottomSheetDialog
 import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 import daily.dayo.presentation.viewmodel.ProfileSettingViewModel
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.regex.Pattern
 
 @Composable
@@ -72,12 +74,16 @@ internal fun MyPageEditScreen(
     onBackClick: () -> Unit,
     profileSettingViewModel: ProfileSettingViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+
     val profileUiState by profileSettingViewModel.profileInfo.observeAsState(Resource.loading(null))
     val isNicknameDuplicate by profileSettingViewModel.isNicknameDuplicate.collectAsStateWithLifecycle(false)
+    val updateSuccess by profileSettingViewModel.updateSuccess.collectAsStateWithLifecycle(false)
 
     val profileInfo = remember { mutableStateOf<Profile?>(null) }
-    val context = LocalContext.current
     val nickNameErrorMessage = remember { mutableStateOf("") }
+    val profileImgFile: File? = null
 
     LaunchedEffect(profileUiState) {
         profileInfo.value = when (profileUiState.status) {
@@ -97,11 +103,24 @@ internal fun MyPageEditScreen(
         }
     }
 
+    LaunchedEffect(updateSuccess) {
+        if (updateSuccess) onBackClick.invoke()
+    }
+
     MyPageEditScreen(
         profileInfo = profileInfo,
         nickNameErrorMessage = nickNameErrorMessage.value,
         onBackClick = onBackClick,
-        onConfirmClick = {}
+        onConfirmClick = {
+            if (profileInfo.value?.nickname != null) {
+                profileSettingViewModel.requestUpdateMyProfile(
+                    nickname = profileInfo.value?.nickname!!,
+                    profileImg = profileImgFile,
+                    isReset = false
+                )
+            }
+            focusManager.clearFocus()
+        }
     )
 }
 
