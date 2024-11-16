@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -26,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,7 +58,10 @@ import daily.dayo.presentation.view.BadgeRoundImageView
 import daily.dayo.presentation.view.DayoTextField
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
+import daily.dayo.presentation.view.dialog.BottomSheetDialog
+import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 import daily.dayo.presentation.viewmodel.ProfileViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun MyPageEditScreen(
@@ -79,6 +85,24 @@ internal fun MyPageEditScreen(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun ProfileImageBottomSheetDialog(bottomSheetState: ModalBottomSheetState) {
+    BottomSheetDialog(
+        sheetState = bottomSheetState,
+        buttons = listOf(
+            Pair(stringResource(id = R.string.my_profile_edit_image_select_gallery)) {
+
+            }, Pair(stringResource(id = R.string.image_option_camera)) {
+
+            }, Pair(stringResource(id = R.string.my_profile_edit_image_reset)) {
+
+            }),
+        isFirstButtonColored = true
+    )
+}
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun MyPageEditScreen(
     profileInfo: Profile?,
@@ -88,6 +112,8 @@ private fun MyPageEditScreen(
     val scrollState = rememberScrollState()
     val nickname = remember { mutableStateOf("") }
     val email = remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
+    val bottomSheetState = getBottomSheetDialogState()
 
     LaunchedEffect(profileInfo) {
         nickname.value = profileInfo?.nickname ?: ""
@@ -96,6 +122,7 @@ private fun MyPageEditScreen(
 
     Scaffold(
         topBar = { MyPageEditTopNavigation(onBackClick = onBackClick, onConfirmClick = onConfirmClick) },
+        bottomBar = { ProfileImageBottomSheetDialog(bottomSheetState) },
         content = { contentPadding ->
             Column(
                 modifier = Modifier
@@ -119,7 +146,9 @@ private fun MyPageEditScreen(
                         .clickableSingle(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
-                            onClick = { }
+                            onClick = {
+                                coroutineScope.launch { bottomSheetState.show() }
+                            }
                         )
                 )
 
