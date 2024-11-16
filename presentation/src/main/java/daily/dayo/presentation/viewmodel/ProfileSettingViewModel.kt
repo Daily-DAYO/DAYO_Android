@@ -31,8 +31,8 @@ class ProfileSettingViewModel @Inject constructor(
     private val _profileInfo = MutableLiveData<Resource<Profile>>()
     val profileInfo: LiveData<Resource<Profile>> = _profileInfo
 
-    private val _updateSuccess = MutableLiveData<Event<Boolean>>()
-    val updateSuccess: LiveData<Event<Boolean>> get() = _updateSuccess
+    private val _updateSuccess = MutableSharedFlow<Boolean>()
+    val updateSuccess = _updateSuccess.asSharedFlow()
 
     private val _blockList = MutableLiveData<Resource<List<UserBlocked>>>()
     val blockList: LiveData<Resource<List<UserBlocked>>> get() = _blockList
@@ -50,32 +50,24 @@ class ProfileSettingViewModel @Inject constructor(
         requestMyProfile()
     }
 
-    fun requestUpdateMyProfile(nickname: String?, profileImg: File?, isReset: Boolean) =
+    fun requestUpdateMyProfile(
+        nickname: String,
+        profileImg: File?,
+        isReset: Boolean = false
+    ) {
         viewModelScope.launch {
-            requestUpdateMyProfileUseCase(
+            val response = requestUpdateMyProfileUseCase(
                 nickname = nickname,
                 profileImg = profileImg,
                 onBasicProfileImg = isReset
-            ).let { response ->
-                when (response) {
-                    is NetworkResponse.Success -> {
-                        _updateSuccess.postValue(Event(true))
-                    }
+            )
 
-                    is NetworkResponse.NetworkError -> {
-                        _updateSuccess.postValue(Event(false))
-                    }
-
-                    is NetworkResponse.ApiError -> {
-                        _updateSuccess.postValue(Event(false))
-                    }
-
-                    is NetworkResponse.UnknownError -> {
-                        _updateSuccess.postValue(Event(false))
-                    }
-                }
+            when (response) {
+                is NetworkResponse.Success -> _updateSuccess.emit(true)
+                else -> _updateSuccess.emit(false)
             }
         }
+    }
 
     fun requestBlockList() = viewModelScope.launch {
         requestBlockListUseCase().let { response ->
