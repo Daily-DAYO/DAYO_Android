@@ -1,5 +1,6 @@
 package daily.dayo.presentation.screen.mypage
 
+import android.content.Context
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -24,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import daily.dayo.domain.model.Profile
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
@@ -60,29 +63,53 @@ import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
 import daily.dayo.presentation.view.dialog.BottomSheetDialog
 import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
-import daily.dayo.presentation.viewmodel.ProfileViewModel
+import daily.dayo.presentation.viewmodel.ProfileSettingViewModel
 import kotlinx.coroutines.launch
+import java.util.regex.Pattern
 
 @Composable
 internal fun MyPageEditScreen(
     onBackClick: () -> Unit,
-    profileViewModel: ProfileViewModel = hiltViewModel(),
+    profileSettingViewModel: ProfileSettingViewModel = hiltViewModel()
 ) {
-    val profileUiState by profileViewModel.profileInfo.observeAsState(Resource.loading(null))
-    val profileInfo = when (profileUiState.status) {
-        Status.SUCCESS -> profileUiState.data
-        Status.LOADING, Status.ERROR -> null
+    val profileUiState by profileSettingViewModel.profileInfo.observeAsState(Resource.loading(null))
+    val isNicknameDuplicate by profileSettingViewModel.isNicknameDuplicate.collectAsStateWithLifecycle(false)
+
+    val profileInfo = remember { mutableStateOf<Profile?>(null) }
+    val context = LocalContext.current
+    val nickNameErrorMessage = remember { mutableStateOf("") }
+
+    LaunchedEffect(profileUiState) {
+        profileInfo.value = when (profileUiState.status) {
+            Status.SUCCESS -> profileUiState.data
+            Status.LOADING, Status.ERROR -> null
+        }
     }
 
-    LaunchedEffect(Unit) {
-        profileViewModel.requestMyProfile()
+    LaunchedEffect(profileInfo.value?.nickname, isNicknameDuplicate) {
+        profileInfo.value?.nickname?.let { nickname ->
+            profileSettingViewModel.requestCheckNicknameDuplicate(nickname)
+        }
+
+        nickNameErrorMessage.value = when {
+            isNicknameDuplicate -> context.getString(R.string.my_profile_edit_nickname_message_duplicate_fail)
+            else -> verifyNickname(profileInfo.value?.nickname ?: "", context)
+        }
     }
 
     MyPageEditScreen(
         profileInfo = profileInfo,
+        nickNameErrorMessage = nickNameErrorMessage.value,
         onBackClick = onBackClick,
         onConfirmClick = {}
     )
+}
+
+private fun verifyNickname(nickname: String, context: Context): String {
+    return if (nickname.length < 2) context.getString(R.string.my_profile_edit_nickname_message_length_fail_min)
+    else if (nickname.length > 10) context.getString(R.string.my_profile_edit_nickname_message_length_fail_max)
+    else if (Pattern.matches("^[ㄱ-ㅎ|ㅏ-ㅣ가-힣a-zA-Z0-9]+$", nickname).not()) context.getString(R.string.my_profile_edit_nickname_message_format_fail)
+    else ""
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -105,23 +132,23 @@ private fun ProfileImageBottomSheetDialog(bottomSheetState: ModalBottomSheetStat
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun MyPageEditScreen(
-    profileInfo: Profile?,
+    profileInfo: MutableState<Profile?>,
+    nickNameErrorMessage: String,
     onBackClick: () -> Unit,
-    onConfirmClick: () -> Unit
+    onConfirmClick: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
-    val nickname = remember { mutableStateOf("") }
-    val email = remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
     val bottomSheetState = getBottomSheetDialogState()
 
-    LaunchedEffect(profileInfo) {
-        nickname.value = profileInfo?.nickname ?: ""
-        email.value = profileInfo?.email ?: ""
-    }
-
     Scaffold(
-        topBar = { MyPageEditTopNavigation(onBackClick = onBackClick, onConfirmClick = onConfirmClick) },
+        topBar = {
+            MyPageEditTopNavigation(
+                confirmEnabled = nickNameErrorMessage.isEmpty(),
+                onBackClick = onBackClick,
+                onConfirmClick = onConfirmClick
+            )
+        },
         bottomBar = { ProfileImageBottomSheetDialog(bottomSheetState) },
         content = { contentPadding ->
             Column(
@@ -136,7 +163,7 @@ private fun MyPageEditScreen(
                 val placeholder = AppCompatResources.getDrawable(LocalContext.current, R.drawable.ic_profile_default_user_profile)
                 BadgeRoundImageView(
                     context = LocalContext.current,
-                    imageUrl = "${BuildConfig.BASE_URL}/images/${profileInfo?.profileImg}",
+                    imageUrl = "${BuildConfig.BASE_URL}/images/${profileInfo.value?.profileImg}",
                     imageDescription = "my page profile image",
                     placeholder = placeholder,
                     contentModifier = Modifier
@@ -155,12 +182,18 @@ private fun MyPageEditScreen(
                 Spacer(modifier = Modifier.height(36.dp))
 
                 DayoTextField(
-                    value = nickname.value,
-                    onValueChange = { textValue -> nickname.value = textValue },
+                    value = profileInfo.value?.nickname ?: "",
+                    onValueChange = { textValue ->
+                        profileInfo.value = profileInfo.value?.copy(
+                            nickname = textValue
+                        )
+                    },
                     label = stringResource(id = R.string.nickname),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 18.dp)
+                        .padding(horizontal = 18.dp),
+                    isError = nickNameErrorMessage.isNotEmpty(),
+                    errorMessage = nickNameErrorMessage
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -175,7 +208,7 @@ private fun MyPageEditScreen(
                     )
 
                     Text(
-                        text = email.value,
+                        text = profileInfo.value?.email ?: "",
                         modifier = Modifier.padding(vertical = 8.dp),
                         style = MaterialTheme.typography.b4.copy(
                             color = Gray2_767B83,
@@ -196,6 +229,7 @@ private fun MyPageEditScreen(
 
 @Composable
 private fun MyPageEditTopNavigation(
+    confirmEnabled: Boolean,
     onBackClick: () -> Unit,
     onConfirmClick: () -> Unit
 ) {
@@ -218,6 +252,7 @@ private fun MyPageEditTopNavigation(
                     .clickableSingle(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
+                        enabled = confirmEnabled,
                         onClick = onConfirmClick
                     ),
                 text = stringResource(id = R.string.confirm),
@@ -233,17 +268,23 @@ private fun MyPageEditTopNavigation(
 internal fun PreviewMyPageEditScreen() {
     MaterialTheme {
         MyPageEditScreen(
-            Profile(
-                null,
-                "princedj@gmail.com",
-                "동준왕자다요",
-                "",
-                0,
-                0,
-                0,
-                false
-            ),
-            {}, {}
+            profileInfo = remember {
+                mutableStateOf(
+                    Profile(
+                        null,
+                        "princedj@gmail.com",
+                        "동준왕자다요",
+                        "",
+                        0,
+                        0,
+                        0,
+                        false
+                    )
+                )
+            },
+            nickNameErrorMessage = "",
+            onBackClick = {},
+            onConfirmClick = {}
         )
     }
 }
