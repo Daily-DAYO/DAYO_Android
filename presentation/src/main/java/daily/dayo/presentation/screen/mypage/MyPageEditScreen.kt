@@ -1,6 +1,16 @@
 package daily.dayo.presentation.screen.mypage
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -31,6 +41,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +52,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import daily.dayo.domain.model.Profile
@@ -48,6 +61,10 @@ import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Resource
 import daily.dayo.presentation.common.Status
+import daily.dayo.presentation.common.dialog.LoadingAlertDialog.createLoadingDialog
+import daily.dayo.presentation.common.dialog.LoadingAlertDialog.hideLoadingDialog
+import daily.dayo.presentation.common.dialog.LoadingAlertDialog.resizeDialogFragment
+import daily.dayo.presentation.common.dialog.LoadingAlertDialog.showLoadingDialog
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.Gray1_50545B
@@ -67,6 +84,7 @@ import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 import daily.dayo.presentation.viewmodel.ProfileSettingViewModel
 import kotlinx.coroutines.launch
 import java.io.File
+import java.io.FileOutputStream
 import java.util.regex.Pattern
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -79,6 +97,7 @@ internal fun MyPageEditScreen(
     val focusManager = LocalFocusManager.current
     val bottomSheetState = getBottomSheetDialogState()
     val coroutineScope = rememberCoroutineScope()
+    val alertDialog = remember { mutableStateOf(createLoadingDialog(context)) }
 
     val profileUiState by profileSettingViewModel.profileInfo.observeAsState(Resource.loading(null))
     val isNicknameDuplicate by profileSettingViewModel.isNicknameDuplicate.collectAsStateWithLifecycle(false)
@@ -87,8 +106,18 @@ internal fun MyPageEditScreen(
     val profileInfo = remember { mutableStateOf<Profile?>(null) }
     val modifiedProfileImage = remember { mutableStateOf("") }
     val nickNameErrorMessage = remember { mutableStateOf("") }
-    val isProfileImageReset = remember { mutableStateOf(false) }
-    val profileImgFile: File? = null
+    var showProfileGallery by remember { mutableStateOf(false) }
+    var showProfileCapture by remember { mutableStateOf(false) }
+    val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null) {
+            modifiedProfileImage.value = uri.toString()
+        }
+    }
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
+        if (bitmap != null) {
+            modifiedProfileImage.value = bitmapToUri(context, bitmap).toString()
+        }
+    }
 
     LaunchedEffect(profileUiState) {
         profileInfo.value = when (profileUiState.status) {
@@ -108,18 +137,27 @@ internal fun MyPageEditScreen(
         }
     }
 
-    LaunchedEffect(profileInfo.value?.profileImg, isProfileImageReset.value, modifiedProfileImage) {
+    LaunchedEffect(profileInfo.value?.profileImg, modifiedProfileImage) {
         profileInfo.value?.profileImg?.let { profileImg ->
-            if (isProfileImageReset.value) {
-                modifiedProfileImage.value = ""
-            } else {
-                modifiedProfileImage.value = "${BuildConfig.BASE_URL}/images/${profileImg}"
-            }
+            modifiedProfileImage.value = "${BuildConfig.BASE_URL}/images/${profileImg}"
         }
     }
 
     LaunchedEffect(updateSuccess) {
-        if (updateSuccess) onBackClick.invoke()
+        if (updateSuccess) {
+            hideLoadingDialog(alertDialog.value)
+            onBackClick.invoke()
+        }
+    }
+
+    if (showProfileGallery) {
+        ProfileGallery(context, galleryLauncher)
+        showProfileGallery = false
+    }
+
+    if (showProfileCapture) {
+        ProfileCapture(context, cameraLauncher)
+        showProfileCapture = false
     }
 
     MyPageEditScreen(
@@ -129,16 +167,18 @@ internal fun MyPageEditScreen(
         nickNameErrorMessage = nickNameErrorMessage.value,
         onClickProfileSelect = {
             coroutineScope.launch {
+                showProfileGallery = true
                 bottomSheetState.hide()
             }
         },
         onClickProfileCapture = {
             coroutineScope.launch {
+                showProfileCapture = true
                 bottomSheetState.hide()
             }
         },
         onClickProfileReset = {
-            isProfileImageReset.value = true
+            modifiedProfileImage.value = ""
             coroutineScope.launch {
                 bottomSheetState.hide()
             }
@@ -146,43 +186,16 @@ internal fun MyPageEditScreen(
         onBackClick = onBackClick,
         onConfirmClick = {
             if (profileInfo.value?.nickname != null) {
+                showLoadingDialog(alertDialog.value)
+                resizeDialogFragment(context, alertDialog.value, 0.8f)
                 profileSettingViewModel.requestUpdateMyProfile(
                     nickname = profileInfo.value?.nickname!!,
-                    profileImg = profileImgFile,
-                    isReset = isProfileImageReset.value
+                    profileImg = uriToFile(context, modifiedProfileImage.value),
+                    isReset = modifiedProfileImage.value.isEmpty()
                 )
             }
             focusManager.clearFocus()
         }
-    )
-}
-
-private fun verifyNickname(nickname: String, context: Context): String {
-    return if (nickname.length < 2) context.getString(R.string.my_profile_edit_nickname_message_length_fail_min)
-    else if (nickname.length > 10) context.getString(R.string.my_profile_edit_nickname_message_length_fail_max)
-    else if (Pattern.matches("^[ㄱ-ㅎ|ㅏ-ㅣ가-힣a-zA-Z0-9]+$", nickname).not()) context.getString(R.string.my_profile_edit_nickname_message_format_fail)
-    else ""
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-private fun ProfileImageBottomSheetDialog(
-    bottomSheetState: ModalBottomSheetState,
-    onClickProfileSelect: () -> Unit,
-    onClickProfileCapture: () -> Unit,
-    onClickProfileReset: () -> Unit,
-) {
-    BottomSheetDialog(
-        sheetState = bottomSheetState,
-        buttons = listOf(
-            Pair(stringResource(id = R.string.my_profile_edit_image_select_gallery)) {
-                onClickProfileSelect()
-            }, Pair(stringResource(id = R.string.image_option_camera)) {
-                onClickProfileCapture()
-            }, Pair(stringResource(id = R.string.my_profile_edit_image_reset)) {
-                onClickProfileReset()
-            }),
-        isFirstButtonColored = true
     )
 }
 
@@ -329,6 +342,136 @@ private fun MyPageEditTopNavigation(
         },
         titleAlignment = TopNavigationAlign.CENTER
     )
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun ProfileImageBottomSheetDialog(
+    bottomSheetState: ModalBottomSheetState,
+    onClickProfileSelect: () -> Unit,
+    onClickProfileCapture: () -> Unit,
+    onClickProfileReset: () -> Unit,
+) {
+    BottomSheetDialog(
+        sheetState = bottomSheetState,
+        buttons = listOf(
+            Pair(stringResource(id = R.string.my_profile_edit_image_select_gallery)) {
+                onClickProfileSelect()
+            }, Pair(stringResource(id = R.string.image_option_camera)) {
+                onClickProfileCapture()
+            }, Pair(stringResource(id = R.string.my_profile_edit_image_reset)) {
+                onClickProfileReset()
+            }),
+        isFirstButtonColored = true
+    )
+}
+
+@Composable
+fun ProfileGallery(
+    context: Context,
+    galleryLauncher: ManagedActivityResultLauncher<String, Uri?>
+) {
+    val imagePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        Manifest.permission.READ_MEDIA_IMAGES
+    } else {
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    }
+
+    var hasImagePermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                imagePermission
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        hasImagePermission = isGranted
+    }
+
+    LaunchedEffect(hasImagePermission) {
+        if (hasImagePermission) {
+            galleryLauncher.launch("image/*")
+        } else {
+            permissionLauncher.launch(imagePermission)
+        }
+    }
+}
+
+@Composable
+fun ProfileCapture(
+    context: Context,
+    cameraLauncher: ManagedActivityResultLauncher<Void?, Bitmap?>
+) {
+    var hasCameraPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        hasCameraPermission = isGranted
+    }
+
+    LaunchedEffect(hasCameraPermission) {
+        if (hasCameraPermission) {
+            cameraLauncher.launch()
+        } else {
+            permissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+}
+
+private fun verifyNickname(nickname: String, context: Context): String {
+    return if (nickname.length < 2) context.getString(R.string.my_profile_edit_nickname_message_length_fail_min)
+    else if (nickname.length > 10) context.getString(R.string.my_profile_edit_nickname_message_length_fail_max)
+    else if (Pattern.matches("^[ㄱ-ㅎ|ㅏ-ㅣ가-힣a-zA-Z0-9]+$", nickname).not()) context.getString(R.string.my_profile_edit_nickname_message_format_fail)
+    else ""
+}
+
+fun uriToFile(context: Context, uri: String): File? {
+    if (uri.isEmpty()) return null
+    val inputStream = context.contentResolver.openInputStream(uri.toUri())
+    return if (inputStream != null) {
+        val tempFile = File(context.cacheDir, "profile_image_${System.currentTimeMillis()}.jpg")
+        try {
+            val outputStream = FileOutputStream(tempFile)
+            inputStream.use { input ->
+                outputStream.use { output ->
+                    input.copyTo(output)
+                }
+            }
+            tempFile
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        } finally {
+            inputStream.close()
+        }
+    } else {
+        null
+    }
+}
+
+fun bitmapToUri(context: Context, bitmap: Bitmap): Uri? {
+    val file = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "profile_image_${System.currentTimeMillis()}.jpg")
+    return try {
+        FileOutputStream(file).use { outputStream ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        }
+        Uri.fromFile(file)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
