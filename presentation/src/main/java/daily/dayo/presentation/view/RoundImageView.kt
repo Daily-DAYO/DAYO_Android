@@ -32,6 +32,7 @@ fun RoundImageView(
         model = ImageRequest.Builder(context)
             .data(imageUrl)
             .placeholder(placeholder)
+            .error(placeholder)
             .build(),
         contentDescription = imageDescription,
         contentScale = ContentScale.Crop,

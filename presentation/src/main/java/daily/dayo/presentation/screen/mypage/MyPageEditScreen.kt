@@ -69,6 +69,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.util.regex.Pattern
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun MyPageEditScreen(
     onBackClick: () -> Unit,
@@ -76,13 +77,17 @@ internal fun MyPageEditScreen(
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
+    val bottomSheetState = getBottomSheetDialogState()
+    val coroutineScope = rememberCoroutineScope()
 
     val profileUiState by profileSettingViewModel.profileInfo.observeAsState(Resource.loading(null))
     val isNicknameDuplicate by profileSettingViewModel.isNicknameDuplicate.collectAsStateWithLifecycle(false)
     val updateSuccess by profileSettingViewModel.updateSuccess.collectAsStateWithLifecycle(false)
 
     val profileInfo = remember { mutableStateOf<Profile?>(null) }
+    val modifiedProfileImage = remember { mutableStateOf("") }
     val nickNameErrorMessage = remember { mutableStateOf("") }
+    val isProfileImageReset = remember { mutableStateOf(false) }
     val profileImgFile: File? = null
 
     LaunchedEffect(profileUiState) {
@@ -103,20 +108,48 @@ internal fun MyPageEditScreen(
         }
     }
 
+    LaunchedEffect(profileInfo.value?.profileImg, isProfileImageReset.value, modifiedProfileImage) {
+        profileInfo.value?.profileImg?.let { profileImg ->
+            if (isProfileImageReset.value) {
+                modifiedProfileImage.value = ""
+            } else {
+                modifiedProfileImage.value = "${BuildConfig.BASE_URL}/images/${profileImg}"
+            }
+        }
+    }
+
     LaunchedEffect(updateSuccess) {
         if (updateSuccess) onBackClick.invoke()
     }
 
     MyPageEditScreen(
         profileInfo = profileInfo,
+        bottomSheetState = bottomSheetState,
+        modifiedProfileImage = modifiedProfileImage.value,
         nickNameErrorMessage = nickNameErrorMessage.value,
+        onClickProfileSelect = {
+            coroutineScope.launch {
+                bottomSheetState.hide()
+            }
+        },
+        onClickProfileCapture = {
+            coroutineScope.launch {
+                bottomSheetState.hide()
+            }
+        },
+        onClickProfileReset = {
+            isProfileImageReset.value = true
+            coroutineScope.launch {
+                bottomSheetState.hide()
+            }
+        },
         onBackClick = onBackClick,
         onConfirmClick = {
             if (profileInfo.value?.nickname != null) {
                 profileSettingViewModel.requestUpdateMyProfile(
                     nickname = profileInfo.value?.nickname!!,
                     profileImg = profileImgFile,
-                    isReset = false
+                    isReset = isProfileImageReset.value
                 )
             }
             focusManager.clearFocus()
@@ -133,16 +166,21 @@ private fun verifyNickname(nickname: String, context: Context): String {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun ProfileImageBottomSheetDialog(bottomSheetState: ModalBottomSheetState) {
+private fun ProfileImageBottomSheetDialog(
+    bottomSheetState: ModalBottomSheetState,
+    onClickProfileSelect: () -> Unit,
+    onClickProfileCapture: () -> Unit,
+    onClickProfileReset: () -> Unit,
+) {
     BottomSheetDialog(
         sheetState = bottomSheetState,
         buttons = listOf(
             Pair(stringResource(id = R.string.my_profile_edit_image_select_gallery)) {
-
+                onClickProfileSelect()
             }, Pair(stringResource(id = R.string.image_option_camera)) {
-
+                onClickProfileCapture()
             }, Pair(stringResource(id = R.string.my_profile_edit_image_reset)) {
-
+                onClickProfileReset()
             }),
         isFirstButtonColored = true
     )
@@ -152,13 +190,17 @@ private fun ProfileImageBottomSheetDialog(bottomSheetState: ModalBottomSheetStat
 @Composable
 private fun MyPageEditScreen(
     profileInfo: MutableState<Profile?>,
+    modifiedProfileImage: String,
     nickNameErrorMessage: String,
+    bottomSheetState: ModalBottomSheetState,
+    onClickProfileSelect: () -> Unit,
+    onClickProfileCapture: () -> Unit,
+    onClickProfileReset: () -> Unit,
     onBackClick: () -> Unit,
     onConfirmClick: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
-    val bottomSheetState = getBottomSheetDialogState()
 
     Scaffold(
         topBar = {
@@ -168,7 +210,14 @@ private fun MyPageEditScreen(
                 onConfirmClick = onConfirmClick
             )
         },
-        bottomBar = { ProfileImageBottomSheetDialog(bottomSheetState) },
+        bottomBar = {
+            ProfileImageBottomSheetDialog(
+                bottomSheetState,
+                onClickProfileSelect,
+                onClickProfileCapture,
+                onClickProfileReset
+            )
+        },
         content = { contentPadding ->
             Column(
                 modifier = Modifier
@@ -182,7 +231,7 @@ private fun MyPageEditScreen(
                 val placeholder = AppCompatResources.getDrawable(LocalContext.current, R.drawable.ic_profile_default_user_profile)
                 BadgeRoundImageView(
                     context = LocalContext.current,
-                    imageUrl = "${BuildConfig.BASE_URL}/images/${profileInfo.value?.profileImg}",
+                    imageUrl = modifiedProfileImage,
                     imageDescription = "my page profile image",
                     placeholder = placeholder,
                     contentModifier = Modifier
@@ -282,6 +331,7 @@ private fun MyPageEditTopNavigation(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
 internal fun PreviewMyPageEditScreen() {
@@ -301,7 +351,12 @@ internal fun PreviewMyPageEditScreen() {
                     )
                 )
             },
+            modifiedProfileImage = "",
             nickNameErrorMessage = "",
+            bottomSheetState = getBottomSheetDialogState(),
+            onClickProfileSelect = {},
+            onClickProfileCapture = {},
+            onClickProfileReset = { },
             onBackClick = {},
             onConfirmClick = {}
         )
