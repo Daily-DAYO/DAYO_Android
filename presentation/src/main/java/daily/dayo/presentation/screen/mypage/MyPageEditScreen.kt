@@ -439,6 +439,8 @@ private fun verifyNickname(nickname: String, context: Context): String {
 
 fun uriToFile(context: Context, uri: String): File? {
     if (uri.isEmpty()) return null
+    if (uri.toUri().scheme == "http" || uri.toUri().scheme == "https") return null
+    
     val inputStream = context.contentResolver.openInputStream(uri.toUri())
     return if (inputStream != null) {
         val tempFile = File(context.cacheDir, "profile_image_${System.currentTimeMillis()}.jpg")
