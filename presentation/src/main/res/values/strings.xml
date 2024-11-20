@@ -288,6 +288,7 @@
     <string name="email_address_certificate_alert_message_time_fail">제한시간을 초과했어요! 인증번호를 다시 받아주세요.</string>
 
     <!-- Signup -->
+    <string name="nickname">닉네임</string>
     <!-- Signup Email Set Address -->
     <string name="email">이메일</string>
     <string name="email_address">이메일 주소</string>

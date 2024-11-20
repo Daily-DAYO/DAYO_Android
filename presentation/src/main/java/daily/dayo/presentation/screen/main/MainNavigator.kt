@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import daily.dayo.presentation.screen.home.HomeRoute
 import daily.dayo.presentation.screen.home.navigateHome
 import daily.dayo.presentation.screen.mypage.navigateBookmark
+import daily.dayo.presentation.screen.mypage.navigateProfileEdit
 import daily.dayo.presentation.screen.post.navigatePost
 import daily.dayo.presentation.screen.post.navigatePostLikeUsers
 import daily.dayo.presentation.screen.search.navigateSearch
@@ -40,6 +41,10 @@ internal class MainNavigator(
 
     fun navigateSearchPostHashtag(hashtag: String) {
         navController.navigateSearchPostHashtag(hashtag = hashtag)
+    }
+
+    fun navigateProfileEdit() {
+        navController.navigateProfileEdit()
     }
 
     fun navigateBookmark() {
