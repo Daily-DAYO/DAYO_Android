@@ -2,7 +2,9 @@ package daily.dayo.presentation.screen.mypage
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import daily.dayo.presentation.screen.bookmark.BookmarkScreen
 
 fun NavController.navigateProfileEdit() {
@@ -15,13 +17,31 @@ fun NavController.navigateBookmark() {
 
 fun NavGraphBuilder.myPageNavGraph(
     onBackClick: () -> Unit,
+    onFollowButtonClick: (Int) -> Unit,
     onBookmarkClick: () -> Unit,
     onProfileEditClick: () -> Unit
 ) {
     composable(MyPageRoute.route) {
         MyPageScreen(
+            onBackClick = onBackClick,
+            onFollowButtonClick = onFollowButtonClick,
             onProfileEditClick = onProfileEditClick,
-            onBookmarkClick = onBookmarkClick
+            onBookmarkClick = onBookmarkClick,
+        )
+    }
+
+    composable(
+        route = MyPageRoute.follow("{tabNum}"),
+        arguments = listOf(
+            navArgument("tabNum") {
+                type = NavType.IntType
+            }
+        )
+    ) { navBackStackEntry ->
+        val tabNum = navBackStackEntry.arguments?.getInt("tabNum") ?: 0
+        FollowScreen(
+            tabNum = tabNum,
+            onBackClick = onBackClick
         )
     }
 
@@ -41,6 +61,7 @@ fun NavGraphBuilder.myPageNavGraph(
 object MyPageRoute {
     const val route = "myPage"
 
+    fun follow(tabNum: String) = "$route/follow/$tabNum"
     fun profileEdit() = "$route/edit"
     fun bookmark() = "$route/bookmark"
     fun bookmarkPost(postId: String) = "$route/bookmark/$postId"
