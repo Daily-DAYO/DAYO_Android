@@ -71,6 +71,8 @@ import daily.dayo.presentation.viewmodel.ProfileViewModel
 
 @Composable
 fun MyPageScreen(
+    onBackClick: () -> Unit,
+    onFollowButtonClick: (Int) -> Unit,
     onProfileEditClick: () -> Unit,
     onBookmarkClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel(),
@@ -97,7 +99,7 @@ fun MyPageScreen(
                     .padding(horizontal = 20.dp),
             ) {
                 item(span = { GridItemSpan(2) }) {
-                    MyPageProfile(profileInfo.value?.data)
+                    MyPageProfile(profileInfo.value?.data, onFollowButtonClick)
                 }
 
                 item(span = { GridItemSpan(2) }) {
@@ -127,7 +129,10 @@ fun MyPageScreen(
 }
 
 @Composable
-private fun MyPageProfile(profile: Profile?) {
+private fun MyPageProfile(
+    profile: Profile?,
+    onFollowButtonClick: (Int) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -174,6 +179,11 @@ private fun MyPageProfile(profile: Profile?) {
 
         // follower
         Column(
+            modifier = Modifier.clickableSingle(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { onFollowButtonClick(FOLLOWER) }
+            ),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -202,6 +212,11 @@ private fun MyPageProfile(profile: Profile?) {
 
         // following
         Column(
+            modifier = Modifier.clickableSingle(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { onFollowButtonClick(FOLLOWING) }
+            ),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -363,7 +378,7 @@ private fun PreviewMyPageTopNavigation() {
 @Preview
 @Composable
 private fun PreviewMyPageProfile() {
-    MyPageProfile(profile = null)
+    MyPageProfile(profile = null, onFollowButtonClick = {})
 }
 
 @Preview
@@ -377,3 +392,6 @@ private fun PreviewMyPageMenu() {
 private fun PreviewMyPageDiaryHeader() {
     MyPageDiaryHeader()
 }
+
+const val FOLLOWER = 0
+const val FOLLOWING = 1
