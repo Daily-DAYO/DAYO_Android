@@ -104,6 +104,7 @@ internal fun MainScreen(
                             )
                             myPageNavGraph(
                                 onBackClick = { navigator.popBackStack() },
+                                onProfileEditClick = { navigator.navigateProfileEdit() },
                                 onBookmarkClick = { navigator.navigateBookmark() }
                             )
                         }
