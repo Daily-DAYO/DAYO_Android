@@ -17,7 +17,7 @@ fun NavController.navigateBookmark() {
 
 fun NavGraphBuilder.myPageNavGraph(
     onBackClick: () -> Unit,
-    onFollowButtonClick: (Int) -> Unit,
+    onFollowButtonClick: (String, Int) -> Unit,
     onBookmarkClick: () -> Unit,
     onProfileEditClick: () -> Unit
 ) {
@@ -31,15 +31,20 @@ fun NavGraphBuilder.myPageNavGraph(
     }
 
     composable(
-        route = MyPageRoute.follow("{tabNum}"),
+        route = MyPageRoute.follow("{memberId}", "{tabNum}"),
         arguments = listOf(
+            navArgument("memberId") {
+                type = NavType.StringType
+            },
             navArgument("tabNum") {
                 type = NavType.IntType
             }
         )
     ) { navBackStackEntry ->
+        val memberId = navBackStackEntry.arguments?.getString("memberId") ?: ""
         val tabNum = navBackStackEntry.arguments?.getInt("tabNum") ?: 0
         FollowScreen(
+            memberId = memberId,
             tabNum = tabNum,
             onBackClick = onBackClick
         )
@@ -61,7 +66,7 @@ fun NavGraphBuilder.myPageNavGraph(
 object MyPageRoute {
     const val route = "myPage"
 
-    fun follow(tabNum: String) = "$route/follow/$tabNum"
+    fun follow(memberId: String, tabNum: String) = "$route/follow/$memberId/$tabNum"
     fun profileEdit() = "$route/edit"
     fun bookmark() = "$route/bookmark"
     fun bookmarkPost(postId: String) = "$route/bookmark/$postId"

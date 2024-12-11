@@ -13,7 +13,6 @@ import daily.dayo.domain.model.NetworkResponse
 import daily.dayo.domain.model.Profile
 import daily.dayo.domain.usecase.block.RequestBlockMemberUseCase
 import daily.dayo.domain.usecase.block.RequestUnblockMemberUseCase
-import daily.dayo.domain.usecase.bookmark.RequestAllMyBookmarkPostListUseCase
 import daily.dayo.domain.usecase.folder.RequestAllFolderListUseCase
 import daily.dayo.domain.usecase.folder.RequestAllMyFolderListUseCase
 import daily.dayo.domain.usecase.follow.RequestCreateFollowUseCase
@@ -43,7 +42,7 @@ class ProfileViewModel @Inject constructor(
     lateinit var profileMemberId: String
 
     private val _profileInfo = MutableLiveData<Resource<Profile>>()
-    val profileInfo: LiveData<Resource<Profile>> get() = _profileInfo
+    val profileInfo: LiveData<Resource<Profile>> = _profileInfo
 
     private val _followSuccess = MutableLiveData<Event<Boolean>>()
     val followSuccess: LiveData<Event<Boolean>> get() = _followSuccess
