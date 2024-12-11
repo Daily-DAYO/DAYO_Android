@@ -142,12 +142,12 @@ fun PostLikeUsersScreen(
                         onProfileClick = onProfileClick,
                         onFollowClick = {
                             if (!user.follow) {
-                                followViewModel.requestCreateFollow(
+                                followViewModel.requestFollow(
                                     followerId = user.memberId,
                                     isFollower = false
                                 )
                             } else {
-                                followViewModel.requestDeleteFollow(
+                                followViewModel.requestUnfollow(
                                     followerId = user.memberId,
                                     isFollower = true
                                 )

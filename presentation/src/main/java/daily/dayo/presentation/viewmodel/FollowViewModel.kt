@@ -25,19 +25,11 @@ class FollowViewModel @Inject constructor(
     private val requestCurrentUserInfoUseCase: RequestCurrentUserInfoUseCase
 ) : ViewModel() {
 
-    var memberId: String = ""
-
-    private val _followerFollowSuccess = MutableLiveData<Event<Boolean>>()
-    val followerFollowSuccess: LiveData<Event<Boolean>> get() = _followerFollowSuccess
-
     private val _followerUnfollowSuccess = MutableLiveData<Event<Boolean>>()
-    val followerUnfollowSuccess: LiveData<Event<Boolean>> get() = _followerUnfollowSuccess
+    val followerUnfollowSuccess: LiveData<Event<Boolean>> = _followerUnfollowSuccess
 
     private val _followingFollowSuccess = MutableLiveData<Event<Boolean>>()
-    val followingFollowSuccess: LiveData<Event<Boolean>> get() = _followingFollowSuccess
-
-    private val _followingUnfollowSuccess = MutableLiveData<Event<Boolean>>()
-    val followingUnfollowSuccess: LiveData<Event<Boolean>> get() = _followingUnfollowSuccess
+    val followingFollowSuccess: LiveData<Event<Boolean>> = _followingFollowSuccess
 
     private val _followerUiState = MutableLiveData<FollowUiState>()
     val followerUiState: LiveData<FollowUiState> = _followerUiState
@@ -93,35 +85,72 @@ class FollowViewModel @Inject constructor(
         }
     }
 
-    fun requestCreateFollow(followerId: String, isFollower: Boolean) = viewModelScope.launch {
-        requestCreateFollowUseCase(followerId = followerId).let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    if (isFollower) _followerFollowSuccess.postValue(Event(true))
-                    else _followingFollowSuccess.postValue(Event(true))
-                }
+    fun requestFollow(followerId: String, isFollower: Boolean) {
+        viewModelScope.launch {
+            requestCreateFollowUseCase(followerId = followerId).let { response ->
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        if (!isFollower) _followingFollowSuccess.postValue(Event(true))
+                    }
 
-                else -> {
-                    if (isFollower) _followerFollowSuccess.postValue(Event(false))
-                    else _followingFollowSuccess.postValue(Event(false))
+                    else -> {
+                        if (!isFollower) _followingFollowSuccess.postValue(Event(false))
+                    }
                 }
             }
         }
     }
 
-    fun requestDeleteFollow(followerId: String, isFollower: Boolean) = viewModelScope.launch {
-        requestDeleteFollowUseCase(followerId).let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    if (isFollower) _followerUnfollowSuccess.postValue(Event(true))
-                    else _followingUnfollowSuccess.postValue(Event(true))
-                }
+    fun requestUnfollow(followerId: String, isFollower: Boolean) {
+        viewModelScope.launch {
+            requestDeleteFollowUseCase(followerId).let { response ->
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        if (isFollower) _followerUnfollowSuccess.postValue(Event(true))
+                    }
 
-                else -> {
-                    if (isFollower) _followerUnfollowSuccess.postValue(Event(false))
-                    else _followingUnfollowSuccess.postValue(Event(false))
+                    else -> {
+                        if (isFollower) _followerUnfollowSuccess.postValue(Event(false))
+                    }
                 }
             }
+        }
+    }
+
+    fun toggleFollow(follow: Follow, isFollower: Boolean) {
+        viewModelScope.launch {
+            if (follow.isFollow) {
+                requestUnfollow(follow.memberId, isFollower)
+            } else {
+                requestFollow(follow.memberId, isFollower)
+            }
+
+            if (isFollower) {
+                updateFollowUiState(follow, _followerUiState)
+            } else {
+                updateFollowUiState(follow, _followingUiState)
+            }
+        }
+    }
+
+    private fun updateFollowUiState(
+        follow: Follow,
+        followUiState: MutableLiveData<FollowUiState>,
+    ) {
+        val currentState = followUiState.value
+        if (currentState is FollowUiState.Success) {
+            val updatedData = currentState.data.map {
+                if (it.memberId == follow.memberId) {
+                    it.copy(isFollow = !it.isFollow)
+                } else {
+                    it
+                }
+            }
+
+            followUiState.value = FollowUiState.Success(
+                count = currentState.count,
+                data = updatedData
+            )
         }
     }
 }
