@@ -1,6 +1,5 @@
 package daily.dayo.presentation.view
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
@@ -27,6 +26,7 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -54,12 +54,12 @@ import daily.dayo.presentation.theme.caption3
 
 @Composable
 fun FilledButton(
-    onClick: () -> Unit,
     label: String,
-    icon: @Composable (() -> Unit)? = null,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isTonal: Boolean = false,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
+    icon: @Composable (() -> Unit)? = null
 ) {
     val buttonColors = if (isTonal)
         ButtonDefaults.buttonColors(
@@ -79,9 +79,10 @@ fun FilledButton(
 
     Button(
         onClick = { onClick() },
-        colors = buttonColors,
-        enabled = enabled,
         modifier = modifier,
+        enabled = enabled,
+        colors = buttonColors,
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         content = {
             if (icon != null) icon()
             Text(text = label, style = MaterialTheme.typography.b6)
@@ -91,14 +92,14 @@ fun FilledButton(
 
 @Composable
 fun FilledRoundedCornerButton(
-    onClick: () -> Unit,
     label: String,
-    icon: @Composable (() -> Unit)? = null,
+    onClick: () -> Unit,
+    modifier: Modifier? = null,
+    contentModifier: Modifier? = null,
     enabled: Boolean = true,
+    color: ButtonColors? = null,
     textStyle: TextStyle = MaterialTheme.typography.b3,
-    @SuppressLint("ModifierParameter") modifier: Modifier? = null,
-    @SuppressLint("ModifierParameter") contentModifier: Modifier? = null,
-    color: ButtonColors? = null
+    icon: @Composable (() -> Unit)? = null
 ) {
     val buttonColors = color
         ?: ButtonDefaults.buttonColors(
@@ -132,20 +133,21 @@ fun FilledRoundedCornerButton(
 }
 
 @Composable
-fun OutlinedButton(
-    onClick: () -> Unit,
+fun DayoOutlinedButton(
     label: String,
-    icon: @Composable (() -> Unit)? = null,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: @Composable (() -> Unit)? = null
 ) {
-    androidx.compose.material3.OutlinedButton(
+    OutlinedButton(
         onClick = { onClick() },
-        border = BorderStroke(1.dp, Gray5_E8EAEE),
+        modifier = modifier,
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = White_FFFFFF,
             contentColor = Gray2_767B83
         ),
-        modifier = modifier,
+        border = BorderStroke(1.dp, Gray5_E8EAEE),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         content = {
             if (icon != null) icon()
             Text(text = label, style = MaterialTheme.typography.b6)
@@ -155,11 +157,11 @@ fun OutlinedButton(
 
 @Composable
 fun TextButton(
-    onClick: () -> Unit,
     text: String = "",
-    textStyle: TextStyle = MaterialTheme.typography.b6.copy(color = Primary_23C882),
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     underline: Boolean = false,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
+    textStyle: TextStyle = MaterialTheme.typography.b6.copy(color = Primary_23C882)
 ) {
     Text(
         modifier = modifier.clickable(
@@ -176,8 +178,8 @@ fun TextButton(
 @Composable
 fun NoRippleIconButton(
     onClick: () -> Unit,
-    iconContentDescription: String,
     iconPainter: Painter,
+    iconContentDescription: String,
     iconButtonModifier: Modifier = Modifier,
     iconModifier: Modifier = Modifier,
     iconTintColor: Color = Color.Unspecified,
@@ -233,7 +235,7 @@ fun NoRippleIconButton(
 
 @Preview
 @Composable
-fun PreviewFilledButton() {
+private fun PreviewFilledButton() {
     Column {
         // Filled Button
         FilledButton(onClick = {}, label = "text")
@@ -244,7 +246,7 @@ fun PreviewFilledButton() {
 
 @Preview
 @Composable
-fun PreviewFilledRoundedButton() {
+private fun PreviewFilledRoundedButton() {
     Column {
         // Rounded Corner Shape Button
         FilledRoundedCornerButton(onClick = {}, label = "label")
@@ -262,17 +264,17 @@ fun PreviewFilledRoundedButton() {
 
 @Preview
 @Composable
-fun PreviewOutlinedButton() {
+private fun PreviewOutlinedButton() {
     Column {
         // Outlined Button
-        OutlinedButton(onClick = {}, label = "text")
-        OutlinedButton(onClick = {}, label = "text", icon = { Icon(Icons.Filled.Add, "Add") })
+        DayoOutlinedButton(onClick = {}, label = "text")
+        DayoOutlinedButton(onClick = {}, label = "text", icon = { Icon(Icons.Filled.Add, "Add") })
     }
 }
 
 @Preview(showBackground = true, backgroundColor = android.graphics.Color.WHITE.toLong())
 @Composable
-fun PreviewTextButton() {
+private fun PreviewTextButton() {
     Column {
         // Text Button
         TextButton(onClick = {}, text = "text")
