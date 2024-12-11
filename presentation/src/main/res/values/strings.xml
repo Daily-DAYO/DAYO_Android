@@ -234,6 +234,8 @@
     <string name="following">팔로잉</string>
     <string name="follow_already">팔로잉</string>
     <string name="follow_yet">팔로우</string>
+    <string name="follow_already_icon_description">팔로우 취소</string>
+    <string name="follow_yet_icon_description">팔로우 하기</string>
     <string name="follow_delete_description_message">팔로우를 취소할까요?</string>
     <string name="follower_empty_content_description">존재하지 않습니다</string>
     <string name="follower_empty_description">관심이 가는 사람들을 팔로우해보세요</string>
