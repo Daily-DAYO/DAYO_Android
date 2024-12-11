@@ -72,7 +72,7 @@ import daily.dayo.presentation.viewmodel.ProfileViewModel
 @Composable
 fun MyPageScreen(
     onBackClick: () -> Unit,
-    onFollowButtonClick: (Int) -> Unit,
+    onFollowButtonClick: (String, Int) -> Unit,
     onProfileEditClick: () -> Unit,
     onBookmarkClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel(),
@@ -131,7 +131,7 @@ fun MyPageScreen(
 @Composable
 private fun MyPageProfile(
     profile: Profile?,
-    onFollowButtonClick: (Int) -> Unit
+    onFollowButtonClick: (String, Int) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -182,7 +182,7 @@ private fun MyPageProfile(
             modifier = Modifier.clickableSingle(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
-                onClick = { onFollowButtonClick(FOLLOWER) }
+                onClick = { profile?.memberId?.let { onFollowButtonClick(it, FOLLOWER) } }
             ),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -215,7 +215,7 @@ private fun MyPageProfile(
             modifier = Modifier.clickableSingle(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
-                onClick = { onFollowButtonClick(FOLLOWING) }
+                onClick = { profile?.memberId?.let { onFollowButtonClick(it, FOLLOWING) } }
             ),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -378,7 +378,7 @@ private fun PreviewMyPageTopNavigation() {
 @Preview
 @Composable
 private fun PreviewMyPageProfile() {
-    MyPageProfile(profile = null, onFollowButtonClick = {})
+    MyPageProfile(profile = null, onFollowButtonClick = { memberId, tabNum -> })
 }
 
 @Preview
@@ -393,5 +393,5 @@ private fun PreviewMyPageDiaryHeader() {
     MyPageDiaryHeader()
 }
 
-const val FOLLOWER = 0
-const val FOLLOWING = 1
+private const val FOLLOWER = 0
+private const val FOLLOWING = 1

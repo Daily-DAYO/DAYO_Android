@@ -4,16 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import daily.dayo.presentation.common.Event
-import daily.dayo.presentation.common.Resource
-import daily.dayo.domain.model.MyFollower
+import dagger.hilt.android.lifecycle.HiltViewModel
+import daily.dayo.domain.model.Follow
 import daily.dayo.domain.model.NetworkResponse
 import daily.dayo.domain.usecase.follow.RequestCreateFollowUseCase
 import daily.dayo.domain.usecase.follow.RequestDeleteFollowUseCase
 import daily.dayo.domain.usecase.follow.RequestListAllFollowerUseCase
 import daily.dayo.domain.usecase.follow.RequestListAllFollowingUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import daily.dayo.domain.usecase.member.RequestCurrentUserInfoUseCase
+import daily.dayo.presentation.common.Event
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,67 +39,55 @@ class FollowViewModel @Inject constructor(
     private val _followingUnfollowSuccess = MutableLiveData<Event<Boolean>>()
     val followingUnfollowSuccess: LiveData<Event<Boolean>> get() = _followingUnfollowSuccess
 
-    private val _followerList = MutableLiveData<Resource<List<MyFollower>>>()
-    val followerList: LiveData<Resource<List<MyFollower>>> get() = _followerList
+    private val _followerUiState = MutableLiveData<FollowUiState>()
+    val followerUiState: LiveData<FollowUiState> = _followerUiState
 
-    private val _followerCount = MutableLiveData<Resource<Int>>()
-    val followerCount: LiveData<Resource<Int>> get() = _followerCount
+    private val _followingUiState = MutableLiveData<FollowUiState>()
+    val followingUiState: LiveData<FollowUiState> = _followingUiState
 
-    private val _followingList = MutableLiveData<Resource<List<MyFollower>>>()
-    val followingList: LiveData<Resource<List<MyFollower>>> get() = _followingList
+    fun requestFollowerList(memberId: String) {
+        viewModelScope.launch {
+            requestListAllFollowerUseCase(memberId).let { response ->
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        val result = response.body?.let { result ->
+                            val followerList = result.data.sortedByDescending {
+                                it.memberId == requestCurrentUserInfoUseCase().memberId
+                            }
+                            FollowUiState.Success(result.count, followerList)
+                        } ?: FollowUiState.Success()
+                        _followerUiState.postValue(result)
+                    }
 
-    private val _followingCount = MutableLiveData<Resource<Int>>()
-    val followingCount: LiveData<Resource<Int>> get() = _followingCount
-
-    fun requestListAllFollower(memberId: String) = viewModelScope.launch {
-        requestListAllFollowerUseCase(memberId = memberId).let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _followerCount.postValue(Resource.success(ApiResponse.body?.count))
-                    val myInfo = ApiResponse.body
-                        ?.data
-                        ?.find { it.memberId == requestCurrentUserInfoUseCase().memberId }
-                    val tmpFollowerList = ApiResponse.body?.data
-                        ?.filterNot { it.memberId == requestCurrentUserInfoUseCase().memberId }
-                        ?.toMutableList()
-                    if (myInfo != null) tmpFollowerList?.add(0, myInfo)
-                    _followerList.postValue(Resource.success(tmpFollowerList))
-                }
-                is NetworkResponse.NetworkError -> {
-                    _followerList.postValue(Resource.error(ApiResponse.exception.toString(), null))
-                }
-                is NetworkResponse.ApiError -> {
-                    _followerList.postValue(Resource.error(ApiResponse.error.toString(), null))
-                }
-                is NetworkResponse.UnknownError -> {
-                    _followerList.postValue(Resource.error(ApiResponse.throwable.toString(), null))
+                    is NetworkResponse.NetworkError,
+                    is NetworkResponse.ApiError,
+                    is NetworkResponse.UnknownError -> {
+                        _followerUiState.postValue(FollowUiState.Error)
+                    }
                 }
             }
         }
     }
 
-    fun requestListAllFollowing(memberId: String) = viewModelScope.launch {
-        requestListAllFollowingUseCase(memberId = memberId).let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _followingCount.postValue(Resource.success(ApiResponse.body?.count))
-                    val myInfo = ApiResponse.body
-                        ?.data
-                        ?.find { it.memberId == requestCurrentUserInfoUseCase().memberId }
-                    val tmpFollowingList = ApiResponse.body?.data
-                        ?.filterNot { it.memberId == requestCurrentUserInfoUseCase().memberId }
-                        ?.toMutableList()
-                    if (myInfo != null) tmpFollowingList?.add(0, myInfo)
-                    _followingList.postValue(Resource.success(tmpFollowingList))
-                }
-                is NetworkResponse.NetworkError -> {
-                    _followingList.postValue(Resource.error(ApiResponse.exception.toString(), null))
-                }
-                is NetworkResponse.ApiError -> {
-                    _followingList.postValue(Resource.error(ApiResponse.error.toString(), null))
-                }
-                is NetworkResponse.UnknownError -> {
-                    _followingList.postValue(Resource.error(ApiResponse.throwable.toString(), null))
+    fun requestFollowingList(memberId: String) {
+        viewModelScope.launch {
+            requestListAllFollowingUseCase(memberId).let { response ->
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        val result = response.body?.let { result ->
+                            val followingList = result.data.sortedByDescending {
+                                it.memberId == requestCurrentUserInfoUseCase().memberId
+                            }
+                            FollowUiState.Success(result.count, followingList)
+                        } ?: FollowUiState.Success()
+                        _followingUiState.postValue(result)
+                    }
+
+                    is NetworkResponse.NetworkError,
+                    is NetworkResponse.ApiError,
+                    is NetworkResponse.UnknownError -> {
+                        _followingUiState.postValue(FollowUiState.Error)
+                    }
                 }
             }
         }
@@ -113,6 +100,7 @@ class FollowViewModel @Inject constructor(
                     if (isFollower) _followerFollowSuccess.postValue(Event(true))
                     else _followingFollowSuccess.postValue(Event(true))
                 }
+
                 else -> {
                     if (isFollower) _followerFollowSuccess.postValue(Event(false))
                     else _followingFollowSuccess.postValue(Event(false))
@@ -128,6 +116,7 @@ class FollowViewModel @Inject constructor(
                     if (isFollower) _followerUnfollowSuccess.postValue(Event(true))
                     else _followingUnfollowSuccess.postValue(Event(true))
                 }
+
                 else -> {
                     if (isFollower) _followerUnfollowSuccess.postValue(Event(false))
                     else _followingUnfollowSuccess.postValue(Event(false))
@@ -135,4 +124,14 @@ class FollowViewModel @Inject constructor(
             }
         }
     }
+}
+
+sealed class FollowUiState {
+    object Loading : FollowUiState()
+    data class Success(
+        val count: Int = 0,
+        val data: List<Follow> = emptyList()
+    ) : FollowUiState()
+
+    object Error : FollowUiState()
 }
