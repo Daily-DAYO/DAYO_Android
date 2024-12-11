@@ -7,11 +7,14 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
@@ -38,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -45,8 +49,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import daily.dayo.domain.model.Follow
 import daily.dayo.domain.model.Profile
+import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
+import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
@@ -55,7 +62,11 @@ import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.b3
 import daily.dayo.presentation.theme.b5
+import daily.dayo.presentation.theme.b6
 import daily.dayo.presentation.theme.caption2
+import daily.dayo.presentation.view.DayoOutlinedButton
+import daily.dayo.presentation.view.FilledButton
+import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
 import daily.dayo.presentation.viewmodel.FollowUiState
@@ -78,17 +89,21 @@ internal fun FollowScreen(
 
     LaunchedEffect(memberId) {
         profileViewModel.requestOtherProfile(memberId)
-        followViewModel.requestFollowerList(memberId)
-        followViewModel.requestFollowingList(memberId)
+        // 팔로워, 팔로잉 수를 알기 위함, pagerState에 따른 중복 호출 방지를 위해 초기 탭이 아닌 정보만 호출
+        when (tabNum) {
+            FOLLOWER_TAB_ID -> followViewModel.requestFollowingList(memberId)
+            FOLLOWING_TAB_ID -> followViewModel.requestFollowerList(memberId)
+        }
     }
 
     LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { page ->
-            when (page) {
-                FOLLOWER_TAB_ID -> followViewModel.requestFollowerList(memberId)
-                FOLLOWING_TAB_ID -> followViewModel.requestFollowingList(memberId)
+        snapshotFlow { pagerState.currentPage }
+            .collect { page ->
+                when (page) {
+                    FOLLOWER_TAB_ID -> followViewModel.requestFollowerList(memberId)
+                    FOLLOWING_TAB_ID -> followViewModel.requestFollowingList(memberId)
+                }
             }
-        }
     }
 
     FollowScreen(
@@ -168,7 +183,8 @@ private fun FollowContent(tabNum: Int, followUiState: FollowUiState) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(White_FFFFFF)
+            .background(White_FFFFFF),
+        contentPadding = PaddingValues(vertical = 20.dp, horizontal = 18.dp)
     ) {
         when (followUiState) {
             is FollowUiState.Loading -> {
@@ -188,7 +204,7 @@ private fun FollowContent(tabNum: Int, followUiState: FollowUiState) {
                 } else {
                     items(followUiState.data.size) { index ->
                         val item = followUiState.data[index]
-                        Text(item.nickname)
+                        FollowUserInfo(item)
                     }
                 }
             }
@@ -255,6 +271,59 @@ private fun FollowerEmpty(tabNum: Int) {
 }
 
 @Composable
+private fun FollowUserInfo(follow: Follow) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        val context = LocalContext.current
+        RoundImageView(
+            context = context,
+            imageUrl = "${BuildConfig.BASE_URL}/images/${follow.profileImg}",
+            roundSize = 18.dp,
+            customModifier = Modifier.size(36.dp)
+        )
+
+        Text(
+            text = follow.nickname,
+            modifier = Modifier.weight(1f),
+            color = Dark,
+            style = MaterialTheme.typography.b6
+        )
+
+        if (follow.isFollow) {
+            DayoOutlinedButton(
+                onClick = {},
+                label = stringResource(id = R.string.follow_already),
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_check_sign_gray),
+                        contentDescription = stringResource(R.string.follow_already_icon_description),
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            )
+        } else {
+            FilledButton(
+                onClick = {},
+                label = stringResource(id = R.string.follow_yet),
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_plus_sign_green),
+                        contentDescription = stringResource(R.string.follow_yet_icon_description),
+                        modifier = Modifier.size(20.dp)
+                    )
+                },
+                isTonal = true
+            )
+        }
+    }
+}
+
+@Composable
 private fun FollowTab(pagerState: PagerState, followerCount: Int, followingCount: Int) {
     val coroutineScope = rememberCoroutineScope()
     val pages = listOf(
@@ -300,10 +369,37 @@ private fun FollowTab(pagerState: PagerState, followerCount: Int, followingCount
 
 @Preview
 @Composable
-private fun PreviewFollowScreen() {
+private fun PreviewEmptyFollowScreen() {
     FollowScreen(
         profileInfo = DEFAULT_PROFILE,
         followerUiState = FollowUiState.Success(),
+        followingUiState = FollowUiState.Success(),
+        pagerState = rememberPagerState(initialPage = FOLLOWER_TAB_ID, pageCount = { 2 }),
+        onBackClick = {}
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewFollowScreen() {
+    FollowScreen(
+        profileInfo = DEFAULT_PROFILE,
+        followerUiState = FollowUiState.Success(
+            2, listOf(
+                Follow(
+                    isFollow = true,
+                    memberId = "",
+                    nickname = "다요",
+                    profileImg = ""
+                ),
+                Follow(
+                    isFollow = false,
+                    memberId = "",
+                    nickname = "다요다요",
+                    profileImg = ""
+                )
+            )
+        ),
         followingUiState = FollowUiState.Success(),
         pagerState = rememberPagerState(initialPage = FOLLOWER_TAB_ID, pageCount = { 2 }),
         onBackClick = {}
