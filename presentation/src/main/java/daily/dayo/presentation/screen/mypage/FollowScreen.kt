@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerState
@@ -86,6 +87,9 @@ internal fun FollowScreen(
     val followerUiState by followViewModel.followerUiState.observeAsState(FollowUiState.Loading)
     val followingUiState by followViewModel.followingUiState.observeAsState(FollowUiState.Loading)
     val pagerState = rememberPagerState(initialPage = tabNum, pageCount = { 2 })
+    val onFollowClick: (Follow) -> Unit = { follow ->
+        followViewModel.toggleFollow(follow, pagerState.currentPage == FOLLOWER_TAB_ID)
+    }
 
     LaunchedEffect(memberId) {
         profileViewModel.requestOtherProfile(memberId)
@@ -111,6 +115,7 @@ internal fun FollowScreen(
         followerUiState,
         followingUiState,
         pagerState,
+        onFollowClick,
         onBackClick
     )
 }
@@ -121,6 +126,7 @@ private fun FollowScreen(
     followerUiState: FollowUiState,
     followingUiState: FollowUiState,
     pagerState: PagerState,
+    onFollowClick: (Follow) -> Unit,
     onBackClick: () -> Unit
 ) {
     Scaffold(
@@ -169,8 +175,8 @@ private fun FollowScreen(
                 flingBehavior = PagerDefaults.flingBehavior(state = pagerState),
                 pageContent = { page ->
                     when (page) {
-                        FOLLOWER_TAB_ID -> FollowContent(page, followerUiState)
-                        FOLLOWING_TAB_ID -> FollowContent(page, followingUiState)
+                        FOLLOWER_TAB_ID -> FollowContent(page, followerUiState, onFollowClick)
+                        FOLLOWING_TAB_ID -> FollowContent(page, followingUiState, onFollowClick)
                     }
                 }
             )
@@ -179,7 +185,11 @@ private fun FollowScreen(
 }
 
 @Composable
-private fun FollowContent(tabNum: Int, followUiState: FollowUiState) {
+private fun FollowContent(
+    tabNum: Int,
+    followUiState: FollowUiState,
+    onFollowClick: (Follow) -> Unit
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -202,9 +212,8 @@ private fun FollowContent(tabNum: Int, followUiState: FollowUiState) {
                         }
                     }
                 } else {
-                    items(followUiState.data.size) { index ->
-                        val item = followUiState.data[index]
-                        FollowUserInfo(item)
+                    items(items = followUiState.data, key = { it.memberId }) { follow ->
+                        FollowUserInfo(follow, onFollowClick)
                     }
                 }
             }
@@ -271,7 +280,10 @@ private fun FollowerEmpty(tabNum: Int) {
 }
 
 @Composable
-private fun FollowUserInfo(follow: Follow) {
+private fun FollowUserInfo(
+    follow: Follow,
+    onFollowClick: (Follow) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -296,7 +308,7 @@ private fun FollowUserInfo(follow: Follow) {
 
         if (follow.isFollow) {
             DayoOutlinedButton(
-                onClick = {},
+                onClick = { onFollowClick(follow) },
                 label = stringResource(id = R.string.follow_already),
                 icon = {
                     Icon(
@@ -308,7 +320,7 @@ private fun FollowUserInfo(follow: Follow) {
             )
         } else {
             FilledButton(
-                onClick = {},
+                onClick = { onFollowClick(follow) },
                 label = stringResource(id = R.string.follow_yet),
                 icon = {
                     Icon(
@@ -375,6 +387,7 @@ private fun PreviewEmptyFollowScreen() {
         followerUiState = FollowUiState.Success(),
         followingUiState = FollowUiState.Success(),
         pagerState = rememberPagerState(initialPage = FOLLOWER_TAB_ID, pageCount = { 2 }),
+        onFollowClick = {},
         onBackClick = {}
     )
 }
@@ -402,6 +415,7 @@ private fun PreviewFollowScreen() {
         ),
         followingUiState = FollowUiState.Success(),
         pagerState = rememberPagerState(initialPage = FOLLOWER_TAB_ID, pageCount = { 2 }),
+        onFollowClick = {},
         onBackClick = {}
     )
 }

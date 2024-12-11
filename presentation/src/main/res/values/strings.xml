@@ -238,10 +238,10 @@
     <string name="follow_yet_icon_description">팔로우 하기</string>
     <string name="follow_delete_description_message">팔로우를 취소할까요?</string>
     <string name="follower_empty_content_description">존재하지 않습니다</string>
-    <string name="follower_empty_description">관심이 가는 사람들을 팔로우해보세요</string>
-    <string name="follower_empty_sub_description">내 취향의 다꾸를 피드에서 모아볼 수 있어요</string>
-    <string name="following_empty_description">아직 회원님을 팔로우하는 사람이 없어요</string>
-    <string name="following_empty_sub_description">회원님의 다꾸를 더 업로드해 보세요</string>
+    <string name="follower_empty_description">아직 회원님을 팔로우하는 사람이 없어요</string>
+    <string name="follower_empty_sub_description">회원님의 다꾸를 더 업로드해 보세요</string>
+    <string name="following_empty_description">관심이 가는 사람들을 팔로우해보세요</string>
+    <string name="following_empty_sub_description">내 취향의 다꾸를 피드에서 모아볼 수 있어요</string>
 
     <!-- My Profile -->
     <string name="my_profile_edit_title">프로필 수정</string>
