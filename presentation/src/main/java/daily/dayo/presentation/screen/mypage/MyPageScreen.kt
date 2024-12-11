@@ -193,7 +193,7 @@ private fun MyPageProfile(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_follower),
-                    contentDescription = "follower",
+                    contentDescription = stringResource(id = R.string.follower),
                     modifier = Modifier.size(12.dp)
                 )
 
@@ -203,7 +203,7 @@ private fun MyPageProfile(
                 )
             }
             Text(
-                text = "${profile?.followingCount ?: "0"}",
+                text = "${profile?.followerCount ?: "0"}",
                 style = MaterialTheme.typography.b6.copy(color = Gray1_50545B)
             )
         }
@@ -226,7 +226,7 @@ private fun MyPageProfile(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_following),
-                    contentDescription = "following",
+                    contentDescription = stringResource(id = R.string.following),
                     modifier = Modifier.size(12.dp)
                 )
 
