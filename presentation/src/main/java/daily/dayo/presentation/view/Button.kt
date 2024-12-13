@@ -44,6 +44,7 @@ import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray5_E8EAEE
+import daily.dayo.presentation.theme.PrimaryL1_8FD9B9
 import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
@@ -101,8 +102,8 @@ fun FilledRoundedCornerButton(
         ?: ButtonDefaults.buttonColors(
             containerColor = Primary_23C882,
             contentColor = White_FFFFFF,
-            disabledContainerColor = Gray5_E8EAEE,
-            disabledContentColor = Gray4_C5CAD2
+            disabledContainerColor = PrimaryL1_8FD9B9,
+            disabledContentColor = White_FFFFFF
         )
 
     Button(
