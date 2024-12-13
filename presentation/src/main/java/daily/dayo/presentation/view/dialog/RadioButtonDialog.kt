@@ -46,7 +46,6 @@ import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Primary_23C882
-import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.CharacterLimitOutlinedTextField
 import daily.dayo.presentation.view.DayoTextButton
 import kotlinx.coroutines.launch
@@ -70,7 +69,9 @@ fun RadioButtonDialog(
         onDismissRequest = onClickCancel
     ) {
         Surface(modifier = modifier.padding(vertical = 24.dp)) {
-            Column {
+            Column(
+                modifier = Modifier.background(DayoTheme.colorScheme.background)
+            ) {
                 DialogHeader(title, description)
 
                 Box(modifier = Modifier.weight(1f)) {
