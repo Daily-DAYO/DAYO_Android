@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,8 +33,8 @@ import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray5_E8EAEE
 import daily.dayo.presentation.theme.Primary_23C882
+import daily.dayo.presentation.view.DayoTextButton
 import daily.dayo.presentation.view.NoRippleIconButton
-import daily.dayo.presentation.view.TextButton
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.dialog.BottomSheetDialog
 import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
@@ -77,7 +76,7 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         modifier = Modifier.padding(start = 18.dp)
                     ) {
-                        TextButton(
+                        DayoTextButton(
                             onClick = {
                                 homeTabState = HOME_DAYOPICK_PAGE_TAB_ID
                             },
@@ -88,7 +87,7 @@ fun HomeScreen(
                             )
                         )
 
-                        TextButton(
+                        DayoTextButton(
                             onClick = {
                                 homeTabState = HOME_NEW_PAGE_TAB_ID
                             },

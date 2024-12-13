@@ -152,7 +152,7 @@ fun DayoOutlinedButton(
 }
 
 @Composable
-fun TextButton(
+fun DayoTextButton(
     text: String = "",
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -260,7 +260,7 @@ private fun PreviewFilledRoundedButton() {
 
 @Preview
 @Composable
-private fun PreviewOutlinedButton() {
+private fun PreviewDayoOutlinedButton() {
     Column {
         // Outlined Button
         DayoOutlinedButton(onClick = {}, label = "text")
@@ -270,18 +270,18 @@ private fun PreviewOutlinedButton() {
 
 @Preview(showBackground = true, backgroundColor = android.graphics.Color.WHITE.toLong())
 @Composable
-private fun PreviewTextButton() {
+private fun PreviewDayoTextButton() {
     Column {
         // Text Button
-        TextButton(onClick = {}, text = "text")
-        TextButton(onClick = {}, text = "text", underline = true)
-        TextButton(onClick = {}, text = "text", textStyle = DayoTheme.typography.b6.copy(Gray2_767B83))
-        TextButton(onClick = {}, text = "text", textStyle = DayoTheme.typography.b6.copy(Gray4_C5CAD2))
+        DayoTextButton(onClick = {}, text = "text")
+        DayoTextButton(onClick = {}, text = "text", underline = true)
+        DayoTextButton(onClick = {}, text = "text", textStyle = DayoTheme.typography.b6.copy(Gray2_767B83))
+        DayoTextButton(onClick = {}, text = "text", textStyle = DayoTheme.typography.b6.copy(Gray4_C5CAD2))
 
         // Underline Text Button
         Row {
             Text(text = "DAYO의 ", style = DayoTheme.typography.caption3.copy(Gray4_C5CAD2))
-            TextButton(onClick = {}, text = "이용약관", textStyle = DayoTheme.typography.caption3.copy(Gray4_C5CAD2), underline = true)
+            DayoTextButton(onClick = {}, text = "이용약관", textStyle = DayoTheme.typography.caption3.copy(Gray4_C5CAD2), underline = true)
             Text(text = "입니다.", style = DayoTheme.typography.caption3.copy(Gray4_C5CAD2))
         }
     }

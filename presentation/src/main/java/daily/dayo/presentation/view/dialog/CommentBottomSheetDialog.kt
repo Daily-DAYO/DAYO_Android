@@ -97,9 +97,9 @@ import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.Gray7_F6F6F7
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
+import daily.dayo.presentation.view.DayoTextButton
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.RoundImageView
-import daily.dayo.presentation.view.TextButton
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.PostViewModel
 import daily.dayo.presentation.viewmodel.ReportViewModel
@@ -583,7 +583,7 @@ private fun CommentReplyDescriptionView(replyCommentState: MutableState<Pair<Lon
                 style = DayoTheme.typography.caption4.copy(Color(0xFF50545B))
             )
             Spacer(modifier = Modifier.weight(1f))
-            TextButton(
+            DayoTextButton(
                 onClick = onClickCancelReply,
                 text = "취소",
                 textStyle = DayoTheme.typography.caption4.copy(Gray2_767B83)
