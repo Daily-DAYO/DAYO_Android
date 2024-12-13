@@ -164,3 +164,5 @@ data class DayoTypography(
         lineHeight = 15.sp
     )
 )
+
+internal val LocalTypography = staticCompositionLocalOf { DayoTypography() }
