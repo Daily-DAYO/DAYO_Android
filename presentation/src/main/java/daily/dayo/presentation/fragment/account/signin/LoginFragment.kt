@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -101,12 +100,11 @@ class LoginFragment : Fragment() {
         LoadingAlertDialog.hideLoadingDialog(loadingAlertDialog)
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun LoginScreen() {
         Column(
             modifier = Modifier
-                .background(White_FFFFFF)
+                .background(DayoTheme.colorScheme.background)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {

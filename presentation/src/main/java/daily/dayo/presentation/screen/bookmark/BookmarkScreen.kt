@@ -39,7 +39,6 @@ import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Primary_23C882
-import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.DayoCheckbox
 import daily.dayo.presentation.view.FilledRoundedCornerButton
 import daily.dayo.presentation.view.RoundImageView
@@ -81,7 +80,7 @@ fun BookmarkScreen(
     ) { contentPadding ->
         Column(
             modifier = Modifier
-                .background(color = White_FFFFFF)
+                .background(DayoTheme.colorScheme.background)
                 .fillMaxSize()
                 .padding(contentPadding)
         ) {

@@ -102,7 +102,7 @@ fun PostLikeUsersScreen(
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
-                .background(White_FFFFFF)
+                .background(DayoTheme.colorScheme.background)
                 .fillMaxSize()
                 .padding(innerPadding),
             contentPadding = PaddingValues(horizontal = 18.dp)

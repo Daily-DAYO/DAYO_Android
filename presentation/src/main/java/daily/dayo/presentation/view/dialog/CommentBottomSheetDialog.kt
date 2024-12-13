@@ -258,7 +258,7 @@ private fun CommentBottomSheetDialogTitle(onClickClose: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(White_FFFFFF)
+            .background(DayoTheme.colorScheme.background)
     ) {
         Text(
             text = stringResource(id = R.string.comment),
@@ -294,7 +294,7 @@ private fun CommentBottomSheetDialogContent(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center,
                             modifier = Modifier
-                                .background(White_FFFFFF)
+                                .background(DayoTheme.colorScheme.background)
                                 .fillMaxWidth()
                                 .fillMaxHeight(0.5f)
                         ) {
@@ -317,7 +317,7 @@ private fun CommentBottomSheetDialogContent(
                         LazyColumn(
                             contentPadding = PaddingValues(horizontal = 18.dp),
                             modifier = Modifier
-                                .background(White_FFFFFF)
+                                .background(DayoTheme.colorScheme.background)
                                 .fillMaxWidth()
                                 .fillMaxHeight(0.5f)
                         ) {
@@ -325,7 +325,7 @@ private fun CommentBottomSheetDialogContent(
                                 Column(
                                     modifier = Modifier
                                         .padding(bottom = 8.dp)
-                                        .background(color = White_FFFFFF, shape = RoundedCornerShape(20.dp))
+                                        .background(color = DayoTheme.colorScheme.background, shape = RoundedCornerShape(20.dp))
                                         .border(width = 1.dp, color = Gray7_F6F6F7, shape = RoundedCornerShape(20.dp))
                                         .padding(12.dp),
                                     horizontalAlignment = Alignment.End,
@@ -523,7 +523,7 @@ private fun CommentMentionSearchView(
     val placeholder = AppCompatResources.getDrawable(LocalContext.current, R.drawable.ic_profile_default_user_profile)
     LazyColumn(
         modifier = Modifier
-            .background(White_FFFFFF)
+            .background(DayoTheme.colorScheme.background)
             .fillMaxWidth(),
         contentPadding = PaddingValues(horizontal = 18.dp)
     ) {
@@ -531,7 +531,7 @@ private fun CommentMentionSearchView(
             userResults[index]?.let { user ->
                 Row(
                     modifier = Modifier
-                        .background(White_FFFFFF)
+                        .background(DayoTheme.colorScheme.background)
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
                         .clickableSingle(
@@ -609,7 +609,7 @@ private fun CommentTextField(
     )
     Row(
         modifier = Modifier
-            .background(White_FFFFFF)
+            .background(DayoTheme.colorScheme.background)
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(horizontal = 18.dp)
@@ -716,7 +716,7 @@ private fun CommentReportDialog(onClickClose: () -> Unit, onClickConfirm: (Strin
             .height(400.dp)
             .imePadding()
             .clip(RoundedCornerShape(28.dp))
-            .background(White_FFFFFF)
+            .background(DayoTheme.colorScheme.background)
     )
 }
 
@@ -745,7 +745,7 @@ private fun PreviewCommentView() {
         isMine = true,
         modifier = Modifier
             .padding(bottom = 12.dp)
-            .background(color = White_FFFFFF, shape = RoundedCornerShape(20.dp))
+            .background(color = DayoTheme.colorScheme.background, shape = RoundedCornerShape(20.dp))
             .border(width = 1.dp, color = Gray7_F6F6F7, shape = RoundedCornerShape(20.dp))
             .padding(12.dp)
             .fillMaxWidth()

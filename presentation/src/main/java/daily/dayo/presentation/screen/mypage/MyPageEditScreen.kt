@@ -232,7 +232,7 @@ private fun MyPageEditScreen(
         content = { contentPadding ->
             Column(
                 modifier = Modifier
-                    .background(White_FFFFFF)
+                    .background(DayoTheme.colorScheme.background)
                     .fillMaxSize()
                     .verticalScroll(scrollState)
                     .padding(contentPadding)
