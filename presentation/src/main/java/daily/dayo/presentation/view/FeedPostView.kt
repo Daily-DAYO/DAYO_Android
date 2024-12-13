@@ -1,7 +1,6 @@
 package daily.dayo.presentation.view
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -72,16 +71,13 @@ import daily.dayo.presentation.R
 import daily.dayo.presentation.common.TimeChangerUtil
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.Transparent_White30
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.theme.b5
-import daily.dayo.presentation.theme.b6
-import daily.dayo.presentation.theme.caption1
-import daily.dayo.presentation.theme.caption3
 import daily.dayo.presentation.view.dialog.CommentBottomSheetDialog
 import daily.dayo.presentation.view.dialog.RadioButtonDialog
 import daily.dayo.presentation.viewmodel.PostViewModel
@@ -89,7 +85,7 @@ import daily.dayo.presentation.viewmodel.ReportViewModel
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FeedPostView(
     post: Post,
@@ -165,7 +161,7 @@ fun FeedPostView(
             Column(Modifier.weight(1f)) {
                 Text(
                     text = post.nickname,
-                    style = MaterialTheme.typography.b5.copy(Dark),
+                    style = DayoTheme.typography.b5.copy(Dark),
                     modifier = Modifier.clickableSingle(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
@@ -175,7 +171,7 @@ fun FeedPostView(
                 Text(
                     text = categoryKR(post.category ?: Category.ETC) + " ･ " +
                             post.createDateTime?.let { TimeChangerUtil.timeChange(context = LocalContext.current, time = it) },
-                    style = MaterialTheme.typography.caption3.copy(Gray3_9FA5AE)
+                    style = DayoTheme.typography.caption3.copy(Gray3_9FA5AE)
                 )
             }
             // post option
@@ -320,18 +316,18 @@ fun FeedPostView(
             // like count
             val dec = DecimalFormat("#,###")
             Row(modifier = Modifier.weight(1f)) {
-                Text(text = stringResource(id = R.string.post_like_count_message_1), style = MaterialTheme.typography.caption1.copy(Gray2_767B83))
+                Text(text = stringResource(id = R.string.post_like_count_message_1), style = DayoTheme.typography.caption1.copy(Gray2_767B83))
                 Text(text = " ${dec.format(post.heartCount)} ",
-                    style = MaterialTheme.typography.caption1,
+                    style = DayoTheme.typography.caption1,
                     modifier = if (post.heartCount != 0) Modifier.clickableSingle { onPostLikeUsersClick(post.postId.toString()) } else Modifier,
                     color = if (post.heartCount != 0) Primary_23C882 else Gray4_C5CAD2)
-                Text(text = stringResource(id = R.string.post_like_count_message_2), style = MaterialTheme.typography.caption1.copy(Gray2_767B83))
+                Text(text = stringResource(id = R.string.post_like_count_message_2), style = DayoTheme.typography.caption1.copy(Gray2_767B83))
             }
 
             // comment count
             Row {
-                Text(text = " ${dec.format(post.commentCount)} ", style = MaterialTheme.typography.caption1, color = if (post.commentCount != 0) Primary_23C882 else Gray4_C5CAD2)
-                Text(text = stringResource(id = R.string.post_comment_count_message), style = MaterialTheme.typography.caption1.copy(Gray2_767B83))
+                Text(text = " ${dec.format(post.commentCount)} ", style = DayoTheme.typography.caption1, color = if (post.commentCount != 0) Primary_23C882 else Gray4_C5CAD2)
+                Text(text = stringResource(id = R.string.post_comment_count_message), style = DayoTheme.typography.caption1.copy(Gray2_767B83))
             }
         }
 
@@ -407,7 +403,7 @@ fun OthersPostDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit, onPo
                         )
                         Text(
                             text = "게시물 신고",
-                            style = MaterialTheme.typography.b6.copy(Dark)
+                            style = DayoTheme.typography.b6.copy(Dark)
                         )
                     }
 
@@ -452,7 +448,7 @@ fun HashtagHorizontalGroup(
                     }
                     Text(
                         text = hashtag,
-                        style = MaterialTheme.typography.caption1.copy(Primary_23C882),
+                        style = DayoTheme.typography.caption1.copy(Primary_23C882),
                         modifier = Modifier.padding(vertical = 4.dp)
                     )
                 }
@@ -499,7 +495,7 @@ fun SeeMoreText(
     Box(modifier) {
         Text(
             text = cutText ?: text,
-            style = MaterialTheme.typography.b6.copy(Dark),
+            style = DayoTheme.typography.b6.copy(Dark),
             maxLines = minimizedMaxLines,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = { textLayoutResultState.value = it },
@@ -509,7 +505,7 @@ fun SeeMoreText(
         Text(
             text = " " + stringResource(id = R.string.post_contents_more),
             onTextLayout = { seeMoreSizeState.value = it.size },
-            style = MaterialTheme.typography.b6.copy(Gray3_9FA5AE),
+            style = DayoTheme.typography.b6.copy(Gray3_9FA5AE),
             modifier = Modifier
                 .then(
                     if (seeMoreOffset != null)

@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -50,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.TextLimitUtil
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray5_E8EAEE
@@ -57,10 +57,6 @@ import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.Gray7_F6F6F7
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.Red_FF4545
-import daily.dayo.presentation.theme.b4
-import daily.dayo.presentation.theme.b6
-import daily.dayo.presentation.theme.caption3
-import daily.dayo.presentation.theme.caption4
 import kotlinx.coroutines.delay
 import java.util.Locale
 
@@ -88,7 +84,7 @@ fun DayoTextField(
         if (label.isNotEmpty()) {
             Text(
                 text = label,
-                style = MaterialTheme.typography.caption3.copy(
+                style = DayoTheme.typography.caption3.copy(
                     color = Gray4_C5CAD2,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -104,7 +100,7 @@ fun DayoTextField(
                 textStyle = TextStyle(
                     textAlign = textAlign,
                     color = Dark,
-                    fontStyle = MaterialTheme.typography.b4.fontStyle
+                    fontStyle = DayoTheme.typography.b4.fontStyle
                 ),
                 interactionSource = interactionSource,
                 decorationBox = @Composable { innerTextField ->
@@ -117,7 +113,7 @@ fun DayoTextField(
                                 text = placeholder,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.b4.copy(Gray4_C5CAD2)
+                                style = DayoTheme.typography.b4.copy(Gray4_C5CAD2)
                             )
                         },
                         singleLine = true,
@@ -174,7 +170,7 @@ fun DayoTextField(
             Text(
                 text = if (isError) errorMessage else "",
                 modifier = Modifier.padding(top = 4.dp),
-                style = MaterialTheme.typography.caption4.copy(Red_FF4545)
+                style = DayoTheme.typography.caption4.copy(Red_FF4545)
             )
         }
     }
@@ -205,7 +201,7 @@ fun DayoPasswordTextField(
         if (label.isNotEmpty()) {
             Text(
                 text = label,
-                style = MaterialTheme.typography.caption3.copy(
+                style = DayoTheme.typography.caption3.copy(
                     color = Gray4_C5CAD2,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -221,7 +217,7 @@ fun DayoPasswordTextField(
                 textStyle = TextStyle(
                     textAlign = textAlign,
                     color = Dark,
-                    fontStyle = MaterialTheme.typography.b4.fontStyle
+                    fontStyle = DayoTheme.typography.b4.fontStyle
                 ),
                 visualTransformation = if (passwordHidden) PasswordVisualTransformation(mask = '●') else VisualTransformation.None,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -236,7 +232,7 @@ fun DayoPasswordTextField(
                                 text = placeholder,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.b4.copy(Gray4_C5CAD2)
+                                style = DayoTheme.typography.b4.copy(Gray4_C5CAD2)
                             )
                         },
                         singleLine = true,
@@ -295,7 +291,7 @@ fun DayoPasswordTextField(
             Text(
                 text = if (isError) errorMessage else "",
                 modifier = Modifier.padding(top = 4.dp),
-                style = MaterialTheme.typography.caption4.copy(Red_FF4545)
+                style = DayoTheme.typography.caption4.copy(Red_FF4545)
             )
         }
     }
@@ -334,7 +330,7 @@ fun DayoTimerTextField(
         if (label.isNotEmpty()) {
             Text(
                 text = label,
-                style = MaterialTheme.typography.caption3.copy(
+                style = DayoTheme.typography.caption3.copy(
                     color = Gray4_C5CAD2,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -350,7 +346,7 @@ fun DayoTimerTextField(
                 textStyle = TextStyle(
                     textAlign = textAlign,
                     color = Dark,
-                    fontStyle = MaterialTheme.typography.b4.fontStyle
+                    fontStyle = DayoTheme.typography.b4.fontStyle
                 ),
                 interactionSource = interactionSource,
                 decorationBox = @Composable { innerTextField ->
@@ -363,7 +359,7 @@ fun DayoTimerTextField(
                                 text = placeholder,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.b4.copy(Gray4_C5CAD2)
+                                style = DayoTheme.typography.b4.copy(Gray4_C5CAD2)
                             )
                         },
                         singleLine = true,
@@ -401,7 +397,7 @@ fun DayoTimerTextField(
                 Text(
                     text = String.format(Locale.getDefault(), "%02d", (timeLeft / 60) % 60) +
                             ":" + String.format(Locale.getDefault(), "%02d", timeLeft % 60),
-                    style = MaterialTheme.typography.b6.copy(Gray2_767B83)
+                    style = DayoTheme.typography.b6.copy(Gray2_767B83)
                 )
             }
         }
@@ -413,7 +409,7 @@ fun DayoTimerTextField(
                 errorMessage
             } else "",
             modifier = Modifier.padding(top = 4.dp),
-            style = MaterialTheme.typography.caption4.copy(Red_FF4545)
+            style = DayoTheme.typography.caption4.copy(Red_FF4545)
         )
     }
 }
@@ -435,7 +431,7 @@ fun CharacterLimitOutlinedTextField(
                 text = TextLimitUtil.trimToMaxLength(textValue, maxLength)
             )
         },
-        placeholder = { Text(text = placeholder, style = MaterialTheme.typography.b6.copy(Gray2_767B83)) },
+        placeholder = { Text(text = placeholder, style = DayoTheme.typography.b6.copy(Gray2_767B83)) },
         singleLine = singleLine,
         shape = RoundedCornerShape(cornerSize),
         colors = outlinedTextFieldColors
@@ -446,7 +442,7 @@ fun CharacterLimitOutlinedTextField(
                 unfocusedBorderColor = Color.Transparent,
                 cursorColor = Primary_23C882
             ),
-        textStyle = MaterialTheme.typography.b6.copy(Dark),
+        textStyle = DayoTheme.typography.b6.copy(Dark),
         modifier = modifier
     )
 }

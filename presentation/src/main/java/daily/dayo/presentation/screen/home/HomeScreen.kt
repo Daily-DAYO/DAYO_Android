@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import daily.dayo.domain.model.Category
 import daily.dayo.presentation.R
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray5_E8EAEE
 import daily.dayo.presentation.theme.Primary_23C882
@@ -81,7 +82,7 @@ fun HomeScreen(
                                 homeTabState = HOME_DAYOPICK_PAGE_TAB_ID
                             },
                             text = stringResource(id = R.string.DayoPick),
-                            textStyle = MaterialTheme.typography.titleLarge.copy(
+                            textStyle = DayoTheme.typography.h3.copy(
                                 color = if (homeTabState == HOME_DAYOPICK_PAGE_TAB_ID) Dark else Gray5_E8EAEE,
                                 fontWeight = FontWeight.ExtraBold
                             )
@@ -92,7 +93,7 @@ fun HomeScreen(
                                 homeTabState = HOME_NEW_PAGE_TAB_ID
                             },
                             text = stringResource(id = R.string.New),
-                            textStyle = MaterialTheme.typography.titleLarge.copy(
+                            textStyle = DayoTheme.typography.h3.copy(
                                 color = if (homeTabState == HOME_NEW_PAGE_TAB_ID) Dark else Gray5_E8EAEE,
                                 fontWeight = FontWeight.ExtraBold
                             )
@@ -178,7 +179,7 @@ private fun CategoryBottomSheetDialog(
 @Composable
 @Preview(showBackground = true)
 private fun PreviewHomeScreen() {
-    MaterialTheme {
+    DayoTheme {
         HomeScreen(rememberCoroutineScope(), getBottomSheetDialogState(), {}, onSearchClick = {})
     }
 }

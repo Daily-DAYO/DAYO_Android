@@ -67,13 +67,11 @@ import daily.dayo.presentation.R
 import daily.dayo.presentation.activity.MainActivity
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.theme.b2
-import daily.dayo.presentation.theme.b5
-import daily.dayo.presentation.theme.caption3
 import daily.dayo.presentation.view.FilledRoundedCornerButton
 import daily.dayo.presentation.view.TextButton
 import daily.dayo.presentation.viewmodel.AccountViewModel
@@ -92,7 +90,7 @@ class LoginFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                MaterialTheme {
+                DayoTheme {
                     LoginScreen()
                 }
             }
@@ -165,7 +163,7 @@ class LoginFragment : Fragment() {
                         .padding(horizontal = 18.dp),
                     color = ButtonDefaults.buttonColors(containerColor = Color(0xFFFBE44D), contentColor = Color(0xFF3B1F1E)),
                     icon = { Icon(painter = painterResource(id = R.drawable.ic_kakao), "Kakao") },
-                    textStyle = MaterialTheme.typography.b5
+                    textStyle = DayoTheme.typography.b5
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -179,7 +177,7 @@ class LoginFragment : Fragment() {
                         .padding(horizontal = 18.dp),
                     color = ButtonDefaults.buttonColors(containerColor = Dark, contentColor = White_FFFFFF),
                     icon = { Icon(Icons.Filled.Email, "Email") },
-                    textStyle = MaterialTheme.typography.b5
+                    textStyle = DayoTheme.typography.b5
                 )
 
                 // Policy Text
@@ -189,11 +187,11 @@ class LoginFragment : Fragment() {
                         .padding(horizontal = 19.dp, vertical = 19.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "가입 시 DAYO의 ", style = MaterialTheme.typography.caption3.copy(Gray4_C5CAD2))
-                    TextButton(onClick = { onClickPolicyMessage(type = "terms") }, text = "이용약관", textStyle = MaterialTheme.typography.caption3.copy(Gray4_C5CAD2), underline = true)
-                    Text(text = " 및 ", style = MaterialTheme.typography.caption3.copy(Gray4_C5CAD2))
-                    TextButton(onClick = { onClickPolicyMessage(type = "privacy") }, text = "개인정보", textStyle = MaterialTheme.typography.caption3.copy(Gray4_C5CAD2), underline = true)
-                    Text(text = " 취급방침에 동의하게 됩니다.", style = MaterialTheme.typography.caption3.copy(Gray4_C5CAD2))
+                    Text(text = "가입 시 DAYO의 ", style = DayoTheme.typography.caption3.copy(Gray4_C5CAD2))
+                    TextButton(onClick = { onClickPolicyMessage(type = "terms") }, text = "이용약관", textStyle = DayoTheme.typography.caption3.copy(Gray4_C5CAD2), underline = true)
+                    Text(text = " 및 ", style = DayoTheme.typography.caption3.copy(Gray4_C5CAD2))
+                    TextButton(onClick = { onClickPolicyMessage(type = "privacy") }, text = "개인정보", textStyle = DayoTheme.typography.caption3.copy(Gray4_C5CAD2), underline = true)
+                    Text(text = " 취급방침에 동의하게 됩니다.", style = DayoTheme.typography.caption3.copy(Gray4_C5CAD2))
                 }
             }
         }
@@ -266,7 +264,7 @@ class LoginFragment : Fragment() {
             text = annotatedString,
             modifier = if (page == 3) Modifier.padding(vertical = 116.dp) else Modifier,
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.b2
+            style = DayoTheme.typography.b2
         )
     }
 
@@ -383,7 +381,7 @@ class LoginFragment : Fragment() {
     @Composable
     @Preview(showBackground = true)
     private fun PreviewLoginScreen() {
-        MaterialTheme {
+        DayoTheme {
             LoginScreen()
         }
     }

@@ -40,7 +40,6 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -90,6 +89,7 @@ import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.TimeChangerUtil
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
@@ -97,14 +97,6 @@ import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.Gray7_F6F6F7
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.theme.b1
-import daily.dayo.presentation.theme.b3
-import daily.dayo.presentation.theme.b5
-import daily.dayo.presentation.theme.b6
-import daily.dayo.presentation.theme.caption1
-import daily.dayo.presentation.theme.caption2
-import daily.dayo.presentation.theme.caption4
-import daily.dayo.presentation.theme.caption5
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TextButton
@@ -272,7 +264,7 @@ private fun CommentBottomSheetDialogTitle(onClickClose: () -> Unit) {
             text = stringResource(id = R.string.comment),
             modifier = Modifier.align(Alignment.Center),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.b1.copy(color = Dark, fontWeight = FontWeight.SemiBold)
+            style = DayoTheme.typography.b1.copy(color = Dark, fontWeight = FontWeight.SemiBold)
         )
 
         NoRippleIconButton(
@@ -313,12 +305,12 @@ private fun CommentBottomSheetDialogContent(
                             )
                             Text(
                                 text = stringResource(id = R.string.post_comment_empty),
-                                style = MaterialTheme.typography.b3.copy(Gray3_9FA5AE),
+                                style = DayoTheme.typography.b3.copy(Gray3_9FA5AE),
                                 modifier = Modifier.padding(top = 12.dp, bottom = 2.dp)
                             )
                             Text(
                                 text = stringResource(id = R.string.post_comment_empty_description),
-                                style = MaterialTheme.typography.caption1.copy(Gray4_C5CAD2)
+                                style = DayoTheme.typography.caption1.copy(Gray4_C5CAD2)
                             )
                         }
                     } else {
@@ -444,7 +436,7 @@ private fun CommentView(
                 ) {
                     // comment nickname
                     Text(text = comment.nickname,
-                        style = MaterialTheme.typography.caption2.copy(Dark),
+                        style = DayoTheme.typography.caption2.copy(Dark),
                         modifier = Modifier
                             .clickableSingle(
                                 indication = null,
@@ -457,7 +449,7 @@ private fun CommentView(
                     // comment create time
                     Text(
                         text = TimeChangerUtil.timeChange(context = LocalContext.current, time = comment.createTime),
-                        style = MaterialTheme.typography.caption5.copy(Gray4_C5CAD2)
+                        style = DayoTheme.typography.caption5.copy(Gray4_C5CAD2)
                     )
                 }
 
@@ -465,7 +457,7 @@ private fun CommentView(
                 Spacer(Modifier.height(2.dp))
                 Text(
                     text = getAnnotatedCommentContent(comment.contents, comment.mentionList),
-                    style = MaterialTheme.typography.b6.copy(Dark)
+                    style = DayoTheme.typography.b6.copy(Dark)
                 )
                 Spacer(Modifier.height(4.dp))
 
@@ -490,21 +482,21 @@ private fun CommentView(
                         Spacer(Modifier.width(3.dp))
                         Text(
                             text = "답글쓰기",
-                            style = MaterialTheme.typography.b6.copy(Gray3_9FA5AE),
+                            style = DayoTheme.typography.b6.copy(Gray3_9FA5AE),
                         )
                         Spacer(Modifier.width(8.dp))
                     }
 
                     Text(
                         text = "•",
-                        style = MaterialTheme.typography.b6.copy(Gray3_9FA5AE)
+                        style = DayoTheme.typography.b6.copy(Gray3_9FA5AE)
                     )
                     Spacer(Modifier.width(8.dp))
 
                     // comment option
                     Text(
                         text = if (isMine) "삭제" else "신고",
-                        style = MaterialTheme.typography.b6.copy(Gray3_9FA5AE),
+                        style = DayoTheme.typography.b6.copy(Gray3_9FA5AE),
                         modifier = Modifier
                             .clickableSingle(
                                 indication = rememberRipple(bounded = false, radius = 8.dp),
@@ -584,17 +576,17 @@ private fun CommentReplyDescriptionView(replyCommentState: MutableState<Pair<Lon
         ) {
             Text(
                 text = replyComment.second.nickname,
-                style = MaterialTheme.typography.caption4.copy(Dark)
+                style = DayoTheme.typography.caption4.copy(Dark)
             )
             Text(
                 text = "님에게 답글 남기는 중",
-                style = MaterialTheme.typography.caption4.copy(Color(0xFF50545B))
+                style = DayoTheme.typography.caption4.copy(Color(0xFF50545B))
             )
             Spacer(modifier = Modifier.weight(1f))
             TextButton(
                 onClick = onClickCancelReply,
                 text = "취소",
-                textStyle = MaterialTheme.typography.caption4.copy(Gray2_767B83)
+                textStyle = DayoTheme.typography.caption4.copy(Gray2_767B83)
             )
         }
     }
@@ -672,7 +664,7 @@ private fun CommentTextField(
                     shape = RoundedCornerShape(12.dp)
                 )
                 .weight(1f),
-            textStyle = MaterialTheme.typography.b6,
+            textStyle = DayoTheme.typography.b6,
             interactionSource = interactionSource,
             cursorBrush = SolidColor(Primary_23C882),
             decorationBox = @Composable { innerTextField ->
@@ -683,7 +675,7 @@ private fun CommentTextField(
                     singleLine = false,
                     visualTransformation = VisualTransformation.None,
                     interactionSource = interactionSource,
-                    placeholder = { Text(text = "댓글을 남겨주세요", style = MaterialTheme.typography.b6.copy(Gray4_C5CAD2)) },
+                    placeholder = { Text(text = "댓글을 남겨주세요", style = DayoTheme.typography.b6.copy(Gray4_C5CAD2)) },
                     contentPadding = TextFieldDefaults.textFieldWithLabelPadding(top = 8.dp, bottom = 8.dp, start = 12.dp)
                 )
             }
@@ -696,7 +688,7 @@ private fun CommentTextField(
             modifier = Modifier
                 .wrapContentWidth()
                 .height(36.dp),
-            content = { Text(text = "남기기", style = MaterialTheme.typography.b5.copy(color = White_FFFFFF, fontWeight = FontWeight.SemiBold)) },
+            content = { Text(text = "남기기", style = DayoTheme.typography.b5.copy(color = White_FFFFFF, fontWeight = FontWeight.SemiBold)) },
             contentPadding = PaddingValues(vertical = 8.dp, horizontal = 12.dp)
         )
     }

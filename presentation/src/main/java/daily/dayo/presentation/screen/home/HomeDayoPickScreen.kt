@@ -27,7 +27,6 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,14 +45,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.theme.b3
-import daily.dayo.presentation.theme.caption1
-import daily.dayo.presentation.theme.caption3
 import daily.dayo.presentation.view.EmojiView
 import daily.dayo.presentation.view.FilledButton
 import daily.dayo.presentation.view.HomePostView
@@ -99,13 +96,13 @@ fun HomeDayoPickScreen(
                         Row {
                             EmojiView(
                                 emoji = "\uD83D\uDCA1",
-                                emojiSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                emojiSize = DayoTheme.typography.b6.fontSize,
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             )
 
                             Text(
                                 text = stringResource(id = R.string.home_dayopick_description),
-                                style = MaterialTheme.typography.bodyMedium.copy(Color(0xFF73777C)),
+                                style = DayoTheme.typography.b6.copy(Color(0xFF73777C)),
                                 modifier = Modifier
                                     .padding(horizontal = 4.dp)
                                     .align(Alignment.CenterVertically)
@@ -174,9 +171,9 @@ private fun HomeDayoPickEmptyView() {
         Image(imageVector = ImageVector.vectorResource(id = R.drawable.ic_home_empty), contentDescription = null)
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text(text = stringResource(id = R.string.home_dayopick_empty_title), style = MaterialTheme.typography.b3.copy(Gray3_9FA5AE))
+        Text(text = stringResource(id = R.string.home_dayopick_empty_title), style = DayoTheme.typography.b3.copy(Gray3_9FA5AE))
         Spacer(modifier = Modifier.height(2.dp))
-        Text(text = stringResource(id = R.string.home_dayopick_empty_detail), style = MaterialTheme.typography.caption1.copy(Gray4_C5CAD2))
+        Text(text = stringResource(id = R.string.home_dayopick_empty_detail), style = DayoTheme.typography.caption1.copy(Gray4_C5CAD2))
 
         Spacer(modifier = Modifier.height(28.dp))
         FilledButton(onClick = { /*TODO*/ }, label = stringResource(id = R.string.home_dayopick_empty_action))
@@ -198,7 +195,7 @@ fun CategoryButton(
         modifier = Modifier
             .border(1.dp, Gray6_F0F1F3, shape = RoundedCornerShape(8.dp))
     ) {
-        Text(text = selectedCategory, style = MaterialTheme.typography.caption3)
+        Text(text = selectedCategory, style = DayoTheme.typography.caption3)
         Spacer(modifier = Modifier.width(8.dp))
         Icon(Icons.Filled.ArrowDropDown, "category menu")
     }

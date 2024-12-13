@@ -7,7 +7,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -16,8 +15,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import daily.dayo.presentation.R
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.theme.h3
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,7 +37,7 @@ fun TopNavigation(
                 navigationIcon = leftIcon,
                 actions = { rightIcon() },
                 title = {
-                    Text(text = title, maxLines = 1, style = MaterialTheme.typography.h3)
+                    Text(text = title, maxLines = 1, style = DayoTheme.typography.h3)
                 }
             )
         }
@@ -52,7 +51,7 @@ fun TopNavigation(
                 navigationIcon = leftIcon,
                 actions = { rightIcon() },
                 title = {
-                    Text(text = title, maxLines = 1, style = MaterialTheme.typography.h3)
+                    Text(text = title, maxLines = 1, style = DayoTheme.typography.h3)
                 }
             )
         }

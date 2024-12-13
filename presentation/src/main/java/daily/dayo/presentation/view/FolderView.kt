@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -26,8 +25,8 @@ import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray3_9FA5AE
-import daily.dayo.presentation.theme.b6
 import java.text.DecimalFormat
 
 @Composable
@@ -74,10 +73,10 @@ fun FolderView(
 
         // folder info
         Column {
-            Text(text = folder.title, style = MaterialTheme.typography.b6.copy(Dark))
+            Text(text = folder.title, style = DayoTheme.typography.b6.copy(Dark))
 
             val dec = DecimalFormat("#,###")
-            Text(text = "${dec.format(folder.postCount)}개", style = MaterialTheme.typography.b6.copy(Gray3_9FA5AE))
+            Text(text = "${dec.format(folder.postCount)}개", style = DayoTheme.typography.b6.copy(Gray3_9FA5AE))
         }
     }
 }
