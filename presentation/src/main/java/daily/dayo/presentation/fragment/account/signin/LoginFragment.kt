@@ -29,7 +29,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -72,8 +71,8 @@ import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
+import daily.dayo.presentation.view.DayoTextButton
 import daily.dayo.presentation.view.FilledRoundedCornerButton
-import daily.dayo.presentation.view.TextButton
 import daily.dayo.presentation.viewmodel.AccountViewModel
 
 @AndroidEntryPoint
@@ -188,9 +187,9 @@ class LoginFragment : Fragment() {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(text = "가입 시 DAYO의 ", style = DayoTheme.typography.caption3.copy(Gray4_C5CAD2))
-                    TextButton(onClick = { onClickPolicyMessage(type = "terms") }, text = "이용약관", textStyle = DayoTheme.typography.caption3.copy(Gray4_C5CAD2), underline = true)
+                    DayoTextButton(onClick = { onClickPolicyMessage(type = "terms") }, text = "이용약관", textStyle = DayoTheme.typography.caption3.copy(Gray4_C5CAD2), underline = true)
                     Text(text = " 및 ", style = DayoTheme.typography.caption3.copy(Gray4_C5CAD2))
-                    TextButton(onClick = { onClickPolicyMessage(type = "privacy") }, text = "개인정보", textStyle = DayoTheme.typography.caption3.copy(Gray4_C5CAD2), underline = true)
+                    DayoTextButton(onClick = { onClickPolicyMessage(type = "privacy") }, text = "개인정보", textStyle = DayoTheme.typography.caption3.copy(Gray4_C5CAD2), underline = true)
                     Text(text = " 취급방침에 동의하게 됩니다.", style = DayoTheme.typography.caption3.copy(Gray4_C5CAD2))
                 }
             }
