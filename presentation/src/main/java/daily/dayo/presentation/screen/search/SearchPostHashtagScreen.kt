@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,11 +35,11 @@ import androidx.paging.compose.itemKey
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.extension.clickableSingle
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.theme.caption1
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
@@ -136,12 +135,12 @@ private fun SearchResultDescription(resultCount: Int, isLatest: Boolean) {
                 .weight(1f)
         ) {
             Text(
-                style = MaterialTheme.typography.caption1.copy(color = Primary_23C882),
+                style = DayoTheme.typography.caption1.copy(color = Primary_23C882),
                 text = "$resultCount",
                 modifier = Modifier.padding(end = 2.dp)
             )
             Text(
-                style = MaterialTheme.typography.caption1.copy(color = Gray2_767B83),
+                style = DayoTheme.typography.caption1.copy(color = Gray2_767B83),
                 text = "개의 태그"
             )
         }
@@ -159,7 +158,7 @@ private fun SearchResultDescription(resultCount: Int, isLatest: Boolean) {
                 tint = Gray1_50545B
             )
             Text(
-                style = MaterialTheme.typography.caption1.copy(color = Gray2_767B83),
+                style = DayoTheme.typography.caption1.copy(color = Gray2_767B83),
                 text = if (isLatest) "최신순" else "오래된순"
             )
         }

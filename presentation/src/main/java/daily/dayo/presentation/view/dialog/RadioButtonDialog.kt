@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.Text
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
@@ -35,14 +34,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import daily.dayo.presentation.R
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Primary_23C882
-import daily.dayo.presentation.theme.b1
-import daily.dayo.presentation.theme.b4
-import daily.dayo.presentation.theme.b6
-import daily.dayo.presentation.theme.caption1
 import daily.dayo.presentation.view.CharacterLimitOutlinedTextField
 import kotlinx.coroutines.launch
 
@@ -80,7 +76,7 @@ fun RadioButtonDialog(
                 ) {
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.b1.copy(
+                        style = DayoTheme.typography.b1.copy(
                             color = Dark,
                             fontWeight = FontWeight.SemiBold
                         ),
@@ -88,7 +84,7 @@ fun RadioButtonDialog(
                     )
                     Text(
                         text = description,
-                        style = MaterialTheme.typography.caption1.copy(
+                        style = DayoTheme.typography.caption1.copy(
                             color = Gray3_9FA5AE
                         ),
                         modifier = Modifier.padding(bottom = 20.dp)
@@ -143,7 +139,7 @@ fun RadioButtonDialog(
                                     )
                                     Text(
                                         text = text,
-                                        style = MaterialTheme.typography.b4.copy(color = Color(0xFF50545B)),
+                                        style = DayoTheme.typography.b4.copy(color = Color(0xFF50545B)),
                                         modifier = Modifier.padding(vertical = 12.dp)
                                     )
                                 }
@@ -180,7 +176,7 @@ fun RadioButtonDialog(
                     daily.dayo.presentation.view.TextButton(
                         onClick = onClickCancel,
                         text = stringResource(id = R.string.cancel),
-                        textStyle = MaterialTheme.typography.b6.copy(
+                        textStyle = DayoTheme.typography.b6.copy(
                             color = Gray2_767B83
                         ),
                         modifier = Modifier.padding(vertical = 10.dp, horizontal = 12.dp)
@@ -203,7 +199,7 @@ fun RadioButtonDialog(
                             }
                         },
                         text = stringResource(id = R.string.submit),
-                        textStyle = MaterialTheme.typography.b6.copy(
+                        textStyle = DayoTheme.typography.b6.copy(
                             color = if (canSubmit) Primary_23C882 else Gray4_C5CAD2
                         ),
                         modifier = Modifier.padding(vertical = 10.dp, horizontal = 12.dp)

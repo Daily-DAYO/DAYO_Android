@@ -30,7 +30,6 @@ import androidx.compose.material.icons.filled.ImageSearch
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -46,11 +45,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import daily.dayo.presentation.R
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.theme.b1
-import daily.dayo.presentation.theme.b4
 import kotlinx.coroutines.launch
 
 // 1. 기본과 Hover 상태 구분
@@ -104,7 +102,7 @@ fun BottomSheetDialog(
                                     .padding(12.dp),
                                 textAlign = TextAlign.Center,
                                 color = Dark,
-                                style = MaterialTheme.typography.b1
+                                style = DayoTheme.typography.b1
                             )
                             androidx.compose.material3.IconButton(
                                 onClick = titleButtonAction,
@@ -161,7 +159,7 @@ fun BottomSheetDialog(
                                 ),
                                 color = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) checkedColor else normalColor,
                                 fontSize = 16.sp,
-                                style = MaterialTheme.typography.b4
+                                style = DayoTheme.typography.b4
                             )
                             if (leftIconButtons != null) {
                                 Spacer(modifier = Modifier.weight(1f))
