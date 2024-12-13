@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -72,8 +73,9 @@ fun BookmarkScreen(
                     label = stringResource(id = R.string.delete),
                     enabled = bookmarkUiState.selectedBookmarks.isNotEmpty(),
                     modifier = Modifier
-                        .fillMaxWidth()
                         .padding(20.dp)
+                        .fillMaxWidth()
+                        .height(44.dp)
                 )
             }
         }
