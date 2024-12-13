@@ -1,5 +1,7 @@
 package daily.dayo.presentation.theme
 
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 val Dark = Color(0xFF313131)
@@ -24,3 +26,10 @@ val PrimaryL2_E6FBF1 = Color(0xFFE6FBF1)
 val PrimaryL3_F2FBF7 = Color(0xFFF2FBF7)
 val Transparent_White30 = Color(0x4DFFFFFF)
 val primaryD1_0EB36E = Color(0xFF0EB36E)
+
+val LightColorScheme = lightColorScheme(
+    primary = Primary_23C882,
+    background = White_FFFFFF
+)
+
+internal val LocalColorScheme = staticCompositionLocalOf { LightColorScheme }
