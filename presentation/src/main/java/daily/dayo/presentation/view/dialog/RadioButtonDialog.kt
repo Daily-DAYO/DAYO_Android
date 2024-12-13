@@ -291,7 +291,7 @@ private fun PreviewRadioButtonDialog() {
                 .height(400.dp)
                 .imePadding()
                 .clip(RoundedCornerShape(28.dp))
-                .background(White_FFFFFF)
+                .background(DayoTheme.colorScheme.background)
         )
     }
 }

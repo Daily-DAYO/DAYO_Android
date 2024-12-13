@@ -90,7 +90,7 @@ fun SearchPostHashtagScreen(
             contentPadding = PaddingValues(horizontal = 18.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .background(White_FFFFFF)
+                .background(DayoTheme.colorScheme.background)
                 .padding(innerPadding)
         ) {
             // description

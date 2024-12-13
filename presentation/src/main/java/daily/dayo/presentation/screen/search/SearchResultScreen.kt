@@ -429,7 +429,7 @@ fun SearchResultsUserView(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = colorResource(id = R.color.white_FFFFFF))
+            .background(DayoTheme.colorScheme.background)
     ) {
         searchKeywordResultsUser?.let { users ->
 

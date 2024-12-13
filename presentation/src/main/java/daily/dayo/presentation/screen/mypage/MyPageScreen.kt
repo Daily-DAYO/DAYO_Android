@@ -88,7 +88,7 @@ fun MyPageScreen(
                 columns = GridCells.Fixed(2),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
-                    .background(color = White_FFFFFF)
+                    .background(DayoTheme.colorScheme.background)
                     .fillMaxSize()
                     .padding(contentPadding)
                     .padding(horizontal = 20.dp),
@@ -131,7 +131,7 @@ private fun MyPageProfile(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(White_FFFFFF)
+            .background(DayoTheme.colorScheme.background)
             .padding(top = 8.dp, bottom = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -275,7 +275,7 @@ private fun MyPageMenu(
         IconButton(
             onClick = { onBookmarkClick() },
             modifier = Modifier
-                .background(color = White_FFFFFF, shape = RoundedCornerShape(12.dp))
+                .background(color = DayoTheme.colorScheme.background, shape = RoundedCornerShape(12.dp))
                 .border(
                     border = BorderStroke(width = 1.dp, color = Gray6_F0F1F3),
                     shape = RoundedCornerShape(size = 12.dp)

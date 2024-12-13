@@ -189,7 +189,7 @@ private fun FollowContent(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(White_FFFFFF),
+            .background(DayoTheme.colorScheme.background),
         contentPadding = PaddingValues(vertical = 20.dp, horizontal = 18.dp)
     ) {
         when (followUiState) {

@@ -156,7 +156,7 @@ class PostLikeUsersFragment : Fragment() {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = colorResource(id = R.color.white_FFFFFF))
+                .background(DayoTheme.colorScheme.background)
         ) {
             items(likeUsers.itemCount) { index ->
                 val item = likeUsers[index]

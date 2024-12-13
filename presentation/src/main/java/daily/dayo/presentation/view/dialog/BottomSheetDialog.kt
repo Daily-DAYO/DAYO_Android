@@ -92,7 +92,7 @@ fun BottomSheetDialog(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .wrapContentHeight()
-                                .background(White_FFFFFF)
+                                .background(DayoTheme.colorScheme.background)
                         ) {
                             Text(
                                 text = title,
