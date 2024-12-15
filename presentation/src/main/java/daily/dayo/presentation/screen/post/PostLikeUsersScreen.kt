@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -49,11 +48,10 @@ import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.theme.b6
-import daily.dayo.presentation.theme.caption1
 import daily.dayo.presentation.view.DayoOutlinedButton
 import daily.dayo.presentation.view.FilledButton
 import daily.dayo.presentation.view.TopNavigation
@@ -104,7 +102,7 @@ fun PostLikeUsersScreen(
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
-                .background(White_FFFFFF)
+                .background(DayoTheme.colorScheme.background)
                 .fillMaxSize()
                 .padding(innerPadding),
             contentPadding = PaddingValues(horizontal = 18.dp)
@@ -120,12 +118,12 @@ fun PostLikeUsersScreen(
                     val dec = DecimalFormat("#,###")
                     Text(
                         text = " ${dec.format(likeCount.value)} ",
-                        style = MaterialTheme.typography.caption1.copy(Primary_23C882),
+                        style = DayoTheme.typography.caption1.copy(Primary_23C882),
                         modifier = Modifier.padding(vertical = 12.dp)
                     )
                     Text(
                         text = "개의 좋아요",
-                        style = MaterialTheme.typography.caption1.copy(Gray2_767B83),
+                        style = DayoTheme.typography.caption1.copy(Gray2_767B83),
                         modifier = Modifier.padding(vertical = 12.dp)
                     )
                 }
@@ -197,7 +195,7 @@ private fun LikeUserItem(
 
             // nickname
             Text(text = likeUser.nickname,
-                style = MaterialTheme.typography.b6.copy(Dark),
+                style = DayoTheme.typography.b6.copy(Dark),
                 modifier = Modifier.clickableSingle(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },

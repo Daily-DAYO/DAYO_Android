@@ -12,7 +12,6 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material3.SnackbarHost
@@ -44,6 +43,7 @@ import daily.dayo.presentation.screen.mypage.myPageNavGraph
 import daily.dayo.presentation.screen.post.postNavGraph
 import daily.dayo.presentation.screen.search.searchNavGraph
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
@@ -152,7 +152,7 @@ fun MainBottomNavigation(
                             )
 
                             if (screen.route != Screen.Write.route) {
-                                Text(text = stringResource(screen.resourceId), style = MaterialTheme.typography.caption)
+                                Text(text = stringResource(screen.resourceId), style = DayoTheme.typography.caption5)
                             }
                         }
                     },

@@ -27,6 +27,7 @@ import daily.dayo.presentation.R
 import daily.dayo.presentation.databinding.ActivityMainBinding
 import daily.dayo.presentation.fragment.home.HomeFragmentDirections
 import daily.dayo.presentation.screen.main.MainScreen
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.SettingNotificationViewModel
 
@@ -47,7 +48,9 @@ class MainActivity : AppCompatActivity() {
         getNotificationData()
         askNotificationPermission()
         setContent {
-            MainScreen()
+            DayoTheme {
+                MainScreen()
+            }
         }
     }
 

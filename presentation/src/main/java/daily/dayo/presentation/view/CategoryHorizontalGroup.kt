@@ -26,11 +26,11 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import daily.dayo.presentation.screen.home.CategoryMenu
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray7_F6F6F7
 import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
 import daily.dayo.presentation.theme.Primary_23C882
-import daily.dayo.presentation.theme.b5
 
 @Composable
 fun CategoryHorizontalGroup(
@@ -77,7 +77,7 @@ fun CategoryHorizontalGroup(
                         )
                         .indication(interactionSource = interactionSource, indication = null),
                     content = {
-                        Text(text = category.name, style = MaterialTheme.typography.b5)
+                        Text(text = category.name, style = DayoTheme.typography.b5)
                     }
                 )
             }
@@ -98,7 +98,7 @@ private fun PreviewCategoryHorizontalGroup() {
         CategoryMenu.ETC
     )
     val selectedCategory = remember { mutableStateOf(categoryMenus[0]) }
-    MaterialTheme {
+    DayoTheme {
         CategoryHorizontalGroup(categoryMenus, selectedCategory)
     }
 }

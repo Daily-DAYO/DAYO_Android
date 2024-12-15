@@ -11,13 +11,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,13 +36,10 @@ import daily.dayo.domain.model.BookmarkPost
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.extension.clickableSingle
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Primary_23C882
-import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.theme.b6
-import daily.dayo.presentation.theme.caption2
-import daily.dayo.presentation.theme.caption4
 import daily.dayo.presentation.view.DayoCheckbox
 import daily.dayo.presentation.view.FilledRoundedCornerButton
 import daily.dayo.presentation.view.RoundImageView
@@ -76,15 +73,16 @@ fun BookmarkScreen(
                     label = stringResource(id = R.string.delete),
                     enabled = bookmarkUiState.selectedBookmarks.isNotEmpty(),
                     modifier = Modifier
-                        .fillMaxWidth()
                         .padding(20.dp)
+                        .fillMaxWidth()
+                        .height(44.dp)
                 )
             }
         }
     ) { contentPadding ->
         Column(
             modifier = Modifier
-                .background(color = White_FFFFFF)
+                .background(DayoTheme.colorScheme.background)
                 .fillMaxSize()
                 .padding(contentPadding)
         ) {
@@ -135,7 +133,7 @@ private fun BookmarkTopNavigation(
                             onClick = onCancelClick
                         ),
                     text = stringResource(id = R.string.cancel),
-                    style = MaterialTheme.typography.b6.copy(color = Gray1_50545B),
+                    style = DayoTheme.typography.b6.copy(color = Gray1_50545B),
                 )
             }
         )
@@ -184,11 +182,11 @@ private fun BookmarkHeader(
             val dec = DecimalFormat("#,###")
             Text(
                 text = " ${dec.format(bookmarkCount)} ",
-                style = MaterialTheme.typography.caption2.copy(Primary_23C882),
+                style = DayoTheme.typography.caption2.copy(Primary_23C882),
             )
             Text(
                 text = stringResource(id = R.string.bookmark_count),
-                style = MaterialTheme.typography.caption2.copy(Gray2_767B83)
+                style = DayoTheme.typography.caption2.copy(Gray2_767B83)
             )
         }
 
@@ -200,7 +198,7 @@ private fun BookmarkHeader(
                 Text(
                     modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
                     text = stringResource(id = R.string.bookmark_selected_count, selectedCount),
-                    style = MaterialTheme.typography.caption4.copy(color = Gray2_767B83),
+                    style = DayoTheme.typography.caption4.copy(color = Gray2_767B83),
                 )
             } else {
                 Text(
@@ -212,7 +210,7 @@ private fun BookmarkHeader(
                             onClick = onEditClick
                         ),
                     text = stringResource(id = R.string.bookmark_edit),
-                    style = MaterialTheme.typography.caption4.copy(color = Gray2_767B83),
+                    style = DayoTheme.typography.caption4.copy(color = Gray2_767B83),
                 )
             }
         }

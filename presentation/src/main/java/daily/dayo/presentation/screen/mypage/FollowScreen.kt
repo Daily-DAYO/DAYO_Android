@@ -24,7 +24,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -55,16 +54,13 @@ import daily.dayo.domain.model.Profile
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.theme.b3
-import daily.dayo.presentation.theme.b5
-import daily.dayo.presentation.theme.b6
-import daily.dayo.presentation.theme.caption2
 import daily.dayo.presentation.view.DayoOutlinedButton
 import daily.dayo.presentation.view.FilledButton
 import daily.dayo.presentation.view.RoundImageView
@@ -193,7 +189,7 @@ private fun FollowContent(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(White_FFFFFF),
+            .background(DayoTheme.colorScheme.background),
         contentPadding = PaddingValues(vertical = 20.dp, horizontal = 18.dp)
     ) {
         when (followUiState) {
@@ -260,7 +256,7 @@ private fun FollowerEmpty(tabNum: Int) {
                 color = Gray3_9FA5AE,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Visible,
-                style = MaterialTheme.typography.b3,
+                style = DayoTheme.typography.b3,
             )
 
             Text(
@@ -271,7 +267,7 @@ private fun FollowerEmpty(tabNum: Int) {
                 color = Gray4_C5CAD2,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Visible,
-                style = MaterialTheme.typography.caption2,
+                style = DayoTheme.typography.caption2,
             )
         }
 
@@ -303,7 +299,7 @@ private fun FollowUserInfo(
             text = follow.nickname,
             modifier = Modifier.weight(1f),
             color = Dark,
-            style = MaterialTheme.typography.b6
+            style = DayoTheme.typography.b6
         )
 
         if (follow.isFollow) {
@@ -363,7 +359,7 @@ private fun FollowTab(pagerState: PagerState, followerCount: Int, followingCount
                 text = {
                     Text(
                         text = "$title " + if (index == FOLLOWER_TAB_ID) "$followerCount" else "$followingCount",
-                        style = MaterialTheme.typography.b5
+                        style = DayoTheme.typography.b5
                     )
                 },
                 selected = pagerState.currentPage == index,
