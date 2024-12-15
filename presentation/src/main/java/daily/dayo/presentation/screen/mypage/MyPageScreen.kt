@@ -28,7 +28,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,6 +49,7 @@ import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray4_C5CAD2
@@ -57,11 +57,6 @@ import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.theme.b3
-import daily.dayo.presentation.theme.b6
-import daily.dayo.presentation.theme.caption4
-import daily.dayo.presentation.theme.caption5
-import daily.dayo.presentation.theme.h1
 import daily.dayo.presentation.view.FolderView
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.RoundImageView
@@ -93,7 +88,7 @@ fun MyPageScreen(
                 columns = GridCells.Fixed(2),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
-                    .background(color = White_FFFFFF)
+                    .background(DayoTheme.colorScheme.background)
                     .fillMaxSize()
                     .padding(contentPadding)
                     .padding(horizontal = 20.dp),
@@ -136,7 +131,7 @@ private fun MyPageProfile(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(White_FFFFFF)
+            .background(DayoTheme.colorScheme.background)
             .padding(top = 8.dp, bottom = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -163,7 +158,7 @@ private fun MyPageProfile(
         ) {
             Text(
                 text = profile?.nickname ?: "",
-                style = MaterialTheme.typography.h1.copy(
+                style = DayoTheme.typography.h1.copy(
                     color = Dark,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -171,7 +166,7 @@ private fun MyPageProfile(
 
             Text(
                 text = profile?.email ?: "",
-                style = MaterialTheme.typography.caption5.copy(
+                style = DayoTheme.typography.caption5.copy(
                     color = Gray4_C5CAD2
                 )
             )
@@ -199,12 +194,12 @@ private fun MyPageProfile(
 
                 Text(
                     text = stringResource(id = R.string.follower),
-                    style = MaterialTheme.typography.caption4.copy(color = Gray1_50545B)
+                    style = DayoTheme.typography.caption4.copy(color = Gray1_50545B)
                 )
             }
             Text(
                 text = "${profile?.followerCount ?: "0"}",
-                style = MaterialTheme.typography.b6.copy(color = Gray1_50545B)
+                style = DayoTheme.typography.b6.copy(color = Gray1_50545B)
             )
         }
 
@@ -232,13 +227,13 @@ private fun MyPageProfile(
 
                 Text(
                     text = stringResource(id = R.string.following),
-                    style = MaterialTheme.typography.caption4.copy(color = Gray1_50545B)
+                    style = DayoTheme.typography.caption4.copy(color = Gray1_50545B)
                 )
             }
 
             Text(
                 text = "${profile?.followingCount ?: "0"}",
-                style = MaterialTheme.typography.b6.copy(color = Gray1_50545B)
+                style = DayoTheme.typography.b6.copy(color = Gray1_50545B)
             )
         }
 
@@ -271,7 +266,7 @@ private fun MyPageMenu(
             content = {
                 Text(
                     text = stringResource(id = R.string.my_profile_edit_title),
-                    style = MaterialTheme.typography.b6.copy(Gray1_50545B),
+                    style = DayoTheme.typography.b6.copy(Gray1_50545B),
                 )
             }
         )
@@ -280,7 +275,7 @@ private fun MyPageMenu(
         IconButton(
             onClick = { onBookmarkClick() },
             modifier = Modifier
-                .background(color = White_FFFFFF, shape = RoundedCornerShape(12.dp))
+                .background(color = DayoTheme.colorScheme.background, shape = RoundedCornerShape(12.dp))
                 .border(
                     border = BorderStroke(width = 1.dp, color = Gray6_F0F1F3),
                     shape = RoundedCornerShape(size = 12.dp)
@@ -307,7 +302,7 @@ private fun MyPageDiaryHeader() {
     ) {
         Text(
             text = stringResource(id = R.string.my_profile_my_diary),
-            style = MaterialTheme.typography.b3.copy(Dark)
+            style = DayoTheme.typography.b3.copy(Dark)
         )
 
         androidx.compose.material3.Button(
@@ -327,7 +322,7 @@ private fun MyPageDiaryHeader() {
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = stringResource(id = R.string.my_profile_new_folder),
-                style = MaterialTheme.typography.b6.copy(Primary_23C882)
+                style = DayoTheme.typography.b6.copy(Primary_23C882)
             )
         }
     }
@@ -348,7 +343,7 @@ private fun MyPageTopNavigation() {
             ) {
                 Text(
                     text = stringResource(id = R.string.my_page),
-                    style = MaterialTheme.typography.h1.copy(
+                    style = DayoTheme.typography.h1.copy(
                         color = Gray1_50545B,
                         fontWeight = FontWeight.SemiBold
                     )

@@ -20,7 +20,6 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,10 +38,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
-import daily.dayo.presentation.theme.b3
-import daily.dayo.presentation.theme.caption1
 import daily.dayo.presentation.view.EmojiView
 import daily.dayo.presentation.view.FilledButton
 import daily.dayo.presentation.view.HomePostView
@@ -87,13 +85,13 @@ fun HomeNewScreen(
                         Row {
                             EmojiView(
                                 emoji = "\uD83D\uDC40",
-                                emojiSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                emojiSize = DayoTheme.typography.b6.fontSize,
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             )
 
                             Text(
                                 text = stringResource(id = R.string.home_new_description),
-                                style = MaterialTheme.typography.bodyMedium.copy(Color(0xFF73777C)),
+                                style = DayoTheme.typography.b6.copy(Color(0xFF73777C)),
                                 modifier = Modifier
                                     .padding(horizontal = 4.dp)
                                     .align(Alignment.CenterVertically)
@@ -161,9 +159,9 @@ private fun HomeNewEmptyView() {
         Image(imageVector = ImageVector.vectorResource(id = R.drawable.ic_home_empty), contentDescription = null)
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text(text = stringResource(id = R.string.home_new_empty_title), style = MaterialTheme.typography.b3.copy(Gray3_9FA5AE))
+        Text(text = stringResource(id = R.string.home_new_empty_title), style = DayoTheme.typography.b3.copy(Gray3_9FA5AE))
         Spacer(modifier = Modifier.height(2.dp))
-        Text(text = stringResource(id = R.string.home_new_empty_detail), style = MaterialTheme.typography.caption1.copy(Gray4_C5CAD2))
+        Text(text = stringResource(id = R.string.home_new_empty_detail), style = DayoTheme.typography.caption1.copy(Gray4_C5CAD2))
 
         Spacer(modifier = Modifier.height(28.dp))
         FilledButton(onClick = { /*TODO*/ }, label = stringResource(id = R.string.home_new_empty_action))

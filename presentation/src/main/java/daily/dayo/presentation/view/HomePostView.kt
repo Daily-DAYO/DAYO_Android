@@ -36,9 +36,8 @@ import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray3_9FA5AE
-import daily.dayo.presentation.theme.b5
-import daily.dayo.presentation.theme.caption3
 import java.text.DecimalFormat
 
 @Composable
@@ -121,7 +120,7 @@ fun HomePostView(
                     .clip(shape = CircleShape)
                     .align(Alignment.CenterVertically)
             )
-            Text(text = post.nickname, style = MaterialTheme.typography.b5.copy(Dark))
+            Text(text = post.nickname, style = DayoTheme.typography.b5.copy(Dark))
         }
 
         Spacer(modifier = Modifier.height(2.dp))
@@ -129,8 +128,8 @@ fun HomePostView(
         // post info
         val dec = DecimalFormat("#,###")
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(text = stringResource(id = R.string.like) + " ${dec.format(post.heartCount)}", style = MaterialTheme.typography.caption3.copy(Gray3_9FA5AE))
-            Text(text = stringResource(id = R.string.comment) + " ${dec.format(post.commentCount)}", style = MaterialTheme.typography.caption3.copy(Gray3_9FA5AE))
+            Text(text = stringResource(id = R.string.like) + " ${dec.format(post.heartCount)}", style = DayoTheme.typography.caption3.copy(Gray3_9FA5AE))
+            Text(text = stringResource(id = R.string.comment) + " ${dec.format(post.commentCount)}", style = DayoTheme.typography.caption3.copy(Gray3_9FA5AE))
         }
     }
 }
@@ -138,7 +137,7 @@ fun HomePostView(
 @Composable
 @Preview(showBackground = true)
 private fun PreviewHomePostView() {
-    MaterialTheme {
+    DayoTheme {
         HomePostView(
             modifier = Modifier.size(156.dp, 205.dp),
             post = Post(

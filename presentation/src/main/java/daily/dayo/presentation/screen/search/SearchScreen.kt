@@ -57,6 +57,7 @@ import daily.dayo.domain.model.SearchHistoryType
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.common.toSp
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.viewmodel.SearchViewModel
 import kotlinx.coroutines.launch
@@ -257,7 +258,7 @@ private fun SetClearSearchHistoryLayout(onHistoryClearClick: () -> Unit) {
         Button(
             modifier = Modifier
                 .wrapContentSize()
-                .background(color = colorResource(id = R.color.white_FFFFFF))
+                .background(DayoTheme.colorScheme.background)
                 .padding(horizontal = 12.dp, vertical = 4.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.white_FFFFFF),
@@ -293,7 +294,7 @@ private fun SetSearchHistoryLayout(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = colorResource(id = R.color.white_FFFFFF))
+            .background(DayoTheme.colorScheme.background)
     ) {
         item {
             SearchHistoryGuideLayout()
