@@ -14,11 +14,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray5_E8EAEE
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.theme.caption2
 
 @Composable
 fun Chip(
@@ -35,7 +35,7 @@ fun Chip(
             Text(
                 text = text,
                 color = if (enabled) color else Gray5_E8EAEE,
-                style = MaterialTheme.typography.caption2
+                style = DayoTheme.typography.caption2
             )
         },
         shape = RoundedCornerShape(100.dp),
@@ -55,7 +55,7 @@ fun Chip(
 @Preview
 @Composable
 fun PreviewChip() {
-    MaterialTheme {
+    DayoTheme {
         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             Chip(text = "Text")
             Chip(text = "Text", enabled = false)

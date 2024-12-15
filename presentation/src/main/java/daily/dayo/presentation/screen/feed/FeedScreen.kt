@@ -16,7 +16,6 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -40,11 +39,9 @@ import androidx.paging.compose.itemKey
 import daily.dayo.presentation.R
 import daily.dayo.presentation.screen.home.CategoryMenu
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
-import daily.dayo.presentation.theme.b3
-import daily.dayo.presentation.theme.caption1
-import daily.dayo.presentation.theme.h1
 import daily.dayo.presentation.view.CategoryHorizontalGroup
 import daily.dayo.presentation.view.FeedPostView
 import daily.dayo.presentation.view.FilledButton
@@ -86,7 +83,7 @@ fun FeedScreen(
                         Text(
                             text = stringResource(id = R.string.feed),
                             modifier = Modifier.padding(start = 18.dp),
-                            style = MaterialTheme.typography.h1.copy(
+                            style = DayoTheme.typography.h1.copy(
                                 color = Dark
                             )
                         )
@@ -177,9 +174,9 @@ private fun FeedEmptyView(onEmptyViewClick: () -> Unit) {
         Image(imageVector = ImageVector.vectorResource(id = R.drawable.ic_feed_empty), contentDescription = null)
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text(text = stringResource(id = R.string.feed_empty_title), style = MaterialTheme.typography.b3.copy(Gray3_9FA5AE))
+        Text(text = stringResource(id = R.string.feed_empty_title), style = DayoTheme.typography.b3.copy(Gray3_9FA5AE))
         Spacer(modifier = Modifier.height(2.dp))
-        Text(text = stringResource(id = R.string.feed_empty_description), style = MaterialTheme.typography.caption1.copy(Gray4_C5CAD2))
+        Text(text = stringResource(id = R.string.feed_empty_description), style = DayoTheme.typography.caption1.copy(Gray4_C5CAD2))
 
         Spacer(modifier = Modifier.height(36.dp))
         FilledButton(onClick = onEmptyViewClick, label = stringResource(id = R.string.feed_empty_button))

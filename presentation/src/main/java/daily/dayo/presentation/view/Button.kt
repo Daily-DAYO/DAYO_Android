@@ -1,6 +1,5 @@
 package daily.dayo.presentation.view
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
@@ -26,7 +25,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -41,25 +40,23 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray5_E8EAEE
+import daily.dayo.presentation.theme.PrimaryL1_8FD9B9
 import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.theme.b3
-import daily.dayo.presentation.theme.b5
-import daily.dayo.presentation.theme.b6
-import daily.dayo.presentation.theme.caption3
 
 @Composable
 fun FilledButton(
-    onClick: () -> Unit,
     label: String,
-    icon: @Composable (() -> Unit)? = null,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isTonal: Boolean = false,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
+    icon: @Composable (() -> Unit)? = null
 ) {
     val buttonColors = if (isTonal)
         ButtonDefaults.buttonColors(
@@ -79,33 +76,34 @@ fun FilledButton(
 
     Button(
         onClick = { onClick() },
-        colors = buttonColors,
-        enabled = enabled,
         modifier = modifier,
+        enabled = enabled,
+        colors = buttonColors,
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         content = {
             if (icon != null) icon()
-            Text(text = label, style = MaterialTheme.typography.b6)
+            Text(text = label, style = DayoTheme.typography.b6)
         }
     )
 }
 
 @Composable
 fun FilledRoundedCornerButton(
-    onClick: () -> Unit,
     label: String,
-    icon: @Composable (() -> Unit)? = null,
+    onClick: () -> Unit,
+    modifier: Modifier? = null,
+    contentModifier: Modifier? = null,
     enabled: Boolean = true,
-    textStyle: TextStyle = MaterialTheme.typography.b3,
-    @SuppressLint("ModifierParameter") modifier: Modifier? = null,
-    @SuppressLint("ModifierParameter") contentModifier: Modifier? = null,
-    color: ButtonColors? = null
+    color: ButtonColors? = null,
+    textStyle: TextStyle = DayoTheme.typography.b3,
+    icon: @Composable (() -> Unit)? = null
 ) {
     val buttonColors = color
         ?: ButtonDefaults.buttonColors(
             containerColor = Primary_23C882,
             contentColor = White_FFFFFF,
-            disabledContainerColor = Gray5_E8EAEE,
-            disabledContentColor = Gray4_C5CAD2
+            disabledContainerColor = PrimaryL1_8FD9B9,
+            disabledContentColor = White_FFFFFF
         )
 
     Button(
@@ -132,34 +130,35 @@ fun FilledRoundedCornerButton(
 }
 
 @Composable
-fun OutlinedButton(
-    onClick: () -> Unit,
+fun DayoOutlinedButton(
     label: String,
-    icon: @Composable (() -> Unit)? = null,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: @Composable (() -> Unit)? = null
 ) {
-    androidx.compose.material3.OutlinedButton(
+    OutlinedButton(
         onClick = { onClick() },
-        border = BorderStroke(1.dp, Gray5_E8EAEE),
+        modifier = modifier,
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = White_FFFFFF,
             contentColor = Gray2_767B83
         ),
-        modifier = modifier,
+        border = BorderStroke(1.dp, Gray5_E8EAEE),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         content = {
             if (icon != null) icon()
-            Text(text = label, style = MaterialTheme.typography.b6)
+            Text(text = label, style = DayoTheme.typography.b6)
         }
     )
 }
 
 @Composable
-fun TextButton(
-    onClick: () -> Unit,
+fun DayoTextButton(
     text: String = "",
-    textStyle: TextStyle = MaterialTheme.typography.b6.copy(color = Primary_23C882),
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     underline: Boolean = false,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
+    textStyle: TextStyle = DayoTheme.typography.b6.copy(color = Primary_23C882)
 ) {
     Text(
         modifier = modifier.clickable(
@@ -176,8 +175,8 @@ fun TextButton(
 @Composable
 fun NoRippleIconButton(
     onClick: () -> Unit,
-    iconContentDescription: String,
     iconPainter: Painter,
+    iconContentDescription: String,
     iconButtonModifier: Modifier = Modifier,
     iconModifier: Modifier = Modifier,
     iconTintColor: Color = Color.Unspecified,
@@ -233,7 +232,7 @@ fun NoRippleIconButton(
 
 @Preview
 @Composable
-fun PreviewFilledButton() {
+private fun PreviewFilledButton() {
     Column {
         // Filled Button
         FilledButton(onClick = {}, label = "text")
@@ -244,7 +243,7 @@ fun PreviewFilledButton() {
 
 @Preview
 @Composable
-fun PreviewFilledRoundedButton() {
+private fun PreviewFilledRoundedButton() {
     Column {
         // Rounded Corner Shape Button
         FilledRoundedCornerButton(onClick = {}, label = "label")
@@ -255,36 +254,36 @@ fun PreviewFilledRoundedButton() {
             modifier = Modifier.size(300.dp, 44.dp),
             color = ButtonDefaults.buttonColors(containerColor = Dark, contentColor = White_FFFFFF),
             icon = { Icon(Icons.Filled.Email, "Email") },
-            textStyle = MaterialTheme.typography.b5
+            textStyle = DayoTheme.typography.b5
         )
     }
 }
 
 @Preview
 @Composable
-fun PreviewOutlinedButton() {
+private fun PreviewDayoOutlinedButton() {
     Column {
         // Outlined Button
-        OutlinedButton(onClick = {}, label = "text")
-        OutlinedButton(onClick = {}, label = "text", icon = { Icon(Icons.Filled.Add, "Add") })
+        DayoOutlinedButton(onClick = {}, label = "text")
+        DayoOutlinedButton(onClick = {}, label = "text", icon = { Icon(Icons.Filled.Add, "Add") })
     }
 }
 
 @Preview(showBackground = true, backgroundColor = android.graphics.Color.WHITE.toLong())
 @Composable
-fun PreviewTextButton() {
+private fun PreviewDayoTextButton() {
     Column {
         // Text Button
-        TextButton(onClick = {}, text = "text")
-        TextButton(onClick = {}, text = "text", underline = true)
-        TextButton(onClick = {}, text = "text", textStyle = MaterialTheme.typography.b6.copy(Gray2_767B83))
-        TextButton(onClick = {}, text = "text", textStyle = MaterialTheme.typography.b6.copy(Gray4_C5CAD2))
+        DayoTextButton(onClick = {}, text = "text")
+        DayoTextButton(onClick = {}, text = "text", underline = true)
+        DayoTextButton(onClick = {}, text = "text", textStyle = DayoTheme.typography.b6.copy(Gray2_767B83))
+        DayoTextButton(onClick = {}, text = "text", textStyle = DayoTheme.typography.b6.copy(Gray4_C5CAD2))
 
         // Underline Text Button
         Row {
-            Text(text = "DAYO의 ", style = MaterialTheme.typography.caption3.copy(Gray4_C5CAD2))
-            TextButton(onClick = {}, text = "이용약관", textStyle = MaterialTheme.typography.caption3.copy(Gray4_C5CAD2), underline = true)
-            Text(text = "입니다.", style = MaterialTheme.typography.caption3.copy(Gray4_C5CAD2))
+            Text(text = "DAYO의 ", style = DayoTheme.typography.caption3.copy(Gray4_C5CAD2))
+            DayoTextButton(onClick = {}, text = "이용약관", textStyle = DayoTheme.typography.caption3.copy(Gray4_C5CAD2), underline = true)
+            Text(text = "입니다.", style = DayoTheme.typography.caption3.copy(Gray4_C5CAD2))
         }
     }
 }
