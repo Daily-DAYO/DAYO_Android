@@ -1,34 +1,40 @@
 package daily.dayo.presentation.screen.write
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Surface
 import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,172 +47,260 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.size.Size
 import daily.dayo.domain.model.Category
-import daily.dayo.domain.model.Folder
-import daily.dayo.domain.model.categoryKR
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.extension.clickableSingle
-import daily.dayo.presentation.common.toSp
-import daily.dayo.presentation.theme.Gray1_313131
+import daily.dayo.presentation.screen.home.CategoryMenu
+import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
+import daily.dayo.presentation.theme.Gray2_767B83
+import daily.dayo.presentation.theme.Gray3_9FA5AE
+import daily.dayo.presentation.theme.Gray4_C5CAD2
+import daily.dayo.presentation.theme.Gray5_E8EAEE
 import daily.dayo.presentation.theme.Gray7_F6F6F7
 import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
+import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.theme.b3
-import daily.dayo.presentation.theme.b6
-import daily.dayo.presentation.theme.caption3
+import daily.dayo.presentation.view.DayoTextButton
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.RoundImageView
-import daily.dayo.presentation.view.TextButton
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
-import daily.dayo.presentation.viewmodel.AccountViewModel
-import daily.dayo.presentation.viewmodel.ProfileViewModel
+import daily.dayo.presentation.view.dialog.BottomSheetDialog
 import daily.dayo.presentation.viewmodel.WriteViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+const val WRITE_POST_IMAGE_MIN_SIZE = 1
+const val WRITE_POST_DETAIL_MAX_LENGTH = 200
+const val WRITE_POST_IMAGE_SIZE = 220
+const val WRITE_POST_TOP_Z_INDEX = 1f
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun WriteRoute(
+    snackBarHostState: SnackbarHostState,
     onBackClick: () -> Unit,
+    onTagClick: () -> Unit,
+    onWriteFolderClick: () -> Unit,
     writeViewModel: WriteViewModel = hiltViewModel(),
-    profileViewModel: ProfileViewModel = hiltViewModel(),
-    accountViewModel: AccountViewModel = hiltViewModel(),
+    bottomSheetState: ModalBottomSheetState,
+    bottomSheetContent: (@Composable () -> Unit) -> Unit,
 ) {
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val folders by profileViewModel.folders.collectAsStateWithLifecycle()
-    val imageUris by writeViewModel.writeImagesUri.collectAsState()
-    val category by writeViewModel.writeCategory.collectAsState()
+    val option = BitmapFactory.Options().apply {
+        inPreferredConfig = Bitmap.Config.ARGB_8888
+    }
+
+    val writeText by writeViewModel.writeText.collectAsState()
+    val processedImages by writeViewModel.writeImages.collectAsState()
     val tags by writeViewModel.writeTags.collectAsState()
     val folderId by writeViewModel.writeFolderId.collectAsState()
     val folderName by writeViewModel.writeFolderName.collectAsState()
     val writePostId by writeViewModel.writePostId.observeAsState()
+    val selectedCategory by writeViewModel.writeCategory.collectAsState() // name, index
+    val onClickCategory: (CategoryMenu, Int) -> Unit = { categoryMenu, index ->
+        writeViewModel.setPostCategory(Pair(categoryMenu.category, index))
+        coroutineScope.launch { bottomSheetState.hide() }
+    }
+    val categoryMenus = listOf(
+        CategoryMenu.Scheduler,
+        CategoryMenu.StudyPlanner,
+        CategoryMenu.PocketBook,
+        CategoryMenu.SixHoleDiary,
+        CategoryMenu.Digital,
+        CategoryMenu.ETC
+    )
+    val uploadSuccess by writeViewModel.uploadSuccess.collectAsState()
 
-    writePostId?.let {
-        LaunchedEffect(it) {
-            onBackClick()
+    BackHandler {
+        onBackClick()
+    }
+
+    BackHandler(enabled = bottomSheetState.isVisible) {
+        coroutineScope.launch {
+            bottomSheetState.hide()
+        }
+    }
+
+    LaunchedEffect(uploadSuccess) {
+        when (uploadSuccess) {
+            Status.LOADING -> {
+                snackBarHostState.showSnackbar(
+                    ContextCompat.getString(context, R.string.write_post_upload_state_loading)
+                )
+            }
+
+            Status.SUCCESS -> {
+                onBackClick()
+                writePostId?.let {
+                    // TODO: 게시글 상세 화면으로 이동
+                }
+            }
+
+            Status.ERROR -> {
+                snackBarHostState.showSnackbar(
+                    ContextCompat.getString(context, R.string.write_post_upload_state_fail)
+                )
+            }
+
+            null -> {}
         }
     }
 
     WriteScreen(
+        context = context,
         onBackClick = onBackClick,
         onUploadClick = {
             coroutineScope.launch {
                 writeViewModel.requestUploadPost()
             }
         },
-        setWriteContents = { writeContents ->
-            writeViewModel.setPostContents(writeContents)
+        setWriteText = { text ->
+            writeViewModel.setWriteText(text)
         },
-        setImageUris = { uri ->
-            writeViewModel.addUploadImage(uri.toString(), true)
+        writeText = writeText,
+        addImages = { uris ->
+            writeViewModel.addAndResizeUploadImages(uris, context.contentResolver, option)
         },
         deleteImageUri = { position ->
-            writeViewModel.deleteUploadImage(position, true)
+            writeViewModel.removeUploadImage(position, true)
         },
-        imageUris = imageUris,
+        processedImages = processedImages,
         navigateToCategory = {
-            // TODO - 임시 글작성을 위한 하드코딩
-            writeViewModel.setPostCategory(Category.SIX_DIARY)
+            coroutineScope.launch { bottomSheetState.show() }
         },
-        category = category,
-        navigateToTag = {
-            // TODO - 임시 글작성을 위한 하드코딩
-            writeViewModel.addPostTag("test", true)
-        },
+        categoryMenus = categoryMenus,
+        category = selectedCategory,
+        navigateToTag = { onTagClick() },
         tags = tags,
-        navigateToFolder = {
-            // TODO - 임시 글작성을 위한 하드코딩
-            profileViewModel.requestFolderList(
-                memberId = accountViewModel.getCurrentUserInfo().memberId!!,
-                true
-            )
-            folders.data?.let {
-                writeViewModel.setFolderId(it.first().folderId!!.toString())
-                writeViewModel.setFolderName(it.first().title)
-            }
-        },
+        navigateToFolder = { onWriteFolderClick() },
         folderId = folderId,
         folderName = folderName,
+        uploadSuccess = uploadSuccess,
+    )
+
+    bottomSheetContent {
+        CategoryBottomSheetDialog(
+            categoryMenus,
+            onClickCategory,
+            selectedCategory,
+            coroutineScope,
+            bottomSheetState
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun CategoryBottomSheetDialog(
+    categoryMenus: List<CategoryMenu>,
+    onCategorySelected: (CategoryMenu, Int) -> Unit,
+    selectedCategory: Pair<Category?, Int>,
+    coroutineScope: CoroutineScope,
+    bottomSheetState: ModalBottomSheetState
+) {
+
+    BottomSheetDialog(
+        sheetState = bottomSheetState,
+        buttons = categoryMenus.mapIndexed { index, category ->
+            Pair(category.name) {
+                onCategorySelected(category, index)
+            }
+        },
+        title = stringResource(id = R.string.category),
+        leftIconButtons = categoryMenus.map {
+            ImageVector.vectorResource(it.defaultIcon)
+        },
+        leftIconCheckedButtons = categoryMenus.map {
+            ImageVector.vectorResource(it.checkedIcon)
+        },
+        normalColor = Gray2_767B83,
+        checkedColor = Primary_23C882,
+        checkedButtonIndex = selectedCategory.second,
+        closeButtonAction = { coroutineScope.launch { bottomSheetState.hide() } }
     )
 }
 
 @Composable
 fun WriteScreen(
+    context: Context = LocalContext.current,
     onBackClick: () -> Unit,
     onUploadClick: () -> Unit,
-    setWriteContents: (String) -> Unit,
-    setImageUris: (Uri) -> Unit,
+    setWriteText: (String) -> Unit,
+    writeText: String,
+    addImages: (List<Uri>) -> Unit,
     deleteImageUri: (Int) -> Unit,
-    imageUris: List<String>,
+    processedImages: List<Bitmap>,
     navigateToCategory: () -> Unit,
-    category: Category? = null,
+    categoryMenus: List<CategoryMenu>,
+    category: Pair<Category?, Int> = Pair(null, -1),
     navigateToTag: () -> Unit,
     tags: List<String> = emptyList(),
     navigateToFolder: () -> Unit,
     folderId: String? = null,
     folderName: String? = null,
+    uploadSuccess: Status? = null,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
 
-    val option = BitmapFactory.Options()
-    option.inPreferredConfig = Bitmap.Config.ARGB_8888
-    val bitmap = BitmapFactory.decodeResource(
-        LocalContext.current.resources,
-        R.drawable.ic_dayo_logo_splash,
-        option
-    )
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenMultipleDocuments()
     ) { uris: List<Uri> ->
         if (uris.isEmpty()) onBackClick.invoke()
-        uris.forEach {
-            setImageUris(it)
-        }
+        addImages(uris)
     }
 
     LaunchedEffect(Unit) {
-        galleryLauncher.launch(arrayOf("image/*"))
+        if (processedImages.isEmpty()) {
+            galleryLauncher.launch(arrayOf("image/*"))
+        }
     }
 
     Surface(
-        color = colorResource(id = R.color.white_FFFFFF),
+        color = White_FFFFFF,
         modifier = Modifier.fillMaxSize()
     ) {
         Column(
             modifier = Modifier.fillMaxHeight()
         ) {
-            WriteActionbarLayout(onBackClick, onUploadClick)
-            WriteUploadImages(images = imageUris.map { uriString ->
-                resizeBitmap(
-                    BitmapFactory.decodeStream(
-                        LocalContext.current.contentResolver.openInputStream(Uri.parse(uriString)),
-                        null,
-                        option
-                    ) ?: bitmap,
-                    220.dp.value.toInt(),
-                    500
-                )
-            }, deleteImage = { index ->
-                deleteImageUri(index)
-            })
-            WriteTextField(
-                setPostContents = setWriteContents
+            WriteActionbarLayout(
+                onBackClick,
+                onUploadClick,
+                isUploadEnable = processedImages.isNotEmpty() && category.first != null && folderId != null && folderName != null
+            )
+            WriteUploadImages(
+                images = processedImages,
+                deleteImage = { index -> deleteImageUri(index) }
+            )
+            WritePostDetail(
+                setWriteText = setWriteText,
+                writeText = writeText
             )
             Spacer(modifier = Modifier.height(36.dp))
             WriteCategoryLayout(
-                category = category,
+                categoryMenus = categoryMenus,
+                category = category.first,
                 navigateToCategory = navigateToCategory
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -218,6 +312,7 @@ fun WriteScreen(
                 color = Gray7_F6F6F7
             )
             WriteTagLayout(
+                context = context,
                 tags = tags,
                 navigateToTag = navigateToTag
             )
@@ -234,6 +329,22 @@ fun WriteScreen(
                 navigateToFolder = navigateToFolder
             )
         }
+
+        // 클릭 차단 레이어
+        if (uploadSuccess == Status.LOADING || uploadSuccess == Status.SUCCESS) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Transparent)
+                    .zIndex(WRITE_POST_TOP_Z_INDEX) // 다른 컴포넌트 위에 표시
+                    .clickable(
+                        indication = null,
+                        interactionSource = interactionSource
+                    ) {
+                        // DO NOTHING FOR BLOCKING CLICK
+                    }
+            )
+        }
     }
 }
 
@@ -242,17 +353,17 @@ fun WriteUploadImages(images: List<Bitmap>, deleteImage: (Int) -> Unit = {}) {
     LazyRow(
         contentPadding = PaddingValues(start = 18.dp, end = 18.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.height(220.dp)
+        modifier = Modifier.height(WRITE_POST_IMAGE_SIZE.dp)
     ) {
-        itemsIndexed(images) { index, image ->
-            Box(modifier = Modifier.size(220.dp)) {
+        itemsIndexed(items = images, key = { index, uri -> uri.hashCode() }) { index, image ->
+            Box(modifier = Modifier.size(WRITE_POST_IMAGE_SIZE.dp)) {
                 RoundImageView(
                     context = LocalContext.current,
                     imageUrl = image,
-                    customModifier = Modifier.size(220.dp),
-                    imageSize = Size(220, 220)
+                    customModifier = Modifier.size(WRITE_POST_IMAGE_SIZE.dp),
+                    imageSize = Size(WRITE_POST_IMAGE_SIZE, WRITE_POST_IMAGE_SIZE)
                 )
-                if (images.size == 1) return@itemsIndexed
+                if (images.size == WRITE_POST_IMAGE_MIN_SIZE) return@itemsIndexed
 
                 Image(
                     painter = painterResource(id = R.drawable.ic_img_delete),
@@ -271,22 +382,29 @@ fun WriteUploadImages(images: List<Bitmap>, deleteImage: (Int) -> Unit = {}) {
 }
 
 @Composable
-fun WriteActionbarLayout(onBackClick: () -> Unit, onUploadClick: () -> Unit) {
+fun WriteActionbarLayout(
+    onBackClick: () -> Unit,
+    onUploadClick: () -> Unit,
+    isUploadEnable: Boolean = false
+) {
     TopNavigation(
-        title = "게시글 작성",
+        title = stringResource(R.string.write_post_title),
         leftIcon = {
             NoRippleIconButton(
-                onClick = { onBackClick() },
-                iconContentDescription = "Previous Page",
+                onClick = {
+                    onBackClick()
+                },
+                iconContentDescription = stringResource(R.string.previous),
                 iconPainter = painterResource(id = R.drawable.ic_arrow_left),
             )
         },
         rightIcon = {
-            TextButton(
-                onClick = { onUploadClick() },
-                text = "올리기",
-                textStyle = MaterialTheme.typography.b3.copy(
-                    textAlign = TextAlign.Center
+            DayoTextButton(
+                onClick = { if (isUploadEnable) onUploadClick() },
+                text = stringResource(R.string.write_post_upload),
+                textStyle = DayoTheme.typography.b3.copy(
+                    textAlign = TextAlign.Center,
+                    color = if (isUploadEnable) Primary_23C882 else Gray5_E8EAEE
                 ),
                 modifier = Modifier.padding(10.dp),
             )
@@ -297,39 +415,39 @@ fun WriteActionbarLayout(onBackClick: () -> Unit, onUploadClick: () -> Unit) {
 
 @Preview
 @Composable
-fun WriteTextField(setPostContents: (String) -> Unit = {}) {
-    var writeContentValue by remember { mutableStateOf(TextFieldValue()) }
+fun WritePostDetail(
+    setWriteText: (String) -> Unit = {},
+    writeText: String = ""
+) {
+    var writeContentValue by remember { mutableStateOf(TextFieldValue(writeText)) }
     Column(
         modifier = Modifier
             .padding(top = 20.dp, start = 20.dp, end = 20.dp)
             .fillMaxWidth()
-            .background(color = colorResource(id = R.color.white_FFFFFF))
+            .background(color = White_FFFFFF)
     ) {
         BasicTextField(
             value = writeContentValue,
             onValueChange = {
+                if (it.text.length > WRITE_POST_DETAIL_MAX_LENGTH) return@BasicTextField
+
                 writeContentValue = it
-                setPostContents(it.text)
+                setWriteText(it.text)
             },
             singleLine = false,
             modifier = Modifier
-                .wrapContentHeight()
+                .height(height = 140.dp)
                 .fillMaxWidth()
-                .background(color = colorResource(id = R.color.white_FFFFFF))
-                .defaultMinSize(minHeight = 140.dp),
-            textStyle = MaterialTheme.typography.b6.copy(
-                color = colorResource(id = R.color.gray_1_313131),
+                .background(color = White_FFFFFF),
+            textStyle = DayoTheme.typography.b6.copy(
+                color = Dark,
             ),
             decorationBox = { innerTextField ->
                 if (writeContentValue.text.isEmpty()) {
                     Text(
-                        text = "꾸민 다이어리에 대해 설명해주세요.",
-                        style = TextStyle(
-                            fontSize = 14.dp.toSp(),
-                            lineHeight = 20.dp.toSp(),
-                            fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                            fontWeight = FontWeight(500),
-                            color = colorResource(id = R.color.gray_3_9FA5AE),
+                        text = stringResource(R.string.write_post_detail_placeholder),
+                        style = DayoTheme.typography.b6.copy(
+                            color = Gray4_C5CAD2,
                         )
                     )
                 }
@@ -337,8 +455,23 @@ fun WriteTextField(setPostContents: (String) -> Unit = {}) {
             },
         )
         Text(
-            text = "${writeContentValue.text.length}/200",
-            style = MaterialTheme.typography.caption3,
+            text = buildAnnotatedString {
+                withStyle(
+                    style = DayoTheme.typography.caption3.toSpanStyle()
+                        .copy(color = Gray2_767B83)
+                ) {
+                    append(writeContentValue.text.length.toString())
+                }
+                withStyle(
+                    style = DayoTheme.typography.caption3.toSpanStyle()
+                        .copy(color = Gray4_C5CAD2)
+                ) {
+                    append(
+                        stringResource(R.string.write_post_detail_count_limit)
+                            .format(WRITE_POST_DETAIL_MAX_LENGTH)
+                    )
+                }
+            },
             modifier = Modifier
                 .padding(top = 8.dp)
                 .align(Alignment.End),
@@ -349,12 +482,17 @@ fun WriteTextField(setPostContents: (String) -> Unit = {}) {
 
 @Preview
 @Composable
-fun WriteCategoryLayout(category: Category? = null, navigateToCategory: () -> Unit = {}) {
+fun WriteCategoryLayout(
+    categoryMenus: List<CategoryMenu> = emptyList(),
+    category: Category? = null,
+    navigateToCategory: () -> Unit = {}
+) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .height(40.dp)
             .padding(horizontal = 18.dp)
+            .clip(RoundedCornerShape(20.dp))
             .clickableSingle { navigateToCategory() },
         shape = RoundedCornerShape(20.dp),
         color = PrimaryL3_F2FBF7
@@ -364,27 +502,36 @@ fun WriteCategoryLayout(category: Category? = null, navigateToCategory: () -> Un
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            Image(
-                modifier = Modifier.fillMaxHeight(),
-                painter = painterResource(id = R.drawable.ic_category),
-                contentDescription = "category"
-            )
-            Spacer(modifier = Modifier.size(2.dp))
-            if (category != null) {
+            if (category == null) {
                 Text(
                     modifier = Modifier
                         .fillMaxHeight()
                         .wrapContentHeight(Alignment.CenterVertically),
-                    text = categoryKR(category),
-                    style = MaterialTheme.typography.b6,
-                    color = colorResource(id = R.color.black_000000)
+                    text = stringResource(R.string.write_post_select_category_title),
+                    style = DayoTheme.typography.b6,
+                    color = Gray3_9FA5AE
+                )
+            } else {
+                Image(
+                    modifier = Modifier.fillMaxHeight(),
+                    painter = painterResource(id = categoryMenus.first { it.category == category }.checkedIcon),
+                    contentDescription = stringResource(R.string.write_post_select_category_title)
+                )
+                Spacer(modifier = Modifier.size(2.dp))
+                Text(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .wrapContentHeight(Alignment.CenterVertically),
+                    text = categoryMenus.first { it.category == category }.name,
+                    style = DayoTheme.typography.b6,
+                    color = Color.Black
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
             Image(
                 modifier = Modifier.fillMaxHeight(),
                 painter = painterResource(id = R.drawable.ic_arrow_category_green),
-                contentDescription = "category"
+                contentDescription = stringResource(R.string.write_post_select_category_title)
             )
         }
     }
@@ -392,44 +539,61 @@ fun WriteCategoryLayout(category: Category? = null, navigateToCategory: () -> Un
 
 @Preview
 @Composable
-fun WriteTagLayout(tags: List<String> = emptyList(), navigateToTag: () -> Unit = {}) {
+fun WriteTagLayout(
+    context: Context = LocalContext.current,
+    tags: List<String> = emptyList(),
+    navigateToTag: () -> Unit = {}
+) {
     Row(
         modifier = Modifier
+            .clickableSingle { navigateToTag() }
             .padding(horizontal = 18.dp)
             .fillMaxWidth()
             .height(48.dp)
             .background(White_FFFFFF)
             .padding(horizontal = 2.dp, vertical = 12.dp)
-            .clickableSingle { navigateToTag() }
     ) {
         Text(
             modifier = Modifier
                 .fillMaxHeight()
                 .wrapContentHeight(Alignment.CenterVertically),
-            text = "태그",
-            style = MaterialTheme.typography.b3,
-            color = Gray1_313131
+            text = stringResource(R.string.write_post_select_tag_title),
+            style = DayoTheme.typography.b3,
+            color = Dark
         )
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(
+            modifier = Modifier
+                .weight(1f)
+                .widthIn(min = 54.dp)
+        )
         if (tags.isNotEmpty()) {
-            val tag = tags.joinToString(prefix = "#", postfix = " ")
+            val tag = tags.joinToString(separator = ", ", postfix = " ") {
+                ContextCompat.getString(context, R.string.write_post_select_tag_contents).format(it)
+            }
             Text(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .wrapContentHeight(Alignment.CenterVertically),
+                    .wrapContentHeight(Alignment.CenterVertically)
+                    .weight(1f),
                 text = tag,
-                style = MaterialTheme.typography.b6,
-                color = Gray1_313131
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = DayoTheme.typography.b6,
+                color = Dark,
+                textAlign = TextAlign.End
             )
         } else {
             Text(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .wrapContentHeight(Alignment.CenterVertically),
-                text = "태그 입력",
-                style = MaterialTheme.typography.b6,
-                color = Gray1_313131,
-                textAlign = TextAlign.Center
+                    .wrapContentHeight(Alignment.CenterVertically)
+                    .weight(1f),
+                text = stringResource(R.string.write_post_select_tag_subheading),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = DayoTheme.typography.b6,
+                color = Gray3_9FA5AE,
+                textAlign = TextAlign.End
             )
         }
         Image(
@@ -437,7 +601,7 @@ fun WriteTagLayout(tags: List<String> = emptyList(), navigateToTag: () -> Unit =
                 .fillMaxHeight()
                 .padding(start = 2.dp),
             painter = painterResource(id = R.drawable.ic_arrow_tag_gray),
-            contentDescription = "tag"
+            contentDescription = stringResource(R.string.write_post_select_tag_title)
         )
     }
 }
@@ -451,35 +615,51 @@ fun WriteFolderLayout(
 ) {
     Row(
         modifier = Modifier
+            .clickableSingle { navigateToFolder() }
             .padding(horizontal = 18.dp)
             .fillMaxWidth()
             .height(48.dp)
             .background(White_FFFFFF)
             .padding(horizontal = 2.dp, vertical = 12.dp)
-            .clickableSingle { navigateToFolder() }
     ) {
         Text(
             modifier = Modifier
                 .fillMaxHeight()
                 .wrapContentHeight(Alignment.CenterVertically),
-            text = "폴더",
-            style = MaterialTheme.typography.b3,
-            color = Gray1_313131
+            text = stringResource(R.string.write_post_select_folder_title),
+            style = DayoTheme.typography.b3,
+            color = Dark
         )
-        Spacer(modifier = Modifier.weight(1f))
-        if (folderName != null) {
+        Spacer(
+            modifier = Modifier
+                .weight(1f)
+                .widthIn(min = 54.dp)
+        )
+        if (!folderName.isNullOrEmpty()) {
             Text(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .wrapContentHeight(Alignment.CenterVertically)
+                    .weight(1f),
                 text = folderName,
-                style = MaterialTheme.typography.b6,
-                color = Gray1_313131
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = DayoTheme.typography.b6,
+                color = Dark,
+                textAlign = TextAlign.End
             )
         } else {
             Text(
-                modifier = Modifier.fillMaxHeight(),
-                text = "폴더 선택",
-                style = MaterialTheme.typography.b6,
-                color = Gray1_313131,
-                textAlign = TextAlign.Center
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .wrapContentHeight(Alignment.CenterVertically)
+                    .weight(1f),
+                text = stringResource(R.string.write_post_select_folder_subheading),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = DayoTheme.typography.b6,
+                color = Gray3_9FA5AE,
+                textAlign = TextAlign.End
             )
         }
         Image(
@@ -487,25 +667,7 @@ fun WriteFolderLayout(
                 .fillMaxHeight()
                 .padding(start = 2.dp),
             painter = painterResource(id = R.drawable.ic_arrow_tag_gray),
-            contentDescription = "tag"
+            contentDescription = stringResource(R.string.write_post_select_folder_title)
         )
     }
-}
-
-fun resizeBitmap(bitmap: Bitmap, maxWidth: Int, maxHeight: Int): Bitmap {
-    val width = bitmap.width
-    val height = bitmap.height
-
-    val ratioBitmap = width.toFloat() / height.toFloat()
-    val ratioMax = maxWidth.toFloat() / maxHeight.toFloat()
-
-    var finalWidth = maxWidth
-    var finalHeight = maxHeight
-    if (ratioMax > 1) {
-        finalWidth = (maxHeight.toFloat() * ratioBitmap).toInt()
-    } else {
-        finalHeight = (maxWidth.toFloat() / ratioBitmap).toInt()
-    }
-
-    return Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, true)
 }
