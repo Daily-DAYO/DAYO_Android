@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import dagger.hilt.android.lifecycle.HiltViewModel
 import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.LikePost
 import daily.dayo.domain.model.NetworkResponse

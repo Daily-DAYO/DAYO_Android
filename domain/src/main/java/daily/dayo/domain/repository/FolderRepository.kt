@@ -34,6 +34,7 @@ interface FolderRepository {
 
     suspend fun requestCreateFolderInPost(
         name: String,
+        description: String,
         privacy: Privacy
     ): NetworkResponse<FolderCreateInPostResponse>
 
