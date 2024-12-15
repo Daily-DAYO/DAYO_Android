@@ -1,6 +1,5 @@
 package daily.dayo.presentation.view
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -32,15 +31,15 @@ import java.text.DecimalFormat
 @Composable
 fun FolderView(
     folder: Folder,
-    onClickFolder: () -> Unit,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
+    onClickFolder: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val imageInteractionSource = remember { MutableInteractionSource() }
     Column(modifier = modifier
         .clickableSingle(
             interactionSource = imageInteractionSource,
             indication = null,
-            onClick = { onClickFolder() }
+            onClick = { onClickFolder("${folder.folderId}") }
         )
     ) {
         Box(

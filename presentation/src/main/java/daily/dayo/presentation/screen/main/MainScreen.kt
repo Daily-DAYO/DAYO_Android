@@ -100,7 +100,9 @@ internal fun MainScreen(
                                 onBackClick = { navigator.popBackStack() },
                                 onFollowButtonClick = { memberId, tabNum -> navigator.navController.navigate(MyPageRoute.follow(memberId, "$tabNum")) },
                                 onProfileEditClick = { navigator.navigateProfileEdit() },
-                                onBookmarkClick = { navigator.navigateBookmark() }
+                                onBookmarkClick = { navigator.navigateBookmark() },
+                                onFolderClick = { folderId -> navigator.navController.navigate(MyPageRoute.folder(folderId)) },
+                                onFolderCreateClick = {}
                             )
                         }
                     }
