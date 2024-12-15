@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import daily.dayo.presentation.screen.bookmark.BookmarkScreen
+import daily.dayo.presentation.screen.folder.FolderScreen
 
 fun NavController.navigateProfileEdit() {
     navigate(MyPageRoute.profileEdit())
@@ -18,8 +19,10 @@ fun NavController.navigateBookmark() {
 fun NavGraphBuilder.myPageNavGraph(
     onBackClick: () -> Unit,
     onFollowButtonClick: (String, Int) -> Unit,
+    onProfileEditClick: () -> Unit,
     onBookmarkClick: () -> Unit,
-    onProfileEditClick: () -> Unit
+    onFolderClick: (String) -> Unit,
+    onFolderCreateClick: () -> Unit
 ) {
     composable(MyPageRoute.route) {
         MyPageScreen(
@@ -27,6 +30,8 @@ fun NavGraphBuilder.myPageNavGraph(
             onFollowButtonClick = onFollowButtonClick,
             onProfileEditClick = onProfileEditClick,
             onBookmarkClick = onBookmarkClick,
+            onFolderClick = onFolderClick,
+            onFolderCreateClick = onFolderCreateClick
         )
     }
 
@@ -61,6 +66,21 @@ fun NavGraphBuilder.myPageNavGraph(
             onBackClick = onBackClick
         )
     }
+
+    composable(
+        route = MyPageRoute.folder("{folderId}"),
+        arguments = listOf(
+            navArgument("folderId") {
+                type = NavType.StringType
+            }
+        )
+    ) { navBackStackEntry ->
+        val folderId = navBackStackEntry.arguments?.getString("folderId") ?: ""
+        FolderScreen(
+            folderId = folderId,
+            onBackClick = onBackClick
+        )
+    }
 }
 
 object MyPageRoute {
@@ -68,6 +88,12 @@ object MyPageRoute {
 
     fun follow(memberId: String, tabNum: String) = "$route/follow/$memberId/$tabNum"
     fun profileEdit() = "$route/edit"
+
     fun bookmark() = "$route/bookmark"
     fun bookmarkPost(postId: String) = "$route/bookmark/$postId"
+
+    fun folder(folderId: String) = "$route/folder/$folderId"
+    fun folderCreate() = "$route/folder/create"
+    fun folderEdit(folderId: String) = "$route/folder/edit/$folderId"
+    fun folderMove() = "$route/folder/move"
 }
