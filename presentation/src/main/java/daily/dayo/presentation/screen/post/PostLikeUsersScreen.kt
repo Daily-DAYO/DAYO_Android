@@ -54,8 +54,8 @@ import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.b6
 import daily.dayo.presentation.theme.caption1
+import daily.dayo.presentation.view.DayoOutlinedButton
 import daily.dayo.presentation.view.FilledButton
-import daily.dayo.presentation.view.OutlinedButton
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
 import daily.dayo.presentation.viewmodel.FollowViewModel
@@ -142,12 +142,12 @@ fun PostLikeUsersScreen(
                         onProfileClick = onProfileClick,
                         onFollowClick = {
                             if (!user.follow) {
-                                followViewModel.requestCreateFollow(
+                                followViewModel.requestFollow(
                                     followerId = user.memberId,
                                     isFollower = false
                                 )
                             } else {
-                                followViewModel.requestDeleteFollow(
+                                followViewModel.requestUnfollow(
                                     followerId = user.memberId,
                                     isFollower = true
                                 )
@@ -216,7 +216,7 @@ private fun LikeUserItem(
                     isTonal = true
                 )
             } else {
-                OutlinedButton(
+                DayoOutlinedButton(
                     onClick = { onFollowClick(likeUser) },
                     modifier = Modifier.height(36.dp),
                     label = stringResource(id = R.string.follow_already),

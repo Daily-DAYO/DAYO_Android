@@ -98,6 +98,7 @@ internal fun MainScreen(
                             )
                             myPageNavGraph(
                                 onBackClick = { navigator.popBackStack() },
+                                onFollowButtonClick = { memberId, tabNum -> navigator.navController.navigate(MyPageRoute.follow(memberId, "$tabNum")) },
                                 onProfileEditClick = { navigator.navigateProfileEdit() },
                                 onBookmarkClick = { navigator.navigateBookmark() }
                             )

@@ -239,7 +239,7 @@ class PostLikeUsersFragment : Fragment() {
         TextButton(
             onClick = {
                 if (followState) {
-                    followViewModel.requestDeleteFollow(
+                    followViewModel.requestUnfollow(
                         followerId = likeUser.memberId,
                         isFollower = true
                     )
@@ -247,7 +247,7 @@ class PostLikeUsersFragment : Fragment() {
                         followState = false
                     }
                 } else {
-                    followViewModel.requestCreateFollow(
+                    followViewModel.requestFollow(
                         followerId = likeUser.memberId,
                         isFollower = false
                     )
