@@ -67,14 +67,12 @@ import daily.dayo.presentation.common.dialog.LoadingAlertDialog.resizeDialogFrag
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog.showLoadingDialog
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.theme.b3
-import daily.dayo.presentation.theme.b4
-import daily.dayo.presentation.theme.caption3
 import daily.dayo.presentation.view.BadgeRoundImageView
 import daily.dayo.presentation.view.DayoTextField
 import daily.dayo.presentation.view.TopNavigation
@@ -234,7 +232,7 @@ private fun MyPageEditScreen(
         content = { contentPadding ->
             Column(
                 modifier = Modifier
-                    .background(White_FFFFFF)
+                    .background(DayoTheme.colorScheme.background)
                     .fillMaxSize()
                     .verticalScroll(scrollState)
                     .padding(contentPadding)
@@ -282,7 +280,7 @@ private fun MyPageEditScreen(
                 Column(modifier = Modifier.padding(horizontal = 18.dp)) {
                     Text(
                         text = stringResource(id = R.string.email),
-                        style = MaterialTheme.typography.caption3.copy(
+                        style = DayoTheme.typography.caption3.copy(
                             color = Gray4_C5CAD2,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -291,7 +289,7 @@ private fun MyPageEditScreen(
                     Text(
                         text = profileInfo.value?.email ?: "",
                         modifier = Modifier.padding(vertical = 8.dp),
-                        style = MaterialTheme.typography.b4.copy(
+                        style = DayoTheme.typography.b4.copy(
                             color = Gray2_767B83,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -337,7 +335,7 @@ private fun MyPageEditTopNavigation(
                         onClick = onConfirmClick
                     ),
                 text = stringResource(id = R.string.confirm),
-                style = MaterialTheme.typography.b3.copy(color = Dark),
+                style = DayoTheme.typography.b3.copy(color = Dark),
             )
         },
         titleAlignment = TopNavigationAlign.CENTER
@@ -440,7 +438,7 @@ private fun verifyNickname(nickname: String, context: Context): String {
 fun uriToFile(context: Context, uri: String): File? {
     if (uri.isEmpty()) return null
     if (uri.toUri().scheme == "http" || uri.toUri().scheme == "https") return null
-    
+
     val inputStream = context.contentResolver.openInputStream(uri.toUri())
     return if (inputStream != null) {
         val tempFile = File(context.cacheDir, "profile_image_${System.currentTimeMillis()}.jpg")
@@ -480,7 +478,7 @@ fun bitmapToUri(context: Context, bitmap: Bitmap): Uri? {
 @Preview
 @Composable
 internal fun PreviewMyPageEditScreen() {
-    MaterialTheme {
+    DayoTheme {
         MyPageEditScreen(
             profileInfo = remember {
                 mutableStateOf(

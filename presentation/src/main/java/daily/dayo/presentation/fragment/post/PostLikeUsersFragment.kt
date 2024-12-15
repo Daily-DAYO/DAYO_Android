@@ -29,7 +29,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -63,19 +62,20 @@ import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.glide.GlideImage
+import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.domain.model.LikeUser
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Event
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.common.extension.navigateSafe
 import daily.dayo.presentation.common.toSp
+import daily.dayo.presentation.theme.DayoTheme
+import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.FollowViewModel
 import daily.dayo.presentation.viewmodel.PostViewModel
-import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.glide.GlideImage
-import dagger.hilt.android.AndroidEntryPoint
-import daily.dayo.domain.model.LikeUser
-import daily.dayo.presentation.viewmodel.AccountViewModel
 
 @AndroidEntryPoint
 class PostLikeUsersFragment : Fragment() {
@@ -92,7 +92,7 @@ class PostLikeUsersFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                MaterialTheme {
+                DayoTheme {
                     Scaffold(topBar = { SetPostLikeUsersActionbar() }) { contentPadding ->
                         Box(modifier = Modifier.padding(contentPadding)) {
                             SetPostLikeUsers()
@@ -156,7 +156,7 @@ class PostLikeUsersFragment : Fragment() {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = colorResource(id = R.color.white_FFFFFF))
+                .background(DayoTheme.colorScheme.background)
         ) {
             items(likeUsers.itemCount) { index ->
                 val item = likeUsers[index]
@@ -239,7 +239,7 @@ class PostLikeUsersFragment : Fragment() {
         TextButton(
             onClick = {
                 if (followState) {
-                    followViewModel.requestDeleteFollow(
+                    followViewModel.requestUnfollow(
                         followerId = likeUser.memberId,
                         isFollower = true
                     )
@@ -247,7 +247,7 @@ class PostLikeUsersFragment : Fragment() {
                         followState = false
                     }
                 } else {
-                    followViewModel.requestCreateFollow(
+                    followViewModel.requestFollow(
                         followerId = likeUser.memberId,
                         isFollower = false
                     )
@@ -300,7 +300,7 @@ class PostLikeUsersFragment : Fragment() {
     @Composable
     @Preview
     private fun PreviewLikeUserLayout() {
-        MaterialTheme {
+        DayoTheme {
             LikeUserLayout(
                 likeUser = LikeUser(
                     false,
@@ -315,7 +315,7 @@ class PostLikeUsersFragment : Fragment() {
     @Composable
     @Preview
     private fun PreviewActionbarLayout() {
-        MaterialTheme {
+        DayoTheme {
             SetPostLikeUsersActionbar()
         }
     }

@@ -28,7 +28,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,7 +35,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -51,6 +49,7 @@ import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray4_C5CAD2
@@ -58,10 +57,6 @@ import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.theme.b3
-import daily.dayo.presentation.theme.b6
-import daily.dayo.presentation.theme.caption5
-import daily.dayo.presentation.theme.h1
 import daily.dayo.presentation.view.FolderView
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.RoundImageView
@@ -71,6 +66,8 @@ import daily.dayo.presentation.viewmodel.ProfileViewModel
 
 @Composable
 fun MyPageScreen(
+    onBackClick: () -> Unit,
+    onFollowButtonClick: (String, Int) -> Unit,
     onProfileEditClick: () -> Unit,
     onBookmarkClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel(),
@@ -91,13 +88,13 @@ fun MyPageScreen(
                 columns = GridCells.Fixed(2),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
-                    .background(color = White_FFFFFF)
+                    .background(DayoTheme.colorScheme.background)
                     .fillMaxSize()
                     .padding(contentPadding)
                     .padding(horizontal = 20.dp),
             ) {
                 item(span = { GridItemSpan(2) }) {
-                    MyPageProfile(profileInfo.value?.data)
+                    MyPageProfile(profileInfo.value?.data, onFollowButtonClick)
                 }
 
                 item(span = { GridItemSpan(2) }) {
@@ -127,11 +124,14 @@ fun MyPageScreen(
 }
 
 @Composable
-private fun MyPageProfile(profile: Profile?) {
+private fun MyPageProfile(
+    profile: Profile?,
+    onFollowButtonClick: (String, Int) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(White_FFFFFF)
+            .background(DayoTheme.colorScheme.background)
             .padding(top = 8.dp, bottom = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -158,7 +158,7 @@ private fun MyPageProfile(profile: Profile?) {
         ) {
             Text(
                 text = profile?.nickname ?: "",
-                style = MaterialTheme.typography.h1.copy(
+                style = DayoTheme.typography.h1.copy(
                     color = Dark,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -166,46 +166,78 @@ private fun MyPageProfile(profile: Profile?) {
 
             Text(
                 text = profile?.email ?: "",
-                style = MaterialTheme.typography.caption5.copy(
+                style = DayoTheme.typography.caption5.copy(
                     color = Gray4_C5CAD2
                 )
             )
         }
 
         // follower
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.clickableSingle(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { profile?.memberId?.let { onFollowButtonClick(it, FOLLOWER) } }
+            ),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_follower),
-                contentDescription = "follower",
-                modifier = Modifier.clickableSingle { /*TODO*/ }
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_follower),
+                    contentDescription = stringResource(id = R.string.follower),
+                    modifier = Modifier.size(12.dp)
+                )
 
+                Text(
+                    text = stringResource(id = R.string.follower),
+                    style = DayoTheme.typography.caption4.copy(color = Gray1_50545B)
+                )
+            }
             Text(
-                text = "${profile?.followerCount ?: ""}".padStart(3, '0'),
-                style = MaterialTheme.typography.b6.copy(color = Color(0xFF50545B))
+                text = "${profile?.followerCount ?: "0"}",
+                style = DayoTheme.typography.b6.copy(color = Gray1_50545B)
             )
         }
+
+        Spacer(modifier = Modifier.width(16.dp))
 
         // following
-        Row(
-            modifier = Modifier.padding(start = 12.dp, end = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
+            modifier = Modifier.clickableSingle(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { profile?.memberId?.let { onFollowButtonClick(it, FOLLOWING) } }
+            ),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_following),
-                contentDescription = "following",
-                modifier = Modifier.clickableSingle { /*TODO*/ }
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_following),
+                    contentDescription = stringResource(id = R.string.following),
+                    modifier = Modifier.size(12.dp)
+                )
+
+                Text(
+                    text = stringResource(id = R.string.following),
+                    style = DayoTheme.typography.caption4.copy(color = Gray1_50545B)
+                )
+            }
 
             Text(
-                text = "${profile?.followingCount ?: ""}".padStart(3, '0'),
-                style = MaterialTheme.typography.b6.copy(color = Color(0xFF50545B))
+                text = "${profile?.followingCount ?: "0"}",
+                style = DayoTheme.typography.b6.copy(color = Gray1_50545B)
             )
         }
+
+        Spacer(modifier = Modifier.width(20.dp))
     }
 }
 
@@ -234,7 +266,7 @@ private fun MyPageMenu(
             content = {
                 Text(
                     text = stringResource(id = R.string.my_profile_edit_title),
-                    style = MaterialTheme.typography.b6.copy(Gray1_50545B),
+                    style = DayoTheme.typography.b6.copy(Gray1_50545B),
                 )
             }
         )
@@ -243,7 +275,7 @@ private fun MyPageMenu(
         IconButton(
             onClick = { onBookmarkClick() },
             modifier = Modifier
-                .background(color = White_FFFFFF, shape = RoundedCornerShape(12.dp))
+                .background(color = DayoTheme.colorScheme.background, shape = RoundedCornerShape(12.dp))
                 .border(
                     border = BorderStroke(width = 1.dp, color = Gray6_F0F1F3),
                     shape = RoundedCornerShape(size = 12.dp)
@@ -270,7 +302,7 @@ private fun MyPageDiaryHeader() {
     ) {
         Text(
             text = stringResource(id = R.string.my_profile_my_diary),
-            style = MaterialTheme.typography.b3.copy(Dark)
+            style = DayoTheme.typography.b3.copy(Dark)
         )
 
         androidx.compose.material3.Button(
@@ -290,7 +322,7 @@ private fun MyPageDiaryHeader() {
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = stringResource(id = R.string.my_profile_new_folder),
-                style = MaterialTheme.typography.b6.copy(Primary_23C882)
+                style = DayoTheme.typography.b6.copy(Primary_23C882)
             )
         }
     }
@@ -311,7 +343,7 @@ private fun MyPageTopNavigation() {
             ) {
                 Text(
                     text = stringResource(id = R.string.my_page),
-                    style = MaterialTheme.typography.h1.copy(
+                    style = DayoTheme.typography.h1.copy(
                         color = Gray1_50545B,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -341,7 +373,7 @@ private fun PreviewMyPageTopNavigation() {
 @Preview
 @Composable
 private fun PreviewMyPageProfile() {
-    MyPageProfile(profile = null)
+    MyPageProfile(profile = null, onFollowButtonClick = { memberId, tabNum -> })
 }
 
 @Preview
@@ -355,3 +387,6 @@ private fun PreviewMyPageMenu() {
 private fun PreviewMyPageDiaryHeader() {
     MyPageDiaryHeader()
 }
+
+private const val FOLLOWER = 0
+private const val FOLLOWING = 1

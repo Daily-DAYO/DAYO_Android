@@ -1,6 +1,5 @@
 package daily.dayo.presentation.screen.search
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -30,7 +29,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -82,16 +80,14 @@ import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Event
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.common.toSp
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray5_E8EAEE
-import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
+import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.theme.b3
-import daily.dayo.presentation.theme.b6
-import daily.dayo.presentation.theme.caption1
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.viewmodel.AccountViewModel
@@ -137,15 +133,16 @@ internal fun SearchResultRoute(
         onPostClick = onPostClick,
         onSearchClick = { keyword ->
             searchViewModel.searchKeyword(keyword, SearchHistoryType.TAG)
-            searchViewModel.searchKeyword(keyword, SearchHistoryType.USER) },
+            searchViewModel.searchKeyword(keyword, SearchHistoryType.USER)
+        },
         onFollowClick = { memberId, isFollower ->
-            followViewModel.requestCreateFollow(
+            followViewModel.requestFollow(
                 memberId,
                 isFollower
             )
         },
         onUnFollowClick = { memberId, isFollower ->
-            followViewModel.requestDeleteFollow(
+            followViewModel.requestUnfollow(
                 memberId,
                 isFollower
             )
@@ -165,7 +162,7 @@ internal fun SearchResultRoutePreview() {
         searchKeywordResultsUser = null,
         searchKeywordResultsTagTotalCount = 0,
         searchKeywordResultsUserTotalCount = 0,
-        onSearchClick = { _, -> },
+        onSearchClick = { _ -> },
         onPostClick = { },
         onFollowClick = { _, _ -> },
         onUnFollowClick = { _, _ -> },
@@ -173,7 +170,6 @@ internal fun SearchResultRoutePreview() {
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchResultScreen(
     searchKeyword: String,
@@ -319,7 +315,7 @@ fun SearchResultEmpty() {
         )
         Text(
             text = stringResource(R.string.search_result_empty_title),
-            style = MaterialTheme.typography.b3
+            style = DayoTheme.typography.b3
                 .copy(
                     color = Gray3_9FA5AE,
                     textAlign = TextAlign.Center
@@ -328,7 +324,7 @@ fun SearchResultEmpty() {
         Text(
             modifier = Modifier.padding(vertical = 2.dp),
             text = stringResource(id = R.string.search_result_empty_description),
-            style = MaterialTheme.typography.caption1
+            style = DayoTheme.typography.caption1
                 .copy(
                     color = Gray3_9FA5AE,
                     textAlign = TextAlign.Center
@@ -433,7 +429,7 @@ fun SearchResultsUserView(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = colorResource(id = R.color.white_FFFFFF))
+            .background(DayoTheme.colorScheme.background)
     ) {
         searchKeywordResultsUser?.let { users ->
 
@@ -531,7 +527,7 @@ private fun SearchResultUserImageLayout(user: SearchUser) {
 private fun SearchResultUserNicknameLayout(userNickname: String) {
     Text(
         text = userNickname,
-        style = MaterialTheme.typography.b6.copy(color = Gray1_50545B),
+        style = DayoTheme.typography.b6.copy(color = Gray1_50545B),
         modifier = Modifier
             .fillMaxHeight()
             .padding(start = 12.dp, top = 8.dp, bottom = 8.dp)
@@ -630,7 +626,7 @@ private fun SearchResultUserFollowLayout(
         Text(
             text = if (isFollowButton) stringResource(id = R.string.follow_yet)
             else stringResource(id = R.string.follow_already),
-            style = MaterialTheme.typography.b6.copy(
+            style = DayoTheme.typography.b6.copy(
                 color = if (isFollowButton) Primary_23C882 else Gray2_767B83,
                 textAlign = TextAlign.Center
             ),
