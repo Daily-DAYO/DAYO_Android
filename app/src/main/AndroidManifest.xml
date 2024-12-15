@@ -64,7 +64,7 @@
         </activity>
         <activity android:name="daily.dayo.presentation.activity.MainActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
         <service
             android:name="daily.dayo.presentation.service.firebase.FirebaseMessagingService"
             android:exported="false">
