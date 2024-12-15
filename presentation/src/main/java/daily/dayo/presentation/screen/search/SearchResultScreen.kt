@@ -137,15 +137,16 @@ internal fun SearchResultRoute(
         onPostClick = onPostClick,
         onSearchClick = { keyword ->
             searchViewModel.searchKeyword(keyword, SearchHistoryType.TAG)
-            searchViewModel.searchKeyword(keyword, SearchHistoryType.USER) },
+            searchViewModel.searchKeyword(keyword, SearchHistoryType.USER)
+        },
         onFollowClick = { memberId, isFollower ->
-            followViewModel.requestCreateFollow(
+            followViewModel.requestFollow(
                 memberId,
                 isFollower
             )
         },
         onUnFollowClick = { memberId, isFollower ->
-            followViewModel.requestDeleteFollow(
+            followViewModel.requestUnfollow(
                 memberId,
                 isFollower
             )
@@ -165,7 +166,7 @@ internal fun SearchResultRoutePreview() {
         searchKeywordResultsUser = null,
         searchKeywordResultsTagTotalCount = 0,
         searchKeywordResultsUserTotalCount = 0,
-        onSearchClick = { _, -> },
+        onSearchClick = { _ -> },
         onPostClick = { },
         onFollowClick = { _, _ -> },
         onUnFollowClick = { _, _ -> },

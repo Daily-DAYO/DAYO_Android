@@ -36,7 +36,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -60,6 +59,7 @@ import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.theme.b3
 import daily.dayo.presentation.theme.b6
+import daily.dayo.presentation.theme.caption4
 import daily.dayo.presentation.theme.caption5
 import daily.dayo.presentation.theme.h1
 import daily.dayo.presentation.view.FolderView
@@ -71,6 +71,8 @@ import daily.dayo.presentation.viewmodel.ProfileViewModel
 
 @Composable
 fun MyPageScreen(
+    onBackClick: () -> Unit,
+    onFollowButtonClick: (String, Int) -> Unit,
     onProfileEditClick: () -> Unit,
     onBookmarkClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel(),
@@ -97,7 +99,7 @@ fun MyPageScreen(
                     .padding(horizontal = 20.dp),
             ) {
                 item(span = { GridItemSpan(2) }) {
-                    MyPageProfile(profileInfo.value?.data)
+                    MyPageProfile(profileInfo.value?.data, onFollowButtonClick)
                 }
 
                 item(span = { GridItemSpan(2) }) {
@@ -127,7 +129,10 @@ fun MyPageScreen(
 }
 
 @Composable
-private fun MyPageProfile(profile: Profile?) {
+private fun MyPageProfile(
+    profile: Profile?,
+    onFollowButtonClick: (String, Int) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -173,39 +178,71 @@ private fun MyPageProfile(profile: Profile?) {
         }
 
         // follower
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.clickableSingle(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { profile?.memberId?.let { onFollowButtonClick(it, FOLLOWER) } }
+            ),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_follower),
-                contentDescription = "follower",
-                modifier = Modifier.clickableSingle { /*TODO*/ }
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_follower),
+                    contentDescription = stringResource(id = R.string.follower),
+                    modifier = Modifier.size(12.dp)
+                )
 
+                Text(
+                    text = stringResource(id = R.string.follower),
+                    style = MaterialTheme.typography.caption4.copy(color = Gray1_50545B)
+                )
+            }
             Text(
-                text = "${profile?.followerCount ?: ""}".padStart(3, '0'),
-                style = MaterialTheme.typography.b6.copy(color = Color(0xFF50545B))
+                text = "${profile?.followerCount ?: "0"}",
+                style = MaterialTheme.typography.b6.copy(color = Gray1_50545B)
             )
         }
+
+        Spacer(modifier = Modifier.width(16.dp))
 
         // following
-        Row(
-            modifier = Modifier.padding(start = 12.dp, end = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
+            modifier = Modifier.clickableSingle(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { profile?.memberId?.let { onFollowButtonClick(it, FOLLOWING) } }
+            ),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_following),
-                contentDescription = "following",
-                modifier = Modifier.clickableSingle { /*TODO*/ }
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_following),
+                    contentDescription = stringResource(id = R.string.following),
+                    modifier = Modifier.size(12.dp)
+                )
+
+                Text(
+                    text = stringResource(id = R.string.following),
+                    style = MaterialTheme.typography.caption4.copy(color = Gray1_50545B)
+                )
+            }
 
             Text(
-                text = "${profile?.followingCount ?: ""}".padStart(3, '0'),
-                style = MaterialTheme.typography.b6.copy(color = Color(0xFF50545B))
+                text = "${profile?.followingCount ?: "0"}",
+                style = MaterialTheme.typography.b6.copy(color = Gray1_50545B)
             )
         }
+
+        Spacer(modifier = Modifier.width(20.dp))
     }
 }
 
@@ -341,7 +378,7 @@ private fun PreviewMyPageTopNavigation() {
 @Preview
 @Composable
 private fun PreviewMyPageProfile() {
-    MyPageProfile(profile = null)
+    MyPageProfile(profile = null, onFollowButtonClick = { memberId, tabNum -> })
 }
 
 @Preview
@@ -355,3 +392,6 @@ private fun PreviewMyPageMenu() {
 private fun PreviewMyPageDiaryHeader() {
     MyPageDiaryHeader()
 }
+
+private const val FOLLOWER = 0
+private const val FOLLOWING = 1

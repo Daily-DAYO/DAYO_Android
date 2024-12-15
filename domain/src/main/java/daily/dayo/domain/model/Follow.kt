@@ -7,19 +7,14 @@ data class Follow(
     val profileImg: String
 )
 
-data class Followings(
+data class Following(
     val count: Int,
-    val data: List<MyFollower>
+    val data: List<Follow>
 )
-data class Followers(
+
+data class Follower(
     val count: Int,
-    val data: List<MyFollower>
-)
-data class MyFollower(
-    val isFollow: Boolean,
-    val memberId: String,
-    val nickname: String,
-    val profileImg: String
+    val data: List<Follow>
 )
 
 data class FollowCreateResponse(
