@@ -41,6 +41,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -65,6 +66,10 @@ import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.size.Size
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
 import daily.dayo.domain.model.Category
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
@@ -186,6 +191,9 @@ internal fun WriteRoute(
         deleteImageUri = { position ->
             writeViewModel.removeUploadImage(position, true)
         },
+        clearImages = {
+            writeViewModel.clearUploadImage()
+        },
         processedImages = processedImages,
         navigateToCategory = {
             coroutineScope.launch { bottomSheetState.show() }
@@ -251,6 +259,7 @@ fun WriteScreen(
     writeText: String,
     addImages: (List<Uri>) -> Unit,
     deleteImageUri: (Int) -> Unit,
+    clearImages: () -> Unit = {},
     processedImages: List<Bitmap>,
     navigateToCategory: () -> Unit,
     categoryMenus: List<CategoryMenu>,
@@ -264,16 +273,72 @@ fun WriteScreen(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
-    val galleryLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenMultipleDocuments()
-    ) { uris: List<Uri> ->
-        if (uris.isEmpty()) onBackClick.invoke()
-        addImages(uris)
-    }
+    var selectedUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
+    var currentImageIndex by remember { mutableStateOf(0) }
+    var isCropping by remember { mutableStateOf(false) }
+    val croppedUris = remember { mutableStateListOf<Uri>() } // 임시 리스트
+
+    // 이미지 선택 런처
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenMultipleDocuments(),
+        onResult = { uris ->
+            if (uris.isNotEmpty()) {
+                selectedUris = uris
+                currentImageIndex = 0
+                croppedUris.clear() // 임시 리스트 초기화
+                clearImages()
+                isCropping = true
+            } else {
+                isCropping = false
+                onBackClick.invoke()
+            }
+        }
+    )
+
+    // 이미지 크롭 런처
+    val cropImageLauncher = rememberLauncherForActivityResult(
+        contract = CropImageContract(),
+        onResult = { result ->
+            if (result.isSuccessful) {
+                result.uriContent?.let { croppedUri ->
+                    croppedUris.add(croppedUri) // 임시 리스트에 추가
+                }
+                currentImageIndex += 1
+                if (currentImageIndex >= selectedUris.size) {
+                    isCropping = false
+                    addImages(croppedUris)
+                }
+            } else {
+                isCropping = false
+                onBackClick.invoke()
+            }
+        }
+    )
 
     LaunchedEffect(Unit) {
         if (processedImages.isEmpty()) {
-            galleryLauncher.launch(arrayOf("image/*"))
+            imagePickerLauncher.launch(arrayOf("image/*"))
+        }
+    }
+
+    // 크롭 진행 중인 경우
+    if (isCropping && currentImageIndex < selectedUris.size) {
+        val uri = selectedUris[currentImageIndex]
+        LaunchedEffect(uri) {
+            val options = CropImageContractOptions(
+                uri = uri,
+                cropImageOptions = CropImageOptions(
+                    cropShape = CropImageView.CropShape.RECTANGLE,
+                    outputCompressFormat = Bitmap.CompressFormat.JPEG,
+                    outputCompressQuality = 100,
+                    fixAspectRatio = true,
+                    aspectRatioX = 1,
+                    aspectRatioY = 1,
+                    activityTitle = ContextCompat.getString(context, R.string.write_post_image_crop_title),
+                    cropMenuCropButtonTitle = ContextCompat.getString(context, R.string.complete),
+                )
+            )
+            cropImageLauncher.launch(options)
         }
     }
 
