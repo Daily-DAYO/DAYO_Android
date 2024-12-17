@@ -7,10 +7,13 @@
     <string name="write">글쓰기</string>
     <string name="notification">알림</string>
     <string name="my_page">MY</string>
+    <string name="tag">태그</string>
+    <string name="previous">이전</string>
     <string name="next">다음</string>
     <string name="confirm">확인</string>
     <string name="complete">완료</string>
     <string name="submit">제출</string>
+    <string name="save">저장</string>
     <string name="cancel">취소</string>
     <string name="select_all">모두 선택</string>
     <string name="delete">삭제</string>
@@ -20,6 +23,8 @@
     <string name="login">로그인</string>
     <string name="like">좋아요</string>
     <string name="comment">댓글</string>
+    <string name="add">추가</string>
+    <string name="category">카테고리</string>
     <string name="app_version">버전 정보</string>
     <string name="app_version_force_update">업데이트가 필요합니다</string>
     <string name="back_sign">뒤로가기</string>
@@ -108,6 +113,18 @@
     <string name="feed_empty_button">팔로우하러 가기</string>
 
     <!-- Write -->
+    <string name="write_post_image_crop_title">이미지 편집</string>
+    <string name="write_post_title">게시글 작성</string>
+    <string name="write_post_upload">올리기</string>
+    <string name="write_post_detail_placeholder">꾸민 다이어리에 대해 설명해주세요.</string>
+    <string name="write_post_detail_count_limit"> / %d</string>
+    <string name="write_post_select_category_title">카테고리 선택</string>
+    <string name="write_post_select_tag_title">태그</string>
+    <string name="write_post_select_tag_subheading">태그 입력</string>
+    <string name="write_post_select_tag_contents">#%s</string>
+    <string name="write_post_select_folder_title">폴더</string>
+    <string name="write_post_select_folder_subheading">폴더 선택</string>
+
     <string name="hint_write_description">내용을 작성해주세요.</string>
     <string name="write_post_description_count_limit"> / 최대 200자</string>
     <string name="upload">올리기</string>
@@ -118,11 +135,28 @@
     <string name="write_option_title_private">공개 설정</string>
     <string name="write_option_title_tag">태그 추가</string>
     <string name="write_option_description_tag">기록에 관한 키워드를 추가해보세요.</string>
+
+    <!-- Write Tag -->
+    <string name="write_post_tag_title">태그</string>
+    <string name="write_post_tag_subheading">어떤 주제의 다꾸인가요?</string>
+    <string name="write_post_tag_input_placeholder"># 태그를 입력하세요</string>
     <string name="write_post_tag_count_limit"> / %d</string>
     <string name="write_post_tag_alert_message_tag_size_fail_max">태그는 %d개까지 등록 가능해요.</string>
     <string name="write_post_tag_alert_message_tag_length_fail_max">태그는 %d자 까지만 입력할 수 있어요!</string>
-    <string name="write_post_folder_title">폴더 설정</string>
+
+    <!-- Write Folder -->
+    <string name="write_post_folder_title">폴더 선택</string>
+    <string name="write_post_folder_navigate_create_folder">새로운 폴더 추가</string>
+    <string name="write_post_folder_detail_current_count">%d개</string>
+
+    <!-- Write Folder New -->
     <string name="write_post_folder_new_title">폴더 추가</string>
+    <string name="write_post_folder_new_folder_name_title">폴더 이름</string>
+    <string name="write_post_folder_new_folder_name_placeholder">12자 이내로 입력해주세요</string>
+    <string name="write_post_folder_new_folder_description_title">폴더 소개</string>
+    <string name="write_post_folder_new_folder_description_placeholder">20자 이내로 입력해주세요</string>
+    <string name="write_post_folder_new_folder_privacy_title">비공개 폴더</string>
+
     <string name="write_post_upload_alert_message_empty_content">내용을 입력해 주세요.</string>
     <string name="write_post_upload_alert_message_empty_image">사진을 추가해 주세요.</string>
     <string name="write_post_upload_alert_message_empty_category">카테고리를 선택해 주세요.</string>
@@ -133,6 +167,11 @@
     <string name="write_post_upload_alert_message_image_fail_null">사진 가져오기에 실패했습니다. 다시 선택해주세요</string>
     <string name="write_post_upload_alert_message_loading">게시글을 올리고 있어요! 잠시만 기다려주세요.</string>
     <string name="write_post_upload_alert_message_fail">게시글을 업로드 할 수 없어요. 다시 시도해주세요.</string>
+
+    <!-- Write State Description-->
+    <string name="write_post_upload_state_loading">게시글을 올리고 있어요! 잠시만 기다려주세요.</string>
+    <string name="write_post_upload_state_fail">게시글을 업로드할 수 없어요. 다시 시도해주세요.</string>
+
 
     <!-- Post -->
     <string name="hint_post_comment_write_description">댓글을 남겨주세요</string>

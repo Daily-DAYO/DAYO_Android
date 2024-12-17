@@ -15,8 +15,12 @@ import daily.dayo.presentation.screen.post.navigatePostLikeUsers
 import daily.dayo.presentation.screen.search.navigateSearch
 import daily.dayo.presentation.screen.search.navigateSearchPostHashtag
 import daily.dayo.presentation.screen.search.navigateSearchResult
+import daily.dayo.presentation.screen.write.navigateWrite
+import daily.dayo.presentation.screen.write.navigateWriteFolder
+import daily.dayo.presentation.screen.write.navigateWriteFolderNew
+import daily.dayo.presentation.screen.write.navigateWriteTag
 
-internal class MainNavigator(
+class MainNavigator(
     val navController: NavHostController,
 ) {
     private val currentDestination: NavDestination?
@@ -51,6 +55,21 @@ internal class MainNavigator(
         navController.navigateBookmark()
     }
 
+    fun navigateWrite() {
+        navController.navigateWrite()
+    }
+    fun navigateWriteTag() {
+        navController.navigateWriteTag()
+    }
+
+    fun navigateWriteFolder() {
+        navController.navigateWriteFolder()
+    }
+
+    fun navigateWriteFolderNew() {
+        navController.navigateWriteFolderNew()
+    }
+
     fun popBackStack() {
         navController.popBackStack()
     }
@@ -76,6 +95,10 @@ internal class MainNavigator(
     fun shouldShowBottomBar(): Boolean {
         val currentRoute = currentDestination?.route ?: return false
         return currentRoute in Screen
+    }
+
+    fun isWriteGraph(): Boolean {
+        return navController.currentDestination?.route?.startsWith("write") == true
     }
 }
 

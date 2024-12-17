@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import dagger.hilt.android.lifecycle.HiltViewModel
 import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.LikePost
 import daily.dayo.domain.model.NetworkResponse
@@ -20,6 +19,9 @@ import daily.dayo.domain.usecase.follow.RequestDeleteFollowUseCase
 import daily.dayo.domain.usecase.like.RequestAllMyLikePostListUseCase
 import daily.dayo.domain.usecase.member.RequestMyProfileUseCase
 import daily.dayo.domain.usecase.member.RequestOtherProfileUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import daily.dayo.presentation.common.Event
 import daily.dayo.presentation.common.Resource
 import kotlinx.coroutines.flow.collectLatest
@@ -52,6 +54,9 @@ class ProfileViewModel @Inject constructor(
 
     private val _folderList = MutableLiveData<Resource<List<Folder>>>()
     val folderList: LiveData<Resource<List<Folder>>> get() = _folderList
+
+    private val _folders = MutableStateFlow<Resource<List<Folder>>>(Resource.loading(null))
+    val folders get() = _folders.asStateFlow()
 
     private val _likePostList = MutableLiveData<PagingData<LikePost>>()
     val likePostList: LiveData<PagingData<LikePost>> get() = _likePostList
@@ -134,11 +139,13 @@ class ProfileViewModel @Inject constructor(
 
     fun requestFolderList(memberId: String, isMine: Boolean) = viewModelScope.launch {
         _folderList.postValue(Resource.loading(null))
+        _folders.emit(Resource.loading(null))
         if (isMine) {
             requestAllMyFolderListUseCase()?.let { ApiResponse ->
                 when (ApiResponse) {
                     is NetworkResponse.Success -> {
                         _folderList.postValue(Resource.success(ApiResponse.body?.data))
+                        _folders.emit(Resource.success(ApiResponse.body?.data))
                     }
 
                     is NetworkResponse.NetworkError -> {
@@ -148,14 +155,27 @@ class ProfileViewModel @Inject constructor(
                                 null
                             )
                         )
+                        _folders.emit(
+                            Resource.error(
+                                ApiResponse.exception.toString(),
+                                null
+                            )
+                        )
                     }
 
                     is NetworkResponse.ApiError -> {
                         _folderList.postValue(Resource.error(ApiResponse.error.toString(), null))
+                        _folders.emit(Resource.error(ApiResponse.error.toString(), null))
                     }
 
                     is NetworkResponse.UnknownError -> {
                         _folderList.postValue(
+                            Resource.error(
+                                ApiResponse.throwable.toString(),
+                                null
+                            )
+                        )
+                        _folders.emit(
                             Resource.error(
                                 ApiResponse.throwable.toString(),
                                 null
@@ -169,6 +189,7 @@ class ProfileViewModel @Inject constructor(
                 when (ApiResponse) {
                     is NetworkResponse.Success -> {
                         _folderList.postValue(Resource.success(ApiResponse.body?.data))
+                        _folders.emit(Resource.success(ApiResponse.body?.data))
                     }
 
                     is NetworkResponse.NetworkError -> {
@@ -178,14 +199,27 @@ class ProfileViewModel @Inject constructor(
                                 null
                             )
                         )
+                        _folders.emit(
+                            Resource.error(
+                                ApiResponse.exception.toString(),
+                                null
+                            )
+                        )
                     }
 
                     is NetworkResponse.ApiError -> {
                         _folderList.postValue(Resource.error(ApiResponse.error.toString(), null))
+                        _folders.emit(Resource.error(ApiResponse.error.toString(), null))
                     }
 
                     is NetworkResponse.UnknownError -> {
                         _folderList.postValue(
+                            Resource.error(
+                                ApiResponse.throwable.toString(),
+                                null
+                            )
+                        )
+                        _folders.emit(
                             Resource.error(
                                 ApiResponse.throwable.toString(),
                                 null
@@ -248,7 +282,10 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun cleanUpFolders() {
-        _profileInfo.postValue(Resource.loading(null))
-        _folderList.postValue(Resource.loading(null))
+        viewModelScope.launch {
+            _profileInfo.postValue(Resource.loading(null))
+            _folderList.postValue(Resource.loading(null))
+            _folders.emit(Resource.loading(null))
+        }
     }
 }

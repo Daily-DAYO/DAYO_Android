@@ -103,13 +103,6 @@ class PostOptionMineFragment : DialogFragment() {
     }
 
     private fun setModifyPostClickListener() {
-        binding.layoutPostOptionMineModify.setOnDebounceClickListener {
-            val navigateWithDataPassAction =
-                PostOptionMineFragmentDirections.actionPostOptionMineFragmentToWriteFragment(postId = args.postId)
-            findNavController().navigateSafe(
-                currentDestinationId = R.id.PostOptionMineFragment,
-                action = navigateWithDataPassAction
-            )
-        }
+        // Post 수정 Compose으로 Migration 예정
     }
 }

@@ -255,4 +255,6 @@ dependencies {
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.2"
 
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
+    // Image Cropper
+    implementation("com.vanniktech:android-image-cropper:4.6.0")
 }

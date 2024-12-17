@@ -6,6 +6,8 @@ import com.google.gson.annotations.SerializedName
 data class CreateFolderInPostRequest(
     @SerializedName("name")
     val name: String,
+    @SerializedName("subheading")
+    val subheading: String,
     @SerializedName("privacy")
     val privacy: Privacy
 )
