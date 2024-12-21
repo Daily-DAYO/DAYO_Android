@@ -17,20 +17,24 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import coil.size.Size
 import daily.dayo.presentation.R
 
 @Composable
 fun RoundImageView(
     context: Context,
-    imageUrl: String,
+    imageUrl: Any,
     imageDescription: String = "default image view",
     placeholder: Drawable? = null,
     roundSize: Dp = 8.dp,
-    customModifier: Modifier = Modifier
+    customModifier: Modifier = Modifier,
+    imageSize: Size = Size.ORIGINAL
 ) {
     AsyncImage(
         model = ImageRequest.Builder(context)
+            .crossfade(true)
             .data(imageUrl)
+            .size(imageSize)
             .placeholder(placeholder)
             .error(placeholder)
             .build(),

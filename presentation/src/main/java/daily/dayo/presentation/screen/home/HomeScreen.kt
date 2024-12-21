@@ -191,5 +191,5 @@ sealed class CategoryMenu(val name: String, @DrawableRes val defaultIcon: Int, @
     object PocketBook : CategoryMenu("포켓북", R.drawable.ic_category_pocketbook, R.drawable.ic_category_pocketbook_checked, Category.POCKET_BOOK)
     object SixHoleDiary : CategoryMenu("6공 다이어리", R.drawable.ic_category_sixholediary, R.drawable.ic_category_sixholediary_checked, Category.SIX_DIARY)
     object Digital : CategoryMenu("모바일 다이어리", R.drawable.ic_category_digital, R.drawable.ic_category_digital_checked, Category.GOOD_NOTE)
-    object ETC : CategoryMenu("기타", R.drawable.ic_category_etc, R.drawable.ic_category_etc_checked, Category.STUDY_PLANNER)
+    object ETC : CategoryMenu("기타", R.drawable.ic_category_etc, R.drawable.ic_category_etc_checked, Category.ETC)
 }

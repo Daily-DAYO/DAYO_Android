@@ -63,9 +63,19 @@ class FolderRepositoryImpl @Inject constructor(
             is NetworkResponse.UnknownError -> response
         }
 
-    override suspend fun requestCreateFolderInPost(name: String, privacy: Privacy): NetworkResponse<FolderCreateInPostResponse> =
+    override suspend fun requestCreateFolderInPost(
+        name: String,
+        description: String,
+        privacy: Privacy
+    ): NetworkResponse<FolderCreateInPostResponse> =
         when (val response =
-            folderApiService.requestCreateFolderInPost(CreateFolderInPostRequest(name = name, privacy = privacy))) {
+            folderApiService.requestCreateFolderInPost(
+                CreateFolderInPostRequest(
+                    name = name,
+                    subheading = description,
+                    privacy = privacy
+                )
+            )) {
             is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toFolderCreateInPostResponse())
             is NetworkResponse.NetworkError -> response
             is NetworkResponse.ApiError -> response
