@@ -42,6 +42,8 @@ import daily.dayo.presentation.screen.mypage.MyPageRoute
 import daily.dayo.presentation.screen.mypage.myPageNavGraph
 import daily.dayo.presentation.screen.post.postNavGraph
 import daily.dayo.presentation.screen.search.searchNavGraph
+import daily.dayo.presentation.screen.write.WriteRoute
+import daily.dayo.presentation.screen.write.writeNavGraph
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
@@ -95,6 +97,16 @@ internal fun MainScreen(
                                 onBackClick = { navigator.popBackStack() },
                                 onSearch = { navigator.navigateSearchResult(it) },
                                 onPostClick = { navigator.navigatePost(it) }
+                            )
+                            writeNavGraph(
+                                snackBarHostState = snackBarHostState,
+                                navController = navigator.navController,
+                                onBackClick = { navigator.navigateUp() },
+                                onTagClick = { navigator.navigateWriteTag() },
+                                onWriteFolderClick = { navigator.navigateWriteFolder() },
+                                onWriteFolderNewClick = { navigator.navigateWriteFolderNew() },
+                                bottomSheetState,
+                                bottomSheetContent,
                             )
                             myPageNavGraph(
                                 onBackClick = { navigator.popBackStack() },
@@ -162,10 +174,13 @@ fun MainBottomNavigation(
                     selectedContentColor = Dark,
                     onClick = {
                         navController.navigate(screen.route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
+                            if (screen.route != Screen.Write.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
                             }
-                            launchSingleTop = true
+                            launchSingleTop =
+                                if (screen.route == Screen.Write.route) false else true
                             restoreState = true
                         }
                     }
@@ -178,13 +193,13 @@ fun MainBottomNavigation(
 sealed class Screen(val route: String, @StringRes val resourceId: Int, @DrawableRes val defaultIcon: Int, @DrawableRes val selectedIcon: Int) {
     object Home : Screen(HomeRoute.route, R.string.home, R.drawable.ic_home, R.drawable.ic_home_filled)
     object Feed : Screen(FeedRoute.route, R.string.feed, R.drawable.ic_feed, R.drawable.ic_feed_filled)
-    object Write : Screen("write", R.string.write, R.drawable.ic_write, R.drawable.ic_write_filled)
+    object Write : Screen(WriteRoute.route, R.string.write, R.drawable.ic_write, R.drawable.ic_write_filled)
     object Notification : Screen("notification", R.string.notification, R.drawable.ic_notification, R.drawable.ic_notification_filled)
     object MyPage : Screen(MyPageRoute.route, R.string.my_page, R.drawable.ic_my_page, R.drawable.ic_my_page_filled)
 
     companion object {
         operator fun contains(route: String): Boolean {
-            return listOf(Home, Feed, Write, Notification, MyPage).map { it.route }.contains(route)
+            return listOf(Home, Feed, Notification, MyPage).map { it.route }.contains(route)
         }
     }
 }
