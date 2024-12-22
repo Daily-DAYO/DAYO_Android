@@ -69,6 +69,7 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 fun FolderScreen(
     folderId: String,
+    onFolderEditClick: () -> Unit,
     onBackClick: () -> Unit,
     folderViewModel: FolderViewModel = hiltViewModel()
 ) {
@@ -85,7 +86,7 @@ fun FolderScreen(
             name = stringResource(id = R.string.folder_option_edit),
             iconRes = R.drawable.ic_menu_folder,
             color = Dark,
-            onClickMenu = {}
+            onClickMenu = onFolderEditClick
         ),
         FolderOptionMenu(
             name = stringResource(id = R.string.folder_option_delete),
@@ -264,7 +265,7 @@ private fun FolderDropdownMenu(
                     }
                 },
                 onClick = {
-                    it.onClickMenu
+                    it.onClickMenu()
                     expanded.value = false
                 },
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 11.5.dp)
