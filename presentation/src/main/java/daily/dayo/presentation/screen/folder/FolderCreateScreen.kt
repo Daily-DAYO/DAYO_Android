@@ -28,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import daily.dayo.domain.model.FolderInfo
 import daily.dayo.domain.model.Privacy
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog.createLoadingDialog
@@ -48,47 +47,38 @@ import daily.dayo.presentation.viewmodel.FOLDER_NAME_MAX_LENGTH
 import daily.dayo.presentation.viewmodel.FolderViewModel
 
 @Composable
-fun FolderEditScreen(
-    folderId: String,
+fun FolderCreateScreen(
     onBackClick: () -> Unit,
     folderViewModel: FolderViewModel = hiltViewModel()
 ) {
-    val folderUiState by folderViewModel.uiState.collectAsStateWithLifecycle()
-    val folderInfo = remember { mutableStateOf<FolderInfo?>(null) }
+    val name = remember { mutableStateOf("") }
+    val subheading = remember { mutableStateOf("") }
+    val privacy = remember { mutableStateOf(Privacy.ALL) }
 
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val alertDialog = remember { mutableStateOf(createLoadingDialog(context)) }
-    val editSuccess by folderViewModel.editSuccess.collectAsStateWithLifecycle(false)
+    val createSuccess by folderViewModel.createSuccess.collectAsStateWithLifecycle(false)
 
-    LaunchedEffect(folderId) {
-        folderViewModel.requestFolderInfo(folderId.toInt())
-    }
-
-    LaunchedEffect(folderUiState) {
-        folderInfo.value = folderUiState.folderInfo
-    }
-
-    LaunchedEffect(editSuccess) {
-        if (editSuccess) {
+    LaunchedEffect(createSuccess) {
+        if (createSuccess) {
             hideLoadingDialog(alertDialog.value)
             onBackClick()
         }
     }
 
-    FolderEditScreen(
-        folderInfo = folderInfo,
+    FolderCreateScreen(
+        name = name,
+        subheading = subheading,
+        privacy = privacy,
         onConfirmClick = {
             showLoadingDialog(alertDialog.value)
             resizeDialogFragment(context, alertDialog.value, 0.8f)
-            folderInfo.value?.run {
-                folderViewModel.requestEditFolder(
-                    folderId = folderId.toInt(),
-                    name = name,
-                    subheading = subheading,
-                    privacy = privacy
-                )
-            }
+            folderViewModel.requestCreateFolder(
+                name = name.value,
+                subheading = subheading.value,
+                privacy = privacy.value,
+            )
             focusManager.clearFocus()
         },
         onBackClick = onBackClick
@@ -96,15 +86,17 @@ fun FolderEditScreen(
 }
 
 @Composable
-private fun FolderEditScreen(
-    folderInfo: MutableState<FolderInfo?>,
+private fun FolderCreateScreen(
+    name: MutableState<String>,
+    subheading: MutableState<String>,
+    privacy: MutableState<Privacy>,
     onConfirmClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
-            FolderEditTopNavigation(
-                confirmEnabled = folderInfo.value?.name?.isNotEmpty() ?: false,
+            FolderCreateTopNavigation(
+                confirmEnabled = name.value.isNotEmpty(),
                 onConfirmClick = onConfirmClick,
                 onBackClick = onBackClick
             )
@@ -119,14 +111,12 @@ private fun FolderEditScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             DayoTextField(
-                value = folderInfo.value?.name ?: "",
+                value = name.value,
                 onValueChange = { textValue ->
                     if (textValue.length > FOLDER_NAME_MAX_LENGTH)
                         return@DayoTextField
 
-                    folderInfo.value = folderInfo.value?.copy(
-                        name = textValue
-                    )
+                    name.value = textValue
                 },
                 modifier = Modifier.fillMaxWidth(),
                 label = stringResource(id = R.string.folder_setting_add_set_title),
@@ -136,14 +126,12 @@ private fun FolderEditScreen(
             Spacer(modifier = Modifier.height(28.dp))
 
             DayoTextField(
-                value = folderInfo.value?.subheading ?: "",
+                value = subheading.value,
                 onValueChange = { textValue ->
                     if (textValue.length > FOLDER_DESCRIPTION_MAX_LENGTH)
                         return@DayoTextField
 
-                    folderInfo.value = folderInfo.value?.copy(
-                        subheading = textValue
-                    )
+                    subheading.value = textValue
                 },
                 modifier = Modifier.fillMaxWidth(),
                 label = stringResource(id = R.string.folder_setting_add_set_subheading),
@@ -154,25 +142,21 @@ private fun FolderEditScreen(
 
             ToggleButtonWithLabel(
                 label = stringResource(R.string.write_post_folder_new_folder_privacy_title),
-                isToggled = folderInfo.value?.privacy == Privacy.ONLY_ME,
-                onToggleChanged = {
-                    folderInfo.value = folderInfo.value?.copy(
-                        privacy = if (it) Privacy.ONLY_ME else Privacy.ALL
-                    )
-                }
+                isToggled = privacy.value == Privacy.ONLY_ME,
+                onToggleChanged = { privacy.value = if (it) Privacy.ONLY_ME else Privacy.ALL }
             )
         }
     }
 }
 
 @Composable
-private fun FolderEditTopNavigation(
+private fun FolderCreateTopNavigation(
     confirmEnabled: Boolean,
     onConfirmClick: () -> Unit,
     onBackClick: () -> Unit,
 ) {
     TopNavigation(
-        title = stringResource(id = R.string.folder_edit_title),
+        title = stringResource(id = R.string.folder_add_title),
         leftIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(
@@ -194,7 +178,7 @@ private fun FolderEditTopNavigation(
                         onClick = onConfirmClick
                     ),
                 text = stringResource(id = R.string.confirm),
-                color = if(confirmEnabled) Dark else Gray5_E8EAEE,
+                color = if (confirmEnabled) Dark else Gray5_E8EAEE,
                 style = DayoTheme.typography.b3,
             )
         },
@@ -204,21 +188,12 @@ private fun FolderEditTopNavigation(
 
 @Preview
 @Composable
-private fun PreviewFolderEditScreen() {
+private fun PreviewFolderCreateScreen() {
     DayoTheme {
-        FolderEditScreen(
-            folderInfo = remember {
-                mutableStateOf(
-                    FolderInfo(
-                        memberId = "",
-                        name = "Folder Title",
-                        postCount = 27,
-                        privacy = Privacy.ALL,
-                        subheading = "Description",
-                        thumbnailImage = ""
-                    )
-                )
-            },
+        FolderCreateScreen(
+            name = remember { mutableStateOf("Folder Title") },
+            subheading = remember { mutableStateOf("Folder Title") },
+            privacy = remember { mutableStateOf(Privacy.ONLY_ME) },
             onConfirmClick = {},
             onBackClick = {}
         )

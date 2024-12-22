@@ -34,7 +34,7 @@ fun FolderInfoResponse.toFolderInfo(): FolderInfo =
         name = name,
         postCount = postCount,
         privacy = privacy,
-        subheading = subheading,
+        subheading = subheading ?: "",
         thumbnailImage = thumbnailImage
     )
 

@@ -31,7 +31,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -54,6 +53,9 @@ class FolderViewModel @Inject constructor(
     private val _editSuccess = MutableSharedFlow<Boolean>()
     val editSuccess = _editSuccess.asSharedFlow()
 
+    private val _createSuccess = MutableSharedFlow<Boolean>()
+    val createSuccess = _createSuccess.asSharedFlow()
+
     private val _thumbnailUri = MutableLiveData<String>()
     val thumbnailUri: LiveData<String> get() = _thumbnailUri
 
@@ -62,9 +64,6 @@ class FolderViewModel @Inject constructor(
 
     private val _orderFolderSuccess = MutableLiveData<Event<Boolean>>()
     val orderFolderSuccess: LiveData<Event<Boolean>> get() = _orderFolderSuccess
-
-    private val _folderAddSuccess = MutableLiveData<Event<Boolean>>()
-    val folderAddSuccess: LiveData<Event<Boolean>> get() = _folderAddSuccess
 
     fun toggleEditMode() {
         _uiState.update { it.copy(isEditMode = !it.isEditMode, selectedPosts = emptySet()) }
@@ -82,27 +81,29 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun requestCreateFolder(name: String, privacy: Privacy, subheading: String?, thumbnailImg: File?) = viewModelScope.launch {
-        requestCreateFolderUseCase(name = name, privacy = privacy, subheading = subheading, thumbnailImg = thumbnailImg).let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _folderAddSuccess.postValue(Event(true))
-                }
-
-                else -> {
-                    _folderAddSuccess.postValue(Event(false))
+    fun requestCreateFolder(name: String, subheading: String, privacy: Privacy) {
+        viewModelScope.launch {
+            requestCreateFolderUseCase(
+                name = name,
+                subheading = subheading,
+                privacy = privacy,
+                thumbnailImg = null
+            ).let { response ->
+                when (response) {
+                    is NetworkResponse.Success -> _createSuccess.emit(true)
+                    else -> _createSuccess.emit(false)
                 }
             }
         }
     }
 
-    fun requestEditFolder(folderId: Int, name: String, privacy: Privacy, subheading: String?) {
+    fun requestEditFolder(folderId: Int, name: String, subheading: String, privacy: Privacy) {
         viewModelScope.launch {
             requestEditFolderUseCase(
                 folderId = folderId,
                 name = name,
-                privacy = privacy,
                 subheading = subheading,
+                privacy = privacy,
                 isFileChange = false,
                 thumbnailImg = null
             ).let { response ->
@@ -202,6 +203,9 @@ val DEFAULT_FOLDER_INFO = FolderInfo(
     name = "",
     postCount = 0,
     privacy = Privacy.ALL,
-    subheading = null,
+    subheading = "",
     thumbnailImage = ""
 )
+
+const val FOLDER_NAME_MAX_LENGTH = 12
+const val FOLDER_DESCRIPTION_MAX_LENGTH = 20
