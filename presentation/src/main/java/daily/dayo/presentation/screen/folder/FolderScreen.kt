@@ -2,6 +2,8 @@ package daily.dayo.presentation.screen.folder
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,14 +59,19 @@ import daily.dayo.presentation.common.dialog.LoadingAlertDialog.createLoadingDia
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog.hideLoadingDialog
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog.resizeDialogFragment
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog.showLoadingDialog
+import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
+import daily.dayo.presentation.theme.Gray4_C5CAD2
+import daily.dayo.presentation.theme.Gray5_E8EAEE
 import daily.dayo.presentation.theme.Gray6_F0F1F3
+import daily.dayo.presentation.theme.Gray7_F6F6F7
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.Red_FF4545
 import daily.dayo.presentation.view.DayoCheckbox
+import daily.dayo.presentation.view.FilledRoundedCornerButton
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.dialog.ConfirmDialog
@@ -92,7 +99,9 @@ fun FolderScreen(
             name = stringResource(id = R.string.folder_option_post_edit),
             iconRes = R.drawable.ic_menu_post,
             color = Dark,
-            onClickMenu = {}
+            onClickMenu = {
+                folderViewModel.toggleEditMode()
+            }
         ),
         FolderOptionMenu(
             name = stringResource(id = R.string.folder_option_edit),
@@ -127,6 +136,9 @@ fun FolderScreen(
         folderPosts = folderPosts,
         optionMenu = optionMenu,
         onPostClick = { postId -> folderViewModel.toggleSelection(postId) },
+        onCancelClick = { folderViewModel.toggleEditMode() },
+        onPostDeleteClick = {},
+        onPostMoveClick = {},
         onBackClick = onBackClick
     )
 
@@ -161,43 +173,101 @@ private fun FolderScreen(
     folderPosts: LazyPagingItems<FolderPost>,
     optionMenu: List<FolderOptionMenu>,
     onPostClick: (Int) -> Unit,
+    onPostDeleteClick: () -> Unit,
+    onPostMoveClick: () -> Unit,
+    onCancelClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
     val optionExpanded = remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
-            TopNavigation(
-                leftIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_back_sign),
-                            contentDescription = stringResource(id = R.string.back_sign),
-                            tint = Dark
+            if (folderUiState.isEditMode) {
+                TopNavigation(
+                    leftIcon = {
+                        androidx.compose.material.Text(
+                            modifier = Modifier
+                                .padding(vertical = 14.dp)
+                                .padding(start = 18.dp, end = 27.dp)
+                                .clickableSingle(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null,
+                                    onClick = onCancelClick
+                                ),
+                            text = stringResource(id = R.string.cancel),
+                            style = DayoTheme.typography.b6.copy(color = Gray1_50545B),
                         )
                     }
-                },
-                rightIcon = {
-                    IconButton(
-                        onClick = { optionExpanded.value = optionExpanded.value.not() }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_option_horizontal),
-                            contentDescription = stringResource(id = R.string.folder_option),
-                            tint = Dark
-                        )
-                    }
+                )
+            } else {
+                TopNavigation(
+                    leftIcon = {
+                        IconButton(onClick = onBackClick) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_back_sign),
+                                contentDescription = stringResource(id = R.string.back_sign),
+                                tint = Dark
+                            )
+                        }
+                    },
+                    rightIcon = {
+                        IconButton(
+                            onClick = { optionExpanded.value = optionExpanded.value.not() }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_option_horizontal),
+                                contentDescription = stringResource(id = R.string.folder_option),
+                                tint = Dark
+                            )
+                        }
 
-                    FolderDropdownMenu(
-                        menuItems = optionMenu,
-                        expanded = optionExpanded
+                        FolderDropdownMenu(
+                            menuItems = optionMenu,
+                            expanded = optionExpanded
+                        )
+                    }
+                )
+            }
+        },
+        bottomBar = {
+            if (folderUiState.isEditMode) {
+                Row(
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    FilledRoundedCornerButton(
+                        label = stringResource(R.string.delete),
+                        onClick = onPostDeleteClick,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(44.dp),
+                        enabled = folderUiState.selectedPosts.isNotEmpty(),
+                        color = ButtonDefaults.buttonColors(
+                            containerColor = Gray5_E8EAEE,
+                            contentColor = Gray2_767B83,
+                            disabledContainerColor = Gray7_F6F6F7,
+                            disabledContentColor = Gray4_C5CAD2
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    FilledRoundedCornerButton(
+                        label = stringResource(R.string.move),
+                        onClick = onPostMoveClick,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(44.dp),
+                        enabled = folderUiState.selectedPosts.isNotEmpty()
                     )
                 }
-            )
+            }
         }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            FolderInformation(folderUiState.folderInfo)
+            if (!folderUiState.isEditMode) {
+                FolderInformation(folderUiState.folderInfo)
+            }
+            FolderHeader(folderUiState.folderInfo.postCount, folderUiState.selectedPosts.size, folderUiState.isEditMode)
             FolderContent(
                 folderUiState = folderUiState,
                 folderPosts = folderPosts,
@@ -320,10 +390,10 @@ private fun FolderDropdownMenu(
 }
 
 @Composable
-private fun FolderContent(
-    folderUiState: FolderUiState,
-    folderPosts: LazyPagingItems<FolderPost>,
-    onPostClick: (Int) -> Unit
+private fun FolderHeader(
+    postCount: Int,
+    selectedCount: Int,
+    isEditMode: Boolean
 ) {
     Row(
         modifier = Modifier
@@ -332,7 +402,7 @@ private fun FolderContent(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "${folderUiState.folderInfo.postCount}",
+            text = "$postCount",
             color = Primary_23C882,
             style = DayoTheme.typography.caption2
         )
@@ -345,19 +415,34 @@ private fun FolderContent(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Icon(
-            painter = painterResource(id = R.drawable.ic_sort),
-            contentDescription = stringResource(id = R.string.folder_post_sort_oldest),
-            tint = Color.Unspecified
-        )
+        if (isEditMode) {
+            Text(
+                text = stringResource(id = R.string.folder_post_selected_count, selectedCount),
+                color = Gray2_767B83,
+                style = DayoTheme.typography.caption2
+            )
+        } else {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_sort),
+                contentDescription = stringResource(id = R.string.folder_post_sort_oldest),
+                tint = Color.Unspecified
+            )
 
-        Text(
-            text = stringResource(id = R.string.folder_post_sort_oldest),
-            color = Gray2_767B83,
-            style = DayoTheme.typography.caption2
-        )
+            Text(
+                text = stringResource(id = R.string.folder_post_sort_oldest),
+                color = Gray2_767B83,
+                style = DayoTheme.typography.caption2
+            )
+        }
     }
+}
 
+@Composable
+private fun FolderContent(
+    folderUiState: FolderUiState,
+    folderPosts: LazyPagingItems<FolderPost>,
+    onPostClick: (Int) -> Unit
+) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.fillMaxSize(),
@@ -385,7 +470,14 @@ private fun FolderPostItem(
     isSelected: Boolean,
     onPostClick: (Int) -> Unit
 ) {
-    Box {
+    val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+
+    Box(
+        modifier = Modifier.clickable(
+            interactionSource = interactionSource,
+            indication = null
+        ) { onPostClick(post.postId) }
+    ) {
         RoundImageView(
             context = LocalContext.current,
             imageUrl = "${BuildConfig.BASE_URL}/images/${post.thumbnailImage}",
@@ -399,7 +491,8 @@ private fun FolderPostItem(
             DayoCheckbox(
                 checked = isSelected,
                 onCheckedChange = { onPostClick(post.postId) },
-                modifier = Modifier.align(Alignment.TopEnd)
+                modifier = Modifier.align(Alignment.TopEnd),
+                interactionSource = interactionSource
             )
         }
     }
@@ -424,7 +517,7 @@ private fun PreviewFolderScreen() {
             thumbnailImage = ""
         ),
         folderPosts = flowOf(folderPostPagingData),
-        isEditMode = false,
+        isEditMode = true,
         selectedPosts = emptySet()
     )
 
@@ -434,6 +527,9 @@ private fun PreviewFolderScreen() {
             folderPosts = folderUiState.folderPosts.collectAsLazyPagingItems(),
             optionMenu = listOf(),
             onPostClick = { },
+            onPostDeleteClick = {},
+            onPostMoveClick = {},
+            onCancelClick = { },
             onBackClick = { }
         )
     }
