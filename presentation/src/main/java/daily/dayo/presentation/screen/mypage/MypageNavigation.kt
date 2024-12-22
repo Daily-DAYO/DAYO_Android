@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import daily.dayo.presentation.screen.bookmark.BookmarkScreen
+import daily.dayo.presentation.screen.folder.FolderCreateScreen
 import daily.dayo.presentation.screen.folder.FolderEditScreen
 import daily.dayo.presentation.screen.folder.FolderScreen
 
@@ -15,6 +16,10 @@ fun NavController.navigateProfileEdit() {
 
 fun NavController.navigateBookmark() {
     navigate(MyPageRoute.bookmark())
+}
+
+fun NavController.navigateFolderCreate() {
+    navigate(MyPageRoute.folderCreate())
 }
 
 fun NavController.navigateFolderEdit(folderId: String) {
@@ -32,7 +37,6 @@ fun NavGraphBuilder.myPageNavGraph(
 ) {
     composable(MyPageRoute.route) {
         MyPageScreen(
-            onBackClick = onBackClick,
             onFollowButtonClick = onFollowButtonClick,
             onProfileEditClick = onProfileEditClick,
             onBookmarkClick = onBookmarkClick,
@@ -69,6 +73,12 @@ fun NavGraphBuilder.myPageNavGraph(
 
     composable(MyPageRoute.bookmark()) {
         BookmarkScreen(
+            onBackClick = onBackClick
+        )
+    }
+
+    composable(MyPageRoute.folderCreate()) {
+        FolderCreateScreen(
             onBackClick = onBackClick
         )
     }

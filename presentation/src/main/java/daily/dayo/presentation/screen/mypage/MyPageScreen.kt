@@ -67,7 +67,6 @@ import daily.dayo.presentation.viewmodel.ProfileViewModel
 
 @Composable
 fun MyPageScreen(
-    onBackClick: () -> Unit,
     onFollowButtonClick: (String, Int) -> Unit,
     onProfileEditClick: () -> Unit,
     onBookmarkClick: () -> Unit,
