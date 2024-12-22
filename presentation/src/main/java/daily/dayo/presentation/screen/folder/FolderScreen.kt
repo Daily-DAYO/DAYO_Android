@@ -33,6 +33,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,6 +53,10 @@ import daily.dayo.domain.model.FolderPost
 import daily.dayo.domain.model.Privacy
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.dialog.LoadingAlertDialog.createLoadingDialog
+import daily.dayo.presentation.common.dialog.LoadingAlertDialog.hideLoadingDialog
+import daily.dayo.presentation.common.dialog.LoadingAlertDialog.resizeDialogFragment
+import daily.dayo.presentation.common.dialog.LoadingAlertDialog.showLoadingDialog
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
@@ -62,6 +67,7 @@ import daily.dayo.presentation.theme.Red_FF4545
 import daily.dayo.presentation.view.DayoCheckbox
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
+import daily.dayo.presentation.view.dialog.ConfirmDialog
 import daily.dayo.presentation.viewmodel.FolderUiState
 import daily.dayo.presentation.viewmodel.FolderViewModel
 import kotlinx.coroutines.flow.flowOf
@@ -75,6 +81,12 @@ fun FolderScreen(
 ) {
     val folderUiState by folderViewModel.uiState.collectAsStateWithLifecycle()
     val folderPosts = folderUiState.folderPosts.collectAsLazyPagingItems()
+
+    val context = LocalContext.current
+    var showDeleteAlertDialog by remember { mutableStateOf(false) }
+    val loadingAlertDialog = remember { mutableStateOf(createLoadingDialog(context)) }
+    val deleteSuccess by folderViewModel.deleteSuccess.collectAsStateWithLifecycle(false)
+
     val optionMenu = listOf(
         FolderOptionMenu(
             name = stringResource(id = R.string.folder_option_post_edit),
@@ -92,13 +104,22 @@ fun FolderScreen(
             name = stringResource(id = R.string.folder_option_delete),
             iconRes = R.drawable.ic_menu_delete,
             color = Red_FF4545,
-            onClickMenu = {}
+            onClickMenu = {
+                showDeleteAlertDialog = true
+            }
         )
     )
 
     LaunchedEffect(folderId) {
         folderViewModel.requestFolderInfo(folderId.toInt())
         folderViewModel.requestFolderPostList(folderId.toInt())
+    }
+
+    LaunchedEffect(deleteSuccess) {
+        if (deleteSuccess) {
+            hideLoadingDialog(loadingAlertDialog.value)
+            onBackClick()
+        }
     }
 
     FolderScreen(
@@ -108,6 +129,30 @@ fun FolderScreen(
         onPostClick = { postId -> folderViewModel.toggleSelection(postId) },
         onBackClick = onBackClick
     )
+
+    if (showDeleteAlertDialog) {
+        val folderDeleteDescription = stringResource(
+            R.string.folder_delete_description_message,
+            folderUiState.folderInfo.name
+        )
+
+        val folderDeleteExplanation = stringResource(
+            R.string.folder_delete_explanation_message,
+            folderUiState.folderInfo.name
+        )
+
+        ConfirmDialog(
+            title = folderDeleteDescription,
+            description = folderDeleteExplanation,
+            onClickConfirm = {
+                showDeleteAlertDialog = false
+                showLoadingDialog(loadingAlertDialog.value)
+                resizeDialogFragment(context, loadingAlertDialog.value, 0.8f)
+                folderViewModel.requestDeleteFolder(folderId.toInt())
+            },
+            onClickCancel = { showDeleteAlertDialog = false }
+        )
+    }
 }
 
 @Composable
@@ -195,7 +240,7 @@ private fun FolderInformation(folderInfo: FolderInfo) {
         Spacer(modifier = Modifier.height(2.dp))
 
         Text(
-            text = folderInfo.subheading ?: "",
+            text = folderInfo.subheading,
             color = Gray1_50545B,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
