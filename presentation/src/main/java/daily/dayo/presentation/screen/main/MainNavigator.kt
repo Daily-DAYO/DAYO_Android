@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import daily.dayo.presentation.screen.home.HomeRoute
 import daily.dayo.presentation.screen.home.navigateHome
 import daily.dayo.presentation.screen.mypage.navigateBookmark
+import daily.dayo.presentation.screen.mypage.navigateFolderEdit
 import daily.dayo.presentation.screen.mypage.navigateProfileEdit
 import daily.dayo.presentation.screen.post.navigatePost
 import daily.dayo.presentation.screen.post.navigatePostLikeUsers
@@ -55,9 +56,14 @@ class MainNavigator(
         navController.navigateBookmark()
     }
 
+    fun navigateFolderEdit(folderId: String) {
+        navController.navigateFolderEdit(folderId)
+    }
+
     fun navigateWrite() {
         navController.navigateWrite()
     }
+
     fun navigateWriteTag() {
         navController.navigateWriteTag()
     }

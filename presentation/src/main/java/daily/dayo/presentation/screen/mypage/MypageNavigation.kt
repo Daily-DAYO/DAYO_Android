@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import daily.dayo.presentation.screen.bookmark.BookmarkScreen
+import daily.dayo.presentation.screen.folder.FolderEditScreen
 import daily.dayo.presentation.screen.folder.FolderScreen
 
 fun NavController.navigateProfileEdit() {
@@ -16,13 +17,18 @@ fun NavController.navigateBookmark() {
     navigate(MyPageRoute.bookmark())
 }
 
+fun NavController.navigateFolderEdit(folderId: String) {
+    navigate(MyPageRoute.folderEdit(folderId))
+}
+
 fun NavGraphBuilder.myPageNavGraph(
     onBackClick: () -> Unit,
     onFollowButtonClick: (String, Int) -> Unit,
     onProfileEditClick: () -> Unit,
     onBookmarkClick: () -> Unit,
     onFolderClick: (String) -> Unit,
-    onFolderCreateClick: () -> Unit
+    onFolderCreateClick: () -> Unit,
+    onFolderEditClick: (String) -> Unit
 ) {
     composable(MyPageRoute.route) {
         MyPageScreen(
@@ -77,6 +83,22 @@ fun NavGraphBuilder.myPageNavGraph(
     ) { navBackStackEntry ->
         val folderId = navBackStackEntry.arguments?.getString("folderId") ?: ""
         FolderScreen(
+            folderId = folderId,
+            onFolderEditClick = { onFolderEditClick(folderId) },
+            onBackClick = onBackClick
+        )
+    }
+
+    composable(
+        route = MyPageRoute.folderEdit("{folderId}"),
+        arguments = listOf(
+            navArgument("folderId") {
+                type = NavType.StringType
+            }
+        )
+    ) { navBackStackEntry ->
+        val folderId = navBackStackEntry.arguments?.getString("folderId") ?: ""
+        FolderEditScreen(
             folderId = folderId,
             onBackClick = onBackClick
         )

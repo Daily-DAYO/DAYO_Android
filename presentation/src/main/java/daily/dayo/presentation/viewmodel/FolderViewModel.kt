@@ -23,8 +23,10 @@ import daily.dayo.domain.usecase.folder.RequestOrderFolderUseCase
 import daily.dayo.presentation.common.Event
 import daily.dayo.presentation.common.Resource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
@@ -49,8 +51,8 @@ class FolderViewModel @Inject constructor(
     private val _deleteSuccess = MutableLiveData<Event<Boolean>>()
     val deleteSuccess: LiveData<Event<Boolean>> get() = _deleteSuccess
 
-    private val _editSuccess = MutableLiveData<Event<Boolean>>()
-    val editSuccess: LiveData<Event<Boolean>> get() = _editSuccess
+    private val _editSuccess = MutableSharedFlow<Boolean>()
+    val editSuccess = _editSuccess.asSharedFlow()
 
     private val _thumbnailUri = MutableLiveData<String>()
     val thumbnailUri: LiveData<String> get() = _thumbnailUri
@@ -63,7 +65,6 @@ class FolderViewModel @Inject constructor(
 
     private val _folderAddSuccess = MutableLiveData<Event<Boolean>>()
     val folderAddSuccess: LiveData<Event<Boolean>> get() = _folderAddSuccess
-
 
     fun toggleEditMode() {
         _uiState.update { it.copy(isEditMode = !it.isEditMode, selectedPosts = emptySet()) }
@@ -95,15 +96,19 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun requestEditFolder(folderId: Int, name: String, privacy: Privacy, subheading: String?, isFileChange: Boolean, thumbnailImage: File?) = viewModelScope.launch {
-        requestEditFolderUseCase(folderId = folderId, name = name, privacy = privacy, subheading = subheading, isFileChange = isFileChange, thumbnailImage).let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _editSuccess.postValue(Event(true))
-                }
-
-                else -> {
-                    _editSuccess.postValue(Event(false))
+    fun requestEditFolder(folderId: Int, name: String, privacy: Privacy, subheading: String?) {
+        viewModelScope.launch {
+            requestEditFolderUseCase(
+                folderId = folderId,
+                name = name,
+                privacy = privacy,
+                subheading = subheading,
+                isFileChange = false,
+                thumbnailImg = null
+            ).let { response ->
+                when (response) {
+                    is NetworkResponse.Success -> _editSuccess.emit(true)
+                    else -> _editSuccess.emit(false)
                 }
             }
         }

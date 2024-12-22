@@ -114,7 +114,8 @@ internal fun MainScreen(
                                 onProfileEditClick = { navigator.navigateProfileEdit() },
                                 onBookmarkClick = { navigator.navigateBookmark() },
                                 onFolderClick = { folderId -> navigator.navController.navigate(MyPageRoute.folder(folderId)) },
-                                onFolderCreateClick = {}
+                                onFolderCreateClick = {},
+                                onFolderEditClick = { folderId -> navigator.navigateFolderEdit(folderId) }
                             )
                         }
                     }
