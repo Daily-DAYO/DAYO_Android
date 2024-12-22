@@ -78,9 +78,11 @@ fun FolderEditScreen(
 
     FolderEditScreen(
         folderInfo = folderInfo,
+        confirmEnabled = (folderUiState.folderInfo != folderInfo.value) && (folderInfo.value?.name?.isNotEmpty() ?: false),
         onConfirmClick = {
             showLoadingDialog(alertDialog.value)
             resizeDialogFragment(context, alertDialog.value, 0.8f)
+
             folderInfo.value?.run {
                 folderViewModel.requestEditFolder(
                     folderId = folderId.toInt(),
@@ -98,13 +100,14 @@ fun FolderEditScreen(
 @Composable
 private fun FolderEditScreen(
     folderInfo: MutableState<FolderInfo?>,
+    confirmEnabled: Boolean,
     onConfirmClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
             FolderEditTopNavigation(
-                confirmEnabled = folderInfo.value?.name?.isNotEmpty() ?: false,
+                confirmEnabled = confirmEnabled,
                 onConfirmClick = onConfirmClick,
                 onBackClick = onBackClick
             )
@@ -219,6 +222,7 @@ private fun PreviewFolderEditScreen() {
                     )
                 )
             },
+            confirmEnabled = false,
             onConfirmClick = {},
             onBackClick = {}
         )
