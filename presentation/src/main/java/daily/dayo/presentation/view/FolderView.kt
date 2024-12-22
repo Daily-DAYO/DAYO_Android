@@ -1,6 +1,8 @@
 package daily.dayo.presentation.view
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -26,6 +29,7 @@ import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray3_9FA5AE
+import daily.dayo.presentation.theme.Gray5_E8EAEE
 import java.text.DecimalFormat
 
 @Composable
@@ -53,6 +57,7 @@ fun FolderView(
                 imageUrl = "${BuildConfig.BASE_URL}/images/${folder.thumbnailImage}",
                 imageDescription = folder.title,
                 customModifier = Modifier
+                    .border(BorderStroke(1.dp, Gray5_E8EAEE), RoundedCornerShape(8.dp))
                     .matchParentSize()
             )
 
