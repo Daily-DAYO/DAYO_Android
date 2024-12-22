@@ -194,7 +194,7 @@ private fun FolderEditTopNavigation(
                         onClick = onConfirmClick
                     ),
                 text = stringResource(id = R.string.confirm),
-                color = if(confirmEnabled) Dark else Gray5_E8EAEE,
+                color = if (confirmEnabled) Dark else Gray5_E8EAEE,
                 style = DayoTheme.typography.b3,
             )
         },

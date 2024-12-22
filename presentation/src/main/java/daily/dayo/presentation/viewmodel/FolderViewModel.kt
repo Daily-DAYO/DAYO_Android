@@ -47,17 +47,14 @@ class FolderViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(FolderUiState())
     val uiState: StateFlow<FolderUiState> = _uiState.asStateFlow()
 
-    private val _deleteSuccess = MutableLiveData<Event<Boolean>>()
-    val deleteSuccess: LiveData<Event<Boolean>> get() = _deleteSuccess
+    private val _createSuccess = MutableSharedFlow<Boolean>()
+    val createSuccess = _createSuccess.asSharedFlow()
 
     private val _editSuccess = MutableSharedFlow<Boolean>()
     val editSuccess = _editSuccess.asSharedFlow()
 
-    private val _createSuccess = MutableSharedFlow<Boolean>()
-    val createSuccess = _createSuccess.asSharedFlow()
-
-    private val _thumbnailUri = MutableLiveData<String>()
-    val thumbnailUri: LiveData<String> get() = _thumbnailUri
+    private val _deleteSuccess = MutableSharedFlow<Boolean>()
+    val deleteSuccess = _deleteSuccess.asSharedFlow()
 
     private val _folderList = MutableLiveData<Resource<List<Folder>>>()
     val folderList: LiveData<Resource<List<Folder>>> get() = _folderList
@@ -115,15 +112,12 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun requestDeleteFolder(folderId: Int) = viewModelScope.launch {
-        requestDeleteFolderUseCase(folderId = folderId).let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _deleteSuccess.postValue(Event(true))
-                }
-
-                else -> {
-                    _deleteSuccess.postValue(Event(false))
+    fun requestDeleteFolder(folderId: Int) {
+        viewModelScope.launch {
+            requestDeleteFolderUseCase(folderId = folderId).let { response ->
+                when (response) {
+                    is NetworkResponse.Success -> _deleteSuccess.emit(true)
+                    else -> _deleteSuccess.emit(false)
                 }
             }
         }
