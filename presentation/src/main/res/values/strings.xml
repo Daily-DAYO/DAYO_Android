@@ -275,6 +275,9 @@
     <string name="folder_add_message_format_fail">폴더 이름에는 한글, 영문, 숫자만 사용할 수 있어요.</string>
     <string name="folder_add_message_fail">폴더를 생성 할 수 없어요. 다시 시도해주세요.</string>
     <string name="folder_post_empty_description">아직 게시물이 없어요.</string>
+    <string name="folder_option_post_edit">게시글 편집</string>
+    <string name="folder_option_edit">폴더 편집</string>
+    <string name="folder_option_delete">폴더 삭제</string>
 
     <!-- Follow -->
     <string name="follower">팔로워</string>

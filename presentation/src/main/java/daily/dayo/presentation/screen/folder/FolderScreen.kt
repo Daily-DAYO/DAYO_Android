@@ -1,5 +1,7 @@
 package daily.dayo.presentation.screen.folder
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,13 +21,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,6 +58,7 @@ import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.Primary_23C882
+import daily.dayo.presentation.theme.Red_FF4545
 import daily.dayo.presentation.view.DayoCheckbox
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
@@ -66,6 +74,26 @@ fun FolderScreen(
 ) {
     val folderUiState by folderViewModel.uiState.collectAsStateWithLifecycle()
     val folderPosts = folderUiState.folderPosts.collectAsLazyPagingItems()
+    val optionMenu = listOf(
+        FolderOptionMenu(
+            name = stringResource(id = R.string.folder_option_post_edit),
+            iconRes = R.drawable.ic_menu_post,
+            color = Dark,
+            onClickMenu = {}
+        ),
+        FolderOptionMenu(
+            name = stringResource(id = R.string.folder_option_edit),
+            iconRes = R.drawable.ic_menu_folder,
+            color = Dark,
+            onClickMenu = {}
+        ),
+        FolderOptionMenu(
+            name = stringResource(id = R.string.folder_option_delete),
+            iconRes = R.drawable.ic_menu_delete,
+            color = Red_FF4545,
+            onClickMenu = {}
+        )
+    )
 
     LaunchedEffect(folderId) {
         folderViewModel.requestFolderInfo(folderId.toInt())
@@ -75,6 +103,7 @@ fun FolderScreen(
     FolderScreen(
         folderUiState = folderUiState,
         folderPosts = folderPosts,
+        optionMenu = optionMenu,
         onPostClick = { postId -> folderViewModel.toggleSelection(postId) },
         onBackClick = onBackClick
     )
@@ -84,9 +113,12 @@ fun FolderScreen(
 private fun FolderScreen(
     folderUiState: FolderUiState,
     folderPosts: LazyPagingItems<FolderPost>,
+    optionMenu: List<FolderOptionMenu>,
     onPostClick: (Int) -> Unit,
     onBackClick: () -> Unit
 ) {
+    val optionExpanded = remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopNavigation(
@@ -100,13 +132,20 @@ private fun FolderScreen(
                     }
                 },
                 rightIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(
+                        onClick = { optionExpanded.value = optionExpanded.value.not() }
+                    ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_option_horizontal),
                             contentDescription = stringResource(id = R.string.folder_option),
                             tint = Dark
                         )
                     }
+
+                    FolderDropdownMenu(
+                        menuItems = optionMenu,
+                        expanded = optionExpanded
+                    )
                 }
             )
         }
@@ -187,6 +226,48 @@ private fun FolderInformation(folderInfo: FolderInfo) {
                 text = stringResource(id = R.string.folder_post_add),
                 color = Gray2_767B83,
                 style = DayoTheme.typography.b5
+            )
+        }
+    }
+}
+
+@Composable
+private fun FolderDropdownMenu(
+    menuItems: List<FolderOptionMenu>,
+    expanded: MutableState<Boolean>
+) {
+    DropdownMenu(
+        expanded = expanded.value,
+        onDismissRequest = { expanded.value = false },
+        modifier = Modifier
+            .background(DayoTheme.colorScheme.background)
+            .width(140.dp)
+    ) {
+        menuItems.forEach {
+            DropdownMenuItem(
+                text = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = it.iconRes),
+                            contentDescription = it.name,
+                            tint = it.color
+                        )
+
+                        Text(
+                            text = it.name,
+                            color = it.color,
+                            style = DayoTheme.typography.b6
+                        )
+                    }
+                },
+                onClick = {
+                    it.onClickMenu
+                    expanded.value = false
+                },
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 11.5.dp)
             )
         }
     }
@@ -305,8 +386,16 @@ private fun PreviewFolderScreen() {
         FolderScreen(
             folderUiState = folderUiState,
             folderPosts = folderUiState.folderPosts.collectAsLazyPagingItems(),
+            optionMenu = listOf(),
             onPostClick = { },
             onBackClick = { }
         )
     }
 }
+
+data class FolderOptionMenu(
+    val name: String,
+    @DrawableRes val iconRes: Int,
+    val color: Color,
+    val onClickMenu: () -> Unit
+)
