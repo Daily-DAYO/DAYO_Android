@@ -162,47 +162,28 @@ fun FolderScreen(
     )
 
     if (showFolderDeleteAlertDialog) {
-        val folderDeleteDescription = stringResource(
-            R.string.folder_delete_description_message,
-            folderUiState.folderInfo.name
-        )
-
-        val folderDeleteExplanation = stringResource(
-            R.string.folder_delete_explanation_message,
-            folderUiState.folderInfo.name
-        )
-
-        ConfirmDialog(
-            title = folderDeleteDescription,
-            description = folderDeleteExplanation,
+        FolderDeleteAlertDialog(
+            folderName = folderUiState.folderInfo.name,
             onClickConfirm = {
                 showFolderDeleteAlertDialog = false
                 showLoadingDialog(loadingAlertDialog.value)
                 resizeDialogFragment(context, loadingAlertDialog.value, 0.8f)
                 folderViewModel.requestDeleteFolder(folderId.toInt())
             },
-            onClickCancel = { showFolderDeleteAlertDialog = false }
+            onShowChange = { showFolderDeleteAlertDialog = it }
         )
     }
 
     if (showPostDeleteAlertDialog) {
-        val postDeleteDescription = stringResource(
-            R.string.folder_post_delete_description_message,
-            folderUiState.selectedPosts.size
-        )
-
-        val postDeleteExplanation = stringResource(R.string.folder_post_delete_explanation_message)
-
-        ConfirmDialog(
-            title = postDeleteDescription,
-            description = postDeleteExplanation,
+        PostDeleteAlertDialog(
+            selectedCount = folderUiState.selectedPosts.size,
             onClickConfirm = {
                 showPostDeleteAlertDialog = false
                 // TODO Show Loading
                 folderViewModel.deletePosts()
                 folderViewModel.requestDeleteFolder(folderId.toInt())
             },
-            onClickCancel = { showPostDeleteAlertDialog = false }
+            onShowChange = { showPostDeleteAlertDialog = it }
         )
     }
 }
@@ -536,6 +517,51 @@ private fun FolderPostItem(
             )
         }
     }
+}
+
+@Composable
+private fun FolderDeleteAlertDialog(
+    folderName: String,
+    onClickConfirm: () -> Unit,
+    onShowChange: (Boolean) -> Unit
+) {
+    val folderDeleteDescription = stringResource(
+        R.string.folder_delete_description_message,
+        folderName
+    )
+
+    val folderDeleteExplanation = stringResource(
+        R.string.folder_delete_explanation_message,
+        folderName
+    )
+
+    ConfirmDialog(
+        title = folderDeleteDescription,
+        description = folderDeleteExplanation,
+        onClickConfirm = onClickConfirm,
+        onClickCancel = { onShowChange(false) }
+    )
+}
+
+@Composable
+private fun PostDeleteAlertDialog(
+    selectedCount: Int,
+    onClickConfirm: () -> Unit,
+    onShowChange: (Boolean) -> Unit
+) {
+    val postDeleteDescription = stringResource(
+        R.string.folder_post_delete_description_message,
+        selectedCount
+    )
+
+    val postDeleteExplanation = stringResource(R.string.folder_post_delete_explanation_message)
+
+    ConfirmDialog(
+        title = postDeleteDescription,
+        description = postDeleteExplanation,
+        onClickConfirm = onClickConfirm,
+        onClickCancel = { onShowChange(false) }
+    )
 }
 
 @Preview
