@@ -1,5 +1,6 @@
 package daily.dayo.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,7 +10,6 @@ import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.FolderInfo
-import daily.dayo.domain.model.FolderOrder
 import daily.dayo.domain.model.FolderPost
 import daily.dayo.domain.model.NetworkResponse
 import daily.dayo.domain.model.Privacy
@@ -20,8 +20,11 @@ import daily.dayo.domain.usecase.folder.RequestEditFolderUseCase
 import daily.dayo.domain.usecase.folder.RequestFolderInfoUseCase
 import daily.dayo.domain.usecase.folder.RequestFolderPostListUseCase
 import daily.dayo.domain.usecase.folder.RequestOrderFolderUseCase
+import daily.dayo.domain.usecase.post.RequestDeletePostUseCase
 import daily.dayo.presentation.common.Event
 import daily.dayo.presentation.common.Resource
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +35,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class FolderViewModel @Inject constructor(
@@ -41,7 +45,8 @@ class FolderViewModel @Inject constructor(
     private val requestOrderFolderUseCase: RequestOrderFolderUseCase,
     private val requestAllMyFolderListUseCase: RequestAllMyFolderListUseCase,
     private val requestFolderInfoUseCase: RequestFolderInfoUseCase,
-    private val requestFolderPostListUseCase: RequestFolderPostListUseCase
+    private val requestFolderPostListUseCase: RequestFolderPostListUseCase,
+    private val requestDeletePostUseCase: RequestDeletePostUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FolderUiState())
@@ -53,8 +58,11 @@ class FolderViewModel @Inject constructor(
     private val _editSuccess = MutableSharedFlow<Boolean>()
     val editSuccess = _editSuccess.asSharedFlow()
 
-    private val _deleteSuccess = MutableSharedFlow<Boolean>()
-    val deleteSuccess = _deleteSuccess.asSharedFlow()
+    private val _folderDeleteSuccess = MutableSharedFlow<Boolean>()
+    val folderDeleteSuccess = _folderDeleteSuccess.asSharedFlow()
+
+    private val _postDeleteSuccess = MutableSharedFlow<Boolean>()
+    val postDeleteSuccess = _postDeleteSuccess.asSharedFlow()
 
     private val _folderList = MutableLiveData<Resource<List<Folder>>>()
     val folderList: LiveData<Resource<List<Folder>>> get() = _folderList
@@ -75,6 +83,30 @@ class FolderViewModel @Inject constructor(
                 currentSelection + postId
             }
             it.copy(selectedPosts = newSelection)
+        }
+    }
+
+    fun deletePosts() {
+        viewModelScope.launch {
+            try {
+                val deleteJobs = uiState.value.selectedPosts.map { postId ->
+                    async {
+                        requestDeletePostUseCase(postId).let { response ->
+                            when (response) {
+                                is NetworkResponse.Success -> true
+                                is NetworkResponse.ApiError -> throw CancellationException("API Error: PostId ${postId}, ${response.error}")
+                                is NetworkResponse.NetworkError -> throw CancellationException("Network Error: PostId ${postId}, ${response.exception.message}")
+                                is NetworkResponse.UnknownError -> throw CancellationException("Unknown Error: PostId ${postId}, ${response.throwable?.message}")
+                            }
+                        }
+                    }
+                }
+                deleteJobs.awaitAll()
+                _postDeleteSuccess.emit(true)
+            } catch (e: CancellationException) {
+                Log.e("Delete Post", "${e.message}")
+                _postDeleteSuccess.emit(false)
+            }
         }
     }
 
@@ -116,22 +148,8 @@ class FolderViewModel @Inject constructor(
         viewModelScope.launch {
             requestDeleteFolderUseCase(folderId = folderId).let { response ->
                 when (response) {
-                    is NetworkResponse.Success -> _deleteSuccess.emit(true)
-                    else -> _deleteSuccess.emit(false)
-                }
-            }
-        }
-    }
-
-    fun requestOrderFolder(folderOrder: List<FolderOrder>) = viewModelScope.launch {
-        requestOrderFolderUseCase(folderOrder = folderOrder).let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _orderFolderSuccess.postValue(Event(true))
-                }
-
-                else -> {
-                    _orderFolderSuccess.postValue(Event(false))
+                    is NetworkResponse.Success -> _folderDeleteSuccess.emit(true)
+                    else -> _folderDeleteSuccess.emit(false)
                 }
             }
         }

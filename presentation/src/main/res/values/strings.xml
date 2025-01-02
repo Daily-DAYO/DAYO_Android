@@ -433,6 +433,9 @@
     <!-- Dialog -->
     <string name="dialog_loading_wait">잠시만 기다려주세요</string>
 
+    <!-- Error -->
+    <string name="error_message">문제가 발생했습니다.</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

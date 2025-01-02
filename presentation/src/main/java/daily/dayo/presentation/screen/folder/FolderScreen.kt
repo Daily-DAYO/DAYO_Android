@@ -1,5 +1,6 @@
 package daily.dayo.presentation.screen.folder
 
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -46,7 +47,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -90,9 +94,11 @@ fun FolderScreen(
     val folderPosts = folderUiState.folderPosts.collectAsLazyPagingItems()
 
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     var showDeleteAlertDialog by remember { mutableStateOf(false) }
     val loadingAlertDialog = remember { mutableStateOf(createLoadingDialog(context)) }
-    val deleteSuccess by folderViewModel.deleteSuccess.collectAsStateWithLifecycle(false)
+    val folderDeleteSuccess by folderViewModel.folderDeleteSuccess.collectAsStateWithLifecycle(false)
 
     val optionMenu = listOf(
         FolderOptionMenu(
@@ -124,11 +130,23 @@ fun FolderScreen(
         folderViewModel.requestFolderPostList(folderId.toInt())
     }
 
-    LaunchedEffect(deleteSuccess) {
-        if (deleteSuccess) {
+    LaunchedEffect(folderDeleteSuccess) {
+        if (folderDeleteSuccess) {
             hideLoadingDialog(loadingAlertDialog.value)
             onBackClick()
         }
+    }
+
+    LaunchedEffect(Unit) {
+        folderViewModel.postDeleteSuccess
+            .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .collect { postDeleteSuccess ->
+                if (!postDeleteSuccess) {
+                    Toast.makeText(context, context.getString(R.string.error_message), Toast.LENGTH_SHORT).show()
+                }
+                folderViewModel.toggleEditMode()
+                folderViewModel.requestFolderPostList(folderId.toInt())
+            }
     }
 
     FolderScreen(
@@ -137,7 +155,7 @@ fun FolderScreen(
         optionMenu = optionMenu,
         onPostClick = { postId -> folderViewModel.toggleSelection(postId) },
         onCancelClick = { folderViewModel.toggleEditMode() },
-        onPostDeleteClick = {},
+        onPostDeleteClick = { folderViewModel.deletePosts() },
         onPostMoveClick = {},
         onBackClick = onBackClick
     )

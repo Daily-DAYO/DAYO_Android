@@ -29,7 +29,7 @@ interface PostRepository {
     suspend fun requestDayoPickPostList(): NetworkResponse<PostsDayoPick>
     suspend fun requestDayoPickPostListCategory(category: Category): NetworkResponse<PostsDayoPick>
     suspend fun requestPostDetail(postId: Int): NetworkResponse<PostDetail>
-    suspend fun requestDeletePost(postId: Int): NetworkResponse<LikePostDeleteResponse>
+    suspend fun requestDeletePost(postId: Int): NetworkResponse<Void>
     suspend fun requestEditPost(
         postId: Int,
         category: Category,
