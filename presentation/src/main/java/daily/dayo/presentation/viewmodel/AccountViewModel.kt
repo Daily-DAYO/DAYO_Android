@@ -9,15 +9,18 @@ import daily.dayo.domain.model.NetworkResponse
 import daily.dayo.domain.usecase.member.*
 import daily.dayo.presentation.service.firebase.FirebaseMessagingService
 import dagger.hilt.android.lifecycle.HiltViewModel
+import daily.dayo.presentation.common.Status
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class AccountViewModel @Inject constructor(
-    private val requestLoginKakaoUseCase: RequestLoginKakaoUseCase,
-    private val requestLoginEmailUseCase: RequestLoginEmailUseCase,
+    private val requestSignInKakaoUseCase: RequestSignInKakaoUseCase,
+    private val requestSignInEmailUseCase: RequestSignInEmailUseCase,
     private val requestRefreshTokenUseCase: RequestRefreshTokenUseCase,
     private val requestMemberInfoUseCase: RequestMemberInfoUseCase,
     private val requestSignUpEmailUseCase: RequestSignUpEmailUseCase,
@@ -42,6 +45,9 @@ class AccountViewModel @Inject constructor(
 
     private val _signupSuccess = MutableLiveData<Event<Boolean>>()
     val signupSuccess: LiveData<Event<Boolean>> get() = _signupSuccess
+
+    private val _signInSuccess: MutableStateFlow<Status?> = MutableStateFlow(null)
+    val signInSuccess: StateFlow<Status?> get() = _signInSuccess
 
     private val _loginSuccess = MutableLiveData<Event<Boolean>>()
     val loginSuccess: LiveData<Event<Boolean>> get() = _loginSuccess
@@ -86,49 +92,47 @@ class AccountViewModel @Inject constructor(
     val isLoginFailByUncorrected get() = _isLoginFailByUncorrected
 
     fun requestLoginKakao(accessToken: String) = viewModelScope.launch {
-        requestLoginKakaoUseCase(accessToken = accessToken).let { ApiResponse ->
+        _signInSuccess.emit(Status.LOADING)
+        requestSignInKakaoUseCase(accessToken = accessToken).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     requestSaveCurrentUserInfoUseCase(ApiResponse.body)
                     coroutineScope {
                         requestMemberInfo()
-                        _loginSuccess.postValue(Event(true))
+                        _signInSuccess.emit(Status.SUCCESS)
                     }
                 }
                 is NetworkResponse.ApiError -> {
-                    _isApiErrorExceptionOccurred.postValue(Event(true))
-                    _loginSuccess.postValue(Event(false))
+                    _signInSuccess.emit(Status.ERROR)
                 }
                 is NetworkResponse.NetworkError -> {
-                    _isErrorExceptionOccurred.postValue(Event(true))
-                    _loginSuccess.postValue(Event(false))
+                    _signInSuccess.emit(Status.ERROR)
                 }
                 is NetworkResponse.UnknownError -> {
-                    _loginSuccess.postValue(Event(false))
+                    _signInSuccess.emit(Status.ERROR)
                 }
             }
         }
     }
 
     fun requestLoginEmail(email: String, password: String) = viewModelScope.launch {
-        requestLoginEmailUseCase(email = email, password = password).let { ApiResponse ->
+        _signInSuccess.emit(Status.LOADING)
+        requestSignInEmailUseCase(email = email, password = password).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     requestSaveCurrentUserInfoUseCase(ApiResponse.body)
                     requestMemberInfo()
-                    _loginSuccess.postValue(Event(true))
+                    _signInSuccess.emit(Status.SUCCESS)
                 }
                 is NetworkResponse.NetworkError -> {
-                    _isErrorExceptionOccurred.postValue(Event(true))
-                    _loginSuccess.postValue(Event(false))
+                    _signInSuccess.emit(Status.ERROR)
                 }
                 is NetworkResponse.ApiError -> {
-                    if (ApiResponse.code != 404) _isApiErrorExceptionOccurred.postValue(Event(true))
-                    else isLoginFailByUncorrected.postValue(Event(true))
-                    _loginSuccess.postValue(Event(false))
+                    // TODO 404 에러코드 별도 처리
+                    _signInSuccess.emit(Status.ERROR)
                 }
                 is NetworkResponse.UnknownError -> {
-                    _loginSuccess.postValue(Event(false))
+                    _signInSuccess.emit(Status.ERROR)
                 }
             }
         }

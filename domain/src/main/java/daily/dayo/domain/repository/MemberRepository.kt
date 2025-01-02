@@ -22,8 +22,8 @@ interface MemberRepository {
         onBasicProfileImg: Boolean
     ): NetworkResponse<Void>
 
-    suspend fun requestLoginKakao(accessToken: String): NetworkResponse<UserTokens>
-    suspend fun requestLoginEmail(email: String, password: String): NetworkResponse<UserTokens>
+    suspend fun requestSignInKakao(accessToken: String): NetworkResponse<UserTokens>
+    suspend fun requestSignInEmail(email: String, password: String): NetworkResponse<UserTokens>
     suspend fun requestMemberInfo(): NetworkResponse<User>
     suspend fun requestCheckEmailDuplicate(email: String): NetworkResponse<Void>
     suspend fun requestCheckNicknameDuplicate(nickname: String): NetworkResponse<Void>
