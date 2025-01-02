@@ -96,9 +96,10 @@ fun FolderScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    var showDeleteAlertDialog by remember { mutableStateOf(false) }
     val loadingAlertDialog = remember { mutableStateOf(createLoadingDialog(context)) }
     val folderDeleteSuccess by folderViewModel.folderDeleteSuccess.collectAsStateWithLifecycle(false)
+    var showFolderDeleteAlertDialog by remember { mutableStateOf(false) }
+    var showPostDeleteAlertDialog by remember { mutableStateOf(false) }
 
     val optionMenu = listOf(
         FolderOptionMenu(
@@ -120,7 +121,7 @@ fun FolderScreen(
             iconRes = R.drawable.ic_menu_delete,
             color = Red_FF4545,
             onClickMenu = {
-                showDeleteAlertDialog = true
+                showFolderDeleteAlertDialog = true
             }
         )
     )
@@ -155,12 +156,12 @@ fun FolderScreen(
         optionMenu = optionMenu,
         onPostClick = { postId -> folderViewModel.toggleSelection(postId) },
         onCancelClick = { folderViewModel.toggleEditMode() },
-        onPostDeleteClick = { folderViewModel.deletePosts() },
+        onPostDeleteClick = { showPostDeleteAlertDialog = true },
         onPostMoveClick = {},
         onBackClick = onBackClick
     )
 
-    if (showDeleteAlertDialog) {
+    if (showFolderDeleteAlertDialog) {
         val folderDeleteDescription = stringResource(
             R.string.folder_delete_description_message,
             folderUiState.folderInfo.name
@@ -175,12 +176,33 @@ fun FolderScreen(
             title = folderDeleteDescription,
             description = folderDeleteExplanation,
             onClickConfirm = {
-                showDeleteAlertDialog = false
+                showFolderDeleteAlertDialog = false
                 showLoadingDialog(loadingAlertDialog.value)
                 resizeDialogFragment(context, loadingAlertDialog.value, 0.8f)
                 folderViewModel.requestDeleteFolder(folderId.toInt())
             },
-            onClickCancel = { showDeleteAlertDialog = false }
+            onClickCancel = { showFolderDeleteAlertDialog = false }
+        )
+    }
+
+    if (showPostDeleteAlertDialog) {
+        val postDeleteDescription = stringResource(
+            R.string.folder_post_delete_description_message,
+            folderUiState.selectedPosts.size
+        )
+
+        val postDeleteExplanation = stringResource(R.string.folder_post_delete_explanation_message)
+
+        ConfirmDialog(
+            title = postDeleteDescription,
+            description = postDeleteExplanation,
+            onClickConfirm = {
+                showPostDeleteAlertDialog = false
+                // TODO Show Loading
+                folderViewModel.deletePosts()
+                folderViewModel.requestDeleteFolder(folderId.toInt())
+            },
+            onClickCancel = { showPostDeleteAlertDialog = false }
         )
     }
 }
