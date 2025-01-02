@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.ViewTreeObserver
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -20,6 +21,8 @@ import daily.dayo.presentation.viewmodel.AccountViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.dialog.DefaultDialogAlert
+import daily.dayo.presentation.screen.account.AccountScreen
+import daily.dayo.presentation.theme.DayoTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -38,11 +41,16 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         createDialogUpdate()
         checkUpdate()
-        setContentView(binding.root)
+//        setContentView(binding.root)
         setSystemBackClickListener()
         observeNetworkException()
         observeApiException()
         setSplash()
+        setContent {
+            DayoTheme {
+                AccountScreen()
+            }
+        }
     }
 
     private fun setSystemBackClickListener() {

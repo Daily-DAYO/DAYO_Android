@@ -24,10 +24,10 @@ interface MemberApiService {
     ): NetworkResponse<Void>
 
     @POST("/api/v1/members/kakaoOAuth")
-    suspend fun requestLoginKakao(@Body body: MemberOAuthRequest): NetworkResponse<MemberOAuthResponse>
+    suspend fun requestSignInKakao(@Body body: MemberOAuthRequest): NetworkResponse<MemberOAuthResponse>
 
     @POST("/api/v1/members/signIn")
-    suspend fun requestLoginEmail(@Body body: MemberSignInRequest): NetworkResponse<MemberSignInResponse>
+    suspend fun requestSignInEmail(@Body body: MemberSignInRequest): NetworkResponse<MemberSignInResponse>
 
     @GET("/api/v1/members/myInfo")
     suspend fun requestMemberInfo(): NetworkResponse<MemberInfoResponse>

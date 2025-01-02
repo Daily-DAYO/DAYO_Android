@@ -21,6 +21,7 @@
     <string name="delete_all">전체삭제</string>
     <string name="modify">수정</string>
     <string name="close">닫기</string>
+    <string name="sign_in">로그인</string>
     <string name="login">로그인</string>
     <string name="like">좋아요</string>
     <string name="comment">댓글</string>
@@ -56,6 +57,17 @@
     <string name="onboarding_third_message">내 다꾸들을 폴더를 만들어 분류할 수 있어요</string>
     <string name="onboarding_fourth_message_1">내가 열심히 꾸민 다이어리,</string>
     <string name="onboarding_fourth_message_2">에 공유하러 가볼까요?</string>
+
+    <!-- Sign In -->
+    <string name="sign_in_kakao_fail_message">카카오 로그인에 실패했어요</string>
+    <string name="sign_in_email_title">로그인</string>
+    <string name="sign_in_email_input_email_title">이메일</string>
+    <string name="sign_in_email_input_email_placeholder">이메일을 입력해주세요</string>
+    <string name="sign_in_email_input_password_title">패스워드</string>
+    <string name="sign_in_email_input_password_placeholder">비밀번호를 입력해주세요</string>
+    <string name="sign_in_email_forget_password">비밀번호 찾기</string>
+    <string name="sign_in_email_fail_message">이메일 또는 비밀번호를 잘못 입력했어요</string>
+    <string name="sign_up_email">아직 계정이 없으신가요?</string>
 
     <!-- Login -->
     <string name="signup_guide_message_email">아직 계정이 없으신가요? <u>회원가입</u>하기</string>
