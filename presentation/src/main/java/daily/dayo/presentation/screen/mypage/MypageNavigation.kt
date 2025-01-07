@@ -8,7 +8,9 @@ import androidx.navigation.navArgument
 import daily.dayo.presentation.screen.bookmark.BookmarkScreen
 import daily.dayo.presentation.screen.folder.FolderCreateScreen
 import daily.dayo.presentation.screen.folder.FolderEditScreen
+import daily.dayo.presentation.screen.folder.FolderPostMoveScreen
 import daily.dayo.presentation.screen.folder.FolderScreen
+import daily.dayo.presentation.screen.write.WriteFolderScreen
 
 fun NavController.navigateProfileEdit() {
     navigate(MyPageRoute.profileEdit())
@@ -26,6 +28,10 @@ fun NavController.navigateFolderEdit(folderId: String) {
     navigate(MyPageRoute.folderEdit(folderId))
 }
 
+fun NavController.navigateFolderPostMove() {
+    navigate(MyPageRoute.folderPostMove())
+}
+
 fun NavGraphBuilder.myPageNavGraph(
     onBackClick: () -> Unit,
     onFollowButtonClick: (String, Int) -> Unit,
@@ -33,7 +39,8 @@ fun NavGraphBuilder.myPageNavGraph(
     onBookmarkClick: () -> Unit,
     onFolderClick: (String) -> Unit,
     onFolderCreateClick: () -> Unit,
-    onFolderEditClick: (String) -> Unit
+    onFolderEditClick: (String) -> Unit,
+    onPostMoveClick: () -> Unit
 ) {
     composable(MyPageRoute.route) {
         MyPageScreen(
@@ -95,6 +102,7 @@ fun NavGraphBuilder.myPageNavGraph(
         FolderScreen(
             folderId = folderId,
             onFolderEditClick = { onFolderEditClick(folderId) },
+            onPostMoveClick = onPostMoveClick,
             onBackClick = onBackClick
         )
     }
@@ -113,6 +121,12 @@ fun NavGraphBuilder.myPageNavGraph(
             onBackClick = onBackClick
         )
     }
+
+    composable(route = MyPageRoute.folderPostMove()) {
+        FolderPostMoveScreen(
+            onBackClick = onBackClick
+        )
+    }
 }
 
 object MyPageRoute {
@@ -127,5 +141,5 @@ object MyPageRoute {
     fun folder(folderId: String) = "$route/folder/$folderId"
     fun folderCreate() = "$route/folder/create"
     fun folderEdit(folderId: String) = "$route/folder/edit/$folderId"
-    fun folderMove() = "$route/folder/move"
+    fun folderPostMove() = "$route/folder/move"
 }

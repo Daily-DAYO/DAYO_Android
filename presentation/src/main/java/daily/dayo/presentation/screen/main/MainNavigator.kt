@@ -11,6 +11,7 @@ import daily.dayo.presentation.screen.home.navigateHome
 import daily.dayo.presentation.screen.mypage.navigateBookmark
 import daily.dayo.presentation.screen.mypage.navigateFolderCreate
 import daily.dayo.presentation.screen.mypage.navigateFolderEdit
+import daily.dayo.presentation.screen.mypage.navigateFolderPostMove
 import daily.dayo.presentation.screen.mypage.navigateProfileEdit
 import daily.dayo.presentation.screen.post.navigatePost
 import daily.dayo.presentation.screen.post.navigatePostLikeUsers
@@ -63,6 +64,10 @@ class MainNavigator(
 
     fun navigateFolderEdit(folderId: String) {
         navController.navigateFolderEdit(folderId)
+    }
+
+    fun navigateFolderPostMove() {
+        navController.navigateFolderPostMove()
     }
 
     fun navigateWrite() {
