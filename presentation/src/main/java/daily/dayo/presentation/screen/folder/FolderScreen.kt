@@ -87,6 +87,7 @@ import kotlinx.coroutines.flow.flowOf
 fun FolderScreen(
     folderId: String,
     onFolderEditClick: () -> Unit,
+    onPostMoveClick: () -> Unit,
     onBackClick: () -> Unit,
     folderViewModel: FolderViewModel = hiltViewModel()
 ) {
@@ -157,7 +158,7 @@ fun FolderScreen(
         onPostClick = { postId -> folderViewModel.toggleSelection(postId) },
         onCancelClick = { folderViewModel.toggleEditMode() },
         onPostDeleteClick = { showPostDeleteAlertDialog = true },
-        onPostMoveClick = {},
+        onPostMoveClick = onPostMoveClick,
         onBackClick = onBackClick
     )
 
