@@ -27,8 +27,17 @@ fun NavController.navigateFolderEdit(folderId: String) {
     navigate(MyPageRoute.folderEdit(folderId))
 }
 
-fun NavController.navigateFolderPostMove() {
-    navigate(MyPageRoute.folderPostMove())
+fun NavController.navigateFolderPostMove(folderId: String) {
+    navigate(MyPageRoute.folderPostMove(folderId))
+}
+
+fun NavController.navigateBackToFolder(folderId: String) {
+    navigate(MyPageRoute.folder(folderId)) {
+        popUpTo(MyPageRoute.folder(folderId)) {
+            inclusive = true
+        }
+        launchSingleTop = true
+    }
 }
 
 fun NavGraphBuilder.myPageNavGraph(
@@ -39,7 +48,8 @@ fun NavGraphBuilder.myPageNavGraph(
     onFolderClick: (String) -> Unit,
     onFolderCreateClick: () -> Unit,
     onFolderEditClick: (String) -> Unit,
-    onPostMoveClick: () -> Unit
+    onPostMoveClick: (String) -> Unit,
+    navigateBackToFolder: (String) -> Unit
 ) {
     composable(MyPageRoute.route) {
         MyPageScreen(
@@ -101,7 +111,7 @@ fun NavGraphBuilder.myPageNavGraph(
         FolderScreen(
             folderId = folderId,
             onFolderEditClick = { onFolderEditClick(folderId) },
-            onPostMoveClick = onPostMoveClick,
+            onPostMoveClick = { onPostMoveClick(folderId) },
             onBackClick = onBackClick
         )
     }
@@ -121,8 +131,17 @@ fun NavGraphBuilder.myPageNavGraph(
         )
     }
 
-    composable(route = MyPageRoute.folderPostMove()) {
+    composable(
+        route = MyPageRoute.folderPostMove("{folderId}"),
+        arguments = listOf(
+            navArgument("folderId") {
+                type = NavType.StringType
+            }
+        )
+    ) { navBackStackEntry ->
+        val folderId = navBackStackEntry.arguments?.getString("folderId") ?: ""
         FolderPostMoveScreen(
+            navigateBackToFolder = { navigateBackToFolder(folderId) },
             navigateToCreateNewFolder = onFolderCreateClick,
             onBackClick = onBackClick
         )
@@ -141,5 +160,5 @@ object MyPageRoute {
     fun folder(folderId: String) = "$route/folder/$folderId"
     fun folderCreate() = "$route/folder/create"
     fun folderEdit(folderId: String) = "$route/folder/edit/$folderId"
-    fun folderPostMove() = "$route/folder/move"
+    fun folderPostMove(folderId: String) = "$route/folder/move/$folderId"
 }
