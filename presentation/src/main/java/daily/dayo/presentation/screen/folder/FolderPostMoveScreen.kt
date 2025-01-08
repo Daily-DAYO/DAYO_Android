@@ -1,13 +1,27 @@
 package daily.dayo.presentation.screen.folder
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import daily.dayo.domain.model.Folder
+import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.screen.write.WriteFolderScreen
+import daily.dayo.presentation.theme.DayoTheme
+import daily.dayo.presentation.view.FilledRoundedCornerButton
 import daily.dayo.presentation.viewmodel.FolderViewModel
 
 @Composable
@@ -16,6 +30,7 @@ internal fun FolderPostMoveScreen(
     folderViewModel: FolderViewModel = hiltViewModel()
 ) {
     val folderList = folderViewModel.folderList.observeAsState()
+    var selectedFolder by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         folderViewModel.requestAllMyFolderList()
@@ -26,8 +41,9 @@ internal fun FolderPostMoveScreen(
             Status.SUCCESS -> folderList.value?.data ?: emptyList()
             else -> emptyList()
         },
+        selectedFolder = selectedFolder,
         onFolderClick = { folderId, folderName ->
-
+            selectedFolder = folderId
         },
         navigateToCreateNewFolder = {
 
@@ -39,17 +55,35 @@ internal fun FolderPostMoveScreen(
 @Composable
 private fun FolderPostMoveScreen(
     folders: List<Folder>,
+    selectedFolder: String?,
     onFolderClick: (String, String) -> Unit,
     navigateToCreateNewFolder: () -> Unit,
     onBackClick: () -> Unit
 ) {
-    WriteFolderScreen(
-        onBackClick = onBackClick,
-        onFolderClick = onFolderClick,
-        navigateToCreateNewFolder = navigateToCreateNewFolder,
-        folders = folders,
-        currentFolderId = null,
-    )
+    Scaffold(
+        bottomBar = {
+            if (selectedFolder != null) {
+                Box(modifier = Modifier.padding(20.dp)) {
+                    FilledRoundedCornerButton(
+                        label = stringResource(id = R.string.folder_post_move),
+                        onClick = { /*TODO*/ },
+                        modifier = Modifier.height(44.dp),
+                        textStyle = DayoTheme.typography.b5
+                    )
+                }
+            }
+        }
+    ) { contentPadding ->
+        Box(modifier = Modifier.padding(contentPadding)) {
+            WriteFolderScreen(
+                onBackClick = onBackClick,
+                onFolderClick = onFolderClick,
+                navigateToCreateNewFolder = navigateToCreateNewFolder,
+                folders = folders,
+                currentFolderId = selectedFolder,
+            )
+        }
+    }
 }
 
 @Preview
@@ -57,6 +91,7 @@ private fun FolderPostMoveScreen(
 private fun PreviewFolderPostMoveScreen() {
     FolderPostMoveScreen(
         folders = emptyList(),
+        selectedFolder = null,
         onFolderClick = { folderId, folderName -> },
         navigateToCreateNewFolder = {},
         onBackClick = {}

@@ -277,6 +277,7 @@
     <string name="folder_delete_explanation_message">\'%s\' 폴더를 삭제하면\n폴더 안의 게시글도 함께 삭제돼요.</string>
     <string name="folder_post_delete_description_message">%d개의 게시글을\n정말 삭제할까요?</string>
     <string name="folder_post_delete_explanation_message">선택한 게시글이 삭제되면 복구할 수 없어요.</string>
+    <string name="folder_post_move">선택한 폴더로 이동</string>
     <string name="folder_add_message_length_fail_min">폴더 이름을 입력해주세요.</string>
     <string name="folder_add_message_format_fail">폴더 이름에는 한글, 영문, 숫자만 사용할 수 있어요.</string>
     <string name="folder_add_message_fail">폴더를 생성 할 수 없어요. 다시 시도해주세요.</string>
