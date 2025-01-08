@@ -26,6 +26,7 @@ import daily.dayo.presentation.viewmodel.FolderViewModel
 
 @Composable
 internal fun FolderPostMoveScreen(
+    navigateToCreateNewFolder: () -> Unit,
     onBackClick: () -> Unit,
     folderViewModel: FolderViewModel = hiltViewModel()
 ) {
@@ -45,9 +46,7 @@ internal fun FolderPostMoveScreen(
         onFolderClick = { folderId, folderName ->
             selectedFolder = folderId
         },
-        navigateToCreateNewFolder = {
-
-        },
+        navigateToCreateNewFolder = navigateToCreateNewFolder,
         onBackClick = onBackClick
     )
 }
