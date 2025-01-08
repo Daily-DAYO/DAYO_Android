@@ -40,6 +40,7 @@ import daily.dayo.presentation.screen.home.HomeRoute
 import daily.dayo.presentation.screen.home.homeNavGraph
 import daily.dayo.presentation.screen.mypage.MyPageRoute
 import daily.dayo.presentation.screen.mypage.myPageNavGraph
+import daily.dayo.presentation.screen.mypage.navigateBackToFolder
 import daily.dayo.presentation.screen.post.postNavGraph
 import daily.dayo.presentation.screen.search.searchNavGraph
 import daily.dayo.presentation.screen.write.WriteRoute
@@ -116,7 +117,8 @@ internal fun MainScreen(
                                 onFolderClick = { folderId -> navigator.navController.navigate(MyPageRoute.folder(folderId)) },
                                 onFolderCreateClick = { navigator.navigateFolderCreate() },
                                 onFolderEditClick = { folderId -> navigator.navigateFolderEdit(folderId) },
-                                onPostMoveClick = { navigator.navigateFolderPostMove() }
+                                onPostMoveClick = { folderId -> navigator.navigateFolderPostMove(folderId) },
+                                navigateBackToFolder = { folderId -> navigator.navController.navigateBackToFolder(folderId) }
                             )
                         }
                     }

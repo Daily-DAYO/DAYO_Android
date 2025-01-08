@@ -64,6 +64,9 @@ class FolderViewModel @Inject constructor(
     private val _postDeleteSuccess = MutableSharedFlow<Boolean>()
     val postDeleteSuccess = _postDeleteSuccess.asSharedFlow()
 
+    private val _postMoveSuccess = MutableSharedFlow<Boolean>()
+    val postMoveSuccess = _postMoveSuccess.asSharedFlow()
+
     private val _folderList = MutableLiveData<Resource<List<Folder>>>()
     val folderList: LiveData<Resource<List<Folder>>> get() = _folderList
 
@@ -199,6 +202,13 @@ class FolderViewModel @Inject constructor(
             _uiState.update {
                 it.copy(folderPosts = folderPosts)
             }
+        }
+    }
+
+    fun moveSelectedPost() {
+        viewModelScope.launch {
+            // TODO API 필요
+            _postMoveSuccess.emit(true)
         }
     }
 }

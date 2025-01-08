@@ -66,8 +66,8 @@ class MainNavigator(
         navController.navigateFolderEdit(folderId)
     }
 
-    fun navigateFolderPostMove() {
-        navController.navigateFolderPostMove()
+    fun navigateFolderPostMove(folderId: String) {
+        navController.navigateFolderPostMove(folderId)
     }
 
     fun navigateWrite() {
