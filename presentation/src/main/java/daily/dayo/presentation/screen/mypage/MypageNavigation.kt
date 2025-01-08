@@ -10,7 +10,6 @@ import daily.dayo.presentation.screen.folder.FolderCreateScreen
 import daily.dayo.presentation.screen.folder.FolderEditScreen
 import daily.dayo.presentation.screen.folder.FolderPostMoveScreen
 import daily.dayo.presentation.screen.folder.FolderScreen
-import daily.dayo.presentation.screen.write.WriteFolderScreen
 
 fun NavController.navigateProfileEdit() {
     navigate(MyPageRoute.profileEdit())
@@ -124,6 +123,7 @@ fun NavGraphBuilder.myPageNavGraph(
 
     composable(route = MyPageRoute.folderPostMove()) {
         FolderPostMoveScreen(
+            navigateToCreateNewFolder = onFolderCreateClick,
             onBackClick = onBackClick
         )
     }
