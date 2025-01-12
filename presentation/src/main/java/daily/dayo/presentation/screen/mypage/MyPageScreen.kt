@@ -26,6 +26,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -66,10 +67,11 @@ import daily.dayo.presentation.viewmodel.ProfileViewModel
 
 @Composable
 fun MyPageScreen(
-    onBackClick: () -> Unit,
     onFollowButtonClick: (String, Int) -> Unit,
     onProfileEditClick: () -> Unit,
     onBookmarkClick: () -> Unit,
+    onFolderClick: (String) -> Unit,
+    onFolderCreateClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel(),
     folderViewModel: FolderViewModel = hiltViewModel()
 ) {
@@ -102,14 +104,14 @@ fun MyPageScreen(
                 }
 
                 item(span = { GridItemSpan(2) }) {
-                    MyPageDiaryHeader()
+                    MyPageDiaryHeader(onFolderCreateClick)
                 }
 
                 when (folderList.value?.status) {
                     Status.SUCCESS -> {
                         folderList.value?.data?.let { folders ->
                             items(folders) { folder ->
-                                MyPageDiary(folder)
+                                MyPageDiary(folder, onFolderClick)
                             }
                         }
                     }
@@ -292,7 +294,9 @@ private fun MyPageMenu(
 }
 
 @Composable
-private fun MyPageDiaryHeader() {
+private fun MyPageDiaryHeader(
+    onFolderCreateClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -305,8 +309,8 @@ private fun MyPageDiaryHeader() {
             style = DayoTheme.typography.b3.copy(Dark)
         )
 
-        androidx.compose.material3.Button(
-            onClick = {},
+        Button(
+            onClick = onFolderCreateClick,
             colors = ButtonDefaults.buttonColors(
                 containerColor = PrimaryL3_F2FBF7,
                 contentColor = Primary_23C882
@@ -329,8 +333,12 @@ private fun MyPageDiaryHeader() {
 }
 
 @Composable
-private fun MyPageDiary(folder: Folder) {
-    FolderView(folder = folder, onClickFolder = {}, modifier = Modifier.padding(bottom = 12.dp))
+private fun MyPageDiary(folder: Folder, onFolderClick: (String) -> Unit) {
+    FolderView(
+        folder = folder,
+        onClickFolder = onFolderClick,
+        modifier = Modifier.padding(bottom = 12.dp)
+    )
 }
 
 @Composable
@@ -385,7 +393,7 @@ private fun PreviewMyPageMenu() {
 @Preview
 @Composable
 private fun PreviewMyPageDiaryHeader() {
-    MyPageDiaryHeader()
+    MyPageDiaryHeader({})
 }
 
 private const val FOLLOWER = 0

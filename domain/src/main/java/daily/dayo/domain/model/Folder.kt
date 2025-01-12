@@ -47,6 +47,6 @@ data class FolderInfo(
     val name: String,
     val postCount: Int,
     val privacy: Privacy,
-    var subheading: String?,
+    var subheading: String,
     val thumbnailImage: String
 )

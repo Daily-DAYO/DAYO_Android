@@ -17,6 +17,7 @@
     <string name="cancel">취소</string>
     <string name="select_all">모두 선택</string>
     <string name="delete">삭제</string>
+    <string name="move">이동</string>
     <string name="delete_all">전체삭제</string>
     <string name="modify">수정</string>
     <string name="close">닫기</string>
@@ -248,10 +249,13 @@
 
     <!-- Folder -->
     <string name="post_folder_add_title">폴더 추가</string>
+    <string name="folder_add_title">폴더 추가</string>
+    <string name="folder_option">폴더 옵션</string>
     <string name="folder_edit_title">폴더 편집</string>
     <string name="post_folder_add_set_title">폴더 이름</string>
     <string name="folder_setting_add_set_title">폴더 이름</string>
     <string name="folder_setting_add_set_subheading">폴더 소개</string>
+    <string name="folder_private">비공개 폴더</string>
     <string name="folder_setting_add_set_private">공개설정</string>
     <string name="hint_post_folder_add_set_title">15자 이내로 입력해주세요.</string>
     <string name="hint_folder_setting_add_set_title">15자 이내로 입력해주세요.</string>
@@ -260,13 +264,27 @@
     <string name="post_folder_add_set_private_all">전체공개</string>
     <string name="post_folder_add_set_private_following">팔로잉</string>
     <string name="post_folder_add_set_private_only_me">나만보기</string>
+    <string name="folder_privacy_public_icon_description">공개 폴더</string>
+    <string name="folder_privacy_privacy_icon_description">비공개 폴더</string>
+    <string name="folder_post_add">게시글 작성</string>
+    <string name="folder_post_add_icon_description">게시글 작성</string>
+    <string name="folder_post_count_description">개의 글</string>
+    <string name="folder_post_selected_count">%d개 선택</string>
+    <string name="folder_post_sort_newest">최신순</string>
+    <string name="folder_post_sort_oldest">오래된순</string>
     <string name="folder_cover_image_reset">커버 사진 초기화</string>
-    <string name="folder_delete_description_message">폴더를 삭제할까요?</string>
-    <string name="folder_delete_explanation_message">해당 폴더에 등록된 게시물도 함께 삭제됩니다.</string>
+    <string name="folder_delete_description_message">\'%s\' 폴더를\n 정말 삭제할까요?</string>
+    <string name="folder_delete_explanation_message">\'%s\' 폴더를 삭제하면\n폴더 안의 게시글도 함께 삭제돼요.</string>
+    <string name="folder_post_delete_description_message">%d개의 게시글을\n정말 삭제할까요?</string>
+    <string name="folder_post_delete_explanation_message">선택한 게시글이 삭제되면 복구할 수 없어요.</string>
+    <string name="folder_post_move">선택한 폴더로 이동</string>
     <string name="folder_add_message_length_fail_min">폴더 이름을 입력해주세요.</string>
     <string name="folder_add_message_format_fail">폴더 이름에는 한글, 영문, 숫자만 사용할 수 있어요.</string>
     <string name="folder_add_message_fail">폴더를 생성 할 수 없어요. 다시 시도해주세요.</string>
     <string name="folder_post_empty_description">아직 게시물이 없어요.</string>
+    <string name="folder_option_post_edit">게시글 편집</string>
+    <string name="folder_option_edit">폴더 편집</string>
+    <string name="folder_option_delete">폴더 삭제</string>
 
     <!-- Follow -->
     <string name="follower">팔로워</string>
@@ -417,6 +435,9 @@
 
     <!-- Dialog -->
     <string name="dialog_loading_wait">잠시만 기다려주세요</string>
+
+    <!-- Error -->
+    <string name="error_message">문제가 발생했습니다.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

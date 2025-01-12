@@ -154,21 +154,23 @@ fun DayoOutlinedButton(
 
 @Composable
 fun DayoTextButton(
-    text: String = "",
+    text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     underline: Boolean = false,
+    textAlign: TextAlign = TextAlign.Start,
     textStyle: TextStyle = DayoTheme.typography.b6.copy(color = Primary_23C882)
 ) {
     Text(
+        text = text,
         modifier = modifier.clickable(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
             onClick = { onClick() }
         ),
-        text = text,
-        style = textStyle,
-        textDecoration = if (underline) TextDecoration.Underline else null
+        textDecoration = if (underline) TextDecoration.Underline else null,
+        textAlign = textAlign,
+        style = textStyle
     )
 }
 

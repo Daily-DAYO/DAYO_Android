@@ -101,9 +101,9 @@ class PostRepositoryImpl @Inject constructor(
             is NetworkResponse.UnknownError -> response
         }
 
-    override suspend fun requestDeletePost(postId: Int): NetworkResponse<LikePostDeleteResponse> =
+    override suspend fun requestDeletePost(postId: Int): NetworkResponse<Void> =
         when (val response = postApiService.requestDeletePost(postId)) {
-            is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toLikePostDeleteResponse())
+            is NetworkResponse.Success -> NetworkResponse.Success(response.body)
             is NetworkResponse.NetworkError -> response
             is NetworkResponse.ApiError -> response
             is NetworkResponse.UnknownError -> response
