@@ -6,9 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.ViewTreeObserver
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -16,7 +14,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.UpdateAvailability
-import daily.dayo.presentation.databinding.ActivityLoginBinding
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
@@ -29,48 +26,25 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLoginBinding
     private val loginViewModel by viewModels<AccountViewModel>()
     private var isReady = false
     private lateinit var updateDialog: AlertDialog
     private lateinit var appUpdateManager: AppUpdateManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
+        installSplashScreen().apply {
+            setKeepOnScreenCondition { !isReady }
+        }
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
         createDialogUpdate()
         checkUpdate()
-//        setContentView(binding.root)
-        setSystemBackClickListener()
         observeNetworkException()
         observeApiException()
-        setSplash()
         setContent {
             DayoTheme {
                 AccountScreen()
             }
         }
-    }
-
-    private fun setSystemBackClickListener() {
-        this.onBackPressedDispatcher.addCallback(
-            this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    val navHostFragment =
-                        supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
-                    val backStackEntryCount =
-                        navHostFragment?.childFragmentManager?.backStackEntryCount
-
-                    if (backStackEntryCount == 0) {
-                        this@LoginActivity.finish()
-                    } else {
-                        navHostFragment?.childFragmentManager?.popBackStack()
-                    }
-                }
-            }
-        )
     }
 
     private fun setFCM() {
@@ -113,20 +87,6 @@ class LoginActivity : AppCompatActivity() {
             Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(intent)
         this@LoginActivity.finish()
-    }
-
-    private fun setSplash() {
-        binding.root.viewTreeObserver.addOnPreDrawListener(
-            object : ViewTreeObserver.OnPreDrawListener {
-                override fun onPreDraw(): Boolean {
-                    return if (isReady) {
-                        binding.root.viewTreeObserver.removeOnPreDrawListener(this)
-                        true
-                    } else
-                        false
-                }
-            }
-        )
     }
 
     private fun checkUpdate() {
