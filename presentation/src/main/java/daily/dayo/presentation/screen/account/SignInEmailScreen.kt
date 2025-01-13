@@ -105,7 +105,7 @@ internal fun SignInEmailRoute(
         onForgetPasswordClick = navigateToFindPassword,
         onSignUpClick = navigateToSignUpEmail,
         onSignInClick = { email, password ->
-            accountViewModel.requestLoginEmail(
+            accountViewModel.requestSignInEmail(
                 email = email,
                 password = password
             )

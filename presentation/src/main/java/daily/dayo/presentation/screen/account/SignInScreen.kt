@@ -95,7 +95,7 @@ internal fun SignInRoute(
         SignInScreen(
             context = context,
             requestSignInKakao = { accessToken ->
-                accountViewModel.requestLoginKakao(accessToken)
+                accountViewModel.requestSignInKakao(accessToken)
             },
             navigateToSignInEmail = navigateToSignInEmail,
             navigateToTermsAndPolicy = { type ->
