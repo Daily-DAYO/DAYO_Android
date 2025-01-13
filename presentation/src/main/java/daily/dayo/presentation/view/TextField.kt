@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
@@ -75,7 +76,10 @@ fun DayoTextField(
     errorMessage: String = "",
     textAlign: TextAlign = TextAlign.Left,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    onTrailingIconClick: (() -> Unit) = { }
+    onTrailingIconClick: (() -> Unit) = { },
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    isEnabled: Boolean = true,
 ) {
     Column(
         modifier = modifier,
@@ -102,7 +106,10 @@ fun DayoTextField(
                     color = Dark,
                     fontStyle = DayoTheme.typography.b4.fontStyle
                 ),
+                enabled = isEnabled,
                 interactionSource = interactionSource,
+                keyboardOptions = keyboardOptions,
+                keyboardActions = keyboardActions,
                 decorationBox = @Composable { innerTextField ->
                     TextFieldDefaults.DecorationBox(
                         value = value,
@@ -118,7 +125,7 @@ fun DayoTextField(
                         },
                         singleLine = true,
                         isError = isError ?: false,
-                        enabled = true,
+                        enabled = isEnabled,
                         interactionSource = interactionSource,
                         contentPadding = PaddingValues(
                             start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
@@ -190,7 +197,10 @@ fun DayoPasswordTextField(
     errorMessage: String = "",
     textAlign: TextAlign = TextAlign.Left,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    onErrorIconClick: (() -> Unit) = { }
+    onErrorIconClick: (() -> Unit) = { },
+    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    isEnabled: Boolean = true,
 ) {
     Column(
         modifier = modifier,
@@ -219,8 +229,10 @@ fun DayoPasswordTextField(
                     color = Dark,
                     fontStyle = DayoTheme.typography.b4.fontStyle
                 ),
+                enabled = isEnabled,
                 visualTransformation = if (passwordHidden) PasswordVisualTransformation(mask = '●') else VisualTransformation.None,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                keyboardOptions = keyboardOptions,
+                keyboardActions = keyboardActions,
                 interactionSource = interactionSource,
                 decorationBox = @Composable { innerTextField ->
                     TextFieldDefaults.DecorationBox(
@@ -237,7 +249,7 @@ fun DayoPasswordTextField(
                         },
                         singleLine = true,
                         isError = isError ?: false,
-                        enabled = true,
+                        enabled = isEnabled,
                         interactionSource = interactionSource,
                         contentPadding = PaddingValues(
                             start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
@@ -313,6 +325,9 @@ fun DayoTimerTextField(
     timeOutErrorMessage: String = stringResource(id = R.string.email_address_certificate_alert_message_time_fail),
     textAlign: TextAlign = TextAlign.Left,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    isEnabled: Boolean = true,
 ) {
     var timeLeft by rememberSaveable { mutableIntStateOf(seconds) }
 
@@ -348,6 +363,9 @@ fun DayoTimerTextField(
                     color = Dark,
                     fontStyle = DayoTheme.typography.b4.fontStyle
                 ),
+                enabled = isEnabled,
+                keyboardOptions = keyboardOptions,
+                keyboardActions = keyboardActions,
                 interactionSource = interactionSource,
                 decorationBox = @Composable { innerTextField ->
                     TextFieldDefaults.DecorationBox(
@@ -364,7 +382,7 @@ fun DayoTimerTextField(
                         },
                         singleLine = true,
                         isError = isError || timeLeft == 0,
-                        enabled = true,
+                        enabled = isEnabled,
                         interactionSource = interactionSource,
                         contentPadding = PaddingValues(
                             start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
