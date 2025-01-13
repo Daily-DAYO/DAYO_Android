@@ -57,6 +57,21 @@ fun NavGraphBuilder.signInNavGraph(
             accountViewModel = hiltViewModel(parentStackEntry),
         )
     }
+    composable(route = SignInRoute.findPassword) {
+        // TODO FindPasswordRoute
+    }
+
+    composable(route = SignInRoute.signUpEmail) {
+        val parentStackEntry = remember(it) {
+            navController.getBackStackEntry(SignInRoute.route)
+        }
+        SignUpEmailRoute(
+            coroutineScope = coroutineScope,
+            snackBarHostState = snackBarHostState,
+            onBackClick = onBackClick,
+            accountViewModel = hiltViewModel(parentStackEntry),
+        )
+    }
 
 }
 
