@@ -1,5 +1,7 @@
 package daily.dayo.presentation.screen.account
 
+import android.app.Activity
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -39,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import daily.dayo.presentation.R
+import daily.dayo.presentation.activity.MainActivity
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
@@ -65,12 +69,22 @@ internal fun SignInEmailRoute(
     accountViewModel: AccountViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    var isInitialized by remember { mutableStateOf(false) }
     val signInSuccess by accountViewModel.signInSuccess.collectAsState()
 
     LaunchedEffect(signInSuccess) {
+        if (!isInitialized) {
+            accountViewModel.initializeSignInSuccess()
+            isInitialized = true
+        }
+
         when (signInSuccess) {
             Status.SUCCESS -> {
-                // TODO Main으로 이동
+                val intent = Intent(context, MainActivity::class.java)
+                intent.flags =
+                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                context.startActivity(intent)
+                (context as Activity).finish()
             }
 
             Status.ERROR -> {
