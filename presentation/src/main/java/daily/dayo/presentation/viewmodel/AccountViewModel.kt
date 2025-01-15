@@ -45,8 +45,9 @@ class AccountViewModel @Inject constructor(
     private val requestClearCurrentUserUseCase: RequestClearCurrentUserUseCase
 ) : ViewModel() {
     companion object {
-        const val SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_INITIAL = Int.MIN_VALUE + 10
+        const val EMAIL_CERTIFICATE_AUTH_CODE_INITIAL = Int.MIN_VALUE + 10
         const val SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_FAIL = Int.MIN_VALUE + 20
+        const val RESET_PASSWORD_EMAIL_CERTIFICATE_AUTH_CODE_FAIL = Int.MIN_VALUE + 30
     }
 
     private val _signupSuccess = MutableStateFlow<Status?>(null)
@@ -70,7 +71,8 @@ class AccountViewModel @Inject constructor(
     private val _isCertificateEmailSend = MutableLiveData<Boolean>()
     val isCertificateEmailSend: LiveData<Boolean> get() = _isCertificateEmailSend
 
-    private val _certificateEmailAuthCode = MutableStateFlow<String?>(SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString())
+    private val _certificateEmailAuthCode =
+        MutableStateFlow<String?>(EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString())
     val certificateEmailAuthCode: StateFlow<String?> get() = _certificateEmailAuthCode
 
     private val _withdrawSuccess = MutableLiveData<Event<Boolean>>()
@@ -79,8 +81,11 @@ class AccountViewModel @Inject constructor(
     private val _logoutSuccess = MutableLiveData<Event<Boolean>>()
     val logoutSuccess: LiveData<Event<Boolean>> get() = _logoutSuccess
 
-    private val _checkEmailSuccess = MutableLiveData<Boolean>()
-    val checkEmailSuccess get() = _checkEmailSuccess
+    private val _checkEmailSuccess = MutableStateFlow<Status>(Status.LOADING)
+    val checkEmailSuccess: StateFlow<Status> get() = _checkEmailSuccess
+
+    private val _resetPasswordSuccess = MutableStateFlow<Status?>(null)
+    val resetPasswordSuccess: StateFlow<Status?> get() = _resetPasswordSuccess
 
     private val _checkCurrentPasswordSuccess = MutableLiveData<Event<Boolean>>()
     val checkCurrentPasswordSuccess get() = _checkCurrentPasswordSuccess
@@ -288,7 +293,7 @@ class AccountViewModel @Inject constructor(
     }
 
     fun requestCertificateEmail(email: String) = viewModelScope.launch {
-        _certificateEmailAuthCode.emit(SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString())
+        _certificateEmailAuthCode.emit(EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString())
         requestCertificateEmailUseCase(email).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
@@ -360,20 +365,19 @@ class AccountViewModel @Inject constructor(
     }
 
     fun requestCheckEmail(inputEmail: String) = viewModelScope.launch {
+        _checkEmailSuccess.emit(Status.LOADING)
         requestCheckEmailUseCase(email = inputEmail).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _checkEmailSuccess.postValue(true)
+                    _checkEmailSuccess.emit(Status.SUCCESS)
                 }
 
                 is NetworkResponse.NetworkError -> {
-                    _isErrorExceptionOccurred.postValue(Event(true))
-                    _checkEmailSuccess.postValue(false)
+                    _checkEmailSuccess.emit(Status.ERROR)
                 }
 
                 is NetworkResponse.ApiError -> {
-                    _isApiErrorExceptionOccurred.postValue(Event(true))
-                    _checkEmailSuccess.postValue(false)
+                    _checkEmailSuccess.emit(Status.ERROR)
                 }
 
                 else -> {}
@@ -427,20 +431,19 @@ class AccountViewModel @Inject constructor(
     }
 
     fun requestChangePassword(email: String, newPassword: String) = viewModelScope.launch {
+        _resetPasswordSuccess.emit(Status.LOADING)
         requestChangePasswordUseCase(email = email, password = newPassword).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _changePasswordSuccess.postValue(true)
+                    _resetPasswordSuccess.emit(Status.SUCCESS)
                 }
 
                 is NetworkResponse.NetworkError -> {
-                    _isErrorExceptionOccurred.postValue(Event(true))
-                    _changePasswordSuccess.postValue(false)
+                    _resetPasswordSuccess.emit(Status.ERROR)
                 }
 
                 is NetworkResponse.ApiError -> {
-                    _isApiErrorExceptionOccurred.postValue(Event(true))
-                    _changePasswordSuccess.postValue(false)
+                    _resetPasswordSuccess.emit(Status.ERROR)
                 }
 
                 else -> {}
@@ -477,7 +480,10 @@ class AccountViewModel @Inject constructor(
     fun getCurrentUserInfo() = requestCurrentUserInfoUseCase()
 
     fun getCurrentUserNotiDevicePermit() = requestCurrentUserNotiDevicePermitUseCase()
-    fun requestCurrentUserNotiDevicePermit(isPermit: Boolean) = requestCurrentUserNotiDevicePermitUseCase(isPermit = isPermit)
+    fun requestCurrentUserNotiDevicePermit(isPermit: Boolean) =
+        requestCurrentUserNotiDevicePermitUseCase(isPermit = isPermit)
+
     fun getCurrentUserNotiNoticePermit() = requestCurrentUserNotiNoticePermitUseCase()
-    fun requestCurrentUserNotiNoticePermit(isPermit: Boolean) = requestCurrentUserNotiNoticePermitUseCase(isPermit = isPermit)
+    fun requestCurrentUserNotiNoticePermit(isPermit: Boolean) =
+        requestCurrentUserNotiNoticePermitUseCase(isPermit = isPermit)
 }

@@ -15,8 +15,8 @@ fun NavController.navigateSignInEmail() {
     this.navigate(SignInRoute.signInEmail)
 }
 
-fun NavController.navigateFindPassword() {
-    this.navigate(SignInRoute.findPassword)
+fun NavController.navigateResetPassword() {
+    this.navigate(SignInRoute.resetPassword)
 }
 
 fun NavController.navigateSignUpEmail() {
@@ -30,7 +30,7 @@ fun NavGraphBuilder.signInNavGraph(
     navController: NavController,
     onBackClick: () -> Unit,
     navigateToSignInEmail: () -> Unit,
-    navigateToFindPassword: () -> Unit,
+    navigateToResetPassword: () -> Unit,
     navigateToSignUpEmail: () -> Unit,
     bottomSheetState: ModalBottomSheetState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
@@ -52,13 +52,22 @@ fun NavGraphBuilder.signInNavGraph(
             coroutineScope = coroutineScope,
             snackBarHostState = snackBarHostState,
             onBackClick = onBackClick,
-            navigateToFindPassword = navigateToFindPassword,
+            navigateToFindPassword = navigateToResetPassword,
             navigateToSignUpEmail = navigateToSignUpEmail,
             accountViewModel = hiltViewModel(parentStackEntry),
         )
     }
-    composable(route = SignInRoute.findPassword) {
-        // TODO FindPasswordRoute
+
+    composable(route = SignInRoute.resetPassword) {
+        val parentStackEntry = remember(it) {
+            navController.getBackStackEntry(SignInRoute.route)
+        }
+        ResetPasswordRoute(
+            coroutineScope = coroutineScope,
+            snackBarHostState = snackBarHostState,
+            onBackClick = onBackClick,
+            accountViewModel = hiltViewModel(parentStackEntry),
+        )
     }
 
     composable(route = SignInRoute.signUpEmail) {
@@ -78,7 +87,7 @@ fun NavGraphBuilder.signInNavGraph(
 object SignInRoute {
     const val route = "signIn"
     const val signInEmail = "$route/email"
-    const val findPassword = "$route/findPassword"
+    const val resetPassword = "$route/resetPassword"
     const val signUpEmail = "$route/signUpEmail"
 
 }

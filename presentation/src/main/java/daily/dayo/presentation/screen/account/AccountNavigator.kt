@@ -17,8 +17,8 @@ class AccountNavigator(
         navController.navigateSignInEmail()
     }
 
-    fun navigateFindPassword() {
-        navController.navigateFindPassword()
+    fun navigateResetPassword() {
+        navController.navigateResetPassword()
     }
 
     fun navigateSignUpEmail() {

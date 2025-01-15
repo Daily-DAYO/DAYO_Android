@@ -431,6 +431,36 @@
     <string name="signup_email_complete_guide_message"><b>%s</b>님,\n가입을 축하드려요!</string>
     <string name="signup_email_alert_message_fail_network">가입을 완료할 수 없어요. 다시 시도해주세요.</string>
 
+    <!-- Reset Password -->
+    <string name="reset_password_alert_message_loading">비밀번호 변경 중입니다.</string>
+    <string name="reset_password_email_title">비밀번호 재설정</string>
+    <string name="reset_password_email_sub_title">가입할 때 사용한 이메일을 입력해주세요.</string>
+    <string name="reset_password_email_fail_invalid_format">올바른 이메일 주소를 입력하세요</string>
+    <string name="reset_password_email_fail_not_exist">등록된 이메일이 없어요</string>
+    <string name="reset_password_email_placeholder">이메일</string>
+    <string name="reset_password_email_next_button">인증번호 받기</string>
+
+    <string name="reset_password_email_certification_next_button">인증하기</string>
+    <string name="reset_password_email_certification_input_title">인증번호</string>
+    <string name="reset_password_email_certification_input_placeholder">인증번호</string>
+    <string name="reset_password_email_certification_fail_wrong">인증번호를 다시 확인하세요</string>
+    <string name="reset_password_email_certification_fail_network">네트워크 오류로 인증번호가 정상적으로 전송되지 않았어요</string>
+    <string name="reset_password_email_certification_fail_time_out">제한시간을 초과했어요! 인증번호를 다시 받아주세요</string>
+    <string name="reset_password_email_certification_resend_button">인증번호 재발송</string>
+
+    <string name="reset_password_new_password_title">새로운 비밀번호 입력</string>
+    <string name="reset_password_new_password_sub_title">메일로 인증번호가 발송되었어요!</string>
+
+    <string name="reset_password_new_password_input_title">비밀번호</string>
+    <string name="reset_password_new_password_input_placeholder">8자리 이상 입력</string>
+    <string name="reset_password_new_password_message_format_fail">8자 이상, 16자 이하의 영문 소문자와 숫자만 사용할 수 있어요</string>
+    <string name="reset_password_new_password_next_button">다음</string>
+
+    <string name="reset_password_new_password_confirm_input_title">비밀번호 확인</string>
+    <string name="reset_password_new_password_confirm_input_placeholder">비밀번호 재입력</string>
+    <string name="reset_password_new_password_confirm_fail_not_match">비밀번호가 일치하지 않아요</string>
+    <string name="reset_password_new_password_confirmation_next_button">변경하기</string>
+
     <!-- Find Account -->
     <string name="find_account_password_title">비밀번호 찾기</string>
     <string name="find_account_password_check_email_description">가입할 때 사용한 이메일을 입력해주세요.</string>

@@ -88,7 +88,7 @@ import daily.dayo.presentation.view.dialog.BottomSheetDialog
 import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.AccountViewModel.Companion.SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_FAIL
-import daily.dayo.presentation.viewmodel.AccountViewModel.Companion.SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_INITIAL
+import daily.dayo.presentation.viewmodel.AccountViewModel.Companion.EMAIL_CERTIFICATE_AUTH_CODE_INITIAL
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -231,7 +231,7 @@ internal fun SignUpEmailRoute(
         },
         isEmailDuplicate = isEmailDuplicate,
         certificateEmailAuthCode = certificateEmailAuthCode
-            ?: SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString(),
+            ?: EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString(),
         isNicknameDuplicate = isNicknameDuplicate,
         profileImg = profileImgState.value,
         signUpStatus = signUpStatus
@@ -263,7 +263,7 @@ fun SignUpEmailScreen(
     onClickProfileReset: () -> Unit = {},
     onSignUpEmailClick: (email: String, nickname: String, password: String, profileImg: Bitmap?) -> Unit = { _, _, _, _ -> },
     isEmailDuplicate: Status = Status.LOADING,
-    certificateEmailAuthCode: String = SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString(),
+    certificateEmailAuthCode: String = EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString(),
     isNicknameDuplicate: Boolean = false,
     profileImg: Bitmap? = null,
     setProfileImg: (Bitmap?) -> Unit = {},
@@ -383,7 +383,7 @@ fun SignUpEmailScreen(
                 })
             Column(
                 modifier = Modifier
-                    .background(White_FFFFFF)
+                    .background(DayoTheme.colorScheme.background)
                     .padding(horizontal = 20.dp, vertical = 0.dp)
                     .fillMaxWidth()
                     .wrapContentSize()
@@ -545,7 +545,7 @@ fun SignUpEmailScreen(
                             }
 
                             SignUpStep.EMAIL_VERIFICATION -> {
-                                if (certificateEmailAuthCode == SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString() ||
+                                if (certificateEmailAuthCode == EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString() ||
                                     certificateEmailAuthCode == SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_FAIL.toString()
                                 ) {
                                     // 인증코드가 없으므로 검증할 필요도 없음
@@ -812,7 +812,7 @@ private fun EmailCertificationScreen(
             .fillMaxWidth()
             .height(8.dp)
     )
-    if (certificationCode != SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString()) {
+    if (certificationCode != EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString()) {
         // 네트워크 오류로 정상적으로 비교할 인증코드를 보내지 못한 경우 에러 처리
         if (certificationCode == SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_FAIL.toString()) {
             timerErrorMessageRedId.value =
@@ -823,7 +823,7 @@ private fun EmailCertificationScreen(
 
     AnimatedVisibility(
         visible = certificationCode != SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_FAIL.toString() &&
-                certificationCode != SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString(),
+                certificationCode != EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString(),
         enter = fadeIn(),
         exit = shrinkVertically()
     ) {
@@ -1053,6 +1053,7 @@ enum class EmailCertificationState {
     IN_PROGRESS_CHECK_CERTIFICATION, // 인증번호 받는 중
     SUCCESS_CHECK_EMAIL,              // 인증 성공
     SUCCESS_CHECK_EMAIL_CERTIFICATION,              // 인증 성공
+    NOT_EXIST_EMAIL,      // 존재하지 않는 이메일로 인증 실패
     DUPLICATE_EMAIL,      // 중복된 이메일로 인증 실패
     INVALID_FORMAT,       // 잘못된 형식의 이메일로 인증 실패
     TIMEOUT               // 인증시간 초과로 인증 실패
