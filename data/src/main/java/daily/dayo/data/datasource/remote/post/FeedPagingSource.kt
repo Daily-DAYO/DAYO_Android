@@ -3,10 +3,12 @@ package daily.dayo.data.datasource.remote.post
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import daily.dayo.data.mapper.toPost
+import daily.dayo.domain.model.Category
 import daily.dayo.domain.model.NetworkResponse
 import daily.dayo.domain.model.Post
 
 class FeedPagingSource(
+    private val category: Category,
     private val apiService: PostApiService,
     private val size: Int
 ) : PagingSource<Int, Post>() {
@@ -15,16 +17,21 @@ class FeedPagingSource(
         params: LoadParams<Int>
     ): LoadResult<Int, Post> {
         val nextPageNumber = params.key ?: 0
-        apiService.requestFeedList(end = nextPageNumber).let { ApiResponse ->
+        if (category == Category.ALL) {
+            apiService.requestAllFeedList(end = nextPageNumber)
+        } else {
+            apiService.requestFeedListByCategory(category = category, end = nextPageNumber)
+        }.let { response ->
             return try {
-                when (ApiResponse) {
+                when (response) {
                     is NetworkResponse.Success -> {
                         return LoadResult.Page(
-                            data = ApiResponse.body!!.data.map { it.toPost() },
+                            data = response.body?.data?.map { it.toPost() } ?: emptyList(),
                             prevKey = if (nextPageNumber == 0) null else nextPageNumber - size,
-                            nextKey = if (ApiResponse.body!!.last || ApiResponse.body!!.count == 0) null else nextPageNumber + size
+                            nextKey = if (response.body?.last != false || response.body?.count == 0) null else nextPageNumber + size
                         )
                     }
+
                     else -> {
                         throw Exception("LoadResult Error")
                     }
