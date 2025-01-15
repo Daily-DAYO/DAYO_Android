@@ -9,6 +9,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import daily.dayo.presentation.screen.rules.RuleRoute
+import daily.dayo.presentation.screen.rules.RuleType
 import kotlinx.coroutines.CoroutineScope
 
 fun NavController.navigateSignInEmail() {
@@ -32,6 +34,7 @@ fun NavGraphBuilder.signInNavGraph(
     navigateToSignInEmail: () -> Unit,
     navigateToResetPassword: () -> Unit,
     navigateToSignUpEmail: () -> Unit,
+    navigateToRules: (RuleType) -> Unit,
     bottomSheetState: ModalBottomSheetState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
 ) {
@@ -42,6 +45,7 @@ fun NavGraphBuilder.signInNavGraph(
         SignInRoute(
             accountViewModel = hiltViewModel(parentStackEntry),
             navigateToSignInEmail = navigateToSignInEmail,
+            navigateToRules = navigateToRules,
         )
     }
     composable(route = SignInRoute.signInEmail) {
@@ -79,6 +83,20 @@ fun NavGraphBuilder.signInNavGraph(
             snackBarHostState = snackBarHostState,
             onBackClick = onBackClick,
             accountViewModel = hiltViewModel(parentStackEntry),
+        )
+    }
+
+    composable(route = RuleRoute.privacyPolicy) {
+        RuleRoute(
+            onBackClick = onBackClick,
+            ruleType = RuleType.PRIVACY_POLICY
+        )
+    }
+
+    composable(route = RuleRoute.termsAndConditions) {
+        RuleRoute(
+            onBackClick = onBackClick,
+            ruleType = RuleType.TERMS_AND_CONDITIONS
         )
     }
 
