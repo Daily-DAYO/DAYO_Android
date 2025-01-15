@@ -13,10 +13,8 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,12 +33,10 @@ import daily.dayo.presentation.theme.Primary_23C882
 @Composable
 fun CategoryHorizontalGroup(
     categoryMenus: List<CategoryMenu>,
-    selectedCategory: MutableState<CategoryMenu>,
+    selectedCategory: CategoryMenu,
+    onCategorySelect: (CategoryMenu) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val selectedOption = selectedCategory.component1()
-    val onOptionSelected = selectedCategory.component2()
-
     LazyRow(
         modifier = modifier.selectableGroup(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -50,7 +46,7 @@ fun CategoryHorizontalGroup(
             item {
                 val interactionSource = remember { MutableInteractionSource() }
                 val isPressed by interactionSource.collectIsPressedAsState()
-                val buttonColors = if (category == selectedOption)
+                val buttonColors = if (category == selectedCategory)
                     ButtonDefaults.buttonColors(
                         containerColor = PrimaryL3_F2FBF7,
                         contentColor = Primary_23C882
@@ -62,7 +58,7 @@ fun CategoryHorizontalGroup(
                     )
 
                 Button(
-                    onClick = { onOptionSelected(category) },
+                    onClick = { onCategorySelect(category) },
                     shape = RoundedCornerShape(12.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp),
                     colors = buttonColors,
@@ -71,8 +67,8 @@ fun CategoryHorizontalGroup(
                         .wrapContentWidth()
                         .height(36.dp)
                         .selectable(
-                            selected = (category == selectedOption),
-                            onClick = { onOptionSelected(category) },
+                            selected = (category == categoryMenus),
+                            onClick = { onCategorySelect(category) },
                             role = Role.RadioButton
                         )
                         .indication(interactionSource = interactionSource, indication = null),
@@ -99,6 +95,6 @@ private fun PreviewCategoryHorizontalGroup() {
     )
     val selectedCategory = remember { mutableStateOf(categoryMenus[0]) }
     DayoTheme {
-        CategoryHorizontalGroup(categoryMenus, selectedCategory)
+        CategoryHorizontalGroup(categoryMenus, selectedCategory.value, {})
     }
 }

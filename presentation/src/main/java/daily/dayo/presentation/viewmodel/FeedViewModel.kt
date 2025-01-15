@@ -1,6 +1,5 @@
 package daily.dayo.presentation.viewmodel
 
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +9,7 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import daily.dayo.domain.model.BookmarkPostResponse
+import daily.dayo.domain.model.Category
 import daily.dayo.domain.model.LikePostResponse
 import daily.dayo.domain.model.NetworkResponse
 import daily.dayo.domain.model.Post
@@ -33,17 +33,18 @@ class FeedViewModel @Inject constructor(
     private val requestBookmarkPostUseCase: RequestBookmarkPostUseCase,
     private val requestDeleteBookmarkPostUseCase: RequestDeleteBookmarkPostUseCase
 ) : ViewModel() {
+
+    private var _currentCategory = Category.ALL
+    private val currentCategory get() = _currentCategory
+
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing get() = _isRefreshing
-
-    val listState = LazyListState()
 
     private val _feedState = MutableStateFlow<PagingData<Post>>(PagingData.empty())
     val feedState get() = _feedState
 
     private val _feedList = MutableLiveData<PagingData<Post>>()
     val feedList: LiveData<PagingData<Post>> get() = _feedList
-
 
     private val _postLiked = MutableLiveData<Resource<LikePostResponse>>()
     val postLiked: LiveData<Resource<LikePostResponse>> get() = _postLiked
@@ -59,13 +60,19 @@ class FeedViewModel @Inject constructor(
         }
     }
 
-    fun requestFeedList() = viewModelScope.launch(Dispatchers.IO) {
-        requestFeedListUseCase()
-            .cachedIn(viewModelScope)
-            .collectLatest {
-                _feedState.emit(it)
-                _feedList.postValue(it)
-            }
+    fun setCurrentCategory(category: Category) {
+        _currentCategory = category
+    }
+
+    fun requestFeedList() {
+        viewModelScope.launch {
+            requestFeedListUseCase(currentCategory)
+                .cachedIn(viewModelScope)
+                .collectLatest {
+                    _feedState.emit(it)
+                    _feedList.postValue(it)
+                }
+        }
     }
 
     fun requestLikePost(postId: Int) = viewModelScope.launch(Dispatchers.IO) {

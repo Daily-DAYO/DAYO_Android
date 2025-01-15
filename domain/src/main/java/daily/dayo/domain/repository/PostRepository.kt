@@ -38,5 +38,5 @@ interface PostRepository {
         hashtags: List<String>
     ): NetworkResponse<PostEditResponse>
 
-    suspend fun requestFeedList(): Flow<PagingData<Post>>
+    suspend fun requestFeedList(category: Category): Flow<PagingData<Post>>
 }
