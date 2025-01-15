@@ -49,7 +49,7 @@ internal fun AccountScreen(
                                 navController = navigator.navController,
                                 onBackClick = { navigator.popBackStack() },
                                 navigateToSignInEmail = { navigator.navigateSignInEmail() },
-                                navigateToFindPassword = { navigator.navigateFindPassword() },
+                                navigateToResetPassword = { navigator.navigateResetPassword() },
                                 navigateToSignUpEmail = { navigator.navigateSignUpEmail() },
                                 bottomSheetState = bottomSheetState,
                                 bottomSheetContent = bottomSheetContent
