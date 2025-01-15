@@ -37,11 +37,11 @@ const val LOADING_TOP_Z_INDEX = Float.MAX_VALUE
 
 @Composable
 fun Loading(
+    isVisible: Boolean,
     @RawRes lottieFile: Int = R.raw.dayo_loading,
     lottieModifier: Modifier = Modifier,
     lottieWidth: Dp = 92.dp,
     lottieHeight: Dp = 85.dp,
-    isVisible: Boolean,
     modifier: Modifier = Modifier,
     message: String = stringResource(id = R.string.loading_default_message),
     dimColor: Color = Dark.copy(alpha = 0.4f),
