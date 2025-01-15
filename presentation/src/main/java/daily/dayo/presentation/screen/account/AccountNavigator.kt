@@ -6,6 +6,8 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import daily.dayo.presentation.screen.rules.RuleType
+import daily.dayo.presentation.screen.rules.navigateRules
 
 class AccountNavigator(
     val navController: NavHostController,
@@ -23,6 +25,10 @@ class AccountNavigator(
 
     fun navigateSignUpEmail() {
         navController.navigateSignUpEmail()
+    }
+
+    fun navigateRules(ruleType: RuleType) {
+        navController.navigateRules(ruleType)
     }
 
     fun popBackStack() {

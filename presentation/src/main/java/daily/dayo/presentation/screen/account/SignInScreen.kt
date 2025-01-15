@@ -63,6 +63,7 @@ import daily.dayo.presentation.R
 import daily.dayo.presentation.activity.LoginActivity
 import daily.dayo.presentation.activity.MainActivity
 import daily.dayo.presentation.common.Status
+import daily.dayo.presentation.screen.rules.RuleType
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray4_C5CAD2
@@ -79,6 +80,7 @@ internal fun SignInRoute(
     snackBarHostState: SnackbarHostState = SnackbarHostState(),
     accountViewModel: AccountViewModel = hiltViewModel(),
     navigateToSignInEmail: () -> Unit = {},
+    navigateToRules: (RuleType) -> Unit = {},
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -98,9 +100,7 @@ internal fun SignInRoute(
                 accountViewModel.requestSignInKakao(accessToken)
             },
             navigateToSignInEmail = navigateToSignInEmail,
-            navigateToTermsAndPolicy = { type ->
-                // TODO 이용약관 및 개인정보 처리방침 화면으로 이동
-            }
+            navigateToTermsAndPolicy = { type -> navigateToRules(type) }
         )
 
         Loading(
@@ -116,7 +116,7 @@ private fun SignInScreen(
     context: Context = LocalContext.current,
     requestSignInKakao: (accessToken: String) -> Unit = {},
     navigateToSignInEmail: () -> Unit = {},
-    navigateToTermsAndPolicy: (type: String) -> Unit = {},
+    navigateToTermsAndPolicy: (type: RuleType) -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -207,7 +207,7 @@ private fun SignInScreen(
             ) {
                 Text(text = "가입 시 DAYO의 ", style = DayoTheme.typography.caption3.copy(Gray4_C5CAD2))
                 DayoTextButton(
-                    onClick = { navigateToTermsAndPolicy("terms") },
+                    onClick = { navigateToTermsAndPolicy(RuleType.TERMS_AND_CONDITIONS) },
                     text = "이용약관",
                     textStyle = DayoTheme.typography.caption3.copy(
                         Gray4_C5CAD2
@@ -216,15 +216,15 @@ private fun SignInScreen(
                 )
                 Text(text = " 및 ", style = DayoTheme.typography.caption3.copy(Gray4_C5CAD2))
                 DayoTextButton(
-                    onClick = { navigateToTermsAndPolicy("privacy") },
-                    text = "개인정보",
+                    onClick = { navigateToTermsAndPolicy(RuleType.PRIVACY_POLICY) },
+                    text = "개인정보 취급방침",
                     textStyle = DayoTheme.typography.caption3.copy(
                         Gray4_C5CAD2
                     ),
                     underline = true
                 )
                 Text(
-                    text = " 취급방침에 동의하게 됩니다.", style = DayoTheme.typography.caption3.copy(
+                    text = "에 동의하게 됩니다.", style = DayoTheme.typography.caption3.copy(
                         Gray4_C5CAD2
                     )
                 )
