@@ -51,6 +51,7 @@ internal fun AccountScreen(
                                 navigateToSignInEmail = { navigator.navigateSignInEmail() },
                                 navigateToResetPassword = { navigator.navigateResetPassword() },
                                 navigateToSignUpEmail = { navigator.navigateSignUpEmail() },
+                                navigateToProfileSetting = { navigator.navigateProfileSetting() },
                                 navigateToRules = { route -> navigator.navigateRules(route) },
                                 bottomSheetState = bottomSheetState,
                                 bottomSheetContent = bottomSheetContent

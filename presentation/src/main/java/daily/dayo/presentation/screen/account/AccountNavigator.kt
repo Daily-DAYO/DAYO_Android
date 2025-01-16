@@ -27,6 +27,10 @@ class AccountNavigator(
         navController.navigateSignUpEmail()
     }
 
+    fun navigateProfileSetting() {
+        navController.navigateProfileSetting()
+    }
+
     fun navigateRules(ruleType: RuleType) {
         navController.navigateRules(ruleType)
     }

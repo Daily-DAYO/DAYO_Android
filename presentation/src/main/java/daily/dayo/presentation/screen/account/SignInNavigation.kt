@@ -25,6 +25,10 @@ fun NavController.navigateSignUpEmail() {
     this.navigate(SignInRoute.signUpEmail)
 }
 
+fun NavController.navigateProfileSetting() {
+    this.navigate(SignInRoute.profileSetting)
+}
+
 @OptIn(ExperimentalMaterialApi::class)
 fun NavGraphBuilder.signInNavGraph(
     coroutineScope: CoroutineScope,
@@ -35,6 +39,7 @@ fun NavGraphBuilder.signInNavGraph(
     navigateToResetPassword: () -> Unit,
     navigateToSignUpEmail: () -> Unit,
     navigateToRules: (RuleType) -> Unit,
+    navigateToProfileSetting: () -> Unit,
     bottomSheetState: ModalBottomSheetState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
 ) {
@@ -46,6 +51,7 @@ fun NavGraphBuilder.signInNavGraph(
             accountViewModel = hiltViewModel(parentStackEntry),
             navigateToSignInEmail = navigateToSignInEmail,
             navigateToRules = navigateToRules,
+            navigateToProfileSetting = navigateToProfileSetting,
         )
     }
     composable(route = SignInRoute.signInEmail) {
@@ -83,6 +89,21 @@ fun NavGraphBuilder.signInNavGraph(
             snackBarHostState = snackBarHostState,
             onBackClick = onBackClick,
             accountViewModel = hiltViewModel(parentStackEntry),
+            profileSettingViewModel = hiltViewModel(parentStackEntry),
+        )
+    }
+
+    composable(route = SignInRoute.profileSetting) {
+        val parentStackEntry = remember(it) {
+            navController.getBackStackEntry(SignInRoute.route)
+        }
+        SignUpEmailRoute(
+            coroutineScope = coroutineScope,
+            snackBarHostState = snackBarHostState,
+            onBackClick = onBackClick,
+            accountViewModel = hiltViewModel(parentStackEntry),
+            profileSettingViewModel = hiltViewModel(parentStackEntry),
+            startSignUpStep = SignUpStep.PROFILE_SETUP
         )
     }
 
@@ -107,5 +128,5 @@ object SignInRoute {
     const val signInEmail = "$route/email"
     const val resetPassword = "$route/resetPassword"
     const val signUpEmail = "$route/signUpEmail"
-
+    const val profileSetting = "$route/profileSetting"
 }
