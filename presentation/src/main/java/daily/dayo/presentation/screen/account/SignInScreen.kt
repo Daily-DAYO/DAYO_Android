@@ -81,6 +81,7 @@ internal fun SignInRoute(
     accountViewModel: AccountViewModel = hiltViewModel(),
     navigateToSignInEmail: () -> Unit = {},
     navigateToRules: (RuleType) -> Unit = {},
+    navigateToProfileSetting: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -90,7 +91,8 @@ internal fun SignInRoute(
         context = context,
         snackBarHostState = snackBarHostState,
         signInSuccess = signInSuccess,
-        getCurrentUserInfo = { accountViewModel.getCurrentUserInfo() }
+        getCurrentUserInfo = { accountViewModel.getCurrentUserInfo() },
+        navigateToProfileSetting = { navigateToProfileSetting() },
     )
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -373,21 +375,16 @@ private fun ObserveSignInStatus(
     context: Context,
     snackBarHostState: SnackbarHostState = SnackbarHostState(),
     signInSuccess: Status?,
-    getCurrentUserInfo: () -> User = { User() }
+    getCurrentUserInfo: () -> User = { User() },
+    navigateToProfileSetting: () -> Unit = {},
 ) {
     LaunchedEffect(signInSuccess) {
         when (signInSuccess) {
             Status.SUCCESS -> {
                 if (getCurrentUserInfo().nickname?.isNullOrEmpty() == true) {
-                    // TODO 카카오 로그인 첫 시도 시 닉네임 설정 화면으로 이동
+                    navigateToProfileSetting()
                 } else {
-                    val intent = Intent(context, MainActivity::class.java)
-                    intent.flags =
-                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    (context as? LoginActivity)?.let {
-                        it.startActivity(intent)
-                        it.finish()
-                    }
+                    navigateToHome(context)
                 }
             }
 
@@ -402,6 +399,16 @@ private fun ObserveSignInStatus(
 
             else -> {}
         }
+    }
+}
+
+fun navigateToHome(context: Context) {
+    val intent = Intent(context, MainActivity::class.java)
+    intent.flags =
+        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+    (context as? LoginActivity)?.let {
+        it.startActivity(intent)
+        it.finish()
     }
 }
 

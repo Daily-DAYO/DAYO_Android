@@ -89,6 +89,7 @@ import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.AccountViewModel.Companion.SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_FAIL
 import daily.dayo.presentation.viewmodel.AccountViewModel.Companion.EMAIL_CERTIFICATE_AUTH_CODE_INITIAL
+import daily.dayo.presentation.viewmodel.ProfileSettingViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -105,7 +106,9 @@ internal fun SignUpEmailRoute(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     snackBarHostState: SnackbarHostState,
     onBackClick: () -> Unit = {},
-    accountViewModel: AccountViewModel = hiltViewModel()
+    accountViewModel: AccountViewModel = hiltViewModel(),
+    profileSettingViewModel: ProfileSettingViewModel = hiltViewModel(),
+    startSignUpStep: SignUpStep = SignUpStep.EMAIL_INPUT
 ) {
     val context = LocalContext.current
     val contentResolver = context.contentResolver
@@ -114,6 +117,7 @@ internal fun SignUpEmailRoute(
     val bitmapOptions =
         BitmapFactory.Options().apply { inPreferredConfig = Bitmap.Config.ARGB_8888 }
 
+    var signUpStep by remember { mutableStateOf(startSignUpStep) }
     val isEmailDuplicate by accountViewModel.isEmailDuplicate.collectAsStateWithLifecycle()
     val certificateEmailAuthCode by accountViewModel.certificateEmailAuthCode.collectAsStateWithLifecycle()
     val isNicknameDuplicate by accountViewModel.isNicknameDuplicate.collectAsStateWithLifecycle()
@@ -121,6 +125,7 @@ internal fun SignUpEmailRoute(
     var showProfileCapture by remember { mutableStateOf(false) }
     val profileImgState = remember { mutableStateOf<Bitmap?>(null) }
     val signUpStatus by accountViewModel.signupSuccess.collectAsStateWithLifecycle()
+    val updateProfileStatus by profileSettingViewModel.isUpdateSuccess.collectAsStateWithLifecycle()
 
     val openGallery = launchGallery(
         context = context,
@@ -214,6 +219,21 @@ internal fun SignUpEmailRoute(
                 bottomSheetState.hide()
             }
         },
+        onProfileUpdateClick = { nickname, profileImg ->
+            val imageFileTimeFormat = SimpleDateFormat("yyyy-MM-d-HH-mm-ss-SSS", Locale.KOREA)
+            val fileName =
+                imageFileTimeFormat.format(Date(System.currentTimeMillis())).toString() + ".jpg"
+
+            coroutineScope.launch {
+                profileSettingViewModel.requestUpdateMyProfileWithResizedFile(
+                    nickname = nickname,
+                    profileImg = profileImg,
+                    profileImgTempDir = "${context.cacheDir}/$fileName",
+                    isReset = profileImg == null
+                )
+            }
+
+        },
         onSignUpEmailClick = { email, nickname, password, profileImg ->
             val imageFileTimeFormat = SimpleDateFormat("yyyy-MM-d-HH-mm-ss-SSS", Locale.KOREA)
             val fileName =
@@ -234,14 +254,14 @@ internal fun SignUpEmailRoute(
             ?: EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString(),
         isNicknameDuplicate = isNicknameDuplicate,
         profileImg = profileImgState.value,
-        signUpStatus = signUpStatus
+        signUpStatus = signUpStatus,
+        updateProfileStatus = updateProfileStatus,
+        startSignUpStep = startSignUpStep,
+        signUpStep = signUpStep,
+        setSignUpStep = { signUpStep = it }
     )
     Loading(
-        isVisible = signUpStatus == Status.LOADING,
-        lottieFile = R.raw.dayo_loading,
-        lottieModifier = Modifier
-            .width(82.dp)
-            .height(85.dp),
+        isVisible = (signUpStatus == Status.LOADING || updateProfileStatus == Status.LOADING),
         message = stringResource(R.string.signup_email_alert_message_loading)
     )
 }
@@ -261,6 +281,7 @@ fun SignUpEmailScreen(
     onClickProfileSelect: () -> Unit = {},
     onClickProfileCapture: () -> Unit = {},
     onClickProfileReset: () -> Unit = {},
+    onProfileUpdateClick: (nickname: String, profileImg: Bitmap?) -> Unit = { _, _ -> },
     onSignUpEmailClick: (email: String, nickname: String, password: String, profileImg: Bitmap?) -> Unit = { _, _, _, _ -> },
     isEmailDuplicate: Status = Status.LOADING,
     certificateEmailAuthCode: String = EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString(),
@@ -268,8 +289,11 @@ fun SignUpEmailScreen(
     profileImg: Bitmap? = null,
     setProfileImg: (Bitmap?) -> Unit = {},
     signUpStatus: Status? = null,
+    updateProfileStatus: Status? = null,
+    startSignUpStep: SignUpStep = SignUpStep.EMAIL_INPUT,
+    signUpStep: SignUpStep = SignUpStep.EMAIL_INPUT,
+    setSignUpStep: (SignUpStep) -> Unit = {},
 ) {
-    var signUpStep by remember { mutableStateOf(SignUpStep.EMAIL_INPUT) }
     val isNextButtonEnabled = remember { mutableStateOf(false) }
     val isNextButtonClickable = remember { mutableStateOf(false) }
 
@@ -291,9 +315,11 @@ fun SignUpEmailScreen(
     val nicknameCertificationState =
         remember { mutableStateOf(NicknameCertificationState.BEFORE_CERTIFICATION) }
 
-    LaunchedEffect(signUpStatus) {
-        if (signUpStep == SignUpStep.PROFILE_SETUP && signUpStatus == Status.SUCCESS) {
-            signUpStep = SignUpStep.SIGNUP_COMPLETE
+    LaunchedEffect(signUpStatus, updateProfileStatus) {
+        if (signUpStep == SignUpStep.PROFILE_SETUP &&
+            (signUpStatus == Status.SUCCESS || updateProfileStatus == Status.SUCCESS)
+        ) {
+            setSignUpStep(SignUpStep.SIGNUP_COMPLETE)
         }
     }
 
@@ -350,7 +376,9 @@ fun SignUpEmailScreen(
             }
 
             SignUpEmailActionbarLayout(
+                context = context,
                 onBackClick = onBackClick,
+                startSignUpStep = startSignUpStep,
                 signUpStep = signUpStep,
                 backStep = {
                     if (signUpStep != SignUpStep.EMAIL_INPUT) {
@@ -362,7 +390,7 @@ fun SignUpEmailScreen(
                                 emailCertificateCodeState.value = ""
                                 isEmailCertificateError.value = null
                                 passwordState.value = ""
-                                signUpStep = SignUpStep.EMAIL_INPUT
+                                setSignUpStep(SignUpStep.EMAIL_INPUT)
                             }
 
                             SignUpStep.PASSWORD_CONFIRM, SignUpStep.PROFILE_SETUP -> {
@@ -374,7 +402,7 @@ fun SignUpEmailScreen(
                                 nicknameCertificationState.value =
                                     NicknameCertificationState.BEFORE_CERTIFICATION
                                 setProfileImg(null)
-                                signUpStep = SignUpStep.PASSWORD_INPUT
+                                setSignUpStep(SignUpStep.PASSWORD_INPUT)
                             }
 
                             else -> {}
@@ -388,7 +416,7 @@ fun SignUpEmailScreen(
                     .fillMaxWidth()
                     .wrapContentSize()
             ) {
-                if (signUpStep != SignUpStep.PROFILE_SETUP || signUpStep != SignUpStep.SIGNUP_COMPLETE) {
+                if (signUpStep.stepNum <= SignUpStep.PASSWORD_CONFIRM.stepNum) {
                     // Title 영역
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
@@ -541,7 +569,7 @@ fun SignUpEmailScreen(
                         when (signUpStep) {
                             SignUpStep.EMAIL_INPUT -> {
                                 onCertificateEmailClick(emailState.value)
-                                signUpStep = SignUpStep.EMAIL_VERIFICATION
+                                setSignUpStep(SignUpStep.EMAIL_VERIFICATION)
                             }
 
                             SignUpStep.EMAIL_VERIFICATION -> {
@@ -551,7 +579,7 @@ fun SignUpEmailScreen(
                                     // 인증코드가 없으므로 검증할 필요도 없음
                                 } else {
                                     if (certificateEmailAuthCode == emailCertificateCodeState.value) {
-                                        signUpStep = SignUpStep.PASSWORD_INPUT
+                                        setSignUpStep(SignUpStep.PASSWORD_INPUT)
                                     } else {
                                         isEmailCertificateError.value = true
                                     }
@@ -561,7 +589,7 @@ fun SignUpEmailScreen(
                             SignUpStep.PASSWORD_INPUT -> {
                                 val passwordFormat = Regex("^[a-z0-9]{8,16}$")
                                 if (passwordFormat.matches(passwordState.value)) {
-                                    signUpStep = SignUpStep.PASSWORD_CONFIRM
+                                    setSignUpStep(SignUpStep.PASSWORD_CONFIRM)
                                 } else {
                                     isPasswordPassFormatError.value = true
                                 }
@@ -569,19 +597,26 @@ fun SignUpEmailScreen(
 
                             SignUpStep.PASSWORD_CONFIRM -> {
                                 if (passwordState.value == passwordConfirmState.value) {
-                                    signUpStep = SignUpStep.PROFILE_SETUP
+                                    setSignUpStep(SignUpStep.PROFILE_SETUP)
                                 } else {
                                     isPasswordMatchError.value = true
                                 }
                             }
 
                             SignUpStep.PROFILE_SETUP -> {
-                                onSignUpEmailClick(
-                                    emailState.value,
-                                    nicknameState.value,
-                                    passwordState.value,
-                                    profileImg
-                                )
+                                if (startSignUpStep == SignUpStep.PROFILE_SETUP) {
+                                    onProfileUpdateClick(
+                                        nicknameState.value,
+                                        profileImg
+                                    )
+                                } else {
+                                    onSignUpEmailClick(
+                                        emailState.value,
+                                        nicknameState.value,
+                                        passwordState.value,
+                                        profileImg
+                                    )
+                                }
                             }
 
                             SignUpStep.SIGNUP_COMPLETE -> {}
@@ -603,12 +638,14 @@ fun SignUpEmailScreen(
 
 @Composable
 fun SignUpEmailActionbarLayout(
+    context: Context = LocalContext.current,
     onBackClick: () -> Unit = {},
+    startSignUpStep: SignUpStep = SignUpStep.EMAIL_INPUT,
     signUpStep: SignUpStep = SignUpStep.EMAIL_INPUT,
     backStep: () -> Unit = {}
 ) {
     BackHandler {
-        if (signUpStep == SignUpStep.EMAIL_INPUT) {
+        if (signUpStep == SignUpStep.EMAIL_INPUT || startSignUpStep == SignUpStep.PROFILE_SETUP) {
             onBackClick()
         } else {
             backStep()
@@ -617,10 +654,10 @@ fun SignUpEmailActionbarLayout(
 
     TopNavigation(
         leftIcon = {
-            if (signUpStep != SignUpStep.SIGNUP_COMPLETE) {
+            if (signUpStep != SignUpStep.SIGNUP_COMPLETE && startSignUpStep != SignUpStep.PROFILE_SETUP) {
                 NoRippleIconButton(
                     onClick = {
-                        if (signUpStep == SignUpStep.EMAIL_INPUT) {
+                        if (signUpStep == SignUpStep.EMAIL_INPUT || startSignUpStep == SignUpStep.PROFILE_SETUP) {
                             onBackClick()
                         } else {
                             backStep()
@@ -636,7 +673,11 @@ fun SignUpEmailActionbarLayout(
                 NoRippleIconButton(
                     onClick = {
                         // FINISH
-                        onBackClick()
+                        if (startSignUpStep == SignUpStep.PROFILE_SETUP) {
+                            navigateToHome(context = context)
+                        } else {
+                            onBackClick()
+                        }
                     },
                     iconContentDescription = stringResource(R.string.close_sign),
                     iconPainter = painterResource(id = R.drawable.ic_x_sign),
