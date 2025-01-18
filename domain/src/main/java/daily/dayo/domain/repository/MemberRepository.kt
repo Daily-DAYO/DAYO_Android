@@ -37,7 +37,7 @@ interface MemberRepository {
     suspend fun requestChangeReceiveAlarm(onReceiveAlarm: Boolean): NetworkResponse<Void>
     suspend fun requestLogout(): NetworkResponse<Void>
     suspend fun requestCheckEmail(email: String): NetworkResponse<Void>
-    suspend fun requestCheckEmailAuth(email: String): NetworkResponse<String>
+    suspend fun requestCertificateEmailPasswordReset(email: String): NetworkResponse<String>
     suspend fun requestCheckCurrentPassword(password: String): NetworkResponse<Void>
     suspend fun requestChangePassword(email: String, password: String): NetworkResponse<Void>
     suspend fun requestSettingChangePassword(email: String, password: String): NetworkResponse<Void>

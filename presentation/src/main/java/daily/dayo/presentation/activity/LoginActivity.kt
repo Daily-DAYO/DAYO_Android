@@ -65,7 +65,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginSuccess() {
-        loginViewModel.loginSuccess.observe(this) { isSuccess ->
+        loginViewModel.autoSignInSuccess.observe(this) { isSuccess ->
             if (isSuccess.peekContent()) {
                 setFCM()
                 if (loginViewModel.getCurrentUserInfo().nickname == "") {

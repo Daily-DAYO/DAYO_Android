@@ -33,7 +33,7 @@ class AccountViewModel @Inject constructor(
     private val requestResignUseCase: RequestResignUseCase,
     private val requestLogoutUseCase: RequestLogoutUseCase,
     private val requestCheckEmailUseCase: RequestCheckEmailUseCase,
-    private val requestCheckEmailAuthUseCase: RequestCheckEmailAuthUseCase,
+    private val requestCertificateEmailPasswordResetUseCase: RequestCertificateEmailPasswordResetUseCase,
     private val requestCheckCurrentPasswordUseCase: RequestCheckCurrentPasswordUseCase,
     private val requestChangePasswordUseCase: RequestChangePasswordUseCase,
     private val requestSettingChangePasswordUseCase: RequestSettingChangePasswordUseCase,
@@ -56,20 +56,14 @@ class AccountViewModel @Inject constructor(
     private val _signInSuccess: MutableStateFlow<Status?> = MutableStateFlow(null)
     val signInSuccess: StateFlow<Status?> get() = _signInSuccess
 
-    private val _loginSuccess = MutableLiveData<Event<Boolean>>()
-    val loginSuccess: LiveData<Event<Boolean>> get() = _loginSuccess
-
-    private val _memberInfoSuccess = MutableLiveData<Boolean>()
-    val memberInfoSuccess get() = _memberInfoSuccess
+    private val _autoSignInSuccess = MutableLiveData<Event<Boolean>>()
+    val autoSignInSuccess: LiveData<Event<Boolean>> get() = _autoSignInSuccess
 
     private val _isEmailDuplicate = MutableStateFlow<Status>(Status.LOADING)
     val isEmailDuplicate: StateFlow<Status> get() = _isEmailDuplicate
 
     private val _isNicknameDuplicate = MutableStateFlow<Boolean>(false)
     val isNicknameDuplicate: StateFlow<Boolean> get() = _isNicknameDuplicate
-
-    private val _isCertificateEmailSend = MutableLiveData<Boolean>()
-    val isCertificateEmailSend: LiveData<Boolean> get() = _isCertificateEmailSend
 
     private val _certificateEmailAuthCode =
         MutableStateFlow<String?>(EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString())
@@ -167,21 +161,21 @@ class AccountViewModel @Inject constructor(
                         requestSaveCurrentUserAccessTokenUseCase(accessToken = response)
                     }
                     requestMemberInfo()
-                    _loginSuccess.postValue(Event(true))
+                    _autoSignInSuccess.postValue(Event(true))
                 }
 
                 is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
-                    _loginSuccess.postValue(Event(false))
+                    _autoSignInSuccess.postValue(Event(false))
                 }
 
                 is NetworkResponse.ApiError -> {
                     if (ApiResponse.code != 401) _isApiErrorExceptionOccurred.postValue(Event(true))
-                    _loginSuccess.postValue(Event(false))
+                    _autoSignInSuccess.postValue(Event(false))
                 }
 
                 is NetworkResponse.UnknownError -> {
-                    _loginSuccess.postValue(Event(false))
+                    _autoSignInSuccess.postValue(Event(false))
                 }
             }
         }
@@ -385,22 +379,20 @@ class AccountViewModel @Inject constructor(
         }
     }
 
-    fun requestCheckEmailAuth(inputEmail: String) = viewModelScope.launch {
-        requestCheckEmailAuthUseCase(inputEmail).let { ApiResponse ->
+    fun requestCertificateEmailPasswordReset(inputEmail: String) = viewModelScope.launch {
+        _certificateEmailAuthCode.emit(EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString())
+        requestCertificateEmailPasswordResetUseCase(inputEmail).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _isCertificateEmailSend.postValue(true)
                     _certificateEmailAuthCode.emit(ApiResponse.body)
                 }
 
                 is NetworkResponse.NetworkError -> {
-                    _isErrorExceptionOccurred.postValue(Event(true))
-                    _isCertificateEmailSend.postValue(false)
+                    _certificateEmailAuthCode.emit(RESET_PASSWORD_EMAIL_CERTIFICATE_AUTH_CODE_FAIL.toString())
                 }
 
                 is NetworkResponse.ApiError -> {
-                    _isApiErrorExceptionOccurred.postValue(Event(true))
-                    _isCertificateEmailSend.postValue(false)
+                    _certificateEmailAuthCode.emit(RESET_PASSWORD_EMAIL_CERTIFICATE_AUTH_CODE_FAIL.toString())
                 }
 
                 else -> {}
