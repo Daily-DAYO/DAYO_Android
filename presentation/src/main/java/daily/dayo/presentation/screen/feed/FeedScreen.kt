@@ -59,7 +59,7 @@ fun FeedScreen(
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
     feedViewModel: FeedViewModel = hiltViewModel()
 ) {
-    val feedPostList = feedViewModel.feedState.collectAsLazyPagingItems()
+    val feedPosts = feedViewModel.feedPosts.collectAsLazyPagingItems()
     val refreshing by feedViewModel.isRefreshing.collectAsStateWithLifecycle()
     val pullRefreshState = rememberPullRefreshState(refreshing, { feedViewModel.loadFeedPosts() })
 
@@ -117,10 +117,10 @@ fun FeedScreen(
                     contentPadding = PaddingValues(vertical = 8.dp)
                 ) {
                     items(
-                        count = feedPostList.itemCount,
-                        key = feedPostList.itemKey()
+                        count = feedPosts.itemCount,
+                        key = feedPosts.itemKey()
                     ) { index ->
-                        val feedPost = feedPostList[index]
+                        val feedPost = feedPosts[index]
                         feedPost?.let { post ->
                             FeedPostView(
                                 post = post,
@@ -129,21 +129,13 @@ fun FeedScreen(
                                     // todo move to profile
                                 },
                                 onClickPost = {
-                                    post.postId?.let { onPostClick(it.toString()) }
+                                    onPostClick(post.postId.toString())
                                 },
                                 onClickLikePost = {
-                                    if (!post.heart) {
-                                        feedViewModel.requestLikePost(postId = post.postId!!)
-                                    } else {
-                                        feedViewModel.requestUnlikePost(postId = post.postId!!)
-                                    }
+                                    feedViewModel.toggleLikePost(post = post)
                                 },
                                 onClickBookmark = {
-                                    if (!post.bookmark!!) {
-                                        feedViewModel.requestBookmarkPost(postId = post.postId!!)
-                                    } else {
-                                        feedViewModel.requestDeleteBookmarkPost(postId = post.postId!!)
-                                    }
+                                    feedViewModel.toggleBookmarkPost(post = post)
                                 },
                                 onPostLikeUsersClick = onPostLikeUsersClick,
                                 onPostHashtagClick = onPostHashtagClick,
@@ -155,7 +147,7 @@ fun FeedScreen(
                 }
 
                 // empty view
-                if (feedPostList.loadState.refresh is LoadState.NotLoading && feedPostList.itemCount == 0) {
+                if (feedPosts.loadState.refresh is LoadState.NotLoading && feedPosts.itemCount == 0) {
                     FeedEmptyView(onEmptyViewClick)
                 }
             }
