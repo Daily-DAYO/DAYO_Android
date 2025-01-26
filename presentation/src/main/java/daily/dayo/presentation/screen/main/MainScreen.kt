@@ -93,7 +93,10 @@ internal fun MainScreen(
                                 bottomSheetState = bottomSheetState,
                                 bottomSheetContent = bottomSheetContent
                             )
-                            postNavGraph(onBackClick = { navigator.popBackStack() })
+                            postNavGraph(
+                                snackBarHostState = snackBarHostState,
+                                onBackClick = { navigator.popBackStack() }
+                            )
                             searchNavGraph(
                                 onBackClick = { navigator.popBackStack() },
                                 onSearch = { navigator.navigateSearchResult(it) },
