@@ -84,25 +84,27 @@ class PostViewModel @Inject constructor(
         _postComment.postValue(Resource.loading(null))
     }
 
-    fun requestPostDetail(postId: Int) = viewModelScope.launch {
-        _postDetail.postValue(Resource.loading(null))
-        requestPostDetailUseCase(postId)?.let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _postDetail.postValue(Resource.success(ApiResponse.body))
-                    postLikeCountUiState.value = ApiResponse.body?.heartCount ?: 0
-                }
+    fun requestPostDetail(postId: Int) {
+        viewModelScope.launch {
+            _postDetail.postValue(Resource.loading(null))
+            requestPostDetailUseCase(postId).let { response ->
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        _postDetail.postValue(Resource.success(response.body))
+                        postLikeCountUiState.value = response.body?.heartCount ?: 0
+                    }
 
-                is NetworkResponse.NetworkError -> {
-                    _postDetail.postValue(Resource.error(ApiResponse.exception.toString(), null))
-                }
+                    is NetworkResponse.NetworkError -> {
+                        _postDetail.postValue(Resource.error(response.exception.toString(), null))
+                    }
 
-                is NetworkResponse.ApiError -> {
-                    _postDetail.postValue(Resource.error(ApiResponse.error.toString(), null))
-                }
+                    is NetworkResponse.ApiError -> {
+                        _postDetail.postValue(Resource.error(response.error.toString(), null))
+                    }
 
-                is NetworkResponse.UnknownError -> {
-                    _postDetail.postValue(Resource.error(ApiResponse.throwable.toString(), null))
+                    is NetworkResponse.UnknownError -> {
+                        _postDetail.postValue(Resource.error(response.throwable.toString(), null))
+                    }
                 }
             }
         }
