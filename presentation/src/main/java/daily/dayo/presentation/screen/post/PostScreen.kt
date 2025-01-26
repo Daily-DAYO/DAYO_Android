@@ -26,7 +26,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -46,10 +48,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import daily.dayo.domain.model.Category
-import daily.dayo.domain.model.Post
+import daily.dayo.domain.model.PostDetail
 import daily.dayo.domain.model.categoryKR
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.TimeChangerUtil
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
@@ -77,9 +80,18 @@ fun PostScreen(
     reportViewModel: ReportViewModel = hiltViewModel(),
     postViewModel: PostViewModel = hiltViewModel()
 ) {
-    
+    val postState = postViewModel.postDetail.observeAsState()
+
+    LaunchedEffect(Unit) {
+        postViewModel.requestPostDetail(postId.toInt())
+    }
+
     PostView(
-        post = DEFAULT_POST,
+        postId = postId,
+        post = when (postState.value?.status) {
+            Status.SUCCESS -> postState.value?.data ?: DEFAULT_POST
+            else -> DEFAULT_POST
+        },
         snackBarHostState = snackBarHostState,
         onClickProfile = { /*TODO*/ },
         onClickPost = { /*TODO*/ },
@@ -88,18 +100,15 @@ fun PostScreen(
         onClickReport = { reason ->
             reportViewModel.requestSavePostReport(reason, postId.toInt())
         },
-        onPostLikeUsersClick = {
-
-        },
-        onPostHashtagClick = {
-
-        }
+        onPostLikeUsersClick = { /*TODO*/ },
+        onPostHashtagClick = { /*TODO*/ }
     )
 }
 
 @Composable
 private fun PostView(
-    post: Post,
+    postId: String,
+    post: PostDetail,
     snackBarHostState: SnackbarHostState,
     onClickProfile: () -> Unit,
     onClickPost: () -> Unit,
@@ -137,7 +146,7 @@ private fun PostView(
             // user profile image
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("${BuildConfig.BASE_URL}/images/${post.userProfileImage}")
+                    .data("${BuildConfig.BASE_URL}/images/${post.profileImg}")
                     .build(),
                 contentDescription = "${post.nickname} profile",
                 contentScale = ContentScale.Crop,
@@ -164,8 +173,8 @@ private fun PostView(
                     )
                 )
                 Text(
-                    text = categoryKR(post.category ?: Category.ETC) + " ･ " +
-                            post.createDateTime?.let { TimeChangerUtil.timeChange(context = LocalContext.current, time = it) },
+                    text = categoryKR(post.category) + " ･ " +
+                            post.createDateTime.let { TimeChangerUtil.timeChange(context = LocalContext.current, time = it) },
                     style = DayoTheme.typography.caption3.copy(Gray3_9FA5AE)
                 )
             }
@@ -200,7 +209,7 @@ private fun PostView(
                 .fillMaxWidth()
                 .aspectRatio(1f)
         ) {
-            post.postImages?.let { postImages ->
+            post.images.let { postImages ->
                 val pagerState = rememberPagerState(pageCount = { postImages.size })
                 HorizontalPager(state = pagerState) {
                     AsyncImage(
@@ -314,30 +323,35 @@ private fun PostView(
                 Text(text = stringResource(id = R.string.post_like_count_message_1), style = DayoTheme.typography.caption1.copy(Gray2_767B83))
                 Text(text = " ${dec.format(post.heartCount)} ",
                     style = DayoTheme.typography.caption1,
-                    modifier = if (post.heartCount != 0) Modifier.clickableSingle { onPostLikeUsersClick(post.postId.toString()) } else Modifier,
+                    modifier = if (post.heartCount != 0) Modifier.clickableSingle { onPostLikeUsersClick(postId) } else Modifier,
                     color = if (post.heartCount != 0) Primary_23C882 else Gray4_C5CAD2)
                 Text(text = stringResource(id = R.string.post_like_count_message_2), style = DayoTheme.typography.caption1.copy(Gray2_767B83))
             }
 
             // comment count
+            // TODO Comment Count API 사용
+            val commentCount = 0
             Row {
-                Text(text = " ${dec.format(post.commentCount)} ", style = DayoTheme.typography.caption1, color = if (post.commentCount != 0) Primary_23C882 else Gray4_C5CAD2)
+                Text(text = " ${dec.format(commentCount)} ", style = DayoTheme.typography.caption1, color = if (commentCount != 0) Primary_23C882 else Gray4_C5CAD2)
                 Text(text = stringResource(id = R.string.post_comment_count_message), style = DayoTheme.typography.caption1.copy(Gray2_767B83))
             }
         }
 
         // post content
-        if (post.contents.isNullOrEmpty().not()) {
+        if (post.contents.isNotEmpty()) {
             Text(
-                text = post.contents!!,
+                text = post.contents,
+                modifier = Modifier
+                    .padding(top = 12.dp)
+                    .padding(horizontal = 18.dp),
                 style = DayoTheme.typography.b6.copy(Dark)
             )
         }
 
         // hashtags
-        if (post.hashtags.isNullOrEmpty().not()) {
+        if (post.hashtags.isNotEmpty()) {
             HashtagHorizontalGroup(
-                hashtags = post.hashtags!!,
+                hashtags = post.hashtags,
                 onPostHashtagClick = onPostHashtagClick
             )
         }
@@ -373,6 +387,7 @@ private fun PostView(
 private fun PreviewPostScreen() {
     DayoTheme {
         PostView(
+            postId = "0",
             post = DEFAULT_POST,
             snackBarHostState = SnackbarHostState(),
             onClickProfile = { /*TODO*/ },
@@ -386,26 +401,20 @@ private fun PreviewPostScreen() {
     }
 }
 
-private val DEFAULT_POST = Post(
-    postId = 0,
-    memberId = "",
-    nickname = "",
-    userProfileImage = "",
+private val DEFAULT_POST = PostDetail(
+    bookmark = false,
     category = Category.ALL,
-    thumbnailImage = "",
-    postImages = emptyList(),
     contents = "",
     createDateTime = LocalDateTime.now().format(
         DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
     ),
-    commentCount = 0,
-    comments = emptyList(),
-    hashtags = emptyList(),
-    bookmark = false,
-    heart = false,
-    heartCount = 0,
     folderId = 0,
     folderName = "",
-    preLoadThumbnail = null,
-    preLoadUserImg = null
+    hashtags = emptyList(),
+    heart = false,
+    heartCount = 0,
+    images = emptyList(),
+    memberId = "",
+    nickname = "",
+    profileImg = "",
 )
