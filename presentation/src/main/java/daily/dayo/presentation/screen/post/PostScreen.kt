@@ -48,6 +48,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import daily.dayo.domain.model.Category
+import daily.dayo.domain.model.Comments
 import daily.dayo.domain.model.PostDetail
 import daily.dayo.domain.model.categoryKR
 import daily.dayo.presentation.BuildConfig
@@ -81,9 +82,11 @@ fun PostScreen(
     postViewModel: PostViewModel = hiltViewModel()
 ) {
     val postState = postViewModel.postDetail.observeAsState()
+    val commentState = postViewModel.postComments.observeAsState()
 
     LaunchedEffect(Unit) {
         postViewModel.requestPostDetail(postId.toInt())
+        postViewModel.requestPostComment(postId.toInt())
     }
 
     PostView(
@@ -91,6 +94,10 @@ fun PostScreen(
         post = when (postState.value?.status) {
             Status.SUCCESS -> postState.value?.data ?: DEFAULT_POST
             else -> DEFAULT_POST
+        },
+        comment = when (commentState.value?.status) {
+            Status.SUCCESS -> commentState.value?.data ?: DEFAULT_COMMENT
+            else -> DEFAULT_COMMENT
         },
         snackBarHostState = snackBarHostState,
         onClickProfile = { /*TODO*/ },
@@ -109,6 +116,7 @@ fun PostScreen(
 private fun PostView(
     postId: String,
     post: PostDetail,
+    comment: Comments,
     snackBarHostState: SnackbarHostState,
     onClickProfile: () -> Unit,
     onClickPost: () -> Unit,
@@ -329,10 +337,8 @@ private fun PostView(
             }
 
             // comment count
-            // TODO Comment Count API 사용
-            val commentCount = 0
             Row {
-                Text(text = " ${dec.format(commentCount)} ", style = DayoTheme.typography.caption1, color = if (commentCount != 0) Primary_23C882 else Gray4_C5CAD2)
+                Text(text = " ${dec.format(comment.count)} ", style = DayoTheme.typography.caption1, color = if (comment.count != 0) Primary_23C882 else Gray4_C5CAD2)
                 Text(text = stringResource(id = R.string.post_comment_count_message), style = DayoTheme.typography.caption1.copy(Gray2_767B83))
             }
         }
@@ -389,6 +395,7 @@ private fun PreviewPostScreen() {
         PostView(
             postId = "0",
             post = DEFAULT_POST,
+            comment = DEFAULT_COMMENT,
             snackBarHostState = SnackbarHostState(),
             onClickProfile = { /*TODO*/ },
             onClickPost = { /*TODO*/ },
@@ -417,4 +424,9 @@ private val DEFAULT_POST = PostDetail(
     memberId = "",
     nickname = "",
     profileImg = "",
+)
+
+val DEFAULT_COMMENT = Comments(
+    count = 0,
+    data = emptyList()
 )

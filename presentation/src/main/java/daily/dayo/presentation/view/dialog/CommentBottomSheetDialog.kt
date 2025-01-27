@@ -1,6 +1,5 @@
 package daily.dayo.presentation.view.dialog
 
-import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.foundation.Image
@@ -79,15 +78,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import daily.dayo.domain.model.Comment
+import daily.dayo.domain.model.Comments
 import daily.dayo.domain.model.MentionUser
 import daily.dayo.domain.model.SearchUser
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Event
-import daily.dayo.presentation.common.Resource
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.TimeChangerUtil
 import daily.dayo.presentation.common.extension.clickableSingle
+import daily.dayo.presentation.screen.post.DEFAULT_COMMENT
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
@@ -109,12 +109,12 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CommentBottomSheetDialog(
-    sheetState: ModalBottomSheetState,
-    onClickClose: () -> Unit,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
     postId: Int,
+    onClickClose: () -> Unit,
+    sheetState: ModalBottomSheetState,
     snackBarHostState: SnackbarHostState,
-    postViewModel: PostViewModel,
+    modifier: Modifier = Modifier,
+    postViewModel: PostViewModel = hiltViewModel(),
     accountViewModel: AccountViewModel = hiltViewModel(),
     searchViewModel: SearchViewModel = hiltViewModel(),
     reportViewModel: ReportViewModel = hiltViewModel()
@@ -126,7 +126,7 @@ fun CommentBottomSheetDialog(
     val coroutineScope = rememberCoroutineScope()
 
     // show comments
-    val postComments by postViewModel.postComment.observeAsState(initial = Resource.loading(emptyList()))
+    val postComments = postViewModel.postComments.observeAsState()
     LaunchedEffect(postId) {
         postViewModel.requestPostComment(postId)
     }
@@ -227,7 +227,17 @@ fun CommentBottomSheetDialog(
                         .wrapContentHeight(),
                 ) {
                     CommentBottomSheetDialogTitle(onClickClose)
-                    CommentBottomSheetDialogContent(postComments, onClickReply, onClickDelete, onClickReport, currentMemberId, scrollState)
+                    CommentBottomSheetDialogContent(
+                        when (postComments.value?.status) {
+                            Status.SUCCESS -> postComments.value?.data ?: DEFAULT_COMMENT
+                            else -> DEFAULT_COMMENT
+                        },
+                        onClickReply,
+                        onClickDelete,
+                        onClickReport,
+                        currentMemberId,
+                        scrollState
+                    )
                     if (showMentionSearchView.value) CommentMentionSearchView(userResults, onClickFollowUser)
                     if (replyCommentState.value != null) CommentReplyDescriptionView(replyCommentState, onClickCancelReply)
                     CommentTextField(commentText, replyCommentState, userSearchKeyword, showMentionSearchView, onClickPostComment)
@@ -278,7 +288,7 @@ private fun CommentBottomSheetDialogTitle(onClickClose: () -> Unit) {
 
 @Composable
 private fun CommentBottomSheetDialogContent(
-    postComments: Resource<List<Comment>>,
+    postComments: Comments,
     onClickReply: (Pair<Long, Comment>) -> Unit,
     onClickDelete: (Long) -> Unit,
     onClickReport: (Long) -> Unit,
@@ -286,88 +296,81 @@ private fun CommentBottomSheetDialogContent(
     scrollState: ScrollState
 ) {
     with(postComments) {
-        when (status) {
-            Status.SUCCESS -> {
-                data?.let { postComments ->
-                    if (postComments.isEmpty()) {
+        data.let { postComments ->
+            if (postComments.isEmpty()) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .background(DayoTheme.colorScheme.background)
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.5f)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_comment_empty),
+                        contentDescription = "empty",
+                        tint = Color.Unspecified
+                    )
+                    Text(
+                        text = stringResource(id = R.string.post_comment_empty),
+                        style = DayoTheme.typography.b3.copy(Gray3_9FA5AE),
+                        modifier = Modifier.padding(top = 12.dp, bottom = 2.dp)
+                    )
+                    Text(
+                        text = stringResource(id = R.string.post_comment_empty_description),
+                        style = DayoTheme.typography.caption1.copy(Gray4_C5CAD2)
+                    )
+                }
+            } else {
+                LazyColumn(
+                    contentPadding = PaddingValues(horizontal = 18.dp),
+                    modifier = Modifier
+                        .background(DayoTheme.colorScheme.background)
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.5f)
+                ) {
+                    items(postComments) { comment ->
                         Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
                             modifier = Modifier
-                                .background(DayoTheme.colorScheme.background)
-                                .fillMaxWidth()
-                                .fillMaxHeight(0.5f)
+                                .padding(bottom = 8.dp)
+                                .background(color = DayoTheme.colorScheme.background, shape = RoundedCornerShape(20.dp))
+                                .border(width = 1.dp, color = Gray7_F6F6F7, shape = RoundedCornerShape(20.dp))
+                                .padding(12.dp),
+                            horizontalAlignment = Alignment.End,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_comment_empty),
-                                contentDescription = "empty",
-                                tint = Color.Unspecified
+                            // comment
+                            CommentView(
+                                parentCommentId = comment.commentId,
+                                comment = comment,
+                                isMine = currentMemberId == comment.memberId,
+                                onClickReply = onClickReply,
+                                onClickDelete = onClickDelete,
+                                onClickReport = onClickReport,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
                             )
-                            Text(
-                                text = stringResource(id = R.string.post_comment_empty),
-                                style = DayoTheme.typography.b3.copy(Gray3_9FA5AE),
-                                modifier = Modifier.padding(top = 12.dp, bottom = 2.dp)
-                            )
-                            Text(
-                                text = stringResource(id = R.string.post_comment_empty_description),
-                                style = DayoTheme.typography.caption1.copy(Gray4_C5CAD2)
-                            )
-                        }
-                    } else {
-                        LazyColumn(
-                            contentPadding = PaddingValues(horizontal = 18.dp),
-                            modifier = Modifier
-                                .background(DayoTheme.colorScheme.background)
-                                .fillMaxWidth()
-                                .fillMaxHeight(0.5f)
-                        ) {
-                            items(postComments) { comment ->
-                                Column(
+                            // reply
+                            comment.replyList.forEach { reply ->
+                                CommentView(
+                                    parentCommentId = comment.commentId,
+                                    comment = reply,
+                                    isMine = currentMemberId == reply.memberId,
+                                    onClickReply = onClickReply,
+                                    onClickDelete = onClickDelete,
+                                    onClickReport = onClickReport,
                                     modifier = Modifier
-                                        .padding(bottom = 8.dp)
-                                        .background(color = DayoTheme.colorScheme.background, shape = RoundedCornerShape(20.dp))
-                                        .border(width = 1.dp, color = Gray7_F6F6F7, shape = RoundedCornerShape(20.dp))
-                                        .padding(12.dp),
-                                    horizontalAlignment = Alignment.End,
-                                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    // comment
-                                    CommentView(
-                                        parentCommentId = comment.commentId,
-                                        comment = comment,
-                                        isMine = currentMemberId == comment.memberId,
-                                        onClickReply = onClickReply,
-                                        onClickDelete = onClickDelete,
-                                        onClickReport = onClickReport,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .wrapContentHeight()
-                                    )
-                                    // reply
-                                    comment.replyList.forEach { reply ->
-                                        CommentView(
-                                            parentCommentId = comment.commentId,
-                                            comment = reply,
-                                            isMine = currentMemberId == reply.memberId,
-                                            onClickReply = onClickReply,
-                                            onClickDelete = onClickDelete,
-                                            onClickReport = onClickReport,
-                                            modifier = Modifier
-                                                .background(color = Gray7_F6F6F7, shape = RoundedCornerShape(20.dp))
-                                                .padding(12.dp)
-                                                .fillMaxWidth(0.9f)
-                                                .wrapContentHeight()
-                                        )
-                                    }
-                                }
+                                        .background(color = Gray7_F6F6F7, shape = RoundedCornerShape(20.dp))
+                                        .padding(12.dp)
+                                        .fillMaxWidth(0.9f)
+                                        .wrapContentHeight()
+                                )
                             }
                         }
                     }
                 }
             }
-
-            Status.LOADING -> {}
-            Status.ERROR -> {}
         }
     }
 }
@@ -730,7 +733,7 @@ private fun PreviewCommentBottomSheetDialogTitle() {
 @Preview
 @Composable
 private fun PreviewCommentBottomSheetDialogContent() {
-    CommentBottomSheetDialogContent(Resource.success(emptyList()), {}, {}, {}, "", rememberScrollState())
+    CommentBottomSheetDialogContent(DEFAULT_COMMENT, {}, {}, {}, "", rememberScrollState())
 }
 
 @Preview
@@ -752,3 +755,8 @@ private fun PreviewCommentView() {
             .wrapContentHeight()
     )
 }
+
+val DEFAULT_COMMENT = Comments(
+    count = 0,
+    data = emptyList()
+)
