@@ -9,6 +9,7 @@ import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import daily.dayo.domain.model.BookmarkPostResponse
 import daily.dayo.domain.model.Comment
+import daily.dayo.domain.model.Comments
 import daily.dayo.domain.model.LikePostResponse
 import daily.dayo.domain.model.LikeUser
 import daily.dayo.domain.model.MentionUser
@@ -56,6 +57,9 @@ class PostViewModel @Inject constructor(
     private val _postDetail = MutableLiveData<Resource<PostDetail>>()
     val postDetail: LiveData<Resource<PostDetail>> get() = _postDetail
 
+    private val _postComments = MutableLiveData<Resource<Comments>>()
+    val postComments: LiveData<Resource<Comments>> = _postComments
+
     private val _postLiked = MutableLiveData<Resource<LikePostResponse>>()
     val postLiked: LiveData<Resource<LikePostResponse>> get() = _postLiked
 
@@ -68,9 +72,6 @@ class PostViewModel @Inject constructor(
     private val _postCommentDeleteSuccess = MutableLiveData<Event<Boolean>>()
     val postCommentDeleteSuccess get() = _postCommentDeleteSuccess
 
-    private val _postComment = MutableLiveData<Resource<List<Comment>>>()
-    val postComment: LiveData<Resource<List<Comment>>> get() = _postComment
-
     private val _blockSuccess = MutableLiveData<Event<Boolean>>()
     val blockSuccess: LiveData<Event<Boolean>> get() = _blockSuccess
 
@@ -81,7 +82,7 @@ class PostViewModel @Inject constructor(
 
     fun cleanUpPostDetail() {
         _postDetail.postValue(Resource.loading(null))
-        _postComment.postValue(Resource.loading(null))
+        _postComments.postValue(Resource.loading(null))
     }
 
     fun requestPostDetail(postId: Int) {
@@ -191,24 +192,26 @@ class PostViewModel @Inject constructor(
         requestDeleteBookmarkPostUseCase(postId)
     }
 
-    fun requestPostComment(postId: Int) = viewModelScope.launch {
-        _postComment.postValue(Resource.loading(null))
-        requestPostCommentUseCase(postId)?.let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _postComment.postValue(Resource.success(ApiResponse.body?.data))
-                }
+    fun requestPostComment(postId: Int) {
+        viewModelScope.launch {
+            _postComments.postValue(Resource.loading(null))
+            requestPostCommentUseCase(postId).let { response ->
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        _postComments.postValue(Resource.success(response.body))
+                    }
 
-                is NetworkResponse.NetworkError -> {
-                    _postComment.postValue(Resource.error(ApiResponse.exception.toString(), null))
-                }
+                    is NetworkResponse.NetworkError -> {
+                        _postComments.postValue(Resource.error(response.exception.toString(), null))
+                    }
 
-                is NetworkResponse.ApiError -> {
-                    _postComment.postValue(Resource.error(ApiResponse.error.toString(), null))
-                }
+                    is NetworkResponse.ApiError -> {
+                        _postComments.postValue(Resource.error(response.error.toString(), null))
+                    }
 
-                is NetworkResponse.UnknownError -> {
-                    _postComment.postValue(Resource.error(ApiResponse.throwable.toString(), null))
+                    is NetworkResponse.UnknownError -> {
+                        _postComments.postValue(Resource.error(response.throwable.toString(), null))
+                    }
                 }
             }
         }

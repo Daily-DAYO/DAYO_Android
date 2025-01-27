@@ -228,10 +228,10 @@ class PostFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 postViewModel.requestPostComment(args.postId)
-                postViewModel.postComment.observe(viewLifecycleOwner) {
+                postViewModel.postComments.observe(viewLifecycleOwner) {
                     when (it.status) {
                         Status.SUCCESS -> {
-                            it.data?.let { postComment ->
+                            it.data?.data?.let { postComment ->
                                 postCommentAdapter?.submitList(postComment.toMutableList())
                                 updatePostStatus(null, null, postComment.size)
                                 binding.commentCount = postComment.size
@@ -516,7 +516,7 @@ class PostFragment : Fragment() {
                     with(it as PostCommentAdapter) {
                         postViewModel.requestPostComment(args.postId)
                         submitList(
-                            postViewModel.postComment.value?.data?.subList(
+                            postViewModel.postComments.value?.data?.data?.subList(
                                 0,
                                 it.itemCount
                             )?.toMutableList()

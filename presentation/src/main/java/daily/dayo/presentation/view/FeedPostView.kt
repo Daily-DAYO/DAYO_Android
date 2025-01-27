@@ -121,11 +121,10 @@ fun FeedPostView(
         coroutineScope.launch { bottomSheetState.show() }
         bottomSheetContent {
             CommentBottomSheetDialog(
-                sheetState = bottomSheetState,
-                onClickClose = { coroutineScope.launch { bottomSheetState.hide() } },
                 postId = postId,
-                snackBarHostState = snackBarHostState,
-                postViewModel = postViewModel
+                onClickClose = { coroutineScope.launch { bottomSheetState.hide() } },
+                sheetState = bottomSheetState,
+                snackBarHostState = snackBarHostState
             )
         }
     }
