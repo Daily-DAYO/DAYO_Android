@@ -239,12 +239,12 @@ private fun MyPageEditScreen(
                     .padding(vertical = 32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val placeholder = AppCompatResources.getDrawable(LocalContext.current, R.drawable.ic_profile_default_user_profile)
+                val placeholderResId = remember { R.drawable.ic_profile_default_user_profile }
                 BadgeRoundImageView(
                     context = LocalContext.current,
                     imageUrl = modifiedProfileImage,
                     imageDescription = "my page profile image",
-                    placeholder = placeholder,
+                    placeholderResId = placeholderResId,
                     contentModifier = Modifier
                         .size(100.dp)
                         .aspectRatio(1f)

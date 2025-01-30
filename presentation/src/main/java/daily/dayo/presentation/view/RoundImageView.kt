@@ -1,7 +1,7 @@
 package daily.dayo.presentation.view
 
 import android.content.Context
-import android.graphics.drawable.Drawable
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,7 +25,7 @@ fun RoundImageView(
     context: Context,
     imageUrl: Any,
     imageDescription: String = "default image view",
-    placeholder: Drawable? = null,
+    @DrawableRes placeholderResId: Int? = null,
     roundSize: Dp = 8.dp,
     customModifier: Modifier = Modifier,
     imageSize: Size = Size.ORIGINAL
@@ -35,13 +35,13 @@ fun RoundImageView(
             .crossfade(true)
             .data(imageUrl)
             .size(imageSize)
-            .placeholder(placeholder)
-            .error(placeholder)
             .build(),
         contentDescription = imageDescription,
         contentScale = ContentScale.Crop,
         modifier = customModifier
-            .clip(RoundedCornerShape(size = roundSize))
+            .clip(RoundedCornerShape(size = roundSize)),
+        placeholder = if (placeholderResId != null) painterResource(id = placeholderResId) else null,
+        error = if (placeholderResId != null) painterResource(id = placeholderResId) else null
     )
 }
 
@@ -52,7 +52,7 @@ fun BadgeRoundImageView(
     modifier: Modifier = Modifier,
     contentModifier: Modifier,
     imageDescription: String = "default image view",
-    placeholder: Drawable? = null,
+    @DrawableRes placeholderResId: Int? = null,
     roundSize: Dp = 8.dp,
     badgeSize: Dp = 30.dp
 ) {
@@ -61,7 +61,7 @@ fun BadgeRoundImageView(
             context = context,
             imageUrl = imageUrl,
             imageDescription = imageDescription,
-            placeholder = placeholder,
+            placeholderResId = placeholderResId,
             roundSize = roundSize,
             customModifier = contentModifier
         )
