@@ -8,7 +8,6 @@ import daily.dayo.data.datasource.remote.heart.HeartPagingSource
 import daily.dayo.data.datasource.remote.heart.HeartPostUsersPagingSource
 import daily.dayo.data.mapper.toLikePostDeleteResponse
 import daily.dayo.data.mapper.toLikePostResponse
-import daily.dayo.domain.model.LikePostDeleteResponse
 import daily.dayo.domain.model.LikePostResponse
 import daily.dayo.domain.model.NetworkResponse
 import daily.dayo.domain.repository.HeartRepository
@@ -26,7 +25,7 @@ class HeartRepositoryImpl @Inject constructor(
             is NetworkResponse.UnknownError -> response
         }
 
-    override suspend fun requestUnlikePost(postId: Int): NetworkResponse<LikePostDeleteResponse> =
+    override suspend fun requestUnlikePost(postId: Int): NetworkResponse<LikePostResponse> =
         when (val response = heartApiService.requestUnlikePost(postId)) {
             is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toLikePostDeleteResponse())
             is NetworkResponse.NetworkError -> response
