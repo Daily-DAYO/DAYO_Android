@@ -323,6 +323,7 @@ fun DayoTimerTextField(
     isError: Boolean = false,
     errorMessage: String = "",
     timeOutErrorMessage: String = stringResource(id = R.string.email_address_certificate_alert_message_time_fail),
+    onTimeOut: (() -> Unit) = { },
     textAlign: TextAlign = TextAlign.Left,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -335,6 +336,10 @@ fun DayoTimerTextField(
         while (timeLeft > 0 && !isPaused) {
             delay(1000L)
             timeLeft--
+        }
+
+        if (timeLeft <= 0) {
+            onTimeOut()
         }
     }
 
