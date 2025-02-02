@@ -48,7 +48,7 @@ fun RoundImageView(
 @Composable
 fun BadgeRoundImageView(
     context: Context,
-    imageUrl: String,
+    imageUrl: Any,
     modifier: Modifier = Modifier,
     contentModifier: Modifier,
     imageDescription: String = "default image view",
