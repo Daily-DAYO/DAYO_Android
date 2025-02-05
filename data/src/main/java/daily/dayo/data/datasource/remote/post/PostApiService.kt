@@ -1,10 +1,15 @@
 package daily.dayo.data.datasource.remote.post
 
-import daily.dayo.data.datasource.remote.heart.DeleteHeartResponse
 import daily.dayo.domain.model.Category
 import daily.dayo.domain.model.NetworkResponse
 import okhttp3.MultipartBody
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.Part
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface PostApiService {
 
@@ -43,5 +48,11 @@ interface PostApiService {
     suspend fun requestDeletePost(@Path("postId") postId: Int): NetworkResponse<Void>
 
     @GET("/api/v1/posts/feed/list")
-    suspend fun requestFeedList(@Query("end") end: Int): NetworkResponse<ListFeedResponse>
+    suspend fun requestAllFeedList(@Query("end") end: Int): NetworkResponse<ListFeedResponse>
+
+    @GET("/api/v1/posts/feed/{category}")
+    suspend fun requestFeedListByCategory(
+        @Path("category") category: Category,
+        @Query("end") end: Int
+    ): NetworkResponse<ListFeedResponse>
 }

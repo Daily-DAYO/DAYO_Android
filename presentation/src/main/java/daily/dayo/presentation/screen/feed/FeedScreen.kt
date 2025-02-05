@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -24,7 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -60,15 +59,25 @@ fun FeedScreen(
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
     feedViewModel: FeedViewModel = hiltViewModel()
 ) {
-    val feedPostList = feedViewModel.feedState.collectAsLazyPagingItems()
+    val feedPosts = feedViewModel.feedPosts.collectAsLazyPagingItems()
     val refreshing by feedViewModel.isRefreshing.collectAsStateWithLifecycle()
     val pullRefreshState = rememberPullRefreshState(refreshing, { feedViewModel.loadFeedPosts() })
-    val listState = rememberSaveable(saver = LazyListState.Saver) { feedViewModel.listState }
 
-    LaunchedEffect(true) {
-        with(feedViewModel) {
-            loadFeedPosts()
-        }
+    // category
+    val categoryMenus = listOf(
+        CategoryMenu.All,
+        CategoryMenu.Scheduler,
+        CategoryMenu.StudyPlanner,
+        CategoryMenu.PocketBook,
+        CategoryMenu.SixHoleDiary,
+        CategoryMenu.Digital,
+        CategoryMenu.ETC
+    )
+    var selectedCategory by remember { mutableStateOf(categoryMenus[0]) }
+
+    LaunchedEffect(selectedCategory) {
+        feedViewModel.setCurrentCategory(selectedCategory.category)
+        feedViewModel.loadFeedPosts()
     }
 
     Box(
@@ -94,30 +103,24 @@ fun FeedScreen(
             Column(
                 modifier = Modifier.padding(innerPadding)
             ) {
-                // category
-                val categoryMenus = listOf(
-                    CategoryMenu.All,
-                    CategoryMenu.Scheduler,
-                    CategoryMenu.StudyPlanner,
-                    CategoryMenu.PocketBook,
-                    CategoryMenu.SixHoleDiary,
-                    CategoryMenu.Digital,
-                    CategoryMenu.ETC
+
+                CategoryHorizontalGroup(
+                    categoryMenus = categoryMenus,
+                    selectedCategory = selectedCategory,
+                    onCategorySelect = { category -> selectedCategory = category },
+                    modifier = Modifier.padding(top = 8.dp, bottom = 12.dp)
                 )
-                val selectedCategory = remember { mutableStateOf(categoryMenus[0]) }
-                CategoryHorizontalGroup(categoryMenus, selectedCategory, modifier = Modifier.padding(top = 8.dp, bottom = 12.dp))
 
                 // feed post list
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(32.dp),
-                    contentPadding = PaddingValues(vertical = 8.dp),
-                    state = listState
+                    contentPadding = PaddingValues(vertical = 8.dp)
                 ) {
                     items(
-                        count = feedPostList.itemCount,
-                        key = feedPostList.itemKey()
+                        count = feedPosts.itemCount,
+                        key = feedPosts.itemKey()
                     ) { index ->
-                        val feedPost = feedPostList[index]
+                        val feedPost = feedPosts[index]
                         feedPost?.let { post ->
                             FeedPostView(
                                 post = post,
@@ -126,21 +129,13 @@ fun FeedScreen(
                                     // todo move to profile
                                 },
                                 onClickPost = {
-                                    post.postId?.let { onPostClick(it.toString()) }
+                                    onPostClick(post.postId.toString())
                                 },
                                 onClickLikePost = {
-                                    if (!post.heart) {
-                                        feedViewModel.requestLikePost(postId = post.postId!!)
-                                    } else {
-                                        feedViewModel.requestUnlikePost(postId = post.postId!!)
-                                    }
+                                    feedViewModel.toggleLikePost(post = post)
                                 },
                                 onClickBookmark = {
-                                    if (!post.bookmark!!) {
-                                        feedViewModel.requestBookmarkPost(postId = post.postId!!)
-                                    } else {
-                                        feedViewModel.requestDeleteBookmarkPost(postId = post.postId!!)
-                                    }
+                                    feedViewModel.toggleBookmarkPost(post = post)
                                 },
                                 onPostLikeUsersClick = onPostLikeUsersClick,
                                 onPostHashtagClick = onPostHashtagClick,
@@ -152,7 +147,7 @@ fun FeedScreen(
                 }
 
                 // empty view
-                if (feedPostList.loadState.refresh is LoadState.NotLoading && feedPostList.itemCount == 0) {
+                if (feedPosts.loadState.refresh is LoadState.NotLoading && feedPosts.itemCount == 0) {
                     FeedEmptyView(onEmptyViewClick)
                 }
             }

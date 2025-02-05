@@ -2,7 +2,6 @@ package daily.dayo.domain.repository
 
 import androidx.paging.PagingData
 import daily.dayo.domain.model.Category
-import daily.dayo.domain.model.LikePostDeleteResponse
 import daily.dayo.domain.model.NetworkResponse
 import daily.dayo.domain.model.Post
 import daily.dayo.domain.model.PostCreateResponse
@@ -38,5 +37,5 @@ interface PostRepository {
         hashtags: List<String>
     ): NetworkResponse<PostEditResponse>
 
-    suspend fun requestFeedList(): Flow<PagingData<Post>>
+    suspend fun requestFeedList(category: Category): Flow<PagingData<Post>>
 }
