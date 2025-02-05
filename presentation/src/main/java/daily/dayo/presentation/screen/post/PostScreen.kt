@@ -18,11 +18,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,6 +69,7 @@ import daily.dayo.presentation.theme.Transparent_White30
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.HashtagHorizontalGroup
 import daily.dayo.presentation.view.OthersPostDropdownMenu
+import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.dialog.RadioButtonDialog
 import daily.dayo.presentation.viewmodel.PostViewModel
 import daily.dayo.presentation.viewmodel.ReportViewModel
@@ -78,10 +82,15 @@ import java.time.format.DateTimeFormatter
 fun PostScreen(
     postId: String,
     snackBarHostState: SnackbarHostState,
+    onProfileClick: (String) -> Unit,
+    onPostLikeUsersClick: (String) -> Unit,
+    onPostHashtagClick: (String) -> Unit,
+    onBackClick: () -> Unit,
     reportViewModel: ReportViewModel = hiltViewModel(),
     postViewModel: PostViewModel = hiltViewModel()
 ) {
     val postState = postViewModel.postDetail.observeAsState()
+    var post by remember { mutableStateOf(DEFAULT_POST) }
     val commentState = postViewModel.postComments.observeAsState()
 
     LaunchedEffect(Unit) {
@@ -89,27 +98,88 @@ fun PostScreen(
         postViewModel.requestPostComment(postId.toInt())
     }
 
-    PostView(
-        postId = postId,
+    LaunchedEffect(postState.value) {
         post = when (postState.value?.status) {
             Status.SUCCESS -> postState.value?.data ?: DEFAULT_POST
             else -> DEFAULT_POST
-        },
+        }
+    }
+
+    PostScreen(
+        postId = postId,
+        post = post,
         comment = when (commentState.value?.status) {
             Status.SUCCESS -> commentState.value?.data ?: DEFAULT_COMMENT
             else -> DEFAULT_COMMENT
         },
         snackBarHostState = snackBarHostState,
-        onClickProfile = { /*TODO*/ },
-        onClickPost = { /*TODO*/ },
-        onClickLikePost = { /*TODO*/ },
-        onClickBookmark = { /*TODO*/ },
+        onClickProfile = onProfileClick,
+        onClickPost = { },
+        onClickLikePost = {
+            postViewModel.toggleLikePost(postId = postId.toInt(), currentHeart = post.heart)
+        },
+        onClickBookmark = {
+            postViewModel.toggleBookmarkPostDetail(postId = postId.toInt(), currentBookmark = post.bookmark)
+        },
         onClickReport = { reason ->
             reportViewModel.requestSavePostReport(reason, postId.toInt())
         },
-        onPostLikeUsersClick = { /*TODO*/ },
-        onPostHashtagClick = { /*TODO*/ }
+        onPostLikeUsersClick = onPostLikeUsersClick,
+        onPostHashtagClick = onPostHashtagClick,
+        onBackClick = onBackClick
     )
+}
+
+@Composable
+private fun PostScreen(
+    postId: String,
+    post: PostDetail,
+    comment: Comments,
+    snackBarHostState: SnackbarHostState,
+    onClickProfile: (String) -> Unit,
+    onClickPost: () -> Unit,
+    onClickLikePost: () -> Unit,
+    onClickBookmark: () -> Unit,
+    onClickReport: (String) -> Unit,
+    onPostLikeUsersClick: (String) -> Unit,
+    onPostHashtagClick: (String) -> Unit,
+    onBackClick: () -> Unit
+) {
+    val scrollState = rememberScrollState()
+
+    Scaffold(
+        topBar = {
+            TopNavigation(
+                leftIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_x_sign),
+                            contentDescription = stringResource(id = R.string.back_sign),
+                            tint = Dark
+                        )
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+
+        PostView(
+            postId = postId,
+            post = post,
+            comment = comment,
+            snackBarHostState = snackBarHostState,
+            onClickProfile = onClickProfile,
+            onClickPost = onClickPost,
+            onClickLikePost = onClickLikePost,
+            onClickBookmark = onClickBookmark,
+            onClickReport = onClickReport,
+            onPostLikeUsersClick = onPostLikeUsersClick,
+            onPostHashtagClick = onPostHashtagClick,
+            modifier = Modifier
+                .padding(innerPadding)
+                .verticalScroll(scrollState)
+        )
+    }
 }
 
 @Composable
@@ -118,7 +188,7 @@ private fun PostView(
     post: PostDetail,
     comment: Comments,
     snackBarHostState: SnackbarHostState,
-    onClickProfile: () -> Unit,
+    onClickProfile: (String) -> Unit,
     onClickPost: () -> Unit,
     onClickLikePost: () -> Unit,
     onClickBookmark: () -> Unit,
@@ -165,7 +235,7 @@ private fun PostView(
                     .clickableSingle(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = onClickProfile
+                        onClick = { onClickProfile("") }
                     )
             )
             Spacer(modifier = Modifier.width(12.dp))
@@ -177,7 +247,7 @@ private fun PostView(
                     modifier = Modifier.clickableSingle(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = onClickProfile
+                        onClick = { onClickProfile("") }
                     )
                 )
                 Text(
@@ -392,18 +462,39 @@ private fun PostView(
 @Composable
 private fun PreviewPostScreen() {
     DayoTheme {
+        PostScreen(
+            postId = "0",
+            post = DEFAULT_POST,
+            comment = DEFAULT_COMMENT,
+            snackBarHostState = SnackbarHostState(),
+            onClickProfile = { },
+            onClickPost = { },
+            onClickLikePost = { },
+            onClickBookmark = { },
+            onClickReport = { },
+            onPostLikeUsersClick = { },
+            onPostHashtagClick = { },
+            onBackClick = { }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewPostView() {
+    DayoTheme {
         PostView(
             postId = "0",
             post = DEFAULT_POST,
             comment = DEFAULT_COMMENT,
             snackBarHostState = SnackbarHostState(),
-            onClickProfile = { /*TODO*/ },
-            onClickPost = { /*TODO*/ },
-            onClickLikePost = { /*TODO*/ },
-            onClickBookmark = { /*TODO*/ },
-            onClickReport = {},
-            onPostLikeUsersClick = {},
-            onPostHashtagClick = {}
+            onClickProfile = { },
+            onClickPost = { },
+            onClickLikePost = { },
+            onClickBookmark = { },
+            onClickReport = { },
+            onPostLikeUsersClick = { },
+            onPostHashtagClick = { }
         )
     }
 }

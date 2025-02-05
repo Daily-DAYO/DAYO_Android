@@ -95,6 +95,9 @@ internal fun MainScreen(
                             )
                             postNavGraph(
                                 snackBarHostState = snackBarHostState,
+                                onProfileClick = { /*TODO*/ },
+                                onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
+                                onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) },
                                 onBackClick = { navigator.popBackStack() }
                             )
                             searchNavGraph(

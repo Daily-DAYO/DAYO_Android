@@ -17,6 +17,9 @@ fun NavController.navigatePostLikeUsers(postId: String) {
 
 fun NavGraphBuilder.postNavGraph(
     snackBarHostState: SnackbarHostState,
+    onProfileClick: (String) -> Unit,
+    onPostLikeUsersClick: (String) -> Unit,
+    onPostHashtagClick: (String) -> Unit,
     onBackClick: () -> Unit
 ) {
     composable(
@@ -30,7 +33,11 @@ fun NavGraphBuilder.postNavGraph(
         val postId = navBackStackEntry.arguments?.getString("postId") ?: ""
         PostScreen(
             postId = postId,
-            snackBarHostState = snackBarHostState
+            snackBarHostState = snackBarHostState,
+            onProfileClick = onProfileClick,
+            onPostLikeUsersClick = onPostLikeUsersClick,
+            onPostHashtagClick = onPostHashtagClick,
+            onBackClick = onBackClick
         )
     }
 

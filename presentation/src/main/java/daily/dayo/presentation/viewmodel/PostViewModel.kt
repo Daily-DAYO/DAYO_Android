@@ -7,10 +7,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import daily.dayo.domain.model.BookmarkPostResponse
 import daily.dayo.domain.model.Comment
 import daily.dayo.domain.model.Comments
-import daily.dayo.domain.model.LikePostResponse
 import daily.dayo.domain.model.LikeUser
 import daily.dayo.domain.model.MentionUser
 import daily.dayo.domain.model.NetworkResponse
@@ -59,12 +57,6 @@ class PostViewModel @Inject constructor(
 
     private val _postComments = MutableLiveData<Resource<Comments>>()
     val postComments: LiveData<Resource<Comments>> = _postComments
-
-    private val _postLiked = MutableLiveData<Resource<LikePostResponse>>()
-    val postLiked: LiveData<Resource<LikePostResponse>> get() = _postLiked
-
-    private val _postBookmarked = MutableLiveData<Resource<BookmarkPostResponse>>()
-    val postBookmarked: LiveData<Resource<BookmarkPostResponse>> get() = _postBookmarked
 
     private val _postCommentCreateSuccess = MutableLiveData<Event<Boolean>>()
     val postCommentCreateSuccess get() = _postCommentCreateSuccess
@@ -115,81 +107,75 @@ class PostViewModel @Inject constructor(
         requestDeletePostUseCase(postId)
     }
 
-    fun requestLikePost(postId: Int) = viewModelScope.launch {
-        requestLikePostUseCase(postId = postId)?.let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _postDetail.postValue(
-                        Resource.success(
-                            _postDetail.value?.data?.apply {
-                                heart = true
-                                heartCount = ApiResponse.body?.allCount ?: 0
-                            }
+    fun toggleLikePost(postId: Int, currentHeart: Boolean) {
+        viewModelScope.launch {
+            if (currentHeart) {
+                requestUnlikePostUseCase(postId = postId)
+            } else {
+                requestLikePostUseCase(postId = postId)
+            }.let { response ->
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        _postDetail.postValue(
+                            Resource.success(
+                                _postDetail.value?.data?.copy(
+                                    heart = !currentHeart,
+                                    heartCount = response.body?.allCount ?: 0
+                                )
+                            )
                         )
-                    )
-                }
+                    }
 
-                is NetworkResponse.NetworkError -> {
-                    _postLiked.postValue(Resource.error(ApiResponse.exception.toString(), null))
-                }
+                    is NetworkResponse.NetworkError -> {
+                        _postDetail.postValue(Resource.error(response.exception.toString(), null))
+                    }
 
-                is NetworkResponse.ApiError -> {
-                    _postLiked.postValue(Resource.error(ApiResponse.error.toString(), null))
-                }
+                    is NetworkResponse.ApiError -> {
+                        _postDetail.postValue(Resource.error(response.error.toString(), null))
+                    }
 
-                is NetworkResponse.UnknownError -> {
-                    _postLiked.postValue(Resource.error(ApiResponse.throwable.toString(), null))
-                }
-            }
-        }
-    }
-
-    fun requestUnlikePost(postId: Int) = viewModelScope.launch {
-        requestUnlikePostUseCase(postId).let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _postDetail.postValue(
-                        Resource.success(
-                            _postDetail.value?.data?.apply {
-                                heart = false
-                                heartCount = ApiResponse.body?.allCount ?: 0
-                            }
-                        )
-                    )
-                }
-
-                is NetworkResponse.NetworkError -> {}
-                is NetworkResponse.ApiError -> {}
-                is NetworkResponse.UnknownError -> {}
-            }
-
-        }
-    }
-
-    fun requestBookmarkPost(postId: Int) = viewModelScope.launch {
-        requestBookmarkPostUseCase(postId = postId).let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _postBookmarked.postValue(Resource.success(ApiResponse.body))
-                }
-
-                is NetworkResponse.NetworkError -> {
-                    _postBookmarked.postValue(Resource.error(ApiResponse.exception.toString(), null))
-                }
-
-                is NetworkResponse.ApiError -> {
-                    _postBookmarked.postValue(Resource.error(ApiResponse.error.toString(), null))
-                }
-
-                is NetworkResponse.UnknownError -> {
-                    _postBookmarked.postValue(Resource.error(ApiResponse.throwable.toString(), null))
+                    is NetworkResponse.UnknownError -> {
+                        _postDetail.postValue(Resource.error(response.throwable.toString(), null))
+                    }
                 }
             }
         }
     }
 
-    fun requestDeleteBookmarkPost(postId: Int) = viewModelScope.launch {
-        requestDeleteBookmarkPostUseCase(postId)
+    fun toggleBookmarkPostDetail(postId: Int, currentBookmark: Boolean?) {
+        viewModelScope.launch {
+            currentBookmark?.let { bookmark ->
+                if (bookmark) {
+                    requestDeleteBookmarkPostUseCase(postId = postId)
+                } else {
+                    requestBookmarkPostUseCase(postId = postId)
+                }.let { response ->
+                    when (response) {
+                        is NetworkResponse.Success -> {
+                            _postDetail.postValue(
+                                Resource.success(
+                                    _postDetail.value?.data?.copy(
+                                        bookmark = !currentBookmark
+                                    )
+                                )
+                            )
+                        }
+
+                        is NetworkResponse.NetworkError -> {
+                            _postDetail.postValue(Resource.error(response.exception.toString(), null))
+                        }
+
+                        is NetworkResponse.ApiError -> {
+                            _postDetail.postValue(Resource.error(response.error.toString(), null))
+                        }
+
+                        is NetworkResponse.UnknownError -> {
+                            _postDetail.postValue(Resource.error(response.throwable.toString(), null))
+                        }
+                    }
+                }
+            }
+        }
     }
 
     fun requestPostComment(postId: Int) {
