@@ -260,7 +260,7 @@ fun WriteFolderItemLayout(
             RoundImageView(
                 context = LocalContext.current,
                 imageUrl = folder.thumbnailImage,
-                customModifier = Modifier.size(FOLDER_THUMBNAIL_SIZE.dp),
+                modifier = Modifier.size(FOLDER_THUMBNAIL_SIZE.dp),
                 imageSize = Size(FOLDER_THUMBNAIL_SIZE, FOLDER_THUMBNAIL_SIZE),
                 roundSize = FOLDER_THUMBNAIL_RADIUS_SIZE.dp,
             )
