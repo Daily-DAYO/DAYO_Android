@@ -292,7 +292,7 @@ private fun FollowUserInfo(
             context = context,
             imageUrl = "${BuildConfig.BASE_URL}/images/${follow.profileImg}",
             roundSize = 18.dp,
-            customModifier = Modifier.size(36.dp)
+            modifier = Modifier.size(36.dp)
         )
 
         Text(
