@@ -56,7 +56,7 @@ fun FolderView(
                 context = LocalContext.current,
                 imageUrl = "${BuildConfig.BASE_URL}/images/${folder.thumbnailImage}",
                 imageDescription = folder.title,
-                customModifier = Modifier
+                modifier = Modifier
                     .border(BorderStroke(1.dp, Gray5_E8EAEE), RoundedCornerShape(8.dp))
                     .matchParentSize()
             )

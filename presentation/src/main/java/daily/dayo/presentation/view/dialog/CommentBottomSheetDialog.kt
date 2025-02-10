@@ -420,7 +420,7 @@ private fun CommentView(
                 imageUrl = "${BuildConfig.BASE_URL}/images/${comment.profileImg}",
                 imageDescription = "comment profile image",
                 placeholderResId = placeholderResId,
-                customModifier = Modifier
+                modifier = Modifier
                     .clip(CircleShape)
                     .size(36.dp)
                     .clickableSingle(
@@ -545,7 +545,7 @@ private fun CommentMentionSearchView(
                         imageUrl = "${BuildConfig.BASE_URL}/images/${user.profileImg}",
                         imageDescription = "search users profile image",
                         placeholderResId = placeholderResId,
-                        customModifier = Modifier
+                        modifier = Modifier
                             .clip(CircleShape)
                             .size(24.dp)
                             .clickableSingle(

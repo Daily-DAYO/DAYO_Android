@@ -61,7 +61,7 @@ fun HomePostView(
                 context = LocalContext.current,
                 imageUrl = "${BuildConfig.BASE_URL}/images/${post.thumbnailImage}",
                 imageDescription = "dayo pick image",
-                customModifier = Modifier
+                modifier = Modifier
                     .matchParentSize()
                     .clickableSingle(
                         interactionSource = imageInteractionSource,
