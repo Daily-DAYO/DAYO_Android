@@ -504,7 +504,7 @@ private fun FolderPostItem(
             context = LocalContext.current,
             imageUrl = "${BuildConfig.BASE_URL}/images/${post.thumbnailImage}",
             imageDescription = "bookmark post thumbnail",
-            customModifier = Modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
         )
