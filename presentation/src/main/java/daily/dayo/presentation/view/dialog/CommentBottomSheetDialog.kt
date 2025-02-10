@@ -415,11 +415,11 @@ private fun CommentView(
         modifier = modifier,
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            val placeholder = AppCompatResources.getDrawable(LocalContext.current, R.drawable.ic_profile_default_user_profile)
+            val placeholderResId = remember { R.drawable.ic_profile_default_user_profile }
             RoundImageView(context = LocalContext.current,
                 imageUrl = "${BuildConfig.BASE_URL}/images/${comment.profileImg}",
                 imageDescription = "comment profile image",
-                placeholder = placeholder,
+                placeholderResId = placeholderResId,
                 customModifier = Modifier
                     .clip(CircleShape)
                     .size(36.dp)
@@ -520,7 +520,7 @@ private fun CommentMentionSearchView(
     userResults: LazyPagingItems<SearchUser>,
     onClickFollowUser: (SearchUser) -> Unit
 ) {
-    val placeholder = AppCompatResources.getDrawable(LocalContext.current, R.drawable.ic_profile_default_user_profile)
+    val placeholderResId = R.drawable.ic_profile_default_user_profile
     LazyColumn(
         modifier = Modifier
             .background(DayoTheme.colorScheme.background)
@@ -544,7 +544,7 @@ private fun CommentMentionSearchView(
                     RoundImageView(context = LocalContext.current,
                         imageUrl = "${BuildConfig.BASE_URL}/images/${user.profileImg}",
                         imageDescription = "search users profile image",
-                        placeholder = placeholder,
+                        placeholderResId = placeholderResId,
                         customModifier = Modifier
                             .clip(CircleShape)
                             .size(24.dp)
