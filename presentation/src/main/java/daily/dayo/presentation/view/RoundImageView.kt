@@ -22,13 +22,13 @@ import daily.dayo.presentation.R
 
 @Composable
 fun RoundImageView(
-    context: Context,
     imageUrl: Any,
+    context: Context,
+    modifier: Modifier = Modifier,
     imageDescription: String = "default image view",
-    @DrawableRes placeholderResId: Int? = null,
+    imageSize: Size = Size.ORIGINAL,
     roundSize: Dp = 8.dp,
-    customModifier: Modifier = Modifier,
-    imageSize: Size = Size.ORIGINAL
+    @DrawableRes placeholderResId: Int? = null
 ) {
     AsyncImage(
         model = ImageRequest.Builder(context)
@@ -38,8 +38,7 @@ fun RoundImageView(
             .build(),
         contentDescription = imageDescription,
         contentScale = ContentScale.Crop,
-        modifier = customModifier
-            .clip(RoundedCornerShape(size = roundSize)),
+        modifier = modifier.clip(RoundedCornerShape(size = roundSize)),
         placeholder = if (placeholderResId != null) painterResource(id = placeholderResId) else null,
         error = if (placeholderResId != null) painterResource(id = placeholderResId) else null
     )
@@ -47,10 +46,10 @@ fun RoundImageView(
 
 @Composable
 fun BadgeRoundImageView(
-    context: Context,
     imageUrl: Any,
-    modifier: Modifier = Modifier,
+    context: Context,
     contentModifier: Modifier,
+    modifier: Modifier = Modifier,
     imageDescription: String = "default image view",
     @DrawableRes placeholderResId: Int? = null,
     roundSize: Dp = 8.dp,
@@ -63,7 +62,7 @@ fun BadgeRoundImageView(
             imageDescription = imageDescription,
             placeholderResId = placeholderResId,
             roundSize = roundSize,
-            customModifier = contentModifier
+            modifier = contentModifier
         )
 
         Icon(
