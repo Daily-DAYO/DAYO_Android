@@ -109,7 +109,7 @@ fun SearchPostHashtagScreen(
                         context = LocalContext.current,
                         imageUrl = "${BuildConfig.BASE_URL}/images/${post?.thumbnailImage}",
                         imageDescription = "searched Image",
-                        customModifier = Modifier
+                        modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(1f)
                             .clickableSingle(
