@@ -79,10 +79,11 @@ internal fun MainScreen(
                             startDestination = Screen.Home.route
                         ) {
                             homeNavGraph(
-                                coroutineScope,
-                                bottomSheetState,
-                                bottomSheetContent,
-                                onSearchClick = { navigator.navigateSearch() }
+                                onPostClick = { navigator.navigatePost(it) },
+                                onSearchClick = { navigator.navigateSearch() },
+                                coroutineScope = coroutineScope,
+                                bottomSheetState = bottomSheetState,
+                                bottomSheetContent = bottomSheetContent,
                             )
                             feedNavGraph(
                                 snackBarHostState = snackBarHostState,
@@ -123,6 +124,7 @@ internal fun MainScreen(
                                 onFolderClick = { folderId -> navigator.navController.navigate(MyPageRoute.folder(folderId)) },
                                 onFolderCreateClick = { navigator.navigateFolderCreate() },
                                 onFolderEditClick = { folderId -> navigator.navigateFolderEdit(folderId) },
+                                onPostClick = { postId -> navigator.navigatePost(postId) },
                                 onPostMoveClick = { folderId -> navigator.navigateFolderPostMove(folderId) },
                                 navigateBackToFolder = { folderId -> navigator.navController.navigateBackToFolder(folderId) }
                             )
