@@ -24,6 +24,7 @@ import daily.dayo.domain.usecase.comment.RequestPostCommentUseCase
 import daily.dayo.domain.usecase.like.RequestLikePostUseCase
 import daily.dayo.domain.usecase.like.RequestPostLikeUsersUseCase
 import daily.dayo.domain.usecase.like.RequestUnlikePostUseCase
+import daily.dayo.domain.usecase.member.RequestCurrentUserInfoUseCase
 import daily.dayo.domain.usecase.post.RequestDeletePostUseCase
 import daily.dayo.domain.usecase.post.RequestPostDetailUseCase
 import daily.dayo.presentation.common.Event
@@ -49,7 +50,8 @@ class PostViewModel @Inject constructor(
     private val requestCreatePostCommentReplyUseCase: RequestCreatePostCommentReplyUseCase,
     private val requestDeletePostCommentUseCase: RequestDeletePostCommentUseCase,
     private val requestBlockMemberUseCase: RequestBlockMemberUseCase,
-    private val requestPostLikeUsersUseCase: RequestPostLikeUsersUseCase
+    private val requestPostLikeUsersUseCase: RequestPostLikeUsersUseCase,
+    private val requestCurrentUserInfoUseCase: RequestCurrentUserInfoUseCase
 ) : ViewModel() {
 
     private val _postDetail = MutableLiveData<Resource<PostDetail>>()
@@ -71,6 +73,8 @@ class PostViewModel @Inject constructor(
     val postLikeUsers = _postLikeUsers.asStateFlow()
 
     val postLikeCountUiState: MutableStateFlow<Int> = MutableStateFlow(0)
+
+    fun getCurrentUserInfo() = requestCurrentUserInfoUseCase()
 
     fun cleanUpPostDetail() {
         _postDetail.postValue(Resource.loading(null))
