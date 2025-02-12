@@ -51,6 +51,7 @@ import kotlinx.coroutines.CoroutineScope
 @Composable
 fun HomeNewScreen(
     selectedCategoryName: String,
+    onPostClick: (String) -> Unit,
     coroutineScope: CoroutineScope,
     bottomSheetState: ModalBottomSheetState,
     homeViewModel: HomeViewModel = hiltViewModel()
@@ -110,9 +111,7 @@ fun HomeNewScreen(
                                 HomePostView(
                                     post = post,
                                     modifier = Modifier.padding(bottom = 20.dp),
-                                    onClickPost = {
-                                        // todo move to post
-                                    },
+                                    onClickPost = { onPostClick(post.postId.toString()) },
                                     onClickLikePost = {
                                         if (!post.heart) {
                                             homeViewModel.requestLikePost(post.postId!!, isDayoPickLike = false)
