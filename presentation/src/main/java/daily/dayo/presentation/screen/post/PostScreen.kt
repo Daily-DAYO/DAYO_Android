@@ -1,12 +1,16 @@
 package daily.dayo.presentation.screen.post
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +30,9 @@ import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
+import daily.dayo.presentation.theme.Gray2_767B83
+import daily.dayo.presentation.theme.Gray4_C5CAD2
+import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.view.CommentListView
 import daily.dayo.presentation.view.DEFAULT_POST
 import daily.dayo.presentation.view.DetailPostView
@@ -35,6 +42,7 @@ import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.PostViewModel
 import daily.dayo.presentation.viewmodel.ReportViewModel
 import daily.dayo.presentation.viewmodel.SearchViewModel
+import java.text.DecimalFormat
 
 @Composable
 fun PostScreen(
@@ -146,6 +154,16 @@ private fun PostScreen(
             }
 
             item {
+                Spacer(Modifier.height(12.dp))
+                Row(Modifier.padding(horizontal = 18.dp)) {
+                    val dec = DecimalFormat("#,###")
+                    Text(text = " ${dec.format(comments.count)} ", style = DayoTheme.typography.caption1, color = if (comments.count != 0) Primary_23C882 else Gray4_C5CAD2)
+                    Text(text = stringResource(id = R.string.post_comment_count_message), style = DayoTheme.typography.caption1.copy(Gray2_767B83))
+                }
+            }
+
+            item {
+                Spacer(Modifier.height(12.dp))
                 CommentListView(
                     postComments = comments,
                     onClickReply = {},

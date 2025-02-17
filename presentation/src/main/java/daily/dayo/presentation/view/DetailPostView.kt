@@ -53,10 +53,9 @@ import daily.dayo.presentation.common.TimeChangerUtil
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
+import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
-import daily.dayo.presentation.theme.Gray4_C5CAD2
-import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.Transparent_White30
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.dialog.RadioButtonDialog
@@ -238,6 +237,8 @@ fun DetailPostView(
                 .padding(horizontal = 18.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            val dec = DecimalFormat("#,###")
+
             // like button
             Image(
                 imageVector = ImageVector.vectorResource(id = if (post.heart) R.drawable.ic_heart_filled else R.drawable.ic_heart_outlined),
@@ -251,6 +252,7 @@ fun DetailPostView(
                     ),
                 contentDescription = "like",
             )
+            Text(text = "${dec.format(post.heartCount)} ", style = DayoTheme.typography.b5, color = Gray1_50545B)
 
             // comment
             Image(
@@ -264,6 +266,7 @@ fun DetailPostView(
                     ),
                 contentDescription = "comment",
             )
+            Text(text = "${dec.format(commentCount)} ", style = DayoTheme.typography.b5, color = Gray1_50545B)
             Spacer(modifier = Modifier.weight(1f))
 
             // bookmark
@@ -278,33 +281,6 @@ fun DetailPostView(
                     ),
                 contentDescription = "bookmark",
             )
-        }
-
-        // post info
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 4.dp)
-                .padding(horizontal = 18.dp)
-                .wrapContentHeight(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // like count
-            val dec = DecimalFormat("#,###")
-            Row(modifier = Modifier.weight(1f)) {
-                Text(text = stringResource(id = R.string.post_like_count_message_1), style = DayoTheme.typography.caption1.copy(Gray2_767B83))
-                Text(text = " ${dec.format(post.heartCount)} ",
-                    style = DayoTheme.typography.caption1,
-                    modifier = if (post.heartCount != 0) Modifier.clickableSingle { onPostLikeUsersClick(postId) } else Modifier,
-                    color = if (post.heartCount != 0) Primary_23C882 else Gray4_C5CAD2)
-                Text(text = stringResource(id = R.string.post_like_count_message_2), style = DayoTheme.typography.caption1.copy(Gray2_767B83))
-            }
-
-            // comment count
-            Row {
-                Text(text = " ${dec.format(commentCount)} ", style = DayoTheme.typography.caption1, color = if (commentCount != 0) Primary_23C882 else Gray4_C5CAD2)
-                Text(text = stringResource(id = R.string.post_comment_count_message), style = DayoTheme.typography.caption1.copy(Gray2_767B83))
-            }
         }
 
         // post content
