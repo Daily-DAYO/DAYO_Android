@@ -256,7 +256,8 @@ private fun CommentBottomSheetDialogContent(
                 onClickDelete,
                 onClickReport,
                 currentMemberId,
-                Modifier.padding(horizontal = 18.dp)
+                Modifier.padding(horizontal = 18.dp),
+                true
             )
         }
     }

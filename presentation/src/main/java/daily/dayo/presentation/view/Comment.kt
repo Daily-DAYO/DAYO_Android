@@ -81,7 +81,8 @@ fun CommentListView(
     onClickDelete: (Long) -> Unit,
     onClickReport: (Long) -> Unit,
     currentMemberId: String?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showEmptyIcon: Boolean = false
 ) {
     with(postComments) {
         data.let { postComments ->
@@ -92,13 +93,17 @@ fun CommentListView(
                     modifier = Modifier
                         .background(DayoTheme.colorScheme.background)
                         .fillMaxSize()
+                        .padding(top = 12.dp, bottom = 30.dp)
                         .then(modifier)
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_comment_empty),
-                        contentDescription = "empty",
-                        tint = Color.Unspecified
-                    )
+                    if (showEmptyIcon) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_comment_empty),
+                            contentDescription = "empty",
+                            tint = Color.Unspecified
+                        )
+                    }
+
                     Text(
                         text = stringResource(id = R.string.post_comment_empty),
                         style = DayoTheme.typography.b3.copy(Gray3_9FA5AE),
