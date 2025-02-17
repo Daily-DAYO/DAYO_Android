@@ -201,6 +201,9 @@
     <string name="post_option_mine_delete">게시물 삭제</string>
     <string name="post_option_mine_delete_alert_message">게시물을 삭제할까요?</string>
 
+    <!-- Comment -->
+    <string name="comment_button_text">남기기</string>
+
     <!-- Report -->
     <string name="report_post_title">게시물 신고</string>
     <string name="report_post_button">신고하기</string>
