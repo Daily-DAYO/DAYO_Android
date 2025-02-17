@@ -45,14 +45,12 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import daily.dayo.domain.model.Category
-import daily.dayo.domain.model.Comments
 import daily.dayo.domain.model.PostDetail
 import daily.dayo.domain.model.categoryKR
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.TimeChangerUtil
 import daily.dayo.presentation.common.extension.clickableSingle
-import daily.dayo.presentation.screen.post.DEFAULT_COMMENT
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
@@ -71,8 +69,8 @@ import java.time.format.DateTimeFormatter
 fun DetailPostView(
     postId: String,
     post: PostDetail,
-    comment: Comments,
-    isMine: Boolean,
+    commentCount: Int,
+    currentMemberId: String?,
     snackBarHostState: SnackbarHostState,
     onClickProfile: (String) -> Unit,
     onClickPost: () -> Unit,
@@ -155,7 +153,7 @@ fun DetailPostView(
                     )
                 }
 
-                if (isMine) {
+                if (currentMemberId == post.memberId) {
                     MyPostDropdownMenu(
                         expanded = showPostOption,
                         onDismissRequest = { showPostOption = !showPostOption },
@@ -304,7 +302,7 @@ fun DetailPostView(
 
             // comment count
             Row {
-                Text(text = " ${dec.format(comment.count)} ", style = DayoTheme.typography.caption1, color = if (comment.count != 0) Primary_23C882 else Gray4_C5CAD2)
+                Text(text = " ${dec.format(commentCount)} ", style = DayoTheme.typography.caption1, color = if (commentCount != 0) Primary_23C882 else Gray4_C5CAD2)
                 Text(text = stringResource(id = R.string.post_comment_count_message), style = DayoTheme.typography.caption1.copy(Gray2_767B83))
             }
         }
@@ -361,8 +359,8 @@ private fun PreviewDetailPostView() {
         DetailPostView(
             postId = "0",
             post = DEFAULT_POST,
-            comment = DEFAULT_COMMENT,
-            isMine = true,
+            commentCount = 0,
+            currentMemberId = "",
             snackBarHostState = SnackbarHostState(),
             onClickProfile = { },
             onClickPost = { },
