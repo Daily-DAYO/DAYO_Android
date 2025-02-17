@@ -1,8 +1,8 @@
 package daily.dayo.presentation.screen.post
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import daily.dayo.domain.model.Comments
 import daily.dayo.domain.model.PostDetail
@@ -25,11 +26,15 @@ import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
+import daily.dayo.presentation.view.CommentListView
 import daily.dayo.presentation.view.DEFAULT_POST
 import daily.dayo.presentation.view.DetailPostView
 import daily.dayo.presentation.view.TopNavigation
+import daily.dayo.presentation.view.dialog.DEFAULT_COMMENTS
+import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.PostViewModel
 import daily.dayo.presentation.viewmodel.ReportViewModel
+import daily.dayo.presentation.viewmodel.SearchViewModel
 
 @Composable
 fun PostScreen(
@@ -39,8 +44,10 @@ fun PostScreen(
     onPostLikeUsersClick: (String) -> Unit,
     onPostHashtagClick: (String) -> Unit,
     onBackClick: () -> Unit,
-    reportViewModel: ReportViewModel = hiltViewModel(),
-    postViewModel: PostViewModel = hiltViewModel()
+    postViewModel: PostViewModel = hiltViewModel(),
+    accountViewModel: AccountViewModel = hiltViewModel(),
+    searchViewModel: SearchViewModel = hiltViewModel(),
+    reportViewModel: ReportViewModel = hiltViewModel()
 ) {
     val postState = postViewModel.postDetail.observeAsState()
     var post by remember { mutableStateOf(DEFAULT_POST) }
@@ -61,11 +68,11 @@ fun PostScreen(
     PostScreen(
         postId = postId,
         post = post,
-        comment = when (commentState.value?.status) {
-            Status.SUCCESS -> commentState.value?.data ?: DEFAULT_COMMENT
-            else -> DEFAULT_COMMENT
+        comments = when (commentState.value?.status) {
+            Status.SUCCESS -> commentState.value?.data ?: DEFAULT_COMMENTS
+            else -> DEFAULT_COMMENTS
         },
-        isMine = postViewModel.getCurrentUserInfo().memberId == post.memberId,
+        currentMemberId = postViewModel.getCurrentUserInfo().memberId,
         snackBarHostState = snackBarHostState,
         onClickProfile = onProfileClick,
         onClickPost = { },
@@ -88,8 +95,8 @@ fun PostScreen(
 private fun PostScreen(
     postId: String,
     post: PostDetail,
-    comment: Comments,
-    isMine: Boolean,
+    comments: Comments,
+    currentMemberId: String?,
     snackBarHostState: SnackbarHostState,
     onClickProfile: (String) -> Unit,
     onClickPost: () -> Unit,
@@ -100,8 +107,6 @@ private fun PostScreen(
     onPostHashtagClick: (String) -> Unit,
     onBackClick: () -> Unit
 ) {
-    val scrollState = rememberScrollState()
-
     Scaffold(
         topBar = {
             TopNavigation(
@@ -117,24 +122,40 @@ private fun PostScreen(
             )
         }
     ) { innerPadding ->
-
-        DetailPostView(
-            postId = postId,
-            post = post,
-            comment = comment,
-            isMine = isMine,
-            snackBarHostState = snackBarHostState,
-            onClickProfile = onClickProfile,
-            onClickPost = onClickPost,
-            onClickLikePost = onClickLikePost,
-            onClickBookmark = onClickBookmark,
-            onClickReport = onClickReport,
-            onPostLikeUsersClick = onPostLikeUsersClick,
-            onPostHashtagClick = onPostHashtagClick,
+        LazyColumn(
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(innerPadding)
-                .verticalScroll(scrollState)
-        )
+        ) {
+            item {
+                DetailPostView(
+                    postId = postId,
+                    post = post,
+                    commentCount = comments.count,
+                    currentMemberId = currentMemberId,
+                    snackBarHostState = snackBarHostState,
+                    onClickProfile = onClickProfile,
+                    onClickPost = onClickPost,
+                    onClickLikePost = onClickLikePost,
+                    onClickBookmark = onClickBookmark,
+                    onClickReport = onClickReport,
+                    onPostLikeUsersClick = onPostLikeUsersClick,
+                    onPostHashtagClick = onPostHashtagClick,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            item {
+                CommentListView(
+                    postComments = comments,
+                    onClickReply = {},
+                    onClickDelete = {},
+                    onClickReport = {},
+                    currentMemberId = currentMemberId,
+                    modifier = Modifier.padding(horizontal = 18.dp)
+                )
+            }
+        }
     }
 }
 
@@ -145,8 +166,8 @@ private fun PreviewPostScreen() {
         PostScreen(
             postId = "0",
             post = DEFAULT_POST,
-            comment = DEFAULT_COMMENT,
-            isMine = true,
+            comments = DEFAULT_COMMENTS,
+            currentMemberId = "",
             snackBarHostState = SnackbarHostState(),
             onClickProfile = { },
             onClickPost = { },
@@ -160,7 +181,3 @@ private fun PreviewPostScreen() {
     }
 }
 
-val DEFAULT_COMMENT = Comments(
-    count = 0,
-    data = emptyList()
-)
