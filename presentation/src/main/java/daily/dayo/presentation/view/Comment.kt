@@ -35,6 +35,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
@@ -389,6 +391,7 @@ fun CommentTextField(
     replyCommentState: MutableState<Pair<Long, Comment>?>,
     userSearchKeyword: MutableState<String>,
     showMentionSearchView: MutableState<Boolean>,
+    focusRequester: FocusRequester,
     onClickPostComment: () -> Unit
 ) {
     Spacer(
@@ -453,7 +456,8 @@ fun CommentTextField(
                     color = Gray7_F6F6F7,
                     shape = RoundedCornerShape(12.dp)
                 )
-                .weight(1f),
+                .weight(1f)
+                .focusRequester(focusRequester),
             textStyle = DayoTheme.typography.b6,
             interactionSource = interactionSource,
             cursorBrush = SolidColor(Primary_23C882),

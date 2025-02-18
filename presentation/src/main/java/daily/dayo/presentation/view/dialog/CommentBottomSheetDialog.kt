@@ -28,6 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -74,6 +75,7 @@ fun CommentBottomSheetDialog(
     val commentText = remember { mutableStateOf(TextFieldValue("")) }
     val showMentionSearchView = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
+    val commentFocusRequester = FocusRequester()
 
     // show comments
     val postComments = postViewModel.postComments.observeAsState()
@@ -137,6 +139,7 @@ fun CommentBottomSheetDialog(
         // show mention user name
         val replyUsername = "@${replyCommentState.value?.second?.nickname} "
         commentText.value = TextFieldValue(text = replyUsername, selection = TextRange(replyUsername.length))
+        commentFocusRequester.requestFocus()
     }
 
     // clear comment
@@ -153,6 +156,7 @@ fun CommentBottomSheetDialog(
         clearComment()
         postViewModel.requestPostComment(postId)
     }
+
     BackHandler(enabled = sheetState.isVisible) {
         coroutineScope.launch {
             clearComment()
@@ -176,7 +180,7 @@ fun CommentBottomSheetDialog(
                         .padding(top = 12.dp)
                         .wrapContentHeight(),
                 ) {
-                    CommentBottomSheetDialogTitle(onClickClose)
+                    CommentBottomSheetDialogTitle(clearComment, onClickClose)
                     CommentBottomSheetDialogContent(
                         when (postComments.value?.status) {
                             Status.SUCCESS -> postComments.value?.data ?: DEFAULT_COMMENTS
@@ -189,7 +193,7 @@ fun CommentBottomSheetDialog(
                     )
                     if (showMentionSearchView.value) CommentMentionSearchView(userResults, onClickFollowUser)
                     if (replyCommentState.value != null) CommentReplyDescriptionView(replyCommentState, onClickCancelReply)
-                    CommentTextField(commentText, replyCommentState, userSearchKeyword, showMentionSearchView, onClickPostComment)
+                    CommentTextField(commentText, replyCommentState, userSearchKeyword, showMentionSearchView, commentFocusRequester, onClickPostComment)
                 }
             }
         }
@@ -212,7 +216,7 @@ fun CommentBottomSheetDialog(
 }
 
 @Composable
-private fun CommentBottomSheetDialogTitle(onClickClose: () -> Unit) {
+private fun CommentBottomSheetDialogTitle(clearComment: () -> Unit, onClickClose: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -227,7 +231,10 @@ private fun CommentBottomSheetDialogTitle(onClickClose: () -> Unit) {
         )
 
         NoRippleIconButton(
-            onClick = onClickClose,
+            onClick = {
+                clearComment()
+                onClickClose()
+            },
             iconContentDescription = "close",
             iconPainter = painterResource(id = R.drawable.ic_x_sign),
             iconButtonModifier = Modifier.align(Alignment.CenterEnd)
@@ -267,7 +274,7 @@ private fun CommentBottomSheetDialogContent(
 @Preview
 @Composable
 private fun PreviewCommentBottomSheetDialogTitle() {
-    CommentBottomSheetDialogTitle({})
+    CommentBottomSheetDialogTitle({}, {})
 }
 
 @Preview
