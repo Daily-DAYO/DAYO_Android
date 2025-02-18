@@ -74,6 +74,8 @@ fun DetailPostView(
     snackBarHostState: SnackbarHostState,
     onClickProfile: (String) -> Unit,
     onClickPost: () -> Unit,
+    onPostModifyClick: (String) -> Unit,
+    onPostDeleteClick: (String) -> Unit,
     onClickLikePost: () -> Unit,
     onClickComment: () -> Unit,
     onClickBookmark: () -> Unit,
@@ -156,10 +158,11 @@ fun DetailPostView(
 
                 if (currentMemberId == post.memberId) {
                     MyPostDropdownMenu(
+                        postId = postId,
                         expanded = showPostOption,
                         onDismissRequest = { showPostOption = !showPostOption },
-                        onPostModifyClick = { /* TODO */ },
-                        onPostDeleteClick = { /* TODO */ },
+                        onPostModifyClick = onPostModifyClick,
+                        onPostDeleteClick = onPostDeleteClick,
                     )
                 } else {
                     OthersPostDropdownMenu(
@@ -350,6 +353,8 @@ private fun PreviewDetailPostView() {
             snackBarHostState = SnackbarHostState(),
             onClickProfile = { },
             onClickPost = { },
+            onPostModifyClick = { },
+            onPostDeleteClick = { },
             onClickLikePost = { },
             onClickComment = { },
             onClickBookmark = { },

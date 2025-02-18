@@ -35,6 +35,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -82,12 +83,19 @@ fun PostScreen(
     var post by remember { mutableStateOf(DEFAULT_POST) }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val commentFocusRequester = FocusRequester()
+
+    // post option
+    val onPostModifyClick: (String) -> Unit = { postId ->  /* TODO 게시글 수정 */ }
+    val onPostDeleteClick: (String) -> Unit = {
+        postViewModel.requestDeletePost(postId.toInt())
+    }
+    val postDeleteSuccess by postViewModel.postDeleteSuccess.collectAsStateWithLifecycle(false)
 
     // comment
     val commentState = postViewModel.postComments.observeAsState()
     val commentText = remember { mutableStateOf(TextFieldValue("")) }
     val showMentionSearchView = remember { mutableStateOf(false) }
+    val commentFocusRequester = FocusRequester()
 
     // comment option
     val onClickCommentDelete: (Long) -> Unit = { commentId ->
@@ -175,6 +183,12 @@ fun PostScreen(
         }
     }
 
+    LaunchedEffect(postDeleteSuccess) {
+        if (postDeleteSuccess) {
+            onBackClick()
+        }
+    }
+
     PostScreen(
         postId = postId,
         post = post,
@@ -193,10 +207,11 @@ fun PostScreen(
         onClickPostComment = onClickPostComment,
         onClickProfile = onProfileClick,
         onClickPost = { },
+        onPostModifyClick = onPostModifyClick,
+        onPostDeleteClick = onPostDeleteClick,
         onClickLikePost = {
             postViewModel.toggleLikePost(postId = postId.toInt(), currentHeart = post.heart)
         },
-        onClickComment = { },
         onClickBookmark = {
             postViewModel.toggleBookmarkPostDetail(postId = postId.toInt(), currentBookmark = post.bookmark)
         },
@@ -245,8 +260,9 @@ private fun PostScreen(
     onClickPostComment: () -> Unit,
     onClickProfile: (String) -> Unit,
     onClickPost: () -> Unit,
+    onPostModifyClick: (String) -> Unit,
+    onPostDeleteClick: (String) -> Unit,
     onClickLikePost: () -> Unit,
-    onClickComment: () -> Unit,
     onClickBookmark: () -> Unit,
     onClickReport: (String) -> Unit,
     onPostLikeUsersClick: (String) -> Unit,
@@ -296,6 +312,8 @@ private fun PostScreen(
                         snackBarHostState = snackBarHostState,
                         onClickProfile = onClickProfile,
                         onClickPost = onClickPost,
+                        onPostModifyClick = onPostModifyClick,
+                        onPostDeleteClick = onPostDeleteClick,
                         onClickLikePost = onClickLikePost,
                         onClickComment = {
                             coroutineScope.launch {
@@ -364,8 +382,9 @@ private fun PreviewPostScreen() {
             onClickPostComment = { },
             onClickProfile = { },
             onClickPost = { },
+            onPostModifyClick = { },
+            onPostDeleteClick = { },
             onClickLikePost = { },
-            onClickComment = { },
             onClickBookmark = { },
             onClickReport = { },
             onPostLikeUsersClick = { },

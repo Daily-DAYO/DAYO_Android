@@ -19,9 +19,10 @@ import androidx.compose.ui.unit.dp
 import daily.dayo.presentation.R
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
+import daily.dayo.presentation.theme.Red_FF4545
 
 @Composable
-fun MyPostDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit, onPostModifyClick: () -> Unit, onPostDeleteClick: () -> Unit) {
+fun MyPostDropdownMenu(postId: String, expanded: Boolean, onDismissRequest: () -> Unit, onPostModifyClick: (String) -> Unit, onPostDeleteClick: (String) -> Unit) {
     DayoTheme(shapes = DayoTheme.shapes.copy(extraSmall = RoundedCornerShape(16.dp))) {
         DropdownMenu(
             expanded = expanded,
@@ -49,7 +50,10 @@ fun MyPostDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit, onPostMo
                         )
                     }
                 },
-                onClick = onPostModifyClick
+                onClick = {
+                    onDismissRequest()
+                    onPostModifyClick(postId)
+                }
             )
 
             DropdownMenuItem(
@@ -64,16 +68,19 @@ fun MyPostDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit, onPostMo
                         Icon(
                             painter = painterResource(id = R.drawable.ic_menu_delete),
                             contentDescription = stringResource(R.string.post_option_mine_delete),
-                            tint = Dark,
+                            tint = Red_FF4545,
                             modifier = Modifier.padding(end = 8.dp)
                         )
                         Text(
                             text = stringResource(R.string.post_option_mine_delete),
-                            style = DayoTheme.typography.b6.copy(Dark)
+                            style = DayoTheme.typography.b6.copy(Red_FF4545)
                         )
                     }
                 },
-                onClick = onPostDeleteClick
+                onClick = {
+                    onDismissRequest()
+                    onPostDeleteClick(postId)
+                }
             )
         }
     }
