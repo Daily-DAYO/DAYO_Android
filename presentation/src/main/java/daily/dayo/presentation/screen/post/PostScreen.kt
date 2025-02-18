@@ -57,6 +57,7 @@ import daily.dayo.presentation.view.CommentTextField
 import daily.dayo.presentation.view.DEFAULT_POST
 import daily.dayo.presentation.view.DetailPostView
 import daily.dayo.presentation.view.TopNavigation
+import daily.dayo.presentation.view.dialog.CommentReportDialog
 import daily.dayo.presentation.view.dialog.DEFAULT_COMMENTS
 import daily.dayo.presentation.viewmodel.PostViewModel
 import daily.dayo.presentation.viewmodel.ReportViewModel
@@ -211,6 +212,21 @@ fun PostScreen(
         onClickCancelReply = onClickCancelReply,
         onBackClick = onBackClick
     )
+
+    reportCommentId?.let { commentId ->
+        if (showReportDialog) {
+            CommentReportDialog(
+                onClickClose = { showReportDialog = !showReportDialog },
+                onClickConfirm = { reason ->
+                    reportViewModel.requestSaveCommentReport(reason, commentId)
+                    showReportDialog = !showReportDialog
+                    coroutineScope.launch {
+                        snackBarHostState.showSnackbar(context.getString(R.string.comment_report_message))
+                    }
+                }
+            )
+        }
+    }
 }
 
 @Composable
