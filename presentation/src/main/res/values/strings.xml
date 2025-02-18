@@ -204,6 +204,7 @@
     <!-- Comment -->
     <string name="comment_button_text">남기기</string>
     <string name="comment_delete_message">댓글이 삭제되었어요.</string>
+    <string name="comment_report_message">신고가 접수되었어요.</string>
 
     <!-- Report -->
     <string name="report_post_title">게시물 신고</string>

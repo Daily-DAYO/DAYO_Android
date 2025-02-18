@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -74,6 +75,7 @@ fun CommentBottomSheetDialog(
     val currentMemberId = accountViewModel.getCurrentUserInfo().memberId
     val commentText = remember { mutableStateOf(TextFieldValue("")) }
     val showMentionSearchView = remember { mutableStateOf(false) }
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val commentFocusRequester = FocusRequester()
 
@@ -198,15 +200,15 @@ fun CommentBottomSheetDialog(
             }
         }
     ) {
-        reportCommentId?.let { id ->
+        reportCommentId?.let { commentId ->
             if (showReportDialog) {
                 CommentReportDialog(
                     onClickClose = { showReportDialog = !showReportDialog },
-                    onClickConfirm = {
-                        reportViewModel.requestSaveCommentReport(it, id)
+                    onClickConfirm = { reason ->
+                        reportViewModel.requestSaveCommentReport(reason, commentId)
                         showReportDialog = !showReportDialog
                         coroutineScope.launch {
-                            snackBarHostState.showSnackbar("신고가 접수되었어요.")
+                            snackBarHostState.showSnackbar(context.getString(R.string.comment_report_message))
                         }
                     }
                 )
