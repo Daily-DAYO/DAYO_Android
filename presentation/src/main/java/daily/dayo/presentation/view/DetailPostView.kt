@@ -2,6 +2,7 @@ package daily.dayo.presentation.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -74,6 +75,7 @@ fun DetailPostView(
     onClickProfile: (String) -> Unit,
     onClickPost: () -> Unit,
     onClickLikePost: () -> Unit,
+    onClickComment: () -> Unit,
     onClickBookmark: () -> Unit,
     onClickReport: (String) -> Unit,
     onPostLikeUsersClick: (String) -> Unit,
@@ -243,8 +245,6 @@ fun DetailPostView(
             Image(
                 imageVector = ImageVector.vectorResource(id = if (post.heart) R.drawable.ic_heart_filled else R.drawable.ic_heart_outlined),
                 modifier = Modifier
-                    .padding(end = 8.dp)
-                    .padding(vertical = 8.dp)
                     .clickableSingle(
                         indication = rememberRipple(bounded = false),
                         interactionSource = remember { MutableInteractionSource() },
@@ -252,21 +252,31 @@ fun DetailPostView(
                     ),
                 contentDescription = "like",
             )
-            Text(text = "${dec.format(post.heartCount)} ", style = DayoTheme.typography.b5, color = Gray1_50545B)
+            Text(
+                text = "${dec.format(post.heartCount)} ",
+                modifier = Modifier
+                    .clickable { onPostLikeUsersClick(postId) }
+                    .padding(8.dp),
+                style = DayoTheme.typography.b5, color = Gray1_50545B
+            )
 
             // comment
             Image(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_comment),
                 modifier = Modifier
-                    .padding(8.dp)
                     .clickableSingle(
                         indication = rememberRipple(bounded = false),
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = { }
+                        onClick = onClickComment
                     ),
                 contentDescription = "comment",
             )
-            Text(text = "${dec.format(commentCount)} ", style = DayoTheme.typography.b5, color = Gray1_50545B)
+            Text(
+                text = "${dec.format(commentCount)} ",
+                modifier = Modifier.padding(8.dp),
+                style = DayoTheme.typography.b5,
+                color = Gray1_50545B
+            )
             Spacer(modifier = Modifier.weight(1f))
 
             // bookmark
@@ -341,6 +351,7 @@ private fun PreviewDetailPostView() {
             onClickProfile = { },
             onClickPost = { },
             onClickLikePost = { },
+            onClickComment = { },
             onClickBookmark = { },
             onClickReport = { },
             onPostLikeUsersClick = { },
