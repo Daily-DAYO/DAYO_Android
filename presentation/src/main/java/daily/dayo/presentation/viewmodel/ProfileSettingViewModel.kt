@@ -1,5 +1,6 @@
 package daily.dayo.presentation.viewmodel
 
+import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,7 +15,12 @@ import daily.dayo.domain.usecase.member.RequestMyProfileUseCase
 import daily.dayo.domain.usecase.member.RequestUpdateMyProfileUseCase
 import daily.dayo.presentation.common.Event
 import daily.dayo.presentation.common.Resource
+import daily.dayo.presentation.common.Status
+import daily.dayo.presentation.common.image.ImageResizeUtil.cropCenterBitmap
+import daily.dayo.presentation.common.toFile
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.io.File
@@ -33,6 +39,9 @@ class ProfileSettingViewModel @Inject constructor(
 
     private val _updateSuccess = MutableSharedFlow<Boolean>()
     val updateSuccess = _updateSuccess.asSharedFlow()
+
+    private val _isUpdateSuccess = MutableStateFlow<Status?>(null)
+    val isUpdateSuccess: StateFlow<Status?> get() = _isUpdateSuccess
 
     private val _blockList = MutableLiveData<Resource<List<UserBlocked>>>()
     val blockList: LiveData<Resource<List<UserBlocked>>> get() = _blockList
@@ -65,6 +74,35 @@ class ProfileSettingViewModel @Inject constructor(
             when (response) {
                 is NetworkResponse.Success -> _updateSuccess.emit(true)
                 else -> _updateSuccess.emit(false)
+            }
+        }
+    }
+
+    fun requestUpdateMyProfileWithResizedFile(
+        nickname: String,
+        profileImg: Bitmap?= null,
+        profileImgTempDir: String? = null,
+        isReset: Boolean = false
+    ) {
+        viewModelScope.launch {
+            _isUpdateSuccess.emit(Status.LOADING)
+            val resizedImage = profileImg?.let { selectedImage ->
+                if (profileImgTempDir != null) {
+                    return@let selectedImage.cropCenterBitmap().toFile(profileImgTempDir)
+                } else {
+                    return@let null
+                }
+            }
+
+            val response = requestUpdateMyProfileUseCase(
+                nickname = nickname,
+                profileImg = resizedImage,
+                onBasicProfileImg = isReset
+            )
+
+            when (response) {
+                is NetworkResponse.Success -> _isUpdateSuccess.emit(Status.SUCCESS)
+                else -> _isUpdateSuccess.emit(Status.ERROR)
             }
         }
     }
