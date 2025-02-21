@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -76,8 +75,7 @@ import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.Transparent_White30
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.dialog.CommentBottomSheetDialog
-import daily.dayo.presentation.view.dialog.RadioButtonDialog
-import daily.dayo.presentation.viewmodel.PostViewModel
+import daily.dayo.presentation.view.dialog.PostReportDialog
 import daily.dayo.presentation.viewmodel.ReportViewModel
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
@@ -96,23 +94,13 @@ fun FeedPostView(
     onPostHashtagClick: (String) -> Unit,
     bottomSheetState: ModalBottomSheetState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
-    reportViewModel: ReportViewModel = hiltViewModel(),
-    postViewModel: PostViewModel = hiltViewModel()
+    reportViewModel: ReportViewModel = hiltViewModel()
 ) {
     val imageInteractionSource = remember { MutableInteractionSource() }
     var showPostOption by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    val reportReasons = arrayListOf(
-        stringResource(id = R.string.report_post_reason_1),
-        stringResource(id = R.string.report_post_reason_2),
-        stringResource(id = R.string.report_post_reason_3),
-        stringResource(id = R.string.report_post_reason_4),
-        stringResource(id = R.string.report_post_reason_5),
-        stringResource(id = R.string.report_post_reason_6),
-        stringResource(id = R.string.report_post_reason_7),
-        stringResource(id = R.string.report_post_reason_other),
-    )
+    val context = LocalContext.current
 
     val onClickComment: (Int) -> Unit = { postId ->
         coroutineScope.launch { bottomSheetState.show() }
@@ -349,26 +337,15 @@ fun FeedPostView(
     }
 
     if (showDialog) {
-        RadioButtonDialog(
-            title = stringResource(id = R.string.report_post_title),
-            description = stringResource(id = R.string.report_post_description),
-            radioItems = reportReasons,
-            lastInputEnabled = true,
-            lastTextPlaceholder = "게시물을 신고하는 기타 사유는 무엇인가요?",
-            lastTextMaxLength = 100,
+        PostReportDialog(
             onClickCancel = { showDialog = !showDialog },
             onClickConfirm = { reason ->
                 reportViewModel.requestSavePostReport(reason, post.postId!!)
                 showDialog = !showDialog
                 coroutineScope.launch {
-                    snackBarHostState.showSnackbar("신고가 접수되었어요.")
+                    snackBarHostState.showSnackbar(context.getString(R.string.report_comment_alert_message))
                 }
-            },
-            modifier = Modifier
-                .height(400.dp)
-                .imePadding()
-                .clip(RoundedCornerShape(28.dp))
-                .background(DayoTheme.colorScheme.background)
+            }
         )
     }
 }

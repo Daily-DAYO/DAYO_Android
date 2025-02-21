@@ -33,6 +33,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -54,7 +55,7 @@ import kotlinx.coroutines.launch
 fun RadioButtonDialog(
     title: String,
     description: String,
-    radioItems: ArrayList<String>,
+    radioItems: Array<String>,
     onClickCancel: () -> Unit,
     onClickConfirm: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -125,7 +126,7 @@ private fun DialogHeader(title: String, description: String) {
 
 @Composable
 private fun DialogRadioButtons(
-    radioItems: ArrayList<String>,
+    radioItems: Array<String>,
     selectedIndex: MutableState<Int?>,
     lastInputEnabled: Boolean,
     lastTextValue: MutableState<TextFieldValue>,
@@ -216,7 +217,7 @@ private fun DialogRadioButtons(
 private fun DialogActionButton(
     onClickCancel: () -> Unit,
     selectedIndex: MutableState<Int?>,
-    radioItems: ArrayList<String>,
+    radioItems: Array<String>,
     lastInputEnabled: Boolean,
     lastTextValue: MutableState<TextFieldValue>,
     onClickConfirm: (String) -> Unit
@@ -267,24 +268,15 @@ private fun DialogActionButton(
 @Composable
 private fun PreviewRadioButtonDialog() {
     var showDialog by remember { mutableStateOf(false) }
-    val reportReasons = arrayListOf(
-        stringResource(id = R.string.report_post_reason_1),
-        stringResource(id = R.string.report_post_reason_2),
-        stringResource(id = R.string.report_post_reason_3),
-        stringResource(id = R.string.report_post_reason_4),
-        stringResource(id = R.string.report_post_reason_5),
-        stringResource(id = R.string.report_post_reason_6),
-        stringResource(id = R.string.report_post_reason_7),
-        stringResource(id = R.string.report_post_reason_other),
-    )
+    val commentPostReasons = stringArrayResource(id = R.array.report_post_reasons)
 
     DayoTheme {
         RadioButtonDialog(
             title = stringResource(id = R.string.report_post_title),
             description = stringResource(id = R.string.report_post_description),
-            radioItems = reportReasons,
+            radioItems = commentPostReasons,
             lastInputEnabled = true,
-            lastTextPlaceholder = "게시물을 신고하는 기타 사유는 무엇인가요?",
+            lastTextPlaceholder = stringResource(id = R.string.report_post_reason_other_hint),
             lastTextMaxLength = 100,
             onClickCancel = { showDialog = !showDialog },
             onClickConfirm = {},

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -39,7 +38,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,7 +57,7 @@ import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Transparent_White30
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.view.dialog.RadioButtonDialog
+import daily.dayo.presentation.view.dialog.PostReportDialog
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.time.LocalDateTime
@@ -88,16 +86,7 @@ fun DetailPostView(
     var showPostOption by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    val reportReasons = arrayListOf(
-        stringResource(id = R.string.report_post_reason_1),
-        stringResource(id = R.string.report_post_reason_2),
-        stringResource(id = R.string.report_post_reason_3),
-        stringResource(id = R.string.report_post_reason_4),
-        stringResource(id = R.string.report_post_reason_5),
-        stringResource(id = R.string.report_post_reason_6),
-        stringResource(id = R.string.report_post_reason_7),
-        stringResource(id = R.string.report_post_reason_other),
-    )
+    val context = LocalContext.current
 
     Column(modifier = modifier) {
         // publisher info
@@ -317,26 +306,15 @@ fun DetailPostView(
     }
 
     if (showDialog) {
-        RadioButtonDialog(
-            title = stringResource(id = R.string.report_post_title),
-            description = stringResource(id = R.string.report_post_description),
-            radioItems = reportReasons,
-            lastInputEnabled = true,
-            lastTextPlaceholder = "게시물을 신고하는 기타 사유는 무엇인가요?",
-            lastTextMaxLength = 100,
+        PostReportDialog(
             onClickCancel = { showDialog = !showDialog },
             onClickConfirm = { reason ->
                 onClickReport(reason)
                 showDialog = !showDialog
                 coroutineScope.launch {
-                    snackBarHostState.showSnackbar("신고가 접수되었어요.")
+                    snackBarHostState.showSnackbar(context.getString(R.string.report_post_alert_message))
                 }
-            },
-            modifier = Modifier
-                .height(400.dp)
-                .imePadding()
-                .clip(RoundedCornerShape(28.dp))
-                .background(DayoTheme.colorScheme.background)
+            }
         )
     }
 }

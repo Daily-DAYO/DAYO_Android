@@ -231,7 +231,7 @@ fun PostScreen(
     reportCommentId?.let { commentId ->
         if (showReportDialog) {
             CommentReportDialog(
-                onClickClose = { showReportDialog = !showReportDialog },
+                onClickCancel = { showReportDialog = !showReportDialog },
                 onClickConfirm = { reason ->
                     reportViewModel.requestSaveCommentReport(reason, commentId)
                     showReportDialog = !showReportDialog
