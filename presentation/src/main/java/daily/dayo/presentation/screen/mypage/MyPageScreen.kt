@@ -143,7 +143,7 @@ private fun MyPageProfile(
             imageUrl = "${BuildConfig.BASE_URL}/images/${profile?.profileImg}",
             imageDescription = "my page profile image",
             roundSize = 24.dp,
-            customModifier = Modifier
+            modifier = Modifier
                 .size(48.dp)
                 .clickableSingle(
                     interactionSource = remember { MutableInteractionSource() },

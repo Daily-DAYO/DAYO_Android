@@ -425,7 +425,7 @@ fun WriteUploadImages(images: List<Bitmap>, deleteImage: (Int) -> Unit = {}) {
                 RoundImageView(
                     context = LocalContext.current,
                     imageUrl = image,
-                    customModifier = Modifier.size(WRITE_POST_IMAGE_SIZE.dp),
+                    modifier = Modifier.size(WRITE_POST_IMAGE_SIZE.dp),
                     imageSize = Size(WRITE_POST_IMAGE_SIZE, WRITE_POST_IMAGE_SIZE)
                 )
                 if (images.size == WRITE_POST_IMAGE_MIN_SIZE) return@itemsIndexed

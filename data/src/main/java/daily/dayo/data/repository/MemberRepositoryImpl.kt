@@ -45,19 +45,19 @@ class MemberRepositoryImpl @Inject constructor(
     ): NetworkResponse<Void> =
         memberApiService.requestUpdateMyProfile(nickname, profileImg, onBasicProfileImg)
 
-    override suspend fun requestLoginKakao(accessToken: String): NetworkResponse<UserTokens> =
-        when (val response = memberApiService.requestLoginKakao(MemberOAuthRequest(accessToken))) {
+    override suspend fun requestSignInKakao(accessToken: String): NetworkResponse<UserTokens> =
+        when (val response = memberApiService.requestSignInKakao(MemberOAuthRequest(accessToken))) {
             is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toUserTokenResponse())
             is NetworkResponse.NetworkError -> response
             is NetworkResponse.ApiError -> response
             is NetworkResponse.UnknownError -> response
         }
 
-    override suspend fun requestLoginEmail(
+    override suspend fun requestSignInEmail(
         email: String,
         password: String
     ): NetworkResponse<UserTokens> =
-        when (val response = memberApiService.requestLoginEmail(
+        when (val response = memberApiService.requestSignInEmail(
             MemberSignInRequest(
                 email = email,
                 password = password
@@ -155,7 +155,7 @@ class MemberRepositoryImpl @Inject constructor(
     override suspend fun requestCheckEmail(email: String): NetworkResponse<Void> =
         memberApiService.requestCheckEmail(email)
 
-    override suspend fun requestCheckEmailAuth(email: String): NetworkResponse<String> =
+    override suspend fun requestCertificateEmailPasswordReset(email: String): NetworkResponse<String> =
         when (val response = memberApiService.requestCheckEmailAuth(email)) {
             is NetworkResponse.Success -> NetworkResponse.Success(response.body?.authCode)
             is NetworkResponse.NetworkError -> response
