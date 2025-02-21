@@ -112,17 +112,17 @@ class SettingChangePasswordNewFragment : Fragment() {
                         accountViewModel.requestChangePassword(
                             newPassword = trimBlankText(binding.etSettingChangePasswordNewUserInput.text)
                         )
-                        accountViewModel.changePasswordSuccess.observe(viewLifecycleOwner) {
-                            Toast.makeText(
-                                requireContext(),
-                                getString(R.string.change_password_success_message),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            findNavController().navigateSafe(
-                                currentDestinationId = R.id.SettingChangePasswordNewFragment,
-                                action = R.id.action_settingChangePasswordNewFragment_to_settingFragment
-                            )
-                        }
+//                        accountViewModel.changePasswordSuccess.observe(viewLifecycleOwner) {
+//                            Toast.makeText(
+//                                requireContext(),
+//                                getString(R.string.change_password_success_message),
+//                                Toast.LENGTH_SHORT
+//                            ).show()
+//                            findNavController().navigateSafe(
+//                                currentDestinationId = R.id.SettingChangePasswordNewFragment,
+//                                action = R.id.action_settingChangePasswordNewFragment_to_settingFragment
+//                            )
+//                        }
                     }
                 }
             } else {

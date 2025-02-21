@@ -1,7 +1,7 @@
 package daily.dayo.presentation.view
 
 import android.content.Context
-import android.graphics.drawable.Drawable
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,37 +22,36 @@ import daily.dayo.presentation.R
 
 @Composable
 fun RoundImageView(
-    context: Context,
     imageUrl: Any,
+    context: Context,
+    modifier: Modifier = Modifier,
     imageDescription: String = "default image view",
-    placeholder: Drawable? = null,
+    imageSize: Size = Size.ORIGINAL,
     roundSize: Dp = 8.dp,
-    customModifier: Modifier = Modifier,
-    imageSize: Size = Size.ORIGINAL
+    @DrawableRes placeholderResId: Int? = null
 ) {
     AsyncImage(
         model = ImageRequest.Builder(context)
             .crossfade(true)
             .data(imageUrl)
             .size(imageSize)
-            .placeholder(placeholder)
-            .error(placeholder)
             .build(),
         contentDescription = imageDescription,
         contentScale = ContentScale.Crop,
-        modifier = customModifier
-            .clip(RoundedCornerShape(size = roundSize))
+        modifier = modifier.clip(RoundedCornerShape(size = roundSize)),
+        placeholder = if (placeholderResId != null) painterResource(id = placeholderResId) else null,
+        error = if (placeholderResId != null) painterResource(id = placeholderResId) else null
     )
 }
 
 @Composable
 fun BadgeRoundImageView(
+    imageUrl: Any,
     context: Context,
-    imageUrl: String,
-    modifier: Modifier = Modifier,
     contentModifier: Modifier,
+    modifier: Modifier = Modifier,
     imageDescription: String = "default image view",
-    placeholder: Drawable? = null,
+    @DrawableRes placeholderResId: Int? = null,
     roundSize: Dp = 8.dp,
     badgeSize: Dp = 30.dp
 ) {
@@ -61,9 +60,9 @@ fun BadgeRoundImageView(
             context = context,
             imageUrl = imageUrl,
             imageDescription = imageDescription,
-            placeholder = placeholder,
+            placeholderResId = placeholderResId,
             roundSize = roundSize,
-            customModifier = contentModifier
+            modifier = contentModifier
         )
 
         Icon(

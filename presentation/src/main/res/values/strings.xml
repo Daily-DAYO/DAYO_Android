@@ -21,6 +21,7 @@
     <string name="delete_all">전체삭제</string>
     <string name="modify">수정</string>
     <string name="close">닫기</string>
+    <string name="sign_in">로그인</string>
     <string name="login">로그인</string>
     <string name="like">좋아요</string>
     <string name="comment">댓글</string>
@@ -30,6 +31,7 @@
     <string name="app_version_force_update">업데이트가 필요합니다</string>
     <string name="back_sign">뒤로가기</string>
     <string name="loading_default_message">잠시만 기다려 주세요</string>
+    <string name="close_sign">닫기</string>
 
     <!-- Time -->
     <string name="time_format">%d%s</string>
@@ -57,6 +59,17 @@
     <string name="onboarding_fourth_message_1">내가 열심히 꾸민 다이어리,</string>
     <string name="onboarding_fourth_message_2">에 공유하러 가볼까요?</string>
 
+    <!-- Sign In -->
+    <string name="sign_in_kakao_fail_message">카카오 로그인에 실패했어요</string>
+    <string name="sign_in_email_title">로그인</string>
+    <string name="sign_in_email_input_email_title">이메일</string>
+    <string name="sign_in_email_input_email_placeholder">이메일을 입력해주세요</string>
+    <string name="sign_in_email_input_password_title">패스워드</string>
+    <string name="sign_in_email_input_password_placeholder">비밀번호를 입력해주세요</string>
+    <string name="sign_in_email_forget_password">비밀번호 찾기</string>
+    <string name="sign_in_email_fail_message">이메일 또는 비밀번호를 잘못 입력했어요</string>
+    <string name="sign_up_email">아직 계정이 없으신가요?</string>
+
     <!-- Login -->
     <string name="signup_guide_message_email">아직 계정이 없으신가요? <u>회원가입</u>하기</string>
     <string name="login_select_method_kakao">카카오톡으로 시작하기</string>
@@ -67,6 +80,10 @@
     <string name="login_email_forget"><u>비밀번호</u>를 잊어버렸어요</string>
     <string name="login_email_signup">아직 계정이 없으신가요? <u>회원가입</u>하기</string>
     <string name="login_policy_guide_message">가입 시 DAYO의 이용약관 및 개인정보 취급방침에 동의하게 됩니다.</string>
+
+    <!-- Rules -->
+    <string name="rules_privacy_policy_title">개인정보 취급방침</string>
+    <string name="rules_terms_and_conditions">이용약관</string>
 
     <!-- Policy -->
     <string name="policy_terms">이용약관</string>
@@ -362,17 +379,42 @@
     <string name="email_address_certificate_alert_message_match_fail_toast">인증 실패 하였습니다.</string>
     <string name="email_address_certificate_alert_message_time_fail">제한시간을 초과했어요! 인증번호를 다시 받아주세요.</string>
 
-    <!-- Signup -->
+    <!-- SignUp -->
     <string name="nickname">닉네임</string>
-    <!-- Signup Email Set Address -->
+    <!-- SignUp Email Set Address -->
+    <string name="sign_up_email_set_address_title">이메일 회원가입</string>
+    <string name="sign_up_email_set_address_subtitle">메일로 인증번호가 발송되었어요!</string>
+    <string name="sign_up_email_set_address_placeholder">이메일</string>
+    <string name="sign_up_email_set_address_fail_invalid_format">올바른 이메일 주소를 입력하세요</string>
+    <string name="sign_up_email_set_address_fail_duplicate">이미 가입된 이메일이에요</string>
+    <string name="sign_up_email_set_address_resend_button">인증번호 재발송</string>
+    <string name="sign_up_email_set_address_next_button">인증번호 받기</string>
+
     <string name="email">이메일</string>
     <string name="email_address">이메일 주소</string>
     <string name="email_address_example">email@example.com</string>
     <string name="email_address_certification">이메일 인증</string>
-    <string name="signup_email_set_email_address_title">이메일을 입력해주세요.</string>
-    <string name="signup_email_set_email_address_message_format_fail">올바른 이메일 주소를 입력해주세요.</string>
-    <string name="signup_email_set_email_address_message_duplicate_fail">이미 사용중인 이메일 주소예요.</string>
-    <!-- Signup Email Set Password -->
+    <string name="sign_up_email_set_email_address_title">이메일을 입력해주세요.</string>
+    <string name="sign_up_email_set_email_address_message_format_fail">올바른 이메일 주소를 입력해주세요.</string>
+    <string name="sign_up_email_set_email_address_message_duplicate_fail">이미 사용중인 이메일 주소예요.</string>
+
+    <!-- SignUp Email Set Address Certification -->
+    <string name="sign_up_email_set_address_certification_input_title">인증번호</string>
+    <string name="sign_up_email_set_address_certification_input_placeholder">인증번호</string>
+    <string name="sign_up_email_set_address_certification_fail_wrong">인증번호를 다시 확인하세요</string>
+    <string name="sign_up_email_set_address_certification_fail_network">네트워크 오류로 인증번호가 정상적으로 전송되지 않았어요</string>
+    <string name="sign_up_email_set_address_certification_fail_time_out">제한시간을 초과했어요! 인증번호를 다시 받아주세요</string>
+    <string name="sign_up_email_set_address_certification_next_button">인증하기</string>
+    <string name="sign_up_email_set_address_certification_send_snackbar">인증번호가 발송됐어요</string>
+
+    <!-- SignUp Email Set Password -->
+    <string name="sign_up_email_set_password_title">비밀번호 설정</string>
+    <string name="sign_up_email_set_password_input_title">비밀번호</string>
+    <string name="sign_up_email_set_password_input_placeholder">8자리 이상 입력</string>
+    <string name="sign_up_email_set_password_message_format_fail">8자 이상, 16자 이하의 영문 소문자와 숫자만 사용할 수 있어요</string>
+
+    <string name="sign_up_email_set_password_next_button">다음</string>
+
     <string name="password">비밀번호</string>
     <string name="signup_email_set_password_title">비밀번호를 입력해주세요.</string>
     <string name="signup_email_set_password_message_format_fail">영문 소문자와 숫자만 사용할 수 있어요.</string>
@@ -382,13 +424,57 @@
     <string name="signup_email_set_password_confirmation_edittext_hint">다시 한번 입력해주세요</string>
     <string name="signup_email_set_password_confirmation_title">비밀번호를 확인해주세요.</string>
     <string name="signup_email_set_password_confirmation_message_fail">비밀번호가 일치하지 않아요.</string>
+    <!-- SignUp Email Set Password Confirm -->
+    <string name="sign_up_email_set_password_confirm_input_title">비밀번호 확인</string>
+    <string name="sign_up_email_set_password_confirm_input_placeholder">비밀번호 재입력</string>
+    <string name="sign_up_email_set_password_confirm_fail_not_match">비밀번호가 일치하지 않아요</string>
+    <string name="sign_up_email_set_password_confirm_next_button">다음</string>
+
+    <!-- SignUp Email Set Profile -->
+    <string name="sign_up_email_set_profile_nickname_input_title">닉네임</string>
+    <string name="sign_up_email_set_profile_nickname_input_placeholder">2자 이상 10자 이하</string>
+    <string name="sign_up_email_set_profile_nickname_message_duplicate_fail">이미 사용중인 닉네임이에요</string>
+    <string name="sign_up_email_set_profile_nickname_message_format_fail">한글, 영문, 숫자만 사용할 수 있어요</string>
+    <string name="sign_up_email_set_profile_image_reset">프로필 사진 초기화</string>
+    <string name="sign_up_email_set_profile_next_button">가입하기</string>
+
     <!-- Select Image  -->
     <string name="image_option_gallery">앨범에서 선택</string>
     <string name="image_option_camera">사진 직접촬영</string>
-    <!-- Signup Email Complete -->
-    <string name="signup_email_alert_message_loading">가입을 완료하는 중입니다. 잠시만 기다려주세요!</string>
+    <!-- SignUp Email Complete -->
+    <string name="signup_email_alert_message_loading">가입을 진행중 입니다. \n잠시만 기다려 주세요.</string>
     <string name="signup_email_complete_guide_message"><b>%s</b>님,\n가입을 축하드려요!</string>
     <string name="signup_email_alert_message_fail_network">가입을 완료할 수 없어요. 다시 시도해주세요.</string>
+
+    <!-- Reset Password -->
+    <string name="reset_password_alert_message_loading">비밀번호 변경 중입니다.</string>
+    <string name="reset_password_email_title">비밀번호 재설정</string>
+    <string name="reset_password_email_sub_title">가입할 때 사용한 이메일을 입력해주세요.</string>
+    <string name="reset_password_email_fail_invalid_format">올바른 이메일 주소를 입력하세요</string>
+    <string name="reset_password_email_fail_not_exist">등록된 이메일이 없어요</string>
+    <string name="reset_password_email_placeholder">이메일</string>
+    <string name="reset_password_email_next_button">인증번호 받기</string>
+
+    <string name="reset_password_email_certification_next_button">인증하기</string>
+    <string name="reset_password_email_certification_input_title">인증번호</string>
+    <string name="reset_password_email_certification_input_placeholder">인증번호</string>
+    <string name="reset_password_email_certification_fail_wrong">인증번호를 다시 확인하세요</string>
+    <string name="reset_password_email_certification_fail_network">네트워크 오류로 인증번호가 정상적으로 전송되지 않았어요</string>
+    <string name="reset_password_email_certification_fail_time_out">제한시간을 초과했어요! 인증번호를 다시 받아주세요</string>
+    <string name="reset_password_email_certification_resend_button">인증번호 재발송</string>
+
+    <string name="reset_password_new_password_title">새로운 비밀번호 입력</string>
+    <string name="reset_password_new_password_sub_title">메일로 인증번호가 발송되었어요!</string>
+
+    <string name="reset_password_new_password_input_title">비밀번호</string>
+    <string name="reset_password_new_password_input_placeholder">8자리 이상 입력</string>
+    <string name="reset_password_new_password_message_format_fail">8자 이상, 16자 이하의 영문 소문자와 숫자만 사용할 수 있어요</string>
+    <string name="reset_password_new_password_next_button">다음</string>
+
+    <string name="reset_password_new_password_confirm_input_title">비밀번호 확인</string>
+    <string name="reset_password_new_password_confirm_input_placeholder">비밀번호 재입력</string>
+    <string name="reset_password_new_password_confirm_fail_not_match">비밀번호가 일치하지 않아요</string>
+    <string name="reset_password_new_password_confirmation_next_button">변경하기</string>
 
     <!-- Find Account -->
     <string name="find_account_password_title">비밀번호 찾기</string>
