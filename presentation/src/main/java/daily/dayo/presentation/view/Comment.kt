@@ -182,19 +182,18 @@ fun CommentView(
         modifier = modifier,
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            val placeholder = AppCompatResources.getDrawable(LocalContext.current, R.drawable.ic_profile_default_user_profile)
-            RoundImageView(context = LocalContext.current,
+            RoundImageView(
                 imageUrl = "${BuildConfig.BASE_URL}/images/${comment.profileImg}",
-                imageDescription = "comment profile image",
-                placeholder = placeholder,
-                customModifier = Modifier
+                context = LocalContext.current,
+                modifier = Modifier
                     .clip(CircleShape)
                     .size(36.dp)
                     .clickableSingle(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
                         onClick = { } // todo onClickProfile
-                    )
+                    ),
+                imageDescription = "comment profile image"
             )
             Column {
                 Row(
@@ -333,18 +332,18 @@ fun CommentMentionSearchView(userResults: LazyPagingItems<SearchUser>, onClickFo
                         ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    RoundImageView(context = LocalContext.current,
+                    RoundImageView(
                         imageUrl = "${BuildConfig.BASE_URL}/images/${user.profileImg}",
-                        imageDescription = "search users profile image",
-                        placeholder = placeholder,
-                        customModifier = Modifier
+                        context = LocalContext.current,
+                        modifier = Modifier
                             .clip(CircleShape)
                             .size(24.dp)
                             .clickableSingle(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null,
                                 onClick = { }
-                            )
+                            ),
+                        imageDescription = "search users profile image",
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(text = user.nickname)
