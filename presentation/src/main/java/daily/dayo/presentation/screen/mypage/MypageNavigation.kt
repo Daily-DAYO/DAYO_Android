@@ -48,6 +48,7 @@ fun NavGraphBuilder.myPageNavGraph(
     onFolderClick: (String) -> Unit,
     onFolderCreateClick: () -> Unit,
     onFolderEditClick: (String) -> Unit,
+    onPostClick: (String) -> Unit,
     onPostMoveClick: (String) -> Unit,
     navigateBackToFolder: (String) -> Unit
 ) {
@@ -110,6 +111,7 @@ fun NavGraphBuilder.myPageNavGraph(
         val folderId = navBackStackEntry.arguments?.getString("folderId") ?: ""
         FolderScreen(
             folderId = folderId,
+            onPostClick = onPostClick,
             onFolderEditClick = { onFolderEditClick(folderId) },
             onPostMoveClick = { onPostMoveClick(folderId) },
             onBackClick = onBackClick

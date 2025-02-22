@@ -62,6 +62,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeDayoPickScreen(
     selectedCategoryName: String,
+    onPostClick: (String) -> Unit,
     coroutineScope: CoroutineScope,
     bottomSheetState: ModalBottomSheetState,
     homeViewModel: HomeViewModel = hiltViewModel()
@@ -122,9 +123,7 @@ fun HomeDayoPickScreen(
                                     post = post,
                                     isDayoPick = index in 0..4,
                                     modifier = Modifier.padding(bottom = 20.dp),
-                                    onClickPost = {
-                                        // todo move to post
-                                    },
+                                    onClickPost = { onPostClick(post.postId.toString()) },
                                     onClickLikePost = {
                                         if (!post.heart) {
                                             homeViewModel.requestLikePost(post.postId!!, isDayoPickLike = true)

@@ -525,7 +525,7 @@ private fun PreviewOutlinedTextField() {
     val limitText = remember { mutableStateOf(TextFieldValue("")) }
     CharacterLimitOutlinedTextField(
         value = limitText,
-        placeholder = "게시물을 신고하는 기타 사유는 무엇인가요?",
+        placeholder = stringResource(id = R.string.report_post_reason_other_hint),
         maxLength = 5
     )
 }
