@@ -218,49 +218,60 @@
     <string name="post_option_mine_delete">게시물 삭제</string>
     <string name="post_option_mine_delete_alert_message">게시물을 삭제할까요?</string>
 
+    <!-- Comment -->
+    <string name="comment_button_text">남기기</string>
+    <string name="comment_delete_message">댓글이 삭제되었어요.</string>
+    <string name="comment_report_message">신고가 접수되었어요.</string>
+
     <!-- Report -->
     <string name="report_post_title">게시물 신고</string>
     <string name="report_post_button">신고하기</string>
     <string name="report_post_subtitle">게시글을 신고하시겠어요?</string>
     <string name="report_post_description">게시글을 신고하는 이유에 대해 알려주세요.</string>
-    <string name="report_post_reason_1">성적인 내용이 포함되어 있어요</string>
-    <string name="report_post_reason_2">폭력적이거나 심한 욕설을 사용해요</string>
-    <string name="report_post_reason_3">잘못된 정보를 제공해요</string>
-    <string name="report_post_reason_4">유해하거나 위험한 내용이에요</string>
-    <string name="report_post_reason_5">불법적인 내용이 포함되어 있어요</string>
-    <string name="report_post_reason_6">너무 많은 광고를 해요.</string>
-    <string name="report_post_reason_7">같은 내용으로 도배가 되어 있어요</string>
-    <string name="report_post_reason_other">기타</string>
-    <string name="report_post_reason_other_hint">신고 사유를 작성해주세요. (100자 이내)</string>
+    <string name="report_post_reason_other_hint">게시물을 신고하는 기타 사유는 무엇인가요?</string>
     <string name="report_post_alert_message">신고가 접수되었어요.</string>
+    <string-array name="report_post_reasons">
+        <item>성적인 내용이 포함되어 있어요</item>
+        <item>폭력적이거나 심한 욕설을 사용해요</item>
+        <item>잘못된 정보를 제공해요</item>
+        <item>유해하거나 위험한 내용이에요</item>
+        <item>불법적인 내용이 포함되어 있어요</item>
+        <item>너무 많은 광고를 해요.</item>
+        <item>같은 내용으로 도배가 되어 있어요</item>
+        <item>기타</item>
+    </string-array>
 
     <string name="report_comment_title">댓글 신고</string>
     <string name="report_comment_button">신고하기</string>
     <string name="report_comment_subtitle">댓글을 신고하시겠어요?</string>
     <string name="report_comment_description">댓글을 신고하는 이유에 대해 알려주세요.</string>
-    <string name="report_comment_reason_1">성적인 내용이 포함되어 있어요</string>
-    <string name="report_comment_reason_2">폭력적이거나 심한 욕설을 사용해요</string>
-    <string name="report_comment_reason_3">잘못된 정보를 제공해요</string>
-    <string name="report_comment_reason_4">유해하거나 위험한 내용이에요</string>
-    <string name="report_comment_reason_5">불법적인 내용이 포함되어 있어요</string>
-    <string name="report_comment_reason_6">너무 많은 광고를 해요.</string>
-    <string name="report_comment_reason_7">같은 내용으로 도배가 돼있어요.</string>
     <string name="report_comment_alert_message">신고가 접수되었어요.</string>
+    <string-array name="report_comment_reasons">
+        <item>성적인 내용이 포함되어 있어요</item>
+        <item>폭력적이거나 심한 욕설을 사용해요</item>
+        <item>잘못된 정보를 제공해요</item>
+        <item>유해하거나 위험한 내용이에요</item>
+        <item>불법적인 내용이 포함되어 있어요</item>
+        <item>너무 많은 광고를 해요.</item>
+        <item>같은 내용으로 도배가 돼있어요.</item>
+    </string-array>
 
     <string name="report_user_title">신고하기</string>
     <string name="report_user_button">신고하기</string>
     <string name="report_user_subtitle">사용자를 신고하시겠어요?</string>
     <string name="report_user_description">사용자를 신고하는 이유에 대해 알려주세요.</string>
-    <string name="report_user_reason_1">성적인 내용을 게시해요.</string>
-    <string name="report_user_reason_2">폭력적이거나 심한 욕설을 사용해요.</string>
-    <string name="report_user_reason_3">잘못된 정보를 제공해요.</string>
-    <string name="report_user_reason_4">유해하거나 위험한 내용을 게시해요.</string>
-    <string name="report_user_reason_5">불법적인 내용을 게시해요.</string>
-    <string name="report_user_reason_6">너무 많은 광고를 해요.</string>
-    <string name="report_user_reason_7">같은 내용으로 도배가 돼있어요.</string>
-    <string name="report_user_reason_other">기타</string>
     <string name="report_user_reason_other_hint">신고 사유를 작성해주세요. (100자 이내)</string>
     <string name="report_user_alert_message">신고가 접수되었어요.</string>
+    <string-array name="report_user_reasons">
+        <item>성적인 내용을 게시해요.</item>
+        <item>폭력적이거나 심한 욕설을 사용해요.</item>
+        <item>잘못된 정보를 제공해요.</item>
+        <item>유해하거나 위험한 내용을 게시해요.</item>
+        <item>불법적인 내용을 게시해요.</item>
+        <item>너무 많은 광고를 해요.</item>
+        <item>같은 내용으로 도배가 돼있어요.</item>
+        <item>기타</item>
+    </string-array>
 
     <!-- Post Like Users -->
     <string name="post_like_users_title">좋아요</string>
@@ -528,5 +539,4 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
 </resources>

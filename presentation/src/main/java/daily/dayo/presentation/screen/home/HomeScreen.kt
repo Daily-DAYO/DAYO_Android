@@ -48,10 +48,11 @@ const val HOME_NEW_PAGE_TAB_ID = 1
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
+    onPostClick: (String) -> Unit,
+    onSearchClick: () -> Unit,
     coroutineScope: CoroutineScope,
     bottomSheetState: ModalBottomSheetState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
-    onSearchClick: () -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     var homeTabState by rememberSaveable { mutableIntStateOf(HOME_DAYOPICK_PAGE_TAB_ID) }
@@ -118,12 +119,24 @@ fun HomeScreen(
         ) {
             when (homeTabState) {
                 HOME_DAYOPICK_PAGE_TAB_ID -> {
-                    HomeDayoPickScreen(selectedCategory.first, coroutineScope, bottomSheetState, homeViewModel)
+                    HomeDayoPickScreen(
+                        selectedCategory.first,
+                        onPostClick,
+                        coroutineScope,
+                        bottomSheetState,
+                        homeViewModel
+                    )
                     homeViewModel.loadDayoPickPosts()
                 }
 
                 HOME_NEW_PAGE_TAB_ID -> {
-                    HomeNewScreen(selectedCategory.first, coroutineScope, bottomSheetState, homeViewModel)
+                    HomeNewScreen(
+                        selectedCategory.first,
+                        onPostClick,
+                        coroutineScope,
+                        bottomSheetState,
+                        homeViewModel
+                    )
                     homeViewModel.loadNewPosts()
                 }
             }
@@ -179,7 +192,13 @@ private fun CategoryBottomSheetDialog(
 @Preview(showBackground = true)
 private fun PreviewHomeScreen() {
     DayoTheme {
-        HomeScreen(rememberCoroutineScope(), getBottomSheetDialogState(), {}, onSearchClick = {})
+        HomeScreen(
+            onPostClick = {},
+            onSearchClick = {},
+            coroutineScope = rememberCoroutineScope(),
+            bottomSheetState = getBottomSheetDialogState(),
+            bottomSheetContent = {},
+        )
     }
 }
 
