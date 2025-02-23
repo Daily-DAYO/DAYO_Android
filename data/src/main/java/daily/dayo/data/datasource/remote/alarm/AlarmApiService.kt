@@ -12,5 +12,5 @@ interface AlarmApiService {
     suspend fun requestAllAlarmList(@Query("end") end: Int): NetworkResponse<ListAllAlarmResponse>
 
     @POST("/api/v1/alarms/{alarmId}")
-    suspend fun requestIsCheckAlarm(@Path("alarmId") alarmId: Int): NetworkResponse<Void>
+    suspend fun markAlarmAsChecked(@Path("alarmId") alarmId: Int): NetworkResponse<Void>
 }

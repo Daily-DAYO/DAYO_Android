@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,12 +14,20 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -42,6 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -61,17 +71,33 @@ import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.viewmodel.NotificationViewModel
 import kotlinx.coroutines.flow.flowOf
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Preview
 fun NotificationScreen(
     notificationViewModel: NotificationViewModel = hiltViewModel()
 ) {
+    val notifications = notificationViewModel.alarmList.collectAsLazyPagingItems()
+    val refreshing by notificationViewModel.isRefreshing.collectAsStateWithLifecycle()
+    val pullRefreshState =
+        rememberPullRefreshState(refreshing, { notificationViewModel.loadNotifications() })
+
+    LaunchedEffect(Unit) {
+        notificationViewModel.loadNotifications()
+    }
+
     Scaffold(
         topBar = {
             NotificationTopNavigation()
         }) { innerPadding ->
         NotificationContent(
             innerPadding = innerPadding,
+            context = LocalContext.current,
+            notifications = notifications,
+            markAlarmAsChecked = { alarmId ->
+                notificationViewModel.markAlarmAsChecked(alarmId)
+            },
+            pullRefreshState = pullRefreshState
         )
     }
 }
@@ -84,9 +110,13 @@ fun NotificationTopNavigation() {
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun NotificationContent(
     innerPadding: PaddingValues,
+    isRefreshing: Boolean = false,
+    pullRefreshState: PullRefreshState,
+    context: Context = LocalContext.current,
     notifications: LazyPagingItems<Notification> = flowOf(
         PagingData.from(
             listOf(
@@ -104,90 +134,102 @@ fun NotificationContent(
             )
         )
     ).collectAsLazyPagingItems(),
+    markAlarmAsChecked: (Int) -> Unit = {},
 ) {
-    Column(
-        modifier = Modifier.padding(innerPadding)
+    Box(
+        modifier = Modifier
+            .padding(innerPadding)
+            .fillMaxSize()
+            .pullRefresh(pullRefreshState)
     ) {
-        if (notifications.itemCount == 0) {
+        if (notifications.itemCount < 1 &&
+            notifications.loadState.refresh is LoadState.NotLoading &&
+            notifications.loadState.append.endOfPaginationReached
+        ) {
             EmptyNotifications()
         } else {
+            // checkedItems와 unCheckedItems를 보여줄때, alaramId만으로 구분하면, check 상태가 변경 되었을 때 오류가 날 수 있음
             val (checkedItems, uncheckedItems) = notifications.itemSnapshotList.items.partition { it.check == true }
 
-            NewNotifications(
-                notifications = uncheckedItems,
-                context = LocalContext.current
-            )
-            if (uncheckedItems.isNotEmpty() && checkedItems.isNotEmpty()) {
-                Spacer(modifier = Modifier.size(12.dp))
-                Divider(
-                    color = Gray7_F6F6F7,
-                    thickness = 1.dp,
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp)
-                        .fillMaxWidth()
-                )
-            }
-            SeenNotifications(
-                notifications = checkedItems,
-                context = LocalContext.current
-            )
-        }
-    }
-}
+            LazyColumn(
+                modifier = Modifier.wrapContentSize()
+            ) {
+                if (uncheckedItems.isNotEmpty()) {
+                    itemsIndexed(
+                        items = uncheckedItems,
+                        key = { idx, notification -> "unchecked-${notification.alarmId ?: idx}" },
+                    ) { idx, notification ->
+                        Box(modifier = Modifier.animateItem()) {
+                            NotificationView(
+                                notification = notification,
+                                context = context,
+                                onClick = {
+                                    notification.alarmId?.let { alarmId ->
+                                        markAlarmAsChecked(alarmId)
+                                    }
+                                    // TODO Navigate Alarm Detail
+                                }
+                            )
+                        }
+                    }
 
-@Composable
-fun NewNotifications(
-    notifications: List<Notification>,
-    context: Context = LocalContext.current
-) {
-    LazyColumn(
-        modifier = Modifier.padding(
-            start = 0.dp,
-            top = 4.dp,
-            end = 0.dp,
-            bottom = 0.dp
-        )
-    ) {
-        items(
-            count = notifications.size,
-            key = { idx ->
-                notifications[idx].alarmId ?: idx
-            }
-        ) { idx ->
-            NotificationView(
-                notification = notifications[idx],
-                context = context,
-            )
-        }
-    }
-}
-
-@Composable
-@Preview
-fun SeenNotifications(
-    notifications: List<Notification> = emptyList(),
-    context: Context = LocalContext.current
-) {
-    Column {
-        Spacer(modifier = Modifier.size(16.dp))
-        Text(
-            text = stringResource(R.string.notification_seen_title),
-            style = DayoTheme.typography.b3.copy(color = Dark),
-            modifier = Modifier.padding(horizontal = 20.dp)
-        )
-        Spacer(modifier = Modifier.size(8.dp))
-        LazyColumn {
-            items(
-                count = notifications.size,
-                key = { idx ->
-                    notifications[idx].alarmId ?: idx
+                    item {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(12.dp)
+                        )
+                    }
                 }
-            ) { idx ->
-                NotificationView(
-                    notification = notifications[idx],
-                    context = context,
-                )
+
+                // 구분선이 필요할 때
+                if (uncheckedItems.isNotEmpty() && checkedItems.isNotEmpty()) {
+                    item {
+                        Divider(
+                            color = Gray7_F6F6F7,
+                            thickness = 1.dp,
+                            modifier = Modifier
+                                .padding(horizontal = 20.dp)
+                                .height(1.dp)
+                                .fillMaxWidth()
+                        )
+                        Spacer(modifier = Modifier.size(16.dp))
+                    }
+                }
+
+                if (checkedItems.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.notification_seen_title),
+                            style = DayoTheme.typography.b3.copy(color = Dark),
+                            modifier = Modifier.padding(horizontal = 20.dp)
+                        )
+                        Spacer(modifier = Modifier.size(8.dp))
+                    }
+
+                    itemsIndexed(
+                        items = checkedItems,
+                        key = { idx, notification -> "checked-${notification.alarmId ?: idx}" },
+                    ) { idx, notification ->
+                        Box(modifier = Modifier.animateItem()) {
+                            NotificationView(
+                                notification = notification,
+                                context = context,
+                                onClick = {
+                                    // TODO Navigate Alarm Detail
+                                }
+                            )
+                        }
+                    }
+                }
             }
+
+            // refresh indicator
+            PullRefreshIndicator(
+                isRefreshing,
+                pullRefreshState,
+                Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }
@@ -232,6 +274,7 @@ fun NotificationView(
         postId = 0,
     ),
     context: Context = LocalContext.current,
+    onClick: () -> Unit = {}
 ) {
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
     val notificationMessage = buildAnnotatedString {
@@ -260,6 +303,7 @@ fun NotificationView(
 
     Row(
         modifier = Modifier
+            .clickable { onClick() }
             .background(DayoTheme.colorScheme.background)
             .fillMaxWidth()
             .wrapContentHeight()
@@ -325,9 +369,11 @@ fun NotificationView(
 
         if (!notification.image.isNullOrBlank()) {
             Row(modifier = Modifier.requiredSize(width = (16 + 56).dp, height = 56.dp)) {
-                Spacer(modifier = Modifier
-                    .width(16.dp)
-                    .fillMaxHeight())
+                Spacer(
+                    modifier = Modifier
+                        .width(16.dp)
+                        .fillMaxHeight()
+                )
                 RoundImageView(
                     imageUrl = "${BuildConfig.BASE_URL}/images/${notification.image!!}",
                     context = context,

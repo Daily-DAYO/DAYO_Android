@@ -63,7 +63,7 @@ class NotificationFragment : Fragment() {
             NotificationListAdapter.OnItemClickListener {
             override fun notificationItemClick(alarmId: Int, alarmCheck: Boolean, position: Int) {
                 if (!alarmCheck) {
-                    notificationViewModel.requestIsCheckAlarm(alarmId = alarmId)
+                    notificationViewModel.markAlarmAsChecked(alarmId = alarmId)
                     notificationViewModel.checkAlarmSuccess.observe(viewLifecycleOwner) {
                         if (it == true) notificationAdapter?.notifyItemChanged(position)
                     }
@@ -77,9 +77,9 @@ class NotificationFragment : Fragment() {
     }
 
     private fun setAlarmList() {
-        notificationViewModel.alarmList.observe(viewLifecycleOwner) {
-            notificationAdapter?.submitData(viewLifecycleOwner.lifecycle, it)
-        }
+//        notificationViewModel.alarmList.observe(viewLifecycleOwner) {
+//            notificationAdapter?.submitData(viewLifecycleOwner.lifecycle, it)
+//        }
     }
 
     private fun setAdapterLoadStateListener() {
