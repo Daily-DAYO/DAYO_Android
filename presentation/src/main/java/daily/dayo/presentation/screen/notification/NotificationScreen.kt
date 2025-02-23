@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
@@ -75,7 +74,10 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 @Preview
 fun NotificationScreen(
-    notificationViewModel: NotificationViewModel = hiltViewModel()
+    notificationViewModel: NotificationViewModel = hiltViewModel(),
+    onPostClick: (String) -> Unit = {},
+    onProfileClick: (String) -> Unit = {},
+    onNoticeClick: (Long) -> Unit = {},
 ) {
     val notifications = notificationViewModel.alarmList.collectAsLazyPagingItems()
     val refreshing by notificationViewModel.isRefreshing.collectAsStateWithLifecycle()
@@ -98,7 +100,11 @@ fun NotificationScreen(
             markAlarmAsChecked = { alarmId ->
                 notificationViewModel.markAlarmAsChecked(alarmId)
             },
-            pullRefreshState = pullRefreshState
+            pullRefreshState = pullRefreshState,
+            isRefreshing = refreshing,
+            onPostClick = onPostClick,
+            onProfileClick = onProfileClick,
+            onNoticeClick = onNoticeClick,
         )
     }
 }
@@ -109,6 +115,50 @@ fun NotificationTopNavigation() {
     TopNavigation(
         title = stringResource(R.string.notification),
     )
+}
+
+fun performNotificationNavigation(
+    notification: Notification,
+    onPostClick: (String) -> Unit,
+    onProfileClick: (String) -> Unit,
+    onNoticeClick: (Long) -> Unit,
+) {
+    notification.topic?.let { topic ->
+        when (topic) {
+            Topic.HEART -> {
+                notification.postId?.let { id ->
+                    onPostClick(id.toString())
+                }
+            }
+
+            Topic.COMMENT -> {
+                notification.postId?.let { id ->
+                    onPostClick(id.toString())
+                }
+            }
+
+            Topic.NOTICE -> {
+                // TODO: Navigate to Notice Post
+                // onNoticeClick(0L)
+            }
+
+            Topic.FOLLOW -> {
+                notification.memberId?.let { id ->
+                    onProfileClick(id)
+                }
+            }
+
+            Topic.MENTION -> {
+                notification.postId?.let { id ->
+                    onPostClick(id.toString())
+                }
+            }
+
+            null -> {
+                Unit
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -136,7 +186,11 @@ fun NotificationContent(
         )
     ).collectAsLazyPagingItems(),
     markAlarmAsChecked: (Int) -> Unit = {},
+    onPostClick: (String) -> Unit = {},
+    onProfileClick: (String) -> Unit = {},
+    onNoticeClick: (Long) -> Unit = {},
 ) {
+    // TODO: New Notification 및 Seen Notification 중복 코드 제거
     Box(
         modifier = Modifier
             .padding(innerPadding)
@@ -157,9 +211,11 @@ fun NotificationContent(
             ) {
                 if (uncheckedItems.isNotEmpty()) {
                     item {
-                        Spacer(modifier = Modifier
-                            .height(4.dp)
-                            .fillMaxWidth())
+                        Spacer(
+                            modifier = Modifier
+                                .height(4.dp)
+                                .fillMaxWidth()
+                        )
                     }
                     itemsIndexed(
                         items = uncheckedItems,
@@ -173,8 +229,14 @@ fun NotificationContent(
                                     notification.alarmId?.let { alarmId ->
                                         markAlarmAsChecked(alarmId)
                                     }
-                                    // TODO Navigate Alarm Detail
-                                }
+                                    performNotificationNavigation(
+                                        notification = notification,
+                                        onPostClick = onPostClick,
+                                        onProfileClick = onProfileClick,
+                                        onNoticeClick = onNoticeClick,
+                                    )
+                                },
+                                onProfileClick = onProfileClick,
                             )
                         }
                     }
@@ -222,8 +284,14 @@ fun NotificationContent(
                                 notification = notification,
                                 context = context,
                                 onClick = {
-                                    // TODO Navigate Alarm Detail
-                                }
+                                    performNotificationNavigation(
+                                        notification = notification,
+                                        onPostClick = onPostClick,
+                                        onProfileClick = onProfileClick,
+                                        onNoticeClick = onNoticeClick,
+                                    )
+                                },
+                                onProfileClick = onProfileClick,
                             )
                         }
                     }
@@ -280,7 +348,8 @@ fun NotificationView(
         postId = 0,
     ),
     context: Context = LocalContext.current,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    onProfileClick: (String) -> Unit = {},
 ) {
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
     val notificationMessage = buildAnnotatedString {
@@ -325,7 +394,9 @@ fun NotificationView(
                 modifier = Modifier
                     .size(28.dp)
                     .clickable {
-                        // TODO: Navigate To User Profile
+                        notification.memberId?.let { id ->
+                            onProfileClick(id)
+                        }
                     },
                 imageDescription = "notification thumbnail",
                 imageSize = Size.ORIGINAL,
@@ -353,10 +424,11 @@ fun NotificationView(
                                     tag = "nickname",
                                     start = position,
                                     end = position
-                                )
-                                    .firstOrNull()?.let {
-                                        // TODO: Navigate To User Profile
+                                ).firstOrNull()?.let {
+                                    notification.memberId?.let { id ->
+                                        onProfileClick(id)
                                     }
+                                }
                             }
                         }
                     },
