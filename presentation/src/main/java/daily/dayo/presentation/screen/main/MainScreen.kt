@@ -130,7 +130,11 @@ internal fun MainScreen(
                                 onPostMoveClick = { folderId -> navigator.navigateFolderPostMove(folderId) },
                                 navigateBackToFolder = { folderId -> navigator.navController.navigateBackToFolder(folderId) }
                             )
-                            notificationNavGraph()
+                            notificationNavGraph(
+                                onPostClick = { navigator.navigatePost(it) },
+                                onProfileClick = { /*TODO*/ },
+                                onNoticeClick = { /*TODO*/ }
+                            )
                         }
                     }
                 },
