@@ -6,23 +6,28 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import daily.dayo.presentation.screen.main.Screen
 import kotlinx.coroutines.CoroutineScope
 
 fun NavController.navigateHome() {
     this.navigate(HomeRoute.route)
 }
 
-
 @OptIn(ExperimentalMaterialApi::class)
 fun NavGraphBuilder.homeNavGraph(
+    onPostClick: (String) -> Unit,
+    onSearchClick: () -> Unit,
     coroutineScope: CoroutineScope,
     bottomSheetState: ModalBottomSheetState,
-    bottomSheetContent: (@Composable () -> Unit) -> Unit,
-    onSearchClick: () -> Unit
+    bottomSheetContent: (@Composable () -> Unit) -> Unit
 ) {
     composable(HomeRoute.route) {
-        HomeScreen(coroutineScope, bottomSheetState, bottomSheetContent, onSearchClick)
+        HomeScreen(
+            onPostClick = onPostClick,
+            onSearchClick = onSearchClick,
+            coroutineScope = coroutineScope,
+            bottomSheetState = bottomSheetState,
+            bottomSheetContent = bottomSheetContent
+        )
     }
 }
 

@@ -86,6 +86,7 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 fun FolderScreen(
     folderId: String,
+    onPostClick: (String) -> Unit,
     onFolderEditClick: () -> Unit,
     onPostMoveClick: () -> Unit,
     onBackClick: () -> Unit,
@@ -155,7 +156,8 @@ fun FolderScreen(
         folderUiState = folderUiState,
         folderPosts = folderPosts,
         optionMenu = optionMenu,
-        onPostClick = { postId -> folderViewModel.toggleSelection(postId) },
+        onPostClick = { postId -> onPostClick(postId) },
+        onPostSelect = { postId -> folderViewModel.toggleSelection(postId.toInt()) },
         onCancelClick = { folderViewModel.toggleEditMode() },
         onPostDeleteClick = { showPostDeleteAlertDialog = true },
         onPostMoveClick = onPostMoveClick,
@@ -194,7 +196,8 @@ private fun FolderScreen(
     folderUiState: FolderUiState,
     folderPosts: LazyPagingItems<FolderPost>,
     optionMenu: List<FolderOptionMenu>,
-    onPostClick: (Int) -> Unit,
+    onPostClick: (String) -> Unit,
+    onPostSelect: (String) -> Unit,
     onPostDeleteClick: () -> Unit,
     onPostMoveClick: () -> Unit,
     onCancelClick: () -> Unit,
@@ -293,7 +296,8 @@ private fun FolderScreen(
             FolderContent(
                 folderUiState = folderUiState,
                 folderPosts = folderPosts,
-                onPostClick = onPostClick
+                onPostClick = onPostClick,
+                onPostSelect = onPostSelect
             )
         }
     }
@@ -463,7 +467,8 @@ private fun FolderHeader(
 private fun FolderContent(
     folderUiState: FolderUiState,
     folderPosts: LazyPagingItems<FolderPost>,
-    onPostClick: (Int) -> Unit
+    onPostClick: (String) -> Unit,
+    onPostSelect: (String) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -478,7 +483,8 @@ private fun FolderContent(
                     post = post,
                     isEditMode = folderUiState.isEditMode,
                     isSelected = folderUiState.selectedPosts.contains(post.postId),
-                    onPostClick = onPostClick
+                    onPostClick = onPostClick,
+                    onPostSelect = onPostSelect
                 )
             }
         }
@@ -490,15 +496,23 @@ private fun FolderPostItem(
     post: FolderPost,
     isEditMode: Boolean,
     isSelected: Boolean,
-    onPostClick: (Int) -> Unit
+    onPostClick: (String) -> Unit,
+    onPostSelect: (String) -> Unit
 ) {
     val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 
     Box(
         modifier = Modifier.clickable(
             interactionSource = interactionSource,
-            indication = null
-        ) { onPostClick(post.postId) }
+            indication = null,
+            onClick = {
+                if (isEditMode) {
+                    onPostSelect(post.postId.toString())
+                } else {
+                    onPostClick(post.postId.toString())
+                }
+            }
+        )
     ) {
         RoundImageView(
             context = LocalContext.current,
@@ -512,7 +526,7 @@ private fun FolderPostItem(
         if (isEditMode) {
             DayoCheckbox(
                 checked = isSelected,
-                onCheckedChange = { onPostClick(post.postId) },
+                onCheckedChange = { onPostSelect(post.postId.toString()) },
                 modifier = Modifier.align(Alignment.TopEnd),
                 interactionSource = interactionSource
             )
@@ -594,8 +608,9 @@ private fun PreviewFolderScreen() {
             folderPosts = folderUiState.folderPosts.collectAsLazyPagingItems(),
             optionMenu = listOf(),
             onPostClick = { },
-            onPostDeleteClick = {},
-            onPostMoveClick = {},
+            onPostSelect = { },
+            onPostDeleteClick = { },
+            onPostMoveClick = { },
             onCancelClick = { },
             onBackClick = { }
         )
