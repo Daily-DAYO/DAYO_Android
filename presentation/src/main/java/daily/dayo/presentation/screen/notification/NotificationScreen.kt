@@ -87,6 +87,7 @@ fun NotificationScreen(
     }
 
     Scaffold(
+        modifier = Modifier.fillMaxSize(),
         topBar = {
             NotificationTopNavigation()
         }) { innerPadding ->
@@ -152,9 +153,14 @@ fun NotificationContent(
             val (checkedItems, uncheckedItems) = notifications.itemSnapshotList.items.partition { it.check == true }
 
             LazyColumn(
-                modifier = Modifier.wrapContentSize()
+                modifier = Modifier.fillMaxSize()
             ) {
                 if (uncheckedItems.isNotEmpty()) {
+                    item {
+                        Spacer(modifier = Modifier
+                            .height(4.dp)
+                            .fillMaxWidth())
+                    }
                     itemsIndexed(
                         items = uncheckedItems,
                         key = { idx, notification -> "unchecked-${notification.alarmId ?: idx}" },
@@ -172,14 +178,14 @@ fun NotificationContent(
                             )
                         }
                     }
+                }
 
-                    item {
-                        Spacer(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(12.dp)
-                        )
-                    }
+                item {
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(12.dp)
+                    )
                 }
 
                 // 구분선이 필요할 때
