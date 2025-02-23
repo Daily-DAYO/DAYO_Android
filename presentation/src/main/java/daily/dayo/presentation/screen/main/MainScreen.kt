@@ -41,6 +41,8 @@ import daily.dayo.presentation.screen.home.homeNavGraph
 import daily.dayo.presentation.screen.mypage.MyPageRoute
 import daily.dayo.presentation.screen.mypage.myPageNavGraph
 import daily.dayo.presentation.screen.mypage.navigateBackToFolder
+import daily.dayo.presentation.screen.notification.NotificationRoute
+import daily.dayo.presentation.screen.notification.notificationNavGraph
 import daily.dayo.presentation.screen.post.postNavGraph
 import daily.dayo.presentation.screen.search.searchNavGraph
 import daily.dayo.presentation.screen.write.WriteRoute
@@ -120,6 +122,7 @@ internal fun MainScreen(
                                 onPostMoveClick = { folderId -> navigator.navigateFolderPostMove(folderId) },
                                 navigateBackToFolder = { folderId -> navigator.navController.navigateBackToFolder(folderId) }
                             )
+                            notificationNavGraph()
                         }
                     }
                 },
@@ -198,7 +201,7 @@ sealed class Screen(val route: String, @StringRes val resourceId: Int, @Drawable
     object Home : Screen(HomeRoute.route, R.string.home, R.drawable.ic_home, R.drawable.ic_home_filled)
     object Feed : Screen(FeedRoute.route, R.string.feed, R.drawable.ic_feed, R.drawable.ic_feed_filled)
     object Write : Screen(WriteRoute.route, R.string.write, R.drawable.ic_write, R.drawable.ic_write_filled)
-    object Notification : Screen("notification", R.string.notification, R.drawable.ic_notification, R.drawable.ic_notification_filled)
+    object Notification : Screen(NotificationRoute.route, R.string.notification, R.drawable.ic_notification, R.drawable.ic_notification_filled)
     object MyPage : Screen(MyPageRoute.route, R.string.my_page, R.drawable.ic_my_page, R.drawable.ic_my_page_filled)
 
     companion object {
