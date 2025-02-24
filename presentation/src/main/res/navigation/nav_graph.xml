@@ -34,9 +34,6 @@
             app:exitAnim="@anim/translate_nothing"
             app:popEnterAnim="@anim/translate_nothing"
             app:popExitAnim="@anim/translate_to_right_out" />
-        <action
-            android:id="@+id/action_homeFragment_to_notificationFragment"
-            app:destination="@+id/NotificationFragment" />
     </fragment>
 
     <fragment
@@ -692,34 +689,6 @@
         <action
             android:id="@+id/action_followFragment_to_profileFragment"
             app:destination="@+id/ProfileFragment"
-            app:enterAnim="@anim/translate_from_right_in"
-            app:exitAnim="@anim/translate_nothing"
-            app:popEnterAnim="@anim/translate_nothing"
-            app:popExitAnim="@anim/translate_to_right_out" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/NotificationFragment"
-        android:name="daily.dayo.presentation.fragment.notification.NotificationFragment"
-        android:label="fragment_notification"
-        tools:layout="@layout/fragment_notification">
-        <action
-            android:id="@+id/action_notificationFragment_to_writeFragment"
-            app:destination="@id/WriteFragment"
-            app:enterAnim="@anim/translate_bottom_up"
-            app:exitAnim="@anim/translate_nothing"
-            app:popEnterAnim="@anim/translate_nothing"
-            app:popExitAnim="@anim/translate_top_down" />
-        <action
-            android:id="@+id/action_notificationFragment_to_profileFragment"
-            app:destination="@id/ProfileFragment"
-            app:enterAnim="@anim/translate_from_right_in"
-            app:exitAnim="@anim/translate_nothing"
-            app:popEnterAnim="@anim/translate_nothing"
-            app:popExitAnim="@anim/translate_to_right_out" />
-        <action
-            android:id="@+id/action_notificationFragment_to_postFragment"
-            app:destination="@id/PostFragment"
             app:enterAnim="@anim/translate_from_right_in"
             app:exitAnim="@anim/translate_nothing"
             app:popEnterAnim="@anim/translate_nothing"
