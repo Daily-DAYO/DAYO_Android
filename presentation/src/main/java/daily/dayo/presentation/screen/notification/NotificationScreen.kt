@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -112,53 +113,7 @@ fun NotificationScreen(
 @Composable
 @Preview
 fun NotificationTopNavigation() {
-    TopNavigation(
-        title = stringResource(R.string.notification),
-    )
-}
-
-fun performNotificationNavigation(
-    notification: Notification,
-    onPostClick: (String) -> Unit,
-    onProfileClick: (String) -> Unit,
-    onNoticeClick: (Long) -> Unit,
-) {
-    notification.topic?.let { topic ->
-        when (topic) {
-            Topic.HEART -> {
-                notification.postId?.let { id ->
-                    onPostClick(id.toString())
-                }
-            }
-
-            Topic.COMMENT -> {
-                notification.postId?.let { id ->
-                    onPostClick(id.toString())
-                }
-            }
-
-            Topic.NOTICE -> {
-                // TODO: Navigate to Notice Post
-                // onNoticeClick(0L)
-            }
-
-            Topic.FOLLOW -> {
-                notification.memberId?.let { id ->
-                    onProfileClick(id)
-                }
-            }
-
-            Topic.MENTION -> {
-                notification.postId?.let { id ->
-                    onPostClick(id.toString())
-                }
-            }
-
-            null -> {
-                Unit
-            }
-        }
-    }
+    TopNavigation(title = stringResource(R.string.notification))
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -190,7 +145,6 @@ fun NotificationContent(
     onProfileClick: (String) -> Unit = {},
     onNoticeClick: (Long) -> Unit = {},
 ) {
-    // TODO: New Notification 및 Seen Notification 중복 코드 제거
     Box(
         modifier = Modifier
             .padding(innerPadding)
@@ -217,29 +171,24 @@ fun NotificationContent(
                                 .fillMaxWidth()
                         )
                     }
-                    itemsIndexed(
-                        items = uncheckedItems,
-                        key = { idx, notification -> "unchecked-${notification.alarmId ?: idx}" },
-                    ) { idx, notification ->
-                        Box(modifier = Modifier.animateItem()) {
-                            NotificationView(
+
+                    notifications(
+                        notifications = uncheckedItems,
+                        keyPrefix = "unchecked",
+                        context = context,
+                        onNotificationClick = { notification ->
+                            notification.alarmId?.let { alarmId ->
+                                markAlarmAsChecked(alarmId)
+                            }
+                            performNotificationNavigation(
                                 notification = notification,
-                                context = context,
-                                onClick = {
-                                    notification.alarmId?.let { alarmId ->
-                                        markAlarmAsChecked(alarmId)
-                                    }
-                                    performNotificationNavigation(
-                                        notification = notification,
-                                        onPostClick = onPostClick,
-                                        onProfileClick = onProfileClick,
-                                        onNoticeClick = onNoticeClick,
-                                    )
-                                },
+                                onPostClick = onPostClick,
                                 onProfileClick = onProfileClick,
+                                onNoticeClick = onNoticeClick,
                             )
-                        }
-                    }
+                        },
+                        onProfileClick = onProfileClick,
+                    )
                 }
 
                 item {
@@ -250,7 +199,6 @@ fun NotificationContent(
                     )
                 }
 
-                // 구분선이 필요할 때
                 if (uncheckedItems.isNotEmpty() && checkedItems.isNotEmpty()) {
                     item {
                         Divider(
@@ -275,26 +223,20 @@ fun NotificationContent(
                         Spacer(modifier = Modifier.size(8.dp))
                     }
 
-                    itemsIndexed(
-                        items = checkedItems,
-                        key = { idx, notification -> "checked-${notification.alarmId ?: idx}" },
-                    ) { idx, notification ->
-                        Box(modifier = Modifier.animateItem()) {
-                            NotificationView(
+                    notifications(
+                        notifications = checkedItems,
+                        keyPrefix = "checked",
+                        context = context,
+                        onNotificationClick = { notification ->
+                            performNotificationNavigation(
                                 notification = notification,
-                                context = context,
-                                onClick = {
-                                    performNotificationNavigation(
-                                        notification = notification,
-                                        onPostClick = onPostClick,
-                                        onProfileClick = onProfileClick,
-                                        onNoticeClick = onNoticeClick,
-                                    )
-                                },
+                                onPostClick = onPostClick,
                                 onProfileClick = onProfileClick,
+                                onNoticeClick = onNoticeClick,
                             )
-                        }
-                    }
+                        },
+                        onProfileClick = onProfileClick,
+                    )
                 }
             }
 
@@ -303,6 +245,28 @@ fun NotificationContent(
                 isRefreshing,
                 pullRefreshState,
                 Modifier.align(Alignment.TopCenter)
+            )
+        }
+    }
+}
+
+fun LazyListScope.notifications(
+    notifications: List<Notification>,
+    keyPrefix: String,
+    context: Context,
+    onNotificationClick: (Notification) -> Unit,
+    onProfileClick: (String) -> Unit,
+) {
+    itemsIndexed(
+        items = notifications,
+        key = { idx, notification -> "$keyPrefix-${notification.alarmId ?: idx}" },
+    ) { idx, notification ->
+        Box(modifier = Modifier.animateItem()) {
+            NotificationView(
+                notification = notification,
+                context = context,
+                onClick = { onNotificationClick(notification) },
+                onProfileClick = onProfileClick,
             )
         }
     }
@@ -420,14 +384,18 @@ fun NotificationView(
                         detectTapGestures { offset ->
                             textLayoutResult?.let { layoutResult ->
                                 val position = layoutResult.getOffsetForPosition(offset)
-                                notificationMessage.getStringAnnotations(
+                                val annotation = notificationMessage.getStringAnnotations(
                                     tag = "nickname",
                                     start = position,
                                     end = position
-                                ).firstOrNull()?.let {
+                                ).firstOrNull()
+
+                                if (annotation != null) {
                                     notification.memberId?.let { id ->
                                         onProfileClick(id)
                                     }
+                                } else {
+                                    onClick()
                                 }
                             }
                         }
@@ -438,6 +406,11 @@ fun NotificationView(
                 )
                 notification.createdTime?.let {
                     Text(
+                        modifier = Modifier.clickable(
+                            interactionSource = null,
+                            indication = null,
+                            onClick = { onClick() }
+                        ),
                         text = TimeChangerUtil.timeChange(context, notification.createdTime ?: ""),
                         style = DayoTheme.typography.caption4.copy(color = Gray3_9FA5AE)
                     )
@@ -460,6 +433,50 @@ fun NotificationView(
                     roundSize = 10.dp,
                     imageDescription = "notification thumbnail",
                 )
+            }
+        }
+    }
+}
+
+fun performNotificationNavigation(
+    notification: Notification,
+    onPostClick: (String) -> Unit,
+    onProfileClick: (String) -> Unit,
+    onNoticeClick: (Long) -> Unit,
+) {
+    notification.topic?.let { topic ->
+        when (topic) {
+            Topic.HEART -> {
+                notification.postId?.let { id ->
+                    onPostClick(id.toString())
+                }
+            }
+
+            Topic.COMMENT -> {
+                notification.postId?.let { id ->
+                    onPostClick(id.toString())
+                }
+            }
+
+            Topic.NOTICE -> {
+                // TODO: Navigate to Notice Post
+                // onNoticeClick(0L)
+            }
+
+            Topic.FOLLOW -> {
+                notification.memberId?.let { id ->
+                    onProfileClick(id)
+                }
+            }
+
+            Topic.MENTION -> {
+                notification.postId?.let { id ->
+                    onPostClick(id.toString())
+                }
+            }
+
+            null -> {
+                Unit
             }
         }
     }
