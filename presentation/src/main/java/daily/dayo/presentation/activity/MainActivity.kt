@@ -99,7 +99,6 @@ class MainActivity : AppCompatActivity() {
                     memberId = memberId
                 )
             )
-            else findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToNotificationFragment())
         }
     }
 
@@ -194,7 +193,6 @@ class MainActivity : AppCompatActivity() {
             binding.layoutBottomNavigationMain.visibility = when (destination.id) {
                 R.id.HomeFragment -> View.VISIBLE
                 R.id.FeedFragment -> View.VISIBLE
-                R.id.NotificationFragment -> View.VISIBLE
                 R.id.MyPageFragment -> View.VISIBLE
                 else -> View.GONE
             }
@@ -228,7 +226,6 @@ class MainActivity : AppCompatActivity() {
                                 when (findNavController().currentDestination!!.id) {
                                     R.id.HomeFragment -> findNavController().navigate(R.id.action_homeFragment_to_writeFragment)
                                     R.id.FeedFragment -> findNavController().navigate(R.id.action_feedFragment_to_writeFragment)
-                                    R.id.NotificationFragment -> findNavController().navigate(R.id.action_notificationFragment_to_writeFragment)
                                     R.id.MyPageFragment -> findNavController().navigate(R.id.action_myPageFragment_to_writeFragment)
                                 }
                             }

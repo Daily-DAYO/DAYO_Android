@@ -16,11 +16,6 @@
         android:icon="@drawable/selector_menu_icon_write"
         android:title="@string/write" />
     <item
-        android:id="@+id/NotificationFragment"
-        android:enabled="true"
-        android:icon="@drawable/selector_menu_icon_notification"
-        android:title="@string/notification" />
-    <item
         android:id="@+id/MyPageFragment"
         android:enabled="true"
         android:icon="@drawable/selector_menu_icon_my_profile"
