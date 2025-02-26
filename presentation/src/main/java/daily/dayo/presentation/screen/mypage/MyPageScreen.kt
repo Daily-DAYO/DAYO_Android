@@ -67,6 +67,7 @@ import daily.dayo.presentation.viewmodel.ProfileViewModel
 
 @Composable
 fun MyPageScreen(
+    onSettingsClick: () -> Unit,
     onFollowButtonClick: (String, Int) -> Unit,
     onProfileEditClick: () -> Unit,
     onBookmarkClick: () -> Unit,
@@ -84,7 +85,7 @@ fun MyPageScreen(
     }
 
     Scaffold(
-        topBar = { MyPageTopNavigation() },
+        topBar = { MyPageTopNavigation(onSettingsClick) },
         content = { contentPadding ->
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
@@ -342,7 +343,7 @@ private fun MyPageDiary(folder: Folder, onFolderClick: (String) -> Unit) {
 }
 
 @Composable
-private fun MyPageTopNavigation() {
+private fun MyPageTopNavigation(onSettingsClick: () -> Unit) {
     TopNavigation(
         leftIcon = {
             Row(
@@ -360,7 +361,7 @@ private fun MyPageTopNavigation() {
         },
         rightIcon = {
             NoRippleIconButton(
-                onClick = { },
+                onClick = onSettingsClick,
                 iconContentDescription = "setting button",
                 iconPainter = painterResource(id = R.drawable.ic_setting),
                 iconModifier = Modifier
@@ -375,7 +376,7 @@ private fun MyPageTopNavigation() {
 @Preview
 @Composable
 private fun PreviewMyPageTopNavigation() {
-    MyPageTopNavigation()
+    MyPageTopNavigation({})
 }
 
 @Preview
