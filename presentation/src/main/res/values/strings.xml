@@ -492,6 +492,14 @@
     <string name="setting_withdraw_explanation_message">모든 정보가 삭제되며, 복구가 불가능합니다.</string>
     <string name="setting_contact_message">메일 주소 복사 완료</string>
     <string name="setting_contact_explanation_message">클립보드에 저장된 메일 주소로 문의 주세요</string>
+    <string name="setting_menu_change_password">비밀번호 변경</string>
+    <string name="setting_menu_block_user">차단 관리</string>
+    <string name="setting_menu_notification">알림</string>
+    <string name="setting_menu_notice">공지사항</string>
+    <string name="setting_menu_information">정보</string>
+    <string name="setting_menu_contact">문의하기</string>
+    <string name="sign_out">로그아웃</string>
+    <string name="delete_account">계정 삭제</string>
 
     <!-- Change Password -->
     <string name="setting_change_password_current_fail_message">비밀번호를 정확히 입력해주세요.</string>
