@@ -9,10 +9,14 @@ fun NavController.navigateSettings() {
 }
 
 fun NavGraphBuilder.settingsNavGraph(
+    onProfileEditClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
     composable(SettingsRoute.route) {
-        SettingsScreen()
+        SettingsScreen(
+            onProfileEditClick = onProfileEditClick,
+            onBackClick = onBackClick
+        )
     }
 }
 

@@ -485,6 +485,8 @@
     <string name="find_account_password_next">로그인하러 가기</string>
 
     <!-- Setting -->
+    <string name="setting_title">환경설정</string>
+    <string name="setting_my_profile_image_description">나의 프로필 이미지</string>
     <string name="setting_logout_message">계정을 로그아웃 할까요?</string>
     <string name="setting_withdraw_message">계정을 삭제할까요?</string>
     <string name="setting_withdraw_explanation_message">모든 정보가 삭제되며, 복구가 불가능합니다.</string>

@@ -131,6 +131,7 @@ internal fun MainScreen(
                                 navigateBackToFolder = { folderId -> navigator.navController.navigateBackToFolder(folderId) }
                             )
                             settingsNavGraph(
+                                onProfileEditClick = { navigator.navigateProfileEdit() },
                                 onBackClick = { navigator.popBackStack() }
                             )
                         }
