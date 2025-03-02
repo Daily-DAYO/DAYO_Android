@@ -32,12 +32,14 @@ import daily.dayo.presentation.view.DayoTextButton
 fun ConfirmDialog(
     title: String,
     description: String,
-    onClickConfirm: () -> Unit,
-    onClickCancel: () -> Unit,
-    modifier: Modifier = Modifier
+    onClickConfirm: () -> Unit, // onClickConfirm is required
+    modifier: Modifier = Modifier,
+    onClickCancel: (() -> Unit)? = {},
+    onClickConfirmText: String = stringResource(id = R.string.confirm),
+    onClickCancelText: String = stringResource(id = R.string.cancel),
 ) {
     Dialog(
-        onDismissRequest = onClickCancel
+        onDismissRequest = onClickCancel ?: onClickConfirm,
     ) {
         Surface(
             modifier = modifier
@@ -55,8 +57,10 @@ fun ConfirmDialog(
                     color = Gray7_F6F6F7
                 )
                 DialogActionButton(
-                    onClickConfirm,
-                    onClickCancel
+                    onClickConfirmText = onClickConfirmText,
+                    onClickConfirm = onClickConfirm,
+                    onClickCancelText = onClickCancelText,
+                    onClickCancel = onClickCancel
                 )
             }
         }
@@ -72,40 +76,51 @@ private fun DialogHeader(title: String, description: String) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Text(
-            text = title,
-            color = Dark,
-            textAlign = TextAlign.Center,
-            style = DayoTheme.typography.b3
-        )
+        if (title.isNotBlank()) {
+            Text(
+                text = title,
+                color = Dark,
+                textAlign = TextAlign.Center,
+                style = DayoTheme.typography.b3
+            )
+        }
 
-        Text(
-            text = description,
-            color = Gray2_767B83,
-            textAlign = TextAlign.Center,
-            style = DayoTheme.typography.caption4
-        )
+        if (description.isNotBlank()) {
+            Text(
+                text = description,
+                color = Gray2_767B83,
+                textAlign = TextAlign.Center,
+                style = DayoTheme.typography.caption4
+            )
+        }
     }
 }
 
 @Composable
-private fun DialogActionButton(onClickConfirm: () -> Unit, onClickCancel: () -> Unit) {
+private fun DialogActionButton(
+    onClickConfirm: () -> Unit,
+    onClickCancel: (() -> Unit)? = {},
+    onClickConfirmText: String = stringResource(id = R.string.confirm),
+    onClickCancelText: String = stringResource(id = R.string.cancel),
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        DayoTextButton(
-            text = stringResource(id = R.string.cancel),
-            onClick = onClickCancel,
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center,
-            textStyle = DayoTheme.typography.b5.copy(Gray3_9FA5AE)
-        )
+        if (onClickCancel != null) {
+            DayoTextButton(
+                text = onClickCancelText,
+                onClick = onClickCancel,
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Center,
+                textStyle = DayoTheme.typography.b5.copy(Gray3_9FA5AE)
+            )
+        }
 
         DayoTextButton(
-            text = stringResource(id = R.string.confirm),
+            text = onClickConfirmText,
             onClick = onClickConfirm,
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,
@@ -118,6 +133,9 @@ private fun DialogActionButton(onClickConfirm: () -> Unit, onClickCancel: () -> 
 @Composable
 private fun PreviewConfirmDialog() {
     DayoTheme {
-        ConfirmDialog("title", "description", {}, {})
+        ConfirmDialog("title", "description",
+            onClickConfirm = {},
+            onClickCancel = {}
+        )
     }
 }
