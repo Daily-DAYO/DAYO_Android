@@ -509,7 +509,8 @@
     <string name="notification_channel_name">반응 알림</string>
     <string name="notification_topic_notice">NOTICE</string>
     <string name="notification_empty_title">아직 받은 알림이 없어요.</string>
-    <string name="notification_empty_description">새로운 소식들을\n이곳에서 알려드릴게요.</string>
+    <string name="notification_empty_description">새로운 소식들을 이곳에서 알려드릴게요.</string>
+    <string name="notification_seen_title">지난 알림</string>
 
     <!-- Withdraw -->
     <string name="withdraw_title">계정 삭제하기</string>
