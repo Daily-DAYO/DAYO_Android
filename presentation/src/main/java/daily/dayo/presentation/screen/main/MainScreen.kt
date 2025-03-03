@@ -40,10 +40,10 @@ import daily.dayo.presentation.screen.home.HomeRoute
 import daily.dayo.presentation.screen.home.homeNavGraph
 import daily.dayo.presentation.screen.mypage.MyPageRoute
 import daily.dayo.presentation.screen.mypage.myPageNavGraph
-import daily.dayo.presentation.screen.mypage.navigateBackToFolder
 import daily.dayo.presentation.screen.notification.NotificationRoute
 import daily.dayo.presentation.screen.notification.notificationNavGraph
 import daily.dayo.presentation.screen.post.postNavGraph
+import daily.dayo.presentation.screen.profile.profileNavGraph
 import daily.dayo.presentation.screen.search.searchNavGraph
 import daily.dayo.presentation.screen.settings.settingsNavGraph
 import daily.dayo.presentation.screen.write.WriteRoute
@@ -99,7 +99,7 @@ internal fun MainScreen(
                             )
                             postNavGraph(
                                 snackBarHostState = snackBarHostState,
-                                onProfileClick = { /*TODO*/ },
+                                onProfileClick = { memberId -> navigator.navigateProfile(memberId) },
                                 onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
                                 onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) },
                                 onBackClick = { navigator.popBackStack() }
@@ -122,19 +122,25 @@ internal fun MainScreen(
                             myPageNavGraph(
                                 onBackClick = { navigator.popBackStack() },
                                 onSettingsClick = { navigator.navigateSettings() },
-                                onFollowButtonClick = { memberId, tabNum -> navigator.navController.navigate(MyPageRoute.follow(memberId, "$tabNum")) },
+                                onFollowButtonClick = { memberId, tabNum -> navigator.navigateFollowMenu(memberId, tabNum) },
                                 onProfileEditClick = { navigator.navigateProfileEdit() },
                                 onBookmarkClick = { navigator.navigateBookmark() },
-                                onFolderClick = { folderId -> navigator.navController.navigate(MyPageRoute.folder(folderId)) },
+                                onFolderClick = { folderId -> navigator.navigateFolder(folderId) },
                                 onFolderCreateClick = { navigator.navigateFolderCreate() },
                                 onFolderEditClick = { folderId -> navigator.navigateFolderEdit(folderId) },
                                 onPostClick = { postId -> navigator.navigatePost(postId) },
                                 onPostMoveClick = { folderId -> navigator.navigateFolderPostMove(folderId) },
-                                navigateBackToFolder = { folderId -> navigator.navController.navigateBackToFolder(folderId) }
+                                navigateBackToFolder = { folderId -> navigator.navigateBackToFolder(folderId) }
+                            )
+                            profileNavGraph(
+                                onFollowMenuClick = { memberId, tabNum -> navigator.navigateFollowMenu(memberId, tabNum) },
+                                onFolderClick = { folderId -> navigator.navigateFolder(folderId) },
+                                onPostClick = { postId -> navigator.navigatePost(postId) },
+                                onBackClick = { navigator.popBackStack() }
                             )
                             notificationNavGraph(
                                 onPostClick = { navigator.navigatePost(it) },
-                                onProfileClick = { /*TODO*/ },
+                                onProfileClick = { memberId -> navigator.navigateProfile(memberId) },
                                 onNoticeClick = { /*TODO*/ }
                             )
                             settingsNavGraph(

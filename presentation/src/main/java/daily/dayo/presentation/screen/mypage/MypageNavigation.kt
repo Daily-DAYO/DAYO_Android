@@ -31,6 +31,14 @@ fun NavController.navigateFolderPostMove(folderId: String) {
     navigate(MyPageRoute.folderPostMove(folderId))
 }
 
+fun NavController.navigateFollowMenu(memberId: String, tabNum: Int) {
+    navigate(MyPageRoute.follow(memberId, "$tabNum"))
+}
+
+fun NavController.navigateFolder(folderId: String) {
+    navigate(MyPageRoute.folder(folderId))
+}
+
 fun NavController.navigateBackToFolder(folderId: String) {
     navigate(MyPageRoute.folder(folderId)) {
         popUpTo(MyPageRoute.folder(folderId)) {
@@ -155,12 +163,16 @@ fun NavGraphBuilder.myPageNavGraph(
 object MyPageRoute {
     const val route = "myPage"
 
-    fun follow(memberId: String, tabNum: String) = "$route/follow/$memberId/$tabNum"
+    // profile edit
     fun profileEdit() = "$route/edit"
 
-    fun bookmark() = "$route/bookmark"
-    fun bookmarkPost(postId: String) = "$route/bookmark/$postId"
+    // follow
+    fun follow(memberId: String, tabNum: String) = "$route/follow/$memberId/$tabNum"
 
+    // bookmark
+    fun bookmark() = "$route/bookmark"
+
+    // folder
     fun folder(folderId: String) = "$route/folder/$folderId"
     fun folderCreate() = "$route/folder/create"
     fun folderEdit(folderId: String) = "$route/folder/edit/$folderId"

@@ -8,13 +8,17 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import daily.dayo.presentation.screen.home.HomeRoute
 import daily.dayo.presentation.screen.home.navigateHome
+import daily.dayo.presentation.screen.mypage.navigateBackToFolder
 import daily.dayo.presentation.screen.mypage.navigateBookmark
+import daily.dayo.presentation.screen.mypage.navigateFolder
 import daily.dayo.presentation.screen.mypage.navigateFolderCreate
 import daily.dayo.presentation.screen.mypage.navigateFolderEdit
 import daily.dayo.presentation.screen.mypage.navigateFolderPostMove
+import daily.dayo.presentation.screen.mypage.navigateFollowMenu
 import daily.dayo.presentation.screen.mypage.navigateProfileEdit
 import daily.dayo.presentation.screen.post.navigatePost
 import daily.dayo.presentation.screen.post.navigatePostLikeUsers
+import daily.dayo.presentation.screen.profile.navigateProfile
 import daily.dayo.presentation.screen.search.navigateSearch
 import daily.dayo.presentation.screen.search.navigateSearchPostHashtag
 import daily.dayo.presentation.screen.search.navigateSearchResult
@@ -37,6 +41,10 @@ class MainNavigator(
 
     fun navigatePost(postId: String) {
         navController.navigatePost(postId = postId)
+    }
+
+    fun navigateProfile(memberId: String) {
+        navController.navigateProfile(memberId)
     }
 
     fun navigateSearch() {
@@ -73,6 +81,18 @@ class MainNavigator(
 
     fun navigateFolderPostMove(folderId: String) {
         navController.navigateFolderPostMove(folderId)
+    }
+
+    fun navigateFollowMenu(memberId: String, tabNum: Int) {
+        navController.navigateFollowMenu(memberId, tabNum)
+    }
+
+    fun navigateFolder(folderId: String) {
+        navController.navigateFolder(folderId)
+    }
+
+    fun navigateBackToFolder(folderId: String) {
+        navController.navigateBackToFolder(folderId)
     }
 
     fun navigateWrite() {
