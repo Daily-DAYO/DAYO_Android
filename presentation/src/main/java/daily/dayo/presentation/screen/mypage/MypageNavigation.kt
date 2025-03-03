@@ -11,6 +11,12 @@ import daily.dayo.presentation.screen.folder.FolderEditScreen
 import daily.dayo.presentation.screen.folder.FolderPostMoveScreen
 import daily.dayo.presentation.screen.folder.FolderScreen
 
+fun NavController.navigateMyPage() {
+    navigate(MyPageRoute.route) {
+        launchSingleTop = true
+    }
+}
+
 fun NavController.navigateProfileEdit() {
     navigate(MyPageRoute.profileEdit())
 }
