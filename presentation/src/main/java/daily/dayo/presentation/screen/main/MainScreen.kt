@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -53,13 +54,16 @@ import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
+import daily.dayo.presentation.viewmodel.ProfileViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 internal fun MainScreen(
-    navigator: MainNavigator = rememberMainNavigator()
+    navigator: MainNavigator = rememberMainNavigator(),
+    profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
+    val currentMemberId = profileViewModel.currentMemberId
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
     val bottomSheetState = getBottomSheetDialogState()
@@ -99,7 +103,7 @@ internal fun MainScreen(
                             )
                             postNavGraph(
                                 snackBarHostState = snackBarHostState,
-                                onProfileClick = { memberId -> navigator.navigateProfile(memberId) },
+                                onProfileClick = { memberId -> navigator.navigateProfile(currentMemberId, memberId) },
                                 onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
                                 onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) },
                                 onBackClick = { navigator.popBackStack() }
@@ -140,7 +144,7 @@ internal fun MainScreen(
                             )
                             notificationNavGraph(
                                 onPostClick = { navigator.navigatePost(it) },
-                                onProfileClick = { memberId -> navigator.navigateProfile(memberId) },
+                                onProfileClick = { memberId -> navigator.navigateProfile(currentMemberId, memberId) },
                                 onNoticeClick = { /*TODO*/ }
                             )
                             settingsNavGraph(

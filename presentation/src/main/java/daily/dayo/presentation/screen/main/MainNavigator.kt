@@ -15,6 +15,7 @@ import daily.dayo.presentation.screen.mypage.navigateFolderCreate
 import daily.dayo.presentation.screen.mypage.navigateFolderEdit
 import daily.dayo.presentation.screen.mypage.navigateFolderPostMove
 import daily.dayo.presentation.screen.mypage.navigateFollowMenu
+import daily.dayo.presentation.screen.mypage.navigateMyPage
 import daily.dayo.presentation.screen.mypage.navigateProfileEdit
 import daily.dayo.presentation.screen.post.navigatePost
 import daily.dayo.presentation.screen.post.navigatePostLikeUsers
@@ -43,8 +44,14 @@ class MainNavigator(
         navController.navigatePost(postId = postId)
     }
 
-    fun navigateProfile(memberId: String) {
-        navController.navigateProfile(memberId)
+    fun navigateProfile(currentMemberId: String?, memberId: String) {
+        if (currentMemberId != null) {
+            if (currentMemberId == memberId) {
+                navController.navigateMyPage()
+            } else {
+                navController.navigateProfile(memberId)
+            }
+        }
     }
 
     fun navigateSearch() {

@@ -20,6 +20,7 @@ import daily.dayo.domain.usecase.like.RequestAllMyLikePostListUseCase
 import daily.dayo.domain.usecase.member.RequestMyProfileUseCase
 import daily.dayo.domain.usecase.member.RequestOtherProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import daily.dayo.domain.usecase.member.RequestCurrentUserInfoUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import daily.dayo.presentation.common.Event
@@ -30,6 +31,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
+    private val requestCurrentUserInfoUseCase: RequestCurrentUserInfoUseCase,
     private val requestAllFolderListUseCase: RequestAllFolderListUseCase,
     private val requestAllMyFolderListUseCase: RequestAllMyFolderListUseCase,
     private val requestMyProfileUseCase: RequestMyProfileUseCase,
@@ -41,7 +43,7 @@ class ProfileViewModel @Inject constructor(
     private val requestUnblockMemberUseCase: RequestUnblockMemberUseCase
 ) : ViewModel() {
 
-    lateinit var profileMemberId: String
+    val currentMemberId get() = requestCurrentUserInfoUseCase().memberId
 
     private val _profileInfo = MutableLiveData<Resource<Profile>>()
     val profileInfo: LiveData<Resource<Profile>> = _profileInfo
