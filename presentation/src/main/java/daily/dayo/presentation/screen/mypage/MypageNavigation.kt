@@ -42,6 +42,7 @@ fun NavController.navigateBackToFolder(folderId: String) {
 
 fun NavGraphBuilder.myPageNavGraph(
     onBackClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     onFollowButtonClick: (String, Int) -> Unit,
     onProfileEditClick: () -> Unit,
     onBookmarkClick: () -> Unit,
@@ -54,6 +55,7 @@ fun NavGraphBuilder.myPageNavGraph(
 ) {
     composable(MyPageRoute.route) {
         MyPageScreen(
+            onSettingsClick = onSettingsClick,
             onFollowButtonClick = onFollowButtonClick,
             onProfileEditClick = onProfileEditClick,
             onBookmarkClick = onBookmarkClick,

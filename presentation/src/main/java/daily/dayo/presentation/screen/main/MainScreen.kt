@@ -45,6 +45,7 @@ import daily.dayo.presentation.screen.notification.NotificationRoute
 import daily.dayo.presentation.screen.notification.notificationNavGraph
 import daily.dayo.presentation.screen.post.postNavGraph
 import daily.dayo.presentation.screen.search.searchNavGraph
+import daily.dayo.presentation.screen.settings.settingsNavGraph
 import daily.dayo.presentation.screen.write.WriteRoute
 import daily.dayo.presentation.screen.write.writeNavGraph
 import daily.dayo.presentation.theme.Dark
@@ -120,6 +121,7 @@ internal fun MainScreen(
                             )
                             myPageNavGraph(
                                 onBackClick = { navigator.popBackStack() },
+                                onSettingsClick = { navigator.navigateSettings() },
                                 onFollowButtonClick = { memberId, tabNum -> navigator.navController.navigate(MyPageRoute.follow(memberId, "$tabNum")) },
                                 onProfileEditClick = { navigator.navigateProfileEdit() },
                                 onBookmarkClick = { navigator.navigateBookmark() },
@@ -134,6 +136,10 @@ internal fun MainScreen(
                                 onPostClick = { navigator.navigatePost(it) },
                                 onProfileClick = { /*TODO*/ },
                                 onNoticeClick = { /*TODO*/ }
+                            )
+                            settingsNavGraph(
+                                onProfileEditClick = { navigator.navigateProfileEdit() },
+                                onBackClick = { navigator.popBackStack() }
                             )
                         }
                     }
