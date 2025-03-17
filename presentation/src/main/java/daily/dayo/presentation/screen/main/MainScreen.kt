@@ -139,7 +139,8 @@ internal fun MainScreen(
                             )
                             settingsNavGraph(
                                 onProfileEditClick = { navigator.navigateProfileEdit() },
-                                onBackClick = { navigator.popBackStack() }
+                                onBackClick = { navigator.popBackStack() },
+                                onSettingNotificationClick = { navigator.navigateSettingsNotification() },
                             )
                         }
                     }

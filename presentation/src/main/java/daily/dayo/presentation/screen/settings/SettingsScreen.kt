@@ -57,6 +57,7 @@ import daily.dayo.presentation.viewmodel.ProfileViewModel
 fun SettingsScreen(
     onProfileEditClick: () -> Unit,
     onBackClick: () -> Unit,
+    onSettingNotificationClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
     val profileInfo = profileViewModel.profileInfo.observeAsState()
@@ -68,7 +69,8 @@ fun SettingsScreen(
     SettingsScreen(
         profile = profileInfo.value?.data,
         onProfileEditClick = onProfileEditClick,
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
+        onSettingNotificationClick = onSettingNotificationClick,
     )
 }
 
@@ -76,7 +78,8 @@ fun SettingsScreen(
 private fun SettingsScreen(
     profile: Profile?,
     onProfileEditClick: () -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onSettingNotificationClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -109,7 +112,7 @@ private fun SettingsScreen(
         val settingMenus = listOf(
             SettingItem(R.string.setting_menu_change_password, R.drawable.ic_setting_password_change, onClickMenu = {}),
             SettingItem(R.string.setting_menu_block_user, R.drawable.ic_block, onClickMenu = {}),
-            SettingItem(R.string.setting_menu_notification, R.drawable.ic_notification, onClickMenu = {}),
+            SettingItem(R.string.setting_menu_notification, R.drawable.ic_notification, onClickMenu = onSettingNotificationClick),
             null, // Divider
             SettingItem(R.string.setting_menu_notice, R.drawable.ic_setting_notice, onClickMenu = {}),
             SettingItem(R.string.setting_menu_information, R.drawable.ic_setting_information, onClickMenu = {}, description = appVersion),
@@ -262,7 +265,8 @@ private fun PreviewSettingsScreen() {
         SettingsScreen(
             profile = null,
             onProfileEditClick = {},
-            onBackClick = {}
+            onBackClick = {},
+            onSettingNotificationClick = {}
         )
     }
 }
