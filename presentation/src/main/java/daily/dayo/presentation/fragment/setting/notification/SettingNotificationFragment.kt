@@ -18,6 +18,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.autoCleared
@@ -65,11 +66,11 @@ class SettingNotificationFragment : Fragment() {
             binding.switchSettingNotificationNotice.isEnabled = true
             binding.switchSettingNotificationReaction.isEnabled = true
             settingNotificationViewModel.requestReceiveAlarm()
-            settingNotificationViewModel.notiReactionPermit.observe(viewLifecycleOwner) { reactionPermit ->
-                binding.notiReactionPermit = reactionPermit
+            settingNotificationViewModel.isReactionNotificationEnabled.asLiveData().observe(viewLifecycleOwner) { reactionPermit ->
+                    binding.notiReactionPermit = reactionPermit
             }
             binding.switchSettingNotificationNotice.isChecked =
-                accountViewModel.getCurrentUserNotiNoticePermit()
+                accountViewModel.isNoticeNotificationEnabled.value
         } else {
             binding.switchSettingNotificationDevice.isChecked = false
             binding.switchSettingNotificationNotice.isEnabled = false
@@ -96,13 +97,13 @@ class SettingNotificationFragment : Fragment() {
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) Log.d(TAG, "NOTICE 수신")
                     }
-                accountViewModel.requestCurrentUserNotiNoticePermit(true)
+                accountViewModel.changeNoticeNotificationSetting(true)
             } else { // 공지 알림 끄기
                 Firebase.messaging.unsubscribeFromTopic("NOTICE")
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) Log.d(TAG, "NOTICE 수신 거부")
                     }
-                accountViewModel.requestCurrentUserNotiNoticePermit(false)
+                accountViewModel.changeNoticeNotificationSetting(false)
             }
         }
     }
@@ -132,11 +133,13 @@ class SettingNotificationFragment : Fragment() {
                 setFCM()
                 accountViewModel.requestCurrentUserNotiDevicePermit(true)
                 settingNotificationViewModel.requestReceiveAlarm()
-                settingNotificationViewModel.notiReactionPermit.observe(viewLifecycleOwner) { reactionPermit ->
-                    binding.notiReactionPermit = reactionPermit
+                settingNotificationViewModel.isReactionNotificationEnabled.asLiveData().observe(viewLifecycleOwner) { reactionPermit ->
+                    if (reactionPermit != null) {
+                        binding.notiReactionPermit = reactionPermit
+                    }
                 }
                 binding.switchSettingNotificationNotice.isChecked =
-                    accountViewModel.getCurrentUserNotiNoticePermit()
+                    accountViewModel.isNoticeNotificationEnabled.value
             } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
                 // TODO: display an educational UI explaining to the user the features that will be enabled
                 // by them granting the POST_NOTIFICATION permission. This UI should provide the user
@@ -153,7 +156,7 @@ class SettingNotificationFragment : Fragment() {
         binding.switchSettingNotificationNotice.isChecked = false
         binding.switchSettingNotificationReaction.isChecked = false
         accountViewModel.requestCurrentUserNotiDevicePermit(false)
-        accountViewModel.requestCurrentUserNotiNoticePermit(false)
+        accountViewModel.changeNoticeNotificationSetting(false)
         settingNotificationViewModel.unregisterFcmToken()
     }
 
@@ -178,7 +181,7 @@ class SettingNotificationFragment : Fragment() {
             when {
                 deniedList.isNotEmpty() -> {
                     accountViewModel.requestCurrentUserNotiDevicePermit(false)
-                    accountViewModel.requestCurrentUserNotiNoticePermit(false)
+                    accountViewModel.changeNoticeNotificationSetting(false)
                     val map = deniedList.groupBy { permission ->
                         if (shouldShowRequestPermissionRationale(permission)) getString(R.string.permission_fail_second) else getString(
                             R.string.permission_fail_final
@@ -217,7 +220,7 @@ class SettingNotificationFragment : Fragment() {
                     //All request are permitted
                     // 알림 최초 허용시에 모든 알림 허용처리
                     accountViewModel.requestCurrentUserNotiDevicePermit(true)
-                    accountViewModel.requestCurrentUserNotiNoticePermit(true)
+                    accountViewModel.changeNoticeNotificationSetting(true)
                     settingNotificationViewModel.registerDeviceToken()
                     settingNotificationViewModel.requestReceiveAlarm()
                     setInitSwitchState()

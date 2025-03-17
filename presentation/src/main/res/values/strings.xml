@@ -521,6 +521,7 @@
     <string name="notification_empty_title">아직 받은 알림이 없어요.</string>
     <string name="notification_empty_description">새로운 소식들을 이곳에서 알려드릴게요.</string>
     <string name="notification_seen_title">지난 알림</string>
+    <string name="move_to_setting_notification_dialog_title">기기의 알림 설정 변경을 위해\n환경설정으로 이동할게요</string>
 
     <!-- Withdraw -->
     <string name="withdraw_title">계정 삭제하기</string>
