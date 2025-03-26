@@ -47,7 +47,7 @@ fun HomePostView(
     isDayoPick: Boolean = false,
     onClickPost: () -> Unit,
     onClickLikePost: () -> Unit,
-    onClickNickname: () -> Unit
+    onClickProfile: () -> Unit
 ) {
     val imageInteractionSource = remember { MutableInteractionSource() }
     Column(modifier = modifier) {
@@ -106,7 +106,7 @@ fun HomePostView(
                 .clickableSingle(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },
-                    onClick = { onClickNickname() }
+                    onClick = onClickProfile
                 )
         ) {
             AsyncImage(
@@ -162,7 +162,7 @@ private fun PreviewHomePostView() {
             isDayoPick = true,
             onClickPost = {},
             onClickLikePost = {},
-            onClickNickname = {}
+            onClickProfile = {}
         )
     }
 }

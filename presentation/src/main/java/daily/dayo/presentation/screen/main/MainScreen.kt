@@ -87,6 +87,7 @@ internal fun MainScreen(
                         ) {
                             homeNavGraph(
                                 onPostClick = { navigator.navigatePost(it) },
+                                onProfileClick = { memberId -> navigator.navigateProfile(currentMemberId, memberId) },
                                 onSearchClick = { navigator.navigateSearch() },
                                 coroutineScope = coroutineScope,
                                 bottomSheetState = bottomSheetState,
@@ -96,6 +97,7 @@ internal fun MainScreen(
                                 snackBarHostState = snackBarHostState,
                                 onEmptyViewClick = { navigator.navigateHome() },
                                 onPostClick = { navigator.navigatePost(it) },
+                                onProfileClick = { memberId -> navigator.navigateProfile(currentMemberId, memberId) },
                                 onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
                                 onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) },
                                 bottomSheetState = bottomSheetState,
@@ -111,7 +113,8 @@ internal fun MainScreen(
                             searchNavGraph(
                                 onBackClick = { navigator.popBackStack() },
                                 onSearch = { navigator.navigateSearchResult(it) },
-                                onPostClick = { navigator.navigatePost(it) }
+                                onPostClick = { navigator.navigatePost(it) },
+                                onProfileClick = { memberId -> navigator.navigateProfile(currentMemberId, memberId) },
                             )
                             writeNavGraph(
                                 snackBarHostState = snackBarHostState,
@@ -127,6 +130,7 @@ internal fun MainScreen(
                                 onBackClick = { navigator.popBackStack() },
                                 onSettingsClick = { navigator.navigateSettings() },
                                 onFollowButtonClick = { memberId, tabNum -> navigator.navigateFollowMenu(memberId, tabNum) },
+                                onProfileClick = { memberId -> navigator.navigateProfile(currentMemberId, memberId) },
                                 onProfileEditClick = { navigator.navigateProfileEdit() },
                                 onBookmarkClick = { navigator.navigateBookmark() },
                                 onFolderClick = { folderId -> navigator.navigateFolder(folderId) },

@@ -49,6 +49,7 @@ const val HOME_NEW_PAGE_TAB_ID = 1
 @Composable
 fun HomeScreen(
     onPostClick: (String) -> Unit,
+    onProfileClick: (String) -> Unit,
     onSearchClick: () -> Unit,
     coroutineScope: CoroutineScope,
     bottomSheetState: ModalBottomSheetState,
@@ -122,6 +123,7 @@ fun HomeScreen(
                     HomeDayoPickScreen(
                         selectedCategory.first,
                         onPostClick,
+                        onProfileClick,
                         coroutineScope,
                         bottomSheetState,
                         homeViewModel
@@ -133,6 +135,7 @@ fun HomeScreen(
                     HomeNewScreen(
                         selectedCategory.first,
                         onPostClick,
+                        onProfileClick,
                         coroutineScope,
                         bottomSheetState,
                         homeViewModel
@@ -194,6 +197,7 @@ private fun PreviewHomeScreen() {
     DayoTheme {
         HomeScreen(
             onPostClick = {},
+            onProfileClick = {},
             onSearchClick = {},
             coroutineScope = rememberCoroutineScope(),
             bottomSheetState = getBottomSheetDialogState(),

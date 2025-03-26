@@ -63,6 +63,7 @@ import kotlinx.coroutines.launch
 fun HomeDayoPickScreen(
     selectedCategoryName: String,
     onPostClick: (String) -> Unit,
+    onProfileClick: (String) -> Unit,
     coroutineScope: CoroutineScope,
     bottomSheetState: ModalBottomSheetState,
     homeViewModel: HomeViewModel = hiltViewModel()
@@ -131,9 +132,7 @@ fun HomeDayoPickScreen(
                                             homeViewModel.requestUnlikePost(post.postId!!, isDayoPickLike = true)
                                         }
                                     },
-                                    onClickNickname = {
-                                        // todo move to profile
-                                    }
+                                    onClickProfile = { post.memberId?.let { onProfileClick(it) } }
                                 )
                             }
                         }

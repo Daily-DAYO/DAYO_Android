@@ -52,6 +52,7 @@ import kotlinx.coroutines.CoroutineScope
 fun HomeNewScreen(
     selectedCategoryName: String,
     onPostClick: (String) -> Unit,
+    onProfileClick: (String) -> Unit,
     coroutineScope: CoroutineScope,
     bottomSheetState: ModalBottomSheetState,
     homeViewModel: HomeViewModel = hiltViewModel()
@@ -119,9 +120,7 @@ fun HomeNewScreen(
                                             homeViewModel.requestUnlikePost(post.postId!!, isDayoPickLike = false)
                                         }
                                     },
-                                    onClickNickname = {
-                                        // todo move to profile
-                                    }
+                                    onClickProfile = { post.memberId?.let { onProfileClick(it) } }
                                 )
                             }
                         }

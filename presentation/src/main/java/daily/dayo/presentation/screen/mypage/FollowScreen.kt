@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
@@ -53,6 +54,7 @@ import daily.dayo.domain.model.Follow
 import daily.dayo.domain.model.Profile
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
@@ -74,6 +76,7 @@ import kotlinx.coroutines.launch
 internal fun FollowScreen(
     memberId: String,
     tabNum: Int,
+    onProfileClick: (String) -> Unit,
     onBackClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel(),
     followViewModel: FollowViewModel = hiltViewModel()
@@ -113,6 +116,7 @@ internal fun FollowScreen(
             followerUiState,
             followingUiState,
             pagerState,
+            onProfileClick,
             onFollowClick,
             onBackClick
         )
@@ -126,6 +130,7 @@ private fun FollowScreen(
     followerUiState: FollowUiState,
     followingUiState: FollowUiState,
     pagerState: PagerState,
+    onProfileClick: (String) -> Unit,
     onFollowClick: (Follow) -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -175,8 +180,8 @@ private fun FollowScreen(
                 flingBehavior = PagerDefaults.flingBehavior(state = pagerState),
                 pageContent = { page ->
                     when (page) {
-                        FOLLOWER_TAB_ID -> FollowContent(page, currentMemberId, followerUiState, onFollowClick)
-                        FOLLOWING_TAB_ID -> FollowContent(page, currentMemberId, followingUiState, onFollowClick)
+                        FOLLOWER_TAB_ID -> FollowContent(page, currentMemberId, followerUiState, onProfileClick, onFollowClick)
+                        FOLLOWING_TAB_ID -> FollowContent(page, currentMemberId, followingUiState, onProfileClick, onFollowClick)
                     }
                 }
             )
@@ -189,6 +194,7 @@ private fun FollowContent(
     tabNum: Int,
     currentMemberId: String,
     followUiState: FollowUiState,
+    onProfileClick: (String) -> Unit,
     onFollowClick: (Follow) -> Unit
 ) {
     LazyColumn(
@@ -214,7 +220,7 @@ private fun FollowContent(
                     }
                 } else {
                     items(items = followUiState.data, key = { it.memberId }) { follow ->
-                        FollowUserInfo(follow, follow.memberId == currentMemberId, onFollowClick)
+                        FollowUserInfo(follow, follow.memberId == currentMemberId, onProfileClick, onFollowClick)
                     }
                 }
             }
@@ -284,6 +290,7 @@ private fun FollowerEmpty(tabNum: Int) {
 private fun FollowUserInfo(
     follow: Follow,
     isMine: Boolean,
+    onProfileClick: (String) -> Unit,
     onFollowClick: (Follow) -> Unit
 ) {
     Row(
@@ -294,19 +301,35 @@ private fun FollowUserInfo(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         val context = LocalContext.current
-        RoundImageView(
-            context = context,
-            imageUrl = "${BuildConfig.BASE_URL}/images/${follow.profileImg}",
-            roundSize = 18.dp,
-            modifier = Modifier.size(36.dp)
-        )
-
-        Text(
-            text = follow.nickname,
+        Row(
             modifier = Modifier.weight(1f),
-            color = Dark,
-            style = DayoTheme.typography.b6
-        )
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            RoundImageView(
+                context = context,
+                imageUrl = "${BuildConfig.BASE_URL}/images/${follow.profileImg}",
+                roundSize = 18.dp,
+                modifier = Modifier
+                    .size(36.dp)
+                    .clickableSingle(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { onProfileClick(follow.memberId) }
+            )
+
+            Text(
+                text = follow.nickname,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .clickableSingle(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { onProfileClick(follow.memberId) },
+                color = Dark,
+                style = DayoTheme.typography.b6
+            )
+        }
 
         if (!isMine) {
             if (follow.isFollow) {
@@ -392,6 +415,7 @@ private fun PreviewEmptyFollowScreen() {
         followerUiState = FollowUiState.Success(),
         followingUiState = FollowUiState.Success(),
         pagerState = rememberPagerState(initialPage = FOLLOWER_TAB_ID, pageCount = { 2 }),
+        onProfileClick = {},
         onFollowClick = {},
         onBackClick = {}
     )
@@ -421,6 +445,7 @@ private fun PreviewFollowScreen() {
         ),
         followingUiState = FollowUiState.Success(),
         pagerState = rememberPagerState(initialPage = FOLLOWER_TAB_ID, pageCount = { 2 }),
+        onProfileClick = {},
         onFollowClick = {},
         onBackClick = {}
     )
