@@ -58,6 +58,7 @@ fun NavGraphBuilder.myPageNavGraph(
     onBackClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onFollowButtonClick: (String, Int) -> Unit,
+    onProfileClick: (String) -> Unit,
     onProfileEditClick: () -> Unit,
     onBookmarkClick: () -> Unit,
     onFolderClick: (String) -> Unit,
@@ -94,6 +95,7 @@ fun NavGraphBuilder.myPageNavGraph(
         FollowScreen(
             memberId = memberId,
             tabNum = tabNum,
+            onProfileClick = onProfileClick,
             onBackClick = onBackClick
         )
     }
