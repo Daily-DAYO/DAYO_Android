@@ -22,12 +22,15 @@ import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,10 +57,13 @@ import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.view.DayoOutlinedButton
 import daily.dayo.presentation.view.FilledButton
 import daily.dayo.presentation.view.FolderView
+import daily.dayo.presentation.view.ProfileDropdownMenu
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
+import daily.dayo.presentation.view.dialog.UserReportDialog
 import daily.dayo.presentation.viewmodel.FolderViewModel
 import daily.dayo.presentation.viewmodel.ProfileViewModel
+import daily.dayo.presentation.viewmodel.ReportViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -67,13 +73,17 @@ fun ProfileScreen(
     onFolderClick: (String) -> Unit,
     onBackClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel(),
-    folderViewModel: FolderViewModel = hiltViewModel()
+    folderViewModel: FolderViewModel = hiltViewModel(),
+    reportViewModel: ReportViewModel = hiltViewModel()
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val profileInfo = profileViewModel.profileInfo.observeAsState()
     val folderList = folderViewModel.folderList.observeAsState()
     val onFollowClick: () -> Unit = {
         profileViewModel.toggleFollow(memberId, profileInfo.value?.data?.follow ?: false)
+    }
+    val onClickUserReport: (String) -> Unit = { reason ->
+        profileInfo.value?.data?.memberId?.let { reportViewModel.requestSaveMemberReport(reason, it) }
     }
 
     LaunchedEffect(Unit) {
@@ -107,6 +117,7 @@ fun ProfileScreen(
         onFollowClick = onFollowClick,
         onFollowMenuClick = onFollowMenuClick,
         onFolderClick = onFolderClick,
+        onClickUserReport = onClickUserReport,
         onBackClick = onBackClick
     )
 }
@@ -118,12 +129,22 @@ private fun ProfileScreen(
     onFollowClick: () -> Unit,
     onFollowMenuClick: (String, Int) -> Unit,
     onFolderClick: (String) -> Unit,
+    onClickUserReport: (String) -> Unit,
     onBackClick: () -> Unit
 ) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
+    var showDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
-            ProfileTopNavigation(onBackClick)
+            ProfileTopNavigation(
+                onUserReportClick = { showDialog = true },
+                onBackClick = onBackClick
+            )
         },
+        snackbarHost = { SnackbarHost(snackBarHostState) },
         content = { contentPadding ->
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
@@ -152,6 +173,19 @@ private fun ProfileScreen(
             }
         }
     )
+
+    if (showDialog) {
+        UserReportDialog(
+            onClickCancel = { showDialog = !showDialog },
+            onClickConfirm = { reason ->
+                onClickUserReport(reason)
+                showDialog = !showDialog
+                coroutineScope.launch {
+                    snackBarHostState.showSnackbar(context.getString(R.string.report_user_alert_message))
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -318,9 +352,11 @@ private fun UserDiary(folder: Folder, onFolderClick: (String) -> Unit) {
 
 @Composable
 private fun ProfileTopNavigation(
+    onUserReportClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
-    var showPostOption by remember { mutableStateOf(false) }
+    var showProfileOption by remember { mutableStateOf(false) }
+
     TopNavigation(
         leftIcon = {
             IconButton(onClick = onBackClick) {
@@ -334,7 +370,7 @@ private fun ProfileTopNavigation(
         rightIcon = {
             Box {
                 IconButton(
-                    onClick = { showPostOption = true }
+                    onClick = { showProfileOption = true }
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_option_horizontal),
@@ -344,6 +380,15 @@ private fun ProfileTopNavigation(
                     )
                 }
             }
+
+            ProfileDropdownMenu(
+                expanded = showProfileOption,
+                onDismissRequest = { showProfileOption = !showProfileOption },
+                onUserReportClick = {
+                    onUserReportClick()
+                    showProfileOption = !showProfileOption
+                }
+            )
         }
     )
 }
@@ -354,9 +399,10 @@ private fun PreviewProfileScreen() {
     ProfileScreen(
         profile = DEFAULT_PROFILE,
         folderList = emptyList(),
-        onFollowClick = {},
+        onFollowClick = { },
         onFollowMenuClick = { _, _ -> },
         onFolderClick = { },
+        onClickUserReport = { },
         onBackClick = { }
     )
 }
