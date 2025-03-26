@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -37,6 +38,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.flowWithLifecycle
 import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.Profile
 import daily.dayo.presentation.BuildConfig
@@ -47,33 +51,60 @@ import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray4_C5CAD2
+import daily.dayo.presentation.view.DayoOutlinedButton
+import daily.dayo.presentation.view.FilledButton
 import daily.dayo.presentation.view.FolderView
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.viewmodel.FolderViewModel
 import daily.dayo.presentation.viewmodel.ProfileViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(
     memberId: String,
     onFollowMenuClick: (String, Int) -> Unit,
     onFolderClick: (String) -> Unit,
-    onPostClick: (String) -> Unit,
     onBackClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel(),
     folderViewModel: FolderViewModel = hiltViewModel()
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
     val profileInfo = profileViewModel.profileInfo.observeAsState()
     val folderList = folderViewModel.folderList.observeAsState()
+    val onFollowClick: () -> Unit = {
+        profileViewModel.toggleFollow(memberId, profileInfo.value?.data?.follow ?: false)
+    }
 
     LaunchedEffect(Unit) {
         profileViewModel.requestOtherProfile(memberId)
         folderViewModel.requestUserFolderList(memberId)
+
+        launch {
+            profileViewModel.followSuccess
+                .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { followSuccess ->
+                    if (followSuccess) {
+                        profileViewModel.requestOtherProfile(memberId)
+                    }
+                }
+        }
+
+        launch {
+            profileViewModel.unfollowSuccess
+                .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { unfollowSuccess ->
+                    if (unfollowSuccess) {
+                        profileViewModel.requestOtherProfile(memberId)
+                    }
+                }
+        }
     }
 
     ProfileScreen(
         profile = profileInfo.value?.data ?: DEFAULT_PROFILE,
         folderList = folderList.value?.data ?: emptyList(),
+        onFollowClick = onFollowClick,
         onFollowMenuClick = onFollowMenuClick,
         onFolderClick = onFolderClick,
         onBackClick = onBackClick
@@ -84,6 +115,7 @@ fun ProfileScreen(
 private fun ProfileScreen(
     profile: Profile,
     folderList: List<Folder>,
+    onFollowClick: () -> Unit,
     onFollowMenuClick: (String, Int) -> Unit,
     onFolderClick: (String) -> Unit,
     onBackClick: () -> Unit
@@ -106,12 +138,55 @@ private fun ProfileScreen(
                     UserProfile(profile, onFollowMenuClick)
                 }
 
+                item(span = { GridItemSpan(2) }) {
+                    Column {
+                        Spacer(Modifier.height(8.dp))
+                        UserFollowButton(profile.follow ?: false, onFollowClick)
+                        Spacer(Modifier.height(20.dp))
+                    }
+                }
+
                 items(folderList) { folder ->
                     UserDiary(folder, onFolderClick)
                 }
             }
         }
     )
+}
+
+@Composable
+private fun UserFollowButton(
+    isFollow: Boolean,
+    onFollowClick: () -> Unit
+) {
+    if (isFollow) {
+        DayoOutlinedButton(
+            onClick = onFollowClick,
+            label = stringResource(id = R.string.follow_already),
+            modifier = Modifier.fillMaxWidth(),
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_check_sign_gray),
+                    contentDescription = stringResource(R.string.follow_already_icon_description),
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        )
+    } else {
+        FilledButton(
+            onClick = onFollowClick,
+            label = stringResource(id = R.string.follow_yet),
+            modifier = Modifier.fillMaxWidth(),
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_plus_sign_green),
+                    contentDescription = stringResource(R.string.follow_yet_icon_description),
+                    modifier = Modifier.size(20.dp)
+                )
+            },
+            isTonal = true
+        )
+    }
 }
 
 @Composable
@@ -279,10 +354,27 @@ private fun PreviewProfileScreen() {
     ProfileScreen(
         profile = DEFAULT_PROFILE,
         folderList = emptyList(),
+        onFollowClick = {},
         onFollowMenuClick = { _, _ -> },
         onFolderClick = { },
         onBackClick = { }
     )
+}
+
+@Preview
+@Composable
+private fun PreviewUserFollowButton() {
+    Column {
+        UserFollowButton(
+            isFollow = true,
+            onFollowClick = {}
+        )
+
+        UserFollowButton(
+            isFollow = false,
+            onFollowClick = {}
+        )
+    }
 }
 
 private const val FOLLOWER = 0
