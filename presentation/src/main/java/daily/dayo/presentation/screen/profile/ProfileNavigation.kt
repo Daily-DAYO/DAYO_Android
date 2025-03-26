@@ -29,7 +29,6 @@ fun NavGraphBuilder.profileNavGraph(
             memberId = memberId,
             onFollowMenuClick = onFollowMenuClick,
             onFolderClick = onFolderClick,
-            onPostClick = onPostClick,
             onBackClick = onBackClick
         )
     }

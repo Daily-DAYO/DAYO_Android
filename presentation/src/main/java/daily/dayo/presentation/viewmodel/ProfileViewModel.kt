@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import dagger.hilt.android.lifecycle.HiltViewModel
 import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.LikePost
 import daily.dayo.domain.model.NetworkResponse
@@ -17,14 +18,15 @@ import daily.dayo.domain.usecase.folder.RequestAllMyFolderListUseCase
 import daily.dayo.domain.usecase.follow.RequestCreateFollowUseCase
 import daily.dayo.domain.usecase.follow.RequestDeleteFollowUseCase
 import daily.dayo.domain.usecase.like.RequestAllMyLikePostListUseCase
+import daily.dayo.domain.usecase.member.RequestCurrentUserInfoUseCase
 import daily.dayo.domain.usecase.member.RequestMyProfileUseCase
 import daily.dayo.domain.usecase.member.RequestOtherProfileUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
-import daily.dayo.domain.usecase.member.RequestCurrentUserInfoUseCase
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import daily.dayo.presentation.common.Event
 import daily.dayo.presentation.common.Resource
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -48,11 +50,11 @@ class ProfileViewModel @Inject constructor(
     private val _profileInfo = MutableLiveData<Resource<Profile>>()
     val profileInfo: LiveData<Resource<Profile>> = _profileInfo
 
-    private val _followSuccess = MutableLiveData<Event<Boolean>>()
-    val followSuccess: LiveData<Event<Boolean>> get() = _followSuccess
+    private val _followSuccess = MutableSharedFlow<Boolean>()
+    val followSuccess = _followSuccess.asSharedFlow()
 
-    private val _unfollowSuccess = MutableLiveData<Event<Boolean>>()
-    val unfollowSuccess: LiveData<Event<Boolean>> get() = _unfollowSuccess
+    private val _unfollowSuccess = MutableSharedFlow<Boolean>()
+    val unfollowSuccess = _unfollowSuccess.asSharedFlow()
 
     private val _folderList = MutableLiveData<Resource<List<Folder>>>()
     val folderList: LiveData<Resource<List<Folder>>> get() = _folderList
@@ -91,50 +93,58 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun requestOtherProfile(memberId: String) = viewModelScope.launch {
-        requestOtherProfileUseCase(memberId = memberId).let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _profileInfo.postValue(Resource.success(ApiResponse.body))
-                }
+    fun requestOtherProfile(memberId: String) {
+        viewModelScope.launch {
+            requestOtherProfileUseCase(memberId = memberId).let { apiResponse ->
+                when (apiResponse) {
+                    is NetworkResponse.Success -> {
+                        _profileInfo.value = Resource.success(apiResponse.body)
+                    }
 
-                is NetworkResponse.NetworkError -> {
-                }
-
-                is NetworkResponse.ApiError -> {
-                }
-
-                is NetworkResponse.UnknownError -> {
-
+                    else -> _profileInfo.value = Resource.error(apiResponse.toString(), null)
                 }
             }
         }
     }
 
-    fun requestCreateFollow(followerId: String) = viewModelScope.launch {
-        requestCreateFollowUseCase(followerId = followerId)?.let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _followSuccess.postValue(Event(true))
-                }
+    private fun requestFollow(followerId: String) {
+        viewModelScope.launch {
+            requestCreateFollowUseCase(followerId = followerId).let { response ->
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        _followSuccess.emit(true)
+                    }
 
-                else -> {
-                    _followSuccess.postValue(Event(false))
+                    else -> {
+                        _followSuccess.emit(false)
+                    }
                 }
             }
         }
     }
 
-    fun requestDeleteFollow(followerId: String) = viewModelScope.launch {
-        requestDeleteFollowUseCase(followerId = followerId)?.let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _unfollowSuccess.postValue(Event(true))
-                }
+    private fun requestUnfollow(followerId: String) {
+        viewModelScope.launch {
+            requestDeleteFollowUseCase(followerId).let { response ->
+                when (response) {
+                    is NetworkResponse.Success -> {
+                        _unfollowSuccess.emit(true)
+                    }
 
-                else -> {
-                    _unfollowSuccess.postValue(Event(false))
+                    else -> {
+                        _unfollowSuccess.emit(false)
+                    }
                 }
+            }
+        }
+    }
+
+    fun toggleFollow(memberId: String, isFollow: Boolean) {
+        viewModelScope.launch {
+            if (isFollow) {
+                requestUnfollow(memberId)
+            } else {
+                requestFollow(memberId)
             }
         }
     }
