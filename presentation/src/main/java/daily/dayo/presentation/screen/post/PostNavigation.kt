@@ -50,7 +50,7 @@ fun NavGraphBuilder.postNavGraph(
         )
     ) { navBackStackEntry ->
         val postId = navBackStackEntry.arguments?.getString("postId") ?: ""
-        PostLikeUsersScreen(postId = postId, onBackClick = { onBackClick() }, onProfileClick = {})
+        PostLikeUsersScreen(postId = postId, onBackClick = { onBackClick() }, onProfileClick = onProfileClick)
     }
 }
 
