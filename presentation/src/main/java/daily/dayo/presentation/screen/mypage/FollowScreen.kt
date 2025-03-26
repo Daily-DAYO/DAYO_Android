@@ -60,7 +60,6 @@ import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Primary_23C882
-import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.DayoOutlinedButton
 import daily.dayo.presentation.view.FilledButton
 import daily.dayo.presentation.view.RoundImageView
@@ -79,6 +78,7 @@ internal fun FollowScreen(
     profileViewModel: ProfileViewModel = hiltViewModel(),
     followViewModel: FollowViewModel = hiltViewModel()
 ) {
+    val currentMemberId = profileViewModel.currentMemberId
     val profileInfo by profileViewModel.profileInfo.observeAsState()
     val followerUiState by followViewModel.followerUiState.observeAsState(FollowUiState.Loading)
     val followingUiState by followViewModel.followingUiState.observeAsState(FollowUiState.Loading)
@@ -106,18 +106,22 @@ internal fun FollowScreen(
             }
     }
 
-    FollowScreen(
-        profileInfo?.data,
-        followerUiState,
-        followingUiState,
-        pagerState,
-        onFollowClick,
-        onBackClick
-    )
+    if (currentMemberId != null) {
+        FollowScreen(
+            currentMemberId,
+            profileInfo?.data,
+            followerUiState,
+            followingUiState,
+            pagerState,
+            onFollowClick,
+            onBackClick
+        )
+    }
 }
 
 @Composable
 private fun FollowScreen(
+    currentMemberId: String,
     profileInfo: Profile?,
     followerUiState: FollowUiState,
     followingUiState: FollowUiState,
@@ -171,8 +175,8 @@ private fun FollowScreen(
                 flingBehavior = PagerDefaults.flingBehavior(state = pagerState),
                 pageContent = { page ->
                     when (page) {
-                        FOLLOWER_TAB_ID -> FollowContent(page, followerUiState, onFollowClick)
-                        FOLLOWING_TAB_ID -> FollowContent(page, followingUiState, onFollowClick)
+                        FOLLOWER_TAB_ID -> FollowContent(page, currentMemberId, followerUiState, onFollowClick)
+                        FOLLOWING_TAB_ID -> FollowContent(page, currentMemberId, followingUiState, onFollowClick)
                     }
                 }
             )
@@ -183,6 +187,7 @@ private fun FollowScreen(
 @Composable
 private fun FollowContent(
     tabNum: Int,
+    currentMemberId: String,
     followUiState: FollowUiState,
     onFollowClick: (Follow) -> Unit
 ) {
@@ -209,7 +214,7 @@ private fun FollowContent(
                     }
                 } else {
                     items(items = followUiState.data, key = { it.memberId }) { follow ->
-                        FollowUserInfo(follow, onFollowClick)
+                        FollowUserInfo(follow, follow.memberId == currentMemberId, onFollowClick)
                     }
                 }
             }
@@ -278,6 +283,7 @@ private fun FollowerEmpty(tabNum: Int) {
 @Composable
 private fun FollowUserInfo(
     follow: Follow,
+    isMine: Boolean,
     onFollowClick: (Follow) -> Unit
 ) {
     Row(
@@ -302,31 +308,33 @@ private fun FollowUserInfo(
             style = DayoTheme.typography.b6
         )
 
-        if (follow.isFollow) {
-            DayoOutlinedButton(
-                onClick = { onFollowClick(follow) },
-                label = stringResource(id = R.string.follow_already),
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_check_sign_gray),
-                        contentDescription = stringResource(R.string.follow_already_icon_description),
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            )
-        } else {
-            FilledButton(
-                onClick = { onFollowClick(follow) },
-                label = stringResource(id = R.string.follow_yet),
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_plus_sign_green),
-                        contentDescription = stringResource(R.string.follow_yet_icon_description),
-                        modifier = Modifier.size(20.dp)
-                    )
-                },
-                isTonal = true
-            )
+        if (!isMine) {
+            if (follow.isFollow) {
+                DayoOutlinedButton(
+                    onClick = { onFollowClick(follow) },
+                    label = stringResource(id = R.string.follow_already),
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_check_sign_gray),
+                            contentDescription = stringResource(R.string.follow_already_icon_description),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                )
+            } else {
+                FilledButton(
+                    onClick = { onFollowClick(follow) },
+                    label = stringResource(id = R.string.follow_yet),
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_plus_sign_green),
+                            contentDescription = stringResource(R.string.follow_yet_icon_description),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    },
+                    isTonal = true
+                )
+            }
         }
     }
 }
@@ -379,6 +387,7 @@ private fun FollowTab(pagerState: PagerState, followerCount: Int, followingCount
 @Composable
 private fun PreviewEmptyFollowScreen() {
     FollowScreen(
+        currentMemberId = "",
         profileInfo = DEFAULT_PROFILE,
         followerUiState = FollowUiState.Success(),
         followingUiState = FollowUiState.Success(),
@@ -392,6 +401,7 @@ private fun PreviewEmptyFollowScreen() {
 @Composable
 private fun PreviewFollowScreen() {
     FollowScreen(
+        currentMemberId = "",
         profileInfo = DEFAULT_PROFILE,
         followerUiState = FollowUiState.Success(
             2, listOf(
