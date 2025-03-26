@@ -51,3 +51,25 @@ fun PostReportDialog(onClickCancel: () -> Unit, onClickConfirm: (String) -> Unit
             .background(DayoTheme.colorScheme.background)
     )
 }
+
+@Composable
+fun UserReportDialog(onClickCancel: () -> Unit, onClickConfirm: (String) -> Unit) {
+    val reportPostReasons = stringArrayResource(id = R.array.report_user_reasons)
+
+    RadioButtonDialog(
+        title = stringResource(id = R.string.report_user_title),
+        description = stringResource(id = R.string.report_user_description),
+        radioItems = reportPostReasons,
+        lastInputEnabled = true,
+        lastTextPlaceholder = stringResource(id = R.string.report_user_reason_other_hint),
+        lastTextMaxLength = 100,
+        onClickCancel = onClickCancel,
+        onClickConfirm = onClickConfirm,
+        modifier = Modifier
+            .height(400.dp)
+            .imePadding()
+            .clip(RoundedCornerShape(28.dp))
+            .background(DayoTheme.colorScheme.background)
+    )
+}
+
