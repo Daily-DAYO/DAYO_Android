@@ -42,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.size.Size
 import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.Privacy
+import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.common.extension.limitTo
@@ -259,7 +260,7 @@ fun WriteFolderItemLayout(
         ) {
             RoundImageView(
                 context = LocalContext.current,
-                imageUrl = folder.thumbnailImage,
+                imageUrl = "${BuildConfig.BASE_URL}/images/${folder.thumbnailImage}",
                 modifier = Modifier.size(FOLDER_THUMBNAIL_SIZE.dp),
                 imageSize = Size(FOLDER_THUMBNAIL_SIZE, FOLDER_THUMBNAIL_SIZE),
                 roundSize = FOLDER_THUMBNAIL_RADIUS_SIZE.dp,
