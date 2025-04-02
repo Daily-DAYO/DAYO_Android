@@ -38,9 +38,6 @@ interface FolderApiService {
     @POST("/api/v1/folders/delete/{folderId}")
     suspend fun requestDeleteFolder(@Path("folderId") folderId: Int): NetworkResponse<Void>
 
-    @POST("/api/v1/folders/order")
-    suspend fun requestOrderFolder(@Body body: List<EditOrderDto>): NetworkResponse<Void>
-
     // 폴더 리스트
     @GET("/api/v2/folders/list/{memberId}")
     suspend fun requestAllFolderList(@Path("memberId") memberId: String): NetworkResponse<ListAllFolderResponse>
@@ -54,5 +51,9 @@ interface FolderApiService {
 
     // 폴더 내 게시글
     @GET("/api/v2/folders/{folderId}")
-    suspend fun requestDetailListFolder(@Path("folderId") folderId: Int, @Query("end") end: Int): NetworkResponse<DetailFolderResponse>
+    suspend fun requestDetailListFolder(
+        @Path("folderId") folderId: Int,
+        @Query("end") end: Int,
+        @Query("order") order: String
+    ): NetworkResponse<DetailFolderResponse>
 }

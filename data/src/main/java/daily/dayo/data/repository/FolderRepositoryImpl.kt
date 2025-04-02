@@ -2,8 +2,9 @@ package daily.dayo.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import daily.dayo.data.datasource.remote.folder.*
-import daily.dayo.data.mapper.toEditOrderDto
+import daily.dayo.data.datasource.remote.folder.CreateFolderInPostRequest
+import daily.dayo.data.datasource.remote.folder.FolderApiService
+import daily.dayo.data.datasource.remote.folder.FolderPagingSource
 import daily.dayo.data.mapper.toFolderCreateInPostResponse
 import daily.dayo.data.mapper.toFolderCreateResponse
 import daily.dayo.data.mapper.toFolderEditResponse
@@ -85,9 +86,6 @@ class FolderRepositoryImpl @Inject constructor(
     override suspend fun requestDeleteFolder(folderId: Int): NetworkResponse<Void> =
         folderApiService.requestDeleteFolder(folderId)
 
-    override suspend fun requestOrderFolder(folderOrders: List<FolderOrder>): NetworkResponse<Void> =
-        folderApiService.requestOrderFolder(folderOrders.map { it.toEditOrderDto() })
-
     override suspend fun requestAllFolderList(memberId: String): NetworkResponse<Folders> =
         when (val response = folderApiService.requestAllFolderList(memberId)) {
             is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toFolders())
@@ -112,9 +110,9 @@ class FolderRepositoryImpl @Inject constructor(
             is NetworkResponse.UnknownError -> response
         }
 
-    override suspend fun requestDetailListFolder(folderId: Int) =
+    override suspend fun requestDetailListFolder(folderId: Int, folderOrder: FolderOrder) =
         Pager(PagingConfig(pageSize = FOLDER_POST_PAGE_SIZE)) {
-            FolderPagingSource(folderApiService, FOLDER_POST_PAGE_SIZE, folderId)
+            FolderPagingSource(folderApiService, FOLDER_POST_PAGE_SIZE, folderId, folderOrder)
         }.flow
 
     companion object {
