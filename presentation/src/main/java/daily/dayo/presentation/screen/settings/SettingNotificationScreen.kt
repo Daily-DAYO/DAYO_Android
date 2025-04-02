@@ -1,5 +1,7 @@
 package daily.dayo.presentation.screen.settings
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
@@ -81,11 +83,18 @@ fun SettingNotificationScreen(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val notificationManager =
+        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    val reactionNotificationChannel = notificationManager.getNotificationChannel("REACTION")
 
     var isNotificationEnabledOnDevice by remember {
         mutableStateOf(NotificationManagerCompat.from(context).areNotificationsEnabled())
     }
     val isNoticeNotificationEnabledOnDevice by accountViewModel.isNoticeNotificationEnabled.collectAsStateWithLifecycle()
+    var isReactionNotificationEnabledOnDevice by remember {
+        // 채널이 없거나, 중요도가 NONE이면 꺼진 것
+        mutableStateOf(reactionNotificationChannel != null && reactionNotificationChannel.importance != NotificationManager.IMPORTANCE_NONE)
+    }
     val isReactionNotificationEnabledOnServer by settingNotificationViewModel.isReactionNotificationEnabled.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -104,6 +113,12 @@ fun SettingNotificationScreen(
             if (event == Lifecycle.Event.ON_RESUME) {
                 isNotificationEnabledOnDevice =
                     NotificationManagerCompat.from(context).areNotificationsEnabled()
+                val updatedChannel =
+                    (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+                        .getNotificationChannel("REACTION")
+
+                isReactionNotificationEnabledOnDevice =
+                    updatedChannel != null && updatedChannel.importance != NotificationManager.IMPORTANCE_NONE
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -121,6 +136,7 @@ fun SettingNotificationScreen(
             innerPadding = innerPadding,
             isNotificationEnabledOnDevice = isNotificationEnabledOnDevice,
             isNoticeNotificationOnDevice = isNoticeNotificationEnabledOnDevice,
+            isReactionNotificationEnabledOnDevice = isReactionNotificationEnabledOnDevice,
             isReactionNotificationEnabledOnServer = isReactionNotificationEnabledOnServer,
             changeNoticeNotificationSetting = { isChecked ->
                 accountViewModel.changeNoticeNotificationSetting(isChecked)
@@ -138,7 +154,8 @@ fun SettingNotificationScreen(
             },
             changeReactionNotificationSetting = {
                 settingNotificationViewModel.requestReceiveChangeReceiveAlarm(it)
-            }
+            },
+            reactionNotificationChannel = reactionNotificationChannel
         )
     }
 }
@@ -186,11 +203,14 @@ fun SettingNotificationContent(
     innerPadding: PaddingValues = PaddingValues(0.dp),
     isNotificationEnabledOnDevice: Boolean = false,
     isNoticeNotificationOnDevice: Boolean = false,
+    isReactionNotificationEnabledOnDevice: Boolean? = false,
     isReactionNotificationEnabledOnServer: Boolean? = false,
     changeNoticeNotificationSetting: (Boolean) -> Unit = {},
     changeReactionNotificationSetting: (Boolean) -> Unit = {},
+    reactionNotificationChannel: NotificationChannel? = null,
 ) {
     val showMoveToDeviceSettingDialog = remember { mutableStateOf(false) }
+    val moveDestination = remember { mutableStateOf(SettingMoveDestination.App) }
 
     val notificationSettingsList = listOf(
         NotificationSettingField(
@@ -207,7 +227,9 @@ fun SettingNotificationContent(
         NotificationSettingField(
             type = NotificationSettingType.REACTION,
             title = stringResource(R.string.setting_notification_reaction),
-            isChecked = (isReactionNotificationEnabledOnServer ?: false)
+            isChecked = (
+                    (isReactionNotificationEnabledOnDevice ?: false || reactionNotificationChannel == null) // channel이 null이면 채널 생성이 아직 안된것 -> 알림을 받아야 채널이 생성되므로 true 처리
+                            && isReactionNotificationEnabledOnServer ?: false)
         )
     )
 
@@ -227,6 +249,7 @@ fun SettingNotificationContent(
             onSwitchChange = { settingField, isChecked ->
                 when (settingField.type) {
                     NotificationSettingType.DEVICE -> {
+                        moveDestination.value = SettingMoveDestination.App
                         showMoveToDeviceSettingDialog.value = true
                     }
 
@@ -235,7 +258,19 @@ fun SettingNotificationContent(
                     }
 
                     NotificationSettingType.REACTION -> {
-                        changeReactionNotificationSetting(isChecked)
+                        val updatedChannel =
+                            (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+                                .getNotificationChannel("REACTION")
+
+                        if (updatedChannel != null &&
+                            updatedChannel.importance == NotificationManager.IMPORTANCE_NONE
+                        ) {
+                            // 채널이 존재하는데, 꺼져있으면 직접 다시 켜야 함
+                            moveDestination.value = SettingMoveDestination.Reaction
+                            showMoveToDeviceSettingDialog.value = true
+                        } else {
+                            changeReactionNotificationSetting(isChecked)
+                        }
                     }
                 }
             },
@@ -245,8 +280,22 @@ fun SettingNotificationContent(
         if (showMoveToDeviceSettingDialog.value) {
             MoveToDeviceSettingDialog(
                 onConfirmClick = {
-                    val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                    val intent = when (moveDestination.value) {
+                        SettingMoveDestination.App -> {
+                            Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                            }
+                        }
+
+                        SettingMoveDestination.Reaction -> {
+                            Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+                                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                                putExtra(
+                                    Settings.EXTRA_CHANNEL_ID,
+                                    context.getString(R.string.notification_channel_id)
+                                )
+                            }
+                        }
                     }
                     context.startActivity(intent)
                     showMoveToDeviceSettingDialog.value = false
@@ -336,4 +385,9 @@ fun SettingNotificationItem(
             )
         )
     }
+}
+
+enum class SettingMoveDestination {
+    App,
+    Reaction,
 }
