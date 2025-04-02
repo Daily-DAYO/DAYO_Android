@@ -2,7 +2,13 @@ package daily.dayo.data.datasource.remote.folder
 
 import daily.dayo.domain.model.NetworkResponse
 import okhttp3.MultipartBody
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.Part
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface FolderApiService {
 
@@ -36,17 +42,17 @@ interface FolderApiService {
     suspend fun requestOrderFolder(@Body body: List<EditOrderDto>): NetworkResponse<Void>
 
     // 폴더 리스트
-    @GET("/api/v1/folders/list/{memberId}")
+    @GET("/api/v2/folders/list/{memberId}")
     suspend fun requestAllFolderList(@Path("memberId") memberId: String): NetworkResponse<ListAllFolderResponse>
 
-    @GET("/api/v1/folders/my")
+    @GET("/api/v2/folders/my")
     suspend fun requestAllMyFolderList(): NetworkResponse<ListAllMyFolderResponse>
 
     // 폴더 정보
-    @GET("/api/v1/folders/{folderId}/info")
+    @GET("/api/v2/folders/{folderId}/info")
     suspend fun requestFolderInfo(@Path("folderId") folderId: Int): NetworkResponse<FolderInfoResponse>
 
     // 폴더 내 게시글
-    @GET("/api/v1/folders/{folderId}")
+    @GET("/api/v2/folders/{folderId}")
     suspend fun requestDetailListFolder(@Path("folderId") folderId: Int, @Query("end") end: Int): NetworkResponse<DetailFolderResponse>
 }
