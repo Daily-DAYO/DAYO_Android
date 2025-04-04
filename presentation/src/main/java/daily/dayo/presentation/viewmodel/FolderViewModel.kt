@@ -13,6 +13,7 @@ import daily.dayo.domain.model.FolderInfo
 import daily.dayo.domain.model.FolderPost
 import daily.dayo.domain.model.NetworkResponse
 import daily.dayo.domain.model.Privacy
+import daily.dayo.domain.usecase.folder.RequestAllFolderListUseCase
 import daily.dayo.domain.usecase.folder.RequestAllMyFolderListUseCase
 import daily.dayo.domain.usecase.folder.RequestCreateFolderUseCase
 import daily.dayo.domain.usecase.folder.RequestDeleteFolderUseCase
@@ -44,6 +45,7 @@ class FolderViewModel @Inject constructor(
     private val requestDeleteFolderUseCase: RequestDeleteFolderUseCase,
     private val requestOrderFolderUseCase: RequestOrderFolderUseCase,
     private val requestAllMyFolderListUseCase: RequestAllMyFolderListUseCase,
+    private val requestUserFolderListUseCase: RequestAllFolderListUseCase,
     private val requestFolderInfoUseCase: RequestFolderInfoUseCase,
     private val requestFolderPostListUseCase: RequestFolderPostListUseCase,
     private val requestDeletePostUseCase: RequestDeletePostUseCase
@@ -176,6 +178,31 @@ class FolderViewModel @Inject constructor(
 
                 is NetworkResponse.UnknownError -> {
                     _folderList.postValue(Resource.error(ApiResponse.throwable.toString(), null))
+                }
+            }
+        }
+    }
+
+    fun requestUserFolderList(memberId: String) {
+        viewModelScope.launch {
+            _folderList.postValue(Resource.loading(null))
+            requestUserFolderListUseCase(memberId).let { apiResponse ->
+                when (apiResponse) {
+                    is NetworkResponse.Success -> {
+                        _folderList.postValue(Resource.success(apiResponse.body?.data))
+                    }
+
+                    is NetworkResponse.NetworkError -> {
+                        _folderList.postValue(Resource.error(apiResponse.exception.toString(), null))
+                    }
+
+                    is NetworkResponse.ApiError -> {
+                        _folderList.postValue(Resource.error(apiResponse.error.toString(), null))
+                    }
+
+                    is NetworkResponse.UnknownError -> {
+                        _folderList.postValue(Resource.error(apiResponse.throwable.toString(), null))
+                    }
                 }
             }
         }

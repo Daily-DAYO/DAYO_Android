@@ -15,6 +15,7 @@ fun NavController.navigateHome() {
 @OptIn(ExperimentalMaterialApi::class)
 fun NavGraphBuilder.homeNavGraph(
     onPostClick: (String) -> Unit,
+    onProfileClick: (String) -> Unit,
     onSearchClick: () -> Unit,
     coroutineScope: CoroutineScope,
     bottomSheetState: ModalBottomSheetState,
@@ -23,6 +24,7 @@ fun NavGraphBuilder.homeNavGraph(
     composable(HomeRoute.route) {
         HomeScreen(
             onPostClick = onPostClick,
+            onProfileClick = onProfileClick,
             onSearchClick = onSearchClick,
             coroutineScope = coroutineScope,
             bottomSheetState = bottomSheetState,

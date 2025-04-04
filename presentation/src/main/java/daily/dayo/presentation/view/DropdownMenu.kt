@@ -120,3 +120,38 @@ fun OthersPostDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit, onPo
         }
     }
 }
+
+@Composable
+fun ProfileDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit, onUserReportClick: () -> Unit) {
+    DayoTheme(shapes = DayoTheme.shapes.copy(extraSmall = RoundedCornerShape(16.dp))) {
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = onDismissRequest,
+            modifier = Modifier.background(DayoTheme.colorScheme.background)
+        ) {
+            DropdownMenuItem(
+                modifier = Modifier
+                    .padding(horizontal = 6.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+                text = {
+                    Row(
+                        modifier = Modifier.width(128.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_menu_report),
+                            contentDescription = stringResource(R.string.other_profile_option_report_user),
+                            tint = Dark,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.other_profile_option_report_user),
+                            style = DayoTheme.typography.b6.copy(Dark)
+                        )
+                    }
+                },
+                onClick = onUserReportClick
+            )
+        }
+    }
+}

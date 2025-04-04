@@ -86,7 +86,7 @@ fun FeedPostView(
     post: Post,
     modifier: Modifier = Modifier,
     snackBarHostState: SnackbarHostState,
-    onClickProfile: () -> Unit,
+    onClickProfile: (String) -> Unit,
     onClickPost: () -> Unit,
     onClickLikePost: () -> Unit,
     onClickBookmark: () -> Unit,
@@ -107,9 +107,10 @@ fun FeedPostView(
         bottomSheetContent {
             CommentBottomSheetDialog(
                 postId = postId,
-                onClickClose = { coroutineScope.launch { bottomSheetState.hide() } },
                 sheetState = bottomSheetState,
-                snackBarHostState = snackBarHostState
+                snackBarHostState = snackBarHostState,
+                onClickProfile = onClickProfile,
+                onClickClose = { coroutineScope.launch { bottomSheetState.hide() } },
             )
         }
     }
@@ -137,7 +138,7 @@ fun FeedPostView(
                     .clickableSingle(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = onClickProfile
+                        onClick = { post.memberId?.let { onClickProfile(it) } }
                     )
             )
             Spacer(modifier = Modifier.width(12.dp))
@@ -149,7 +150,7 @@ fun FeedPostView(
                     modifier = Modifier.clickableSingle(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = onClickProfile
+                        onClick = { post.memberId?.let { onClickProfile(it) } }
                     )
                 )
                 Text(

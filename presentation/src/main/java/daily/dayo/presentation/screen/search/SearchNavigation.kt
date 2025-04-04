@@ -21,6 +21,7 @@ fun NavController.navigateSearchPostHashtag(hashtag: String) {
 fun NavGraphBuilder.searchNavGraph(
     onBackClick: () -> Unit,
     onSearch: (String) -> Unit,
+    onProfileClick: (String) -> Unit,
     onPostClick: (String) -> Unit
 ) {
     composable(route = SearchRoute.route) {
@@ -38,7 +39,8 @@ fun NavGraphBuilder.searchNavGraph(
         SearchResultRoute(
             searchKeyword = searchKeyword,
             onBackClick = onBackClick,
-            onPostClick = onPostClick
+            onPostClick = onPostClick,
+            onClickProfile = onProfileClick
         )
     }
 
