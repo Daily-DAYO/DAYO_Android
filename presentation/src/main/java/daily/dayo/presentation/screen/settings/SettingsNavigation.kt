@@ -8,13 +8,25 @@ fun NavController.navigateSettings() {
     navigate(SettingsRoute.route)
 }
 
+fun NavController.navigateChangePassword() {
+    navigate(SettingsRoute.changePassword)
+}
+
 fun NavGraphBuilder.settingsNavGraph(
     onProfileEditClick: () -> Unit,
-    onBackClick: () -> Unit
+    onPasswordChangeClick: () -> Unit,
+    onBackClick: () -> Unit,
 ) {
     composable(SettingsRoute.route) {
         SettingsScreen(
             onProfileEditClick = onProfileEditClick,
+            onPasswordChangeClick = onPasswordChangeClick,
+            onBackClick = onBackClick
+        )
+    }
+
+    composable(SettingsRoute.changePassword) {
+        ChangePasswordScreen(
             onBackClick = onBackClick
         )
     }
@@ -22,4 +34,6 @@ fun NavGraphBuilder.settingsNavGraph(
 
 object SettingsRoute {
     const val route = "settings"
+
+    const val changePassword = "${route}/changePassword"
 }

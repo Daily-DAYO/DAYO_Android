@@ -139,6 +139,7 @@ internal fun MainScreen(
                             )
                             settingsNavGraph(
                                 onProfileEditClick = { navigator.navigateProfileEdit() },
+                                onPasswordChangeClick = { navigator.navigateChangePassword() },
                                 onBackClick = { navigator.popBackStack() }
                             )
                         }
