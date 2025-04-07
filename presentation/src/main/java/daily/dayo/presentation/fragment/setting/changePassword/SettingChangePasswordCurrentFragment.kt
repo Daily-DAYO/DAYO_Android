@@ -123,24 +123,24 @@ class SettingChangePasswordCurrentFragment : Fragment() {
     }
 
     private fun verifyPassword() {
-        accountViewModel.checkCurrentPasswordSuccess.observe(viewLifecycleOwner) {
-            if (it.getContentIfNotHandled() == true) {
-                // 로그인 성공 시 다름 화면으로 이동
-                findNavController().navigateSafe(
-                    currentDestinationId = R.id.SettingChangePasswordCurrentFragment,
-                    action = R.id.action_settingChangePasswordCurrentFragment_to_settingChangePasswordNewFragment
-                )
-            } else if (it.getContentIfNotHandled() == false) {
-                // 실패 시
-                SetTextInputLayout.setEditTextErrorTheme(
-                    requireContext(),
-                    binding.layoutSettingChangePasswordCurrentUserInput,
-                    binding.etSettingChangePasswordCurrentUserInput,
-                    getString(R.string.setting_change_password_current_fail_message),
-                    false
-                )
-            }
-        }
+//        accountViewModel.checkCurrentPasswordSuccess.observe(viewLifecycleOwner) {
+//            if (it.getContentIfNotHandled() == true) {
+//                // 로그인 성공 시 다름 화면으로 이동
+//                findNavController().navigateSafe(
+//                    currentDestinationId = R.id.SettingChangePasswordCurrentFragment,
+//                    action = R.id.action_settingChangePasswordCurrentFragment_to_settingChangePasswordNewFragment
+//                )
+//            } else if (it.getContentIfNotHandled() == false) {
+//                // 실패 시
+//                SetTextInputLayout.setEditTextErrorTheme(
+//                    requireContext(),
+//                    binding.layoutSettingChangePasswordCurrentUserInput,
+//                    binding.etSettingChangePasswordCurrentUserInput,
+//                    getString(R.string.setting_change_password_current_fail_message),
+//                    false
+//                )
+//            }
+//        }
     }
 
     private fun setLimitEditTextInputType() {

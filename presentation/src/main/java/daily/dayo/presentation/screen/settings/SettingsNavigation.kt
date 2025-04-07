@@ -1,8 +1,10 @@
 package daily.dayo.presentation.screen.settings
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import kotlinx.coroutines.CoroutineScope
 
 fun NavController.navigateSettings() {
     navigate(SettingsRoute.route)
@@ -13,6 +15,8 @@ fun NavController.navigateChangePassword() {
 }
 
 fun NavGraphBuilder.settingsNavGraph(
+    coroutineScope: CoroutineScope,
+    snackBarHostState: SnackbarHostState,
     onProfileEditClick: () -> Unit,
     onPasswordChangeClick: () -> Unit,
     onBackClick: () -> Unit,
@@ -27,7 +31,9 @@ fun NavGraphBuilder.settingsNavGraph(
 
     composable(SettingsRoute.changePassword) {
         ChangePasswordScreen(
-            onBackClick = onBackClick
+            coroutineScope = coroutineScope,
+            snackBarHostState = snackBarHostState,
+            onBackClick = onBackClick,
         )
     }
 }
