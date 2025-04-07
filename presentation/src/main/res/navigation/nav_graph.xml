@@ -531,13 +531,6 @@
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting">
         <action
-            android:id="@+id/action_settingFragment_to_settingChangePasswordCurrentFragment"
-            app:destination="@id/SettingChangePasswordCurrentFragment"
-            app:enterAnim="@anim/translate_from_right_in"
-            app:exitAnim="@anim/translate_to_left_out"
-            app:popEnterAnim="@anim/translate_from_left_in"
-            app:popExitAnim="@anim/translate_to_right_out" />
-        <action
             android:id="@+id/action_settingFragment_to_withdrawFragment"
             app:destination="@id/WithdrawFragment"
             app:enterAnim="@anim/translate_from_right_in"
@@ -582,36 +575,6 @@
         android:name="daily.dayo.presentation.fragment.setting.block.SettingBlockFragment"
         android:label="fragment_setting_block"
         tools:layout="@layout/fragment_setting_block" />
-
-    <fragment
-        android:id="@+id/SettingChangePasswordCurrentFragment"
-        android:name="daily.dayo.presentation.fragment.setting.changePassword.SettingChangePasswordCurrentFragment"
-        android:label="fragment_setting_change_password_current"
-        tools:layout="@layout/fragment_setting_change_password_current">
-        <action
-            android:id="@+id/action_settingChangePasswordCurrentFragment_to_settingChangePasswordNewFragment"
-            app:destination="@id/SettingChangePasswordNewFragment"
-            app:enterAnim="@anim/translate_from_right_in"
-            app:exitAnim="@anim/translate_to_left_out"
-            app:popEnterAnim="@anim/translate_from_left_in"
-            app:popExitAnim="@anim/translate_to_right_out" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/SettingChangePasswordNewFragment"
-        android:name="daily.dayo.presentation.fragment.setting.changePassword.SettingChangePasswordNewFragment"
-        android:label="fragment_setting_change_password_new"
-        tools:layout="@layout/fragment_setting_change_password_new">
-        <action
-            android:id="@+id/action_settingChangePasswordNewFragment_to_settingFragment"
-            app:destination="@id/SettingFragment"
-            app:enterAnim="@anim/translate_from_right_in"
-            app:exitAnim="@anim/translate_to_left_out"
-            app:popEnterAnim="@anim/translate_from_left_in"
-            app:popExitAnim="@anim/translate_to_right_out"
-            app:popUpTo="@id/SettingFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
 
     <fragment
         android:id="@+id/SettingNotificationFragment"

@@ -56,10 +56,7 @@ class SettingFragment : Fragment() {
 
     private fun setChangePasswordClickListener() {
         binding.layoutSettingPasswordChange.setOnDebounceClickListener {
-            findNavController().navigateSafe(
-                currentDestinationId = R.id.SettingFragment,
-                action = R.id.action_settingFragment_to_settingChangePasswordCurrentFragment
-            )
+
         }
     }
 
