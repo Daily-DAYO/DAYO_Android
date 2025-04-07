@@ -39,6 +39,8 @@ fun SetPasswordView(
     setPasswordConfirmation: (String) -> Unit = {},
     isPasswordMismatch: Boolean = false,
     setIsPasswordMismatch: (Boolean) -> Unit = {},
+    passwordFailMessage: String = "",
+    passwordConfirmationFailMessage: String = "",
 ) {
     Column(
         modifier = Modifier
@@ -70,7 +72,8 @@ fun SetPasswordView(
                 else stringResource(R.string.sign_up_email_set_password_confirm_input_title),
                 placeholder = if (passwordConfirmation.isBlank()) stringResource(R.string.sign_up_email_set_password_confirm_input_placeholder) else "",
                 isError = isPasswordMismatch,
-                errorMessage = stringResource(R.string.sign_up_email_set_password_confirm_fail_not_match),
+                errorMessage =
+                if (passwordConfirmationFailMessage.isBlank()) stringResource(R.string.sign_up_email_set_password_confirm_fail_not_match) else passwordConfirmationFailMessage,
             )
         }
 
@@ -97,7 +100,8 @@ fun SetPasswordView(
                 placeholder = if (password.isBlank())
                     stringResource(R.string.sign_up_email_set_password_input_placeholder) else "",
                 isError = if (passwordInputViewCondition) !isPasswordFormatValid else false,
-                errorMessage = stringResource(R.string.sign_up_email_set_password_message_format_fail),
+                errorMessage =
+                if (passwordFailMessage.isBlank()) stringResource(R.string.sign_up_email_set_password_message_format_fail) else passwordFailMessage,
                 isEnabled = passwordInputViewCondition,
             )
         }
