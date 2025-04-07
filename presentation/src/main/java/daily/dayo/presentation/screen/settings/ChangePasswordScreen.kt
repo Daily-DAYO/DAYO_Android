@@ -18,6 +18,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,7 +32,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.screen.account.SetPasswordView
 import daily.dayo.presentation.theme.Dark
@@ -41,6 +44,7 @@ import daily.dayo.presentation.view.FilledRoundedCornerButton
 import daily.dayo.presentation.view.Loading
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.TopNavigation
+import daily.dayo.presentation.viewmodel.AccountViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -51,13 +55,15 @@ const val PASSWORD_PERMIT_FORMAT = "^[a-z0-9]{8,16}$"
 fun ChangePasswordScreen(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    accountViewModel: AccountViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     var changePasswordStep by remember { mutableStateOf(ChangePasswordStep.CUR_PASSWORD_INPUT) }
     val setChangePasswordStep: (ChangePasswordStep) -> Unit = { changePasswordStep = it }
-    val changePasswordStatus by remember { mutableStateOf(Status.LOADING) } // TODO: ViewModel 연결
+    val changePasswordStatus by accountViewModel.changePasswordSuccess.collectAsState()
+    val checkCurrentPasswordStatus by accountViewModel.checkCurrentPasswordSuccess.collectAsState()
 
     val isNextButtonEnabled = remember { mutableStateOf(false) }
     val isNextButtonClickable = remember { mutableStateOf(false) }
@@ -66,7 +72,7 @@ fun ChangePasswordScreen(
     val currentPasswordState = remember { mutableStateOf("") }
     val isCurrentPasswordPassFormatError = remember { mutableStateOf(false) }
 
-    // Current Password
+    // New Password
     val newPasswordState = remember { mutableStateOf("") }
     val isNewPasswordPassFormatError = remember { mutableStateOf(false) }
     val newPasswordConfirmState = remember { mutableStateOf("") }
@@ -77,9 +83,18 @@ fun ChangePasswordScreen(
         if (changePasswordStep == ChangePasswordStep.NEW_PASSWORD_CONFIRM &&
             changePasswordStatus == Status.SUCCESS
         ) {
+            onBackClick()
             coroutineScope.launch {
                 snackBarHostState.showSnackbar(context.getString(R.string.change_password_success_message))
             }
+        }
+    }
+
+    LaunchedEffect(checkCurrentPasswordStatus) {
+        if (checkCurrentPasswordStatus == true) {
+            setChangePasswordStep(ChangePasswordStep.NEW_PASSWORD_INPUT)
+        } else if (checkCurrentPasswordStatus == false) {
+            isCurrentPasswordPassFormatError.value = true
         }
     }
 
@@ -125,13 +140,8 @@ fun ChangePasswordScreen(
 
             when (changePasswordStep) {
                 ChangePasswordStep.CUR_PASSWORD_INPUT -> {
-                    if (
-                        true // TODO: 비밀번호 확인 API 호출
-                    ) {
-                        setChangePasswordStep(ChangePasswordStep.NEW_PASSWORD_INPUT)
-                    } else {
-                        isCurrentPasswordPassFormatError.value = true
-                    }
+                    accountViewModel.requestCheckCurrentPassword(currentPasswordState.value)
+                    isCurrentPasswordPassFormatError.value = false
                 }
 
                 ChangePasswordStep.NEW_PASSWORD_INPUT -> {
@@ -145,7 +155,9 @@ fun ChangePasswordScreen(
 
                 ChangePasswordStep.NEW_PASSWORD_CONFIRM -> {
                     if (newPasswordState.value == newPasswordConfirmState.value) {
-                        // TODO 비밀번호 변경 API 호출
+                        accountViewModel.requestChangePassword(
+                            newPassword = trimBlankText(newPasswordState.value)
+                        )
                     } else {
                         isNewPasswordMatchError.value = true
                     }
@@ -170,6 +182,7 @@ fun ChangePasswordScreen(
                     setPassword = { currentPasswordState.value = it },
                     isPasswordFormatValid = !isCurrentPasswordPassFormatError.value,
                     setIsPasswordFormatValid = { isCurrentPasswordPassFormatError.value = !it },
+                    passwordFailMessage = stringResource(R.string.setting_change_password_current_fail_message),
                 )
             }
 
@@ -188,7 +201,7 @@ fun ChangePasswordScreen(
                     passwordConfirmation = newPasswordConfirmState.value,
                     setPasswordConfirmation = { newPasswordConfirmState.value = it },
                     isPasswordMismatch = isNewPasswordMatchError.value,
-                    setIsPasswordMismatch = { isNewPasswordMatchError.value = it }
+                    setIsPasswordMismatch = { isNewPasswordMatchError.value = it },
                 )
 
             }
@@ -196,7 +209,7 @@ fun ChangePasswordScreen(
     }
 
     Loading(
-        isVisible = false, // TODO: Status로 조건 설정
+        isVisible = changePasswordStatus == Status.LOADING || changePasswordStatus == Status.SUCCESS,
     )
 }
 

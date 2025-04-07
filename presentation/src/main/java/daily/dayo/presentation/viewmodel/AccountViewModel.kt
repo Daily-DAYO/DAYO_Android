@@ -81,11 +81,11 @@ class AccountViewModel @Inject constructor(
     private val _resetPasswordSuccess = MutableStateFlow<Status?>(null)
     val resetPasswordSuccess: StateFlow<Status?> get() = _resetPasswordSuccess
 
-    private val _checkCurrentPasswordSuccess = MutableLiveData<Event<Boolean>>()
-    val checkCurrentPasswordSuccess get() = _checkCurrentPasswordSuccess
+    private val _checkCurrentPasswordSuccess = MutableStateFlow<Boolean?>(null)
+    val checkCurrentPasswordSuccess:StateFlow<Boolean?> get() = _checkCurrentPasswordSuccess
 
-    private val _changePasswordSuccess = MutableLiveData<Boolean>()
-    val changePasswordSuccess get() = _changePasswordSuccess
+    private val _changePasswordSuccess = MutableStateFlow<Status?>(null)
+    val changePasswordSuccess: StateFlow<Status?> get() = _changePasswordSuccess
 
     private val _isErrorExceptionOccurred = MutableLiveData<Event<Boolean>>()
     val isErrorExceptionOccurred get() = _isErrorExceptionOccurred
@@ -401,20 +401,21 @@ class AccountViewModel @Inject constructor(
     }
 
     fun requestCheckCurrentPassword(inputPassword: String) = viewModelScope.launch {
+        _checkCurrentPasswordSuccess.emit(null)
         requestCheckCurrentPasswordUseCase(password = inputPassword).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _checkCurrentPasswordSuccess.postValue(Event(true))
+                    _checkCurrentPasswordSuccess.emit(true)
                 }
 
                 is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
-                    _checkCurrentPasswordSuccess.postValue(Event(false))
+                    _checkCurrentPasswordSuccess.emit(false)
                 }
 
                 is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
-                    _checkCurrentPasswordSuccess.postValue(Event(false))
+                    _checkCurrentPasswordSuccess.emit(false)
                 }
 
                 else -> {}
@@ -444,23 +445,24 @@ class AccountViewModel @Inject constructor(
     }
 
     fun requestChangePassword(newPassword: String) = viewModelScope.launch {
+        _changePasswordSuccess.emit(Status.LOADING)
         requestSettingChangePasswordUseCase(
             email = requestCurrentUserInfoUseCase().email!!,
             password = newPassword
         ).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _changePasswordSuccess.postValue(true)
+                    _changePasswordSuccess.emit(Status.SUCCESS)
                 }
 
                 is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
-                    _changePasswordSuccess.postValue(false)
+                    _changePasswordSuccess.emit(Status.ERROR)
                 }
 
                 is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
-                    _changePasswordSuccess.postValue(false)
+                    _changePasswordSuccess.emit(Status.ERROR)
                 }
 
                 else -> {}

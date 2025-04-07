@@ -138,6 +138,8 @@ internal fun MainScreen(
                                 onNoticeClick = { /*TODO*/ }
                             )
                             settingsNavGraph(
+                                coroutineScope = coroutineScope,
+                                snackBarHostState = snackBarHostState,
                                 onProfileEditClick = { navigator.navigateProfileEdit() },
                                 onPasswordChangeClick = { navigator.navigateChangePassword() },
                                 onBackClick = { navigator.popBackStack() }
