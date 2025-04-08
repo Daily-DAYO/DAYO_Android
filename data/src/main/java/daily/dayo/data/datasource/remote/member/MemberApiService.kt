@@ -63,7 +63,7 @@ interface MemberApiService {
     suspend fun requestChangeReceiveAlarm(@Body body: ChangeReceiveAlarmRequest): NetworkResponse<Void>
 
     @POST("/api/v1/members/logout")
-    suspend fun requestLogout(): NetworkResponse<Void>
+    suspend fun requestSignOut(): NetworkResponse<Void>
 
     @GET("/api/v1/members/search/{email}")
     suspend fun requestCheckEmail(@Path("email") email: String): NetworkResponse<Void>

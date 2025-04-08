@@ -31,7 +31,7 @@ class AccountViewModel @Inject constructor(
     private val requestCertificateEmailUseCase: RequestCertificateEmailUseCase,
     private val requestDeviceTokenUseCase: RequestDeviceTokenUseCase,
     private val requestResignUseCase: RequestResignUseCase,
-    private val requestLogoutUseCase: RequestLogoutUseCase,
+    private val requestSignOutUseCase: RequestSignOutUseCase,
     private val requestCheckEmailUseCase: RequestCheckEmailUseCase,
     private val requestCertificateEmailPasswordResetUseCase: RequestCertificateEmailPasswordResetUseCase,
     private val requestCheckCurrentPasswordUseCase: RequestCheckCurrentPasswordUseCase,
@@ -72,8 +72,8 @@ class AccountViewModel @Inject constructor(
     private val _withdrawSuccess = MutableLiveData<Event<Boolean>>()
     val withdrawSuccess: LiveData<Event<Boolean>> get() = _withdrawSuccess
 
-    private val _logoutSuccess = MutableLiveData<Event<Boolean>>()
-    val logoutSuccess: LiveData<Event<Boolean>> get() = _logoutSuccess
+    private val _signOutSuccess = MutableStateFlow<Status?>(null)
+    val signOutSuccess: StateFlow<Status?> get() = _signOutSuccess
 
     private val _checkEmailSuccess = MutableStateFlow<Status>(Status.LOADING)
     val checkEmailSuccess: StateFlow<Status> get() = _checkEmailSuccess
@@ -336,21 +336,22 @@ class AccountViewModel @Inject constructor(
         }
     }
 
-    fun requestLogout() = viewModelScope.launch {
-        requestLogoutUseCase().let { ApiResponse ->
+    fun requestSignOut() = viewModelScope.launch {
+        _signOutSuccess.emit(Status.LOADING)
+        requestSignOutUseCase().let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _logoutSuccess.postValue(Event(true))
+                    _signOutSuccess.emit(Status.SUCCESS)
                 }
 
                 is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
-                    _logoutSuccess.postValue(Event(false))
+                    _signOutSuccess.emit(Status.ERROR)
                 }
 
                 is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
-                    _logoutSuccess.postValue(Event(false))
+                    _signOutSuccess.emit(Status.ERROR)
                 }
 
                 else -> {}

@@ -1,5 +1,6 @@
 package daily.dayo.presentation.screen.settings
 
+import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
@@ -25,7 +26,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,9 +39,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import daily.dayo.domain.model.Profile
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
+import daily.dayo.presentation.activity.LoginActivity
+import daily.dayo.presentation.activity.MainActivity
+import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
@@ -48,27 +55,63 @@ import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
+import daily.dayo.presentation.view.Loading
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
+import daily.dayo.presentation.view.dialog.ConfirmDialog
+import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.ProfileViewModel
 
 @Composable
 fun SettingsScreen(
     onProfileEditClick: () -> Unit,
     onBackClick: () -> Unit,
-    profileViewModel: ProfileViewModel = hiltViewModel()
+    accountViewModel: AccountViewModel = hiltViewModel(),
+    profileViewModel: ProfileViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
+    val signOutSuccess by accountViewModel.signOutSuccess.collectAsStateWithLifecycle()
     val profileInfo = profileViewModel.profileInfo.observeAsState()
+    val showSignOutDialog = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         profileViewModel.requestMyProfile()
     }
 
+    LaunchedEffect(signOutSuccess) {
+        if (signOutSuccess == Status.SUCCESS) {
+            accountViewModel.clearCurrentUser()
+            val intent = Intent(context, LoginActivity::class.java).apply {
+                flags =
+                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+            (context as? MainActivity)?.let {
+                it.startActivity(intent)
+                it.finish()
+            }
+        }
+    }
+
     SettingsScreen(
         profile = profileInfo.value?.data,
         onProfileEditClick = onProfileEditClick,
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
+        onSignOutClick = { showSignOutDialog.value = true },
+    )
+
+    if (showSignOutDialog.value) {
+        SignOutDialog(
+            onConfirmClick = {
+                accountViewModel.requestSignOut()
+                showSignOutDialog.value = false
+            },
+            onDismissClick = { showSignOutDialog.value = false },
+        )
+    }
+
+    Loading(
+        isVisible = (signOutSuccess == Status.LOADING || signOutSuccess == Status.SUCCESS),
     )
 }
 
@@ -76,7 +119,8 @@ fun SettingsScreen(
 private fun SettingsScreen(
     profile: Profile?,
     onProfileEditClick: () -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onSignOutClick: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -141,9 +185,11 @@ private fun SettingsScreen(
             }
             Text(
                 text = stringResource(id = R.string.sign_out),
-                modifier = Modifier.padding(vertical = 11.5.dp, horizontal = 8.dp),
+                modifier = Modifier
+                    .padding(vertical = 11.5.dp, horizontal = 8.dp)
+                    .clickable { onSignOutClick() },
                 color = Primary_23C882,
-                style = DayoTheme.typography.b6
+                style = DayoTheme.typography.b6,
             )
             Text(
                 text = stringResource(id = R.string.delete_account),
@@ -253,6 +299,22 @@ private fun SettingMenu(
             tint = Gray4_C5CAD2
         )
     }
+}
+
+@Composable
+@Preview
+fun SignOutDialog(
+    onConfirmClick: () -> Unit = {},
+    onDismissClick: () -> Unit = {}
+) {
+    ConfirmDialog(
+        title = stringResource(R.string.sign_out_message),
+        description = "",
+        onClickConfirmText = stringResource(R.string.confirm),
+        onClickConfirm = onConfirmClick,
+        onClickCancelText = stringResource(R.string.cancel),
+        onClickCancel = onDismissClick,
+    )
 }
 
 @Preview
