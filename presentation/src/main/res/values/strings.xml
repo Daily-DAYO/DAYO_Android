@@ -487,7 +487,6 @@
     <!-- Setting -->
     <string name="setting_title">환경설정</string>
     <string name="setting_my_profile_image_description">나의 프로필 이미지</string>
-    <string name="setting_logout_message">계정을 로그아웃 할까요?</string>
     <string name="setting_withdraw_message">계정을 삭제할까요?</string>
     <string name="setting_withdraw_explanation_message">모든 정보가 삭제되며, 복구가 불가능합니다.</string>
     <string name="setting_contact_message">메일 주소 복사 완료</string>
@@ -499,6 +498,7 @@
     <string name="setting_menu_information">정보</string>
     <string name="setting_menu_contact">문의하기</string>
     <string name="sign_out">로그아웃</string>
+    <string name="sign_out_message">로그아웃 할까요?</string>
     <string name="delete_account">계정 삭제</string>
 
     <!-- Change Password -->

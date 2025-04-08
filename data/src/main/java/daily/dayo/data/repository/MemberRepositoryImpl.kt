@@ -149,8 +149,8 @@ class MemberRepositoryImpl @Inject constructor(
     override suspend fun requestChangeReceiveAlarm(onReceiveAlarm: Boolean): NetworkResponse<Void> =
         memberApiService.requestChangeReceiveAlarm(ChangeReceiveAlarmRequest(onReceiveAlarm))
 
-    override suspend fun requestLogout(): NetworkResponse<Void> =
-        memberApiService.requestLogout()
+    override suspend fun requestSignOut(): NetworkResponse<Void> =
+        memberApiService.requestSignOut()
 
     override suspend fun requestCheckEmail(email: String): NetworkResponse<Void> =
         memberApiService.requestCheckEmail(email)

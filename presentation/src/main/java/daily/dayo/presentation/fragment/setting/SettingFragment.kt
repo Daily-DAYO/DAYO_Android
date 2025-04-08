@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import daily.dayo.presentation.R
-import daily.dayo.presentation.activity.LoginActivity
 import daily.dayo.presentation.common.autoCleared
 import daily.dayo.presentation.common.dialog.DefaultDialogConfigure
 import daily.dayo.presentation.common.dialog.DefaultDialogConfirm
@@ -138,7 +136,7 @@ class SettingFragment : Fragment() {
     private fun setLogoutButtonClickListener() {
         binding.layoutSettingLogout.setOnDebounceClickListener {
             val logoutAlertDialog =
-                DefaultDialogConfirm.createDialog(requireContext(), R.string.setting_logout_message,
+                DefaultDialogConfirm.createDialog(requireContext(), R.string.sign_out_message,
                     true, true, R.string.confirm, R.string.cancel, { doLogout() }, {})
             if (!logoutAlertDialog.isShowing) {
                 logoutAlertDialog.show()
@@ -189,16 +187,7 @@ class SettingFragment : Fragment() {
     }
 
     private fun doLogout() {
-        LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
-        accountViewModel.requestLogout()
-        accountViewModel.logoutSuccess.observe(viewLifecycleOwner) {
-            if (it.getContentIfNotHandled() == true) {
-                accountViewModel.clearCurrentUser()
-                val intent = Intent(this.activity, LoginActivity::class.java)
-                startActivity(intent)
-                this.requireActivity().finish()
-            }
-        }
+
     }
 }
 
