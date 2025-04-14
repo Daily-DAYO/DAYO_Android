@@ -31,6 +31,7 @@ import daily.dayo.presentation.viewmodel.FolderViewModel
 
 @Composable
 internal fun FolderPostMoveScreen(
+    currentFolderId: String,
     navigateToCreateNewFolder: () -> Unit,
     navigateBackToFolder: () -> Unit,
     onBackClick: () -> Unit,
@@ -39,7 +40,15 @@ internal fun FolderPostMoveScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val folderList = folderViewModel.folderList.observeAsState()
+    val folderListState = folderViewModel.folderList.observeAsState()
+    val folderList = when (folderListState.value?.status) {
+        Status.SUCCESS -> folderListState.value?.data
+            ?.filterNot { it.folderId == currentFolderId.toIntOrNull() }
+            ?: emptyList()
+
+        else -> emptyList()
+    }
+
     var selectedFolder by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
@@ -59,10 +68,7 @@ internal fun FolderPostMoveScreen(
     }
 
     FolderPostMoveScreen(
-        folders = when (folderList.value?.status) {
-            Status.SUCCESS -> folderList.value?.data ?: emptyList()
-            else -> emptyList()
-        },
+        folders = folderList,
         selectedFolder = selectedFolder,
         onFolderClick = { folderId, _ ->
             selectedFolder = folderId
@@ -86,15 +92,14 @@ private fun FolderPostMoveScreen(
 ) {
     Scaffold(
         bottomBar = {
-            if (selectedFolder != null) {
-                Box(modifier = Modifier.padding(20.dp)) {
-                    FilledRoundedCornerButton(
-                        label = stringResource(id = R.string.folder_post_move),
-                        onClick = onPostMoveClick,
-                        modifier = Modifier.height(44.dp),
-                        textStyle = DayoTheme.typography.b5
-                    )
-                }
+            Box(modifier = Modifier.padding(20.dp)) {
+                FilledRoundedCornerButton(
+                    label = stringResource(id = R.string.folder_post_move),
+                    onClick = onPostMoveClick,
+                    modifier = Modifier.height(44.dp),
+                    enabled = selectedFolder != null,
+                    textStyle = DayoTheme.typography.b5
+                )
             }
         }
     ) { contentPadding ->
