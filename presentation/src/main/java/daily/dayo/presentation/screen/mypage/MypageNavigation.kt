@@ -145,8 +145,9 @@ fun NavGraphBuilder.myPageNavGraph(
     ) { navBackStackEntry ->
         val folderId = navBackStackEntry.arguments?.getString("folderId") ?: ""
         FolderPostMoveScreen(
-            navigateBackToFolder = { navigateBackToFolder(folderId) },
+            currentFolderId = folderId,
             navigateToCreateNewFolder = onFolderCreateClick,
+            navigateBackToFolder = { navigateBackToFolder(folderId) },
             onBackClick = onBackClick
         )
     }
