@@ -84,6 +84,7 @@ fun WriteFolderRoute(
     }
 
     WriteFolderScreen(
+        showCreateFolder = (folders.data?.size ?: 0) < MAX_FOLDER_COUNT,
         onBackClick = onBackClick,
         onFolderClick = { folderId, folderName ->
             writeViewModel.setFolderId(folderId)
@@ -99,6 +100,7 @@ fun WriteFolderRoute(
 
 @Composable
 fun WriteFolderScreen(
+    showCreateFolder: Boolean,
     onBackClick: () -> Unit,
     onFolderClick: (String, String) -> Unit,
     navigateToCreateNewFolder: () -> Unit,
@@ -116,6 +118,7 @@ fun WriteFolderScreen(
                 onBackClick = onBackClick
             )
             WriteFolderContent(
+                showCreateFolder = showCreateFolder,
                 onFolderClick = onFolderClick,
                 navigateToCreateNewFolder = navigateToCreateNewFolder,
                 folders = folders,
@@ -142,9 +145,9 @@ fun WriteFolderActionbarLayout(onBackClick: () -> Unit) {
     }
 }
 
-@Preview
 @Composable
 fun WriteFolderContent(
+    showCreateFolder: Boolean,
     onFolderClick: (String, String) -> Unit = { _, _ -> },
     navigateToCreateNewFolder: () -> Unit = {},
     folders: List<Folder> = emptyList(),
@@ -155,7 +158,7 @@ fun WriteFolderContent(
             .fillMaxSize()
             .padding(horizontal = 18.dp)
     ) {
-        if (folders.size < MAX_FOLDER_COUNT) {
+        if (showCreateFolder) {
             WriteFolderNewLayout(
                 navigateToCreateNewFolder = navigateToCreateNewFolder
             )
