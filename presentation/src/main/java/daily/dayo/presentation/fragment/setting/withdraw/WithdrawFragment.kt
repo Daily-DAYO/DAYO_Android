@@ -75,22 +75,22 @@ class WithdrawFragment : Fragment() {
         binding.btnWithdraw.setOnDebounceClickListener {
             LoadingAlertDialog.showLoadingDialog(loadingAlertDialog)
             val reason = when (binding.radiogroupWithdrawReason.checkedRadioButtonId) {
-                R.id.radiobutton_withdraw_reason_1 -> binding.radiobuttonWithdrawReason1.text.toString()
-                R.id.radiobutton_withdraw_reason_2 -> binding.radiobuttonWithdrawReason2.text.toString()
-                R.id.radiobutton_withdraw_reason_3 -> binding.radiobuttonWithdrawReason3.text.toString()
-                R.id.radiobutton_withdraw_reason_4 -> binding.radiobuttonWithdrawReason4.text.toString()
-                R.id.radiobutton_withdraw_reason_5 -> binding.radiobuttonWithdrawReason5.text.toString()
+//                R.id.radiobutton_withdraw_reason_1 -> binding.radiobuttonWithdrawReason1.text.toString()
+//                R.id.radiobutton_withdraw_reason_2 -> binding.radiobuttonWithdrawReason2.text.toString()
+//                R.id.radiobutton_withdraw_reason_3 -> binding.radiobuttonWithdrawReason3.text.toString()
+//                R.id.radiobutton_withdraw_reason_4 -> binding.radiobuttonWithdrawReason4.text.toString()
+//                R.id.radiobutton_withdraw_reason_5 -> binding.radiobuttonWithdrawReason5.text.toString()
                 else -> binding.radiobuttonWithdrawReasonOther.text.toString()
             }
             accountViewModel.requestWithdraw(content = reason)
-            accountViewModel.withdrawSuccess.observe(viewLifecycleOwner) {
-                if (it.getContentIfNotHandled() == true) {
-                    accountViewModel.clearCurrentUser()
-                    val intent = Intent(this.activity, LoginActivity::class.java)
-                    startActivity(intent)
-                    this.requireActivity().finish()
-                }
-            }
+//            accountViewModel.withdrawSuccess.observe(viewLifecycleOwner) {
+//                if (it.getContentIfNotHandled() == true) {
+//                    accountViewModel.clearCurrentUser()
+//                    val intent = Intent(this.activity, LoginActivity::class.java)
+//                    startActivity(intent)
+//                    this.requireActivity().finish()
+//                }
+//            }
         }
     }
 

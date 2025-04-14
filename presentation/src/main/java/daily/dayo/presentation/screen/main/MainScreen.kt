@@ -153,7 +153,11 @@ internal fun MainScreen(
                             )
                             settingsNavGraph(
                                 onProfileEditClick = { navigator.navigateProfileEdit() },
-                                onBackClick = { navigator.popBackStack() }
+                                onWithdrawClick = { navigator.navigateWithdraw() },
+                                onBackClick = { navigator.popBackStack() },
+                                snackBarHostState = snackBarHostState,
+                                bottomSheetState = bottomSheetState,
+                                bottomSheetContent = bottomSheetContent,
                             )
                         }
                     }

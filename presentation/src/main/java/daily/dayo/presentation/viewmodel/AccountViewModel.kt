@@ -69,8 +69,8 @@ class AccountViewModel @Inject constructor(
         MutableStateFlow<String?>(EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString())
     val certificateEmailAuthCode: StateFlow<String?> get() = _certificateEmailAuthCode
 
-    private val _withdrawSuccess = MutableLiveData<Event<Boolean>>()
-    val withdrawSuccess: LiveData<Event<Boolean>> get() = _withdrawSuccess
+    private val _withdrawSuccess = MutableStateFlow<Status?>(null)
+    val withdrawSuccess: StateFlow<Status?> get() = _withdrawSuccess
 
     private val _signOutSuccess = MutableStateFlow<Status?>(null)
     val signOutSuccess: StateFlow<Status?> get() = _signOutSuccess
@@ -315,20 +315,21 @@ class AccountViewModel @Inject constructor(
     suspend fun getCurrentFcmToken() = FirebaseMessagingService().getCurrentToken()
 
     fun requestWithdraw(content: String) = viewModelScope.launch {
+        _withdrawSuccess.emit(Status.LOADING)
         requestResignUseCase(content).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _withdrawSuccess.postValue(Event(true))
+                    _withdrawSuccess.emit(Status.SUCCESS)
                 }
 
                 is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
-                    _withdrawSuccess.postValue(Event(false))
+                    _withdrawSuccess.emit(Status.ERROR)
                 }
 
                 is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
-                    _withdrawSuccess.postValue(Event(false))
+                    _withdrawSuccess.emit(Status.ERROR)
                 }
 
                 else -> {}
