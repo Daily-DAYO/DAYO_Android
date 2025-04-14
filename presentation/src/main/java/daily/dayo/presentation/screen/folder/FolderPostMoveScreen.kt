@@ -49,7 +49,7 @@ internal fun FolderPostMoveScreen(
         else -> emptyList()
     }
 
-    var selectedFolder by remember { mutableStateOf<String?>(null) }
+    var selectedFolder by remember { mutableStateOf<Long?>(null) }
 
     LaunchedEffect(Unit) {
         folderViewModel.requestAllMyFolderList()
@@ -71,10 +71,10 @@ internal fun FolderPostMoveScreen(
         folders = folderList,
         selectedFolder = selectedFolder,
         onFolderClick = { folderId, _ ->
-            selectedFolder = folderId
+            selectedFolder = folderId.toLongOrNull()
         },
         onPostMoveClick = {
-            folderViewModel.moveSelectedPost()
+            selectedFolder?.let { folderViewModel.moveSelectedPost(it) }
         },
         navigateToCreateNewFolder = navigateToCreateNewFolder,
         onBackClick = onBackClick
@@ -84,7 +84,7 @@ internal fun FolderPostMoveScreen(
 @Composable
 private fun FolderPostMoveScreen(
     folders: List<Folder>,
-    selectedFolder: String?,
+    selectedFolder: Long?,
     onFolderClick: (String, String) -> Unit,
     onPostMoveClick: () -> Unit,
     navigateToCreateNewFolder: () -> Unit,
@@ -109,7 +109,7 @@ private fun FolderPostMoveScreen(
                 onFolderClick = onFolderClick,
                 navigateToCreateNewFolder = navigateToCreateNewFolder,
                 folders = folders,
-                currentFolderId = selectedFolder
+                currentFolderId = selectedFolder.toString()
             )
         }
     }

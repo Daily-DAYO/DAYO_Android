@@ -1,7 +1,7 @@
 package daily.dayo.data.datasource.remote.folder
 
-import daily.dayo.domain.model.Privacy
 import com.google.gson.annotations.SerializedName
+import daily.dayo.domain.model.Privacy
 
 data class CreateFolderInPostRequest(
     @SerializedName("name")
@@ -10,4 +10,11 @@ data class CreateFolderInPostRequest(
     val subheading: String,
     @SerializedName("privacy")
     val privacy: Privacy
+)
+
+data class FolderMoveRequest(
+    @SerializedName("postIdList")
+    val postIdList: List<Long>,
+    @SerializedName("targetFolderId")
+    val targetFolderId: Long
 )

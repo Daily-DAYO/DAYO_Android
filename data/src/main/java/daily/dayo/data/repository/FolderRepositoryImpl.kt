@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import daily.dayo.data.datasource.remote.folder.CreateFolderInPostRequest
 import daily.dayo.data.datasource.remote.folder.FolderApiService
+import daily.dayo.data.datasource.remote.folder.FolderMoveRequest
 import daily.dayo.data.datasource.remote.folder.FolderPagingSource
 import daily.dayo.data.mapper.toFolderCreateInPostResponse
 import daily.dayo.data.mapper.toFolderCreateResponse
@@ -85,6 +86,9 @@ class FolderRepositoryImpl @Inject constructor(
 
     override suspend fun requestDeleteFolder(folderId: Int): NetworkResponse<Void> =
         folderApiService.requestDeleteFolder(folderId)
+
+    override suspend fun requestFolderMove(postIdList: List<Long>, targetFolderId: Long): NetworkResponse<Void> =
+        folderApiService.requestFolderMove(FolderMoveRequest(postIdList, targetFolderId))
 
     override suspend fun requestAllFolderList(memberId: String): NetworkResponse<Folders> =
         when (val response = folderApiService.requestAllFolderList(memberId)) {

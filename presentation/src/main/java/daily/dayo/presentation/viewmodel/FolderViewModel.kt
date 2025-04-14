@@ -19,6 +19,7 @@ import daily.dayo.domain.usecase.folder.RequestCreateFolderUseCase
 import daily.dayo.domain.usecase.folder.RequestDeleteFolderUseCase
 import daily.dayo.domain.usecase.folder.RequestEditFolderUseCase
 import daily.dayo.domain.usecase.folder.RequestFolderInfoUseCase
+import daily.dayo.domain.usecase.folder.RequestFolderMoveUseCase
 import daily.dayo.domain.usecase.folder.RequestFolderPostListUseCase
 import daily.dayo.domain.usecase.post.RequestDeletePostUseCase
 import daily.dayo.presentation.common.Resource
@@ -44,7 +45,8 @@ class FolderViewModel @Inject constructor(
     private val requestAllMyFolderListUseCase: RequestAllMyFolderListUseCase,
     private val requestFolderInfoUseCase: RequestFolderInfoUseCase,
     private val requestFolderPostListUseCase: RequestFolderPostListUseCase,
-    private val requestDeletePostUseCase: RequestDeletePostUseCase
+    private val requestDeletePostUseCase: RequestDeletePostUseCase,
+    private val requestFolderMoveUseCase: RequestFolderMoveUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FolderUiState())
@@ -209,10 +211,17 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun moveSelectedPost() {
+    fun moveSelectedPost(targetFolderId: Long) {
         viewModelScope.launch {
-            // TODO API 필요
-            _postMoveSuccess.emit(true)
+            requestFolderMoveUseCase(
+                postIdList = uiState.value.selectedPosts.map { it.toLong() },
+                targetFolderId = targetFolderId
+            ).let { response ->
+                when (response) {
+                    is NetworkResponse.Success -> _postMoveSuccess.emit(true)
+                    else -> _postMoveSuccess.emit(false)
+                }
+            }
         }
     }
 }

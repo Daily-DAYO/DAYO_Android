@@ -38,6 +38,9 @@ interface FolderApiService {
     @POST("/api/v1/folders/delete/{folderId}")
     suspend fun requestDeleteFolder(@Path("folderId") folderId: Int): NetworkResponse<Void>
 
+    @POST("/api/v2/folders/move")
+    suspend fun requestFolderMove(@Body body: FolderMoveRequest): NetworkResponse<Void>
+
     // 폴더 리스트
     @GET("/api/v2/folders/list/{memberId}")
     suspend fun requestAllFolderList(@Path("memberId") memberId: String): NetworkResponse<ListAllFolderResponse>
