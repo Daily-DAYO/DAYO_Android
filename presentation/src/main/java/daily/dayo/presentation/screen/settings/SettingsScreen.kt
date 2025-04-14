@@ -66,6 +66,7 @@ import daily.dayo.presentation.viewmodel.ProfileViewModel
 @Composable
 fun SettingsScreen(
     onProfileEditClick: () -> Unit,
+    onWithdrawClick: () -> Unit,
     onBackClick: () -> Unit,
     accountViewModel: AccountViewModel = hiltViewModel(),
     profileViewModel: ProfileViewModel = hiltViewModel(),
@@ -96,6 +97,7 @@ fun SettingsScreen(
     SettingsScreen(
         profile = profileInfo.value?.data,
         onProfileEditClick = onProfileEditClick,
+        onWithdrawClick = onWithdrawClick,
         onBackClick = onBackClick,
         onSignOutClick = { showSignOutDialog.value = true },
     )
@@ -119,6 +121,7 @@ fun SettingsScreen(
 private fun SettingsScreen(
     profile: Profile?,
     onProfileEditClick: () -> Unit,
+    onWithdrawClick: () -> Unit,
     onBackClick: () -> Unit,
     onSignOutClick: () -> Unit = {},
 ) {
@@ -193,7 +196,8 @@ private fun SettingsScreen(
             )
             Text(
                 text = stringResource(id = R.string.delete_account),
-                modifier = Modifier.padding(vertical = 11.5.dp, horizontal = 8.dp),
+                modifier = Modifier.padding(vertical = 11.5.dp, horizontal = 8.dp)
+                    .clickable { onWithdrawClick() },
                 color = Gray3_9FA5AE,
                 style = DayoTheme.typography.b6
             )
@@ -324,6 +328,7 @@ private fun PreviewSettingsScreen() {
         SettingsScreen(
             profile = null,
             onProfileEditClick = {},
+            onWithdrawClick = {},
             onBackClick = {}
         )
     }

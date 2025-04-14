@@ -24,6 +24,7 @@ import daily.dayo.presentation.screen.search.navigateSearch
 import daily.dayo.presentation.screen.search.navigateSearchPostHashtag
 import daily.dayo.presentation.screen.search.navigateSearchResult
 import daily.dayo.presentation.screen.settings.navigateSettings
+import daily.dayo.presentation.screen.settings.navigateWithdraw
 import daily.dayo.presentation.screen.write.navigateWrite
 import daily.dayo.presentation.screen.write.navigateWriteFolder
 import daily.dayo.presentation.screen.write.navigateWriteFolderNew
@@ -72,6 +73,10 @@ class MainNavigator(
 
     fun navigateProfileEdit() {
         navController.navigateProfileEdit()
+    }
+
+    fun navigateWithdraw() {
+        navController.navigateWithdraw()
     }
 
     fun navigateBookmark() {
