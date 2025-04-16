@@ -71,10 +71,6 @@ class SettingFragment : Fragment() {
 
     private fun setNotificationButtonClickListener() {
         binding.layoutSettingNotification.setOnDebounceClickListener {
-            findNavController().navigateSafe(
-                currentDestinationId = R.id.SettingFragment,
-                action = R.id.action_settingFragment_to_settingNotificationFragment
-            )
         }
     }
 
