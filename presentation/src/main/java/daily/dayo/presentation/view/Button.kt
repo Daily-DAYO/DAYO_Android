@@ -96,8 +96,8 @@ fun FilledRoundedCornerButton(
     enabled: Boolean = true,
     color: ButtonColors? = null,
     textStyle: TextStyle = DayoTheme.typography.b3,
-    icon: @Composable (() -> Unit)? = null,
     radius: Int = 8,
+    icon: @Composable (() -> Unit)? = null,
 ) {
     val buttonColors = color
         ?: ButtonDefaults.buttonColors(
