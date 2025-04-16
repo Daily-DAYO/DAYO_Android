@@ -8,13 +8,25 @@ fun NavController.navigateSettings() {
     navigate(SettingsRoute.route)
 }
 
+fun NavController.navigateSettingsNotification() {
+    navigate(SettingsRoute.notification)
+}
+
 fun NavGraphBuilder.settingsNavGraph(
     onProfileEditClick: () -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onSettingNotificationClick: () -> Unit,
 ) {
     composable(SettingsRoute.route) {
         SettingsScreen(
             onProfileEditClick = onProfileEditClick,
+            onBackClick = onBackClick,
+            onSettingNotificationClick = onSettingNotificationClick,
+        )
+    }
+
+    composable(route = SettingsRoute.notification) {
+        SettingNotificationScreen(
             onBackClick = onBackClick
         )
     }
@@ -22,4 +34,6 @@ fun NavGraphBuilder.settingsNavGraph(
 
 object SettingsRoute {
     const val route = "settings"
+
+    const val notification = "${route}/notification"
 }

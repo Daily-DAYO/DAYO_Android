@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
             when {
                 deniedList.isNotEmpty() -> {
                     accountViewModel.requestCurrentUserNotiDevicePermit(false)
-                    accountViewModel.requestCurrentUserNotiNoticePermit(false)
+                    accountViewModel.changeNoticeNotificationSetting(false)
                     val map = deniedList.groupBy { permission ->
                         if (shouldShowRequestPermissionRationale(permission)) getString(R.string.permission_fail_second) else getString(
                             R.string.permission_fail_final
@@ -149,7 +149,7 @@ class MainActivity : AppCompatActivity() {
                     //All request are permitted
                     // 알림 최초 허용시에 모든 알림 허용처리
                     accountViewModel.requestCurrentUserNotiDevicePermit(true)
-                    accountViewModel.requestCurrentUserNotiNoticePermit(true)
+                    accountViewModel.changeNoticeNotificationSetting(true)
                     settingNotificationViewModel.registerDeviceToken()
                     settingNotificationViewModel.requestReceiveAlarm()
                 }
