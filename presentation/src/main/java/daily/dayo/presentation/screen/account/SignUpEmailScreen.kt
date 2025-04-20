@@ -516,7 +516,8 @@ fun SignUpEmailScreen(
 
             SignUpStep.PASSWORD_INPUT, SignUpStep.PASSWORD_CONFIRM -> {
                 SetPasswordView(
-                    signUpStep = signUpStep,
+                    passwordInputViewCondition = signUpStep == SignUpStep.PASSWORD_INPUT,
+                    passwordConfirmationViewCondition = signUpStep == SignUpStep.PASSWORD_CONFIRM,
                     isNextButtonEnabled = isNextButtonEnabled.value,
                     setNextButtonEnabled = { isNextButtonEnabled.value = it },
                     isNextButtonClickable = isNextButtonClickable.value,

@@ -23,6 +23,7 @@ import daily.dayo.presentation.screen.profile.navigateProfile
 import daily.dayo.presentation.screen.search.navigateSearch
 import daily.dayo.presentation.screen.search.navigateSearchPostHashtag
 import daily.dayo.presentation.screen.search.navigateSearchResult
+import daily.dayo.presentation.screen.settings.navigateChangePassword
 import daily.dayo.presentation.screen.settings.navigateSettings
 import daily.dayo.presentation.screen.settings.navigateSettingsNotification
 import daily.dayo.presentation.screen.write.navigateWrite
@@ -69,6 +70,10 @@ class MainNavigator(
 
     fun navigateSettings() {
         navController.navigateSettings()
+    }
+
+    fun navigateChangePassword() {
+        navController.navigateChangePassword()
     }
 
     fun navigateSettingsNotification() {
