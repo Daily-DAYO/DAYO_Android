@@ -342,6 +342,7 @@ private fun PostScreen(
                     Spacer(Modifier.height(12.dp))
                     CommentListView(
                         postComments = comments,
+                        onClickProfile = onClickProfile,
                         onClickReply = onClickCommentReply,
                         onClickDelete = onClickCommentDelete,
                         onClickReport = onClickCommentReport,

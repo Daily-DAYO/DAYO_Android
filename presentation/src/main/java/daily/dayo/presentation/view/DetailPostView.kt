@@ -111,7 +111,7 @@ fun DetailPostView(
                     .clickableSingle(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = { onClickProfile("") }
+                        onClick = { onClickProfile(post.memberId) }
                     )
             )
             Spacer(modifier = Modifier.width(12.dp))
@@ -123,7 +123,7 @@ fun DetailPostView(
                     modifier = Modifier.clickableSingle(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = { onClickProfile("") }
+                        onClick = { onClickProfile(post.memberId) }
                     )
                 )
                 Text(

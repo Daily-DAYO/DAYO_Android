@@ -14,18 +14,30 @@ fun NavController.navigateChangePassword() {
     navigate(SettingsRoute.changePassword)
 }
 
+fun NavController.navigateSettingsNotification() {
+    navigate(SettingsRoute.notification)
+}
+
 fun NavGraphBuilder.settingsNavGraph(
     coroutineScope: CoroutineScope,
     snackBarHostState: SnackbarHostState,
     onProfileEditClick: () -> Unit,
-    onPasswordChangeClick: () -> Unit,
     onBackClick: () -> Unit,
+    onSettingNotificationClick: () -> Unit,
+    onPasswordChangeClick: () -> Unit,
 ) {
     composable(SettingsRoute.route) {
         SettingsScreen(
             onProfileEditClick = onProfileEditClick,
+            onBackClick = onBackClick,
             onPasswordChangeClick = onPasswordChangeClick,
-            onBackClick = onBackClick
+            onSettingNotificationClick = onSettingNotificationClick,
+        )
+    }
+
+    composable(route = SettingsRoute.notification) {
+        SettingNotificationScreen(
+            onBackClick = onBackClick,
         )
     }
 
@@ -42,4 +54,5 @@ object SettingsRoute {
     const val route = "settings"
 
     const val changePassword = "${route}/changePassword"
+    const val notification = "${route}/notification"
 }

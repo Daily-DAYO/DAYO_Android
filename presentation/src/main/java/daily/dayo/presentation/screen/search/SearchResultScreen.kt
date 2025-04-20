@@ -100,6 +100,7 @@ internal fun SearchResultRoute(
     searchKeyword: String,
     onBackClick: () -> Unit,
     onPostClick: (String) -> Unit,
+    onClickProfile: (String) -> Unit,
     searchViewModel: SearchViewModel = hiltViewModel(),
     followViewModel: FollowViewModel = hiltViewModel(),
     accountViewModel: AccountViewModel = hiltViewModel()
@@ -149,7 +150,8 @@ internal fun SearchResultRoute(
         },
         onFollowSuccess = followSuccess.peekContent(),
         onUnFollowSuccess = unFollowSuccess.peekContent(),
-        currentUserMemberId = currentUserMemberId ?: ""
+        currentUserMemberId = currentUserMemberId ?: "",
+        onClickProfile = onClickProfile
     )
 }
 
@@ -166,7 +168,8 @@ internal fun SearchResultRoutePreview() {
         onPostClick = { },
         onFollowClick = { _, _ -> },
         onUnFollowClick = { _, _ -> },
-        currentUserMemberId = ""
+        currentUserMemberId = "",
+        onClickProfile = { }
     )
 }
 
@@ -184,7 +187,8 @@ fun SearchResultScreen(
     onUnFollowClick: (String, Boolean) -> Unit,
     onFollowSuccess: Boolean = true,
     onUnFollowSuccess: Boolean = true,
-    currentUserMemberId: String
+    currentUserMemberId: String,
+    onClickProfile: (String) -> Unit
 ) {
     val pages = listOf("태그", "사용자")
     val coroutineScope = rememberCoroutineScope()
@@ -283,7 +287,8 @@ fun SearchResultScreen(
                                             onUnFollowClick = onUnFollowClick,
                                             onFollowSuccess = onFollowSuccess,
                                             onUnFollowSuccess = onUnFollowSuccess,
-                                            currentUserMemberId = currentUserMemberId
+                                            currentUserMemberId = currentUserMemberId,
+                                            onClickProfile = onClickProfile
                                         )
                                     }
                                 } else {
@@ -413,10 +418,6 @@ fun SearchResultTagView(
     }
 }
 
-private fun onClickProfile(userId: String) {
-    // TODO Navigate to Profile
-}
-
 @Composable
 fun SearchResultsUserView(
     searchKeywordResultsUser: LazyPagingItems<SearchUser>?,
@@ -424,7 +425,8 @@ fun SearchResultsUserView(
     onUnFollowClick: (String, Boolean) -> Unit,
     onFollowSuccess: Boolean = true,
     onUnFollowSuccess: Boolean = true,
-    currentUserMemberId: String
+    currentUserMemberId: String,
+    onClickProfile: (String) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -437,11 +439,12 @@ fun SearchResultsUserView(
                 val item = users[index]
                 SearchResultUserView(
                     user = item!!,
-                    onFollowClick,
-                    onUnFollowClick,
-                    onFollowSuccess,
-                    onUnFollowSuccess,
-                    currentUserMemberId
+                    onFollowSuccess = onFollowSuccess,
+                    onUnFollowSuccess = onUnFollowSuccess,
+                    currentUserMemberId = currentUserMemberId,
+                    onFollowClick = onFollowClick,
+                    onUnFollowClick = onUnFollowClick,
+                    onClickProfile = onClickProfile
                 )
             }
         }
@@ -462,17 +465,19 @@ fun SearchResultUserViewPreview() {
         onUnFollowClick = { _, _ -> },
         onFollowSuccess = true,
         onUnFollowSuccess = true,
-        currentUserMemberId = "1"
+        currentUserMemberId = "1",
+        onClickProfile = { }
     )
 }
 
 @Composable
 fun SearchResultUserView(
     user: SearchUser,
+    onFollowSuccess: Boolean, onUnFollowSuccess: Boolean,
     onFollowClick: (String, Boolean) -> Unit,
     onUnFollowClick: (String, Boolean) -> Unit,
-    onFollowSuccess: Boolean, onUnFollowSuccess: Boolean,
-    currentUserMemberId: String
+    currentUserMemberId: String,
+    onClickProfile: (String) -> Unit
 ) {
     Surface(
         color = colorResource(id = R.color.white_FFFFFF),
@@ -482,10 +487,10 @@ fun SearchResultUserView(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickableSingle { onClickProfile(userId = user.memberId) }
+                .clickableSingle { onClickProfile(user.memberId) }
                 .padding(horizontal = 18.dp, vertical = 8.dp)
         ) {
-            SearchResultUserImageLayout(user = user)
+            SearchResultUserImageLayout(user = user, onClickProfile = onClickProfile)
             SearchResultUserNicknameLayout(userNickname = user.nickname) // TODO NICKNAME을 받아오도록해야 함
             Spacer(modifier = Modifier.weight(1f))
             if (user.memberId != currentUserMemberId) {
@@ -502,7 +507,7 @@ fun SearchResultUserView(
 }
 
 @Composable
-private fun SearchResultUserImageLayout(user: SearchUser) {
+private fun SearchResultUserImageLayout(user: SearchUser, onClickProfile: (String) -> Unit) {
     val imageInteractionSource = remember { MutableInteractionSource() }
     GlideImage(
         imageModel = { "${BuildConfig.BASE_URL}/images/${user.profileImg}" },

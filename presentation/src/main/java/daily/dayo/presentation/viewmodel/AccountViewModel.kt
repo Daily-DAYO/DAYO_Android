@@ -96,6 +96,9 @@ class AccountViewModel @Inject constructor(
     private val _isLoginFailByUncorrected = MutableLiveData<Event<Boolean>>()
     val isLoginFailByUncorrected get() = _isLoginFailByUncorrected
 
+    private val _isNoticeNotificationEnabled = MutableStateFlow<Boolean>(requestCurrentUserNotiNoticePermitUseCase())
+    val isNoticeNotificationEnabled: StateFlow<Boolean> get() = _isNoticeNotificationEnabled
+
     fun initializeSignInSuccess() {
         _signInSuccess.value = null
     }
@@ -477,7 +480,8 @@ class AccountViewModel @Inject constructor(
     fun requestCurrentUserNotiDevicePermit(isPermit: Boolean) =
         requestCurrentUserNotiDevicePermitUseCase(isPermit = isPermit)
 
-    fun getCurrentUserNotiNoticePermit() = requestCurrentUserNotiNoticePermitUseCase()
-    fun requestCurrentUserNotiNoticePermit(isPermit: Boolean) =
+    fun changeNoticeNotificationSetting(isPermit: Boolean) = viewModelScope.launch {
         requestCurrentUserNotiNoticePermitUseCase(isPermit = isPermit)
+        _isNoticeNotificationEnabled.emit(isPermit)
+    }
 }
