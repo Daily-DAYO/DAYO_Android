@@ -63,9 +63,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun CommentBottomSheetDialog(
     postId: Int,
-    onClickClose: () -> Unit,
     sheetState: ModalBottomSheetState,
     snackBarHostState: SnackbarHostState,
+    onClickProfile: (String) -> Unit,
+    onClickClose: () -> Unit,
     modifier: Modifier = Modifier,
     postViewModel: PostViewModel = hiltViewModel(),
     accountViewModel: AccountViewModel = hiltViewModel(),
@@ -78,6 +79,10 @@ fun CommentBottomSheetDialog(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val commentFocusRequester = FocusRequester()
+    val onClickCommentProfile: (String) -> Unit = { memberId ->
+        onClickClose()
+        onClickProfile(memberId)
+    }
 
     // show comments
     val postComments = postViewModel.postComments.observeAsState()
@@ -184,14 +189,15 @@ fun CommentBottomSheetDialog(
                 ) {
                     CommentBottomSheetDialogTitle(clearComment, onClickClose)
                     CommentBottomSheetDialogContent(
-                        when (postComments.value?.status) {
+                        currentMemberId = currentMemberId,
+                        postComments = when (postComments.value?.status) {
                             Status.SUCCESS -> postComments.value?.data ?: DEFAULT_COMMENTS
                             else -> DEFAULT_COMMENTS
                         },
-                        onClickReply,
-                        onClickDelete,
-                        onClickReport,
-                        currentMemberId
+                        onClickCommentProfile = onClickCommentProfile,
+                        onClickReply = onClickReply,
+                        onClickDelete = onClickDelete,
+                        onClickReport = onClickReport
                     )
                     if (showMentionSearchView.value) CommentMentionSearchView(userResults, onClickFollowUser)
                     if (replyCommentState.value != null) CommentReplyDescriptionView(replyCommentState, onClickCancelReply)
@@ -246,11 +252,12 @@ private fun CommentBottomSheetDialogTitle(clearComment: () -> Unit, onClickClose
 
 @Composable
 private fun CommentBottomSheetDialogContent(
+    currentMemberId: String?,
     postComments: Comments,
+    onClickCommentProfile: (String) -> Unit,
     onClickReply: (Pair<Long, Comment>) -> Unit,
     onClickDelete: (Long) -> Unit,
-    onClickReport: (Long) -> Unit,
-    currentMemberId: String?
+    onClickReport: (Long) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -260,13 +267,14 @@ private fun CommentBottomSheetDialogContent(
     ) {
         item {
             CommentListView(
-                postComments,
-                onClickReply,
-                onClickDelete,
-                onClickReport,
-                currentMemberId,
-                Modifier.padding(horizontal = 18.dp),
-                true
+                currentMemberId = currentMemberId,
+                postComments = postComments,
+                onClickProfile = onClickCommentProfile,
+                onClickReply = onClickReply,
+                onClickDelete = onClickDelete,
+                onClickReport = onClickReport,
+                modifier = Modifier.padding(horizontal = 18.dp),
+                showEmptyIcon = true
             )
         }
     }
@@ -282,7 +290,7 @@ private fun PreviewCommentBottomSheetDialogTitle() {
 @Preview
 @Composable
 private fun PreviewCommentBottomSheetDialogContent() {
-    CommentBottomSheetDialogContent(DEFAULT_COMMENTS, {}, {}, {}, "")
+    CommentBottomSheetDialogContent("", DEFAULT_COMMENTS, {}, {}, {}, {})
 }
 
 val DEFAULT_COMMENTS = Comments(

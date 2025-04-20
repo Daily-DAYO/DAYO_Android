@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -44,6 +45,7 @@ import daily.dayo.presentation.screen.mypage.navigateBackToFolder
 import daily.dayo.presentation.screen.notification.NotificationRoute
 import daily.dayo.presentation.screen.notification.notificationNavGraph
 import daily.dayo.presentation.screen.post.postNavGraph
+import daily.dayo.presentation.screen.profile.profileNavGraph
 import daily.dayo.presentation.screen.search.searchNavGraph
 import daily.dayo.presentation.screen.settings.settingsNavGraph
 import daily.dayo.presentation.screen.write.WriteRoute
@@ -53,13 +55,16 @@ import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
+import daily.dayo.presentation.viewmodel.ProfileViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 internal fun MainScreen(
-    navigator: MainNavigator = rememberMainNavigator()
+    navigator: MainNavigator = rememberMainNavigator(),
+    profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
+    val currentMemberId = profileViewModel.currentMemberId
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
     val bottomSheetState = getBottomSheetDialogState()
@@ -83,6 +88,7 @@ internal fun MainScreen(
                         ) {
                             homeNavGraph(
                                 onPostClick = { navigator.navigatePost(it) },
+                                onProfileClick = { memberId -> navigator.navigateProfile(currentMemberId, memberId) },
                                 onSearchClick = { navigator.navigateSearch() },
                                 coroutineScope = coroutineScope,
                                 bottomSheetState = bottomSheetState,
@@ -92,6 +98,7 @@ internal fun MainScreen(
                                 snackBarHostState = snackBarHostState,
                                 onEmptyViewClick = { navigator.navigateHome() },
                                 onPostClick = { navigator.navigatePost(it) },
+                                onProfileClick = { memberId -> navigator.navigateProfile(currentMemberId, memberId) },
                                 onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
                                 onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) },
                                 bottomSheetState = bottomSheetState,
@@ -99,7 +106,7 @@ internal fun MainScreen(
                             )
                             postNavGraph(
                                 snackBarHostState = snackBarHostState,
-                                onProfileClick = { /*TODO*/ },
+                                onProfileClick = { memberId -> navigator.navigateProfile(currentMemberId, memberId) },
                                 onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
                                 onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) },
                                 onBackClick = { navigator.popBackStack() }
@@ -107,7 +114,8 @@ internal fun MainScreen(
                             searchNavGraph(
                                 onBackClick = { navigator.popBackStack() },
                                 onSearch = { navigator.navigateSearchResult(it) },
-                                onPostClick = { navigator.navigatePost(it) }
+                                onPostClick = { navigator.navigatePost(it) },
+                                onProfileClick = { memberId -> navigator.navigateProfile(currentMemberId, memberId) },
                             )
                             writeNavGraph(
                                 snackBarHostState = snackBarHostState,
@@ -122,19 +130,26 @@ internal fun MainScreen(
                             myPageNavGraph(
                                 onBackClick = { navigator.popBackStack() },
                                 onSettingsClick = { navigator.navigateSettings() },
-                                onFollowButtonClick = { memberId, tabNum -> navigator.navController.navigate(MyPageRoute.follow(memberId, "$tabNum")) },
+                                onFollowButtonClick = { memberId, tabNum -> navigator.navigateFollowMenu(memberId, tabNum) },
+                                onProfileClick = { memberId -> navigator.navigateProfile(currentMemberId, memberId) },
                                 onProfileEditClick = { navigator.navigateProfileEdit() },
                                 onBookmarkClick = { navigator.navigateBookmark() },
-                                onFolderClick = { folderId -> navigator.navController.navigate(MyPageRoute.folder(folderId)) },
+                                onFolderClick = { folderId -> navigator.navigateFolder(folderId) },
                                 onFolderCreateClick = { navigator.navigateFolderCreate() },
                                 onFolderEditClick = { folderId -> navigator.navigateFolderEdit(folderId) },
                                 onPostClick = { postId -> navigator.navigatePost(postId) },
                                 onPostMoveClick = { folderId -> navigator.navigateFolderPostMove(folderId) },
-                                navigateBackToFolder = { folderId -> navigator.navController.navigateBackToFolder(folderId) }
+                                navigateBackToFolder = { folderId -> navigator.navigateBackToFolder(folderId) }
+                            )
+                            profileNavGraph(
+                                onFollowMenuClick = { memberId, tabNum -> navigator.navigateFollowMenu(memberId, tabNum) },
+                                onFolderClick = { folderId -> navigator.navigateFolder(folderId) },
+                                onPostClick = { postId -> navigator.navigatePost(postId) },
+                                onBackClick = { navigator.popBackStack() }
                             )
                             notificationNavGraph(
                                 onPostClick = { navigator.navigatePost(it) },
-                                onProfileClick = { /*TODO*/ },
+                                onProfileClick = { memberId -> navigator.navigateProfile(currentMemberId, memberId) },
                                 onNoticeClick = { /*TODO*/ }
                             )
                             settingsNavGraph(
@@ -142,6 +157,7 @@ internal fun MainScreen(
                                 snackBarHostState = snackBarHostState,
                                 onProfileEditClick = { navigator.navigateProfileEdit() },
                                 onPasswordChangeClick = { navigator.navigateChangePassword() },
+                                onSettingNotificationClick = { navigator.navigateSettingsNotification() },
                                 onBackClick = { navigator.popBackStack() }
                             )
                         }

@@ -53,6 +53,7 @@ fun FeedScreen(
     snackBarHostState: SnackbarHostState,
     onEmptyViewClick: () -> Unit,
     onPostClick: (String) -> Unit,
+    onProfileClick: (String) -> Unit,
     onPostLikeUsersClick: (String) -> Unit,
     onPostHashtagClick: (String) -> Unit,
     bottomSheetState: ModalBottomSheetState,
@@ -125,9 +126,7 @@ fun FeedScreen(
                             FeedPostView(
                                 post = post,
                                 snackBarHostState = snackBarHostState,
-                                onClickProfile = {
-                                    // todo move to profile
-                                },
+                                onClickProfile = onProfileClick,
                                 onClickPost = {
                                     onPostClick(post.postId.toString())
                                 },

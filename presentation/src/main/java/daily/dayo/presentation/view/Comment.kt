@@ -77,11 +77,12 @@ import daily.dayo.presentation.theme.White_FFFFFF
 
 @Composable
 fun CommentListView(
+    currentMemberId: String?,
     postComments: Comments,
+    onClickProfile: (String) -> Unit,
     onClickReply: (Pair<Long, Comment>) -> Unit,
     onClickDelete: (Long) -> Unit,
     onClickReport: (Long) -> Unit,
-    currentMemberId: String?,
     modifier: Modifier = Modifier,
     showEmptyIcon: Boolean = false
 ) {
@@ -137,6 +138,7 @@ fun CommentListView(
                                 parentCommentId = comment.commentId,
                                 comment = comment,
                                 isMine = currentMemberId == comment.memberId,
+                                onClickProfile = onClickProfile,
                                 onClickReply = onClickReply,
                                 onClickDelete = onClickDelete,
                                 onClickReport = onClickReport,
@@ -150,6 +152,7 @@ fun CommentListView(
                                     parentCommentId = comment.commentId,
                                     comment = reply,
                                     isMine = currentMemberId == reply.memberId,
+                                    onClickProfile = onClickProfile,
                                     onClickReply = onClickReply,
                                     onClickDelete = onClickDelete,
                                     onClickReport = onClickReport,
@@ -173,6 +176,7 @@ fun CommentView(
     parentCommentId: Long,
     comment: Comment,
     isMine: Boolean,
+    onClickProfile: (String) -> Unit,
     onClickReply: (Pair<Long, Comment>) -> Unit,
     onClickDelete: (Long) -> Unit,
     onClickReport: (Long) -> Unit,
@@ -191,7 +195,7 @@ fun CommentView(
                     .clickableSingle(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
-                        onClick = { } // todo onClickProfile
+                        onClick = { onClickProfile(comment.memberId) }
                     ),
                 imageDescription = "comment profile image"
             )
@@ -207,7 +211,7 @@ fun CommentView(
                             .clickableSingle(
                                 indication = null,
                                 interactionSource = remember { MutableInteractionSource() },
-                                onClick = { } // todo onClickProfile
+                                onClick = { onClickProfile(comment.memberId) }
                             )
                     )
                     Spacer(Modifier.width(4.dp))
@@ -494,6 +498,7 @@ private fun PreviewCommentView() {
     CommentView(
         parentCommentId = 0,
         comment = Comment(0, "", "닉네임", "", "댓글", "2024-07-20T00:58:45.162925", emptyList(), emptyList()),
+        onClickProfile = {},
         onClickReply = {},
         onClickReport = {},
         onClickDelete = {},

@@ -12,6 +12,7 @@ import androidx.compose.ui.semantics.Role
 
 internal interface MultipleEventsCutter {
     fun processEvent(event: () -> Unit)
+
     companion object
 }
 
@@ -56,13 +57,14 @@ fun Modifier.clickableSingle(
         interactionSource = remember { MutableInteractionSource() }
     )
 }
+
 fun Modifier.clickableSingle(
     enabled: Boolean = true,
     onClickLabel: String? = null,
     role: Role? = null,
-    onClick: () -> Unit,
     indication: Indication?,
-    interactionSource: MutableInteractionSource
+    interactionSource: MutableInteractionSource,
+    onClick: () -> Unit
 ) = composed(
     inspectorInfo = debugInspectorInfo {
         name = "clickable"
