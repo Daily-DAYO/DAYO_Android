@@ -531,13 +531,6 @@
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting">
         <action
-            android:id="@+id/action_settingFragment_to_settingChangePasswordCurrentFragment"
-            app:destination="@id/SettingChangePasswordCurrentFragment"
-            app:enterAnim="@anim/translate_from_right_in"
-            app:exitAnim="@anim/translate_to_left_out"
-            app:popEnterAnim="@anim/translate_from_left_in"
-            app:popExitAnim="@anim/translate_to_right_out" />
-        <action
             android:id="@+id/action_settingFragment_to_withdrawFragment"
             app:destination="@id/WithdrawFragment"
             app:enterAnim="@anim/translate_from_right_in"
@@ -575,6 +568,12 @@
         android:name="daily.dayo.presentation.fragment.setting.block.SettingBlockFragment"
         android:label="fragment_setting_block"
         tools:layout="@layout/fragment_setting_block" />
+
+    <fragment
+        android:id="@+id/SettingNotificationFragment"
+        android:name="daily.dayo.presentation.fragment.setting.notification.SettingNotificationFragment"
+        android:label="fragment_withdraw"
+        tools:layout="@layout/fragment_setting_notification"></fragment>
 
     <fragment
         android:id="@+id/SettingChangePasswordCurrentFragment"
