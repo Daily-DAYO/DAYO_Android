@@ -41,6 +41,7 @@ import daily.dayo.presentation.screen.home.HomeRoute
 import daily.dayo.presentation.screen.home.homeNavGraph
 import daily.dayo.presentation.screen.mypage.MyPageRoute
 import daily.dayo.presentation.screen.mypage.myPageNavGraph
+import daily.dayo.presentation.screen.mypage.navigateBackToFolder
 import daily.dayo.presentation.screen.notification.NotificationRoute
 import daily.dayo.presentation.screen.notification.notificationNavGraph
 import daily.dayo.presentation.screen.post.postNavGraph
@@ -152,9 +153,12 @@ internal fun MainScreen(
                                 onNoticeClick = { /*TODO*/ }
                             )
                             settingsNavGraph(
+                                coroutineScope = coroutineScope,
+                                snackBarHostState = snackBarHostState,
                                 onProfileEditClick = { navigator.navigateProfileEdit() },
-                                onBackClick = { navigator.popBackStack() },
+                                onPasswordChangeClick = { navigator.navigateChangePassword() },
                                 onSettingNotificationClick = { navigator.navigateSettingsNotification() },
+                                onBackClick = { navigator.popBackStack() }
                             )
                         }
                     }

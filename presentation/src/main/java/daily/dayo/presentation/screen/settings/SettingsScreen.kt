@@ -57,6 +57,7 @@ import daily.dayo.presentation.viewmodel.ProfileViewModel
 fun SettingsScreen(
     onProfileEditClick: () -> Unit,
     onBackClick: () -> Unit,
+    onPasswordChangeClick: () -> Unit,
     onSettingNotificationClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
@@ -71,6 +72,7 @@ fun SettingsScreen(
         onProfileEditClick = onProfileEditClick,
         onBackClick = onBackClick,
         onSettingNotificationClick = onSettingNotificationClick,
+        onPasswordChangeClick = onPasswordChangeClick,
     )
 }
 
@@ -80,6 +82,7 @@ private fun SettingsScreen(
     onProfileEditClick: () -> Unit,
     onBackClick: () -> Unit,
     onSettingNotificationClick: () -> Unit,
+    onPasswordChangeClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -110,7 +113,7 @@ private fun SettingsScreen(
         val appVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName
 
         val settingMenus = listOf(
-            SettingItem(R.string.setting_menu_change_password, R.drawable.ic_setting_password_change, onClickMenu = {}),
+            SettingItem(R.string.setting_menu_change_password, R.drawable.ic_setting_password_change, onClickMenu = onPasswordChangeClick),
             SettingItem(R.string.setting_menu_block_user, R.drawable.ic_block, onClickMenu = {}),
             SettingItem(R.string.setting_menu_notification, R.drawable.ic_notification, onClickMenu = onSettingNotificationClick),
             null, // Divider
@@ -264,8 +267,9 @@ private fun PreviewSettingsScreen() {
     DayoTheme {
         SettingsScreen(
             profile = null,
-            onProfileEditClick = {},
             onBackClick = {},
+            onProfileEditClick = {},
+            onPasswordChangeClick = {},
             onSettingNotificationClick = {}
         )
     }
