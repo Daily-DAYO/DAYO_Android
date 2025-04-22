@@ -1,7 +1,7 @@
 package daily.dayo.domain.model
 
 data class Folder(
-    val folderId: Int?,
+    val folderId: Long?,
     val title: String,
     val memberId: String?,
     val privacy: Privacy,
@@ -26,20 +26,20 @@ data class FolderPost(
 )
 
 data class FolderOrder(
-    var folderId: Int,
+    var folderId: Long,
     var orderIndex: Int
 )
 
 data class FolderCreateResponse(
-    val folderId: Int
+    val folderId: Long
 )
 
 data class FolderCreateInPostResponse(
-    val folderId: Int
+    val folderId: Long
 )
 
 data class FolderEditResponse(
-    val folderId: Int
+    val folderId: Long
 )
 
 data class FolderInfo(

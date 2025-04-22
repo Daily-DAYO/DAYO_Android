@@ -29,11 +29,11 @@ fun NavController.navigateFolderCreate() {
     navigate(MyPageRoute.folderCreate())
 }
 
-fun NavController.navigateFolderEdit(folderId: String) {
+fun NavController.navigateFolderEdit(folderId: Long) {
     navigate(MyPageRoute.folderEdit(folderId))
 }
 
-fun NavController.navigateFolderPostMove(folderId: String) {
+fun NavController.navigateFolderPostMove(folderId: Long) {
     navigate(MyPageRoute.folderPostMove(folderId))
 }
 
@@ -41,11 +41,11 @@ fun NavController.navigateFollowMenu(memberId: String, tabNum: Int) {
     navigate(MyPageRoute.follow(memberId, "$tabNum"))
 }
 
-fun NavController.navigateFolder(folderId: String) {
+fun NavController.navigateFolder(folderId: Long) {
     navigate(MyPageRoute.folder(folderId))
 }
 
-fun NavController.navigateBackToFolder(folderId: String) {
+fun NavController.navigateBackToFolder(folderId: Long) {
     navigate(MyPageRoute.folder(folderId)) {
         popUpTo(MyPageRoute.folder(folderId)) {
             inclusive = true
@@ -61,12 +61,12 @@ fun NavGraphBuilder.myPageNavGraph(
     onProfileClick: (String) -> Unit,
     onProfileEditClick: () -> Unit,
     onBookmarkClick: () -> Unit,
-    onFolderClick: (String) -> Unit,
+    onFolderClick: (Long) -> Unit,
     onFolderCreateClick: () -> Unit,
-    onFolderEditClick: (String) -> Unit,
+    onFolderEditClick: (Long) -> Unit,
     onPostClick: (Long) -> Unit,
-    onPostMoveClick: (String) -> Unit,
-    navigateBackToFolder: (String) -> Unit
+    onPostMoveClick: (Long) -> Unit,
+    navigateBackToFolder: (Long) -> Unit
 ) {
     composable(MyPageRoute.route) {
         MyPageScreen(
@@ -119,57 +119,63 @@ fun NavGraphBuilder.myPageNavGraph(
     }
 
     composable(
-        route = MyPageRoute.folder("{folderId}"),
+        route = MyPageRoute.folderRoute,
         arguments = listOf(
             navArgument("folderId") {
-                type = NavType.StringType
+                type = NavType.LongType
             }
         )
     ) { navBackStackEntry ->
-        val folderId = navBackStackEntry.arguments?.getString("folderId") ?: ""
-        FolderScreen(
-            folderId = folderId,
-            onPostClick = onPostClick,
-            onFolderEditClick = { onFolderEditClick(folderId) },
-            onPostMoveClick = { onPostMoveClick(folderId) },
-            onBackClick = onBackClick
-        )
+        navBackStackEntry.arguments?.getLong("folderId")?.let { folderId ->
+            FolderScreen(
+                folderId = folderId,
+                onPostClick = onPostClick,
+                onFolderEditClick = { onFolderEditClick(folderId) },
+                onPostMoveClick = { onPostMoveClick(folderId) },
+                onBackClick = onBackClick
+            )
+        }
     }
 
     composable(
-        route = MyPageRoute.folderEdit("{folderId}"),
+        route = MyPageRoute.folderEditRoute,
         arguments = listOf(
             navArgument("folderId") {
-                type = NavType.StringType
+                type = NavType.LongType
             }
         )
     ) { navBackStackEntry ->
-        val folderId = navBackStackEntry.arguments?.getString("folderId") ?: ""
-        FolderEditScreen(
-            folderId = folderId,
-            onBackClick = onBackClick
-        )
+        navBackStackEntry.arguments?.getLong("folderId")?.let { folderId ->
+            FolderEditScreen(
+                folderId = folderId,
+                onBackClick = onBackClick
+            )
+        }
     }
 
     composable(
-        route = MyPageRoute.folderPostMove("{folderId}"),
+        route = MyPageRoute.folderPostMoveRoute,
         arguments = listOf(
             navArgument("folderId") {
-                type = NavType.StringType
+                type = NavType.LongType
             }
         )
     ) { navBackStackEntry ->
-        val folderId = navBackStackEntry.arguments?.getString("folderId") ?: ""
-        FolderPostMoveScreen(
-            navigateBackToFolder = { navigateBackToFolder(folderId) },
-            navigateToCreateNewFolder = onFolderCreateClick,
-            onBackClick = onBackClick
-        )
+        navBackStackEntry.arguments?.getLong("folderId")?.let { folderId ->
+            FolderPostMoveScreen(
+                navigateBackToFolder = { navigateBackToFolder(folderId) },
+                navigateToCreateNewFolder = onFolderCreateClick,
+                onBackClick = onBackClick
+            )
+        }
     }
 }
 
 object MyPageRoute {
     const val route = "myPage"
+    const val folderRoute = "$route/folder/{folderId}"
+    const val folderEditRoute = "$route/folder/edit/{folderId}"
+    const val folderPostMoveRoute = "$route/folder/move/{folderId}"
 
     // profile edit
     fun profileEdit() = "$route/edit"
@@ -181,8 +187,8 @@ object MyPageRoute {
     fun bookmark() = "$route/bookmark"
 
     // folder
-    fun folder(folderId: String) = "$route/folder/$folderId"
+    fun folder(folderId: Long) = "$route/folder/$folderId"
     fun folderCreate() = "$route/folder/create"
-    fun folderEdit(folderId: String) = "$route/folder/edit/$folderId"
-    fun folderPostMove(folderId: String) = "$route/folder/move/$folderId"
+    fun folderEdit(folderId: Long) = "$route/folder/edit/$folderId"
+    fun folderPostMove(folderId: Long) = "$route/folder/move/$folderId"
 }

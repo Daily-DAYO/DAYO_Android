@@ -24,7 +24,7 @@ interface FolderRepository {
     ): NetworkResponse<FolderCreateResponse>
 
     suspend fun requestEditFolder(
-        folderId: Int,
+        folderId: Long,
         name: String,
         privacy: Privacy,
         subheading: String?,
@@ -38,10 +38,10 @@ interface FolderRepository {
         privacy: Privacy
     ): NetworkResponse<FolderCreateInPostResponse>
 
-    suspend fun requestDeleteFolder(folderId: Int): NetworkResponse<Void>
+    suspend fun requestDeleteFolder(folderId: Long): NetworkResponse<Void>
     suspend fun requestOrderFolder(folderOrders: List<FolderOrder>): NetworkResponse<Void>
     suspend fun requestAllFolderList(memberId: String): NetworkResponse<Folders>
     suspend fun requestAllMyFolderList(): NetworkResponse<FoldersMine>
-    suspend fun requestFolderInfo(folderId: Int): NetworkResponse<FolderInfo>
-    suspend fun requestDetailListFolder(folderId: Int): Flow<PagingData<FolderPost>>
+    suspend fun requestFolderInfo(folderId: Long): NetworkResponse<FolderInfo>
+    suspend fun requestDetailListFolder(folderId: Long): Flow<PagingData<FolderPost>>
 }

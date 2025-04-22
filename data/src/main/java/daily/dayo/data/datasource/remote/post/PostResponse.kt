@@ -53,7 +53,7 @@ data class DetailPostResponse(
     @SerializedName("createDateTime")
     val createDateTime: String,
     @SerializedName("folderId")
-    val folderId: Int,
+    val folderId: Long,
     @SerializedName("folderName")
     val folderName: String,
     @SerializedName("hashtags")

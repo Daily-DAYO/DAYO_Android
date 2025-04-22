@@ -19,7 +19,7 @@ interface PostRepository {
         category: Category,
         contents: String,
         files: List<MultipartBody.Part>,
-        folderId: Int,
+        folderId: Long,
         tags: Array<String>
     ): NetworkResponse<PostCreateResponse>
 
@@ -33,7 +33,7 @@ interface PostRepository {
         postId: Long,
         category: Category,
         contents: String,
-        folderId: Int,
+        folderId: Long,
         hashtags: List<String>
     ): NetworkResponse<PostEditResponse>
 

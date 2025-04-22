@@ -85,7 +85,7 @@ import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun FolderScreen(
-    folderId: String,
+    folderId: Long,
     onPostClick: (Long) -> Unit,
     onFolderEditClick: () -> Unit,
     onPostMoveClick: () -> Unit,
@@ -129,8 +129,8 @@ fun FolderScreen(
     )
 
     LaunchedEffect(folderId) {
-        folderViewModel.requestFolderInfo(folderId.toInt())
-        folderViewModel.requestFolderPostList(folderId.toInt())
+        folderViewModel.requestFolderInfo(folderId)
+        folderViewModel.requestFolderPostList(folderId)
     }
 
     LaunchedEffect(folderDeleteSuccess) {
@@ -148,7 +148,7 @@ fun FolderScreen(
                     Toast.makeText(context, context.getString(R.string.error_message), Toast.LENGTH_SHORT).show()
                 }
                 folderViewModel.toggleEditMode()
-                folderViewModel.requestFolderPostList(folderId.toInt())
+                folderViewModel.requestFolderPostList(folderId)
             }
     }
 
@@ -171,7 +171,7 @@ fun FolderScreen(
                 showFolderDeleteAlertDialog = false
                 showLoadingDialog(loadingAlertDialog.value)
                 resizeDialogFragment(context, loadingAlertDialog.value, 0.8f)
-                folderViewModel.requestDeleteFolder(folderId.toInt())
+                folderViewModel.requestDeleteFolder(folderId)
             },
             onShowChange = { showFolderDeleteAlertDialog = it }
         )
@@ -184,7 +184,7 @@ fun FolderScreen(
                 showPostDeleteAlertDialog = false
                 // TODO Show Loading
                 folderViewModel.deletePosts()
-                folderViewModel.requestDeleteFolder(folderId.toInt())
+                folderViewModel.requestDeleteFolder(folderId)
             },
             onShowChange = { showPostDeleteAlertDialog = it }
         )

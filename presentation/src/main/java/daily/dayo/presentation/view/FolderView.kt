@@ -35,7 +35,7 @@ import java.text.DecimalFormat
 @Composable
 fun FolderView(
     folder: Folder,
-    onClickFolder: (String) -> Unit,
+    onClickFolder: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val imageInteractionSource = remember { MutableInteractionSource() }
@@ -43,7 +43,7 @@ fun FolderView(
         .clickableSingle(
             interactionSource = imageInteractionSource,
             indication = null,
-            onClick = { onClickFolder("${folder.folderId}") }
+            onClick = { onClickFolder(folder.folderId!!) }
         )
     ) {
         Box(

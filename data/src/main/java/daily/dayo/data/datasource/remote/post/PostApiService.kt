@@ -19,7 +19,7 @@ interface PostApiService {
         @Part("category") category: String,
         @Part("contents") contents: String,
         @Part files: List<MultipartBody.Part>,
-        @Part("folderId") folderId: Int,
+        @Part("folderId") folderId: Long,
         @Part("tags") tags: Array<String>
     ): NetworkResponse<CreatePostResponse>
 

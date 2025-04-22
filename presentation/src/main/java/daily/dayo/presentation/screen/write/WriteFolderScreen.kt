@@ -99,10 +99,10 @@ fun WriteFolderRoute(
 @Composable
 fun WriteFolderScreen(
     onBackClick: () -> Unit,
-    onFolderClick: (String, String) -> Unit,
+    onFolderClick: (Long, String) -> Unit,
     navigateToCreateNewFolder: () -> Unit,
     folders: List<Folder>,
-    currentFolderId: String?,
+    currentFolderId: Long?,
 ) {
     Surface(
         color = White_FFFFFF,
@@ -144,10 +144,10 @@ fun WriteFolderActionbarLayout(onBackClick: () -> Unit) {
 @Preview
 @Composable
 fun WriteFolderContent(
-    onFolderClick: (String, String) -> Unit = { _, _ -> },
+    onFolderClick: (Long, String) -> Unit = { _, _ -> },
     navigateToCreateNewFolder: () -> Unit = {},
     folders: List<Folder> = emptyList(),
-    currentFolderId: String? = null,
+    currentFolderId: Long? = null,
 ) {
     Column(
         modifier = Modifier
@@ -211,9 +211,9 @@ fun WriteFolderNewLayout(
 
 @Composable
 fun WriteFoldersLayout(
-    onFolderClick: (String, String) -> Unit,
+    onFolderClick: (Long, String) -> Unit,
     folders: List<Folder>,
-    currentFolderId: String?,
+    currentFolderId: Long?,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -222,7 +222,7 @@ fun WriteFoldersLayout(
         itemsIndexed(folders) { _, folder ->
             WriteFolderItemLayout(
                 folder = folder,
-                isSelected = folder.folderId?.toString() == currentFolderId,
+                isSelected = folder.folderId == currentFolderId,
                 onFolderClick = onFolderClick
             )
         }
@@ -243,7 +243,7 @@ fun WriteFolderItemLayout(
         postCount = 1
     ),
     isSelected: Boolean = true,
-    onFolderClick: (String, String) -> Unit = { _, _ -> },
+    onFolderClick: (Long, String) -> Unit = { _, _ -> },
 ) {
     Row(
         modifier = Modifier
@@ -251,7 +251,7 @@ fun WriteFolderItemLayout(
             .height(FOLDER_THUMBNAIL_SIZE.dp)
             .clip(RoundedCornerShape(FOLDER_THUMBNAIL_RADIUS_SIZE.dp))
             .background(White_FFFFFF)
-            .clickableSingle { onFolderClick(folder.folderId.toString(), folder.title) }
+            .clickableSingle { onFolderClick(folder.folderId!!, folder.title) }
     ) {
         Box(
             modifier = Modifier
