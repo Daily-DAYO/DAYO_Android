@@ -24,7 +24,7 @@ class ReportRepositoryImpl @Inject constructor(
 
     override suspend fun requestSavePostReport(
         comment: String,
-        postId: Int
+        postId: Long
     ): NetworkResponse<Void> =
         reportApiService.requestSavePostReport(
             CreateReportPostRequest(

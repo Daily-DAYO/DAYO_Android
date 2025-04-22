@@ -49,7 +49,7 @@ import daily.dayo.presentation.viewmodel.SearchViewModel
 fun SearchPostHashtagScreen(
     hashtag: String,
     onBackClick: () -> Unit,
-    onPostClick: (String) -> Unit,
+    onPostClick: (Long) -> Unit,
     searchViewModel: SearchViewModel = hiltViewModel()
 ) {
     val isLatest by rememberSaveable { mutableStateOf(true) } // TODO api 수정 후 구현
@@ -115,7 +115,7 @@ fun SearchPostHashtagScreen(
                             .clickableSingle(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null,
-                                onClick = { onPostClick(post?.postId.toString()) }
+                                onClick = { onPostClick(post?.postId!!) }
                             )
                             .padding(bottom = 4.dp)
                     )

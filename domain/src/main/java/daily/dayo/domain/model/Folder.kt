@@ -21,7 +21,7 @@ data class FoldersMine(
 
 data class FolderPost(
     val createDate: String,
-    val postId: Int,
+    val postId: Long,
     val thumbnailImage: String
 )
 

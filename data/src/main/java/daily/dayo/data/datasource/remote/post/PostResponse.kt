@@ -1,7 +1,7 @@
 package daily.dayo.data.datasource.remote.post
 
-import daily.dayo.domain.model.Category
 import com.google.gson.annotations.SerializedName
+import daily.dayo.domain.model.Category
 
 data class ListFeedResponse(
     @SerializedName("count")
@@ -14,12 +14,12 @@ data class ListFeedResponse(
 
 data class EditPostResponse(
     @SerializedName("postId")
-    val postId: Int
+    val postId: Long
 )
 
 data class CreatePostResponse(
     @SerializedName("id")
-    val id: Int
+    val id: Long
 )
 
 data class ListAllPostResponse(
@@ -80,7 +80,7 @@ data class PostDto(
     @SerializedName("heartCount")
     val heartCount: Int,
     @SerializedName("id")
-    val postId: Int,
+    val postId: Long,
     @SerializedName("memberId")
     val memberId: String,
     @SerializedName("nickname")
@@ -99,7 +99,7 @@ data class DayoPick(
     @SerializedName("heartCount")
     val heartCount: Int,
     @SerializedName("id")
-    val postId: Int,
+    val postId: Long,
     @SerializedName("memberId")
     val memberId: String,
     @SerializedName("nickname")
@@ -128,7 +128,7 @@ data class FeedDto(
     @SerializedName("heartCount")
     val heartCount: Int,
     @SerializedName("id")
-    val postId: Int,
+    val postId: Long,
     @SerializedName("memberId")
     val memberId: String,
     @SerializedName("nickname")

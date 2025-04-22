@@ -6,7 +6,7 @@ data class CreateCommentRequest(
     @SerializedName("contents")
     val contents: String,
     @SerializedName("postId")
-    val postId: Int,
+    val postId: Long,
     @SerializedName("mentionList")
     val mentionList: List<MentionUserDto>
 )
@@ -17,7 +17,7 @@ data class CreateCommentReplyRequest(
     @SerializedName("contents")
     val contents: String,
     @SerializedName("postId")
-    val postId: Int,
+    val postId: Long,
     @SerializedName("mentionList")
     val mentionList: List<MentionUserDto>
 )

@@ -58,7 +58,7 @@ class WriteViewModel @Inject constructor(
     val showWriteOptionDialog = MutableLiveData<Event<Boolean>>()
 
     // WriteInfo
-    private val _postId = MutableLiveData(0)
+    private val _postId = MutableLiveData(0L)
     val postId get() = _postId
     private val _postCategory = MutableLiveData<Category?>(null)
     val postCategory get() = _postCategory
@@ -88,8 +88,8 @@ class WriteViewModel @Inject constructor(
     val writeTags get() = _writeTags
 
     // WritePost
-    private val _writePostId = MutableLiveData<Event<Int>>()
-    val writePostId: LiveData<Event<Int>> get() = _writePostId
+    private val _writePostId = MutableLiveData<Event<Long>>()
+    val writePostId: LiveData<Event<Long>> get() = _writePostId
     private val _writeSuccess = MutableLiveData<Event<Boolean>>()
     val writeSuccess: LiveData<Event<Boolean>> get() = _writeSuccess
     private val _uploadSuccess: MutableStateFlow<Status?> = MutableStateFlow(null)
@@ -108,7 +108,7 @@ class WriteViewModel @Inject constructor(
     val writeFolderAddSuccess get() = _writeFolderAddSuccess
 
     fun requestUploadPost() {
-        if (this@WriteViewModel.postId.value != 0) {
+        if (this@WriteViewModel.postId.value != 0L) {
             requestUploadEditingPost()
         } else {
             requestUploadNewPost()
@@ -168,7 +168,7 @@ class WriteViewModel @Inject constructor(
         }
     }
 
-    fun requestPostDetail(postId: Int) = viewModelScope.launch(Dispatchers.IO) {
+    fun requestPostDetail(postId: Long) = viewModelScope.launch(Dispatchers.IO) {
         withContext(Dispatchers.Main) {
             resetWriteInfoValue()
             requestPostDetailUseCase(postId = postId)
@@ -259,7 +259,7 @@ class WriteViewModel @Inject constructor(
         }
     }
 
-    fun setPostId(id: Int) {
+    fun setPostId(id: Long) {
         _postId.value = id
     }
 

@@ -15,7 +15,7 @@ data class SearchResultResponse(
 
 data class SearchDto(
     @SerializedName("postId")
-    val postId: Int,
+    val postId: Long,
     @SerializedName("thumbnailImage")
     val thumbnailImage: String,
 )

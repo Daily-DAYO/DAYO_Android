@@ -75,7 +75,7 @@ data class FolderPostDto(
     @SerializedName("createDate")
     val createDate: String,
     @SerializedName("postId")
-    val postId: Int,
+    val postId: Long,
     @SerializedName("thumbnailImage")
     val thumbnailImage: String
 )

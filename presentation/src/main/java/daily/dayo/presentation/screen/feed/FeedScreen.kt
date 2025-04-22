@@ -52,9 +52,9 @@ import daily.dayo.presentation.viewmodel.FeedViewModel
 fun FeedScreen(
     snackBarHostState: SnackbarHostState,
     onEmptyViewClick: () -> Unit,
-    onPostClick: (String) -> Unit,
+    onPostClick: (Long) -> Unit,
     onProfileClick: (String) -> Unit,
-    onPostLikeUsersClick: (String) -> Unit,
+    onPostLikeUsersClick: (Long) -> Unit,
     onPostHashtagClick: (String) -> Unit,
     bottomSheetState: ModalBottomSheetState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
@@ -128,7 +128,7 @@ fun FeedScreen(
                                 snackBarHostState = snackBarHostState,
                                 onClickProfile = onProfileClick,
                                 onClickPost = {
-                                    onPostClick(post.postId.toString())
+                                    onPostClick(post.postId!!)
                                 },
                                 onClickLikePost = {
                                     feedViewModel.toggleLikePost(post = post)

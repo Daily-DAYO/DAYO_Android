@@ -13,7 +13,7 @@ fun NavController.navigateProfile(memberId: String) {
 fun NavGraphBuilder.profileNavGraph(
     onFollowMenuClick: (String, Int) -> Unit,
     onFolderClick: (String) -> Unit,
-    onPostClick: (String) -> Unit,
+    onPostClick: (Long) -> Unit,
     onBackClick: () -> Unit
 ) {
     composable(
