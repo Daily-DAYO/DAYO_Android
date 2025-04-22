@@ -124,12 +124,14 @@ fun HomeDayoPickScreen(
                                     post = post,
                                     isDayoPick = index in 0..4,
                                     modifier = Modifier.padding(bottom = 20.dp),
-                                    onClickPost = { onPostClick(post.postId!!) },
+                                    onClickPost = { post.postId?.let { onPostClick(it) } },
                                     onClickLikePost = {
-                                        if (!post.heart) {
-                                            homeViewModel.requestLikePost(post.postId!!, isDayoPickLike = true)
-                                        } else {
-                                            homeViewModel.requestUnlikePost(post.postId!!, isDayoPickLike = true)
+                                        post.postId?.let { postId ->
+                                            if (!post.heart) {
+                                                homeViewModel.requestLikePost(postId, isDayoPickLike = true)
+                                            } else {
+                                                homeViewModel.requestUnlikePost(postId, isDayoPickLike = true)
+                                            }
                                         }
                                     },
                                     onClickProfile = { post.memberId?.let { onProfileClick(it) } }

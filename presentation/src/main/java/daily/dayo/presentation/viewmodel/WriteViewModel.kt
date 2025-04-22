@@ -10,12 +10,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import daily.dayo.presentation.BuildConfig
-import daily.dayo.presentation.common.Event
-import daily.dayo.presentation.common.image.ImageResizeUtil.cropCenterBitmap
-import daily.dayo.presentation.common.ListLiveData
-import daily.dayo.presentation.common.Resource
-import daily.dayo.presentation.common.toFile
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import daily.dayo.domain.model.Category
 import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.NetworkResponse
@@ -26,10 +22,14 @@ import daily.dayo.domain.usecase.folder.RequestCreateFolderInPostUseCase
 import daily.dayo.domain.usecase.post.RequestEditPostUseCase
 import daily.dayo.domain.usecase.post.RequestPostDetailUseCase
 import daily.dayo.domain.usecase.post.RequestUploadPostUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
+import daily.dayo.presentation.BuildConfig
+import daily.dayo.presentation.common.Event
+import daily.dayo.presentation.common.ListLiveData
+import daily.dayo.presentation.common.Resource
 import daily.dayo.presentation.common.Status
+import daily.dayo.presentation.common.image.ImageResizeUtil.cropCenterBitmap
 import daily.dayo.presentation.common.image.ImageResizeUtil.resizeBitmap
+import daily.dayo.presentation.common.toFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -72,7 +72,7 @@ class WriteViewModel @Inject constructor(
     val postFolderId get() = _postFolderId
     private val _postFolderName = MutableLiveData("")
     val postFolderName get() = _postFolderName
-    private val _writeFolderId = MutableStateFlow(0L)
+    private val _writeFolderId = MutableStateFlow<Long?>(null)
     val writeFolderId get() = _writeFolderId
     private val _writeFolderName = MutableStateFlow(null as String?)
     val writeFolderName get() = _writeFolderName
@@ -134,7 +134,7 @@ class WriteViewModel @Inject constructor(
                 category = writeCategory.value.first!!,
                 contents = writeText.value,
                 files = it.toTypedArray(),
-                folderId = writeFolderId.value,
+                folderId = writeFolderId.value ?: 0L,
                 tags = if (writeTags.value.isNotEmpty()) writeTags.value.toTypedArray() else emptyArray()
             ).let { ApiResponse ->
                 when (ApiResponse) {
@@ -158,7 +158,7 @@ class WriteViewModel @Inject constructor(
             postId = this@WriteViewModel.postId.value!!,
             category = if (writeCategory.value.first != null) writeCategory.value.first!! else this@WriteViewModel.postCategory.value!!,
             contents = this@WriteViewModel.postContents.value!!,
-            folderId = if (writeFolderId.value != 0L) writeFolderId.value else this@WriteViewModel.postFolderId.value!!,
+            folderId = if (writeFolderId.value != null) writeFolderId.value!! else this@WriteViewModel.postFolderId.value!!,
             hashtags = if (writeTags.value.isNotEmpty()) writeTags.value else this@WriteViewModel.postTagList.value!!.toList()
         ).let { ApiResponse ->
             _writeEditSuccess.postValue(Event(ApiResponse is NetworkResponse.Success))

@@ -251,7 +251,7 @@ fun WriteFolderItemLayout(
             .height(FOLDER_THUMBNAIL_SIZE.dp)
             .clip(RoundedCornerShape(FOLDER_THUMBNAIL_RADIUS_SIZE.dp))
             .background(White_FFFFFF)
-            .clickableSingle { onFolderClick(folder.folderId!!, folder.title) }
+            .clickableSingle { folder.folderId?.let { onFolderClick(it, folder.title) } }
     ) {
         Box(
             modifier = Modifier

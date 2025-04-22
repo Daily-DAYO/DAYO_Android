@@ -43,7 +43,7 @@ fun FolderView(
         .clickableSingle(
             interactionSource = imageInteractionSource,
             indication = null,
-            onClick = { onClickFolder(folder.folderId!!) }
+            onClick = { folder.folderId?.let { onClickFolder(it) } }
         )
     ) {
         Box(
