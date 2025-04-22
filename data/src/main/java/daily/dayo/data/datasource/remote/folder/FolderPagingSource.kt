@@ -9,7 +9,7 @@ import daily.dayo.domain.model.NetworkResponse
 class FolderPagingSource(
     private val apiService: FolderApiService,
     private val size: Int,
-    private val folderId: Int
+    private val folderId: Long
 ) : PagingSource<Int, FolderPost>() {
 
     override suspend fun load(

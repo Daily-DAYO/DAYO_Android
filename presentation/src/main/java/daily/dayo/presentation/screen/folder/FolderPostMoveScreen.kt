@@ -40,7 +40,7 @@ internal fun FolderPostMoveScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val folderList = folderViewModel.folderList.observeAsState()
-    var selectedFolder by remember { mutableStateOf<String?>(null) }
+    var selectedFolder by remember { mutableStateOf<Long?>(null) }
 
     LaunchedEffect(Unit) {
         folderViewModel.requestAllMyFolderList()
@@ -78,8 +78,8 @@ internal fun FolderPostMoveScreen(
 @Composable
 private fun FolderPostMoveScreen(
     folders: List<Folder>,
-    selectedFolder: String?,
-    onFolderClick: (String, String) -> Unit,
+    selectedFolder: Long?,
+    onFolderClick: (Long, String) -> Unit,
     onPostMoveClick: () -> Unit,
     navigateToCreateNewFolder: () -> Unit,
     onBackClick: () -> Unit

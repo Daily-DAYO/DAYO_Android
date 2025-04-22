@@ -68,11 +68,11 @@ class WriteViewModel @Inject constructor(
     val postContents get() = _postContents
     private val _writeText = MutableStateFlow("")
     val writeText get() = _writeText
-    private val _postFolderId = MutableLiveData("")
+    private val _postFolderId = MutableLiveData(0L)
     val postFolderId get() = _postFolderId
     private val _postFolderName = MutableLiveData("")
     val postFolderName get() = _postFolderName
-    private val _writeFolderId = MutableStateFlow(null as String?)
+    private val _writeFolderId = MutableStateFlow(0L)
     val writeFolderId get() = _writeFolderId
     private val _writeFolderName = MutableStateFlow(null as String?)
     val writeFolderName get() = _writeFolderName
@@ -134,7 +134,7 @@ class WriteViewModel @Inject constructor(
                 category = writeCategory.value.first!!,
                 contents = writeText.value,
                 files = it.toTypedArray(),
-                folderId = writeFolderId.value?.toIntOrNull() ?: 0,
+                folderId = writeFolderId.value,
                 tags = if (writeTags.value.isNotEmpty()) writeTags.value.toTypedArray() else emptyArray()
             ).let { ApiResponse ->
                 when (ApiResponse) {
@@ -158,7 +158,7 @@ class WriteViewModel @Inject constructor(
             postId = this@WriteViewModel.postId.value!!,
             category = if (writeCategory.value.first != null) writeCategory.value.first!! else this@WriteViewModel.postCategory.value!!,
             contents = this@WriteViewModel.postContents.value!!,
-            folderId = if (!writeFolderId.value.isNullOrEmpty()) writeFolderId.value!!.toInt() else this@WriteViewModel.postFolderId.value!!.toInt(),
+            folderId = if (writeFolderId.value != 0L) writeFolderId.value else this@WriteViewModel.postFolderId.value!!,
             hashtags = if (writeTags.value.isNotEmpty()) writeTags.value else this@WriteViewModel.postTagList.value!!.toList()
         ).let { ApiResponse ->
             _writeEditSuccess.postValue(Event(ApiResponse is NetworkResponse.Success))
@@ -197,9 +197,9 @@ class WriteViewModel @Inject constructor(
 
         postDetail.hashtags.let { _postTagList.addAll(it, false) }
         postDetail.hashtags.let { _writeTags.emit(it) }
-        _postFolderId.postValue(postDetail.folderId.toString())
+        _postFolderId.postValue(postDetail.folderId)
         _postFolderName.postValue(postDetail.folderName)
-        _writeFolderId.emit(postDetail.folderId.toString())
+        _writeFolderId.emit(postDetail.folderId)
         _writeFolderName.emit(postDetail.folderName)
     }
 
@@ -247,9 +247,9 @@ class WriteViewModel @Inject constructor(
     fun resetWriteInfoValue() = viewModelScope.launch {
         _postId.postValue(0)
         _postContents.postValue("")
-        _postFolderId.postValue("")
+        _postFolderId.postValue(0)
         _postFolderName.postValue("")
-        _writeFolderId.emit("")
+        _writeFolderId.emit(0)
         _writeFolderName.emit("")
         _postImageUriList.postValue(arrayListOf())
         _postTagList.clear(notify = false)
@@ -276,7 +276,7 @@ class WriteViewModel @Inject constructor(
         _writeCategory.emit(category)
     }
 
-    fun setFolderId(id: String) = viewModelScope.launch {
+    fun setFolderId(id: Long) = viewModelScope.launch {
         _postFolderId.value = id
         _writeFolderId.emit(id)
     }

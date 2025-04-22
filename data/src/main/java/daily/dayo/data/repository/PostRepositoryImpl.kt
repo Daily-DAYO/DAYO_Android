@@ -31,7 +31,7 @@ class PostRepositoryImpl @Inject constructor(
         category: Category,
         contents: String,
         files: List<MultipartBody.Part>,
-        folderId: Int,
+        folderId: Long,
         tags: Array<String>
     ): NetworkResponse<PostCreateResponse> =
         when (val response =
@@ -46,7 +46,7 @@ class PostRepositoryImpl @Inject constructor(
         postId: Long,
         category: Category,
         contents: String,
-        folderId: Int,
+        folderId: Long,
         hashtags: List<String>
     ): NetworkResponse<PostEditResponse> =
         when (

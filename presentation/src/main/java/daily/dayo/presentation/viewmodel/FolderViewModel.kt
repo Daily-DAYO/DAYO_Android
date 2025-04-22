@@ -131,7 +131,7 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun requestEditFolder(folderId: Int, name: String, subheading: String, privacy: Privacy) {
+    fun requestEditFolder(folderId: Long, name: String, subheading: String, privacy: Privacy) {
         viewModelScope.launch {
             requestEditFolderUseCase(
                 folderId = folderId,
@@ -149,7 +149,7 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun requestDeleteFolder(folderId: Int) {
+    fun requestDeleteFolder(folderId: Long) {
         viewModelScope.launch {
             requestDeleteFolderUseCase(folderId = folderId).let { response ->
                 when (response) {
@@ -208,7 +208,7 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun requestFolderInfo(folderId: Int) {
+    fun requestFolderInfo(folderId: Long) {
         viewModelScope.launch {
             val result = when (val response = requestFolderInfoUseCase(folderId)) {
                 is NetworkResponse.Success -> response.body ?: DEFAULT_FOLDER_INFO
@@ -221,7 +221,7 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun requestFolderPostList(folderId: Int) {
+    fun requestFolderPostList(folderId: Long) {
         viewModelScope.launch {
             val folderPosts = requestFolderPostListUseCase(folderId)
                 .cachedIn(viewModelScope)

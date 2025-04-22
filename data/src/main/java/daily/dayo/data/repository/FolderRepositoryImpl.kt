@@ -42,7 +42,7 @@ class FolderRepositoryImpl @Inject constructor(
         }
 
     override suspend fun requestEditFolder(
-        folderId: Int,
+        folderId: Long,
         name: String,
         privacy: Privacy,
         subheading: String?,
@@ -82,7 +82,7 @@ class FolderRepositoryImpl @Inject constructor(
             is NetworkResponse.UnknownError -> response
         }
 
-    override suspend fun requestDeleteFolder(folderId: Int): NetworkResponse<Void> =
+    override suspend fun requestDeleteFolder(folderId: Long): NetworkResponse<Void> =
         folderApiService.requestDeleteFolder(folderId)
 
     override suspend fun requestOrderFolder(folderOrders: List<FolderOrder>): NetworkResponse<Void> =
@@ -104,7 +104,7 @@ class FolderRepositoryImpl @Inject constructor(
             is NetworkResponse.UnknownError -> response
         }
 
-    override suspend fun requestFolderInfo(folderId: Int): NetworkResponse<FolderInfo> =
+    override suspend fun requestFolderInfo(folderId: Long): NetworkResponse<FolderInfo> =
         when (val response = folderApiService.requestFolderInfo(folderId)) {
             is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toFolderInfo())
             is NetworkResponse.NetworkError -> response
@@ -112,7 +112,7 @@ class FolderRepositoryImpl @Inject constructor(
             is NetworkResponse.UnknownError -> response
         }
 
-    override suspend fun requestDetailListFolder(folderId: Int) =
+    override suspend fun requestDetailListFolder(folderId: Long) =
         Pager(PagingConfig(pageSize = FOLDER_POST_PAGE_SIZE)) {
             FolderPagingSource(folderApiService, FOLDER_POST_PAGE_SIZE, folderId)
         }.flow

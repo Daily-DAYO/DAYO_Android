@@ -70,7 +70,7 @@ import kotlinx.coroutines.launch
 fun ProfileScreen(
     memberId: String,
     onFollowMenuClick: (String, Int) -> Unit,
-    onFolderClick: (String) -> Unit,
+    onFolderClick: (Long) -> Unit,
     onBackClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel(),
     folderViewModel: FolderViewModel = hiltViewModel(),
@@ -128,7 +128,7 @@ private fun ProfileScreen(
     folderList: List<Folder>,
     onFollowClick: () -> Unit,
     onFollowMenuClick: (String, Int) -> Unit,
-    onFolderClick: (String) -> Unit,
+    onFolderClick: (Long) -> Unit,
     onClickUserReport: (String) -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -342,7 +342,7 @@ private fun UserProfile(
 }
 
 @Composable
-private fun UserDiary(folder: Folder, onFolderClick: (String) -> Unit) {
+private fun UserDiary(folder: Folder, onFolderClick: (Long) -> Unit) {
     FolderView(
         folder = folder,
         onClickFolder = onFolderClick,
