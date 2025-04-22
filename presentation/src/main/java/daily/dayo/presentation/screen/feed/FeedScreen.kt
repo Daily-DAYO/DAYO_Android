@@ -127,15 +127,9 @@ fun FeedScreen(
                                 post = post,
                                 snackBarHostState = snackBarHostState,
                                 onClickProfile = onProfileClick,
-                                onClickPost = {
-                                    onPostClick(post.postId!!)
-                                },
-                                onClickLikePost = {
-                                    feedViewModel.toggleLikePost(post = post)
-                                },
-                                onClickBookmark = {
-                                    feedViewModel.toggleBookmarkPost(post = post)
-                                },
+                                onClickPost = { post.postId?.let { onPostClick(it) } },
+                                onClickLikePost = { feedViewModel.toggleLikePost(post = post) },
+                                onClickBookmark = { feedViewModel.toggleBookmarkPost(post = post) },
                                 onPostLikeUsersClick = onPostLikeUsersClick,
                                 onPostHashtagClick = onPostHashtagClick,
                                 bottomSheetState = bottomSheetState,
