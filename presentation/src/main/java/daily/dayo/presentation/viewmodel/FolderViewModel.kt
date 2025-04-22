@@ -79,7 +79,7 @@ class FolderViewModel @Inject constructor(
         _uiState.update { it.copy(isEditMode = !it.isEditMode, selectedPosts = emptySet()) }
     }
 
-    fun toggleSelection(postId: Int) {
+    fun toggleSelection(postId: Long) {
         _uiState.update {
             val currentSelection = it.selectedPosts
             val newSelection = if (currentSelection.contains(postId)) {
@@ -244,7 +244,7 @@ data class FolderUiState(
     val folderInfo: FolderInfo = DEFAULT_FOLDER_INFO,
     val folderPosts: Flow<PagingData<FolderPost>> = flow { emit(PagingData.empty()) },
     val isEditMode: Boolean = false,
-    val selectedPosts: Set<Int> = emptySet()
+    val selectedPosts: Set<Long> = emptySet()
 )
 
 val DEFAULT_FOLDER_INFO = FolderInfo(

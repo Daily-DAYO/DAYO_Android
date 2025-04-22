@@ -14,7 +14,7 @@ fun NavController.navigateHome() {
 
 @OptIn(ExperimentalMaterialApi::class)
 fun NavGraphBuilder.homeNavGraph(
-    onPostClick: (String) -> Unit,
+    onPostClick: (Long) -> Unit,
     onProfileClick: (String) -> Unit,
     onSearchClick: () -> Unit,
     coroutineScope: CoroutineScope,

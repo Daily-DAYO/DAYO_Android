@@ -9,7 +9,7 @@ import daily.dayo.domain.model.NetworkResponse
 class HeartPostUsersPagingSource(
     private val apiService: HeartApiService,
     private val size: Int,
-    private val postId: Int
+    private val postId: Long
 ) : PagingSource<Int, LikeUser>() {
 
     override suspend fun load(

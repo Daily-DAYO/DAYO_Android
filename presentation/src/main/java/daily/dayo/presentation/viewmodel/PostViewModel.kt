@@ -86,7 +86,7 @@ class PostViewModel @Inject constructor(
         _postComments.postValue(Resource.loading(null))
     }
 
-    fun requestPostDetail(postId: Int) {
+    fun requestPostDetail(postId: Long) {
         viewModelScope.launch {
             _postDetail.postValue(Resource.loading(null))
             requestPostDetailUseCase(postId).let { response ->
@@ -112,7 +112,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun requestDeletePost(postId: Int) {
+    fun requestDeletePost(postId: Long) {
         viewModelScope.launch {
             requestDeletePostUseCase(postId).let { response ->
                 when (response) {
@@ -123,7 +123,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun toggleLikePost(postId: Int, currentHeart: Boolean) {
+    fun toggleLikePost(postId: Long, currentHeart: Boolean) {
         viewModelScope.launch {
             if (currentHeart) {
                 requestUnlikePostUseCase(postId = postId)
@@ -158,7 +158,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun toggleBookmarkPostDetail(postId: Int, currentBookmark: Boolean?) {
+    fun toggleBookmarkPostDetail(postId: Long, currentBookmark: Boolean?) {
         viewModelScope.launch {
             currentBookmark?.let { bookmark ->
                 if (bookmark) {
@@ -194,7 +194,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun requestPostComment(postId: Int) {
+    fun requestPostComment(postId: Long) {
         viewModelScope.launch {
             _postComments.postValue(Resource.loading(null))
             requestPostCommentUseCase(postId).let { response ->
@@ -238,7 +238,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun requestCreatePostComment(contents: String, postId: Int, mentionedUser: List<SearchUser>) {
+    fun requestCreatePostComment(contents: String, postId: Long, mentionedUser: List<SearchUser>) {
         if (contents.isEmpty()) return
         viewModelScope.launch {
             val mentionList = getMentionList(contents, mentionedUser)
@@ -256,7 +256,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun requestCreatePostCommentReply(reply: Pair<Long, Comment>, contents: String, postId: Int, mentionedUser: List<SearchUser>) {
+    fun requestCreatePostCommentReply(reply: Pair<Long, Comment>, contents: String, postId: Long, mentionedUser: List<SearchUser>) {
         if (contents.isEmpty()) return
         viewModelScope.launch {
             val mentionList = getMentionList(contents, mentionedUser).toMutableList()
@@ -304,7 +304,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun requestPostLikeUsers(postId: Int) = viewModelScope.launch(Dispatchers.IO) {
+    fun requestPostLikeUsers(postId: Long) = viewModelScope.launch(Dispatchers.IO) {
         requestPostLikeUsersUseCase(postId = postId)
             .cachedIn(viewModelScope)
             .collectLatest { _postLikeUsers.emit(it) }

@@ -86,7 +86,7 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 fun FolderScreen(
     folderId: String,
-    onPostClick: (String) -> Unit,
+    onPostClick: (Long) -> Unit,
     onFolderEditClick: () -> Unit,
     onPostMoveClick: () -> Unit,
     onBackClick: () -> Unit,
@@ -157,7 +157,7 @@ fun FolderScreen(
         folderPosts = folderPosts,
         optionMenu = optionMenu,
         onPostClick = { postId -> onPostClick(postId) },
-        onPostSelect = { postId -> folderViewModel.toggleSelection(postId.toInt()) },
+        onPostSelect = { postId -> folderViewModel.toggleSelection(postId) },
         onCancelClick = { folderViewModel.toggleEditMode() },
         onPostDeleteClick = { showPostDeleteAlertDialog = true },
         onPostMoveClick = onPostMoveClick,
@@ -196,8 +196,8 @@ private fun FolderScreen(
     folderUiState: FolderUiState,
     folderPosts: LazyPagingItems<FolderPost>,
     optionMenu: List<FolderOptionMenu>,
-    onPostClick: (String) -> Unit,
-    onPostSelect: (String) -> Unit,
+    onPostClick: (Long) -> Unit,
+    onPostSelect: (Long) -> Unit,
     onPostDeleteClick: () -> Unit,
     onPostMoveClick: () -> Unit,
     onCancelClick: () -> Unit,
@@ -467,8 +467,8 @@ private fun FolderHeader(
 private fun FolderContent(
     folderUiState: FolderUiState,
     folderPosts: LazyPagingItems<FolderPost>,
-    onPostClick: (String) -> Unit,
-    onPostSelect: (String) -> Unit
+    onPostClick: (Long) -> Unit,
+    onPostSelect: (Long) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -496,8 +496,8 @@ private fun FolderPostItem(
     post: FolderPost,
     isEditMode: Boolean,
     isSelected: Boolean,
-    onPostClick: (String) -> Unit,
-    onPostSelect: (String) -> Unit
+    onPostClick: (Long) -> Unit,
+    onPostSelect: (Long) -> Unit
 ) {
     val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 
@@ -507,9 +507,9 @@ private fun FolderPostItem(
             indication = null,
             onClick = {
                 if (isEditMode) {
-                    onPostSelect(post.postId.toString())
+                    onPostSelect(post.postId)
                 } else {
-                    onPostClick(post.postId.toString())
+                    onPostClick(post.postId)
                 }
             }
         )
@@ -526,7 +526,7 @@ private fun FolderPostItem(
         if (isEditMode) {
             DayoCheckbox(
                 checked = isSelected,
-                onCheckedChange = { onPostSelect(post.postId.toString()) },
+                onCheckedChange = { onPostSelect(post.postId) },
                 modifier = Modifier.align(Alignment.TopEnd),
                 interactionSource = interactionSource
             )

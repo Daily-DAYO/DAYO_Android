@@ -64,7 +64,7 @@ fun NavGraphBuilder.myPageNavGraph(
     onFolderClick: (String) -> Unit,
     onFolderCreateClick: () -> Unit,
     onFolderEditClick: (String) -> Unit,
-    onPostClick: (String) -> Unit,
+    onPostClick: (Long) -> Unit,
     onPostMoveClick: (String) -> Unit,
     navigateBackToFolder: (String) -> Unit
 ) {

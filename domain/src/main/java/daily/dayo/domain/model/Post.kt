@@ -1,7 +1,7 @@
 package daily.dayo.domain.model
 
 data class Post(
-    val postId: Int?,
+    val postId: Long?,
     val memberId: String?,
     val nickname: String,
     val userProfileImage: String,
@@ -39,11 +39,11 @@ data class PostDetail(
 )
 
 data class PostCreateResponse(
-    val id: Int
+    val id: Long
 )
 
 data class PostEditResponse(
-    val postId: Int
+    val postId: Long
 )
 
 data class Posts(

@@ -43,7 +43,7 @@ class PostRepositoryImpl @Inject constructor(
         }
 
     override suspend fun requestEditPost(
-        postId: Int,
+        postId: Long,
         category: Category,
         contents: String,
         folderId: Int,
@@ -93,7 +93,7 @@ class PostRepositoryImpl @Inject constructor(
             is NetworkResponse.UnknownError -> response
         }
 
-    override suspend fun requestPostDetail(postId: Int): NetworkResponse<PostDetail> =
+    override suspend fun requestPostDetail(postId: Long): NetworkResponse<PostDetail> =
         when (val response = postApiService.requestPostDetail(postId)) {
             is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toPostDetail())
             is NetworkResponse.NetworkError -> response
@@ -101,7 +101,7 @@ class PostRepositoryImpl @Inject constructor(
             is NetworkResponse.UnknownError -> response
         }
 
-    override suspend fun requestDeletePost(postId: Int): NetworkResponse<Void> =
+    override suspend fun requestDeletePost(postId: Long): NetworkResponse<Void> =
         when (val response = postApiService.requestDeletePost(postId)) {
             is NetworkResponse.Success -> NetworkResponse.Success(response.body)
             is NetworkResponse.NetworkError -> response

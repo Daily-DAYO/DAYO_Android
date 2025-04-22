@@ -62,7 +62,7 @@ import java.text.DecimalFormat
 
 @Composable
 fun PostLikeUsersScreen(
-    postId: String,
+    postId: Long,
     onBackClick: () -> Unit,
     onProfileClick: (String) -> Unit,
     postViewModel: PostViewModel = hiltViewModel(),
@@ -75,8 +75,8 @@ fun PostLikeUsersScreen(
     val unFollowSuccess by followViewModel.followerUnfollowSuccess.observeAsState()
 
     LaunchedEffect(likeCount, followSuccess, unFollowSuccess) {
-        postViewModel.requestPostDetail(postId = postId.toInt())
-        postViewModel.requestPostLikeUsers(postId = postId.toInt())
+        postViewModel.requestPostDetail(postId = postId)
+        postViewModel.requestPostLikeUsers(postId = postId)
     }
 
     Scaffold(

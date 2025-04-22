@@ -42,7 +42,7 @@ class MainNavigator(
         navController.navigateHome()
     }
 
-    fun navigatePost(postId: String) {
+    fun navigatePost(postId: Long) {
         navController.navigatePost(postId = postId)
     }
 
@@ -141,7 +141,7 @@ class MainNavigator(
     private fun isSameCurrentDestination(route: String) =
         navController.currentDestination?.route == route
 
-    fun navigatePostLikeUsers(postId: String) {
+    fun navigatePostLikeUsers(postId: Long) {
         navController.navigatePostLikeUsers(postId = postId)
     }
 
