@@ -24,6 +24,7 @@ import androidx.lifecycle.flowWithLifecycle
 import daily.dayo.domain.model.Folder
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
+import daily.dayo.presentation.screen.write.MAX_FOLDER_COUNT
 import daily.dayo.presentation.screen.write.WriteFolderScreen
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.view.FilledRoundedCornerButton
@@ -31,6 +32,7 @@ import daily.dayo.presentation.viewmodel.FolderViewModel
 
 @Composable
 internal fun FolderPostMoveScreen(
+    currentFolderId: String,
     navigateToCreateNewFolder: () -> Unit,
     navigateBackToFolder: () -> Unit,
     onBackClick: () -> Unit,
@@ -39,8 +41,13 @@ internal fun FolderPostMoveScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val folderList = folderViewModel.folderList.observeAsState()
-    var selectedFolder by remember { mutableStateOf<String?>(null) }
+    val folderListState = folderViewModel.folderList.observeAsState()
+    val folderList = when (folderListState.value?.status) {
+        Status.SUCCESS -> folderListState.value?.data ?: emptyList()
+        else -> emptyList()
+    }
+
+    var selectedFolder by remember { mutableStateOf<Long?>(null) }
 
     LaunchedEffect(Unit) {
         folderViewModel.requestAllMyFolderList()
@@ -59,16 +66,14 @@ internal fun FolderPostMoveScreen(
     }
 
     FolderPostMoveScreen(
-        folders = when (folderList.value?.status) {
-            Status.SUCCESS -> folderList.value?.data ?: emptyList()
-            else -> emptyList()
-        },
+        currentFolderId = currentFolderId.toLong(),
+        folders = folderList,
         selectedFolder = selectedFolder,
         onFolderClick = { folderId, _ ->
-            selectedFolder = folderId
+            selectedFolder = folderId.toLongOrNull()
         },
         onPostMoveClick = {
-            folderViewModel.moveSelectedPost()
+            selectedFolder?.let { folderViewModel.moveSelectedPost(it) }
         },
         navigateToCreateNewFolder = navigateToCreateNewFolder,
         onBackClick = onBackClick
@@ -77,8 +82,9 @@ internal fun FolderPostMoveScreen(
 
 @Composable
 private fun FolderPostMoveScreen(
+    currentFolderId: Long,
     folders: List<Folder>,
-    selectedFolder: String?,
+    selectedFolder: Long?,
     onFolderClick: (String, String) -> Unit,
     onPostMoveClick: () -> Unit,
     navigateToCreateNewFolder: () -> Unit,
@@ -86,25 +92,25 @@ private fun FolderPostMoveScreen(
 ) {
     Scaffold(
         bottomBar = {
-            if (selectedFolder != null) {
-                Box(modifier = Modifier.padding(20.dp)) {
-                    FilledRoundedCornerButton(
-                        label = stringResource(id = R.string.folder_post_move),
-                        onClick = onPostMoveClick,
-                        modifier = Modifier.height(44.dp),
-                        textStyle = DayoTheme.typography.b5
-                    )
-                }
+            Box(modifier = Modifier.padding(20.dp)) {
+                FilledRoundedCornerButton(
+                    label = stringResource(id = R.string.folder_post_move),
+                    onClick = onPostMoveClick,
+                    modifier = Modifier.height(44.dp),
+                    enabled = selectedFolder != null,
+                    textStyle = DayoTheme.typography.b5
+                )
             }
         }
     ) { contentPadding ->
         Box(modifier = Modifier.padding(contentPadding)) {
             WriteFolderScreen(
+                showCreateFolder = folders.size < MAX_FOLDER_COUNT,
                 onBackClick = onBackClick,
                 onFolderClick = onFolderClick,
                 navigateToCreateNewFolder = navigateToCreateNewFolder,
-                folders = folders,
-                currentFolderId = selectedFolder
+                folders = folders.filterNot { it.folderId?.toLong() == currentFolderId },
+                currentFolderId = selectedFolder.toString()
             )
         }
     }
@@ -114,6 +120,7 @@ private fun FolderPostMoveScreen(
 @Composable
 private fun PreviewFolderPostMoveScreen() {
     FolderPostMoveScreen(
+        currentFolderId = 0,
         folders = emptyList(),
         selectedFolder = null,
         onFolderClick = { folderId, folderName -> },
