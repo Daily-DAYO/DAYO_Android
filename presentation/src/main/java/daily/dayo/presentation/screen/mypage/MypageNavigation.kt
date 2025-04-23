@@ -1,5 +1,7 @@
 package daily.dayo.presentation.screen.mypage
 
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -55,6 +57,7 @@ fun NavController.navigateBackToFolder(folderId: String) {
 }
 
 fun NavGraphBuilder.myPageNavGraph(
+    navController: NavController,
     onBackClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onFollowButtonClick: (String, Int) -> Unit,
@@ -132,7 +135,8 @@ fun NavGraphBuilder.myPageNavGraph(
             onPostClick = onPostClick,
             onFolderEditClick = { onFolderEditClick(folderId) },
             onPostMoveClick = { onPostMoveClick(folderId) },
-            onBackClick = onBackClick
+            onBackClick = onBackClick,
+            folderViewModel = hiltViewModel(navBackStackEntry)
         )
     }
 
@@ -160,10 +164,15 @@ fun NavGraphBuilder.myPageNavGraph(
         )
     ) { navBackStackEntry ->
         val folderId = navBackStackEntry.arguments?.getString("folderId") ?: ""
+        val parentStackEntry = remember(navBackStackEntry) {
+            navController.getBackStackEntry(MyPageRoute.folder(folderId))
+        }
         FolderPostMoveScreen(
-            navigateBackToFolder = { navigateBackToFolder(folderId) },
+            currentFolderId = folderId,
             navigateToCreateNewFolder = onFolderCreateClick,
-            onBackClick = onBackClick
+            navigateBackToFolder = { navigateBackToFolder(folderId) },
+            onBackClick = onBackClick,
+            folderViewModel = hiltViewModel(parentStackEntry)
         )
     }
 }

@@ -39,9 +39,9 @@ interface FolderRepository {
     ): NetworkResponse<FolderCreateInPostResponse>
 
     suspend fun requestDeleteFolder(folderId: Int): NetworkResponse<Void>
-    suspend fun requestOrderFolder(folderOrders: List<FolderOrder>): NetworkResponse<Void>
+    suspend fun requestFolderMove(postIdList: List<Long>, targetFolderId: Long): NetworkResponse<Void>
     suspend fun requestAllFolderList(memberId: String): NetworkResponse<Folders>
     suspend fun requestAllMyFolderList(): NetworkResponse<FoldersMine>
     suspend fun requestFolderInfo(folderId: Int): NetworkResponse<FolderInfo>
-    suspend fun requestDetailListFolder(folderId: Int): Flow<PagingData<FolderPost>>
+    suspend fun requestDetailListFolder(folderId: Int, folderOrder: FolderOrder): Flow<PagingData<FolderPost>>
 }
