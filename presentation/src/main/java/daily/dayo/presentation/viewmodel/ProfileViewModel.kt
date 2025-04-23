@@ -23,8 +23,10 @@ import daily.dayo.domain.usecase.member.RequestMyProfileUseCase
 import daily.dayo.domain.usecase.member.RequestOtherProfileUseCase
 import daily.dayo.presentation.common.Event
 import daily.dayo.presentation.common.Resource
+import daily.dayo.presentation.common.Status
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -68,8 +70,8 @@ class ProfileViewModel @Inject constructor(
     private val _blockSuccess = MutableLiveData<Event<Boolean>>()
     val blockSuccess: LiveData<Event<Boolean>> get() = _blockSuccess
 
-    private val _unblockSuccess = MutableLiveData<Event<Boolean>>()
-    val unblockSuccess: LiveData<Event<Boolean>> get() = _unblockSuccess
+    private val _unblockSuccess = MutableStateFlow<Status?>(null)
+    val unblockSuccess: StateFlow<Status?> get() = _unblockSuccess
 
     fun requestMyProfile() = viewModelScope.launch {
         requestMyProfileUseCase().let { ApiResponse ->
@@ -272,22 +274,23 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun requestUnblockMember(memberId: String) = viewModelScope.launch {
+        _unblockSuccess.value = Status.LOADING
         requestUnblockMemberUseCase(memberId).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _unblockSuccess.postValue(Event(true))
+                    _unblockSuccess.emit(Status.SUCCESS)
                 }
 
                 is NetworkResponse.NetworkError -> {
-                    _unblockSuccess.postValue(Event(false))
+                    _unblockSuccess.emit(Status.ERROR)
                 }
 
                 is NetworkResponse.ApiError -> {
-                    _unblockSuccess.postValue(Event(false))
+                    _unblockSuccess.emit(Status.ERROR)
                 }
 
                 is NetworkResponse.UnknownError -> {
-                    _unblockSuccess.postValue(Event(false))
+                    _unblockSuccess.emit(Status.ERROR)
                 }
             }
         }
