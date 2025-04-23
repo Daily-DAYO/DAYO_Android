@@ -128,6 +128,7 @@ internal fun MainScreen(
                                 bottomSheetContent,
                             )
                             myPageNavGraph(
+                                navController = navigator.navController,
                                 onBackClick = { navigator.popBackStack() },
                                 onSettingsClick = { navigator.navigateSettings() },
                                 onFollowButtonClick = { memberId, tabNum -> navigator.navigateFollowMenu(memberId, tabNum) },
