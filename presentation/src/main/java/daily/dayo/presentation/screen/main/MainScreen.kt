@@ -129,6 +129,7 @@ internal fun MainScreen(
                             )
                             myPageNavGraph(
                                 navController = navigator.navController,
+                                coroutineScope = coroutineScope,
                                 onBackClick = { navigator.popBackStack() },
                                 onSettingsClick = { navigator.navigateSettings() },
                                 onFollowButtonClick = { memberId, tabNum -> navigator.navigateFollowMenu(memberId, tabNum) },
@@ -157,6 +158,7 @@ internal fun MainScreen(
                                 coroutineScope = coroutineScope,
                                 snackBarHostState = snackBarHostState,
                                 onProfileEditClick = { navigator.navigateProfileEdit() },
+                                onBlockUsersClick = { navigator.navigateBlockedUsers() },
                                 onPasswordChangeClick = { navigator.navigateChangePassword() },
                                 onSettingNotificationClick = { navigator.navigateSettingsNotification() },
                                 onBackClick = { navigator.popBackStack() }
