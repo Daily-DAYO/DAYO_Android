@@ -22,6 +22,7 @@ fun NavGraphBuilder.settingsNavGraph(
     coroutineScope: CoroutineScope,
     snackBarHostState: SnackbarHostState,
     onProfileEditClick: () -> Unit,
+    onBlockUsersClick: () -> Unit,
     onBackClick: () -> Unit,
     onSettingNotificationClick: () -> Unit,
     onPasswordChangeClick: () -> Unit,
@@ -31,6 +32,7 @@ fun NavGraphBuilder.settingsNavGraph(
             onProfileEditClick = onProfileEditClick,
             onBackClick = onBackClick,
             onPasswordChangeClick = onPasswordChangeClick,
+            onBlockUsersClick = onBlockUsersClick,
             onSettingNotificationClick = onSettingNotificationClick,
         )
     }
