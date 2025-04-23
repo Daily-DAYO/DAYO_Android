@@ -537,6 +537,11 @@
     <string name="withdraw_reason_other_hint">탈퇴 사유를 작성해주세요. (100자 이내)</string>
     <string name="withdraw_final_message">계정 삭제시 정보가 회원님의 모든 콘텐츠와 활동기록이 함께 삭제됩니다. 삭제된 정보는 복구할 수 없습니다.</string>
 
+    <!-- Blocked Users -->
+    <string name="blocked_users_title">차단 관리</string>
+    <string name="blocked_users_empty_description">차단한 사용자가 없어요.</string>
+    <string name="blocked_users_unblock">차단 해제</string>
+
     <!-- Information -->
     <string name="information_title">정보</string>
 
