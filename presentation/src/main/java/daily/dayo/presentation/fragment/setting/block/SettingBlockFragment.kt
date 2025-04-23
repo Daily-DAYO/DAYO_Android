@@ -56,37 +56,37 @@ class SettingBlockFragment : Fragment() {
     }
 
     private fun setBlockListAdapter() {
-        blockListAdapter = glideRequestManager?.let { requestManager ->
-            BlockListAdapter(requestManager = requestManager)
-        }
-        binding.rvBlock.adapter = blockListAdapter
-        blockListAdapter?.setOnItemClickListener(object :
-            BlockListAdapter.OnItemClickListener {
-            override fun onItemClick(checkbox: CheckBox, blockUser: UserBlocked, position: Int) {
-                unblockUser(blockUser.memberId, position)
-            }
-        })
+//        blockListAdapter = glideRequestManager?.let { requestManager ->
+//            BlockListAdapter(requestManager = requestManager)
+//        }
+//        binding.rvBlock.adapter = blockListAdapter
+//        blockListAdapter?.setOnItemClickListener(object :
+//            BlockListAdapter.OnItemClickListener {
+//            override fun onItemClick(checkbox: CheckBox, blockUser: UserBlocked, position: Int) {
+//                unblockUser(blockUser.memberId, position)
+//            }
+//        })
     }
 
     private fun setBlockList() {
-        profileSettingViewModel.requestBlockList()
-        profileSettingViewModel.blockList.observe(viewLifecycleOwner) {
-            when (it.status) {
-                Status.SUCCESS -> it.data?.let { blockList ->
-                    blockListAdapter?.submitList(blockList)
-                }
-                else -> {}
-            }
-        }
+//        profileSettingViewModel.requestBlockList()
+//        profileSettingViewModel.blockList.observe(viewLifecycleOwner) {
+//            when (it.status) {
+//                Status.SUCCESS -> it.data?.let { blockList ->
+//                    blockListAdapter?.submitList(blockList)
+//                }
+//                else -> {}
+//            }
+//        }
     }
 
     private fun unblockUser(memberId: String, position: Int) {
-        profileViewModel.requestUnblockMember(memberId = memberId)
-        profileViewModel.unblockSuccess.observe(viewLifecycleOwner) {
-            if (it.getContentIfNotHandled() == true) {
-                profileSettingViewModel.requestBlockList()
-            }
-        }
+//        profileViewModel.requestUnblockMember(memberId = memberId)
+//        profileViewModel.unblockSuccess.observe(viewLifecycleOwner) {
+//            if (it.getContentIfNotHandled() == true) {
+//                profileSettingViewModel.requestBlockList()
+//            }
+//        }
     }
 
     private fun setBackButtonClickListener() {

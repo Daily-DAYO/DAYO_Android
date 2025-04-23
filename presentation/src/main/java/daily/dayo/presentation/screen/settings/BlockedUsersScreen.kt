@@ -15,9 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -26,14 +29,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.size.Size
+import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.view.DayoOutlinedButton
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
+import daily.dayo.presentation.viewmodel.ProfileSettingViewModel
 import daily.dayo.presentation.viewmodel.ProfileViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -43,8 +50,26 @@ fun BlockedUsersScreen(
     coroutineScope: CoroutineScope,
     onBackClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel(),
+    profileSettingViewModel: ProfileSettingViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    val blockedUsers by profileSettingViewModel.blockList.collectAsStateWithLifecycle()
+    val unblockSuccess by profileViewModel.unblockSuccess.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        profileSettingViewModel.requestBlockList()
+    }
+
+    LaunchedEffect(unblockSuccess) {
+        unblockSuccess?.let { state ->
+            when (state) {
+                Status.SUCCESS -> profileSettingViewModel.requestBlockList()
+                else -> {
+                    // TODO: Handle error state
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = { BlockedUsersActionbarLayout(onBackClick = onBackClick) },
@@ -61,18 +86,32 @@ fun BlockedUsersScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(vertical = 16.dp)
                 ) {
-                    // TODO: Replace with actual data
-                    items(10) {
-                        BlockedUser(
-                            imageUrl = "",
-                            nickName = "Blocked User Name $it",
-                            onUnblockClick = { userId ->
-                                coroutineScope.launch {
-                                    profileViewModel.requestUnblockMember(userId)
+                    if (blockedUsers.status != Status.ERROR) {
+                        blockedUsers.data?.let { blockedUsers ->
+                            itemsIndexed(
+                                blockedUsers,
+                                key = { _, user -> user.memberId }
+                            ) { _, user ->
+                                // Nickname이 null인 경우는 없을 것 같지만, null일 경우 보이지 않도록 처리
+                                user.nickname?.let { nickname ->
+                                    BlockedUser(
+                                        userId = user.memberId,
+                                        imageFileName = user.profileImg,
+                                        nickName = nickname,
+                                        onUnblockClick = { userId ->
+                                            coroutineScope.launch {
+                                                profileViewModel.requestUnblockMember(userId)
+                                            }
+                                        },
+                                        context = context,
+                                    )
                                 }
-                            },
-                            context = context,
-                        )
+                            }
+                        } ?: run {
+                            // TODO: Handle empty state
+                        }
+                    } else {
+                        // TODO: Handle error state
                     }
                 }
             }
@@ -83,7 +122,8 @@ fun BlockedUsersScreen(
 @Preview
 @Composable
 fun BlockedUser(
-    imageUrl: String = "",
+    userId: String = "",
+    imageFileName: String = "",
     nickName: String = "",
     onUnblockClick: (String) -> Unit = {},
     context: Context = LocalContext.current,
@@ -98,7 +138,7 @@ fun BlockedUser(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         RoundImageView(
-            imageUrl = imageUrl,
+            imageUrl = "${BuildConfig.BASE_URL}/images/${imageFileName}",
             context = context,
             modifier = Modifier
                 .size(36.dp)
@@ -118,9 +158,7 @@ fun BlockedUser(
         Spacer(modifier = Modifier.weight(1f))
         DayoOutlinedButton(
             label = stringResource(R.string.blocked_users_unblock),
-            onClick = {
-                onUnblockClick("userId") // Replace with actual user ID
-            },
+            onClick = { onUnblockClick(userId) },
             modifier = Modifier.height(36.dp),
         )
     }
