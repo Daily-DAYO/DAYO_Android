@@ -73,6 +73,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(
+    externalSnackBarHostState: SnackbarHostState,
     memberId: String,
     onFollowMenuClick: (String, Int) -> Unit,
     onFolderClick: (String) -> Unit,
@@ -102,7 +103,7 @@ fun ProfileScreen(
         when (onClickUserBlockSuccess) {
             Status.SUCCESS -> {
                 coroutineScope.launch {
-                    snackBarHostState.showSnackbar(context.getString(R.string.other_profile_block_success_message))
+                    externalSnackBarHostState.showSnackbar(context.getString(R.string.other_profile_block_success_message))
                 }
                 onBackClick()
             }
