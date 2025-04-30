@@ -95,7 +95,7 @@ fun ProfileScreen(
         profileInfo.value?.data?.memberId?.let { reportViewModel.requestSaveMemberReport(reason, it) }
     }
     val onClickUserBlockSuccess by profileViewModel.blockSuccess.collectAsStateWithLifecycle()
-    val onClickUserBlock: (String) -> Unit = { reason ->
+    val onClickUserBlock: (String) -> Unit = { memberId ->
         profileInfo.value?.data?.memberId?.let { profileViewModel.requestBlockMember(it) }
     }
 
