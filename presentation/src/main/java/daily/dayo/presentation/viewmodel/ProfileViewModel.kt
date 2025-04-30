@@ -275,7 +275,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun requestUnblockMember(memberId: String) = viewModelScope.launch {
-        _unblockSuccess.value = Status.LOADING
+        _unblockSuccess.emit(Status.LOADING)
         requestUnblockMemberUseCase(memberId).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
