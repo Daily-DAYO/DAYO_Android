@@ -156,7 +156,7 @@ fun ProfileScreen(
 @Composable
 private fun ProfileScreen(
     context: Context,
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    coroutineScope: CoroutineScope,
     snackBarHostState: SnackbarHostState,
     profile: Profile,
     folderList: List<Folder>,
@@ -210,10 +210,10 @@ private fun ProfileScreen(
 
     if (showReportDialog) {
         UserReportDialog(
-            onClickCancel = { showReportDialog = !showReportDialog },
+            onClickCancel = { showReportDialog = false },
             onClickConfirm = { reason ->
                 onClickUserReport(reason)
-                showReportDialog = !showReportDialog
+                showReportDialog = false
                 coroutineScope.launch {
                     snackBarHostState.showSnackbar(context.getString(R.string.report_user_alert_message))
                 }
@@ -223,13 +223,12 @@ private fun ProfileScreen(
 
     if (showBlockDialog) {
         ConfirmDialog(
-            // TODO title, description 변경
             title = stringResource(id = R.string.other_profile_block_message),
             description = stringResource(id = R.string.other_profile_block_explanation_message),
-            onClickCancel = { showBlockDialog = !showBlockDialog },
+            onClickCancel = { showBlockDialog = false },
             onClickConfirm = {
                 onClickUserBlock(profile.memberId ?: "")
-                showBlockDialog = !showBlockDialog
+                showBlockDialog = false
             },
         )
     }
