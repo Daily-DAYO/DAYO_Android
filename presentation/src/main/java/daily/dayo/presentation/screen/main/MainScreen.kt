@@ -129,7 +129,6 @@ internal fun MainScreen(
                             )
                             myPageNavGraph(
                                 navController = navigator.navController,
-                                coroutineScope = coroutineScope,
                                 onBackClick = { navigator.popBackStack() },
                                 onSettingsClick = { navigator.navigateSettings() },
                                 onFollowButtonClick = { memberId, tabNum -> navigator.navigateFollowMenu(memberId, tabNum) },

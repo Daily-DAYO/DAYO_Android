@@ -346,6 +346,8 @@
     <string name="other_profile_block_message">사용자를 차단할까요?</string>
     <string name="other_profile_block_explanation_message">사용자를 차단하면\n 서로 게시물을 볼 수 없어요.</string>
     <string name="other_profile_block_success_message">사용자가 차단되었어요.</string>
+    <string name="other_profile_unblock_success_message">사용자가 차단해제되었어요.</string>
+    <string name="other_profile_unblock_fail_message">차단 해제에 실패했어요. 다시 시도해주세요</string>
     <string name="other_profile_option_report_user">사용자 신고</string>
     <string name="my_profile_option_my_info">로그인 정보</string>
     <string name="my_profile_option_setting_env">환경설정</string>
@@ -539,7 +541,7 @@
 
     <!-- Blocked Users -->
     <string name="blocked_users_title">차단 관리</string>
-    <string name="blocked_users_empty_description">차단한 사용자가 없어요.</string>
+    <string name="blocked_users_empty_description">아직 차단한 유저가 없어요.</string>
     <string name="blocked_users_unblock">차단 해제</string>
 
     <!-- Information -->

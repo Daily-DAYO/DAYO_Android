@@ -63,7 +63,6 @@ fun NavController.navigateBackToFolder(folderId: String) {
 }
 
 fun NavGraphBuilder.myPageNavGraph(
-    coroutineScope: CoroutineScope,
     navController: NavController,
     onBackClick: () -> Unit,
     onSettingsClick: () -> Unit,
@@ -118,7 +117,6 @@ fun NavGraphBuilder.myPageNavGraph(
 
     composable(MyPageRoute.blockedUsers()) {
         BlockedUsersScreen(
-            coroutineScope = coroutineScope,
             onBackClick = onBackClick,
         )
     }
