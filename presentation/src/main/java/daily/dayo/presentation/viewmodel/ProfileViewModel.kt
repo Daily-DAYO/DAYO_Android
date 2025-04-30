@@ -67,8 +67,8 @@ class ProfileViewModel @Inject constructor(
     private val _likePostList = MutableLiveData<PagingData<LikePost>>()
     val likePostList: LiveData<PagingData<LikePost>> get() = _likePostList
 
-    private val _blockSuccess = MutableLiveData<Event<Boolean>>()
-    val blockSuccess: LiveData<Event<Boolean>> get() = _blockSuccess
+    private val _blockSuccess = MutableStateFlow<Status?>(null)
+    val blockSuccess: StateFlow<Status?> get() = _blockSuccess
 
     private val _unblockSuccess = MutableStateFlow<Status?>(null)
     val unblockSuccess: StateFlow<Status?> get() = _unblockSuccess
@@ -252,22 +252,23 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun requestBlockMember(memberId: String) = viewModelScope.launch {
+        _blockSuccess.emit(Status.LOADING)
         requestBlockMemberUseCase(memberId)?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _blockSuccess.postValue(Event(true))
+                    _blockSuccess.emit(Status.SUCCESS)
                 }
 
                 is NetworkResponse.NetworkError -> {
-                    _blockSuccess.postValue(Event(false))
+                    _blockSuccess.emit(Status.ERROR)
                 }
 
                 is NetworkResponse.ApiError -> {
-                    _blockSuccess.postValue(Event(false))
+                    _blockSuccess.emit(Status.ERROR)
                 }
 
                 is NetworkResponse.UnknownError -> {
-                    _blockSuccess.postValue(Event(false))
+                    _blockSuccess.emit(Status.ERROR)
                 }
             }
         }
