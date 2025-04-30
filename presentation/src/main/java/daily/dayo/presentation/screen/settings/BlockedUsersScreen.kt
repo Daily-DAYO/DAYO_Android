@@ -45,6 +45,7 @@ import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.view.DayoOutlinedButton
+import daily.dayo.presentation.view.FilledRoundedCornerButton
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
@@ -128,11 +129,19 @@ fun BlockedUsersScreen(
                                         )
                                         Spacer(modifier = Modifier.height(20.dp))
                                         Text(
-                                            text = stringResource(R.string.blocked_users_empty_description),
+                                            text = stringResource(R.string.blocked_users_error_description),
                                             color = Gray3_9FA5AE,
                                             style = DayoTheme.typography.b3,
                                             modifier = Modifier
                                                 .wrapContentSize()
+                                        )
+                                        Spacer(modifier = Modifier.height(20.dp))
+                                        FilledRoundedCornerButton(
+                                            modifier = Modifier
+                                                .padding(horizontal = 20.dp)
+                                                .wrapContentSize(),
+                                            onClick = { profileSettingViewModel.requestBlockList() },
+                                            label = stringResource(R.string.re_try)
                                         )
                                     }
                                 }
@@ -159,7 +168,40 @@ fun BlockedUsersScreen(
                             }
                         }
                     } else {
-                        // TODO: Handle error state
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(top = 164.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_blocked_users_empty),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .width(136.dp)
+                                        .wrapContentHeight()
+                                        .padding(6.5.dp)
+                                )
+                                Spacer(modifier = Modifier.height(20.dp))
+                                Text(
+                                    text = stringResource(R.string.blocked_users_error_description),
+                                    color = Gray3_9FA5AE,
+                                    style = DayoTheme.typography.b3,
+                                    modifier = Modifier
+                                        .wrapContentSize()
+                                )
+                                Spacer(modifier = Modifier.height(20.dp))
+                                FilledRoundedCornerButton(
+                                    modifier = Modifier
+                                        .padding(horizontal = 20.dp)
+                                        .wrapContentSize(),
+                                    onClick = { profileSettingViewModel.requestBlockList() },
+                                    label = stringResource(R.string.re_try)
+                                )
+                            }
+                        }
                     }
                 }
             }

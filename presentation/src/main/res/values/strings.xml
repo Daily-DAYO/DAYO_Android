@@ -32,6 +32,7 @@
     <string name="back_sign">뒤로가기</string>
     <string name="loading_default_message">잠시만 기다려 주세요</string>
     <string name="close_sign">닫기</string>
+    <string name="re_try">재시도</string>
 
     <!-- Time -->
     <string name="time_format">%d%s</string>
@@ -542,6 +543,7 @@
     <!-- Blocked Users -->
     <string name="blocked_users_title">차단 관리</string>
     <string name="blocked_users_empty_description">아직 차단한 유저가 없어요.</string>
+    <string name="blocked_users_error_description">로딩에 실패 했어요.</string>
     <string name="blocked_users_unblock">차단 해제</string>
 
     <!-- Information -->
