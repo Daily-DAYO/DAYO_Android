@@ -15,7 +15,7 @@ class CommentRepositoryImpl @Inject constructor(
     private val commentApiService: CommentApiService
 ) : CommentRepository {
 
-    override suspend fun requestPostComment(postId: Int): NetworkResponse<Comments> =
+    override suspend fun requestPostComment(postId: Long): NetworkResponse<Comments> =
         when (val response =
             commentApiService.requestPostComment(postId)) {
             is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toComments())
@@ -26,7 +26,7 @@ class CommentRepositoryImpl @Inject constructor(
 
     override suspend fun requestCreatePostComment(
         contents: String,
-        postId: Int,
+        postId: Long,
         mentionList: List<MentionUser>
     ): NetworkResponse<Int> =
         when (val response =
@@ -48,7 +48,7 @@ class CommentRepositoryImpl @Inject constructor(
     override suspend fun requestCreatePostCommentReply(
         commentId: Long,
         contents: String,
-        postId: Int,
+        postId: Long,
         mentionList: List<MentionUser>
     ): NetworkResponse<Int> =
         when (val response =

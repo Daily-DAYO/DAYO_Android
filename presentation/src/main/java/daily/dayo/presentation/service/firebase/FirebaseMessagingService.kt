@@ -30,7 +30,7 @@ class FirebaseMessagingService : FirebaseMessagingService() {
         super.onMessageReceived(remoteMessage)
         if (remoteMessage.data.isNotEmpty()) {
             val body = remoteMessage.data["body"]
-            val postId = remoteMessage.data["postId"]
+            val postId = remoteMessage.data["postId"]?.toLong()
             val memberId = remoteMessage.data["memberId"]
             sendNotification(body = body, postId = postId, memberId = memberId)
         } else if (remoteMessage.notification != null) {
@@ -39,7 +39,7 @@ class FirebaseMessagingService : FirebaseMessagingService() {
         }
     }
 
-    private fun sendNotification(body: String?, postId: String?, memberId: String?) {
+    private fun sendNotification(body: String?, postId: Long?, memberId: String?) {
         val id = System.currentTimeMillis().toInt()
 
         // notification 클릭 시 이동하는 액티비티

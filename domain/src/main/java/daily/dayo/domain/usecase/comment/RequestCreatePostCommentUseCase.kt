@@ -7,6 +7,6 @@ import javax.inject.Inject
 class RequestCreatePostCommentUseCase @Inject constructor(
     private val commentRepository: CommentRepository
 ) {
-    suspend operator fun invoke(contents: String, postId: Int, mentionList: List<MentionUser>) =
+    suspend operator fun invoke(contents: String, postId: Long, mentionList: List<MentionUser>) =
         commentRepository.requestCreatePostComment(contents = contents, postId = postId, mentionList = mentionList)
 }

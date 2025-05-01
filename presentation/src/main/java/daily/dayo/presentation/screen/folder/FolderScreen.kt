@@ -86,8 +86,8 @@ import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun FolderScreen(
-    folderId: String,
-    onPostClick: (String) -> Unit,
+    folderId: Long,
+    onPostClick: (Long) -> Unit,
     onFolderEditClick: () -> Unit,
     onPostMoveClick: () -> Unit,
     onBackClick: () -> Unit,
@@ -130,8 +130,8 @@ fun FolderScreen(
     )
 
     LaunchedEffect(folderId) {
-        folderViewModel.requestFolderInfo(folderId.toInt())
-        folderViewModel.requestFolderPostList(folderId.toInt())
+        folderViewModel.requestFolderInfo(folderId)
+        folderViewModel.requestFolderPostList(folderId)
     }
 
     LaunchedEffect(folderDeleteSuccess) {
@@ -149,7 +149,7 @@ fun FolderScreen(
                     Toast.makeText(context, context.getString(R.string.error_message), Toast.LENGTH_SHORT).show()
                 }
                 folderViewModel.toggleEditMode()
-                folderViewModel.requestFolderPostList(folderId.toInt())
+                folderViewModel.requestFolderPostList(folderId)
             }
     }
 
@@ -158,10 +158,10 @@ fun FolderScreen(
         folderPosts = folderPosts,
         optionMenu = optionMenu,
         onPostClick = { postId -> onPostClick(postId) },
-        onPostSelect = { postId -> folderViewModel.toggleSelection(postId.toInt()) },
+        onPostSelect = { postId -> folderViewModel.toggleSelection(postId) },
         onCancelClick = { folderViewModel.toggleEditMode() },
         onPostDeleteClick = { showPostDeleteAlertDialog = true },
-        onClickSort = { folderViewModel.toggleFolderOrder(folderId.toInt()) },
+        onClickSort = { folderViewModel.toggleFolderOrder(folderId) },
         onPostMoveClick = onPostMoveClick,
         onBackClick = onBackClick
     )
@@ -173,7 +173,7 @@ fun FolderScreen(
                 showFolderDeleteAlertDialog = false
                 showLoadingDialog(loadingAlertDialog.value)
                 resizeDialogFragment(context, loadingAlertDialog.value, 0.8f)
-                folderViewModel.requestDeleteFolder(folderId.toInt())
+                folderViewModel.requestDeleteFolder(folderId)
             },
             onShowChange = { showFolderDeleteAlertDialog = it }
         )
@@ -186,7 +186,7 @@ fun FolderScreen(
                 showPostDeleteAlertDialog = false
                 // TODO Show Loading
                 folderViewModel.deletePosts()
-                folderViewModel.requestDeleteFolder(folderId.toInt())
+                folderViewModel.requestDeleteFolder(folderId)
             },
             onShowChange = { showPostDeleteAlertDialog = it }
         )
@@ -198,8 +198,8 @@ private fun FolderScreen(
     folderUiState: FolderUiState,
     folderPosts: LazyPagingItems<FolderPost>,
     optionMenu: List<FolderOptionMenu>,
-    onPostClick: (String) -> Unit,
-    onPostSelect: (String) -> Unit,
+    onPostClick: (Long) -> Unit,
+    onPostSelect: (Long) -> Unit,
     onPostDeleteClick: () -> Unit,
     onPostMoveClick: () -> Unit,
     onClickSort: () -> Unit,
@@ -494,8 +494,8 @@ private fun FolderSortSelector(folderOrder: FolderOrder, onClickSort: () -> Unit
 private fun FolderContent(
     folderUiState: FolderUiState,
     folderPosts: LazyPagingItems<FolderPost>,
-    onPostClick: (String) -> Unit,
-    onPostSelect: (String) -> Unit
+    onPostClick: (Long) -> Unit,
+    onPostSelect: (Long) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -523,8 +523,8 @@ private fun FolderPostItem(
     post: FolderPost,
     isEditMode: Boolean,
     isSelected: Boolean,
-    onPostClick: (String) -> Unit,
-    onPostSelect: (String) -> Unit
+    onPostClick: (Long) -> Unit,
+    onPostSelect: (Long) -> Unit
 ) {
     val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 
@@ -534,9 +534,9 @@ private fun FolderPostItem(
             indication = null,
             onClick = {
                 if (isEditMode) {
-                    onPostSelect(post.postId.toString())
+                    onPostSelect(post.postId)
                 } else {
-                    onPostClick(post.postId.toString())
+                    onPostClick(post.postId)
                 }
             }
         )
@@ -553,7 +553,7 @@ private fun FolderPostItem(
         if (isEditMode) {
             DayoCheckbox(
                 checked = isSelected,
-                onCheckedChange = { onPostSelect(post.postId.toString()) },
+                onCheckedChange = { onPostSelect(post.postId) },
                 modifier = Modifier.align(Alignment.TopEnd),
                 interactionSource = interactionSource
             )

@@ -14,7 +14,7 @@ import javax.inject.Inject
 class BookmarkRepositoryImpl @Inject constructor(
     private val bookmarkApiService: BookmarkApiService
 ) : BookmarkRepository {
-    override suspend fun requestBookmarkPost(postId: Int): NetworkResponse<BookmarkPostResponse> {
+    override suspend fun requestBookmarkPost(postId: Long): NetworkResponse<BookmarkPostResponse> {
         return when (val response = bookmarkApiService.requestBookmarkPost(CreateBookmarkRequest(postId = postId))) {
             is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toBookmarkPostResponse)
             is NetworkResponse.NetworkError -> response
@@ -23,7 +23,7 @@ class BookmarkRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun requestDeleteBookmarkPost(postId: Int): NetworkResponse<Void> =
+    override suspend fun requestDeleteBookmarkPost(postId: Long): NetworkResponse<Void> =
         bookmarkApiService.requestDeleteBookmarkPost(postId)
 
     override suspend fun requestAllMyBookmarkPostList() =

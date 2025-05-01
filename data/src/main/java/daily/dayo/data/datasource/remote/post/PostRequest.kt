@@ -9,7 +9,7 @@ data class EditPostRequest (
     @SerializedName("contents")
     val contents : String,
     @SerializedName("folderId")
-    val folderId : Int,
+    val folderId : Long,
     @SerializedName("hashtags")
     val hashtags : List<String>
 )

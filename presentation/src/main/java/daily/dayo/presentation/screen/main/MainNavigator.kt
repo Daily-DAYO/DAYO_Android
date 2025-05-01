@@ -42,7 +42,7 @@ class MainNavigator(
         navController.navigateHome()
     }
 
-    fun navigatePost(postId: String) {
+    fun navigatePost(postId: Long) {
         navController.navigatePost(postId = postId)
     }
 
@@ -92,11 +92,11 @@ class MainNavigator(
         navController.navigateFolderCreate()
     }
 
-    fun navigateFolderEdit(folderId: String) {
+    fun navigateFolderEdit(folderId: Long) {
         navController.navigateFolderEdit(folderId)
     }
 
-    fun navigateFolderPostMove(folderId: String) {
+    fun navigateFolderPostMove(folderId: Long) {
         navController.navigateFolderPostMove(folderId)
     }
 
@@ -104,11 +104,11 @@ class MainNavigator(
         navController.navigateFollowMenu(memberId, tabNum)
     }
 
-    fun navigateFolder(folderId: String) {
+    fun navigateFolder(folderId: Long) {
         navController.navigateFolder(folderId)
     }
 
-    fun navigateBackToFolder(folderId: String) {
+    fun navigateBackToFolder(folderId: Long) {
         navController.navigateBackToFolder(folderId)
     }
 
@@ -141,7 +141,7 @@ class MainNavigator(
     private fun isSameCurrentDestination(route: String) =
         navController.currentDestination?.route == route
 
-    fun navigatePostLikeUsers(postId: String) {
+    fun navigatePostLikeUsers(postId: Long) {
         navController.navigatePostLikeUsers(postId = postId)
     }
 
