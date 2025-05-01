@@ -161,7 +161,7 @@ fun FolderScreen(
         onPostSelect = { postId -> folderViewModel.toggleSelection(postId) },
         onCancelClick = { folderViewModel.toggleEditMode() },
         onPostDeleteClick = { showPostDeleteAlertDialog = true },
-        onClickSort = { folderViewModel.toggleFolderOrder(folderId.toInt()) },
+        onClickSort = { folderViewModel.toggleFolderOrder(folderId) },
         onPostMoveClick = onPostMoveClick,
         onBackClick = onBackClick
     )

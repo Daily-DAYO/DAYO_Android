@@ -34,11 +34,6 @@ data class FolderPost(
     val thumbnailImage: String
 )
 
-data class FolderOrder(
-    var folderId: Long,
-    var orderIndex: Int
-)
-
 data class FolderCreateResponse(
     val folderId: Long
 )
