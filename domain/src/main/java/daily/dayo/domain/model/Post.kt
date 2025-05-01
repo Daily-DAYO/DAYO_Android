@@ -1,7 +1,7 @@
 package daily.dayo.domain.model
 
 data class Post(
-    val postId: Int?,
+    val postId: Long?,
     val memberId: String?,
     val nickname: String,
     val userProfileImage: String,
@@ -16,7 +16,7 @@ data class Post(
     var bookmark: Boolean?,
     var heart: Boolean,
     var heartCount: Int,
-    val folderId: Int?,
+    val folderId: Long?,
     val folderName: String?,
     var preLoadThumbnail: ByteArray?=null,
     var preLoadUserImg: ByteArray?=null
@@ -27,7 +27,7 @@ data class PostDetail(
     val category: Category,
     val contents: String,
     val createDateTime: String,
-    val folderId: Int,
+    val folderId: Long,
     val folderName: String,
     val hashtags: List<String>,
     var heart: Boolean,
@@ -39,11 +39,11 @@ data class PostDetail(
 )
 
 data class PostCreateResponse(
-    val id: Int
+    val id: Long
 )
 
 data class PostEditResponse(
-    val postId: Int
+    val postId: Long
 )
 
 data class Posts(
