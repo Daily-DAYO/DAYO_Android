@@ -9,7 +9,7 @@ enum class FolderOrder {
 }
 
 data class Folder(
-    val folderId: Int?,
+    val folderId: Long?,
     val title: String,
     val memberId: String?,
     val privacy: Privacy,
@@ -30,20 +30,25 @@ data class FoldersMine(
 
 data class FolderPost(
     val createDate: String,
-    val postId: Int,
+    val postId: Long,
     val thumbnailImage: String
 )
 
+data class FolderOrder(
+    var folderId: Long,
+    var orderIndex: Int
+)
+
 data class FolderCreateResponse(
-    val folderId: Int
+    val folderId: Long
 )
 
 data class FolderCreateInPostResponse(
-    val folderId: Int
+    val folderId: Long
 )
 
 data class FolderEditResponse(
-    val folderId: Int
+    val folderId: Long
 )
 
 data class FolderInfo(

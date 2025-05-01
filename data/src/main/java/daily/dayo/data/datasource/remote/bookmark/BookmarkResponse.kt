@@ -6,7 +6,7 @@ data class CreateBookmarkResponse(
     @SerializedName("memberId")
     val memberId: String,
     @SerializedName("postId")
-    val postId: Int
+    val postId: Long
 )
 
 data class ListAllMyBookmarkPostResponse(
@@ -20,7 +20,7 @@ data class ListAllMyBookmarkPostResponse(
 
 data class BookmarkPostDto(
     @SerializedName("postId")
-    val postId: Int,
+    val postId: Long,
     @SerializedName("thumbnailImage")
     val thumbnailImage: String
 )

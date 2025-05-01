@@ -8,10 +8,10 @@ class RequestEditPostUseCase @Inject constructor(
     private val postRepository: PostRepository
 ) {
     suspend operator fun invoke(
-        postId: Int,
+        postId: Long,
         category: Category,
         contents: String,
-        folderId: Int,
+        folderId: Long,
         hashtags: List<String>
     ) =
         postRepository.requestEditPost(postId, category, contents, folderId, hashtags)

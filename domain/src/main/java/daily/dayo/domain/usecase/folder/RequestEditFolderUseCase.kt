@@ -14,7 +14,7 @@ class RequestEditFolderUseCase @Inject constructor(
     private val folderRepository: FolderRepository
 ) {
     suspend operator fun invoke(
-        folderId: Int,
+        folderId: Long,
         name: String,
         privacy: Privacy,
         subheading: String?,

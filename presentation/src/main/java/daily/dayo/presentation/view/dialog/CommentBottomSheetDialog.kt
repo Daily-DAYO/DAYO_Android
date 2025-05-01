@@ -62,7 +62,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CommentBottomSheetDialog(
-    postId: Int,
+    postId: Long,
     sheetState: ModalBottomSheetState,
     snackBarHostState: SnackbarHostState,
     onClickProfile: (String) -> Unit,

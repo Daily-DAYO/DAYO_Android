@@ -17,7 +17,7 @@ class RequestUploadPostUseCase @Inject constructor(
         category: Category,
         contents: String,
         files: Array<File>,
-        folderId: Int,
+        folderId: Long,
         tags: Array<String>
     ): NetworkResponse<PostCreateResponse> {
         val uploadFiles: ArrayList<MultipartBody.Part> = ArrayList()

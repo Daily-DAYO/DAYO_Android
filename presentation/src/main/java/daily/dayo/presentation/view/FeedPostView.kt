@@ -90,7 +90,7 @@ fun FeedPostView(
     onClickPost: () -> Unit,
     onClickLikePost: () -> Unit,
     onClickBookmark: () -> Unit,
-    onPostLikeUsersClick: (String) -> Unit,
+    onPostLikeUsersClick: (Long) -> Unit,
     onPostHashtagClick: (String) -> Unit,
     bottomSheetState: ModalBottomSheetState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
@@ -102,7 +102,7 @@ fun FeedPostView(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    val onClickComment: (Int) -> Unit = { postId ->
+    val onClickComment: (Long) -> Unit = { postId ->
         coroutineScope.launch { bottomSheetState.show() }
         bottomSheetContent {
             CommentBottomSheetDialog(
@@ -269,7 +269,7 @@ fun FeedPostView(
                     .clickableSingle(
                         indication = rememberRipple(bounded = false),
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = { onClickComment(post.postId!!) }
+                        onClick = { post.postId?.let { onClickComment(it) } }
                     ),
                 contentDescription = "comment",
             )
@@ -304,7 +304,7 @@ fun FeedPostView(
                 Text(text = stringResource(id = R.string.post_like_count_message_1), style = DayoTheme.typography.caption1.copy(Gray2_767B83))
                 Text(text = " ${dec.format(post.heartCount)} ",
                     style = DayoTheme.typography.caption1,
-                    modifier = if (post.heartCount != 0) Modifier.clickableSingle { onPostLikeUsersClick(post.postId.toString()) } else Modifier,
+                    modifier = if (post.heartCount != 0) Modifier.clickableSingle { post.postId?.let { onPostLikeUsersClick(it) } } else Modifier,
                     color = if (post.heartCount != 0) Primary_23C882 else Gray4_C5CAD2)
                 Text(text = stringResource(id = R.string.post_like_count_message_2), style = DayoTheme.typography.caption1.copy(Gray2_767B83))
             }
@@ -341,10 +341,12 @@ fun FeedPostView(
         PostReportDialog(
             onClickCancel = { showDialog = !showDialog },
             onClickConfirm = { reason ->
-                reportViewModel.requestSavePostReport(reason, post.postId!!)
-                showDialog = !showDialog
-                coroutineScope.launch {
-                    snackBarHostState.showSnackbar(context.getString(R.string.report_comment_alert_message))
+                post.postId?.let { postId ->
+                    reportViewModel.requestSavePostReport(reason, postId)
+                    showDialog = !showDialog
+                    coroutineScope.launch {
+                        snackBarHostState.showSnackbar(context.getString(R.string.report_comment_alert_message))
+                    }
                 }
             }
         )

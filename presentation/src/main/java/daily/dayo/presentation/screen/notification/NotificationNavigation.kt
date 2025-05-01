@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 
 fun NavGraphBuilder.notificationNavGraph(
-    onPostClick: (String) -> Unit,
+    onPostClick: (Long) -> Unit,
     onProfileClick: (String) -> Unit,
     onNoticeClick: (Long) -> Unit,
 ) {

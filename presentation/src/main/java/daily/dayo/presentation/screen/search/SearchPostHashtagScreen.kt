@@ -39,7 +39,6 @@ import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Primary_23C882
-import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
@@ -49,7 +48,7 @@ import daily.dayo.presentation.viewmodel.SearchViewModel
 fun SearchPostHashtagScreen(
     hashtag: String,
     onBackClick: () -> Unit,
-    onPostClick: (String) -> Unit,
+    onPostClick: (Long) -> Unit,
     searchViewModel: SearchViewModel = hiltViewModel()
 ) {
     val isLatest by rememberSaveable { mutableStateOf(true) } // TODO api 수정 후 구현
@@ -115,7 +114,7 @@ fun SearchPostHashtagScreen(
                             .clickableSingle(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null,
-                                onClick = { onPostClick(post?.postId.toString()) }
+                                onClick = { post?.postId?.let { onPostClick(it) } }
                             )
                             .padding(bottom = 4.dp)
                     )

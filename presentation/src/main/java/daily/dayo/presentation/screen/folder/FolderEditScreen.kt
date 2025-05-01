@@ -49,7 +49,7 @@ import daily.dayo.presentation.viewmodel.FolderViewModel
 
 @Composable
 fun FolderEditScreen(
-    folderId: String,
+    folderId: Long,
     onBackClick: () -> Unit,
     folderViewModel: FolderViewModel = hiltViewModel()
 ) {
@@ -62,7 +62,7 @@ fun FolderEditScreen(
     val editSuccess by folderViewModel.editSuccess.collectAsStateWithLifecycle(false)
 
     LaunchedEffect(folderId) {
-        folderViewModel.requestFolderInfo(folderId.toInt())
+        folderViewModel.requestFolderInfo(folderId)
     }
 
     LaunchedEffect(folderUiState) {
@@ -85,7 +85,7 @@ fun FolderEditScreen(
 
             folderInfo.value?.run {
                 folderViewModel.requestEditFolder(
-                    folderId = folderId.toInt(),
+                    folderId = folderId,
                     name = name,
                     subheading = subheading,
                     privacy = privacy

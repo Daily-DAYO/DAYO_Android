@@ -76,7 +76,7 @@ import kotlinx.coroutines.flow.flowOf
 @Preview
 fun NotificationScreen(
     notificationViewModel: NotificationViewModel = hiltViewModel(),
-    onPostClick: (String) -> Unit = {},
+    onPostClick: (Long) -> Unit = {},
     onProfileClick: (String) -> Unit = {},
     onNoticeClick: (Long) -> Unit = {},
 ) {
@@ -141,7 +141,7 @@ fun NotificationContent(
         )
     ).collectAsLazyPagingItems(),
     markAlarmAsChecked: (Int) -> Unit = {},
-    onPostClick: (String) -> Unit = {},
+    onPostClick: (Long) -> Unit = {},
     onProfileClick: (String) -> Unit = {},
     onNoticeClick: (Long) -> Unit = {},
 ) {
@@ -440,7 +440,7 @@ fun NotificationView(
 
 fun performNotificationNavigation(
     notification: Notification,
-    onPostClick: (String) -> Unit,
+    onPostClick: (Long) -> Unit,
     onProfileClick: (String) -> Unit,
     onNoticeClick: (Long) -> Unit,
 ) {
@@ -448,13 +448,13 @@ fun performNotificationNavigation(
         when (topic) {
             Topic.HEART -> {
                 notification.postId?.let { id ->
-                    onPostClick(id.toString())
+                    onPostClick(id)
                 }
             }
 
             Topic.COMMENT -> {
                 notification.postId?.let { id ->
-                    onPostClick(id.toString())
+                    onPostClick(id)
                 }
             }
 
@@ -471,7 +471,7 @@ fun performNotificationNavigation(
 
             Topic.MENTION -> {
                 notification.postId?.let { id ->
-                    onPostClick(id.toString())
+                    onPostClick(id)
                 }
             }
 
