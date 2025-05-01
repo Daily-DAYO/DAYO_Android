@@ -22,7 +22,7 @@ import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Red_FF4545
 
 @Composable
-fun MyPostDropdownMenu(postId: String, expanded: Boolean, onDismissRequest: () -> Unit, onPostModifyClick: (String) -> Unit, onPostDeleteClick: (String) -> Unit) {
+fun MyPostDropdownMenu(postId: Long, expanded: Boolean, onDismissRequest: () -> Unit, onPostModifyClick: (Long) -> Unit, onPostDeleteClick: (Long) -> Unit) {
     DayoTheme(shapes = DayoTheme.shapes.copy(extraSmall = RoundedCornerShape(16.dp))) {
         DropdownMenu(
             expanded = expanded,

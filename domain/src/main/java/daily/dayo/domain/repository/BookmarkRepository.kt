@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface BookmarkRepository {
     
-    suspend fun requestBookmarkPost(postId: Int): NetworkResponse<BookmarkPostResponse>
-    suspend fun requestDeleteBookmarkPost(postId: Int): NetworkResponse<Void>
+    suspend fun requestBookmarkPost(postId: Long): NetworkResponse<BookmarkPostResponse>
+    suspend fun requestDeleteBookmarkPost(postId: Long): NetworkResponse<Void>
     suspend fun requestAllMyBookmarkPostList(): Flow<PagingData<BookmarkPost>>
     suspend fun requestBookmarkCount(): Int
 }

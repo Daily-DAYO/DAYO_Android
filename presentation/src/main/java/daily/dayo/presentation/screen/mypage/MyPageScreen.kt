@@ -71,7 +71,7 @@ fun MyPageScreen(
     onFollowButtonClick: (String, Int) -> Unit,
     onProfileEditClick: () -> Unit,
     onBookmarkClick: () -> Unit,
-    onFolderClick: (String) -> Unit,
+    onFolderClick: (Long) -> Unit,
     onFolderCreateClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel(),
     folderViewModel: FolderViewModel = hiltViewModel()
@@ -334,7 +334,7 @@ private fun MyPageDiaryHeader(
 }
 
 @Composable
-private fun MyPageDiary(folder: Folder, onFolderClick: (String) -> Unit) {
+private fun MyPageDiary(folder: Folder, onFolderClick: (Long) -> Unit) {
     FolderView(
         folder = folder,
         onClickFolder = onFolderClick,

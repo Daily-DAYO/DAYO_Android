@@ -65,20 +65,20 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun DetailPostView(
-    postId: String,
+    postId: Long,
     post: PostDetail,
     commentCount: Int,
     currentMemberId: String?,
     snackBarHostState: SnackbarHostState,
     onClickProfile: (String) -> Unit,
     onClickPost: () -> Unit,
-    onPostModifyClick: (String) -> Unit,
-    onPostDeleteClick: (String) -> Unit,
+    onPostModifyClick: (Long) -> Unit,
+    onPostDeleteClick: (Long) -> Unit,
     onClickLikePost: () -> Unit,
     onClickComment: () -> Unit,
     onClickBookmark: () -> Unit,
     onClickReport: (String) -> Unit,
-    onPostLikeUsersClick: (String) -> Unit,
+    onPostLikeUsersClick: (Long) -> Unit,
     onPostHashtagClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -324,7 +324,7 @@ fun DetailPostView(
 private fun PreviewDetailPostView() {
     DayoTheme {
         DetailPostView(
-            postId = "0",
+            postId = 0L,
             post = DEFAULT_POST,
             commentCount = 0,
             currentMemberId = "",

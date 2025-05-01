@@ -76,7 +76,7 @@ class FolderViewModel @Inject constructor(
         _uiState.update { it.copy(isEditMode = !it.isEditMode, selectedPosts = emptySet()) }
     }
 
-    fun toggleSelection(postId: Int) {
+    fun toggleSelection(postId: Long) {
         _uiState.update {
             val currentSelection = it.selectedPosts
             val newSelection = if (currentSelection.contains(postId)) {
@@ -88,7 +88,7 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun toggleFolderOrder(folderId: Int) {
+    fun toggleFolderOrder(folderId: Long) {
         val newOrder = when (_uiState.value.folderOrder) {
             FolderOrder.NEW -> FolderOrder.OLD
             FolderOrder.OLD -> FolderOrder.NEW
@@ -137,7 +137,7 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun requestEditFolder(folderId: Int, name: String, subheading: String, privacy: Privacy) {
+    fun requestEditFolder(folderId: Long, name: String, subheading: String, privacy: Privacy) {
         viewModelScope.launch {
             requestEditFolderUseCase(
                 folderId = folderId,
@@ -155,7 +155,7 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun requestDeleteFolder(folderId: Int) {
+    fun requestDeleteFolder(folderId: Long) {
         viewModelScope.launch {
             requestDeleteFolderUseCase(folderId = folderId).let { response ->
                 when (response) {
@@ -214,7 +214,7 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun requestFolderInfo(folderId: Int) {
+    fun requestFolderInfo(folderId: Long) {
         viewModelScope.launch {
             val result = when (val response = requestFolderInfoUseCase(folderId)) {
                 is NetworkResponse.Success -> response.body ?: DEFAULT_FOLDER_INFO
@@ -227,7 +227,7 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun requestFolderPostList(folderId: Int) {
+    fun requestFolderPostList(folderId: Long) {
         viewModelScope.launch {
             val folderPosts = requestFolderPostListUseCase(folderId, _uiState.value.folderOrder)
                 .cachedIn(viewModelScope)
@@ -258,7 +258,7 @@ data class FolderUiState(
     val folderPosts: Flow<PagingData<FolderPost>> = flow { emit(PagingData.empty()) },
     val folderOrder: FolderOrder = FolderOrder.NEW,
     val isEditMode: Boolean = false,
-    val selectedPosts: Set<Int> = emptySet()
+    val selectedPosts: Set<Long> = emptySet()
 )
 
 val DEFAULT_FOLDER_INFO = FolderInfo(

@@ -2,13 +2,7 @@ package daily.dayo.data.datasource.remote.folder
 
 import daily.dayo.domain.model.NetworkResponse
 import okhttp3.MultipartBody
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Multipart
-import retrofit2.http.POST
-import retrofit2.http.Part
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface FolderApiService {
 
@@ -24,7 +18,7 @@ interface FolderApiService {
     @Multipart
     @POST("/api/v1/folders/patch")
     suspend fun requestEditFolder(
-        @Part("folderId") folderId: Int,
+        @Part("folderId") folderId: Long,
         @Part("name") name: String,
         @Part("privacy") privacy: String,
         @Part("subheading") subheading: String?,
@@ -36,7 +30,7 @@ interface FolderApiService {
     suspend fun requestCreateFolderInPost(@Body body: CreateFolderInPostRequest): NetworkResponse<CreateFolderInPostResponse>
 
     @POST("/api/v1/folders/delete/{folderId}")
-    suspend fun requestDeleteFolder(@Path("folderId") folderId: Int): NetworkResponse<Void>
+    suspend fun requestDeleteFolder(@Path("folderId") folderId: Long): NetworkResponse<Void>
 
     @POST("/api/v2/folders/move")
     suspend fun requestFolderMove(@Body body: FolderMoveRequest): NetworkResponse<Void>
@@ -50,12 +44,12 @@ interface FolderApiService {
 
     // 폴더 정보
     @GET("/api/v2/folders/{folderId}/info")
-    suspend fun requestFolderInfo(@Path("folderId") folderId: Int): NetworkResponse<FolderInfoResponse>
+    suspend fun requestFolderInfo(@Path("folderId") folderId: Long): NetworkResponse<FolderInfoResponse>
 
     // 폴더 내 게시글
     @GET("/api/v2/folders/{folderId}")
     suspend fun requestDetailListFolder(
-        @Path("folderId") folderId: Int,
+        @Path("folderId") folderId: Long,
         @Query("end") end: Int,
         @Query("order") order: String
     ): NetworkResponse<DetailFolderResponse>

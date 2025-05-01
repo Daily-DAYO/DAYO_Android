@@ -267,7 +267,7 @@ fun WriteScreen(
     navigateToTag: () -> Unit,
     tags: List<String> = emptyList(),
     navigateToFolder: () -> Unit,
-    folderId: String? = null,
+    folderId: Long? = null,
     folderName: String? = null,
     uploadSuccess: Status? = null,
 ) {
@@ -674,7 +674,7 @@ fun WriteTagLayout(
 @Preview
 @Composable
 fun WriteFolderLayout(
-    folderId: String? = null,
+    folderId: Long? = null,
     folderName: String? = null,
     navigateToFolder: () -> Unit = {}
 ) {

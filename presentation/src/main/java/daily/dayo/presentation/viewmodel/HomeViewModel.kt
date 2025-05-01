@@ -191,7 +191,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun requestLikePost(postId: Int, isDayoPickLike: Boolean) =
+    fun requestLikePost(postId: Long, isDayoPickLike: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
             val editList = if (isDayoPickLike) _dayoPickPostList else _newPostList
             requestLikePostUseCase(postId = postId).let { ApiResponse ->
@@ -220,7 +220,7 @@ class HomeViewModel @Inject constructor(
             }
         }
 
-    fun requestUnlikePost(postId: Int, isDayoPickLike: Boolean) =
+    fun requestUnlikePost(postId: Long, isDayoPickLike: Boolean) =
         viewModelScope.launch(Dispatchers.IO) {
             val editList = if (isDayoPickLike) _dayoPickPostList else _newPostList
             requestUnlikePostUseCase(postId = postId).let { ApiResponse ->
@@ -250,7 +250,7 @@ class HomeViewModel @Inject constructor(
         }
 
     fun setPostStatus(
-        postId: Int,
+        postId: Long,
         isLike: Boolean? = null,
         heartCount: Int? = null,
         commentCount: Int? = null

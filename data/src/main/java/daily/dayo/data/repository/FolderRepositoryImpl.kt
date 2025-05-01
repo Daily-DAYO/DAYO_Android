@@ -2,10 +2,7 @@ package daily.dayo.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import daily.dayo.data.datasource.remote.folder.CreateFolderInPostRequest
-import daily.dayo.data.datasource.remote.folder.FolderApiService
-import daily.dayo.data.datasource.remote.folder.FolderMoveRequest
-import daily.dayo.data.datasource.remote.folder.FolderPagingSource
+import daily.dayo.data.datasource.remote.folder.*
 import daily.dayo.data.mapper.toFolderCreateInPostResponse
 import daily.dayo.data.mapper.toFolderCreateResponse
 import daily.dayo.data.mapper.toFolderEditResponse
@@ -44,7 +41,7 @@ class FolderRepositoryImpl @Inject constructor(
         }
 
     override suspend fun requestEditFolder(
-        folderId: Int,
+        folderId: Long,
         name: String,
         privacy: Privacy,
         subheading: String?,
@@ -84,7 +81,7 @@ class FolderRepositoryImpl @Inject constructor(
             is NetworkResponse.UnknownError -> response
         }
 
-    override suspend fun requestDeleteFolder(folderId: Int): NetworkResponse<Void> =
+    override suspend fun requestDeleteFolder(folderId: Long): NetworkResponse<Void> =
         folderApiService.requestDeleteFolder(folderId)
 
     override suspend fun requestFolderMove(postIdList: List<Long>, targetFolderId: Long): NetworkResponse<Void> =
@@ -106,7 +103,7 @@ class FolderRepositoryImpl @Inject constructor(
             is NetworkResponse.UnknownError -> response
         }
 
-    override suspend fun requestFolderInfo(folderId: Int): NetworkResponse<FolderInfo> =
+    override suspend fun requestFolderInfo(folderId: Long): NetworkResponse<FolderInfo> =
         when (val response = folderApiService.requestFolderInfo(folderId)) {
             is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toFolderInfo())
             is NetworkResponse.NetworkError -> response
@@ -114,7 +111,7 @@ class FolderRepositoryImpl @Inject constructor(
             is NetworkResponse.UnknownError -> response
         }
 
-    override suspend fun requestDetailListFolder(folderId: Int, folderOrder: FolderOrder) =
+    override suspend fun requestDetailListFolder(folderId: Long, folderOrder: FolderOrder) =
         Pager(PagingConfig(pageSize = FOLDER_POST_PAGE_SIZE)) {
             FolderPagingSource(folderApiService, FOLDER_POST_PAGE_SIZE, folderId, folderOrder)
         }.flow
