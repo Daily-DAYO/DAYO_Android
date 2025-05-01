@@ -88,7 +88,7 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun toggleFolderOrder(folderId: Int) {
+    fun toggleFolderOrder(folderId: Long) {
         val newOrder = when (_uiState.value.folderOrder) {
             FolderOrder.NEW -> FolderOrder.OLD
             FolderOrder.OLD -> FolderOrder.NEW
