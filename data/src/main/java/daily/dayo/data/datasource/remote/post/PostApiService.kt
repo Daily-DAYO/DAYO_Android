@@ -19,13 +19,13 @@ interface PostApiService {
         @Part("category") category: String,
         @Part("contents") contents: String,
         @Part files: List<MultipartBody.Part>,
-        @Part("folderId") folderId: Int,
+        @Part("folderId") folderId: Long,
         @Part("tags") tags: Array<String>
     ): NetworkResponse<CreatePostResponse>
 
     @POST("/api/v1/posts/{postId}/edit")
     suspend fun requestEditPost(
-        @Path("postId") postId: Int,
+        @Path("postId") postId: Long,
         @Body body: EditPostRequest
     ): NetworkResponse<EditPostResponse>
 
@@ -42,10 +42,10 @@ interface PostApiService {
     suspend fun requestDayoPickPostListCategory(@Path("category") category: Category): NetworkResponse<DayoPickPostListResponse>
 
     @GET("/api/v1/posts/{postId}")
-    suspend fun requestPostDetail(@Path("postId") postId: Int): NetworkResponse<DetailPostResponse>
+    suspend fun requestPostDetail(@Path("postId") postId: Long): NetworkResponse<DetailPostResponse>
 
     @POST("/api/v1/posts/delete/{postId}")
-    suspend fun requestDeletePost(@Path("postId") postId: Int): NetworkResponse<Void>
+    suspend fun requestDeletePost(@Path("postId") postId: Long): NetworkResponse<Void>
 
     @GET("/api/v1/posts/feed/list")
     suspend fun requestAllFeedList(@Query("end") end: Int): NetworkResponse<ListFeedResponse>

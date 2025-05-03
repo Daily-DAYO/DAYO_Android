@@ -37,7 +37,7 @@ class ReportViewModel @Inject constructor(
         }
     }
 
-    fun requestSavePostReport(comment: String, postId: Int) = viewModelScope.launch {
+    fun requestSavePostReport(comment: String, postId: Long) = viewModelScope.launch {
         requestSavePostReportUseCase(comment = comment, postId = postId)?.let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> { _reportPostSuccess.postValue(true) }

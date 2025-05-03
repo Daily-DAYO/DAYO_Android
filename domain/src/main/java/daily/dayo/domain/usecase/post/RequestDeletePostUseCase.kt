@@ -6,6 +6,6 @@ import javax.inject.Inject
 class RequestDeletePostUseCase @Inject constructor(
     private val postRepository: PostRepository
 ) {
-    suspend operator fun invoke(postId: Int) =
+    suspend operator fun invoke(postId: Long) =
         postRepository.requestDeletePost(postId)
 }

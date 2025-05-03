@@ -11,9 +11,9 @@ import androidx.navigation.compose.composable
 fun NavGraphBuilder.feedNavGraph(
     snackBarHostState: SnackbarHostState,
     onEmptyViewClick: () -> Unit,
-    onPostClick: (String) -> Unit,
+    onPostClick: (Long) -> Unit,
     onProfileClick: (String) -> Unit,
-    onPostLikeUsersClick: (String) -> Unit,
+    onPostLikeUsersClick: (Long) -> Unit,
     onPostHashtagClick: (String) -> Unit,
     bottomSheetState: ModalBottomSheetState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,

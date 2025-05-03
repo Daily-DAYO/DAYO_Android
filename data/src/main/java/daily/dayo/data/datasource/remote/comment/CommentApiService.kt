@@ -10,7 +10,7 @@ interface CommentApiService {
 
     /*** v2 ***/
     @GET("/api/v2/comments/{postId}")
-    suspend fun requestPostComment(@Path("postId") postId: Int): NetworkResponse<ListAllCommentResponse>
+    suspend fun requestPostComment(@Path("postId") postId: Long): NetworkResponse<ListAllCommentResponse>
 
     @POST("/api/v2/comments")
     suspend fun requestCreatePostComment(@Body body: CreateCommentRequest): NetworkResponse<CreateCommentResponse>

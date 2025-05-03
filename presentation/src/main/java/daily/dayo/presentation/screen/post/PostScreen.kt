@@ -69,10 +69,10 @@ import java.text.DecimalFormat
 
 @Composable
 fun PostScreen(
-    postId: String,
+    postId: Long,
     snackBarHostState: SnackbarHostState,
     onProfileClick: (String) -> Unit,
-    onPostLikeUsersClick: (String) -> Unit,
+    onPostLikeUsersClick: (Long) -> Unit,
     onPostHashtagClick: (String) -> Unit,
     onBackClick: () -> Unit,
     postViewModel: PostViewModel = hiltViewModel(),
@@ -85,9 +85,9 @@ fun PostScreen(
     val coroutineScope = rememberCoroutineScope()
 
     // post option
-    val onPostModifyClick: (String) -> Unit = { postId ->  /* TODO 게시글 수정 */ }
-    val onPostDeleteClick: (String) -> Unit = {
-        postViewModel.requestDeletePost(postId.toInt())
+    val onPostModifyClick: (Long) -> Unit = { postId ->  /* TODO 게시글 수정 */ }
+    val onPostDeleteClick: (Long) -> Unit = {
+        postViewModel.requestDeletePost(postId)
     }
     val postDeleteSuccess by postViewModel.postDeleteSuccess.collectAsStateWithLifecycle(false)
 
@@ -103,7 +103,7 @@ fun PostScreen(
     }
     val postCommentDeleteSuccess by postViewModel.postCommentDeleteSuccess.observeAsState(Event(false))
     if (postCommentDeleteSuccess.getContentIfNotHandled() == true) {
-        postViewModel.requestPostComment(postId.toInt())
+        postViewModel.requestPostComment(postId)
         SideEffect {
             coroutineScope.launch {
                 snackBarHostState.showSnackbar(context.getString(R.string.comment_delete_message))
@@ -143,8 +143,8 @@ fun PostScreen(
     // create comment
     val replyCommentState = remember { mutableStateOf<Pair<Long, Comment>?>(null) } // parent comment Id, reply comment
     val onClickPostComment: () -> Unit = {
-        if (replyCommentState.value == null) postViewModel.requestCreatePostComment(commentText.value.text, postId.toInt(), mentionedMemberIds)
-        else postViewModel.requestCreatePostCommentReply(replyCommentState.value!!, commentText.value.text, postId.toInt(), mentionedMemberIds)
+        if (replyCommentState.value == null) postViewModel.requestCreatePostComment(commentText.value.text, postId, mentionedMemberIds)
+        else postViewModel.requestCreatePostCommentReply(replyCommentState.value!!, commentText.value.text, postId, mentionedMemberIds)
     }
     val onClickCommentReply: (Pair<Long, Comment>?) -> Unit = { reply ->
         // set reply comment state
@@ -168,12 +168,12 @@ fun PostScreen(
     val postCommentCreateSuccess by postViewModel.postCommentCreateSuccess.observeAsState(Event(false))
     if (postCommentCreateSuccess.getContentIfNotHandled() == true) {
         clearComment()
-        postViewModel.requestPostComment(postId.toInt())
+        postViewModel.requestPostComment(postId)
     }
 
     LaunchedEffect(Unit) {
-        postViewModel.requestPostDetail(postId.toInt())
-        postViewModel.requestPostComment(postId.toInt())
+        postViewModel.requestPostDetail(postId)
+        postViewModel.requestPostComment(postId)
     }
 
     LaunchedEffect(postState.value) {
@@ -210,13 +210,13 @@ fun PostScreen(
         onPostModifyClick = onPostModifyClick,
         onPostDeleteClick = onPostDeleteClick,
         onClickLikePost = {
-            postViewModel.toggleLikePost(postId = postId.toInt(), currentHeart = post.heart)
+            postViewModel.toggleLikePost(postId = postId, currentHeart = post.heart)
         },
         onClickBookmark = {
-            postViewModel.toggleBookmarkPostDetail(postId = postId.toInt(), currentBookmark = post.bookmark)
+            postViewModel.toggleBookmarkPostDetail(postId = postId, currentBookmark = post.bookmark)
         },
         onClickReport = { reason ->
-            reportViewModel.requestSavePostReport(reason, postId.toInt())
+            reportViewModel.requestSavePostReport(reason, postId)
         },
         onPostLikeUsersClick = onPostLikeUsersClick,
         onPostHashtagClick = onPostHashtagClick,
@@ -246,7 +246,7 @@ fun PostScreen(
 
 @Composable
 private fun PostScreen(
-    postId: String,
+    postId: Long,
     post: PostDetail,
     comments: Comments,
     currentMemberId: String?,
@@ -260,12 +260,12 @@ private fun PostScreen(
     onClickPostComment: () -> Unit,
     onClickProfile: (String) -> Unit,
     onClickPost: () -> Unit,
-    onPostModifyClick: (String) -> Unit,
-    onPostDeleteClick: (String) -> Unit,
+    onPostModifyClick: (Long) -> Unit,
+    onPostDeleteClick: (Long) -> Unit,
     onClickLikePost: () -> Unit,
     onClickBookmark: () -> Unit,
     onClickReport: (String) -> Unit,
-    onPostLikeUsersClick: (String) -> Unit,
+    onPostLikeUsersClick: (Long) -> Unit,
     onPostHashtagClick: (String) -> Unit,
     onClickCommentReply: (Pair<Long, Comment>) -> Unit,
     onClickCommentDelete: (Long) -> Unit,
@@ -369,7 +369,7 @@ private fun PreviewPostScreen() {
 
     DayoTheme {
         PostScreen(
-            postId = "0",
+            postId = 0L,
             post = DEFAULT_POST,
             comments = DEFAULT_COMMENTS,
             currentMemberId = "",

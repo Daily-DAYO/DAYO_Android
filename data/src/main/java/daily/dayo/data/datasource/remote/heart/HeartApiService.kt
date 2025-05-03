@@ -9,11 +9,11 @@ interface HeartApiService {
     suspend fun requestLikePost(@Body body: CreateHeartRequest): NetworkResponse<CreateHeartResponse>
 
     @POST("/api/v1/heart/delete/{postId}")
-    suspend fun requestUnlikePost(@Path("postId") postId: Int): NetworkResponse<DeleteHeartResponse>
+    suspend fun requestUnlikePost(@Path("postId") postId: Long): NetworkResponse<DeleteHeartResponse>
 
     @GET("/api/v1/heart/list")
     suspend fun requestAllMyLikePostList(@Query("end") end: Int): NetworkResponse<ListAllMyHeartPostResponse>
 
     @GET("/api/v1/heart/post/{postId}/list")
-    suspend fun requestPostLikeUsers(@Path("postId") postId: Int, @Query("end") end: Int): NetworkResponse<PostMemberHeartListResponse>
+    suspend fun requestPostLikeUsers(@Path("postId") postId: Long, @Query("end") end: Int): NetworkResponse<PostMemberHeartListResponse>
 }

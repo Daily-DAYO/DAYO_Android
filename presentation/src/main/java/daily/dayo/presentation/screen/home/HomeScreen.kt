@@ -48,7 +48,7 @@ const val HOME_NEW_PAGE_TAB_ID = 1
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
-    onPostClick: (String) -> Unit,
+    onPostClick: (Long) -> Unit,
     onProfileClick: (String) -> Unit,
     onSearchClick: () -> Unit,
     coroutineScope: CoroutineScope,
