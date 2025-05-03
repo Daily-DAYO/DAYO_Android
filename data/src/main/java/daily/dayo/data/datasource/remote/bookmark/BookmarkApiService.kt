@@ -9,7 +9,7 @@ interface BookmarkApiService {
     suspend fun requestBookmarkPost(@Body body: CreateBookmarkRequest): NetworkResponse<CreateBookmarkResponse>
 
     @POST("/api/v1/bookmark/delete/{postId}")
-    suspend fun requestDeleteBookmarkPost(@Path("postId") postId: Int): NetworkResponse<Void>
+    suspend fun requestDeleteBookmarkPost(@Path("postId") postId: Long): NetworkResponse<Void>
 
     @GET("/api/v1/bookmark/list")
     suspend fun requestAllMyBookmarkPostList(@Query("end") end: Int): NetworkResponse<ListAllMyBookmarkPostResponse>

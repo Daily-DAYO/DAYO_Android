@@ -99,7 +99,7 @@ import kotlinx.coroutines.launch
 internal fun SearchResultRoute(
     searchKeyword: String,
     onBackClick: () -> Unit,
-    onPostClick: (String) -> Unit,
+    onPostClick: (Long) -> Unit,
     onClickProfile: (String) -> Unit,
     searchViewModel: SearchViewModel = hiltViewModel(),
     followViewModel: FollowViewModel = hiltViewModel(),
@@ -177,7 +177,7 @@ internal fun SearchResultRoutePreview() {
 fun SearchResultScreen(
     searchKeyword: String,
     onBackClick: () -> Unit,
-    onPostClick: (String) -> Unit,
+    onPostClick: (Long) -> Unit,
     searchKeywordResultsTag: LazyPagingItems<Search>?,
     searchKeywordResultsTagTotalCount: Int,
     searchKeywordResultsUser: LazyPagingItems<SearchUser>?,
@@ -377,7 +377,7 @@ fun SearchResultsCount(resultCount: Int = 0) {
 @Composable
 fun SearchResultTagView(
     searchKeywordResultsTag: LazyPagingItems<Search>?,
-    onPostClick: (String) -> Unit
+    onPostClick: (Long) -> Unit
 ) {
     val imageInteractionSource = remember { MutableInteractionSource() }
     Box(
@@ -408,7 +408,7 @@ fun SearchResultTagView(
                                 .clickableSingle(
                                     interactionSource = imageInteractionSource,
                                     indication = null,
-                                    onClick = { onPostClick(post.postId.toString()) }
+                                    onClick = { onPostClick(post.postId) }
                                 )
                         )
                     }

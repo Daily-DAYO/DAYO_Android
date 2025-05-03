@@ -10,7 +10,7 @@ import daily.dayo.domain.model.NetworkResponse
 class FolderPagingSource(
     private val apiService: FolderApiService,
     private val size: Int,
-    private val folderId: Int,
+    private val folderId: Long,
     private val folderOrder: FolderOrder
 ) : PagingSource<Int, FolderPost>() {
 
@@ -28,7 +28,6 @@ class FolderPagingSource(
                             nextKey = if (ApiResponse.body!!.last || ApiResponse.body!!.count == 0) null else nextPageNumber + size
                         )
                     }
-
                     else -> {
                         throw Exception("LoadResult Error")
                     }

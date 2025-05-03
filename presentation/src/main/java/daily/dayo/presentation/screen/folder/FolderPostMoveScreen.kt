@@ -32,7 +32,7 @@ import daily.dayo.presentation.viewmodel.FolderViewModel
 
 @Composable
 internal fun FolderPostMoveScreen(
-    currentFolderId: String,
+    currentFolderId: Long,
     navigateToCreateNewFolder: () -> Unit,
     navigateBackToFolder: () -> Unit,
     onBackClick: () -> Unit,
@@ -46,7 +46,6 @@ internal fun FolderPostMoveScreen(
         Status.SUCCESS -> folderListState.value?.data ?: emptyList()
         else -> emptyList()
     }
-
     var selectedFolder by remember { mutableStateOf<Long?>(null) }
 
     LaunchedEffect(Unit) {
@@ -66,11 +65,11 @@ internal fun FolderPostMoveScreen(
     }
 
     FolderPostMoveScreen(
-        currentFolderId = currentFolderId.toLong(),
+        currentFolderId = currentFolderId,
         folders = folderList,
         selectedFolder = selectedFolder,
         onFolderClick = { folderId, _ ->
-            selectedFolder = folderId.toLongOrNull()
+            selectedFolder = folderId
         },
         onPostMoveClick = {
             selectedFolder?.let { folderViewModel.moveSelectedPost(it) }
@@ -85,7 +84,7 @@ private fun FolderPostMoveScreen(
     currentFolderId: Long,
     folders: List<Folder>,
     selectedFolder: Long?,
-    onFolderClick: (String, String) -> Unit,
+    onFolderClick: (Long, String) -> Unit,
     onPostMoveClick: () -> Unit,
     navigateToCreateNewFolder: () -> Unit,
     onBackClick: () -> Unit
@@ -109,8 +108,8 @@ private fun FolderPostMoveScreen(
                 onBackClick = onBackClick,
                 onFolderClick = onFolderClick,
                 navigateToCreateNewFolder = navigateToCreateNewFolder,
-                folders = folders.filterNot { it.folderId?.toLong() == currentFolderId },
-                currentFolderId = selectedFolder.toString()
+                folders = folders.filterNot { it.folderId == currentFolderId },
+                currentFolderId = selectedFolder
             )
         }
     }
