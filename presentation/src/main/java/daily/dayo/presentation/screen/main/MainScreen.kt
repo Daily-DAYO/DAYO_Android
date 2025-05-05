@@ -56,6 +56,7 @@ import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
+import daily.dayo.presentation.viewmodel.NoticeViewModel
 import daily.dayo.presentation.viewmodel.ProfileViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -67,6 +68,7 @@ internal fun MainScreen(
 ) {
     val currentMemberId = profileViewModel.currentMemberId
     val coroutineScope = rememberCoroutineScope()
+    val noticeViewModel = hiltViewModel<NoticeViewModel>()
     val snackBarHostState = remember { SnackbarHostState() }
     val bottomSheetState = getBottomSheetDialogState()
     var bottomSheet: (@Composable () -> Unit)? by remember { mutableStateOf(null) }
@@ -166,6 +168,7 @@ internal fun MainScreen(
                             noticeNavGraph(
                                 coroutineScope = coroutineScope,
                                 snackBarHostState = snackBarHostState,
+                                noticeViewModel = noticeViewModel,
                                 onBackClick = { navigator.popBackStack() },
                                 onNoticeDetailClick = { noticeId -> navigator.navigateNoticeDetail(noticeId)}
                             )

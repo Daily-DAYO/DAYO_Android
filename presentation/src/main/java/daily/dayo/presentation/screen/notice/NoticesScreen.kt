@@ -16,11 +16,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import daily.dayo.domain.model.Notice
 import daily.dayo.presentation.R
 import daily.dayo.presentation.theme.Dark
@@ -28,13 +32,21 @@ import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.TopNavigation
+import daily.dayo.presentation.viewmodel.NoticeViewModel
 
 @Preview
 @Composable
 fun NoticesScreen(
     onBackClick: () -> Unit = {},
     onNoticeDetailClick: (Long) -> Unit = {},
+    noticeViewModel: NoticeViewModel = hiltViewModel(),
 ) {
+    val notices = noticeViewModel.noticeList.collectAsLazyPagingItems()
+
+    LaunchedEffect(Unit) {
+        noticeViewModel.requestAllNoticeList()
+    }
+
     Scaffold(
         topBar = {
             NoticesActionbarLayout(onBackClick = onBackClick)
@@ -51,15 +63,20 @@ fun NoticesScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(vertical = 8.dp),
             ) {
-                items(30) { index ->
-                    Notice(
-                        notice = Notice(
-                            noticeId = index.toLong(),
-                            title = "공지사항 제목 $index",
-                            uploadDate = "2023.10.01"
-                        ),
-                        onNoticeDetailClick = onNoticeDetailClick,
-                    )
+                items(
+                    count = notices.itemCount,
+                    key = notices.itemKey()
+                ) { index ->
+                    val notice = notices[index]
+                    notice?.let {
+                        Notice(
+                            notice = it,
+                            onNoticeDetailClick = {
+                                noticeViewModel.selectNotice(notice)
+                                onNoticeDetailClick(notice.noticeId)
+                            },
+                        )
+                    }
                 }
             }
         }
@@ -91,11 +108,11 @@ fun Notice(
         title = "공지사항",
         uploadDate = "0000.00.00"
     ),
-    onNoticeDetailClick: (Long) -> Unit = {},
+    onNoticeDetailClick: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier
-            .clickable { onNoticeDetailClick(notice.noticeId) }
+            .clickable { onNoticeDetailClick() }
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(horizontal = 20.dp, vertical = 12.dp),
