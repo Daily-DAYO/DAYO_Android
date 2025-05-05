@@ -1,6 +1,7 @@
 package daily.dayo.presentation.screen.notice
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,6 +33,7 @@ import daily.dayo.presentation.view.TopNavigation
 @Composable
 fun NoticesScreen(
     onBackClick: () -> Unit = {},
+    onNoticeDetailClick: (Long) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -52,10 +54,11 @@ fun NoticesScreen(
                 items(30) { index ->
                     Notice(
                         notice = Notice(
-                            noticeId = index,
+                            noticeId = index.toLong(),
                             title = "공지사항 제목 $index",
                             uploadDate = "2023.10.01"
                         ),
+                        onNoticeDetailClick = onNoticeDetailClick,
                     )
                 }
             }
@@ -84,13 +87,15 @@ fun NoticesActionbarLayout(
 @Composable
 fun Notice(
     notice: Notice = Notice(
-        noticeId = Int.MAX_VALUE,
+        noticeId = Long.MAX_VALUE,
         title = "공지사항",
         uploadDate = "0000.00.00"
     ),
+    onNoticeDetailClick: (Long) -> Unit = {},
 ) {
     Column(
         modifier = Modifier
+            .clickable { onNoticeDetailClick(notice.noticeId) }
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(horizontal = 20.dp, vertical = 12.dp),

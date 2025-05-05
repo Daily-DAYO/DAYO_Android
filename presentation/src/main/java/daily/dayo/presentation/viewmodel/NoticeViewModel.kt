@@ -35,7 +35,7 @@ class NoticeViewModel @Inject constructor(
             .collectLatest { _noticeList.emit(it) }
     }
 
-    fun requestDetailNotice(noticeId: Int) = viewModelScope.launch {
+    fun requestDetailNotice(noticeId: Long) = viewModelScope.launch {
         requestDetailNoticeUseCase(noticeId).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> _detailNotice.postValue(ApiResponse.body?.contents.toString())
