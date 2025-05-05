@@ -42,6 +42,7 @@ import daily.dayo.presentation.screen.home.homeNavGraph
 import daily.dayo.presentation.screen.mypage.MyPageRoute
 import daily.dayo.presentation.screen.mypage.myPageNavGraph
 import daily.dayo.presentation.screen.mypage.navigateBackToFolder
+import daily.dayo.presentation.screen.notice.noticeNavGraph
 import daily.dayo.presentation.screen.notification.NotificationRoute
 import daily.dayo.presentation.screen.notification.notificationNavGraph
 import daily.dayo.presentation.screen.post.postNavGraph
@@ -151,7 +152,7 @@ internal fun MainScreen(
                             notificationNavGraph(
                                 onPostClick = { navigator.navigatePost(it) },
                                 onProfileClick = { memberId -> navigator.navigateProfile(currentMemberId, memberId) },
-                                onNoticeClick = { /*TODO*/ }
+                                onNoticeClick = { noticeId -> navigator.navigateNoticeDetail(noticeId) },
                             )
                             settingsNavGraph(
                                 coroutineScope = coroutineScope,
@@ -159,7 +160,14 @@ internal fun MainScreen(
                                 onProfileEditClick = { navigator.navigateProfileEdit() },
                                 onPasswordChangeClick = { navigator.navigateChangePassword() },
                                 onSettingNotificationClick = { navigator.navigateSettingsNotification() },
+                                onNoticesClick = { navigator.navigateNotices() },
                                 onBackClick = { navigator.popBackStack() }
+                            )
+                            noticeNavGraph(
+                                coroutineScope = coroutineScope,
+                                snackBarHostState = snackBarHostState,
+                                onBackClick = { navigator.popBackStack() },
+                                onNoticeDetailClick = { noticeId -> navigator.navigateNoticeDetail(noticeId)}
                             )
                         }
                     }

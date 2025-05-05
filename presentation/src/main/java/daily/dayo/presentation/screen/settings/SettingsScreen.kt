@@ -59,6 +59,7 @@ fun SettingsScreen(
     onBackClick: () -> Unit,
     onPasswordChangeClick: () -> Unit,
     onSettingNotificationClick: () -> Unit,
+    onNoticesClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
     val profileInfo = profileViewModel.profileInfo.observeAsState()
@@ -73,6 +74,7 @@ fun SettingsScreen(
         onBackClick = onBackClick,
         onSettingNotificationClick = onSettingNotificationClick,
         onPasswordChangeClick = onPasswordChangeClick,
+        onNoticesClick = onNoticesClick,
     )
 }
 
@@ -83,6 +85,7 @@ private fun SettingsScreen(
     onBackClick: () -> Unit,
     onSettingNotificationClick: () -> Unit,
     onPasswordChangeClick: () -> Unit,
+    onNoticesClick: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -117,7 +120,7 @@ private fun SettingsScreen(
             SettingItem(R.string.setting_menu_block_user, R.drawable.ic_block, onClickMenu = {}),
             SettingItem(R.string.setting_menu_notification, R.drawable.ic_notification, onClickMenu = onSettingNotificationClick),
             null, // Divider
-            SettingItem(R.string.setting_menu_notice, R.drawable.ic_setting_notice, onClickMenu = {}),
+            SettingItem(R.string.setting_menu_notice, R.drawable.ic_setting_notice, onClickMenu = onNoticesClick),
             SettingItem(R.string.setting_menu_information, R.drawable.ic_setting_information, onClickMenu = {}, description = appVersion),
             SettingItem(R.string.setting_menu_contact, R.drawable.ic_setting_contact, onClickMenu = {}),
             null // Divider
@@ -270,7 +273,8 @@ private fun PreviewSettingsScreen() {
             onBackClick = {},
             onProfileEditClick = {},
             onPasswordChangeClick = {},
-            onSettingNotificationClick = {}
+            onSettingNotificationClick = {},
+            onNoticesClick = {},
         )
     }
 }

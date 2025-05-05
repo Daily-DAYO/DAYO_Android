@@ -19,7 +19,7 @@ class NoticeRepositoryImpl @Inject constructor(
             NoticePagingSource(noticeApiService, NOTICE_PAGE_SIZE)
         }.flow
 
-    override suspend fun requestDetailNotice(noticeId: Int): NetworkResponse<NoticeDetail> =
+    override suspend fun requestDetailNotice(noticeId: Long): NetworkResponse<NoticeDetail> =
         when (
             val response = noticeApiService.requestDetailNotice(noticeId)) {
             is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toNoticeDetail())

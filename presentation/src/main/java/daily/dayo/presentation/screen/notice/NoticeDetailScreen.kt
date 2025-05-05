@@ -27,9 +27,9 @@ import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.TopNavigation
 
-@Preview
 @Composable
 fun NoticeDetailScreen(
+    noticeId: Long,
     onBackClick: () -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
