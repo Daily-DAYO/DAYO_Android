@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import daily.dayo.presentation.viewmodel.NoticeViewModel
 import kotlinx.coroutines.CoroutineScope
 
 fun NavController.navigateNotices() {
@@ -19,6 +20,7 @@ fun NavController.navigateNoticeDetail(noticeId: Long) {
 fun NavGraphBuilder.noticeNavGraph(
     coroutineScope: CoroutineScope,
     snackBarHostState: SnackbarHostState,
+    noticeViewModel: NoticeViewModel,
     onBackClick: () -> Unit,
     onNoticeDetailClick: (Long) -> Unit,
 ) {
@@ -26,6 +28,7 @@ fun NavGraphBuilder.noticeNavGraph(
         NoticesScreen(
             onBackClick = onBackClick,
             onNoticeDetailClick = onNoticeDetailClick,
+            noticeViewModel = noticeViewModel,
         )
     }
 
@@ -40,7 +43,8 @@ fun NavGraphBuilder.noticeNavGraph(
         navBackStackEntry.arguments?.getLong("noticeId")?.let { noticeId ->
             NoticeDetailScreen(
                 noticeId = noticeId,
-                onBackClick = onBackClick
+                onBackClick = onBackClick,
+                noticeViewModel = noticeViewModel,
             )
         }
     }

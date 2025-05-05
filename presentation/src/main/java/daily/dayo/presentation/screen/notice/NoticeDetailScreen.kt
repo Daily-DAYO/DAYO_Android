@@ -1,5 +1,6 @@
 package daily.dayo.presentation.screen.notice
 
+import android.webkit.WebView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,11 +15,16 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import daily.dayo.presentation.R
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
@@ -26,13 +32,22 @@ import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.TopNavigation
+import daily.dayo.presentation.viewmodel.NoticeViewModel
 
 @Composable
 fun NoticeDetailScreen(
     noticeId: Long,
     onBackClick: () -> Unit = {},
+    noticeViewModel: NoticeViewModel = hiltViewModel(),
 ) {
     val scrollState = rememberScrollState()
+    val noticeDetail by noticeViewModel.detailNotice.collectAsStateWithLifecycle()
+    val notice = noticeViewModel.selectedNotice.collectAsStateWithLifecycle().value
+
+    LaunchedEffect(Unit) {
+        noticeViewModel.requestDetailNotice(noticeId)
+    }
+
     Scaffold(
         topBar = {
             NoticeDetailActionbarLayout(onBackClick = onBackClick)
@@ -46,9 +61,9 @@ fun NoticeDetailScreen(
                 .verticalScroll(scrollState),
         ) {
             NoticeDetail(
-                title = "공지사항",
-                contents = "공지사항 내용",
-                uploadDate = "0000.00.00",
+                title = notice?.title ?: "공지사항",
+                contents = noticeDetail?.data ?: "",
+                uploadDate = notice?.uploadDate ?: "0000.00.00",
             )
         }
     }
@@ -93,10 +108,17 @@ fun NoticeDetail(
             color = Gray6_F0F1F3,
             thickness = 1.dp,
         )
-        Text(
-            text = contents,
-            style = DayoTheme.typography.b6,
-            color = Dark,
+
+        AndroidView(
+            factory = { context ->
+                WebView(context).apply {
+                    settings.javaScriptEnabled = true
+                    loadDataWithBaseURL(null, contents, "text/html", "UTF-8", null)
+                }
+            },
+            update = { webView ->
+                webView.loadDataWithBaseURL(null, contents, "text/html", "UTF-8", null)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),

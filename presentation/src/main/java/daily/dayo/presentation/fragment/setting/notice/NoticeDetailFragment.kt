@@ -49,14 +49,5 @@ class NoticeDetailFragment : Fragment() {
     }
 
     private fun observeNoticeDetail() {
-        noticeViewModel.detailNotice.observe(viewLifecycleOwner) {
-            with(binding.webviewNoticeDetailContents) {
-                apply {
-                    webViewClient = WebViewClient()
-                    settings.javaScriptEnabled = false
-                }
-                loadDataWithBaseURL(null, it, "text/html", "UTF-8", null)
-            }
-        }
     }
 }
