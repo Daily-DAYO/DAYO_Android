@@ -553,14 +553,6 @@
             app:exitAnim="@anim/translate_to_left_out"
             app:popEnterAnim="@anim/translate_from_left_in"
             app:popExitAnim="@anim/translate_to_right_out" />
-
-        <action
-            android:id="@+id/action_settingFragment_to_noticeFragment"
-            app:destination="@id/NoticeListFragment"
-            app:enterAnim="@anim/translate_from_right_in"
-            app:exitAnim="@anim/translate_to_left_out"
-            app:popEnterAnim="@anim/translate_from_left_in"
-            app:popExitAnim="@anim/translate_to_right_out" />
     </fragment>
 
     <fragment
@@ -704,29 +696,5 @@
             android:name="informationType"
             android:defaultValue="privacy"
             app:argType="string" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/NoticeListFragment"
-        android:name="daily.dayo.presentation.fragment.setting.notice.NoticeListFragment"
-        android:label="fragment_notice_list"
-        tools:layout="@layout/fragment_notice_list">
-        <action
-            android:id="@+id/action_noticeListFragment_to_noticeDetailFragment"
-            app:destination="@+id/NoticeDetailFragment"
-            app:enterAnim="@anim/translate_from_right_in"
-            app:exitAnim="@anim/translate_to_left_out"
-            app:popEnterAnim="@anim/translate_from_left_in"
-            app:popExitAnim="@anim/translate_to_right_out" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/NoticeDetailFragment"
-        android:name="daily.dayo.presentation.fragment.setting.notice.NoticeDetailFragment"
-        android:label="fragment_notice_detail"
-        tools:layout="@layout/fragment_notice_detail">
-        <argument
-            android:name="notice"
-            app:argType="daily.dayo.domain.model.Notice" />
     </fragment>
 </navigation>
