@@ -129,19 +129,11 @@ fun BlockedUsersScreen(
                                         )
                                         Spacer(modifier = Modifier.height(20.dp))
                                         Text(
-                                            text = stringResource(R.string.blocked_users_error_description),
+                                            text = stringResource(R.string.blocked_users_empty_description),
                                             color = Gray3_9FA5AE,
                                             style = DayoTheme.typography.b3,
                                             modifier = Modifier
                                                 .wrapContentSize()
-                                        )
-                                        Spacer(modifier = Modifier.height(20.dp))
-                                        FilledRoundedCornerButton(
-                                            modifier = Modifier
-                                                .padding(horizontal = 20.dp)
-                                                .wrapContentSize(),
-                                            onClick = { profileSettingViewModel.requestBlockList() },
-                                            label = stringResource(R.string.re_try)
                                         )
                                     }
                                 }
