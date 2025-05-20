@@ -14,7 +14,7 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 
 android {
     namespace 'daily.dayo.data'
-    compileSdk 33
+    compileSdk 35
 
     defaultConfig {
         minSdk 26
