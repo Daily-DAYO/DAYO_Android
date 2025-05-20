@@ -143,6 +143,7 @@ internal fun MainScreen(
                                 navigateBackToFolder = { folderId -> navigator.navigateBackToFolder(folderId) }
                             )
                             profileNavGraph(
+                                snackBarHostState = snackBarHostState,
                                 onFollowMenuClick = { memberId, tabNum -> navigator.navigateFollowMenu(memberId, tabNum) },
                                 onFolderClick = { folderId -> navigator.navigateFolder(folderId) },
                                 onPostClick = { postId -> navigator.navigatePost(postId) },
@@ -157,6 +158,7 @@ internal fun MainScreen(
                                 coroutineScope = coroutineScope,
                                 snackBarHostState = snackBarHostState,
                                 onProfileEditClick = { navigator.navigateProfileEdit() },
+                                onBlockUsersClick = { navigator.navigateBlockedUsers() },
                                 onPasswordChangeClick = { navigator.navigateChangePassword() },
                                 onSettingNotificationClick = { navigator.navigateSettingsNotification() },
                                 onBackClick = { navigator.popBackStack() }
