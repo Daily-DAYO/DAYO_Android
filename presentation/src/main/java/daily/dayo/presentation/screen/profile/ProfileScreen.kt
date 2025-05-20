@@ -1,5 +1,6 @@
 package daily.dayo.presentation.screen.profile
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -43,11 +44,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.Profile
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
@@ -60,14 +63,17 @@ import daily.dayo.presentation.view.FolderView
 import daily.dayo.presentation.view.ProfileDropdownMenu
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
+import daily.dayo.presentation.view.dialog.ConfirmDialog
 import daily.dayo.presentation.view.dialog.UserReportDialog
 import daily.dayo.presentation.viewmodel.FolderViewModel
 import daily.dayo.presentation.viewmodel.ProfileViewModel
 import daily.dayo.presentation.viewmodel.ReportViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(
+    externalSnackBarHostState: SnackbarHostState,
     memberId: String,
     onFollowMenuClick: (String, Int) -> Unit,
     onFolderClick: (Long) -> Unit,
@@ -76,6 +82,9 @@ fun ProfileScreen(
     folderViewModel: FolderViewModel = hiltViewModel(),
     reportViewModel: ReportViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
     val lifecycleOwner = LocalLifecycleOwner.current
     val profileInfo = profileViewModel.profileInfo.observeAsState()
     val folderList = folderViewModel.folderList.observeAsState()
@@ -84,6 +93,24 @@ fun ProfileScreen(
     }
     val onClickUserReport: (String) -> Unit = { reason ->
         profileInfo.value?.data?.memberId?.let { reportViewModel.requestSaveMemberReport(reason, it) }
+    }
+    val onClickUserBlockSuccess by profileViewModel.blockSuccess.collectAsStateWithLifecycle()
+    val onClickUserBlock: (String) -> Unit = { memberId ->
+        profileInfo.value?.data?.memberId?.let { profileViewModel.requestBlockMember(it) }
+    }
+
+    LaunchedEffect(onClickUserBlockSuccess) {
+        when (onClickUserBlockSuccess) {
+            Status.SUCCESS -> {
+                coroutineScope.launch {
+                    externalSnackBarHostState.showSnackbar(context.getString(R.string.other_profile_block_success_message))
+                }
+                onBackClick()
+            }
+            Status.ERROR -> {
+            }
+            else -> {}
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -112,36 +139,43 @@ fun ProfileScreen(
     }
 
     ProfileScreen(
+        context = context,
+        coroutineScope = coroutineScope,
+        snackBarHostState = snackBarHostState,
         profile = profileInfo.value?.data ?: DEFAULT_PROFILE,
         folderList = folderList.value?.data ?: emptyList(),
         onFollowClick = onFollowClick,
         onFollowMenuClick = onFollowMenuClick,
         onFolderClick = onFolderClick,
         onClickUserReport = onClickUserReport,
+        onClickUserBlock = onClickUserBlock,
         onBackClick = onBackClick
     )
 }
 
 @Composable
 private fun ProfileScreen(
+    context: Context,
+    coroutineScope: CoroutineScope,
+    snackBarHostState: SnackbarHostState,
     profile: Profile,
     folderList: List<Folder>,
     onFollowClick: () -> Unit,
     onFollowMenuClick: (String, Int) -> Unit,
     onFolderClick: (Long) -> Unit,
     onClickUserReport: (String) -> Unit,
-    onBackClick: () -> Unit
+    onClickUserBlock: (String) -> Unit,
+    onBackClick: () -> Unit,
 ) {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-    val snackBarHostState = remember { SnackbarHostState() }
-    var showDialog by remember { mutableStateOf(false) }
+    var showReportDialog by remember { mutableStateOf(false) }
+    var showBlockDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             ProfileTopNavigation(
-                onUserReportClick = { showDialog = true },
-                onBackClick = onBackClick
+                onUserReportClick = { showReportDialog = true },
+                onUserBlockClick = { showBlockDialog = true },
+                onBackClick = onBackClick,
             )
         },
         snackbarHost = { SnackbarHost(snackBarHostState) },
@@ -174,16 +208,28 @@ private fun ProfileScreen(
         }
     )
 
-    if (showDialog) {
+    if (showReportDialog) {
         UserReportDialog(
-            onClickCancel = { showDialog = !showDialog },
+            onClickCancel = { showReportDialog = false },
             onClickConfirm = { reason ->
                 onClickUserReport(reason)
-                showDialog = !showDialog
+                showReportDialog = false
                 coroutineScope.launch {
                     snackBarHostState.showSnackbar(context.getString(R.string.report_user_alert_message))
                 }
             }
+        )
+    }
+
+    if (showBlockDialog) {
+        ConfirmDialog(
+            title = stringResource(id = R.string.other_profile_block_message),
+            description = stringResource(id = R.string.other_profile_block_explanation_message),
+            onClickCancel = { showBlockDialog = false },
+            onClickConfirm = {
+                onClickUserBlock(profile.memberId ?: "")
+                showBlockDialog = false
+            },
         )
     }
 }
@@ -353,7 +399,8 @@ private fun UserDiary(folder: Folder, onFolderClick: (Long) -> Unit) {
 @Composable
 private fun ProfileTopNavigation(
     onUserReportClick: () -> Unit,
-    onBackClick: () -> Unit
+    onUserBlockClick: () -> Unit,
+    onBackClick: () -> Unit,
 ) {
     var showProfileOption by remember { mutableStateOf(false) }
 
@@ -387,6 +434,10 @@ private fun ProfileTopNavigation(
                 onUserReportClick = {
                     onUserReportClick()
                     showProfileOption = !showProfileOption
+                },
+                onUserBlockClick = {
+                    onUserBlockClick()
+                    showProfileOption = !showProfileOption
                 }
             )
         }
@@ -397,13 +448,17 @@ private fun ProfileTopNavigation(
 @Composable
 private fun PreviewProfileScreen() {
     ProfileScreen(
+        context = LocalContext.current,
+        coroutineScope = rememberCoroutineScope(),
+        snackBarHostState = remember { SnackbarHostState() },
         profile = DEFAULT_PROFILE,
         folderList = emptyList(),
         onFollowClick = { },
         onFollowMenuClick = { _, _ -> },
         onFolderClick = { },
         onClickUserReport = { },
-        onBackClick = { }
+        onClickUserBlock = { },
+        onBackClick = { },
     )
 }
 

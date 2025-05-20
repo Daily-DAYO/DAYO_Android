@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import daily.dayo.presentation.screen.home.HomeRoute
 import daily.dayo.presentation.screen.home.navigateHome
 import daily.dayo.presentation.screen.mypage.navigateBackToFolder
+import daily.dayo.presentation.screen.mypage.navigateBlockedUsers
 import daily.dayo.presentation.screen.mypage.navigateBookmark
 import daily.dayo.presentation.screen.mypage.navigateFolder
 import daily.dayo.presentation.screen.mypage.navigateFolderCreate
@@ -82,6 +83,10 @@ class MainNavigator(
 
     fun navigateProfileEdit() {
         navController.navigateProfileEdit()
+    }
+
+    fun navigateBlockedUsers() {
+        navController.navigateBlockedUsers()
     }
 
     fun navigateBookmark() {

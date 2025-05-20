@@ -12,6 +12,8 @@ import daily.dayo.presentation.screen.folder.FolderCreateScreen
 import daily.dayo.presentation.screen.folder.FolderEditScreen
 import daily.dayo.presentation.screen.folder.FolderPostMoveScreen
 import daily.dayo.presentation.screen.folder.FolderScreen
+import daily.dayo.presentation.screen.settings.BlockedUsersScreen
+import kotlinx.coroutines.CoroutineScope
 
 fun NavController.navigateMyPage() {
     navigate(MyPageRoute.route) {
@@ -21,6 +23,10 @@ fun NavController.navigateMyPage() {
 
 fun NavController.navigateProfileEdit() {
     navigate(MyPageRoute.profileEdit())
+}
+
+fun NavController.navigateBlockedUsers() {
+    navigate(MyPageRoute.blockedUsers())
 }
 
 fun NavController.navigateBookmark() {
@@ -109,6 +115,12 @@ fun NavGraphBuilder.myPageNavGraph(
         )
     }
 
+    composable(MyPageRoute.blockedUsers()) {
+        BlockedUsersScreen(
+            onBackClick = onBackClick,
+        )
+    }
+
     composable(MyPageRoute.bookmark()) {
         BookmarkScreen(
             onBackClick = onBackClick
@@ -189,6 +201,9 @@ object MyPageRoute {
 
     // profile edit
     fun profileEdit() = "$route/edit"
+
+    // blocked users
+    fun blockedUsers() = "$route/blockedUsers"
 
     // follow
     fun follow(memberId: String, tabNum: String) = "$route/follow/$memberId/$tabNum"
