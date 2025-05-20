@@ -20,7 +20,7 @@ kotlin {
 
 android {
     namespace 'daily.dayo.presentation'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         minSdk 26
@@ -86,9 +86,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     // Compose
-    def composeBom = platform("androidx.compose:compose-bom:2023.06.01")
-    implementation(composeBom)
-    androidTestImplementation(composeBom)
+    Dependency composeBom = platform('androidx.compose:compose-bom:2025.05.00')
+    implementation composeBom
+    testImplementation composeBom
+    androidTestImplementation composeBom
     implementation "androidx.compose.material:material:1.5.4"
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -104,7 +105,6 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.10.1'
-    implementation("androidx.compose.material3:material3")
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     // Java language implementation
@@ -119,7 +119,7 @@ dependencies {
     // Jetpack Compose
     // Material
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material:material-icons-extended:1.5.3")
+    implementation("androidx.compose.material:material-icons-extended")
     // Android Studio Preview support
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
@@ -127,13 +127,13 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     // Optional - Integration with activities
-    implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.activity:activity-compose:1.10.1")
     // Optional - Integration with LiveData
     implementation("androidx.compose.runtime:runtime-livedata")
     // Optional - Integration with RxJava
     implementation("androidx.compose.runtime:runtime-rxjava2")
     // To use constraintlayout in compose
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.1")
 
     // Jetpack Navigation
     // Java language implementation
@@ -148,7 +148,7 @@ dependencies {
     androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
     // Jetpack Compose Integration
     implementation "androidx.navigation:navigation-compose:$nav_version"
-    implementation "androidx.hilt:hilt-navigation-compose:1.1.0"
+    implementation "androidx.hilt:hilt-navigation-compose:1.2.0"
 
     // ViewPager2
     implementation "androidx.viewpager2:viewpager2:1.0.0"

@@ -28,9 +28,9 @@ kotlin {
 android {
     defaultConfig {
         applicationId "com.daily.dayo"
-        compileSdk 34
+        compileSdk 35
         minSdkVersion 26
-        targetSdkVersion 34
+        targetSdkVersion 35
         versionCode 20000
         versionName "2.0.0"
 
