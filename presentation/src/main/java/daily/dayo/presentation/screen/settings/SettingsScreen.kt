@@ -113,7 +113,7 @@ private fun SettingsScreen(
     ) { contentPadding ->
         val scrollState = rememberScrollState()
         val context = LocalContext.current
-        val appVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: ""
+        val appVersion = context.packageManager.getPackageInfo(context.packageName, PackageManager.PackageInfoFlags.of(0)).versionName ?: ""
 
         val settingMenus = listOf(
             SettingItem(R.string.setting_menu_change_password, R.drawable.ic_setting_password_change, onClickMenu = onPasswordChangeClick),
