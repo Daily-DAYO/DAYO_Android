@@ -20,10 +20,10 @@ kotlin {
 
 android {
     namespace 'daily.dayo.presentation'
-    compileSdk 35
+    compileSdk rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        minSdk 26
+        minSdk rootProject.ext.minSdkVersion
         versionCode 10000
         versionName "1.0.0"
 
