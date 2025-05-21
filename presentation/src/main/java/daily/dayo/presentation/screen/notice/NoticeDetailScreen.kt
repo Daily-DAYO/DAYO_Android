@@ -1,6 +1,9 @@
 package daily.dayo.presentation.screen.notice
 
 import android.webkit.WebView
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -34,11 +38,14 @@ import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.viewmodel.NoticeViewModel
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun NoticeDetailScreen(
     noticeId: Long,
     onBackClick: () -> Unit = {},
     noticeViewModel: NoticeViewModel = hiltViewModel(),
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedElementScope: SharedTransitionScope,
 ) {
     val scrollState = rememberScrollState()
     val noticeDetail by noticeViewModel.detailNotice.collectAsStateWithLifecycle()
@@ -61,9 +68,12 @@ fun NoticeDetailScreen(
                 .verticalScroll(scrollState),
         ) {
             NoticeDetail(
+                noticeId = noticeId,
                 title = notice?.title ?: "공지사항",
                 contents = noticeDetail?.data ?: "",
                 uploadDate = notice?.uploadDate ?: "0000.00.00",
+                sharedTransitionScope = sharedElementScope,
+                animatedVisibilityScope = animatedVisibilityScope,
             )
         }
     }
@@ -85,50 +95,64 @@ fun NoticeDetailActionbarLayout(
     )
 }
 
-@Preview
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun NoticeDetail(
+    noticeId: Long,
     title: String = "공지사항",
     contents: String = "공지사항 내용",
     uploadDate: String = "0000.00.00",
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(start = 20.dp, end = 20.dp, top = 4.dp)
-            .background(DayoTheme.colorScheme.background)
-    ) {
-        NoticeDetailHeader(
-            title = title,
-            uploadDate = uploadDate,
-        )
-        Divider(
-            modifier = Modifier.padding(top = 20.dp, bottom = 18.dp),
-            color = Gray6_F0F1F3,
-            thickness = 1.dp,
-        )
-
-        AndroidView(
-            factory = { context ->
-                WebView(context).apply {
-                    settings.javaScriptEnabled = true
-                    loadDataWithBaseURL(null, contents, "text/html", "UTF-8", null)
-                }
-            },
-            update = { webView ->
-                webView.loadDataWithBaseURL(null, contents, "text/html", "UTF-8", null)
-            },
+    with(sharedTransitionScope) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(),
-        )
+                .wrapContentHeight()
+                .padding(start = 20.dp, end = 20.dp, top = 4.dp)
+                .background(DayoTheme.colorScheme.background)
+        ) {
+            NoticeDetailHeader(
+                titleModifier = Modifier.sharedBounds(
+                    sharedContentState = rememberSharedContentState(key = "title_$noticeId"),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                ),
+                uploadDateModifier = Modifier.sharedBounds(
+                    sharedContentState = rememberSharedContentState(key = "uploadDate_$noticeId"),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                ),
+                title = title,
+                uploadDate = uploadDate,
+            )
+            Divider(
+                modifier = Modifier.padding(top = 20.dp, bottom = 18.dp),
+                color = Gray6_F0F1F3,
+                thickness = 1.dp,
+            )
+
+            AndroidView(
+                factory = { context ->
+                    WebView(context).apply {
+                        settings.javaScriptEnabled = true
+                        loadDataWithBaseURL(null, contents, "text/html", "UTF-8", null)
+                    }
+                },
+                update = { webView ->
+                    webView.loadDataWithBaseURL(null, contents, "text/html", "UTF-8", null)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+            )
+        }
     }
 }
 
-@Preview
 @Composable
 fun NoticeDetailHeader(
+    titleModifier: Modifier,
+    uploadDateModifier: Modifier,
     title: String = "공지사항",
     uploadDate: String = "0000.00.00",
 ) {
@@ -138,15 +162,21 @@ fun NoticeDetailHeader(
             .wrapContentHeight(),
     ) {
         Text(
+            modifier = uploadDateModifier,
             text = uploadDate,
             style = DayoTheme.typography.caption4,
             color = Gray3_9FA5AE,
+            softWrap = false,
+            overflow = TextOverflow.Visible
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
+            modifier = titleModifier,
             text = title,
             style = DayoTheme.typography.b1,
             color = Dark,
+            softWrap = false,
+            overflow = TextOverflow.Visible
         )
     }
 }

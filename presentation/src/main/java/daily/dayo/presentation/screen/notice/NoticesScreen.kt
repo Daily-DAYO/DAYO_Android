@@ -1,5 +1,8 @@
 package daily.dayo.presentation.screen.notice
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,9 +37,11 @@ import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.viewmodel.NoticeViewModel
 
-@Preview
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun NoticesScreen(
+    sharedElementScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onBackClick: () -> Unit = {},
     onNoticeDetailClick: (Long) -> Unit = {},
     noticeViewModel: NoticeViewModel = hiltViewModel(),
@@ -75,6 +80,8 @@ fun NoticesScreen(
                                 noticeViewModel.selectNotice(notice)
                                 onNoticeDetailClick(notice.noticeId)
                             },
+                            sharedElementScope = sharedElementScope,
+                            animatedVisibilityScope = animatedVisibilityScope,
                         )
                     }
                 }
@@ -100,7 +107,7 @@ fun NoticesActionbarLayout(
     )
 }
 
-@Preview
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun Notice(
     notice: Notice = Notice(
@@ -109,26 +116,40 @@ fun Notice(
         uploadDate = "0000.00.00"
     ),
     onNoticeDetailClick: () -> Unit = {},
+    sharedElementScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
-    Column(
-        modifier = Modifier
-            .clickable { onNoticeDetailClick() }
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(horizontal = 20.dp, vertical = 12.dp),
-    ) {
-        Text(
-            text = notice.uploadDate,
-            modifier = Modifier.wrapContentSize(),
-            style = DayoTheme.typography.caption4,
-            color = Gray3_9FA5AE,
-        )
-        Spacer(modifier = Modifier.height(2.dp))
-        Text(
-            text = notice.title,
-            modifier = Modifier.wrapContentSize(),
-            style = DayoTheme.typography.b6,
-            color = Dark,
-        )
+    with(sharedElementScope) {
+        Column(
+            modifier = Modifier
+                .clickable { onNoticeDetailClick() }
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(horizontal = 20.dp, vertical = 12.dp),
+        ) {
+            Text(
+                text = notice.uploadDate,
+                modifier = Modifier
+                    .sharedBounds(
+                        sharedContentState = rememberSharedContentState(key = "uploadDate_${notice.noticeId}"),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    )
+                    .wrapContentSize(),
+                style = DayoTheme.typography.caption4,
+                color = Gray3_9FA5AE,
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = notice.title,
+                modifier = Modifier
+                    .sharedBounds(
+                        sharedContentState = rememberSharedContentState(key = "title_${notice.noticeId}"),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    )
+                    .wrapContentSize(),
+                style = DayoTheme.typography.b6,
+                color = Dark,
+            )
+        }
     }
 }

@@ -1,5 +1,7 @@
 package daily.dayo.presentation.screen.notice
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -17,18 +19,20 @@ fun NavController.navigateNoticeDetail(noticeId: Long) {
     navigate(NoticeRoute.noticeDetail(noticeId))
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.noticeNavGraph(
-    coroutineScope: CoroutineScope,
-    snackBarHostState: SnackbarHostState,
     noticeViewModel: NoticeViewModel,
     onBackClick: () -> Unit,
     onNoticeDetailClick: (Long) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
 ) {
     composable(NoticeRoute.route) {
         NoticesScreen(
             onBackClick = onBackClick,
             onNoticeDetailClick = onNoticeDetailClick,
             noticeViewModel = noticeViewModel,
+            sharedElementScope = sharedTransitionScope,
+            animatedVisibilityScope = this,
         )
     }
 
@@ -45,6 +49,8 @@ fun NavGraphBuilder.noticeNavGraph(
                 noticeId = noticeId,
                 onBackClick = onBackClick,
                 noticeViewModel = noticeViewModel,
+                sharedElementScope = sharedTransitionScope,
+                animatedVisibilityScope = this,
             )
         }
     }
