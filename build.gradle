@@ -6,6 +6,9 @@ buildscript {
         compose_version = '1.4.6'
         nav_version = '2.6.0'
         paging_version = "3.2.0"
+        targetSdkVersion = 35
+        compileSdkVersion = 35
+        minSdkVersion = 26
     }
     repositories {
         google()
