@@ -17,7 +17,6 @@ import daily.dayo.domain.usecase.post.RequestNewPostListUseCase
 import daily.dayo.presentation.common.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,12 +31,10 @@ class HomeViewModel @Inject constructor(
     private val requestUnlikePostUseCase: RequestUnlikePostUseCase
 ) : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing: StateFlow<Boolean>
-        get() = _isRefreshing.asStateFlow()
+    val isRefreshing = _isRefreshing.asStateFlow()
 
     private val _currentCategory = MutableStateFlow(Category.ALL)
-    val currentCategory: StateFlow<Category>
-        get() = _currentCategory.asStateFlow()
+    val currentCategory = _currentCategory.asStateFlow()
 
     private val _dayoPickPostList = MutableLiveData<Resource<List<Post>>>()
     val dayoPickPostList: LiveData<Resource<List<Post>>> get() = _dayoPickPostList
@@ -67,7 +64,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun requestDayoPickPostList() = viewModelScope.launch {
+    private fun requestDayoPickPostList() = viewModelScope.launch {
         _dayoPickPostList.postValue(Resource.loading(null))
         when (currentCategory.value) {
             Category.ALL -> requestHomeDayoPickPostList()
@@ -75,7 +72,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun requestNewPostList() = viewModelScope.launch {
+    private fun requestNewPostList() = viewModelScope.launch {
         _newPostList.postValue(Resource.loading(null))
         when (currentCategory.value) {
             Category.ALL -> requestHomeNewPostList()
@@ -84,7 +81,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun requestHomeNewPostList() = viewModelScope.launch {
-        requestNewPostListUseCase()?.let { ApiResponse ->
+        requestNewPostListUseCase().let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
                     _newPostList.postValue(Resource.success(ApiResponse.body?.data))
