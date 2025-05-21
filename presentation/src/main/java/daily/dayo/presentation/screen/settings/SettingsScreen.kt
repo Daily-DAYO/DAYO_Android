@@ -1,5 +1,7 @@
 package daily.dayo.presentation.screen.settings
 
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
@@ -113,7 +115,11 @@ private fun SettingsScreen(
     ) { contentPadding ->
         val scrollState = rememberScrollState()
         val context = LocalContext.current
-        val appVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        val appVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.packageManager.getPackageInfo(context.packageName, PackageManager.PackageInfoFlags.of(0)).versionName
+        } else {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        } ?: ""
 
         val settingMenus = listOf(
             SettingItem(R.string.setting_menu_change_password, R.drawable.ic_setting_password_change, onClickMenu = onPasswordChangeClick),
