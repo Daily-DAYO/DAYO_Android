@@ -41,7 +41,6 @@ import daily.dayo.presentation.screen.home.HomeRoute
 import daily.dayo.presentation.screen.home.homeNavGraph
 import daily.dayo.presentation.screen.mypage.MyPageRoute
 import daily.dayo.presentation.screen.mypage.myPageNavGraph
-import daily.dayo.presentation.screen.mypage.navigateBackToFolder
 import daily.dayo.presentation.screen.notification.NotificationRoute
 import daily.dayo.presentation.screen.notification.notificationNavGraph
 import daily.dayo.presentation.screen.post.postNavGraph
@@ -67,17 +66,15 @@ internal fun MainScreen(
     val currentMemberId = profileViewModel.currentMemberId
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
+
     val bottomSheetState = getBottomSheetDialogState()
-    var bottomSheet: (@Composable () -> Unit)? by remember { mutableStateOf(null) }
-    val bottomSheetContent: (@Composable () -> Unit) -> Unit = {
-        bottomSheet = it
-    }
+    var bottomSheetContent by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
     ) {
         Scaffold(
-            bottomBar = { bottomSheet?.let { it() } }
+            bottomBar = { bottomSheetContent?.invoke() }
         ) {
             Scaffold(
                 content = { innerPadding ->
@@ -92,7 +89,7 @@ internal fun MainScreen(
                                 onSearchClick = { navigator.navigateSearch() },
                                 coroutineScope = coroutineScope,
                                 bottomSheetState = bottomSheetState,
-                                bottomSheetContent = bottomSheetContent,
+                                bottomSheetContent = { content -> bottomSheetContent = content },
                             )
                             feedNavGraph(
                                 snackBarHostState = snackBarHostState,
@@ -102,7 +99,7 @@ internal fun MainScreen(
                                 onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
                                 onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) },
                                 bottomSheetState = bottomSheetState,
-                                bottomSheetContent = bottomSheetContent
+                                bottomSheetContent = { content -> bottomSheetContent = content }
                             )
                             postNavGraph(
                                 snackBarHostState = snackBarHostState,
@@ -124,8 +121,8 @@ internal fun MainScreen(
                                 onTagClick = { navigator.navigateWriteTag() },
                                 onWriteFolderClick = { navigator.navigateWriteFolder() },
                                 onWriteFolderNewClick = { navigator.navigateWriteFolderNew() },
-                                bottomSheetState,
-                                bottomSheetContent,
+                                bottomSheetState = bottomSheetState,
+                                bottomSheetContent = { content -> bottomSheetContent = content },
                             )
                             myPageNavGraph(
                                 navController = navigator.navController,
