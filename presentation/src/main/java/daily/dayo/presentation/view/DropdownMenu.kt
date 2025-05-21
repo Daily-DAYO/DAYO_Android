@@ -22,7 +22,13 @@ import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Red_FF4545
 
 @Composable
-fun MyPostDropdownMenu(postId: Long, expanded: Boolean, onDismissRequest: () -> Unit, onPostModifyClick: (Long) -> Unit, onPostDeleteClick: (Long) -> Unit) {
+fun MyPostDropdownMenu(
+    postId: Long,
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
+    onPostModifyClick: (Long) -> Unit,
+    onPostDeleteClick: (Long) -> Unit
+) {
     DayoTheme(shapes = DayoTheme.shapes.copy(extraSmall = RoundedCornerShape(16.dp))) {
         DropdownMenu(
             expanded = expanded,
@@ -87,7 +93,11 @@ fun MyPostDropdownMenu(postId: Long, expanded: Boolean, onDismissRequest: () -> 
 }
 
 @Composable
-fun OthersPostDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit, onPostReportClick: () -> Unit) {
+fun OthersPostDropdownMenu(
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
+    onPostReportClick: () -> Unit
+) {
     DayoTheme(shapes = DayoTheme.shapes.copy(extraSmall = RoundedCornerShape(16.dp))) {
         DropdownMenu(
             expanded = expanded,
@@ -122,7 +132,12 @@ fun OthersPostDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit, onPo
 }
 
 @Composable
-fun ProfileDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit, onUserReportClick: () -> Unit) {
+fun ProfileDropdownMenu(
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
+    onUserReportClick: () -> Unit,
+    onUserBlockClick: () -> Unit,
+) {
     DayoTheme(shapes = DayoTheme.shapes.copy(extraSmall = RoundedCornerShape(16.dp))) {
         DropdownMenu(
             expanded = expanded,
@@ -132,7 +147,7 @@ fun ProfileDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit, onUserR
             DropdownMenuItem(
                 modifier = Modifier
                     .padding(horizontal = 6.dp)
-                    .clip(RoundedCornerShape(12.dp)),
+                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
                 text = {
                     Row(
                         modifier = Modifier.width(128.dp),
@@ -151,6 +166,29 @@ fun ProfileDropdownMenu(expanded: Boolean, onDismissRequest: () -> Unit, onUserR
                     }
                 },
                 onClick = onUserReportClick
+            )
+            DropdownMenuItem(
+                modifier = Modifier
+                    .padding(horizontal = 6.dp)
+                    .clip(RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)),
+                text = {
+                    Row(
+                        modifier = Modifier.width(128.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_menu_block),
+                            contentDescription = stringResource(R.string.other_profile_option_block_user),
+                            tint = Dark,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.other_profile_option_block_user),
+                            style = DayoTheme.typography.b6.copy(Dark)
+                        )
+                    }
+                },
+                onClick = onUserBlockClick
             )
         }
     }

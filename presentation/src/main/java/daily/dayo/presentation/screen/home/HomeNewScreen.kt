@@ -16,12 +16,12 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
@@ -45,7 +44,6 @@ import daily.dayo.presentation.view.EmojiView
 import daily.dayo.presentation.view.FilledButton
 import daily.dayo.presentation.view.HomePostView
 import daily.dayo.presentation.viewmodel.HomeViewModel
-import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -53,14 +51,18 @@ fun HomeNewScreen(
     selectedCategoryName: String,
     onPostClick: (Long) -> Unit,
     onProfileClick: (String) -> Unit,
-    coroutineScope: CoroutineScope,
-    bottomSheetState: ModalBottomSheetState,
-    homeViewModel: HomeViewModel = hiltViewModel()
+    onCategoryClick: () -> Unit,
+    homeViewModel: HomeViewModel
 ) {
     val newPostList = homeViewModel.newPostList.observeAsState()
+    val currentCategory = homeViewModel.currentCategory.collectAsStateWithLifecycle()
     val refreshing by homeViewModel.isRefreshing.collectAsStateWithLifecycle()
     val pullRefreshState = rememberPullRefreshState(refreshing, { homeViewModel.loadNewPosts() })
     var isEmpty by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(currentCategory.value) {
+        homeViewModel.loadNewPosts()
+    }
 
     Box(
         modifier = Modifier
@@ -99,7 +101,7 @@ fun HomeNewScreen(
                                     .align(Alignment.CenterVertically)
                             )
                         }
-                        CategoryButton(selectedCategoryName, coroutineScope, bottomSheetState)
+                        CategoryButton(selectedCategoryName, onCategoryClick)
                     }
                 }
 

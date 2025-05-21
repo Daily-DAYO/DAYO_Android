@@ -1,12 +1,12 @@
 package daily.dayo.presentation.view
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -39,11 +39,10 @@ fun Chip(
             )
         },
         shape = RoundedCornerShape(100.dp),
-        border = AssistChipDefaults.assistChipBorder(
-            borderColor = color,
-            borderWidth = 1.dp,
-            disabledBorderColor = Gray6_F0F1F3
-        ),
+        border = if (enabled) BorderStroke(
+            width = 1.dp,
+            color = color
+        ) else BorderStroke(width = 1.dp, color = Gray6_F0F1F3),
         colors = AssistChipDefaults.assistChipColors(
             containerColor = White_FFFFFF,
             disabledContainerColor = White_FFFFFF

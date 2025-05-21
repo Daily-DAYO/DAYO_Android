@@ -58,16 +58,18 @@ fun HomeScreen(
 ) {
     var homeTabState by rememberSaveable { mutableIntStateOf(HOME_DAYOPICK_PAGE_TAB_ID) }
     var selectedCategory by rememberSaveable { mutableStateOf(Pair(CategoryMenu.All.name, 0)) } // name, index
-    val onClickCategory: (CategoryMenu, Int) -> Unit = { categoryMenu, index ->
+    val onCategoryClick: () -> Unit = {
+        coroutineScope.launch { bottomSheetState.show() }
+    }
+
+    val onCategorySelect: (CategoryMenu, Int) -> Unit = { categoryMenu, index ->
         selectedCategory = Pair(categoryMenu.name, index)
         homeViewModel.setCategory(categoryMenu.category)
         coroutineScope.launch { bottomSheetState.hide() }
     }
 
     BackHandler(enabled = bottomSheetState.isVisible) {
-        coroutineScope.launch {
-            bottomSheetState.hide()
-        }
+        coroutineScope.launch { bottomSheetState.hide() }
     }
 
     Scaffold(
@@ -124,11 +126,9 @@ fun HomeScreen(
                         selectedCategory.first,
                         onPostClick,
                         onProfileClick,
-                        coroutineScope,
-                        bottomSheetState,
+                        onCategoryClick,
                         homeViewModel
                     )
-                    homeViewModel.loadDayoPickPosts()
                 }
 
                 HOME_NEW_PAGE_TAB_ID -> {
@@ -136,18 +136,16 @@ fun HomeScreen(
                         selectedCategory.first,
                         onPostClick,
                         onProfileClick,
-                        coroutineScope,
-                        bottomSheetState,
+                        onCategoryClick,
                         homeViewModel
                     )
-                    homeViewModel.loadNewPosts()
                 }
             }
         }
     }
 
     bottomSheetContent {
-        CategoryBottomSheetDialog(onClickCategory, selectedCategory, coroutineScope, bottomSheetState)
+        CategoryBottomSheetDialog(onCategorySelect, selectedCategory, coroutineScope, bottomSheetState)
     }
 }
 

@@ -27,7 +27,7 @@ git clone git@github.com:Daily-DAYO/DAYO_Android.git
 
 ## Application Version
 - minSdkVersion : 26<br>
-- targetSdkVersion : 33
+- targetSdkVersion : 35
 
 ## Git Convention
 - Create issue<br>

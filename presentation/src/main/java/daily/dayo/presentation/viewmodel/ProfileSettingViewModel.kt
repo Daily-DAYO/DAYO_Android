@@ -43,8 +43,9 @@ class ProfileSettingViewModel @Inject constructor(
     private val _isUpdateSuccess = MutableStateFlow<Status?>(null)
     val isUpdateSuccess: StateFlow<Status?> get() = _isUpdateSuccess
 
-    private val _blockList = MutableLiveData<Resource<List<UserBlocked>>>()
-    val blockList: LiveData<Resource<List<UserBlocked>>> get() = _blockList
+    private val _blockList =
+        MutableStateFlow<Resource<List<UserBlocked>>>(Resource.loading(emptyList()))
+    val blockList: StateFlow<Resource<List<UserBlocked>>> get() = _blockList
 
     private val _isNicknameDuplicate = MutableSharedFlow<Boolean>()
     val isNicknameDuplicate = _isNicknameDuplicate.asSharedFlow()
@@ -80,7 +81,7 @@ class ProfileSettingViewModel @Inject constructor(
 
     fun requestUpdateMyProfileWithResizedFile(
         nickname: String,
-        profileImg: Bitmap?= null,
+        profileImg: Bitmap? = null,
         profileImgTempDir: String? = null,
         isReset: Boolean = false
     ) {
@@ -108,22 +109,25 @@ class ProfileSettingViewModel @Inject constructor(
     }
 
     fun requestBlockList() = viewModelScope.launch {
+        val currentData = _blockList.value.data
+        _blockList.emit(Resource.loading(currentData))
+
         requestBlockListUseCase().let { response ->
             when (response) {
                 is NetworkResponse.Success -> {
-                    _blockList.postValue(Resource.success(response.body?.data))
+                    _blockList.emit(Resource.success(response.body?.data))
                 }
 
                 is NetworkResponse.NetworkError -> {
-                    _blockList.postValue(Resource.error(response.exception.toString(), null))
+                    _blockList.emit(Resource.error(response.exception.toString(), null))
                 }
 
                 is NetworkResponse.ApiError -> {
-                    _blockList.postValue(Resource.error(response.error.toString(), null))
+                    _blockList.emit(Resource.error(response.error.toString(), null))
                 }
 
                 is NetworkResponse.UnknownError -> {
-                    _blockList.postValue(Resource.error(response.throwable.toString(), null))
+                    _blockList.emit(Resource.error(response.throwable.toString(), null))
                 }
             }
         }
