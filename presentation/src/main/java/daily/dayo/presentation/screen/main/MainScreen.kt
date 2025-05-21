@@ -70,17 +70,15 @@ internal fun MainScreen(
     val coroutineScope = rememberCoroutineScope()
     val noticeViewModel = hiltViewModel<NoticeViewModel>()
     val snackBarHostState = remember { SnackbarHostState() }
+
     val bottomSheetState = getBottomSheetDialogState()
-    var bottomSheet: (@Composable () -> Unit)? by remember { mutableStateOf(null) }
-    val bottomSheetContent: (@Composable () -> Unit) -> Unit = {
-        bottomSheet = it
-    }
+    var bottomSheetContent by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
     ) {
         Scaffold(
-            bottomBar = { bottomSheet?.let { it() } }
+            bottomBar = { bottomSheetContent?.invoke() }
         ) {
             Scaffold(
                 content = { innerPadding ->
@@ -95,7 +93,7 @@ internal fun MainScreen(
                                 onSearchClick = { navigator.navigateSearch() },
                                 coroutineScope = coroutineScope,
                                 bottomSheetState = bottomSheetState,
-                                bottomSheetContent = bottomSheetContent,
+                                bottomSheetContent = { content -> bottomSheetContent = content },
                             )
                             feedNavGraph(
                                 snackBarHostState = snackBarHostState,
@@ -105,7 +103,7 @@ internal fun MainScreen(
                                 onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
                                 onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) },
                                 bottomSheetState = bottomSheetState,
-                                bottomSheetContent = bottomSheetContent
+                                bottomSheetContent = { content -> bottomSheetContent = content }
                             )
                             postNavGraph(
                                 snackBarHostState = snackBarHostState,
@@ -127,8 +125,8 @@ internal fun MainScreen(
                                 onTagClick = { navigator.navigateWriteTag() },
                                 onWriteFolderClick = { navigator.navigateWriteFolder() },
                                 onWriteFolderNewClick = { navigator.navigateWriteFolderNew() },
-                                bottomSheetState,
-                                bottomSheetContent,
+                                bottomSheetState = bottomSheetState,
+                                bottomSheetContent = { content -> bottomSheetContent = content },
                             )
                             myPageNavGraph(
                                 navController = navigator.navController,
@@ -146,6 +144,7 @@ internal fun MainScreen(
                                 navigateBackToFolder = { folderId -> navigator.navigateBackToFolder(folderId) }
                             )
                             profileNavGraph(
+                                snackBarHostState = snackBarHostState,
                                 onFollowMenuClick = { memberId, tabNum -> navigator.navigateFollowMenu(memberId, tabNum) },
                                 onFolderClick = { folderId -> navigator.navigateFolder(folderId) },
                                 onPostClick = { postId -> navigator.navigatePost(postId) },
@@ -160,6 +159,7 @@ internal fun MainScreen(
                                 coroutineScope = coroutineScope,
                                 snackBarHostState = snackBarHostState,
                                 onProfileEditClick = { navigator.navigateProfileEdit() },
+                                onBlockUsersClick = { navigator.navigateBlockedUsers() },
                                 onPasswordChangeClick = { navigator.navigateChangePassword() },
                                 onSettingNotificationClick = { navigator.navigateSettingsNotification() },
                                 onNoticesClick = { navigator.navigateNotices() },

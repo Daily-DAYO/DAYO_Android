@@ -26,11 +26,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -254,7 +254,7 @@ fun FeedPostView(
                     .padding(end = 8.dp)
                     .padding(vertical = 8.dp)
                     .clickableSingle(
-                        indication = rememberRipple(bounded = false),
+                        indication = ripple(bounded = false),
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = onClickLikePost
                     ),
@@ -267,7 +267,7 @@ fun FeedPostView(
                 modifier = Modifier
                     .padding(8.dp)
                     .clickableSingle(
-                        indication = rememberRipple(bounded = false),
+                        indication = ripple(bounded = false),
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = { post.postId?.let { onClickComment(it) } }
                     ),
@@ -281,7 +281,7 @@ fun FeedPostView(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
                     .clickableSingle(
-                        indication = rememberRipple(bounded = false),
+                        indication = ripple(bounded = false),
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = onClickBookmark
                     ),

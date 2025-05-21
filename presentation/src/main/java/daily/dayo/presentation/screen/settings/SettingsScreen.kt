@@ -1,5 +1,7 @@
 package daily.dayo.presentation.screen.settings
 
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
@@ -58,6 +60,7 @@ fun SettingsScreen(
     onProfileEditClick: () -> Unit,
     onBackClick: () -> Unit,
     onPasswordChangeClick: () -> Unit,
+    onBlockUsersClick: () -> Unit,
     onSettingNotificationClick: () -> Unit,
     onNoticesClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel()
@@ -75,6 +78,7 @@ fun SettingsScreen(
         onSettingNotificationClick = onSettingNotificationClick,
         onPasswordChangeClick = onPasswordChangeClick,
         onNoticesClick = onNoticesClick,
+        onBlockUsersClick = onBlockUsersClick
     )
 }
 
@@ -86,6 +90,7 @@ private fun SettingsScreen(
     onSettingNotificationClick: () -> Unit,
     onPasswordChangeClick: () -> Unit,
     onNoticesClick: () -> Unit = {},
+    onBlockUsersClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -113,11 +118,15 @@ private fun SettingsScreen(
     ) { contentPadding ->
         val scrollState = rememberScrollState()
         val context = LocalContext.current
-        val appVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        val appVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.packageManager.getPackageInfo(context.packageName, PackageManager.PackageInfoFlags.of(0)).versionName
+        } else {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        } ?: ""
 
         val settingMenus = listOf(
             SettingItem(R.string.setting_menu_change_password, R.drawable.ic_setting_password_change, onClickMenu = onPasswordChangeClick),
-            SettingItem(R.string.setting_menu_block_user, R.drawable.ic_block, onClickMenu = {}),
+            SettingItem(R.string.setting_menu_block_user, R.drawable.ic_block, onClickMenu = onBlockUsersClick),
             SettingItem(R.string.setting_menu_notification, R.drawable.ic_notification, onClickMenu = onSettingNotificationClick),
             null, // Divider
             SettingItem(R.string.setting_menu_notice, R.drawable.ic_setting_notice, onClickMenu = onNoticesClick),
@@ -275,6 +284,7 @@ private fun PreviewSettingsScreen() {
             onPasswordChangeClick = {},
             onSettingNotificationClick = {},
             onNoticesClick = {},
+            onBlockUsersClick = {}
         )
     }
 }

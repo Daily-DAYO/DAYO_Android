@@ -539,14 +539,6 @@
             app:popExitAnim="@anim/translate_to_right_out" />
 
         <action
-            android:id="@+id/action_settingFragment_to_settingBlockFragment"
-            app:destination="@+id/SettingBlockFragment"
-            app:enterAnim="@anim/translate_from_right_in"
-            app:exitAnim="@anim/translate_to_left_out"
-            app:popEnterAnim="@anim/translate_from_left_in"
-            app:popExitAnim="@anim/translate_to_right_out" />
-
-        <action
             android:id="@+id/action_settingFragment_to_informationFragment"
             app:destination="@id/InformationFragment"
             app:enterAnim="@anim/translate_from_right_in"
@@ -554,12 +546,6 @@
             app:popEnterAnim="@anim/translate_from_left_in"
             app:popExitAnim="@anim/translate_to_right_out" />
     </fragment>
-
-    <fragment
-        android:id="@+id/SettingBlockFragment"
-        android:name="daily.dayo.presentation.fragment.setting.block.SettingBlockFragment"
-        android:label="fragment_setting_block"
-        tools:layout="@layout/fragment_setting_block" />
 
     <fragment
         android:id="@+id/SettingNotificationFragment"
