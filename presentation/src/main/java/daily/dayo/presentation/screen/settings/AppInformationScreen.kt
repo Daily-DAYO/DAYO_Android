@@ -138,14 +138,18 @@ fun AppInformationItem(
 }
 
 private fun getAppVersion(context: Context): String {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        context.packageManager.getPackageInfo(
-            context.packageName,
-            PackageManager.PackageInfoFlags.of(0)
-        ).versionName
-    } else {
-        context.packageManager.getPackageInfo(context.packageName, 0).versionName
-    } ?: ""
+    return try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.packageManager.getPackageInfo(
+                context.packageName,
+                PackageManager.PackageInfoFlags.of(0)
+            ).versionName
+        } else {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        } ?: ""
+    } catch (e: PackageManager.NameNotFoundException) {
+        ""
+    }
 }
 
 @Preview(showBackground = true)
