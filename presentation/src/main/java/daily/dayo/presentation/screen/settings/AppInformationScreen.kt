@@ -39,13 +39,11 @@ fun AppInformationScreen(
     onBackClick: () -> Unit = {},
     onRulesClick: (RuleType) -> Unit = {},
 ) {
-    val context = LocalContext.current
     Scaffold(
         topBar = { AppInformationTopBar(onBackClick = onBackClick) },
     ) { paddingValues ->
         AppInformationContent(
             modifier = Modifier.padding(paddingValues),
-            context = context,
             onRulesClick = onRulesClick,
         )
     }
@@ -68,22 +66,13 @@ fun AppInformationTopBar(
     )
 }
 
-@Preview
 @Composable
 fun AppInformationContent(
     modifier: Modifier = Modifier,
-    context: Context = LocalContext.current,
     onRulesClick: (RuleType) -> Unit = {},
 ) {
-
-    val appVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        context.packageManager.getPackageInfo(
-            context.packageName,
-            PackageManager.PackageInfoFlags.of(0)
-        ).versionName
-    } else {
-        context.packageManager.getPackageInfo(context.packageName, 0).versionName
-    } ?: ""
+    val context = LocalContext.current
+    val appVersion = getAppVersion(context)
 
     Column(
         modifier = modifier
@@ -92,30 +81,24 @@ fun AppInformationContent(
     ) {
         AppInformationItem(
             title = stringResource(R.string.rules_terms_and_conditions),
-            onClick = {
-                onRulesClick(RuleType.TERMS_AND_CONDITIONS)
-            },
+            onClick = { onRulesClick(RuleType.TERMS_AND_CONDITIONS) },
         )
         Spacer(modifier = Modifier.height(2.dp))
         AppInformationItem(
             title = stringResource(R.string.rules_privacy_policy_title),
-            onClick = {
-                onRulesClick(RuleType.PRIVACY_POLICY)
-            },
+            onClick = { onRulesClick(RuleType.PRIVACY_POLICY) },
         )
         Spacer(modifier = Modifier.height(2.dp))
         AppInformationItem(
             title = stringResource(R.string.app_version),
             description = "DAYO $appVersion",
-            onClick = { },
         )
     }
 }
 
-@Preview
 @Composable
 fun AppInformationItem(
-    title: String = "정보",
+    title: String,
     description: String? = null,
     onClick: () -> Unit = {},
 ) {
@@ -132,11 +115,11 @@ fun AppInformationItem(
             color = Dark,
         )
         Spacer(modifier = Modifier.weight(1f))
-        if (description != null) {
+        if (!description.isNullOrBlank()) {
             Text(
                 text = description,
                 style = DayoTheme.typography.b4,
-                color = Primary_23C882,
+                color = DayoTheme.colorScheme.primary,
                 modifier = Modifier
                     .padding(end = 4.dp)
                     .wrapContentSize(),
@@ -148,8 +131,39 @@ fun AppInformationItem(
                     .size(20.dp),
                 painter = painterResource(id = R.drawable.ic_chevron_r),
                 contentDescription = null,
-                tint = Gray4_C5CAD2,
+                tint = DayoTheme.colorScheme.outline,
             )
+        }
+    }
+}
+
+private fun getAppVersion(context: Context): String {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        context.packageManager.getPackageInfo(
+            context.packageName,
+            PackageManager.PackageInfoFlags.of(0)
+        ).versionName
+    } else {
+        context.packageManager.getPackageInfo(context.packageName, 0).versionName
+    } ?: ""
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewAppInformationContent() {
+    DayoTheme {
+        AppInformationContent()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewSettingsListItem() {
+    DayoTheme {
+        Column {
+            AppInformationItem(title = "이용약관")
+            AppInformationItem(title = "개인정보처리방침")
+            AppInformationItem(title = "앱 버전", description = "DAYO 1.0.0")
         }
     }
 }
