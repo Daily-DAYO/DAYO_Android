@@ -18,6 +18,8 @@ import daily.dayo.presentation.screen.mypage.navigateFolderPostMove
 import daily.dayo.presentation.screen.mypage.navigateFollowMenu
 import daily.dayo.presentation.screen.mypage.navigateMyPage
 import daily.dayo.presentation.screen.mypage.navigateProfileEdit
+import daily.dayo.presentation.screen.notice.navigateNotices
+import daily.dayo.presentation.screen.notice.navigateNoticeDetail
 import daily.dayo.presentation.screen.post.navigatePost
 import daily.dayo.presentation.screen.post.navigatePostLikeUsers
 import daily.dayo.presentation.screen.profile.navigateProfile
@@ -67,6 +69,14 @@ class MainNavigator(
 
     fun navigateSearchPostHashtag(hashtag: String) {
         navController.navigateSearchPostHashtag(hashtag = hashtag)
+    }
+
+    fun navigateNotices() {
+        navController.navigateNotices()
+    }
+
+    fun navigateNoticeDetail(noticeId: Long) {
+        navController.navigateNoticeDetail(noticeId = noticeId)
     }
 
     fun navigateSettings() {

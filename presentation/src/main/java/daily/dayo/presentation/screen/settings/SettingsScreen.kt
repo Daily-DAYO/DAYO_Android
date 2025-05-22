@@ -62,6 +62,7 @@ fun SettingsScreen(
     onPasswordChangeClick: () -> Unit,
     onBlockUsersClick: () -> Unit,
     onSettingNotificationClick: () -> Unit,
+    onNoticesClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
     val profileInfo = profileViewModel.profileInfo.observeAsState()
@@ -76,6 +77,7 @@ fun SettingsScreen(
         onBackClick = onBackClick,
         onSettingNotificationClick = onSettingNotificationClick,
         onPasswordChangeClick = onPasswordChangeClick,
+        onNoticesClick = onNoticesClick,
         onBlockUsersClick = onBlockUsersClick
     )
 }
@@ -87,6 +89,7 @@ private fun SettingsScreen(
     onBackClick: () -> Unit,
     onSettingNotificationClick: () -> Unit,
     onPasswordChangeClick: () -> Unit,
+    onNoticesClick: () -> Unit = {},
     onBlockUsersClick: () -> Unit,
 ) {
     Scaffold(
@@ -126,7 +129,7 @@ private fun SettingsScreen(
             SettingItem(R.string.setting_menu_block_user, R.drawable.ic_block, onClickMenu = onBlockUsersClick),
             SettingItem(R.string.setting_menu_notification, R.drawable.ic_notification, onClickMenu = onSettingNotificationClick),
             null, // Divider
-            SettingItem(R.string.setting_menu_notice, R.drawable.ic_setting_notice, onClickMenu = {}),
+            SettingItem(R.string.setting_menu_notice, R.drawable.ic_setting_notice, onClickMenu = onNoticesClick),
             SettingItem(R.string.setting_menu_information, R.drawable.ic_setting_information, onClickMenu = {}, description = appVersion),
             SettingItem(R.string.setting_menu_contact, R.drawable.ic_setting_contact, onClickMenu = {}),
             null // Divider
@@ -279,8 +282,9 @@ private fun PreviewSettingsScreen() {
             onBackClick = {},
             onProfileEditClick = {},
             onPasswordChangeClick = {},
-            onBlockUsersClick = {},
-            onSettingNotificationClick = {}
+            onSettingNotificationClick = {},
+            onNoticesClick = {},
+            onBlockUsersClick = {}
         )
     }
 }
