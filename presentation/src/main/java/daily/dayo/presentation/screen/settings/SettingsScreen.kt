@@ -1,5 +1,8 @@
 package daily.dayo.presentation.screen.settings
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.DrawableRes
@@ -27,8 +30,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
@@ -53,6 +59,7 @@ import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
+import daily.dayo.presentation.view.dialog.ConfirmDialog
 import daily.dayo.presentation.viewmodel.ProfileViewModel
 
 @Composable
@@ -65,7 +72,10 @@ fun SettingsScreen(
     onNoticesClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val profileInfo = profileViewModel.profileInfo.observeAsState()
+    var showInquiryGuideDialog by remember { mutableStateOf(false) }
+    val inquiryEmail = stringResource(id = R.string.inquiry_email)
 
     LaunchedEffect(Unit) {
         profileViewModel.requestMyProfile()
@@ -78,8 +88,21 @@ fun SettingsScreen(
         onSettingNotificationClick = onSettingNotificationClick,
         onPasswordChangeClick = onPasswordChangeClick,
         onNoticesClick = onNoticesClick,
-        onBlockUsersClick = onBlockUsersClick
+        onBlockUsersClick = onBlockUsersClick,
+        onInquiryClick = {
+            copyInquiryEmail(context, inquiryEmail)
+            showInquiryGuideDialog = true
+        },
     )
+
+    if (showInquiryGuideDialog) {
+        ConfirmDialog(
+            title = stringResource(R.string.setting_contact_message),
+            description = stringResource(R.string.setting_contact_explanation_message),
+            onClickCancel = null,
+            onClickConfirm = { showInquiryGuideDialog = false },
+        )
+    }
 }
 
 @Composable
@@ -91,6 +114,7 @@ private fun SettingsScreen(
     onPasswordChangeClick: () -> Unit,
     onNoticesClick: () -> Unit = {},
     onBlockUsersClick: () -> Unit,
+    onInquiryClick: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -271,6 +295,15 @@ private fun SettingMenu(
             tint = Gray4_C5CAD2
         )
     }
+}
+
+fun copyInquiryEmail(
+    context: Context,
+    inquiryEmail: String,
+) {
+    val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clipData = ClipData.newPlainText("inquiry_email", inquiryEmail)
+    clipboardManager.setPrimaryClip(clipData)
 }
 
 @Preview
