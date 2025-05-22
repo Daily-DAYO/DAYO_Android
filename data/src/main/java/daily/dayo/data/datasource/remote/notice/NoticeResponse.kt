@@ -18,7 +18,7 @@ data class NoticeDetailResponse(
 
 data class NoticeDto(
     @SerializedName("id")
-    val id: Int,
+    val id: Long,
     @SerializedName("title")
     val title: String,
     @SerializedName("createdDate")

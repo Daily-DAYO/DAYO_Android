@@ -26,6 +26,7 @@ fun NavGraphBuilder.settingsNavGraph(
     onBackClick: () -> Unit,
     onSettingNotificationClick: () -> Unit,
     onPasswordChangeClick: () -> Unit,
+    onNoticesClick: () -> Unit,
 ) {
     composable(SettingsRoute.route) {
         SettingsScreen(
@@ -34,6 +35,7 @@ fun NavGraphBuilder.settingsNavGraph(
             onPasswordChangeClick = onPasswordChangeClick,
             onBlockUsersClick = onBlockUsersClick,
             onSettingNotificationClick = onSettingNotificationClick,
+            onNoticesClick = onNoticesClick,
         )
     }
 
