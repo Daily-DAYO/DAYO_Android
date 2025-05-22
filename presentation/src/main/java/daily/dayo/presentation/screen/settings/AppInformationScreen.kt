@@ -146,7 +146,7 @@ fun AppInformationItem(
                 modifier = Modifier
                     .padding(end = 4.dp)
                     .size(20.dp),
-                painter = painterResource(id = R.drawable.ic_arrow_tag_gray),
+                painter = painterResource(id = R.drawable.ic_chevron_r),
                 contentDescription = null,
                 tint = Gray4_C5CAD2,
             )
