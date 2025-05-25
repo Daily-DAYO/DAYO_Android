@@ -370,6 +370,8 @@
     <string name="search_result_empty_title">앗! 찾으시는 검색 결과가 없어요.</string>
     <string name="search_result_empty_description">다른 검색어를 입력해보세요</string>
     <string name="search_history_clear">검색 기록 지우기</string>
+    <string name="search_history_empty_title">최근 검색 결과가 없어요.</string>
+    <string name="search_history_empty_description">관심있는 키워드 또는 사용자를 찾아보세요</string>
 
     <!-- Certificate-->
     <string name="get_certificate_code">인증번호 받기</string>
