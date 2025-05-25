@@ -355,7 +355,7 @@ fun NotificationView(
             modifier = Modifier.weight(1f),
         ) {
             RoundImageView(
-                imageUrl = "${BuildConfig.BASE_URL}/images/${notification.profileImage!!}",
+                imageUrl = "${BuildConfig.BASE_URL}/images/${notification.profileImage}",
                 context = context,
                 modifier = Modifier
                     .size(28.dp)
