@@ -1,5 +1,6 @@
 package daily.dayo.presentation.screen.search
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -68,6 +69,10 @@ internal fun SearchRoute(
     onSearch: (String) -> Unit,
     viewmodel: SearchViewModel = hiltViewModel()
 ) {
+    BackHandler {
+        onBackClick()
+    }
+
     val searchHistory by viewmodel.searchHistory.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
 

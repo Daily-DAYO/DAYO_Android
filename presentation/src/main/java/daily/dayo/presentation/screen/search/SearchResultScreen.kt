@@ -1,5 +1,6 @@
 package daily.dayo.presentation.screen.search
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -105,6 +106,10 @@ internal fun SearchResultRoute(
     followViewModel: FollowViewModel = hiltViewModel(),
     accountViewModel: AccountViewModel = hiltViewModel()
 ) {
+    BackHandler {
+        onBackClick()
+    }
+
     val searchKeywordResultsTag = searchViewModel.searchTagList.collectAsLazyPagingItems()
     val searchKeywordResultsUser = searchViewModel.searchUserList.collectAsLazyPagingItems()
     val searchKeywordResultsTagTotalCount by searchViewModel.searchTagTotalCount.collectAsStateWithLifecycle(
