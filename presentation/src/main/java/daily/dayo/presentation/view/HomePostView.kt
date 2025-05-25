@@ -14,9 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -88,7 +87,7 @@ fun HomePostView(
                     .padding(bottom = 12.dp, end = 11.dp)
                     .align(Alignment.BottomEnd)
                     .clickableSingle(
-                        indication = rememberRipple(bounded = false),
+                        indication = ripple(bounded = false),
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = { onClickLikePost() }
                     ),

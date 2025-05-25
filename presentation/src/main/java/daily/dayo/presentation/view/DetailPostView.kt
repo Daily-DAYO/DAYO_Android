@@ -20,11 +20,11 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,20 +65,20 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun DetailPostView(
-    postId: String,
+    postId: Long,
     post: PostDetail,
     commentCount: Int,
     currentMemberId: String?,
     snackBarHostState: SnackbarHostState,
     onClickProfile: (String) -> Unit,
     onClickPost: () -> Unit,
-    onPostModifyClick: (String) -> Unit,
-    onPostDeleteClick: (String) -> Unit,
+    onPostModifyClick: (Long) -> Unit,
+    onPostDeleteClick: (Long) -> Unit,
     onClickLikePost: () -> Unit,
     onClickComment: () -> Unit,
     onClickBookmark: () -> Unit,
     onClickReport: (String) -> Unit,
-    onPostLikeUsersClick: (String) -> Unit,
+    onPostLikeUsersClick: (Long) -> Unit,
     onPostHashtagClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -238,7 +238,7 @@ fun DetailPostView(
                 imageVector = ImageVector.vectorResource(id = if (post.heart) R.drawable.ic_heart_filled else R.drawable.ic_heart_outlined),
                 modifier = Modifier
                     .clickableSingle(
-                        indication = rememberRipple(bounded = false),
+                        indication = ripple(bounded = false),
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = onClickLikePost
                     ),
@@ -257,7 +257,7 @@ fun DetailPostView(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_comment),
                 modifier = Modifier
                     .clickableSingle(
-                        indication = rememberRipple(bounded = false),
+                        indication = ripple(bounded = false),
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = onClickComment
                     ),
@@ -277,7 +277,7 @@ fun DetailPostView(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
                     .clickableSingle(
-                        indication = rememberRipple(bounded = false),
+                        indication = ripple(bounded = false),
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = onClickBookmark
                     ),
@@ -324,7 +324,7 @@ fun DetailPostView(
 private fun PreviewDetailPostView() {
     DayoTheme {
         DetailPostView(
-            postId = "0",
+            postId = 0L,
             post = DEFAULT_POST,
             commentCount = 0,
             currentMemberId = "",

@@ -1,5 +1,6 @@
 package daily.dayo.presentation.screen.profile
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -11,9 +12,10 @@ fun NavController.navigateProfile(memberId: String) {
 }
 
 fun NavGraphBuilder.profileNavGraph(
+    snackBarHostState: SnackbarHostState,
     onFollowMenuClick: (String, Int) -> Unit,
-    onFolderClick: (String) -> Unit,
-    onPostClick: (String) -> Unit,
+    onFolderClick: (Long) -> Unit,
+    onPostClick: (Long) -> Unit,
     onBackClick: () -> Unit
 ) {
     composable(
@@ -26,6 +28,7 @@ fun NavGraphBuilder.profileNavGraph(
     ) { navBackStackEntry ->
         val memberId = navBackStackEntry.arguments?.getString("memberId") ?: ""
         ProfileScreen(
+            externalSnackBarHostState = snackBarHostState,
             memberId = memberId,
             onFollowMenuClick = onFollowMenuClick,
             onFolderClick = onFolderClick,

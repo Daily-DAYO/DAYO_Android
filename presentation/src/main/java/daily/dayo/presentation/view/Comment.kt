@@ -27,8 +27,8 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TextFieldDefaults.TextFieldDecorationBox
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
@@ -238,7 +238,7 @@ fun CommentView(
                     // reply comment
                     Row(
                         modifier = Modifier.clickableSingle(
-                            indication = rememberRipple(bounded = false, radius = 8.dp),
+                            indication = ripple(bounded = false, radius = 8.dp),
                             interactionSource = remember { MutableInteractionSource() },
                             onClick = { onClickReply(Pair(parentCommentId, comment)) }),
                         verticalAlignment = Alignment.CenterVertically
@@ -269,7 +269,7 @@ fun CommentView(
                         style = DayoTheme.typography.b6.copy(Gray3_9FA5AE),
                         modifier = Modifier
                             .clickableSingle(
-                                indication = rememberRipple(bounded = false, radius = 8.dp),
+                                indication = ripple(bounded = false, radius = 8.dp),
                                 interactionSource = remember { MutableInteractionSource() },
                                 onClick = if (isMine) {
                                     { onClickDelete(comment.commentId) }
@@ -330,7 +330,7 @@ fun CommentMentionSearchView(userResults: LazyPagingItems<SearchUser>, onClickFo
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
                         .clickableSingle(
-                            indication = rememberRipple(bounded = false, radius = 8.dp, color = Gray7_F6F6F7),
+                            indication = ripple(bounded = false, radius = 8.dp, color = Gray7_F6F6F7),
                             interactionSource = remember { MutableInteractionSource() },
                             onClick = { onClickFollowUser(user) }
                         ),

@@ -10,12 +10,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import daily.dayo.presentation.BuildConfig
-import daily.dayo.presentation.common.Event
-import daily.dayo.presentation.common.image.ImageResizeUtil.cropCenterBitmap
-import daily.dayo.presentation.common.ListLiveData
-import daily.dayo.presentation.common.Resource
-import daily.dayo.presentation.common.toFile
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import daily.dayo.domain.model.Category
 import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.NetworkResponse
@@ -26,10 +22,14 @@ import daily.dayo.domain.usecase.folder.RequestCreateFolderInPostUseCase
 import daily.dayo.domain.usecase.post.RequestEditPostUseCase
 import daily.dayo.domain.usecase.post.RequestPostDetailUseCase
 import daily.dayo.domain.usecase.post.RequestUploadPostUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
+import daily.dayo.presentation.BuildConfig
+import daily.dayo.presentation.common.Event
+import daily.dayo.presentation.common.ListLiveData
+import daily.dayo.presentation.common.Resource
 import daily.dayo.presentation.common.Status
+import daily.dayo.presentation.common.image.ImageResizeUtil.cropCenterBitmap
 import daily.dayo.presentation.common.image.ImageResizeUtil.resizeBitmap
+import daily.dayo.presentation.common.toFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -58,7 +58,7 @@ class WriteViewModel @Inject constructor(
     val showWriteOptionDialog = MutableLiveData<Event<Boolean>>()
 
     // WriteInfo
-    private val _postId = MutableLiveData(0)
+    private val _postId = MutableLiveData(0L)
     val postId get() = _postId
     private val _postCategory = MutableLiveData<Category?>(null)
     val postCategory get() = _postCategory
@@ -68,11 +68,11 @@ class WriteViewModel @Inject constructor(
     val postContents get() = _postContents
     private val _writeText = MutableStateFlow("")
     val writeText get() = _writeText
-    private val _postFolderId = MutableLiveData("")
+    private val _postFolderId = MutableLiveData(0L)
     val postFolderId get() = _postFolderId
     private val _postFolderName = MutableLiveData("")
     val postFolderName get() = _postFolderName
-    private val _writeFolderId = MutableStateFlow(null as String?)
+    private val _writeFolderId = MutableStateFlow<Long?>(null)
     val writeFolderId get() = _writeFolderId
     private val _writeFolderName = MutableStateFlow(null as String?)
     val writeFolderName get() = _writeFolderName
@@ -88,8 +88,8 @@ class WriteViewModel @Inject constructor(
     val writeTags get() = _writeTags
 
     // WritePost
-    private val _writePostId = MutableLiveData<Event<Int>>()
-    val writePostId: LiveData<Event<Int>> get() = _writePostId
+    private val _writePostId = MutableLiveData<Event<Long>>()
+    val writePostId: LiveData<Event<Long>> get() = _writePostId
     private val _writeSuccess = MutableLiveData<Event<Boolean>>()
     val writeSuccess: LiveData<Event<Boolean>> get() = _writeSuccess
     private val _uploadSuccess: MutableStateFlow<Status?> = MutableStateFlow(null)
@@ -108,7 +108,7 @@ class WriteViewModel @Inject constructor(
     val writeFolderAddSuccess get() = _writeFolderAddSuccess
 
     fun requestUploadPost() {
-        if (this@WriteViewModel.postId.value != 0) {
+        if (this@WriteViewModel.postId.value != 0L) {
             requestUploadEditingPost()
         } else {
             requestUploadNewPost()
@@ -134,7 +134,7 @@ class WriteViewModel @Inject constructor(
                 category = writeCategory.value.first!!,
                 contents = writeText.value,
                 files = it.toTypedArray(),
-                folderId = writeFolderId.value?.toIntOrNull() ?: 0,
+                folderId = writeFolderId.value ?: 0L,
                 tags = if (writeTags.value.isNotEmpty()) writeTags.value.toTypedArray() else emptyArray()
             ).let { ApiResponse ->
                 when (ApiResponse) {
@@ -158,7 +158,7 @@ class WriteViewModel @Inject constructor(
             postId = this@WriteViewModel.postId.value!!,
             category = if (writeCategory.value.first != null) writeCategory.value.first!! else this@WriteViewModel.postCategory.value!!,
             contents = this@WriteViewModel.postContents.value!!,
-            folderId = if (!writeFolderId.value.isNullOrEmpty()) writeFolderId.value!!.toInt() else this@WriteViewModel.postFolderId.value!!.toInt(),
+            folderId = if (writeFolderId.value != null) writeFolderId.value!! else this@WriteViewModel.postFolderId.value!!,
             hashtags = if (writeTags.value.isNotEmpty()) writeTags.value else this@WriteViewModel.postTagList.value!!.toList()
         ).let { ApiResponse ->
             _writeEditSuccess.postValue(Event(ApiResponse is NetworkResponse.Success))
@@ -168,7 +168,7 @@ class WriteViewModel @Inject constructor(
         }
     }
 
-    fun requestPostDetail(postId: Int) = viewModelScope.launch(Dispatchers.IO) {
+    fun requestPostDetail(postId: Long) = viewModelScope.launch(Dispatchers.IO) {
         withContext(Dispatchers.Main) {
             resetWriteInfoValue()
             requestPostDetailUseCase(postId = postId)
@@ -197,9 +197,9 @@ class WriteViewModel @Inject constructor(
 
         postDetail.hashtags.let { _postTagList.addAll(it, false) }
         postDetail.hashtags.let { _writeTags.emit(it) }
-        _postFolderId.postValue(postDetail.folderId.toString())
+        _postFolderId.postValue(postDetail.folderId)
         _postFolderName.postValue(postDetail.folderName)
-        _writeFolderId.emit(postDetail.folderId.toString())
+        _writeFolderId.emit(postDetail.folderId)
         _writeFolderName.emit(postDetail.folderName)
     }
 
@@ -247,9 +247,9 @@ class WriteViewModel @Inject constructor(
     fun resetWriteInfoValue() = viewModelScope.launch {
         _postId.postValue(0)
         _postContents.postValue("")
-        _postFolderId.postValue("")
+        _postFolderId.postValue(0)
         _postFolderName.postValue("")
-        _writeFolderId.emit("")
+        _writeFolderId.emit(0)
         _writeFolderName.emit("")
         _postImageUriList.postValue(arrayListOf())
         _postTagList.clear(notify = false)
@@ -259,7 +259,7 @@ class WriteViewModel @Inject constructor(
         }
     }
 
-    fun setPostId(id: Int) {
+    fun setPostId(id: Long) {
         _postId.value = id
     }
 
@@ -276,7 +276,7 @@ class WriteViewModel @Inject constructor(
         _writeCategory.emit(category)
     }
 
-    fun setFolderId(id: String) = viewModelScope.launch {
+    fun setFolderId(id: Long) = viewModelScope.launch {
         _postFolderId.value = id
         _writeFolderId.emit(id)
     }

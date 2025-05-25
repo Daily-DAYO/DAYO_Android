@@ -82,15 +82,3 @@ fun FolderPostDto.toFolderPost(): FolderPost =
         postId = postId,
         thumbnailImage = thumbnailImage
     )
-
-fun FolderOrder.toEditOrderDto(): EditOrderDto =
-    EditOrderDto(
-        folderId = folderId,
-        orderIndex = orderIndex
-    )
-
-fun EditOrderDto.toFolderOrder(): FolderOrder =
-    FolderOrder(
-        folderId = folderId,
-        orderIndex = orderIndex
-    )

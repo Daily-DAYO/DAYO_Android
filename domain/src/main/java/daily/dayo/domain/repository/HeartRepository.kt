@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface HeartRepository {
 
-    suspend fun requestLikePost(postId: Int): NetworkResponse<LikePostResponse>
-    suspend fun requestUnlikePost(postId: Int): NetworkResponse<LikePostResponse>
+    suspend fun requestLikePost(postId: Long): NetworkResponse<LikePostResponse>
+    suspend fun requestUnlikePost(postId: Long): NetworkResponse<LikePostResponse>
     suspend fun requestAllMyLikePostList(): Flow<PagingData<LikePost>>
-    suspend fun requestPostLikeUsers(postId: Int): Flow<PagingData<LikeUser>>
+    suspend fun requestPostLikeUsers(postId: Long): Flow<PagingData<LikeUser>>
 }

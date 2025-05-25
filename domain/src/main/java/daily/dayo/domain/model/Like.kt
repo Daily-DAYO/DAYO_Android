@@ -1,7 +1,7 @@
 package daily.dayo.domain.model
 
 data class LikePost(
-    val postId: Int,
+    val postId: Long,
     val thumbnailImage: String
 )
 

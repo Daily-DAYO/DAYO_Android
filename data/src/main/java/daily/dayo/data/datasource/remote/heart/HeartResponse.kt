@@ -6,7 +6,7 @@ data class CreateHeartResponse(
     @SerializedName("memberId")
     val memberId: String,
     @SerializedName("postId")
-    val postId: Int,
+    val postId: Long,
     @SerializedName("allCount")
     val allCount: Int
 )
@@ -27,7 +27,7 @@ data class ListAllMyHeartPostResponse(
 
 data class MyHeartPostDto(
     @SerializedName("postId")
-    val postId: Int,
+    val postId: Long,
     @SerializedName("thumbnailImage")
     val thumbnailImage: String
 )
