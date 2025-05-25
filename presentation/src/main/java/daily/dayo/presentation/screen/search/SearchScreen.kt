@@ -1,8 +1,10 @@
 package daily.dayo.presentation.screen.search
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -37,9 +39,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -58,6 +62,8 @@ import daily.dayo.presentation.R
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.common.toSp
 import daily.dayo.presentation.theme.DayoTheme
+import daily.dayo.presentation.theme.Gray3_9FA5AE
+import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.viewmodel.SearchViewModel
 import kotlinx.coroutines.launch
@@ -118,14 +124,12 @@ fun SearchScreen(
                 onBackClick = onBackClick,
                 onSearchClick = onSearchClick
             )
-            searchHistory.let {
-                SetSearchHistoryLayout(
-                    onKeywordClick = onSearchClick,
-                    onKeywordDeleteClick = onKeywordDeleteClick,
-                    onHistoryClearClick = onHistoryClearClick,
-                    searchHistory = it
-                )
-            }
+            SetSearchHistoryLayout(
+                onKeywordClick = onSearchClick,
+                onKeywordDeleteClick = onKeywordDeleteClick,
+                onHistoryClearClick = onHistoryClearClick,
+                searchHistory = searchHistory
+            )
         }
     }
 }
@@ -299,16 +303,56 @@ private fun SetSearchHistoryLayout(
         item {
             SearchHistoryGuideLayout()
         }
-        items(searchHistory.data) {
-            SearchHistoryLayout(
-                onKeywordClick = onKeywordClick,
-                onKeywordDeleteClick = onKeywordDeleteClick,
-                searchHistoryDetail = it
-            )
+
+        if (searchHistory.data.isNotEmpty()) {
+            items(searchHistory.data) {
+                SearchHistoryLayout(
+                    onKeywordClick = onKeywordClick,
+                    onKeywordDeleteClick = onKeywordDeleteClick,
+                    searchHistoryDetail = it
+                )
+            }
+            item {
+                SetClearSearchHistoryLayout(onHistoryClearClick = onHistoryClearClick)
+            }
+        } else {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillParentMaxHeight()
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    SearchHistoryEmpty()
+                }
+            }
         }
-        item {
-            SetClearSearchHistoryLayout(onHistoryClearClick = onHistoryClearClick)
-        }
+    }
+}
+
+@Composable
+@Preview
+fun SearchHistoryEmpty() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_search_empty),
+            contentDescription = "search history empty"
+        )
+        Text(
+            text = stringResource(R.string.search_history_empty_title),
+            style = DayoTheme.typography.b3,
+            color = Gray3_9FA5AE,
+        )
+        Text(
+            modifier = Modifier.padding(vertical = 2.dp),
+            text = stringResource(id = R.string.search_history_empty_description),
+            style = DayoTheme.typography.caption2,
+            color = Gray4_C5CAD2,
+        )
     }
 }
 
@@ -352,7 +396,7 @@ private fun SearchHistoryLayout(
 @Preview
 private fun PreviewSearchHistoryLayout() {
     SearchHistoryLayout(
-        onKeywordClick = { _, -> },
+        onKeywordClick = { _ -> },
         onKeywordDeleteClick = { _, _ -> },
         searchHistoryDetail = SearchHistoryDetail(
             history = "검색어",
