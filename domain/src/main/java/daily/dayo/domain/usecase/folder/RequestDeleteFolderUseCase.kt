@@ -6,6 +6,6 @@ import javax.inject.Inject
 class RequestDeleteFolderUseCase @Inject constructor(
     private val folderRepository: FolderRepository
 ) {
-    suspend operator fun invoke(folderId: Int) =
+    suspend operator fun invoke(folderId: Long) =
         folderRepository.requestDeleteFolder(folderId)
 }

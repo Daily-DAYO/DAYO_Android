@@ -42,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.size.Size
 import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.Privacy
+import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.common.extension.limitTo
@@ -83,6 +84,7 @@ fun WriteFolderRoute(
     }
 
     WriteFolderScreen(
+        showCreateFolder = (folders.data?.size ?: 0) < MAX_FOLDER_COUNT,
         onBackClick = onBackClick,
         onFolderClick = { folderId, folderName ->
             writeViewModel.setFolderId(folderId)
@@ -98,11 +100,12 @@ fun WriteFolderRoute(
 
 @Composable
 fun WriteFolderScreen(
+    showCreateFolder: Boolean,
     onBackClick: () -> Unit,
-    onFolderClick: (String, String) -> Unit,
+    onFolderClick: (Long, String) -> Unit,
     navigateToCreateNewFolder: () -> Unit,
     folders: List<Folder>,
-    currentFolderId: String?,
+    currentFolderId: Long?,
 ) {
     Surface(
         color = White_FFFFFF,
@@ -115,6 +118,7 @@ fun WriteFolderScreen(
                 onBackClick = onBackClick
             )
             WriteFolderContent(
+                showCreateFolder = showCreateFolder,
                 onFolderClick = onFolderClick,
                 navigateToCreateNewFolder = navigateToCreateNewFolder,
                 folders = folders,
@@ -141,20 +145,20 @@ fun WriteFolderActionbarLayout(onBackClick: () -> Unit) {
     }
 }
 
-@Preview
 @Composable
 fun WriteFolderContent(
-    onFolderClick: (String, String) -> Unit = { _, _ -> },
+    showCreateFolder: Boolean,
+    onFolderClick: (Long, String) -> Unit = { _, _ -> },
     navigateToCreateNewFolder: () -> Unit = {},
     folders: List<Folder> = emptyList(),
-    currentFolderId: String? = null,
+    currentFolderId: Long? = null,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 18.dp)
     ) {
-        if (folders.size < MAX_FOLDER_COUNT) {
+        if (showCreateFolder) {
             WriteFolderNewLayout(
                 navigateToCreateNewFolder = navigateToCreateNewFolder
             )
@@ -211,9 +215,9 @@ fun WriteFolderNewLayout(
 
 @Composable
 fun WriteFoldersLayout(
-    onFolderClick: (String, String) -> Unit,
+    onFolderClick: (Long, String) -> Unit,
     folders: List<Folder>,
-    currentFolderId: String?,
+    currentFolderId: Long?,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -222,7 +226,7 @@ fun WriteFoldersLayout(
         itemsIndexed(folders) { _, folder ->
             WriteFolderItemLayout(
                 folder = folder,
-                isSelected = folder.folderId?.toString() == currentFolderId,
+                isSelected = folder.folderId == currentFolderId,
                 onFolderClick = onFolderClick
             )
         }
@@ -243,7 +247,7 @@ fun WriteFolderItemLayout(
         postCount = 1
     ),
     isSelected: Boolean = true,
-    onFolderClick: (String, String) -> Unit = { _, _ -> },
+    onFolderClick: (Long, String) -> Unit = { _, _ -> },
 ) {
     Row(
         modifier = Modifier
@@ -251,7 +255,7 @@ fun WriteFolderItemLayout(
             .height(FOLDER_THUMBNAIL_SIZE.dp)
             .clip(RoundedCornerShape(FOLDER_THUMBNAIL_RADIUS_SIZE.dp))
             .background(White_FFFFFF)
-            .clickableSingle { onFolderClick(folder.folderId.toString(), folder.title) }
+            .clickableSingle { folder.folderId?.let { onFolderClick(it, folder.title) } }
     ) {
         Box(
             modifier = Modifier
@@ -259,7 +263,7 @@ fun WriteFolderItemLayout(
         ) {
             RoundImageView(
                 context = LocalContext.current,
-                imageUrl = folder.thumbnailImage,
+                imageUrl = "${BuildConfig.BASE_URL}/images/${folder.thumbnailImage}",
                 modifier = Modifier.size(FOLDER_THUMBNAIL_SIZE.dp),
                 imageSize = Size(FOLDER_THUMBNAIL_SIZE, FOLDER_THUMBNAIL_SIZE),
                 roundSize = FOLDER_THUMBNAIL_RADIUS_SIZE.dp,

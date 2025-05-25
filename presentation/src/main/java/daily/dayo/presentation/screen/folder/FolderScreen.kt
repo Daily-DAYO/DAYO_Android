@@ -55,6 +55,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import daily.dayo.domain.model.FolderInfo
+import daily.dayo.domain.model.FolderOrder
 import daily.dayo.domain.model.FolderPost
 import daily.dayo.domain.model.Privacy
 import daily.dayo.presentation.BuildConfig
@@ -85,8 +86,8 @@ import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun FolderScreen(
-    folderId: String,
-    onPostClick: (String) -> Unit,
+    folderId: Long,
+    onPostClick: (Long) -> Unit,
     onFolderEditClick: () -> Unit,
     onPostMoveClick: () -> Unit,
     onBackClick: () -> Unit,
@@ -129,8 +130,8 @@ fun FolderScreen(
     )
 
     LaunchedEffect(folderId) {
-        folderViewModel.requestFolderInfo(folderId.toInt())
-        folderViewModel.requestFolderPostList(folderId.toInt())
+        folderViewModel.requestFolderInfo(folderId)
+        folderViewModel.requestFolderPostList(folderId)
     }
 
     LaunchedEffect(folderDeleteSuccess) {
@@ -148,7 +149,7 @@ fun FolderScreen(
                     Toast.makeText(context, context.getString(R.string.error_message), Toast.LENGTH_SHORT).show()
                 }
                 folderViewModel.toggleEditMode()
-                folderViewModel.requestFolderPostList(folderId.toInt())
+                folderViewModel.requestFolderPostList(folderId)
             }
     }
 
@@ -157,9 +158,10 @@ fun FolderScreen(
         folderPosts = folderPosts,
         optionMenu = optionMenu,
         onPostClick = { postId -> onPostClick(postId) },
-        onPostSelect = { postId -> folderViewModel.toggleSelection(postId.toInt()) },
+        onPostSelect = { postId -> folderViewModel.toggleSelection(postId) },
         onCancelClick = { folderViewModel.toggleEditMode() },
         onPostDeleteClick = { showPostDeleteAlertDialog = true },
+        onClickSort = { folderViewModel.toggleFolderOrder(folderId) },
         onPostMoveClick = onPostMoveClick,
         onBackClick = onBackClick
     )
@@ -171,7 +173,7 @@ fun FolderScreen(
                 showFolderDeleteAlertDialog = false
                 showLoadingDialog(loadingAlertDialog.value)
                 resizeDialogFragment(context, loadingAlertDialog.value, 0.8f)
-                folderViewModel.requestDeleteFolder(folderId.toInt())
+                folderViewModel.requestDeleteFolder(folderId)
             },
             onShowChange = { showFolderDeleteAlertDialog = it }
         )
@@ -184,7 +186,7 @@ fun FolderScreen(
                 showPostDeleteAlertDialog = false
                 // TODO Show Loading
                 folderViewModel.deletePosts()
-                folderViewModel.requestDeleteFolder(folderId.toInt())
+                folderViewModel.requestDeleteFolder(folderId)
             },
             onShowChange = { showPostDeleteAlertDialog = it }
         )
@@ -196,109 +198,118 @@ private fun FolderScreen(
     folderUiState: FolderUiState,
     folderPosts: LazyPagingItems<FolderPost>,
     optionMenu: List<FolderOptionMenu>,
-    onPostClick: (String) -> Unit,
-    onPostSelect: (String) -> Unit,
+    onPostClick: (Long) -> Unit,
+    onPostSelect: (Long) -> Unit,
     onPostDeleteClick: () -> Unit,
     onPostMoveClick: () -> Unit,
+    onClickSort: () -> Unit,
     onCancelClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
     val optionExpanded = remember { mutableStateOf(false) }
 
-    Scaffold(
-        topBar = {
-            if (folderUiState.isEditMode) {
-                TopNavigation(
-                    leftIcon = {
-                        androidx.compose.material.Text(
-                            modifier = Modifier
-                                .padding(vertical = 14.dp)
-                                .padding(start = 18.dp, end = 27.dp)
-                                .clickableSingle(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null,
-                                    onClick = onCancelClick
-                                ),
-                            text = stringResource(id = R.string.cancel),
-                            style = DayoTheme.typography.b6.copy(color = Gray1_50545B),
-                        )
-                    }
-                )
-            } else {
-                TopNavigation(
-                    leftIcon = {
-                        IconButton(onClick = onBackClick) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_back_sign),
-                                contentDescription = stringResource(id = R.string.back_sign),
-                                tint = Dark
+    with(folderUiState) {
+        Scaffold(
+            topBar = {
+                if (isEditMode) {
+                    TopNavigation(
+                        leftIcon = {
+                            androidx.compose.material.Text(
+                                modifier = Modifier
+                                    .padding(vertical = 14.dp)
+                                    .padding(start = 18.dp, end = 27.dp)
+                                    .clickableSingle(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = null,
+                                        onClick = onCancelClick
+                                    ),
+                                text = stringResource(id = R.string.cancel),
+                                style = DayoTheme.typography.b6.copy(color = Gray1_50545B),
                             )
                         }
-                    },
-                    rightIcon = {
-                        IconButton(
-                            onClick = { optionExpanded.value = optionExpanded.value.not() }
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_option_horizontal),
-                                contentDescription = stringResource(id = R.string.folder_option),
-                                tint = Dark
-                            )
-                        }
-
-                        FolderDropdownMenu(
-                            menuItems = optionMenu,
-                            expanded = optionExpanded
-                        )
-                    }
-                )
-            }
-        },
-        bottomBar = {
-            if (folderUiState.isEditMode) {
-                Row(
-                    modifier = Modifier.padding(20.dp)
-                ) {
-                    FilledRoundedCornerButton(
-                        label = stringResource(R.string.delete),
-                        onClick = onPostDeleteClick,
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(44.dp),
-                        enabled = folderUiState.selectedPosts.isNotEmpty(),
-                        color = ButtonDefaults.buttonColors(
-                            containerColor = Gray5_E8EAEE,
-                            contentColor = Gray2_767B83,
-                            disabledContainerColor = Gray7_F6F6F7,
-                            disabledContentColor = Gray4_C5CAD2
-                        )
                     )
+                } else {
+                    TopNavigation(
+                        leftIcon = {
+                            IconButton(onClick = onBackClick) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_back_sign),
+                                    contentDescription = stringResource(id = R.string.back_sign),
+                                    tint = Dark
+                                )
+                            }
+                        },
+                        rightIcon = {
+                            IconButton(
+                                onClick = { optionExpanded.value = optionExpanded.value.not() }
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_option_horizontal),
+                                    contentDescription = stringResource(id = R.string.folder_option),
+                                    tint = Dark
+                                )
+                            }
 
-                    Spacer(modifier = Modifier.width(10.dp))
-
-                    FilledRoundedCornerButton(
-                        label = stringResource(R.string.move),
-                        onClick = onPostMoveClick,
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(44.dp),
-                        enabled = folderUiState.selectedPosts.isNotEmpty()
+                            FolderDropdownMenu(
+                                menuItems = optionMenu,
+                                expanded = optionExpanded
+                            )
+                        }
                     )
                 }
+            },
+            bottomBar = {
+                if (isEditMode) {
+                    Row(
+                        modifier = Modifier.padding(20.dp)
+                    ) {
+                        FilledRoundedCornerButton(
+                            label = stringResource(R.string.delete),
+                            onClick = onPostDeleteClick,
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(44.dp),
+                            enabled = selectedPosts.isNotEmpty(),
+                            color = ButtonDefaults.buttonColors(
+                                containerColor = Gray5_E8EAEE,
+                                contentColor = Gray2_767B83,
+                                disabledContainerColor = Gray7_F6F6F7,
+                                disabledContentColor = Gray4_C5CAD2
+                            )
+                        )
+
+                        Spacer(modifier = Modifier.width(10.dp))
+
+                        FilledRoundedCornerButton(
+                            label = stringResource(R.string.move),
+                            onClick = onPostMoveClick,
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(44.dp),
+                            enabled = selectedPosts.isNotEmpty()
+                        )
+                    }
+                }
             }
-        }
-    ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
-            if (!folderUiState.isEditMode) {
-                FolderInformation(folderUiState.folderInfo)
+        ) { innerPadding ->
+            Column(modifier = Modifier.padding(innerPadding)) {
+                if (!isEditMode) {
+                    FolderInformation(folderInfo)
+                }
+                FolderHeader(
+                    postCount = folderInfo.postCount,
+                    selectedCount = selectedPosts.size,
+                    isEditMode = isEditMode,
+                    folderOrder = folderOrder,
+                    onClickSort = onClickSort
+                )
+                FolderContent(
+                    folderUiState = folderUiState,
+                    folderPosts = folderPosts,
+                    onPostClick = onPostClick,
+                    onPostSelect = onPostSelect
+                )
             }
-            FolderHeader(folderUiState.folderInfo.postCount, folderUiState.selectedPosts.size, folderUiState.isEditMode)
-            FolderContent(
-                folderUiState = folderUiState,
-                folderPosts = folderPosts,
-                onPostClick = onPostClick,
-                onPostSelect = onPostSelect
-            )
         }
     }
 }
@@ -419,7 +430,9 @@ private fun FolderDropdownMenu(
 private fun FolderHeader(
     postCount: Int,
     selectedCount: Int,
-    isEditMode: Boolean
+    isEditMode: Boolean,
+    folderOrder: FolderOrder,
+    onClickSort: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -448,18 +461,32 @@ private fun FolderHeader(
                 style = DayoTheme.typography.caption2
             )
         } else {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_sort),
-                contentDescription = stringResource(id = R.string.folder_post_sort_oldest),
-                tint = Color.Unspecified
-            )
-
-            Text(
-                text = stringResource(id = R.string.folder_post_sort_oldest),
-                color = Gray2_767B83,
-                style = DayoTheme.typography.caption2
-            )
+            FolderSortSelector(folderOrder = folderOrder, onClickSort = onClickSort)
         }
+    }
+}
+
+@Composable
+private fun FolderSortSelector(folderOrder: FolderOrder, onClickSort: () -> Unit) {
+    val sortResId = when (folderOrder) {
+        FolderOrder.NEW -> R.string.folder_post_sort_newest
+        FolderOrder.OLD -> R.string.folder_post_sort_oldest
+    }
+
+    Row(
+        modifier = Modifier.clickableSingle { onClickSort() }
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_sort),
+            contentDescription = stringResource(id = sortResId),
+            tint = Color.Unspecified
+        )
+
+        Text(
+            text = stringResource(id = sortResId),
+            color = Gray2_767B83,
+            style = DayoTheme.typography.caption2
+        )
     }
 }
 
@@ -467,8 +494,8 @@ private fun FolderHeader(
 private fun FolderContent(
     folderUiState: FolderUiState,
     folderPosts: LazyPagingItems<FolderPost>,
-    onPostClick: (String) -> Unit,
-    onPostSelect: (String) -> Unit
+    onPostClick: (Long) -> Unit,
+    onPostSelect: (Long) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -496,8 +523,8 @@ private fun FolderPostItem(
     post: FolderPost,
     isEditMode: Boolean,
     isSelected: Boolean,
-    onPostClick: (String) -> Unit,
-    onPostSelect: (String) -> Unit
+    onPostClick: (Long) -> Unit,
+    onPostSelect: (Long) -> Unit
 ) {
     val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 
@@ -507,9 +534,9 @@ private fun FolderPostItem(
             indication = null,
             onClick = {
                 if (isEditMode) {
-                    onPostSelect(post.postId.toString())
+                    onPostSelect(post.postId)
                 } else {
-                    onPostClick(post.postId.toString())
+                    onPostClick(post.postId)
                 }
             }
         )
@@ -526,7 +553,7 @@ private fun FolderPostItem(
         if (isEditMode) {
             DayoCheckbox(
                 checked = isSelected,
-                onCheckedChange = { onPostSelect(post.postId.toString()) },
+                onCheckedChange = { onPostSelect(post.postId) },
                 modifier = Modifier.align(Alignment.TopEnd),
                 interactionSource = interactionSource
             )
@@ -598,6 +625,45 @@ private fun PreviewFolderScreen() {
             thumbnailImage = ""
         ),
         folderPosts = flowOf(folderPostPagingData),
+        isEditMode = false,
+        selectedPosts = emptySet()
+    )
+
+    DayoTheme {
+        FolderScreen(
+            folderUiState = folderUiState,
+            folderPosts = folderUiState.folderPosts.collectAsLazyPagingItems(),
+            optionMenu = listOf(),
+            onPostClick = { },
+            onPostSelect = { },
+            onPostDeleteClick = { },
+            onPostMoveClick = { },
+            onClickSort = { },
+            onCancelClick = { },
+            onBackClick = { }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewFolderScreenEditMode() {
+    val folderPostPagingData = PagingData.from(
+        listOf(
+            FolderPost("", 0, "")
+        )
+    )
+
+    val folderUiState = FolderUiState(
+        folderInfo = FolderInfo(
+            memberId = "",
+            name = "Folder Title",
+            postCount = 27,
+            privacy = Privacy.ALL,
+            subheading = "Description",
+            thumbnailImage = ""
+        ),
+        folderPosts = flowOf(folderPostPagingData),
         isEditMode = true,
         selectedPosts = emptySet()
     )
@@ -611,6 +677,7 @@ private fun PreviewFolderScreen() {
             onPostSelect = { },
             onPostDeleteClick = { },
             onPostMoveClick = { },
+            onClickSort = { },
             onCancelClick = { },
             onBackClick = { }
         )

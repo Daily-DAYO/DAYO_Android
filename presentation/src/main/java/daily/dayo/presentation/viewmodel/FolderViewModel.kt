@@ -10,6 +10,7 @@ import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.FolderInfo
+import daily.dayo.domain.model.FolderOrder
 import daily.dayo.domain.model.FolderPost
 import daily.dayo.domain.model.NetworkResponse
 import daily.dayo.domain.model.Privacy
@@ -19,10 +20,9 @@ import daily.dayo.domain.usecase.folder.RequestCreateFolderUseCase
 import daily.dayo.domain.usecase.folder.RequestDeleteFolderUseCase
 import daily.dayo.domain.usecase.folder.RequestEditFolderUseCase
 import daily.dayo.domain.usecase.folder.RequestFolderInfoUseCase
+import daily.dayo.domain.usecase.folder.RequestFolderMoveUseCase
 import daily.dayo.domain.usecase.folder.RequestFolderPostListUseCase
-import daily.dayo.domain.usecase.folder.RequestOrderFolderUseCase
 import daily.dayo.domain.usecase.post.RequestDeletePostUseCase
-import daily.dayo.presentation.common.Event
 import daily.dayo.presentation.common.Resource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -43,12 +43,12 @@ class FolderViewModel @Inject constructor(
     private val requestCreateFolderUseCase: RequestCreateFolderUseCase,
     private val requestEditFolderUseCase: RequestEditFolderUseCase,
     private val requestDeleteFolderUseCase: RequestDeleteFolderUseCase,
-    private val requestOrderFolderUseCase: RequestOrderFolderUseCase,
     private val requestAllMyFolderListUseCase: RequestAllMyFolderListUseCase,
     private val requestUserFolderListUseCase: RequestAllFolderListUseCase,
     private val requestFolderInfoUseCase: RequestFolderInfoUseCase,
     private val requestFolderPostListUseCase: RequestFolderPostListUseCase,
-    private val requestDeletePostUseCase: RequestDeletePostUseCase
+    private val requestDeletePostUseCase: RequestDeletePostUseCase,
+    private val requestFolderMoveUseCase: RequestFolderMoveUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FolderUiState())
@@ -72,14 +72,11 @@ class FolderViewModel @Inject constructor(
     private val _folderList = MutableLiveData<Resource<List<Folder>>>()
     val folderList: LiveData<Resource<List<Folder>>> get() = _folderList
 
-    private val _orderFolderSuccess = MutableLiveData<Event<Boolean>>()
-    val orderFolderSuccess: LiveData<Event<Boolean>> get() = _orderFolderSuccess
-
     fun toggleEditMode() {
         _uiState.update { it.copy(isEditMode = !it.isEditMode, selectedPosts = emptySet()) }
     }
 
-    fun toggleSelection(postId: Int) {
+    fun toggleSelection(postId: Long) {
         _uiState.update {
             val currentSelection = it.selectedPosts
             val newSelection = if (currentSelection.contains(postId)) {
@@ -89,6 +86,15 @@ class FolderViewModel @Inject constructor(
             }
             it.copy(selectedPosts = newSelection)
         }
+    }
+
+    fun toggleFolderOrder(folderId: Long) {
+        val newOrder = when (_uiState.value.folderOrder) {
+            FolderOrder.NEW -> FolderOrder.OLD
+            FolderOrder.OLD -> FolderOrder.NEW
+        }
+        _uiState.update { it.copy(folderOrder = newOrder) }
+        requestFolderPostList(folderId)
     }
 
     fun deletePosts() {
@@ -131,7 +137,7 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun requestEditFolder(folderId: Int, name: String, subheading: String, privacy: Privacy) {
+    fun requestEditFolder(folderId: Long, name: String, subheading: String, privacy: Privacy) {
         viewModelScope.launch {
             requestEditFolderUseCase(
                 folderId = folderId,
@@ -149,7 +155,7 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun requestDeleteFolder(folderId: Int) {
+    fun requestDeleteFolder(folderId: Long) {
         viewModelScope.launch {
             requestDeleteFolderUseCase(folderId = folderId).let { response ->
                 when (response) {
@@ -208,7 +214,7 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun requestFolderInfo(folderId: Int) {
+    fun requestFolderInfo(folderId: Long) {
         viewModelScope.launch {
             val result = when (val response = requestFolderInfoUseCase(folderId)) {
                 is NetworkResponse.Success -> response.body ?: DEFAULT_FOLDER_INFO
@@ -221,9 +227,9 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun requestFolderPostList(folderId: Int) {
+    fun requestFolderPostList(folderId: Long) {
         viewModelScope.launch {
-            val folderPosts = requestFolderPostListUseCase(folderId)
+            val folderPosts = requestFolderPostListUseCase(folderId, _uiState.value.folderOrder)
                 .cachedIn(viewModelScope)
 
             _uiState.update {
@@ -232,10 +238,17 @@ class FolderViewModel @Inject constructor(
         }
     }
 
-    fun moveSelectedPost() {
+    fun moveSelectedPost(targetFolderId: Long) {
         viewModelScope.launch {
-            // TODO API 필요
-            _postMoveSuccess.emit(true)
+            requestFolderMoveUseCase(
+                postIdList = uiState.value.selectedPosts.map { it.toLong() },
+                targetFolderId = targetFolderId
+            ).let { response ->
+                when (response) {
+                    is NetworkResponse.Success -> _postMoveSuccess.emit(true)
+                    else -> _postMoveSuccess.emit(false)
+                }
+            }
         }
     }
 }
@@ -243,8 +256,9 @@ class FolderViewModel @Inject constructor(
 data class FolderUiState(
     val folderInfo: FolderInfo = DEFAULT_FOLDER_INFO,
     val folderPosts: Flow<PagingData<FolderPost>> = flow { emit(PagingData.empty()) },
+    val folderOrder: FolderOrder = FolderOrder.NEW,
     val isEditMode: Boolean = false,
-    val selectedPosts: Set<Int> = emptySet()
+    val selectedPosts: Set<Long> = emptySet()
 )
 
 val DEFAULT_FOLDER_INFO = FolderInfo(

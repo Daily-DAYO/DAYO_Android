@@ -1,6 +1,8 @@
 package daily.dayo.presentation.screen.settings
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
@@ -68,8 +70,12 @@ fun SettingsScreen(
     onProfileEditClick: () -> Unit,
     onWithdrawClick: () -> Unit,
     onBackClick: () -> Unit,
-    accountViewModel: AccountViewModel = hiltViewModel(),
+    onPasswordChangeClick: () -> Unit,
+    onBlockUsersClick: () -> Unit,
+    onSettingNotificationClick: () -> Unit,
+    onNoticesClick: () -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel(),
+    accountViewModel: AccountViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val signOutSuccess by accountViewModel.signOutSuccess.collectAsStateWithLifecycle()
@@ -97,8 +103,12 @@ fun SettingsScreen(
     SettingsScreen(
         profile = profileInfo.value?.data,
         onProfileEditClick = onProfileEditClick,
-        onWithdrawClick = onWithdrawClick,
         onBackClick = onBackClick,
+        onSettingNotificationClick = onSettingNotificationClick,
+        onPasswordChangeClick = onPasswordChangeClick,
+        onNoticesClick = onNoticesClick,
+        onBlockUsersClick = onBlockUsersClick,
+        onWithdrawClick = onWithdrawClick,
         onSignOutClick = { showSignOutDialog.value = true },
     )
 
@@ -121,6 +131,10 @@ fun SettingsScreen(
 private fun SettingsScreen(
     profile: Profile?,
     onProfileEditClick: () -> Unit,
+    onSettingNotificationClick: () -> Unit,
+    onPasswordChangeClick: () -> Unit,
+    onNoticesClick: () -> Unit = {},
+    onBlockUsersClick: () -> Unit,
     onWithdrawClick: () -> Unit,
     onBackClick: () -> Unit,
     onSignOutClick: () -> Unit = {},
@@ -151,14 +165,18 @@ private fun SettingsScreen(
     ) { contentPadding ->
         val scrollState = rememberScrollState()
         val context = LocalContext.current
-        val appVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        val appVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.packageManager.getPackageInfo(context.packageName, PackageManager.PackageInfoFlags.of(0)).versionName
+        } else {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        } ?: ""
 
         val settingMenus = listOf(
-            SettingItem(R.string.setting_menu_change_password, R.drawable.ic_setting_password_change, onClickMenu = {}),
-            SettingItem(R.string.setting_menu_block_user, R.drawable.ic_block, onClickMenu = {}),
-            SettingItem(R.string.setting_menu_notification, R.drawable.ic_notification, onClickMenu = {}),
+            SettingItem(R.string.setting_menu_change_password, R.drawable.ic_setting_password_change, onClickMenu = onPasswordChangeClick),
+            SettingItem(R.string.setting_menu_block_user, R.drawable.ic_block, onClickMenu = onBlockUsersClick),
+            SettingItem(R.string.setting_menu_notification, R.drawable.ic_notification, onClickMenu = onSettingNotificationClick),
             null, // Divider
-            SettingItem(R.string.setting_menu_notice, R.drawable.ic_setting_notice, onClickMenu = {}),
+            SettingItem(R.string.setting_menu_notice, R.drawable.ic_setting_notice, onClickMenu = onNoticesClick),
             SettingItem(R.string.setting_menu_information, R.drawable.ic_setting_information, onClickMenu = {}, description = appVersion),
             SettingItem(R.string.setting_menu_contact, R.drawable.ic_setting_contact, onClickMenu = {}),
             null // Divider
@@ -327,9 +345,13 @@ private fun PreviewSettingsScreen() {
     DayoTheme {
         SettingsScreen(
             profile = null,
+            onBackClick = {},
             onProfileEditClick = {},
+            onPasswordChangeClick = {},
+            onSettingNotificationClick = {},
+            onNoticesClick = {},
+            onBlockUsersClick = {},
             onWithdrawClick = {},
-            onBackClick = {}
         )
     }
 }

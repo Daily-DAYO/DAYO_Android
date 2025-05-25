@@ -122,17 +122,6 @@ class ProfileOptionFragment : DialogFragment() {
     }
 
     private fun blockUser() {
-        profileViewModel.requestBlockMember(args.memberId)
-        profileViewModel.blockSuccess.observe(viewLifecycleOwner) {
-            if (it.getContentIfNotHandled() == true) {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.other_profile_block_success_message,
-                    Toast.LENGTH_SHORT
-                ).show()
-                findNavController().navigateUp()
-            }
-        }
     }
 
     private fun setOptionReportUserClickListener() {

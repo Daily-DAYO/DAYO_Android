@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import daily.dayo.presentation.screen.home.HomeRoute
 import daily.dayo.presentation.screen.home.navigateHome
 import daily.dayo.presentation.screen.mypage.navigateBackToFolder
+import daily.dayo.presentation.screen.mypage.navigateBlockedUsers
 import daily.dayo.presentation.screen.mypage.navigateBookmark
 import daily.dayo.presentation.screen.mypage.navigateFolder
 import daily.dayo.presentation.screen.mypage.navigateFolderCreate
@@ -17,13 +18,17 @@ import daily.dayo.presentation.screen.mypage.navigateFolderPostMove
 import daily.dayo.presentation.screen.mypage.navigateFollowMenu
 import daily.dayo.presentation.screen.mypage.navigateMyPage
 import daily.dayo.presentation.screen.mypage.navigateProfileEdit
+import daily.dayo.presentation.screen.notice.navigateNotices
+import daily.dayo.presentation.screen.notice.navigateNoticeDetail
 import daily.dayo.presentation.screen.post.navigatePost
 import daily.dayo.presentation.screen.post.navigatePostLikeUsers
 import daily.dayo.presentation.screen.profile.navigateProfile
 import daily.dayo.presentation.screen.search.navigateSearch
 import daily.dayo.presentation.screen.search.navigateSearchPostHashtag
 import daily.dayo.presentation.screen.search.navigateSearchResult
+import daily.dayo.presentation.screen.settings.navigateChangePassword
 import daily.dayo.presentation.screen.settings.navigateSettings
+import daily.dayo.presentation.screen.settings.navigateSettingsNotification
 import daily.dayo.presentation.screen.settings.navigateWithdraw
 import daily.dayo.presentation.screen.write.navigateWrite
 import daily.dayo.presentation.screen.write.navigateWriteFolder
@@ -41,7 +46,7 @@ class MainNavigator(
         navController.navigateHome()
     }
 
-    fun navigatePost(postId: String) {
+    fun navigatePost(postId: Long) {
         navController.navigatePost(postId = postId)
     }
 
@@ -67,8 +72,24 @@ class MainNavigator(
         navController.navigateSearchPostHashtag(hashtag = hashtag)
     }
 
+    fun navigateNotices() {
+        navController.navigateNotices()
+    }
+
+    fun navigateNoticeDetail(noticeId: Long) {
+        navController.navigateNoticeDetail(noticeId = noticeId)
+    }
+
     fun navigateSettings() {
         navController.navigateSettings()
+    }
+
+    fun navigateChangePassword() {
+        navController.navigateChangePassword()
+    }
+
+    fun navigateSettingsNotification() {
+        navController.navigateSettingsNotification()
     }
 
     fun navigateProfileEdit() {
@@ -79,6 +100,10 @@ class MainNavigator(
         navController.navigateWithdraw()
     }
 
+    fun navigateBlockedUsers() {
+        navController.navigateBlockedUsers()
+    }
+
     fun navigateBookmark() {
         navController.navigateBookmark()
     }
@@ -87,11 +112,11 @@ class MainNavigator(
         navController.navigateFolderCreate()
     }
 
-    fun navigateFolderEdit(folderId: String) {
+    fun navigateFolderEdit(folderId: Long) {
         navController.navigateFolderEdit(folderId)
     }
 
-    fun navigateFolderPostMove(folderId: String) {
+    fun navigateFolderPostMove(folderId: Long) {
         navController.navigateFolderPostMove(folderId)
     }
 
@@ -99,11 +124,11 @@ class MainNavigator(
         navController.navigateFollowMenu(memberId, tabNum)
     }
 
-    fun navigateFolder(folderId: String) {
+    fun navigateFolder(folderId: Long) {
         navController.navigateFolder(folderId)
     }
 
-    fun navigateBackToFolder(folderId: String) {
+    fun navigateBackToFolder(folderId: Long) {
         navController.navigateBackToFolder(folderId)
     }
 
@@ -136,7 +161,7 @@ class MainNavigator(
     private fun isSameCurrentDestination(route: String) =
         navController.currentDestination?.route == route
 
-    fun navigatePostLikeUsers(postId: String) {
+    fun navigatePostLikeUsers(postId: Long) {
         navController.navigatePostLikeUsers(postId = postId)
     }
 

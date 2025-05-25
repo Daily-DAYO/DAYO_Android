@@ -25,7 +25,8 @@ import daily.dayo.presentation.view.DayoPasswordTextField
 @Composable
 @Preview
 fun SetPasswordView(
-    signUpStep: SignUpStep = SignUpStep.PASSWORD_INPUT,
+    passwordInputViewCondition: Boolean = true,
+    passwordConfirmationViewCondition: Boolean = false,
     isNextButtonEnabled: Boolean = false,
     setNextButtonEnabled: (Boolean) -> Unit = {},
     isNextButtonClickable: Boolean = false,
@@ -38,6 +39,8 @@ fun SetPasswordView(
     setPasswordConfirmation: (String) -> Unit = {},
     isPasswordMismatch: Boolean = false,
     setIsPasswordMismatch: (Boolean) -> Unit = {},
+    passwordFailMessage: String = "",
+    passwordConfirmationFailMessage: String = "",
 ) {
     Column(
         modifier = Modifier
@@ -45,16 +48,16 @@ fun SetPasswordView(
             .wrapContentHeight()
     ) {
         setNextButtonEnabled(
-            if (signUpStep == SignUpStep.PASSWORD_INPUT) password.isNotBlank()
+            if (passwordInputViewCondition) password.isNotBlank()
             else passwordConfirmation.isNotBlank()
         )
         setIsNextButtonClickable(
-            if (signUpStep == SignUpStep.PASSWORD_INPUT) password.isNotBlank()
+            if (passwordInputViewCondition) password.isNotBlank()
             else passwordConfirmation.isNotBlank()
         )
 
         AnimatedVisibility(
-            visible = signUpStep == SignUpStep.PASSWORD_CONFIRM,
+            visible = passwordConfirmationViewCondition,
             enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
             exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()
         ) {
@@ -69,11 +72,12 @@ fun SetPasswordView(
                 else stringResource(R.string.sign_up_email_set_password_confirm_input_title),
                 placeholder = if (passwordConfirmation.isBlank()) stringResource(R.string.sign_up_email_set_password_confirm_input_placeholder) else "",
                 isError = isPasswordMismatch,
-                errorMessage = stringResource(R.string.sign_up_email_set_password_confirm_fail_not_match),
+                errorMessage =
+                if (passwordConfirmationFailMessage.isBlank()) stringResource(R.string.sign_up_email_set_password_confirm_fail_not_match) else passwordConfirmationFailMessage,
             )
         }
 
-        if (signUpStep == SignUpStep.PASSWORD_CONFIRM) {
+        if (passwordConfirmationViewCondition) {
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -82,7 +86,7 @@ fun SetPasswordView(
         }
 
         AnimatedVisibility(
-            visible = signUpStep == SignUpStep.PASSWORD_INPUT || signUpStep == SignUpStep.PASSWORD_CONFIRM,
+            visible = passwordInputViewCondition || passwordConfirmationViewCondition,
             enter = slideInVertically(),
         ) {
             DayoPasswordTextField(
@@ -95,9 +99,10 @@ fun SetPasswordView(
                 else stringResource(R.string.sign_up_email_set_password_input_title),
                 placeholder = if (password.isBlank())
                     stringResource(R.string.sign_up_email_set_password_input_placeholder) else "",
-                isError = if (signUpStep == SignUpStep.PASSWORD_INPUT) !isPasswordFormatValid else false,
-                errorMessage = stringResource(R.string.sign_up_email_set_password_message_format_fail),
-                isEnabled = signUpStep == SignUpStep.PASSWORD_INPUT,
+                isError = if (passwordInputViewCondition) !isPasswordFormatValid else false,
+                errorMessage =
+                if (passwordFailMessage.isBlank()) stringResource(R.string.sign_up_email_set_password_message_format_fail) else passwordFailMessage,
+                isEnabled = passwordInputViewCondition,
             )
         }
     }

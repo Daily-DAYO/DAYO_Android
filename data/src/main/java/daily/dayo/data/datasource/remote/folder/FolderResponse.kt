@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class CreateFolderResponse(
     @SerializedName("folderId")
-    val id: Int
+    val id: Long
 )
 
 data class ListAllFolderResponse(
@@ -48,17 +48,17 @@ data class DetailFolderResponse(
 
 data class CreateFolderInPostResponse(
     @SerializedName("folderId")
-    val folderId: Int
+    val folderId: Long
 )
 
 data class EditFolderResponse(
     @SerializedName("folderId")
-    val folderId: Int
+    val folderId: Long
 )
 
 data class FolderDto(
     @SerializedName("folderId")
-    val folderId: Int,
+    val folderId: Long,
     @SerializedName("name")
     val name: String,
     @SerializedName("postCount")
@@ -75,14 +75,14 @@ data class FolderPostDto(
     @SerializedName("createDate")
     val createDate: String,
     @SerializedName("postId")
-    val postId: Int,
+    val postId: Long,
     @SerializedName("thumbnailImage")
     val thumbnailImage: String
 )
 
 data class EditOrderDto(
     @SerializedName("folderId")
-    var folderId: Int,
+    var folderId: Long,
     @SerializedName("orderIndex")
     var orderIndex: Int
 )

@@ -38,7 +38,7 @@ class BookmarkViewModel @Inject constructor(
         _uiState.update { it.copy(isEditMode = !it.isEditMode, selectedBookmarks = emptySet()) }
     }
 
-    fun toggleSelection(postId: Int) {
+    fun toggleSelection(postId: Long) {
         _uiState.update {
             val currentSelection = it.selectedBookmarks
             val newSelection = if (currentSelection.contains(postId)) {
@@ -88,5 +88,5 @@ data class BookmarkUiState(
     val count: Int = 0,
     val bookmarks: Flow<PagingData<BookmarkPost>> = flow { emit(PagingData.empty()) },
     val isEditMode: Boolean = false,
-    val selectedBookmarks: Set<Int> = emptySet()
+    val selectedBookmarks: Set<Long> = emptySet()
 )

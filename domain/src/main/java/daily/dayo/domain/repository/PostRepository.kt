@@ -19,7 +19,7 @@ interface PostRepository {
         category: Category,
         contents: String,
         files: List<MultipartBody.Part>,
-        folderId: Int,
+        folderId: Long,
         tags: Array<String>
     ): NetworkResponse<PostCreateResponse>
 
@@ -27,13 +27,13 @@ interface PostRepository {
     suspend fun requestNewPostListCategory(category: Category): NetworkResponse<PostsCategorized>
     suspend fun requestDayoPickPostList(): NetworkResponse<PostsDayoPick>
     suspend fun requestDayoPickPostListCategory(category: Category): NetworkResponse<PostsDayoPick>
-    suspend fun requestPostDetail(postId: Int): NetworkResponse<PostDetail>
-    suspend fun requestDeletePost(postId: Int): NetworkResponse<Void>
+    suspend fun requestPostDetail(postId: Long): NetworkResponse<PostDetail>
+    suspend fun requestDeletePost(postId: Long): NetworkResponse<Void>
     suspend fun requestEditPost(
-        postId: Int,
+        postId: Long,
         category: Category,
         contents: String,
-        folderId: Int,
+        folderId: Long,
         hashtags: List<String>
     ): NetworkResponse<PostEditResponse>
 

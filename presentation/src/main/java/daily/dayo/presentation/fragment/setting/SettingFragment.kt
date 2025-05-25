@@ -54,10 +54,7 @@ class SettingFragment : Fragment() {
 
     private fun setChangePasswordClickListener() {
         binding.layoutSettingPasswordChange.setOnDebounceClickListener {
-            findNavController().navigateSafe(
-                currentDestinationId = R.id.SettingFragment,
-                action = R.id.action_settingFragment_to_settingChangePasswordCurrentFragment
-            )
+
         }
     }
 
@@ -69,19 +66,12 @@ class SettingFragment : Fragment() {
 
     private fun setNotificationButtonClickListener() {
         binding.layoutSettingNotification.setOnDebounceClickListener {
-            findNavController().navigateSafe(
-                currentDestinationId = R.id.SettingFragment,
-                action = R.id.action_settingFragment_to_settingNotificationFragment
-            )
         }
     }
 
     private fun setBlockButtonClickListener() {
         binding.layoutSettingBlock.setOnDebounceClickListener {
-            findNavController().navigateSafe(
-                currentDestinationId = R.id.SettingFragment,
-                action = R.id.action_settingFragment_to_settingBlockFragment
-            )
+
         }
     }
 
@@ -96,10 +86,6 @@ class SettingFragment : Fragment() {
 
     private fun setNoticeButtonClickListener() {
         binding.layoutSettingNotice.setOnDebounceClickListener {
-            findNavController().navigateSafe(
-                currentDestinationId = R.id.SettingFragment,
-                action = R.id.action_settingFragment_to_noticeFragment
-            )
         }
     }
 
