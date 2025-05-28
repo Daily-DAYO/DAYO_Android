@@ -155,6 +155,9 @@ class MemberRepositoryImpl @Inject constructor(
     override suspend fun requestCheckEmail(email: String): NetworkResponse<Void> =
         memberApiService.requestCheckEmail(email)
 
+    override suspend fun requestCheckOAuthEmail(email: String): NetworkResponse<Void> =
+        memberApiService.requestCheckOAuthEmail(email)
+
     override suspend fun requestCertificateEmailPasswordReset(email: String): NetworkResponse<String> =
         when (val response = memberApiService.requestCheckEmailAuth(email)) {
             is NetworkResponse.Success -> NetworkResponse.Success(response.body?.authCode)

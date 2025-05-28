@@ -84,6 +84,7 @@ internal fun ResetPasswordRoute(
     val emailCertification =
         remember { mutableStateOf(EmailCertificationState.BEFORE_CERTIFICATION) }
     val isEmailExist by accountViewModel.checkEmailSuccess.collectAsStateWithLifecycle()
+    val isOAuthEmail by accountViewModel.checkOAuthEmailSuccess.collectAsStateWithLifecycle()
     val certificateEmailAuthCode by accountViewModel.certificateEmailAuthCode.collectAsStateWithLifecycle()
     val certificationInputCode = remember { mutableStateOf("") }
     val isEmailCertificateError: MutableState<Boolean?> = remember { mutableStateOf(null) }
@@ -113,6 +114,8 @@ internal fun ResetPasswordRoute(
         setEmailCertification = { emailCertification.value = it },
         requestIsEmailExist = { accountViewModel.requestCheckEmail(it) },
         isEmailExist = isEmailExist,
+        requestIsOAuthEmail = { accountViewModel.requestCheckOAuthEmail(it) },
+        isOAuthEmail = isOAuthEmail,
         certificateEmailAuthCode = certificateEmailAuthCode
             ?: EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString(),
         certificationInputCode = certificationInputCode.value,
@@ -164,6 +167,8 @@ fun ResetPasswordScreen(
     setEmail: (String) -> Unit = {},
     isEmailExist: Status = Status.LOADING,
     requestIsEmailExist: (String) -> Unit = {},
+    isOAuthEmail: Status = Status.LOADING,
+    requestIsOAuthEmail: (String) -> Unit = {},
     emailCertification: EmailCertificationState = EmailCertificationState.BEFORE_CERTIFICATION,
     setEmailCertification: (EmailCertificationState) -> Unit = {},
     certificateEmailAuthCode: String = EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString(),
@@ -189,7 +194,14 @@ fun ResetPasswordScreen(
         }
     }
 
-    LaunchedEffect(email, isEmailExist) {
+    LaunchedEffect(isEmailExist) {
+        if (isEmailExist == Status.SUCCESS) {
+            requestIsOAuthEmail(email)
+        }
+    }
+
+
+    LaunchedEffect(email, isEmailExist, isOAuthEmail) {
         setEmailCertification(
             when {
                 email.isBlank() -> {
@@ -208,7 +220,15 @@ fun ResetPasswordScreen(
                     EmailCertificationState.IN_PROGRESS_CHECK_EMAIL
                 }
 
-                isEmailExist == Status.SUCCESS -> {
+                isEmailExist == Status.SUCCESS && isOAuthEmail == Status.LOADING -> {
+                    EmailCertificationState.IN_PROGRESS_CHECK_EMAIL
+                }
+
+                isEmailExist == Status.SUCCESS && isOAuthEmail == Status.ERROR -> {
+                    EmailCertificationState.NOT_EXIST_EMAIL
+                }
+
+                isEmailExist == Status.SUCCESS && isOAuthEmail == Status.SUCCESS -> {
                     EmailCertificationState.SUCCESS_CHECK_EMAIL
                 }
 
@@ -329,6 +349,8 @@ fun ResetPasswordScreen(
                             setEmailCertification = setEmailCertification,
                             isEmailExist = isEmailExist,
                             requestIsEmailExist = requestIsEmailExist,
+                            isOAuthEmail = isOAuthEmail,
+                            requestIsOAuthEmail = requestIsOAuthEmail,
                             requestEmailCertification = requestEmailCertification,
                         )
                     }
@@ -524,6 +546,8 @@ fun EmailInputLayout(
     setEmailCertification: (EmailCertificationState) -> Unit = {},
     isEmailExist: Status = Status.LOADING,
     requestIsEmailExist: (String) -> Unit = {},
+    isOAuthEmail: Status = Status.LOADING,
+    requestIsOAuthEmail: (String) -> Unit = {},
     requestEmailCertification: (String) -> Unit = {},
 ) {
     val lastErrorMessage = remember { mutableStateOf("") }

@@ -33,6 +33,7 @@ class AccountViewModel @Inject constructor(
     private val requestResignUseCase: RequestResignUseCase,
     private val requestLogoutUseCase: RequestLogoutUseCase,
     private val requestCheckEmailUseCase: RequestCheckEmailUseCase,
+    private val requestCheckOAuthEmailUseCase: RequestCheckOAuthEmailUseCase,
     private val requestCertificateEmailPasswordResetUseCase: RequestCertificateEmailPasswordResetUseCase,
     private val requestCheckCurrentPasswordUseCase: RequestCheckCurrentPasswordUseCase,
     private val requestChangePasswordUseCase: RequestChangePasswordUseCase,
@@ -77,6 +78,9 @@ class AccountViewModel @Inject constructor(
 
     private val _checkEmailSuccess = MutableStateFlow<Status>(Status.LOADING)
     val checkEmailSuccess: StateFlow<Status> get() = _checkEmailSuccess
+
+    private val _checkOAuthEmailSuccess = MutableStateFlow<Status>(Status.LOADING)
+    val checkOAuthEmailSuccess: StateFlow<Status> get() = _checkOAuthEmailSuccess
 
     private val _resetPasswordSuccess = MutableStateFlow<Status?>(null)
     val resetPasswordSuccess: StateFlow<Status?> get() = _resetPasswordSuccess
@@ -375,6 +379,27 @@ class AccountViewModel @Inject constructor(
 
                 is NetworkResponse.ApiError -> {
                     _checkEmailSuccess.emit(Status.ERROR)
+                }
+
+                else -> {}
+            }
+        }
+    }
+
+    fun requestCheckOAuthEmail(inputEmail: String) = viewModelScope.launch {
+        _checkOAuthEmailSuccess.emit(Status.LOADING)
+        requestCheckOAuthEmailUseCase(email = inputEmail).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _checkOAuthEmailSuccess.emit(Status.SUCCESS)
+                }
+
+                is NetworkResponse.NetworkError -> {
+                    _checkOAuthEmailSuccess.emit(Status.ERROR)
+                }
+
+                is NetworkResponse.ApiError -> {
+                    _checkOAuthEmailSuccess.emit(Status.ERROR)
                 }
 
                 else -> {}
