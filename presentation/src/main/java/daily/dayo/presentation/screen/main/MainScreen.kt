@@ -141,6 +141,7 @@ internal fun MainScreen(
                                             memberId
                                         )
                                     },
+                                    navController = navigator.navController,
                                 )
                                 writeNavGraph(
                                     snackBarHostState = snackBarHostState,
