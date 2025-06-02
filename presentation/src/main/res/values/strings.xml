@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">DAYO</string>
     <string name="app_logo">Dayo Logo</string>
-    <string name="inquiry_email">gemij.dev@gmail.com</string>
+    <string name="inquiry_email">dayo.jkhj@gmail.com</string>
 
     <string name="home">홈</string>
     <string name="feed">피드</string>

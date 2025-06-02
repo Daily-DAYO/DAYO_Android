@@ -155,7 +155,7 @@ private fun SettingsScreen(
             null, // Divider
             SettingItem(R.string.setting_menu_notice, R.drawable.ic_setting_notice, onClickMenu = onNoticesClick),
             SettingItem(R.string.setting_menu_information, R.drawable.ic_setting_information, onClickMenu = {}, description = appVersion),
-            SettingItem(R.string.setting_menu_contact, R.drawable.ic_setting_contact, onClickMenu = {}),
+            SettingItem(R.string.setting_menu_contact, R.drawable.ic_setting_contact, onClickMenu = onInquiryClick),
             null // Divider
         )
 
