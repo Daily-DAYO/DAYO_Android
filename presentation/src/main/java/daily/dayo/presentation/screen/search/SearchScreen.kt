@@ -342,6 +342,7 @@ fun SearchHistoryEmpty() {
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_search_empty),
             contentDescription = "search history empty"
         )
+        Spacer(modifier = Modifier.height(20.dp))
         Text(
             text = stringResource(R.string.search_history_empty_title),
             style = DayoTheme.typography.b3,
