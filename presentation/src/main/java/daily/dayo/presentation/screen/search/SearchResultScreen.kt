@@ -216,7 +216,6 @@ fun SearchResultScreen(
                 onBackClick = onBackClick,
                 onSearchClick = { keyword ->
                     onSearchClick(keyword)
-                    onSearchClick(keyword)
                 }
             )
 
