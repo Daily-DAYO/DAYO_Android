@@ -66,6 +66,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -101,9 +102,10 @@ internal fun SearchResultRoute(
     onBackClick: () -> Unit,
     onPostClick: (Long) -> Unit,
     onClickProfile: (String) -> Unit,
+    navController: NavController,
     searchViewModel: SearchViewModel = hiltViewModel(),
     followViewModel: FollowViewModel = hiltViewModel(),
-    accountViewModel: AccountViewModel = hiltViewModel()
+    accountViewModel: AccountViewModel = hiltViewModel(),
 ) {
     val searchKeywordResultsTag = searchViewModel.searchTagList.collectAsLazyPagingItems()
     val searchKeywordResultsUser = searchViewModel.searchUserList.collectAsLazyPagingItems()
@@ -132,9 +134,12 @@ internal fun SearchResultRoute(
         searchKeywordResultsUserTotalCount = searchKeywordResultsUserTotalCount,
         onBackClick = onBackClick,
         onPostClick = onPostClick,
-        onSearchClick = { keyword ->
-            searchViewModel.searchKeyword(keyword, SearchHistoryType.TAG)
-            searchViewModel.searchKeyword(keyword, SearchHistoryType.USER)
+        onSearchClick = { newKeyword ->
+            navController.navigate(SearchRoute.resultSearch(newKeyword)) {
+                launchSingleTop = true
+                popUpTo(SearchRoute.route) { inclusive = false } // 이전 결과 화면 스택에서 제거
+                restoreState = true
+            }
         },
         onFollowClick = { memberId, isFollower ->
             followViewModel.requestFollow(
