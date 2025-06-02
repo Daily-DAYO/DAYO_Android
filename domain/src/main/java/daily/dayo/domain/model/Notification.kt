@@ -9,5 +9,6 @@ data class Notification(
     val image: String?,
     val nickname: String?,
     val memberId: String?,
-    val postId: Long?
+    val postId: Long?,
+    val profileImage: String?,
 )
