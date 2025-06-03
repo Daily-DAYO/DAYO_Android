@@ -323,6 +323,7 @@ fun SearchResultEmpty() {
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_search_empty),
             contentDescription = "search tag empty"
         )
+        Spacer(modifier = Modifier.height(20.dp))
         Text(
             text = stringResource(R.string.search_result_empty_title),
             style = DayoTheme.typography.b3
