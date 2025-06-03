@@ -225,6 +225,8 @@ internal fun MainScreen(
                                     onPasswordChangeClick = { navigator.navigateChangePassword() },
                                     onSettingNotificationClick = { navigator.navigateSettingsNotification() },
                                     onNoticesClick = { navigator.navigateNotices() },
+                                    onInformationClick = { navigator.navigateInformation() },
+                                    onRulesClick = { ruleType -> navigator.navigateRules(ruleType) },
                                     onBackClick = { navigator.popBackStack() }
                                 )
                                 noticeNavGraph(

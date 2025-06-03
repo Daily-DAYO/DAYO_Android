@@ -86,10 +86,6 @@
     <string name="rules_privacy_policy_title">개인정보 취급방침</string>
     <string name="rules_terms_and_conditions">이용약관</string>
 
-    <!-- Policy -->
-    <string name="policy_terms">이용약관</string>
-    <string name="policy_privacy">개인정보 취급방침</string>
-
     <!-- Home -->
     <string name="DayoPick">DAYO PICK</string>
     <string name="New">New</string>
