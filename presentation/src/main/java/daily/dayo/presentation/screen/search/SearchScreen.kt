@@ -1,5 +1,6 @@
 package daily.dayo.presentation.screen.search
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -59,6 +60,7 @@ import daily.dayo.domain.model.SearchHistory
 import daily.dayo.domain.model.SearchHistoryDetail
 import daily.dayo.domain.model.SearchHistoryType
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.common.toSp
 import daily.dayo.presentation.theme.DayoTheme
@@ -74,6 +76,10 @@ internal fun SearchRoute(
     onSearch: (String) -> Unit,
     viewmodel: SearchViewModel = hiltViewModel()
 ) {
+    BackHandler {
+        onBackClick()
+    }
+
     val searchHistory by viewmodel.searchHistory.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
 
@@ -204,9 +210,9 @@ fun SearchActionbarLayout(
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(
                         onSearch = {
-                            if (textFieldValue.text.isNotEmpty()) {
-                                onSearchClick(textFieldValue.text)
-                                onSearchClick(textFieldValue.text)
+                            val trimmedBlankText = trimBlankText(textFieldValue.text)
+                            if (trimmedBlankText.isNotEmpty()) {
+                                onSearchClick(trimmedBlankText)
                             }
                         }
                     )
