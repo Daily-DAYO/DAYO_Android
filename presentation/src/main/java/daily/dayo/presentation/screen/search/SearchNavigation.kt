@@ -22,7 +22,8 @@ fun NavGraphBuilder.searchNavGraph(
     onBackClick: () -> Unit,
     onSearch: (String) -> Unit,
     onProfileClick: (String) -> Unit,
-    onPostClick: (Long) -> Unit
+    onPostClick: (Long) -> Unit,
+    navController: NavController,
 ) {
     composable(route = SearchRoute.route) {
         SearchRoute(
@@ -40,7 +41,8 @@ fun NavGraphBuilder.searchNavGraph(
             searchKeyword = searchKeyword,
             onBackClick = onBackClick,
             onPostClick = onPostClick,
-            onClickProfile = onProfileClick
+            onClickProfile = onProfileClick,
+            navController = navController,
         )
     }
 

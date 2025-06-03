@@ -70,6 +70,7 @@ fun SettingsScreen(
     onBlockUsersClick: () -> Unit,
     onSettingNotificationClick: () -> Unit,
     onNoticesClick: () -> Unit,
+    onInformationClick: () -> Unit = {},
     profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -93,6 +94,7 @@ fun SettingsScreen(
             copyInquiryEmail(context, inquiryEmail)
             showInquiryGuideDialog = true
         },
+        onInformationClick = onInformationClick,
     )
 
     if (showInquiryGuideDialog) {
@@ -115,6 +117,7 @@ private fun SettingsScreen(
     onNoticesClick: () -> Unit = {},
     onBlockUsersClick: () -> Unit,
     onInquiryClick: () -> Unit = {},
+    onInformationClick: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -154,7 +157,7 @@ private fun SettingsScreen(
             SettingItem(R.string.setting_menu_notification, R.drawable.ic_notification, onClickMenu = onSettingNotificationClick),
             null, // Divider
             SettingItem(R.string.setting_menu_notice, R.drawable.ic_setting_notice, onClickMenu = onNoticesClick),
-            SettingItem(R.string.setting_menu_information, R.drawable.ic_setting_information, onClickMenu = {}, description = appVersion),
+            SettingItem(R.string.setting_menu_information, R.drawable.ic_setting_information, onClickMenu = onInformationClick, description = appVersion),
             SettingItem(R.string.setting_menu_contact, R.drawable.ic_setting_contact, onClickMenu = onInquiryClick),
             null // Divider
         )
@@ -317,7 +320,8 @@ private fun PreviewSettingsScreen() {
             onPasswordChangeClick = {},
             onSettingNotificationClick = {},
             onNoticesClick = {},
-            onBlockUsersClick = {}
+            onBlockUsersClick = {},
+            onInformationClick = {}
         )
     }
 }

@@ -7,12 +7,10 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -29,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -36,6 +35,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import daily.dayo.presentation.R
 import daily.dayo.presentation.screen.feed.FeedRoute
 import daily.dayo.presentation.screen.feed.feedNavGraph
@@ -43,7 +43,6 @@ import daily.dayo.presentation.screen.home.HomeRoute
 import daily.dayo.presentation.screen.home.homeNavGraph
 import daily.dayo.presentation.screen.mypage.MyPageRoute
 import daily.dayo.presentation.screen.mypage.myPageNavGraph
-import daily.dayo.presentation.screen.mypage.navigateBackToFolder
 import daily.dayo.presentation.screen.notice.noticeNavGraph
 import daily.dayo.presentation.screen.notification.NotificationRoute
 import daily.dayo.presentation.screen.notification.notificationNavGraph
@@ -61,7 +60,7 @@ import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 import daily.dayo.presentation.viewmodel.NoticeViewModel
 import daily.dayo.presentation.viewmodel.ProfileViewModel
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 internal fun MainScreen(
@@ -141,6 +140,7 @@ internal fun MainScreen(
                                             memberId
                                         )
                                     },
+                                    navController = navigator.navController,
                                 )
                                 writeNavGraph(
                                     snackBarHostState = snackBarHostState,
@@ -225,6 +225,8 @@ internal fun MainScreen(
                                     onPasswordChangeClick = { navigator.navigateChangePassword() },
                                     onSettingNotificationClick = { navigator.navigateSettingsNotification() },
                                     onNoticesClick = { navigator.navigateNotices() },
+                                    onInformationClick = { navigator.navigateInformation() },
+                                    onRulesClick = { ruleType -> navigator.navigateRules(ruleType) },
                                     onBackClick = { navigator.popBackStack() }
                                 )
                                 noticeNavGraph(
@@ -270,8 +272,7 @@ fun MainBottomNavigation(
     if (visible) {
         BottomNavigation(
             backgroundColor = White_FFFFFF,
-            contentColor = Gray2_767B83,
-            modifier = Modifier.height(73.dp)
+            contentColor = Gray2_767B83
         ) {
             items.forEach { screen ->
                 val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
@@ -283,8 +284,7 @@ fun MainBottomNavigation(
                             Icon(
                                 imageVector = ImageVector.vectorResource(id = if (selected) screen.selectedIcon else screen.defaultIcon),
                                 contentDescription = stringResource(id = screen.resourceId),
-                                modifier = Modifier
-                                    .size(if (screen.route != Screen.Write.route) 24.dp else 36.dp)
+                                modifier = Modifier.size(if (screen.route != Screen.Write.route) 24.dp else 36.dp)
                             )
 
                             if (screen.route != Screen.Write.route) {
@@ -292,6 +292,7 @@ fun MainBottomNavigation(
                             }
                         }
                     },
+                    modifier = Modifier.padding(top = 12.dp, bottom = 16.dp),
                     selected = selected,
                     selectedContentColor = Dark,
                     onClick = {
@@ -324,4 +325,13 @@ sealed class Screen(val route: String, @StringRes val resourceId: Int, @Drawable
             return listOf(Home, Feed, Notification, MyPage).map { it.route }.contains(route)
         }
     }
+}
+
+@Preview
+@Composable
+private fun PreviewMainBottomNavigation() {
+    MainBottomNavigation(
+        visible = true,
+        navController = rememberNavController()
+    )
 }

@@ -49,12 +49,14 @@ import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.extension.clickableSingle
+import daily.dayo.presentation.screen.write.MAX_FOLDER_COUNT
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray6_F0F1F3
+import daily.dayo.presentation.theme.Gray7_F6F6F7
 import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
@@ -105,7 +107,10 @@ fun MyPageScreen(
                 }
 
                 item(span = { GridItemSpan(2) }) {
-                    MyPageDiaryHeader(onFolderCreateClick)
+                    MyPageDiaryHeader(
+                        isCreateFolderEnabled = folderList.value?.data?.size?.let { it < MAX_FOLDER_COUNT } ?: false,
+                        onFolderCreateClick = onFolderCreateClick
+                    )
                 }
 
                 when (folderList.value?.status) {
@@ -296,10 +301,12 @@ private fun MyPageMenu(
 
 @Composable
 private fun MyPageDiaryHeader(
+    isCreateFolderEnabled: Boolean,
     onFolderCreateClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
+            .background(color = DayoTheme.colorScheme.background)
             .fillMaxWidth()
             .padding(bottom = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -310,24 +317,30 @@ private fun MyPageDiaryHeader(
             style = DayoTheme.typography.b3.copy(Dark)
         )
 
+        // 새 폴더 생성 버튼
         Button(
             onClick = onFolderCreateClick,
             colors = ButtonDefaults.buttonColors(
                 containerColor = PrimaryL3_F2FBF7,
-                contentColor = Primary_23C882
+                contentColor = Primary_23C882,
+                disabledContainerColor = Gray7_F6F6F7,
+                disabledContentColor = Gray4_C5CAD2
             ),
             shape = RoundedCornerShape(8.dp),
             contentPadding = PaddingValues(8.dp),
-            modifier = Modifier.wrapContentSize()
+            modifier = Modifier.wrapContentSize(),
+            enabled = isCreateFolderEnabled
         ) {
             Icon(
-                Icons.Filled.Add,
-                stringResource(id = R.string.my_profile_new_folder)
+                imageVector = Icons.Filled.Add,
+                contentDescription = stringResource(id = R.string.my_profile_new_folder)
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = stringResource(id = R.string.my_profile_new_folder),
-                style = DayoTheme.typography.b6.copy(Primary_23C882)
+                style = DayoTheme.typography.b6.copy(
+                    if (isCreateFolderEnabled) Primary_23C882 else Gray4_C5CAD2
+                )
             )
         }
     }
@@ -394,7 +407,10 @@ private fun PreviewMyPageMenu() {
 @Preview
 @Composable
 private fun PreviewMyPageDiaryHeader() {
-    MyPageDiaryHeader({})
+    Column {
+        MyPageDiaryHeader(isCreateFolderEnabled = true, onFolderCreateClick = {})
+        MyPageDiaryHeader(isCreateFolderEnabled = false, onFolderCreateClick = {})
+    }
 }
 
 private const val FOLLOWER = 0

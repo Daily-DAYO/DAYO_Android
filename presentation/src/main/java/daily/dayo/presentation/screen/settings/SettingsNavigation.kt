@@ -4,6 +4,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import daily.dayo.presentation.screen.rules.RuleRoute
+import daily.dayo.presentation.screen.rules.RuleType
 import kotlinx.coroutines.CoroutineScope
 
 fun NavController.navigateSettings() {
@@ -18,6 +20,10 @@ fun NavController.navigateSettingsNotification() {
     navigate(SettingsRoute.notification)
 }
 
+fun NavController.navigateInformation() {
+    navigate(SettingsRoute.information)
+}
+
 fun NavGraphBuilder.settingsNavGraph(
     coroutineScope: CoroutineScope,
     snackBarHostState: SnackbarHostState,
@@ -27,6 +33,8 @@ fun NavGraphBuilder.settingsNavGraph(
     onSettingNotificationClick: () -> Unit,
     onPasswordChangeClick: () -> Unit,
     onNoticesClick: () -> Unit,
+    onInformationClick: () -> Unit,
+    onRulesClick: (RuleType) -> Unit,
 ) {
     composable(SettingsRoute.route) {
         SettingsScreen(
@@ -36,6 +44,7 @@ fun NavGraphBuilder.settingsNavGraph(
             onBlockUsersClick = onBlockUsersClick,
             onSettingNotificationClick = onSettingNotificationClick,
             onNoticesClick = onNoticesClick,
+            onInformationClick = onInformationClick
         )
     }
 
@@ -52,6 +61,27 @@ fun NavGraphBuilder.settingsNavGraph(
             onBackClick = onBackClick,
         )
     }
+
+    composable(SettingsRoute.information) {
+        AppInformationScreen(
+            onBackClick = onBackClick,
+            onRulesClick = onRulesClick,
+        )
+    }
+
+    composable(route = RuleRoute.privacyPolicy) {
+        RuleRoute(
+            onBackClick = onBackClick,
+            ruleType = RuleType.PRIVACY_POLICY
+        )
+    }
+
+    composable(route = RuleRoute.termsAndConditions) {
+        RuleRoute(
+            onBackClick = onBackClick,
+            ruleType = RuleType.TERMS_AND_CONDITIONS
+        )
+    }
 }
 
 object SettingsRoute {
@@ -59,4 +89,5 @@ object SettingsRoute {
 
     const val changePassword = "${route}/changePassword"
     const val notification = "${route}/notification"
+    const val information = "${route}/information"
 }
