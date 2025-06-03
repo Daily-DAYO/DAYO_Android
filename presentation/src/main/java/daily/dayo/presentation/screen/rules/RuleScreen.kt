@@ -58,6 +58,7 @@ fun RuleScreen(
                     WebView(context).apply {
                         webViewClient = WebViewClient()
                         settings.javaScriptEnabled = false
+                        overScrollMode = View.OVER_SCROLL_NEVER
                         loadUrl("${BuildConfig.BASE_URL}/${ruleType.fileName}.html")
 
                         setOnKeyListener(

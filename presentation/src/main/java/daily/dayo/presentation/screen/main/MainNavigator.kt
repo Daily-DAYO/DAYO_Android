@@ -23,10 +23,13 @@ import daily.dayo.presentation.screen.notice.navigateNoticeDetail
 import daily.dayo.presentation.screen.post.navigatePost
 import daily.dayo.presentation.screen.post.navigatePostLikeUsers
 import daily.dayo.presentation.screen.profile.navigateProfile
+import daily.dayo.presentation.screen.rules.RuleType
+import daily.dayo.presentation.screen.rules.navigateRules
 import daily.dayo.presentation.screen.search.navigateSearch
 import daily.dayo.presentation.screen.search.navigateSearchPostHashtag
 import daily.dayo.presentation.screen.search.navigateSearchResult
 import daily.dayo.presentation.screen.settings.navigateChangePassword
+import daily.dayo.presentation.screen.settings.navigateInformation
 import daily.dayo.presentation.screen.settings.navigateSettings
 import daily.dayo.presentation.screen.settings.navigateSettingsNotification
 import daily.dayo.presentation.screen.write.navigateWrite
@@ -77,6 +80,14 @@ class MainNavigator(
 
     fun navigateNoticeDetail(noticeId: Long) {
         navController.navigateNoticeDetail(noticeId = noticeId)
+    }
+
+    fun navigateInformation() {
+        navController.navigateInformation()
+    }
+
+    fun navigateRules(ruleType: RuleType) {
+        navController.navigateRules(ruleType)
     }
 
     fun navigateSettings() {
