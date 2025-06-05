@@ -14,6 +14,12 @@ import daily.dayo.presentation.screen.rules.RuleRoute
 import daily.dayo.presentation.screen.rules.RuleType
 import kotlinx.coroutines.CoroutineScope
 
+fun NavController.navigateSignIn() {
+    this.navigate(SignInRoute.route) {
+        popUpTo(SignInRoute.route) { inclusive = true }
+    }
+}
+
 fun NavController.navigateSignInEmail() {
     this.navigate(SignInRoute.signInEmail)
 }
@@ -30,12 +36,12 @@ fun NavController.navigateProfileSetting() {
     this.navigate(SignInRoute.profileSetting)
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 fun NavGraphBuilder.signInNavGraph(
     coroutineScope: CoroutineScope,
     snackBarHostState: SnackbarHostState,
     navController: NavController,
     onBackClick: () -> Unit,
+    navigateToSignIn: () -> Unit,
     navigateToSignInEmail: () -> Unit,
     navigateToResetPassword: () -> Unit,
     navigateToSignUpEmail: () -> Unit,
@@ -77,6 +83,7 @@ fun NavGraphBuilder.signInNavGraph(
             coroutineScope = coroutineScope,
             snackBarHostState = snackBarHostState,
             onBackClick = onBackClick,
+            navigateToSignIn = navigateToSignIn,
             accountViewModel = hiltViewModel(parentStackEntry),
         )
     }
