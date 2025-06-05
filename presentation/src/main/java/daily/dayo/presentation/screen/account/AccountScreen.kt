@@ -48,6 +48,7 @@ internal fun AccountScreen(
                                 snackBarHostState = snackBarHostState,
                                 navController = navigator.navController,
                                 onBackClick = { navigator.popBackStack() },
+                                navigateToSignIn = { navigator.navigateSignIn() },
                                 navigateToSignInEmail = { navigator.navigateSignInEmail() },
                                 navigateToResetPassword = { navigator.navigateResetPassword() },
                                 navigateToSignUpEmail = { navigator.navigateSignUpEmail() },

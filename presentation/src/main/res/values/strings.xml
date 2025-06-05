@@ -465,6 +465,8 @@
     <string name="reset_password_email_certification_fail_network">네트워크 오류로 인증번호가 정상적으로 전송되지 않았어요</string>
     <string name="reset_password_email_certification_fail_time_out">제한시간을 초과했어요! 인증번호를 다시 받아주세요</string>
     <string name="reset_password_email_certification_resend_button">인증번호 재발송</string>
+    <string name="reset_password_email_certification_fail_oauth_account_dialog_title">간편 로그인 계정이에요</string>
+    <string name="reset_password_email_certification_fail_oauth_account_dialog_description">가입하셨던 소셜 계정을 이용해\n로그인해주세요</string>
 
     <string name="reset_password_new_password_title">새로운 비밀번호 입력</string>
     <string name="reset_password_new_password_sub_title">메일로 인증번호가 발송되었어요!</string>
