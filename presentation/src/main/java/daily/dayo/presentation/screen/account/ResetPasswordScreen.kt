@@ -47,7 +47,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
+import daily.dayo.presentation.screen.account.model.CheckOAuthEmailStatus
 import daily.dayo.presentation.screen.account.model.EmailCertificationState
+import daily.dayo.presentation.screen.account.model.EmailExistenceStatus
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
@@ -102,48 +104,64 @@ internal fun ResetPasswordRoute(
 
 
     LaunchedEffect(resetPasswordStatus) {
-        if (resetPasswordStep.value == ResetPasswordStep.NEW_PASSWORD_CONFIRM &&
-            resetPasswordStatus == Status.SUCCESS
-        ) {
-            onBackClick()
+        when (resetPasswordStatus) {
+            Status.SUCCESS -> {
+                if (resetPasswordStep.value == ResetPasswordStep.NEW_PASSWORD_CONFIRM) {
+                    onBackClick()
+                }
+            }
+            Status.ERROR -> {
+                emailCertification.value = EmailCertificationState.ERROR
+            }
+            Status.LOADING -> { /* DO NOTHING*/ }
+            null -> { /* DO NOTHING*/ }
         }
     }
 
     LaunchedEffect(isEmailExist) {
         if (!isCheckingEmail) return@LaunchedEffect
         when (isEmailExist) {
-            Status.SUCCESS -> {
+            EmailExistenceStatus.EXISTS -> {
                 accountViewModel.requestCheckOAuthEmail(email.value)
             }
-
-            Status.ERROR -> {
+            EmailExistenceStatus.NOT_EXISTS -> {
                 emailCertification.value = EmailCertificationState.NOT_EXIST_EMAIL
                 isCheckingEmail = false
             }
-
-            Status.LOADING -> {
+            EmailExistenceStatus.LOADING -> {
                 emailCertification.value = EmailCertificationState.IN_PROGRESS_CHECK_EMAIL
+            }
+
+            EmailExistenceStatus.IDLE -> { /* DO NOTHING*/ }
+            EmailExistenceStatus.ERROR -> {
+                emailCertification.value = EmailCertificationState.ERROR
+                isCheckingEmail = false
             }
         }
     }
 
     LaunchedEffect(isOAuthEmail) {
-        if (!isCheckingEmail || isEmailExist != Status.SUCCESS) return@LaunchedEffect
+        if (!isCheckingEmail || isEmailExist != EmailExistenceStatus.EXISTS) return@LaunchedEffect
 
         when (isOAuthEmail) {
-            Status.SUCCESS -> {
+            CheckOAuthEmailStatus.NORMAL_EMAIL -> {
                 emailCertification.value = EmailCertificationState.SUCCESS_CHECK_EMAIL
                 accountViewModel.requestCertificateEmailPasswordReset(email.value)
                 resetPasswordStep.value = ResetPasswordStep.EMAIL_VERIFICATION
                 isCheckingEmail = false
             }
 
-            Status.ERROR -> {
+            CheckOAuthEmailStatus.OAUTH_ACCOUNT -> {
                 emailCertification.value = EmailCertificationState.OAUTH_EMAIL
                 isCheckingEmail = false
             }
 
-            Status.LOADING -> {
+            CheckOAuthEmailStatus.ERROR -> {
+                emailCertification.value = EmailCertificationState.ERROR
+                isCheckingEmail = false
+            }
+
+            CheckOAuthEmailStatus.LOADING -> {
                 emailCertification.value = EmailCertificationState.IN_PROGRESS_CHECK_EMAIL
             }
         }
@@ -204,6 +222,10 @@ internal fun ResetPasswordRoute(
         )
     }
 
+    if (emailCertification.value == EmailCertificationState.ERROR) {
+        // TODO: 네트워크 오류에 대한 Dialog 표시
+    }
+
     Loading(
         isVisible = resetPasswordStatus == Status.LOADING || resetPasswordStatus == Status.SUCCESS,
         lottieFile = R.raw.dayo_loading,
@@ -230,9 +252,9 @@ fun ResetPasswordScreen(
     setNextButtonClickable: (Boolean) -> Unit = {},
     email: String = "",
     setEmail: (String) -> Unit = {},
-    isEmailExist: Status = Status.LOADING,
+    isEmailExist: EmailExistenceStatus = EmailExistenceStatus.IDLE,
     requestIsEmailExist: (String) -> Unit = {},
-    isOAuthEmail: Status = Status.LOADING,
+    isOAuthEmail: CheckOAuthEmailStatus = CheckOAuthEmailStatus.LOADING,
     requestIsOAuthEmail: (String) -> Unit = {},
     emailCertification: EmailCertificationState = EmailCertificationState.BEFORE_CERTIFICATION,
     setEmailCertification: (EmailCertificationState) -> Unit = {},
@@ -563,9 +585,9 @@ fun EmailInputLayout(
     setEmail: (String) -> Unit = {},
     emailCertification: EmailCertificationState = EmailCertificationState.BEFORE_CERTIFICATION,
     setEmailCertification: (EmailCertificationState) -> Unit = {},
-    isEmailExist: Status = Status.LOADING,
+    isEmailExist: EmailExistenceStatus = EmailExistenceStatus.IDLE,
     requestIsEmailExist: (String) -> Unit = {},
-    isOAuthEmail: Status = Status.LOADING,
+    isOAuthEmail: CheckOAuthEmailStatus = CheckOAuthEmailStatus.LOADING,
     requestIsOAuthEmail: (String) -> Unit = {},
     requestEmailCertification: (String) -> Unit = {},
 ) {
@@ -577,8 +599,8 @@ fun EmailInputLayout(
             EmailCertificationState.IN_PROGRESS_CHECK_EMAIL -> lastErrorMessage.value
             EmailCertificationState.INVALID_FORMAT -> context.getString(R.string.reset_password_email_fail_invalid_format)
             EmailCertificationState.NOT_EXIST_EMAIL -> context.getString(R.string.reset_password_email_fail_not_exist)
+            EmailCertificationState.OAUTH_EMAIL -> context.getString(R.string.reset_password_email_fail_oauth_account)
             EmailCertificationState.SUCCESS_CHECK_EMAIL -> ""
-            EmailCertificationState.OAUTH_EMAIL -> "소셜 로그인 계정입니다"
             else -> lastErrorMessage.value
         }
     }
