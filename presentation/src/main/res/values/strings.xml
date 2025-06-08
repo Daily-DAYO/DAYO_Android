@@ -455,6 +455,7 @@
     <string name="reset_password_email_sub_title">가입할 때 사용한 이메일을 입력해주세요.</string>
     <string name="reset_password_email_fail_invalid_format">올바른 이메일 주소를 입력하세요</string>
     <string name="reset_password_email_fail_not_exist">등록된 이메일이 없어요</string>
+    <string name="reset_password_email_fail_oauth_account">소셜 계정으로 가입한 이메일이에요</string>
     <string name="reset_password_email_placeholder">이메일</string>
     <string name="reset_password_email_next_button">인증번호 받기</string>
 
