@@ -10,7 +10,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,13 +23,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Surface
 import androidx.compose.material3.Divider
@@ -50,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -100,7 +100,6 @@ const val WRITE_POST_DETAIL_MAX_LENGTH = 200
 const val WRITE_POST_IMAGE_SIZE = 220
 const val WRITE_POST_TOP_Z_INDEX = 1f
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun WriteRoute(
     snackBarHostState: SnackbarHostState,
@@ -188,6 +187,14 @@ internal fun WriteRoute(
         addImages = { uris ->
             writeViewModel.addAndResizeUploadImages(uris, context.contentResolver, option)
         },
+        updateImage = { index, uri ->
+            writeViewModel.updateAndResizeUploadImages(
+                uri = uri,
+                currentIndex = index,
+                contentResolver = context.contentResolver,
+                option = option
+            )
+        },
         deleteImageUri = { position ->
             writeViewModel.removeUploadImage(position, true)
         },
@@ -219,7 +226,6 @@ internal fun WriteRoute(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun CategoryBottomSheetDialog(
     categoryMenus: List<CategoryMenu>,
@@ -258,6 +264,7 @@ fun WriteScreen(
     setWriteText: (String) -> Unit,
     writeText: String,
     addImages: (List<Uri>) -> Unit,
+    updateImage: (Int, Uri) -> Unit = { _, _ -> },
     deleteImageUri: (Int) -> Unit,
     clearImages: () -> Unit = {},
     processedImages: List<Bitmap>,
@@ -273,23 +280,19 @@ fun WriteScreen(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
-    var selectedUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
+    val selectedUris = remember { mutableStateListOf<Uri>() }
     var currentImageIndex by remember { mutableStateOf(0) }
-    var isCropping by remember { mutableStateOf(false) }
-    val croppedUris = remember { mutableStateListOf<Uri>() } // 임시 리스트
 
     // 이미지 선택 런처
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenMultipleDocuments(),
         onResult = { uris ->
             if (uris.isNotEmpty()) {
-                selectedUris = uris
+                selectedUris.addAll(uris)
                 currentImageIndex = 0
-                croppedUris.clear() // 임시 리스트 초기화
                 clearImages()
-                isCropping = true
+                addImages(uris)
             } else {
-                isCropping = false
                 onBackClick.invoke()
             }
         }
@@ -301,16 +304,9 @@ fun WriteScreen(
         onResult = { result ->
             if (result.isSuccessful) {
                 result.uriContent?.let { croppedUri ->
-                    croppedUris.add(croppedUri) // 임시 리스트에 추가
+                    selectedUris[currentImageIndex] = croppedUri
+                    updateImage(currentImageIndex, croppedUri)
                 }
-                currentImageIndex += 1
-                if (currentImageIndex >= selectedUris.size) {
-                    isCropping = false
-                    addImages(croppedUris)
-                }
-            } else {
-                isCropping = false
-                onBackClick.invoke()
             }
         }
     )
@@ -318,27 +314,6 @@ fun WriteScreen(
     LaunchedEffect(Unit) {
         if (processedImages.isEmpty()) {
             imagePickerLauncher.launch(arrayOf("image/*"))
-        }
-    }
-
-    // 크롭 진행 중인 경우
-    if (isCropping && currentImageIndex < selectedUris.size) {
-        val uri = selectedUris[currentImageIndex]
-        LaunchedEffect(uri) {
-            val options = CropImageContractOptions(
-                uri = uri,
-                cropImageOptions = CropImageOptions(
-                    cropShape = CropImageView.CropShape.RECTANGLE,
-                    outputCompressFormat = Bitmap.CompressFormat.JPEG,
-                    outputCompressQuality = 100,
-                    fixAspectRatio = true,
-                    aspectRatioX = 1,
-                    aspectRatioY = 1,
-                    activityTitle = ContextCompat.getString(context, R.string.write_post_image_crop_title),
-                    cropMenuCropButtonTitle = ContextCompat.getString(context, R.string.complete),
-                )
-            )
-            cropImageLauncher.launch(options)
         }
     }
 
@@ -356,7 +331,38 @@ fun WriteScreen(
             )
             WriteUploadImages(
                 images = processedImages,
-                deleteImage = { index -> deleteImageUri(index) }
+                deleteImage = { index -> deleteImageUri(index) },
+                onEditImage = { index ->
+                    currentImageIndex = index
+                    val options = CropImageContractOptions(
+                        uri = selectedUris[index],
+                        cropImageOptions = CropImageOptions(
+                            cropShape = CropImageView.CropShape.RECTANGLE,
+                            outputCompressFormat = Bitmap.CompressFormat.JPEG,
+                            outputCompressQuality = 100,
+                            fixAspectRatio = true,
+                            aspectRatioX = 1,
+                            aspectRatioY = 1,
+                            activityTitle = ContextCompat.getString(
+                                context,
+                                R.string.write_post_image_crop_title
+                            ),
+                            cropMenuCropButtonTitle = ContextCompat.getString(
+                                context,
+                                R.string.complete
+                            ),
+                            activityMenuTextColor = Dark.toArgb(),
+                            activityMenuIconColor = Dark.toArgb(),
+                            activityBackgroundColor = White_FFFFFF.toArgb(),
+                            toolbarTitleColor = Dark.toArgb(),
+                            toolbarBackButtonColor = Dark.toArgb(),
+                            toolbarColor = White_FFFFFF.toArgb(),
+                            allowRotation = false,
+                            allowFlipping = false,
+                        )
+                    )
+                    cropImageLauncher.launch(options)
+                },
             )
             WritePostDetail(
                 setWriteText = setWriteText,
@@ -414,7 +420,11 @@ fun WriteScreen(
 }
 
 @Composable
-fun WriteUploadImages(images: List<Bitmap>, deleteImage: (Int) -> Unit = {}) {
+fun WriteUploadImages(
+    images: List<Bitmap>,
+    deleteImage: (Int) -> Unit = {},
+    onEditImage: (index: Int) -> Unit,
+) {
     LazyRow(
         contentPadding = PaddingValues(start = 18.dp, end = 18.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -428,6 +438,38 @@ fun WriteUploadImages(images: List<Bitmap>, deleteImage: (Int) -> Unit = {}) {
                     modifier = Modifier.size(WRITE_POST_IMAGE_SIZE.dp),
                     imageSize = Size(WRITE_POST_IMAGE_SIZE, WRITE_POST_IMAGE_SIZE)
                 )
+                Surface(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(start = 16.dp, bottom = 16.dp),
+                    shape = RoundedCornerShape(99.dp),
+                    color = Dark,
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .width(112.dp)
+                            .height(36.dp)
+                            .clickable {
+                                onEditImage(index)
+                            }
+                            .padding(horizontal = 12.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_crop),
+                            contentDescription = "edit image",
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = stringResource(R.string.write_post_image_edit),
+                            style = DayoTheme.typography.b5,
+                            color = White_FFFFFF,
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                    }
+                }
                 if (images.size == WRITE_POST_IMAGE_MIN_SIZE) return@itemsIndexed
 
                 Image(
