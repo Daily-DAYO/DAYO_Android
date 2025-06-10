@@ -291,6 +291,41 @@ class WriteViewModel @Inject constructor(
         _writeImagesUri.getAndUpdate { it + uriPath }
     }
 
+    fun updateAndResizeUploadImages(
+        uri: Uri,
+        currentIndex: Int,
+        contentResolver: ContentResolver,
+        option: BitmapFactory.Options,
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val inputStream = contentResolver.openInputStream(uri)
+            inputStream?.use {
+                val bitmap = BitmapFactory.decodeStream(it, null, option)
+                val resizedBitmap = bitmap?.let { resizeBitmap(it, 220, 500) }
+                resizedBitmap?.let { newBitmap ->
+                    _writeImages.getAndUpdate { currentList ->
+                        currentList.toMutableList().apply {
+                            if (currentIndex in indices) {
+                                this[currentIndex] = newBitmap
+                            } else {
+                                add(newBitmap)
+                            }
+                        }
+                    }
+                    _writeImagesUri.getAndUpdate { currentList ->
+                        currentList.toMutableList().apply {
+                            if (currentIndex in indices) {
+                                this[currentIndex] = uri.toString()
+                            } else {
+                                add(uri.toString())
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     fun addAndResizeUploadImages(
         uris: List<Uri>,
         contentResolver: ContentResolver,
