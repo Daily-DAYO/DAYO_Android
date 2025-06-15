@@ -68,6 +68,9 @@ interface MemberApiService {
     @GET("/api/v1/members/search/{email}")
     suspend fun requestCheckEmail(@Path("email") email: String): NetworkResponse<Void>
 
+    @GET("/api/v2/members/find-oauth-email/{email}")
+    suspend fun requestCheckOAuthEmail(@Path("email") email: String): NetworkResponse<Void>
+
     @GET("/api/v1/members/search/code/{email}")
     suspend fun requestCheckEmailAuth(@Path("email") email: String): NetworkResponse<MemberAuthCodeResponse>
 

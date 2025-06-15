@@ -15,6 +15,10 @@ class AccountNavigator(
     private val currentDestination: NavDestination?
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination
 
+    fun navigateSignIn() {
+        navController.navigateSignIn()
+    }
+
     fun navigateSignInEmail() {
         navController.navigateSignInEmail()
     }
