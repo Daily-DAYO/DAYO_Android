@@ -47,7 +47,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
+import daily.dayo.presentation.screen.account.model.CheckOAuthEmailStatus
 import daily.dayo.presentation.screen.account.model.EmailCertificationState
+import daily.dayo.presentation.screen.account.model.EmailExistenceStatus
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
@@ -60,6 +62,7 @@ import daily.dayo.presentation.view.FilledRoundedCornerButton
 import daily.dayo.presentation.view.Loading
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.TopNavigation
+import daily.dayo.presentation.view.dialog.ConfirmDialog
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.AccountViewModel.Companion.RESET_PASSWORD_EMAIL_CERTIFICATE_AUTH_CODE_FAIL
 import daily.dayo.presentation.viewmodel.AccountViewModel.Companion.EMAIL_CERTIFICATE_AUTH_CODE_INITIAL
@@ -72,6 +75,7 @@ internal fun ResetPasswordRoute(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     snackBarHostState: SnackbarHostState,
     onBackClick: () -> Unit = {},
+    navigateToSignIn: () -> Unit = {},
     accountViewModel: AccountViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -84,6 +88,7 @@ internal fun ResetPasswordRoute(
     val emailCertification =
         remember { mutableStateOf(EmailCertificationState.BEFORE_CERTIFICATION) }
     val isEmailExist by accountViewModel.checkEmailSuccess.collectAsStateWithLifecycle()
+    val isOAuthEmail by accountViewModel.checkOAuthEmailSuccess.collectAsStateWithLifecycle()
     val certificateEmailAuthCode by accountViewModel.certificateEmailAuthCode.collectAsStateWithLifecycle()
     val certificationInputCode = remember { mutableStateOf("") }
     val isEmailCertificateError: MutableState<Boolean?> = remember { mutableStateOf(null) }
@@ -94,6 +99,73 @@ internal fun ResetPasswordRoute(
     val isPasswordMismatch = remember { mutableStateOf(false) }
 
     val resetPasswordStatus by accountViewModel.resetPasswordSuccess.collectAsStateWithLifecycle()
+
+    var isCheckingEmail by remember { mutableStateOf(false) }
+
+
+    LaunchedEffect(resetPasswordStatus) {
+        when (resetPasswordStatus) {
+            Status.SUCCESS -> {
+                if (resetPasswordStep.value == ResetPasswordStep.NEW_PASSWORD_CONFIRM) {
+                    onBackClick()
+                }
+            }
+            Status.ERROR -> {
+                emailCertification.value = EmailCertificationState.ERROR
+            }
+            Status.LOADING -> { /* DO NOTHING*/ }
+            null -> { /* DO NOTHING*/ }
+        }
+    }
+
+    LaunchedEffect(isEmailExist) {
+        if (!isCheckingEmail) return@LaunchedEffect
+        when (isEmailExist) {
+            EmailExistenceStatus.EXISTS -> {
+                accountViewModel.requestCheckOAuthEmail(email.value)
+            }
+            EmailExistenceStatus.NOT_EXISTS -> {
+                emailCertification.value = EmailCertificationState.NOT_EXIST_EMAIL
+                isCheckingEmail = false
+            }
+            EmailExistenceStatus.LOADING -> {
+                emailCertification.value = EmailCertificationState.IN_PROGRESS_CHECK_EMAIL
+            }
+
+            EmailExistenceStatus.IDLE -> { /* DO NOTHING*/ }
+            EmailExistenceStatus.ERROR -> {
+                emailCertification.value = EmailCertificationState.ERROR
+                isCheckingEmail = false
+            }
+        }
+    }
+
+    LaunchedEffect(isOAuthEmail) {
+        if (!isCheckingEmail || isEmailExist != EmailExistenceStatus.EXISTS) return@LaunchedEffect
+
+        when (isOAuthEmail) {
+            CheckOAuthEmailStatus.NORMAL_EMAIL -> {
+                emailCertification.value = EmailCertificationState.SUCCESS_CHECK_EMAIL
+                accountViewModel.requestCertificateEmailPasswordReset(email.value)
+                resetPasswordStep.value = ResetPasswordStep.EMAIL_VERIFICATION
+                isCheckingEmail = false
+            }
+
+            CheckOAuthEmailStatus.OAUTH_ACCOUNT -> {
+                emailCertification.value = EmailCertificationState.OAUTH_EMAIL
+                isCheckingEmail = false
+            }
+
+            CheckOAuthEmailStatus.ERROR -> {
+                emailCertification.value = EmailCertificationState.ERROR
+                isCheckingEmail = false
+            }
+
+            CheckOAuthEmailStatus.LOADING -> {
+                emailCertification.value = EmailCertificationState.IN_PROGRESS_CHECK_EMAIL
+            }
+        }
+    }
 
     ResetPasswordScreen(
         context = context,
@@ -113,6 +185,8 @@ internal fun ResetPasswordRoute(
         setEmailCertification = { emailCertification.value = it },
         requestIsEmailExist = { accountViewModel.requestCheckEmail(it) },
         isEmailExist = isEmailExist,
+        requestIsOAuthEmail = { accountViewModel.requestCheckOAuthEmail(it) },
+        isOAuthEmail = isOAuthEmail,
         certificateEmailAuthCode = certificateEmailAuthCode
             ?: EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString(),
         certificationInputCode = certificationInputCode.value,
@@ -134,8 +208,24 @@ internal fun ResetPasswordRoute(
                 password.value
             )
         },
-        resetPasswordSuccess = resetPasswordStatus
+        isCheckingEmail = isCheckingEmail,
+        setIsCheckingEmail = { isCheckingEmail = it }
     )
+
+    if (emailCertification.value == EmailCertificationState.OAUTH_EMAIL) {
+        ConfirmDialog(
+            title = stringResource(R.string.reset_password_email_certification_fail_oauth_account_dialog_title),
+            description = stringResource(R.string.reset_password_email_certification_fail_oauth_account_dialog_description),
+            onClickConfirmText = stringResource(R.string.confirm),
+            onClickConfirm = { navigateToSignIn() },
+            onClickCancel = null
+        )
+    }
+
+    if (emailCertification.value == EmailCertificationState.ERROR) {
+        // TODO: 네트워크 오류에 대한 Dialog 표시
+    }
+
     Loading(
         isVisible = resetPasswordStatus == Status.LOADING || resetPasswordStatus == Status.SUCCESS,
         lottieFile = R.raw.dayo_loading,
@@ -162,8 +252,10 @@ fun ResetPasswordScreen(
     setNextButtonClickable: (Boolean) -> Unit = {},
     email: String = "",
     setEmail: (String) -> Unit = {},
-    isEmailExist: Status = Status.LOADING,
+    isEmailExist: EmailExistenceStatus = EmailExistenceStatus.IDLE,
     requestIsEmailExist: (String) -> Unit = {},
+    isOAuthEmail: CheckOAuthEmailStatus = CheckOAuthEmailStatus.LOADING,
+    requestIsOAuthEmail: (String) -> Unit = {},
     emailCertification: EmailCertificationState = EmailCertificationState.BEFORE_CERTIFICATION,
     setEmailCertification: (EmailCertificationState) -> Unit = {},
     certificateEmailAuthCode: String = EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString(),
@@ -180,42 +272,10 @@ fun ResetPasswordScreen(
     setPasswordConfirmation: (String) -> Unit = {},
     isPasswordMismatch: Boolean = false,
     setIsPasswordMismatch: (Boolean) -> Unit = {},
-    resetPasswordSuccess: Status? = null,
     requestResetPassword: () -> Unit = {},
+    isCheckingEmail: Boolean = false,
+    setIsCheckingEmail: (Boolean) -> Unit = {},
 ) {
-    LaunchedEffect(resetPasswordSuccess) {
-        if (resetPasswordStep == ResetPasswordStep.NEW_PASSWORD_CONFIRM && resetPasswordSuccess == Status.SUCCESS) {
-            onBackClick()
-        }
-    }
-
-    LaunchedEffect(email, isEmailExist) {
-        setEmailCertification(
-            when {
-                email.isBlank() -> {
-                    EmailCertificationState.BEFORE_CERTIFICATION
-                }
-
-                !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
-                    EmailCertificationState.INVALID_FORMAT
-                }
-
-                isEmailExist == Status.ERROR -> {
-                    EmailCertificationState.NOT_EXIST_EMAIL
-                }
-
-                isEmailExist == Status.LOADING -> {
-                    EmailCertificationState.IN_PROGRESS_CHECK_EMAIL
-                }
-
-                isEmailExist == Status.SUCCESS -> {
-                    EmailCertificationState.SUCCESS_CHECK_EMAIL
-                }
-
-                else -> emailCertification
-            }
-        )
-    }
     Surface(
         modifier = Modifier
             .background(DayoTheme.colorScheme.background)
@@ -329,6 +389,8 @@ fun ResetPasswordScreen(
                             setEmailCertification = setEmailCertification,
                             isEmailExist = isEmailExist,
                             requestIsEmailExist = requestIsEmailExist,
+                            isOAuthEmail = isOAuthEmail,
+                            requestIsOAuthEmail = requestIsOAuthEmail,
                             requestEmailCertification = requestEmailCertification,
                         )
                     }
@@ -376,10 +438,11 @@ fun ResetPasswordScreen(
                 onNextClick = {
                     hideKeyboard()
                     setNextButtonEnabled(false)
+
                     when (resetPasswordStep) {
                         ResetPasswordStep.EMAIL_INPUT -> {
-                            requestEmailCertification(email)
-                            setResetPasswordStep(ResetPasswordStep.EMAIL_VERIFICATION)
+                            setIsCheckingEmail(true)
+                            requestIsEmailExist(email)
                         }
 
                         ResetPasswordStep.EMAIL_VERIFICATION -> {
@@ -522,16 +585,13 @@ fun EmailInputLayout(
     setEmail: (String) -> Unit = {},
     emailCertification: EmailCertificationState = EmailCertificationState.BEFORE_CERTIFICATION,
     setEmailCertification: (EmailCertificationState) -> Unit = {},
-    isEmailExist: Status = Status.LOADING,
+    isEmailExist: EmailExistenceStatus = EmailExistenceStatus.IDLE,
     requestIsEmailExist: (String) -> Unit = {},
+    isOAuthEmail: CheckOAuthEmailStatus = CheckOAuthEmailStatus.LOADING,
+    requestIsOAuthEmail: (String) -> Unit = {},
     requestEmailCertification: (String) -> Unit = {},
 ) {
     val lastErrorMessage = remember { mutableStateOf("") }
-    setNextButtonEnabled(
-        emailCertification == EmailCertificationState.SUCCESS_CHECK_EMAIL
-                || (isNextButtonEnabled && emailCertification == EmailCertificationState.IN_PROGRESS_CHECK_EMAIL)
-    )
-    setIsNextButtonClickable(emailCertification == EmailCertificationState.SUCCESS_CHECK_EMAIL)
 
     LaunchedEffect(emailCertification) {
         lastErrorMessage.value = when (emailCertification) {
@@ -539,6 +599,7 @@ fun EmailInputLayout(
             EmailCertificationState.IN_PROGRESS_CHECK_EMAIL -> lastErrorMessage.value
             EmailCertificationState.INVALID_FORMAT -> context.getString(R.string.reset_password_email_fail_invalid_format)
             EmailCertificationState.NOT_EXIST_EMAIL -> context.getString(R.string.reset_password_email_fail_not_exist)
+            EmailCertificationState.OAUTH_EMAIL -> context.getString(R.string.reset_password_email_fail_oauth_account)
             EmailCertificationState.SUCCESS_CHECK_EMAIL -> ""
             else -> lastErrorMessage.value
         }
@@ -548,8 +609,14 @@ fun EmailInputLayout(
         value = email,
         onValueChange = {
             setEmail(it)
-            if (android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches()) {
-                requestIsEmailExist(it)
+            val formatValid = android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches()
+            setNextButtonEnabled(formatValid)
+            setIsNextButtonClickable(formatValid)
+            if (!formatValid) {
+                setEmailCertification(EmailCertificationState.INVALID_FORMAT)
+            } else {
+                lastErrorMessage.value = ""
+                // INVALID FORMAT 에러 메시지가 다음 에러 메시지가 표시될 떄 남아 있지 않도록 value Clear
             }
         },
         label = stringResource(R.string.email),
