@@ -21,16 +21,19 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TextFieldDefaults.TextFieldDecorationBox
+import androidx.compose.material.TextFieldDefaults.textFieldColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -205,7 +208,8 @@ fun CommentView(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // comment nickname
-                    Text(text = comment.nickname,
+                    Text(
+                        text = comment.nickname,
                         style = DayoTheme.typography.caption2.copy(Dark),
                         modifier = Modifier
                             .clickableSingle(
@@ -455,10 +459,6 @@ fun CommentTextField(
             modifier = Modifier
                 .padding(end = 8.dp)
                 .heightIn(min = 36.dp)
-                .background(
-                    color = Gray7_F6F6F7,
-                    shape = RoundedCornerShape(12.dp)
-                )
                 .weight(1f)
                 .focusRequester(focusRequester),
             textStyle = DayoTheme.typography.b6,
@@ -473,6 +473,8 @@ fun CommentTextField(
                     visualTransformation = VisualTransformation.None,
                     interactionSource = interactionSource,
                     placeholder = { Text(text = "댓글을 남겨주세요", style = DayoTheme.typography.b6.copy(Gray4_C5CAD2)) },
+                    shape = DayoTheme.shapes.small.copy(all = CornerSize(12.dp)),
+                    colors = textFieldColors(backgroundColor = Gray7_F6F6F7),
                     contentPadding = TextFieldDefaults.textFieldWithLabelPadding(top = 8.dp, bottom = 8.dp, start = 12.dp)
                 )
             }
@@ -484,7 +486,7 @@ fun CommentTextField(
             style = DayoTheme.typography.b5.copy(color = White_FFFFFF, fontWeight = FontWeight.SemiBold),
             modifier = Modifier
                 .defaultMinSize(minWidth = 64.dp, minHeight = 36.dp)
-                .background(Primary_23C882, shape = RoundedCornerShape(8.dp))
+                .background(Primary_23C882, shape = RoundedCornerShape(12.dp))
                 .clickableSingle { onClickPostComment() }
                 .padding(vertical = 8.dp, horizontal = 12.dp)
         )
@@ -510,5 +512,18 @@ private fun PreviewCommentView() {
             .padding(12.dp)
             .fillMaxWidth()
             .wrapContentHeight()
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewCommentTextField() {
+    val commentText = remember { mutableStateOf(TextFieldValue("")) }
+    val replyCommentState = remember { mutableStateOf<Pair<Long, Comment>?>(null) } // parent comment Id, reply comment
+    val userSearchKeyword = remember { mutableStateOf("") }
+    val showMentionSearchView = remember { mutableStateOf(false) }
+    val commentFocusRequester = FocusRequester()
+    CommentTextField(
+        commentText, replyCommentState, userSearchKeyword, showMentionSearchView, commentFocusRequester, { }
     )
 }
