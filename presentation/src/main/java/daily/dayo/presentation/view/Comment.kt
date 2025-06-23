@@ -70,6 +70,7 @@ import daily.dayo.presentation.common.TimeChangerUtil
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
+import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
@@ -210,7 +211,7 @@ fun CommentView(
                     // comment nickname
                     Text(
                         text = comment.nickname,
-                        style = DayoTheme.typography.caption2.copy(Dark),
+                        style = DayoTheme.typography.caption3.copy(Gray1_50545B),
                         modifier = Modifier
                             .clickableSingle(
                                 indication = null,
@@ -223,7 +224,7 @@ fun CommentView(
                     // comment create time
                     Text(
                         text = TimeChangerUtil.timeChange(context = LocalContext.current, time = comment.createTime),
-                        style = DayoTheme.typography.caption5.copy(Gray4_C5CAD2)
+                        style = DayoTheme.typography.caption6.copy(Gray4_C5CAD2)
                     )
                 }
 
@@ -256,21 +257,21 @@ fun CommentView(
                         Spacer(Modifier.width(3.dp))
                         Text(
                             text = "답글쓰기",
-                            style = DayoTheme.typography.b6.copy(Gray3_9FA5AE),
+                            style = DayoTheme.typography.caption4.copy(Gray3_9FA5AE),
                         )
                         Spacer(Modifier.width(8.dp))
                     }
 
                     Text(
                         text = "•",
-                        style = DayoTheme.typography.b6.copy(Gray3_9FA5AE)
+                        style = DayoTheme.typography.caption4.copy(Gray3_9FA5AE)
                     )
                     Spacer(Modifier.width(8.dp))
 
                     // comment option
                     Text(
                         text = if (isMine) "삭제" else "신고",
-                        style = DayoTheme.typography.b6.copy(Gray3_9FA5AE),
+                        style = DayoTheme.typography.caption4.copy(Gray3_9FA5AE),
                         modifier = Modifier
                             .clickableSingle(
                                 indication = ripple(bounded = false, radius = 8.dp),
@@ -379,7 +380,7 @@ fun CommentReplyDescriptionView(replyCommentState: MutableState<Pair<Long, Comme
             )
             Text(
                 text = "님에게 답글 남기는 중",
-                style = DayoTheme.typography.caption4.copy(Color(0xFF50545B))
+                style = DayoTheme.typography.caption4.copy(Gray1_50545B)
             )
             Spacer(modifier = Modifier.weight(1f))
             DayoTextButton(
