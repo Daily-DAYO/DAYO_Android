@@ -143,8 +143,13 @@ fun PostScreen(
     // create comment
     val replyCommentState = remember { mutableStateOf<Pair<Long, Comment>?>(null) } // parent comment Id, reply comment
     val onClickPostComment: () -> Unit = {
-        if (replyCommentState.value == null) postViewModel.requestCreatePostComment(commentText.value.text, postId, mentionedMemberIds)
-        else postViewModel.requestCreatePostCommentReply(replyCommentState.value!!, commentText.value.text, postId, mentionedMemberIds)
+        if (replyCommentState.value == null) {
+            if (commentText.value.text.isNotBlank()) {
+                postViewModel.requestCreatePostComment(commentText.value.text, postId, mentionedMemberIds)
+            }
+        } else {
+            postViewModel.requestCreatePostCommentReply(replyCommentState.value!!, commentText.value.text, postId, mentionedMemberIds)
+        }
     }
     val onClickCommentReply: (Pair<Long, Comment>?) -> Unit = { reply ->
         // set reply comment state
