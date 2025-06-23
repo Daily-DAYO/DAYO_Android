@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -83,6 +84,7 @@ fun PostScreen(
     var post by remember { mutableStateOf(DEFAULT_POST) }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     // post option
     val onPostModifyClick: (Long) -> Unit = { postId ->  /* TODO 게시글 수정 */ }
@@ -173,6 +175,7 @@ fun PostScreen(
     val postCommentCreateSuccess by postViewModel.postCommentCreateSuccess.observeAsState(Event(false))
     if (postCommentCreateSuccess.getContentIfNotHandled() == true) {
         clearComment()
+        keyboardController?.hide()
         postViewModel.requestPostComment(postId)
     }
 
