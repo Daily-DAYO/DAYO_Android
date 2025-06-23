@@ -166,6 +166,7 @@ fun CommentBottomSheetDialog(
     val postCommentCreateSuccess by postViewModel.postCommentCreateSuccess.observeAsState(Event(false))
     if (postCommentCreateSuccess.getContentIfNotHandled() == true) {
         clearComment()
+        keyboardController?.hide()
         postViewModel.requestPostComment(postId)
     }
 
