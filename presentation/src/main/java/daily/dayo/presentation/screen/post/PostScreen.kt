@@ -162,6 +162,12 @@ fun PostScreen(
         commentText.value = TextFieldValue(text = replyUsername, selection = TextRange(replyUsername.length))
         commentFocusRequester.requestFocus()
     }
+    val commentEnabled = if (replyCommentState.value == null) {
+        commentText.value.text.isNotBlank()
+    } else {
+        val replyUsername = "@${replyCommentState.value?.second?.nickname} "
+        commentText.value.text.drop(replyUsername.length).isNotBlank()
+    }
 
     // clear comment
     val clearComment = {
@@ -205,6 +211,7 @@ fun PostScreen(
             else -> DEFAULT_COMMENTS
         },
         currentMemberId = postViewModel.getCurrentUserInfo().memberId,
+        commentEnabled = commentEnabled,
         snackBarHostState = snackBarHostState,
         commentText = commentText,
         replyCommentState = replyCommentState,
@@ -258,6 +265,7 @@ private fun PostScreen(
     post: PostDetail,
     comments: Comments,
     currentMemberId: String?,
+    commentEnabled: Boolean,
     snackBarHostState: SnackbarHostState,
     commentText: MutableState<TextFieldValue>,
     replyCommentState: MutableState<Pair<Long, Comment>?>,
@@ -361,7 +369,15 @@ private fun PostScreen(
             }
             if (showMentionSearchView.value) CommentMentionSearchView(userResults, onClickFollowUser)
             if (replyCommentState.value != null) CommentReplyDescriptionView(replyCommentState, onClickCancelReply)
-            CommentTextField(commentText, replyCommentState, userSearchKeyword, showMentionSearchView, commentFocusRequester, onClickPostComment)
+            CommentTextField(
+                enabled = commentEnabled,
+                commentText = commentText,
+                replyCommentState = replyCommentState,
+                userSearchKeyword = userSearchKeyword,
+                showMentionSearchView = showMentionSearchView,
+                focusRequester = commentFocusRequester,
+                onClickPostComment = onClickPostComment
+            )
         }
     }
 }
@@ -381,6 +397,7 @@ private fun PreviewPostScreen() {
             post = DEFAULT_POST,
             comments = DEFAULT_COMMENTS,
             currentMemberId = "",
+            commentEnabled = commentText.value.text.isNotBlank(),
             snackBarHostState = SnackbarHostState(),
             commentText = commentText,
             replyCommentState = replyCommentState,
