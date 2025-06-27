@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -76,6 +77,8 @@ import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.Gray7_F6F6F7
+import daily.dayo.presentation.theme.PrimaryL1_8FD9B9
+import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
 
@@ -395,6 +398,7 @@ fun CommentReplyDescriptionView(replyCommentState: MutableState<Pair<Long, Comme
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CommentTextField(
+    enabled: Boolean,
     commentText: MutableState<TextFieldValue>,
     replyCommentState: MutableState<Pair<Long, Comment>?>,
     userSearchKeyword: MutableState<String>,
@@ -481,16 +485,23 @@ fun CommentTextField(
             }
         )
 
-        Text(
-            text = stringResource(R.string.comment_button_text),
-            textAlign = TextAlign.Center,
-            style = DayoTheme.typography.b5.copy(color = White_FFFFFF, fontWeight = FontWeight.SemiBold),
+        Box(
             modifier = Modifier
                 .defaultMinSize(minWidth = 64.dp, minHeight = 36.dp)
-                .background(Primary_23C882, shape = RoundedCornerShape(12.dp))
-                .clickableSingle { onClickPostComment() }
-                .padding(vertical = 8.dp, horizontal = 12.dp)
-        )
+                .clip(RoundedCornerShape(12.dp))
+                .background(color = if (enabled) Primary_23C882 else PrimaryL1_8FD9B9)
+                .clickableSingle(enabled = enabled) { onClickPostComment() }
+                .padding(vertical = 8.dp, horizontal = 12.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = stringResource(R.string.comment_button_text),
+                color = if (enabled) White_FFFFFF else PrimaryL3_F2FBF7,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center,
+                style = DayoTheme.typography.b5
+            )
+        }
     }
 }
 
@@ -525,6 +536,12 @@ private fun PreviewCommentTextField() {
     val showMentionSearchView = remember { mutableStateOf(false) }
     val commentFocusRequester = FocusRequester()
     CommentTextField(
-        commentText, replyCommentState, userSearchKeyword, showMentionSearchView, commentFocusRequester, { }
+        enabled = commentText.value.text.isNotBlank(),
+        commentText = commentText,
+        replyCommentState = replyCommentState,
+        userSearchKeyword = userSearchKeyword,
+        showMentionSearchView = showMentionSearchView,
+        focusRequester = commentFocusRequester,
+        onClickPostComment = { }
     )
 }

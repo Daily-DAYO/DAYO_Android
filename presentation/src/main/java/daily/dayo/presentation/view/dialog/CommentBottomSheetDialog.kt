@@ -153,6 +153,12 @@ fun CommentBottomSheetDialog(
         commentText.value = TextFieldValue(text = replyUsername, selection = TextRange(replyUsername.length))
         commentFocusRequester.requestFocus()
     }
+    val commentEnabled = if (replyCommentState.value == null) {
+        commentText.value.text.isNotBlank()
+    } else {
+        val replyUsername = "@${replyCommentState.value?.second?.nickname} "
+        commentText.value.text.drop(replyUsername.length).isNotBlank()
+    }
 
     // clear comment
     val clearComment = {
@@ -216,7 +222,15 @@ fun CommentBottomSheetDialog(
                 Column(modifier = Modifier.align(Alignment.BottomCenter)) {
                     if (showMentionSearchView.value) CommentMentionSearchView(userResults, onClickFollowUser)
                     if (replyCommentState.value != null) CommentReplyDescriptionView(replyCommentState, onClickCancelReply)
-                    CommentTextField(commentText, replyCommentState, userSearchKeyword, showMentionSearchView, commentFocusRequester, onClickPostComment)
+                    CommentTextField(
+                        enabled = commentEnabled,
+                        commentText = commentText,
+                        replyCommentState = replyCommentState,
+                        userSearchKeyword = userSearchKeyword,
+                        showMentionSearchView = showMentionSearchView,
+                        focusRequester = commentFocusRequester,
+                        onClickPostComment = onClickPostComment
+                    )
                 }
             }
         }
