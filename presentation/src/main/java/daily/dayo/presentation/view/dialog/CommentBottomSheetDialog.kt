@@ -10,12 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -30,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -59,7 +59,6 @@ import daily.dayo.presentation.viewmodel.ReportViewModel
 import daily.dayo.presentation.viewmodel.SearchViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CommentBottomSheetDialog(
     postId: Long,
@@ -79,6 +78,7 @@ fun CommentBottomSheetDialog(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val commentFocusRequester = FocusRequester()
+    val keyboardController = LocalSoftwareKeyboardController.current
     val onClickCommentProfile: (String) -> Unit = { memberId ->
         onClickClose()
         onClickProfile(memberId)
@@ -136,8 +136,13 @@ fun CommentBottomSheetDialog(
     // create comment
     val replyCommentState = remember { mutableStateOf<Pair<Long, Comment>?>(null) } // parent comment Id, reply comment
     val onClickPostComment: () -> Unit = {
-        if (replyCommentState.value == null) postViewModel.requestCreatePostComment(commentText.value.text, postId, mentionedMemberIds)
-        else postViewModel.requestCreatePostCommentReply(replyCommentState.value!!, commentText.value.text, postId, mentionedMemberIds)
+        if (replyCommentState.value == null) {
+            if (commentText.value.text.isNotBlank()) {
+                postViewModel.requestCreatePostComment(commentText.value.text, postId, mentionedMemberIds)
+            }
+        } else {
+            postViewModel.requestCreatePostCommentReply(replyCommentState.value!!, commentText.value.text, postId, mentionedMemberIds)
+        }
     }
     val onClickReply: (Pair<Long, Comment>?) -> Unit = { reply ->
         // set reply comment state
@@ -147,6 +152,12 @@ fun CommentBottomSheetDialog(
         val replyUsername = "@${replyCommentState.value?.second?.nickname} "
         commentText.value = TextFieldValue(text = replyUsername, selection = TextRange(replyUsername.length))
         commentFocusRequester.requestFocus()
+    }
+    val commentEnabled = if (replyCommentState.value == null) {
+        commentText.value.text.isNotBlank()
+    } else {
+        val replyUsername = "@${replyCommentState.value?.second?.nickname} "
+        commentText.value.text.drop(replyUsername.length).isNotBlank()
     }
 
     // clear comment
@@ -161,6 +172,7 @@ fun CommentBottomSheetDialog(
     val postCommentCreateSuccess by postViewModel.postCommentCreateSuccess.observeAsState(Event(false))
     if (postCommentCreateSuccess.getContentIfNotHandled() == true) {
         clearComment()
+        keyboardController?.hide()
         postViewModel.requestPostComment(postId)
     }
 
@@ -171,12 +183,18 @@ fun CommentBottomSheetDialog(
         }
     }
 
+    LaunchedEffect(sheetState.currentValue) {
+        if (sheetState.currentValue == ModalBottomSheetValue.Hidden) {
+            keyboardController?.hide()
+        }
+    }
+
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetShape = RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp),
         modifier = modifier,
         sheetContent = {
-            Surface(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
@@ -184,7 +202,7 @@ fun CommentBottomSheetDialog(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 12.dp)
+                        .padding(top = 12.dp, bottom = 65.dp)
                         .wrapContentHeight(),
                 ) {
                     CommentBottomSheetDialogTitle(clearComment, onClickClose)
@@ -199,9 +217,20 @@ fun CommentBottomSheetDialog(
                         onClickDelete = onClickDelete,
                         onClickReport = onClickReport
                     )
+                }
+
+                Column(modifier = Modifier.align(Alignment.BottomCenter)) {
                     if (showMentionSearchView.value) CommentMentionSearchView(userResults, onClickFollowUser)
                     if (replyCommentState.value != null) CommentReplyDescriptionView(replyCommentState, onClickCancelReply)
-                    CommentTextField(commentText, replyCommentState, userSearchKeyword, showMentionSearchView, commentFocusRequester, onClickPostComment)
+                    CommentTextField(
+                        enabled = commentEnabled,
+                        commentText = commentText,
+                        replyCommentState = replyCommentState,
+                        userSearchKeyword = userSearchKeyword,
+                        showMentionSearchView = showMentionSearchView,
+                        focusRequester = commentFocusRequester,
+                        onClickPostComment = onClickPostComment
+                    )
                 }
             }
         }
@@ -263,7 +292,7 @@ private fun CommentBottomSheetDialogContent(
         modifier = Modifier
             .background(DayoTheme.colorScheme.background)
             .fillMaxWidth()
-            .fillMaxHeight(0.5f)
+            .fillMaxHeight(0.8f)
     ) {
         item {
             CommentListView(
