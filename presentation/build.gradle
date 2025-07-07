@@ -257,4 +257,7 @@ dependencies {
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
     // Image Cropper
     implementation("com.vanniktech:android-image-cropper:4.6.0")
+
+    // Google Ads
+    implementation 'com.google.android.gms:play-services-ads:23.6.0'
 }
