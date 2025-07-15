@@ -75,6 +75,7 @@ fun MyPageScreen(
     onBookmarkClick: () -> Unit,
     onFolderClick: (Long) -> Unit,
     onFolderCreateClick: () -> Unit,
+    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit,
     profileViewModel: ProfileViewModel = hiltViewModel(),
     folderViewModel: FolderViewModel = hiltViewModel()
 ) {
@@ -109,7 +110,12 @@ fun MyPageScreen(
                 item(span = { GridItemSpan(2) }) {
                     MyPageDiaryHeader(
                         isCreateFolderEnabled = folderList.value?.data?.size?.let { it < MAX_FOLDER_COUNT } ?: false,
-                        onFolderCreateClick = onFolderCreateClick
+                        onFolderCreateClick = {
+                            // 광고 보기
+                            onAdRequest {
+                                onFolderCreateClick()
+                            }
+                        }
                     )
                 }
 
