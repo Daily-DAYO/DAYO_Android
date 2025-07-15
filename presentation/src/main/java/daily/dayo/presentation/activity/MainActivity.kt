@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
@@ -15,6 +16,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
 import daily.dayo.presentation.R
 import daily.dayo.presentation.screen.main.MainScreen
@@ -26,16 +31,52 @@ import daily.dayo.presentation.viewmodel.SettingNotificationViewModel
 class MainActivity : AppCompatActivity() {
     private val accountViewModel by viewModels<AccountViewModel>()
     private val settingNotificationViewModel by viewModels<SettingNotificationViewModel>()
+    private var rewardedAd: RewardedAd? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSystemBackClickListener()
         checkCurrentNotification()
         getNotificationData()
         askNotificationPermission()
+        loadRewardedAd()
         setContent {
             DayoTheme {
-                MainScreen()
+                MainScreen(
+                    onAdRequest = { onRewardSuccess ->
+                        showAdIfAvailable(onRewardSuccess)
+                    }
+                )
             }
+        }
+    }
+
+    private fun loadRewardedAd() {
+        val adRequest = AdRequest.Builder().build()
+        // TODO 테스트 광고 아이디 변경 필요
+        RewardedAd.load(this, "ca-app-pub-3940256099942544/5224354917", adRequest, object : RewardedAdLoadCallback() {
+            override fun onAdLoaded(ad: RewardedAd) {
+                rewardedAd = ad
+            }
+
+            override fun onAdFailedToLoad(error: LoadAdError) {
+                rewardedAd = null
+            }
+        })
+    }
+
+    private fun showAdIfAvailable(onRewardSuccess: () -> Unit) {
+        rewardedAd?.let { ad ->
+            ad.show(this) {
+                // 광고를 끝까지 봤을 때만 호출됨
+                onRewardSuccess()
+
+                // 광고 다시 로드
+                rewardedAd = null
+                loadRewardedAd()
+            }
+        } ?: run {
+            Log.d("Ad", "The rewarded ad wasn't ready yet.")
+            loadRewardedAd()
         }
     }
 

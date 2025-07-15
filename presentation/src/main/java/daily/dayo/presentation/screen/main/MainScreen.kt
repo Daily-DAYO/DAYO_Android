@@ -64,6 +64,7 @@ import daily.dayo.presentation.viewmodel.ProfileViewModel
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 internal fun MainScreen(
+    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit,
     navigator: MainNavigator = rememberMainNavigator(),
     profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
@@ -185,6 +186,7 @@ internal fun MainScreen(
                                             folderId
                                         )
                                     },
+                                    onAdRequest = onAdRequest,
                                     navigateBackToFolder = { folderId ->
                                         navigator.navigateBackToFolder(
                                             folderId
