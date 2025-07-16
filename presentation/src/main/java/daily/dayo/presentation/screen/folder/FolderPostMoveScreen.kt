@@ -35,6 +35,7 @@ internal fun FolderPostMoveScreen(
     currentFolderId: Long,
     navigateToCreateNewFolder: () -> Unit,
     navigateBackToFolder: () -> Unit,
+    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit,
     onBackClick: () -> Unit,
     folderViewModel: FolderViewModel = hiltViewModel()
 ) {
@@ -75,6 +76,7 @@ internal fun FolderPostMoveScreen(
             selectedFolder?.let { folderViewModel.moveSelectedPost(it) }
         },
         navigateToCreateNewFolder = navigateToCreateNewFolder,
+        onAdRequest = onAdRequest,
         onBackClick = onBackClick
     )
 }
@@ -87,6 +89,7 @@ private fun FolderPostMoveScreen(
     onFolderClick: (Long, String) -> Unit,
     onPostMoveClick: () -> Unit,
     navigateToCreateNewFolder: () -> Unit,
+    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit,
     onBackClick: () -> Unit
 ) {
     Scaffold(
@@ -109,7 +112,8 @@ private fun FolderPostMoveScreen(
                 onFolderClick = onFolderClick,
                 navigateToCreateNewFolder = navigateToCreateNewFolder,
                 folders = folders.filterNot { it.folderId == currentFolderId },
-                currentFolderId = selectedFolder
+                currentFolderId = selectedFolder,
+                onAdRequest = onAdRequest
             )
         }
     }
@@ -125,6 +129,7 @@ private fun PreviewFolderPostMoveScreen() {
         onFolderClick = { folderId, folderName -> },
         onPostMoveClick = {},
         navigateToCreateNewFolder = {},
+        onAdRequest = {},
         onBackClick = {}
     )
 }

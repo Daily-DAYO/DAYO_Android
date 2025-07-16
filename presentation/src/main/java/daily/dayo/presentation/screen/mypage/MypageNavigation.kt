@@ -187,6 +187,7 @@ fun NavGraphBuilder.myPageNavGraph(
                 currentFolderId = folderId,
                 navigateToCreateNewFolder = onFolderCreateClick,
                 navigateBackToFolder = { navigateBackToFolder(folderId) },
+                onAdRequest = onAdRequest,
                 onBackClick = onBackClick,
                 folderViewModel = hiltViewModel(parentStackEntry)
             )
