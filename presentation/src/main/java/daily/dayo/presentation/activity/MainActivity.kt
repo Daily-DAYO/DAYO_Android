@@ -21,6 +21,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.screen.main.MainScreen
 import daily.dayo.presentation.theme.DayoTheme
@@ -52,8 +53,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadRewardedAd() {
         val adRequest = AdRequest.Builder().build()
-        // TODO 테스트 광고 아이디 변경 필요
-        RewardedAd.load(this, "ca-app-pub-3940256099942544/5224354917", adRequest, object : RewardedAdLoadCallback() {
+        RewardedAd.load(this, BuildConfig.REWARDED_AD_UNIT_ID_FOLDER, adRequest, object : RewardedAdLoadCallback() {
             override fun onAdLoaded(ad: RewardedAd) {
                 rewardedAd = ad
             }
