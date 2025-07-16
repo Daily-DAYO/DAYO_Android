@@ -68,6 +68,7 @@ const val FOLDER_THUMBNAIL_RADIUS_SIZE = 12
 fun WriteFolderRoute(
     onBackClick: () -> Unit,
     onWriteFolderNewClick: () -> Unit,
+    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit,
     writeViewModel: WriteViewModel = hiltViewModel(),
     accountViewModel: AccountViewModel = hiltViewModel(),
     profileViewModel: ProfileViewModel = hiltViewModel(),
@@ -93,7 +94,8 @@ fun WriteFolderRoute(
         },
         navigateToCreateNewFolder = { onWriteFolderNewClick() },
         folders = folders.data.orEmpty(),
-        currentFolderId = folderId
+        currentFolderId = folderId,
+        onAdRequest = onAdRequest
     )
 
 }
@@ -106,6 +108,7 @@ fun WriteFolderScreen(
     navigateToCreateNewFolder: () -> Unit,
     folders: List<Folder>,
     currentFolderId: Long?,
+    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit
 ) {
     Surface(
         color = White_FFFFFF,
@@ -122,7 +125,8 @@ fun WriteFolderScreen(
                 onFolderClick = onFolderClick,
                 navigateToCreateNewFolder = navigateToCreateNewFolder,
                 folders = folders,
-                currentFolderId = currentFolderId
+                currentFolderId = currentFolderId,
+                onAdRequest = onAdRequest
             )
         }
     }
@@ -152,6 +156,7 @@ fun WriteFolderContent(
     navigateToCreateNewFolder: () -> Unit = {},
     folders: List<Folder> = emptyList(),
     currentFolderId: Long? = null,
+    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -160,7 +165,8 @@ fun WriteFolderContent(
     ) {
         if (showCreateFolder) {
             WriteFolderNewLayout(
-                navigateToCreateNewFolder = navigateToCreateNewFolder
+                navigateToCreateNewFolder = navigateToCreateNewFolder,
+                onAdRequest = onAdRequest
             )
             Spacer(
                 modifier = Modifier
@@ -179,14 +185,20 @@ fun WriteFolderContent(
 @Preview
 @Composable
 fun WriteFolderNewLayout(
-    navigateToCreateNewFolder: () -> Unit = {}
+    navigateToCreateNewFolder: () -> Unit = {},
+    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(FOLDER_THUMBNAIL_SIZE.dp)
             .background(White_FFFFFF)
-            .clickableSingle { navigateToCreateNewFolder() },
+            .clickableSingle {
+                // 광고 보기
+                onAdRequest {
+                    navigateToCreateNewFolder()
+                }
+            }
     ) {
         Image(
             contentDescription = "new folderThumbnail",

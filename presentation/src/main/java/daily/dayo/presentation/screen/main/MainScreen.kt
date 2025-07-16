@@ -150,10 +150,11 @@ internal fun MainScreen(
                                     onTagClick = { navigator.navigateWriteTag() },
                                     onWriteFolderClick = { navigator.navigateWriteFolder() },
                                     onWriteFolderNewClick = { navigator.navigateWriteFolderNew() },
+                                    onAdRequest = onAdRequest,
                                     bottomSheetState = bottomSheetState,
                                     bottomSheetContent = { content ->
                                         bottomSheetContent = content
-                                    },
+                                    }
                                 )
                                 myPageNavGraph(
                                     navController = navigator.navController,
