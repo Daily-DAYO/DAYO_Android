@@ -44,6 +44,10 @@ import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.Privacy
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.constant.FolderConstants.FOLDER_AD_START_COUNT
+import daily.dayo.presentation.common.constant.FolderConstants.FOLDER_THUMBNAIL_RADIUS_SIZE
+import daily.dayo.presentation.common.constant.FolderConstants.FOLDER_THUMBNAIL_SIZE
+import daily.dayo.presentation.common.constant.FolderConstants.MAX_FOLDER_COUNT
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.common.extension.limitTo
 import daily.dayo.presentation.theme.Dark
@@ -59,10 +63,6 @@ import daily.dayo.presentation.view.TopNavigationAlign
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.ProfileViewModel
 import daily.dayo.presentation.viewmodel.WriteViewModel
-
-const val MAX_FOLDER_COUNT = 5
-const val FOLDER_THUMBNAIL_SIZE = 72
-const val FOLDER_THUMBNAIL_RADIUS_SIZE = 12
 
 @Composable
 fun WriteFolderRoute(
@@ -165,6 +165,7 @@ fun WriteFolderContent(
     ) {
         if (showCreateFolder) {
             WriteFolderNewLayout(
+                shouldShowAd = folders.size + 1 in FOLDER_AD_START_COUNT..MAX_FOLDER_COUNT,
                 navigateToCreateNewFolder = navigateToCreateNewFolder,
                 onAdRequest = onAdRequest
             )
@@ -182,10 +183,10 @@ fun WriteFolderContent(
     }
 }
 
-@Preview
 @Composable
 fun WriteFolderNewLayout(
-    navigateToCreateNewFolder: () -> Unit = {},
+    shouldShowAd: Boolean,
+    navigateToCreateNewFolder: () -> Unit,
     onAdRequest: (onRewardSuccess: () -> Unit) -> Unit
 ) {
     Row(
@@ -195,7 +196,11 @@ fun WriteFolderNewLayout(
             .background(White_FFFFFF)
             .clickableSingle {
                 // 광고 보기
-                onAdRequest {
+                if (shouldShowAd) {
+                    onAdRequest {
+                        navigateToCreateNewFolder()
+                    }
+                } else {
                     navigateToCreateNewFolder()
                 }
             }
@@ -343,4 +348,14 @@ fun WriteFolderItemLayout(
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun PreviewWriteFolderNewLayout() {
+    WriteFolderNewLayout(
+        shouldShowAd = false,
+        navigateToCreateNewFolder = {},
+        onAdRequest = {}
+    )
 }
