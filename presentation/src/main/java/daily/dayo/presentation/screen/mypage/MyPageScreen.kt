@@ -48,8 +48,9 @@ import daily.dayo.domain.model.Profile
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
+import daily.dayo.presentation.common.constant.FolderConstants.FOLDER_AD_START_COUNT
+import daily.dayo.presentation.common.constant.FolderConstants.MAX_FOLDER_COUNT
 import daily.dayo.presentation.common.extension.clickableSingle
-import daily.dayo.presentation.screen.write.MAX_FOLDER_COUNT
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
@@ -81,6 +82,8 @@ fun MyPageScreen(
 ) {
     val profileInfo = profileViewModel.profileInfo.observeAsState()
     val folderList = folderViewModel.folderList.observeAsState()
+    val folderCount = folderList.value?.data?.size ?: 0
+    val shouldShowAd = folderCount + 1 in FOLDER_AD_START_COUNT..MAX_FOLDER_COUNT
 
     LaunchedEffect(Unit) {
         profileViewModel.requestMyProfile()
@@ -112,7 +115,11 @@ fun MyPageScreen(
                         isCreateFolderEnabled = folderList.value?.data?.size?.let { it < MAX_FOLDER_COUNT } ?: false,
                         onFolderCreateClick = {
                             // 광고 보기
-                            onAdRequest {
+                            if (shouldShowAd) {
+                                onAdRequest {
+                                    onFolderCreateClick()
+                                }
+                            } else {
                                 onFolderCreateClick()
                             }
                         }

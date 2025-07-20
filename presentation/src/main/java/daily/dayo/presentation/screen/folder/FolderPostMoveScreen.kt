@@ -24,7 +24,7 @@ import androidx.lifecycle.flowWithLifecycle
 import daily.dayo.domain.model.Folder
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
-import daily.dayo.presentation.screen.write.MAX_FOLDER_COUNT
+import daily.dayo.presentation.common.constant.FolderConstants.MAX_FOLDER_COUNT
 import daily.dayo.presentation.screen.write.WriteFolderScreen
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.view.FilledRoundedCornerButton
