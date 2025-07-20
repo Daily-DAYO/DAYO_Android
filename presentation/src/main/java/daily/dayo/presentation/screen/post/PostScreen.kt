@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -83,6 +84,7 @@ fun PostScreen(
     var post by remember { mutableStateOf(DEFAULT_POST) }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     // post option
     val onPostModifyClick: (Long) -> Unit = { postId ->  /* TODO 게시글 수정 */ }
@@ -143,8 +145,13 @@ fun PostScreen(
     // create comment
     val replyCommentState = remember { mutableStateOf<Pair<Long, Comment>?>(null) } // parent comment Id, reply comment
     val onClickPostComment: () -> Unit = {
-        if (replyCommentState.value == null) postViewModel.requestCreatePostComment(commentText.value.text, postId, mentionedMemberIds)
-        else postViewModel.requestCreatePostCommentReply(replyCommentState.value!!, commentText.value.text, postId, mentionedMemberIds)
+        if (replyCommentState.value == null) {
+            if (commentText.value.text.isNotBlank()) {
+                postViewModel.requestCreatePostComment(commentText.value.text, postId, mentionedMemberIds)
+            }
+        } else {
+            postViewModel.requestCreatePostCommentReply(replyCommentState.value!!, commentText.value.text, postId, mentionedMemberIds)
+        }
     }
     val onClickCommentReply: (Pair<Long, Comment>?) -> Unit = { reply ->
         // set reply comment state
@@ -154,6 +161,12 @@ fun PostScreen(
         val replyUsername = "@${replyCommentState.value?.second?.nickname} "
         commentText.value = TextFieldValue(text = replyUsername, selection = TextRange(replyUsername.length))
         commentFocusRequester.requestFocus()
+    }
+    val commentEnabled = if (replyCommentState.value == null) {
+        commentText.value.text.isNotBlank()
+    } else {
+        val replyUsername = "@${replyCommentState.value?.second?.nickname} "
+        commentText.value.text.drop(replyUsername.length).isNotBlank()
     }
 
     // clear comment
@@ -168,6 +181,7 @@ fun PostScreen(
     val postCommentCreateSuccess by postViewModel.postCommentCreateSuccess.observeAsState(Event(false))
     if (postCommentCreateSuccess.getContentIfNotHandled() == true) {
         clearComment()
+        keyboardController?.hide()
         postViewModel.requestPostComment(postId)
     }
 
@@ -197,6 +211,7 @@ fun PostScreen(
             else -> DEFAULT_COMMENTS
         },
         currentMemberId = postViewModel.getCurrentUserInfo().memberId,
+        commentEnabled = commentEnabled,
         snackBarHostState = snackBarHostState,
         commentText = commentText,
         replyCommentState = replyCommentState,
@@ -250,6 +265,7 @@ private fun PostScreen(
     post: PostDetail,
     comments: Comments,
     currentMemberId: String?,
+    commentEnabled: Boolean,
     snackBarHostState: SnackbarHostState,
     commentText: MutableState<TextFieldValue>,
     replyCommentState: MutableState<Pair<Long, Comment>?>,
@@ -353,7 +369,15 @@ private fun PostScreen(
             }
             if (showMentionSearchView.value) CommentMentionSearchView(userResults, onClickFollowUser)
             if (replyCommentState.value != null) CommentReplyDescriptionView(replyCommentState, onClickCancelReply)
-            CommentTextField(commentText, replyCommentState, userSearchKeyword, showMentionSearchView, commentFocusRequester, onClickPostComment)
+            CommentTextField(
+                enabled = commentEnabled,
+                commentText = commentText,
+                replyCommentState = replyCommentState,
+                userSearchKeyword = userSearchKeyword,
+                showMentionSearchView = showMentionSearchView,
+                focusRequester = commentFocusRequester,
+                onClickPostComment = onClickPostComment
+            )
         }
     }
 }
@@ -373,6 +397,7 @@ private fun PreviewPostScreen() {
             post = DEFAULT_POST,
             comments = DEFAULT_COMMENTS,
             currentMemberId = "",
+            commentEnabled = commentText.value.text.isNotBlank(),
             snackBarHostState = SnackbarHostState(),
             commentText = commentText,
             replyCommentState = replyCommentState,
