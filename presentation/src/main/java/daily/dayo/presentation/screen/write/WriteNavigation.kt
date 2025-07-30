@@ -1,6 +1,5 @@
 package daily.dayo.presentation.screen.write
 
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -22,11 +21,11 @@ fun NavController.navigateWriteTag() {
 fun NavController.navigateWriteFolder() {
     navigate(WriteRoute.folder)
 }
+
 fun NavController.navigateWriteFolderNew() {
     navigate(WriteRoute.folderNew)
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 fun NavGraphBuilder.writeNavGraph(
     snackBarHostState: SnackbarHostState,
     navController: NavController,
@@ -34,6 +33,7 @@ fun NavGraphBuilder.writeNavGraph(
     onTagClick: () -> Unit,
     onWriteFolderClick: () -> Unit,
     onWriteFolderNewClick: () -> Unit,
+    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit,
     bottomSheetState: ModalBottomSheetState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
 ) {
@@ -73,6 +73,7 @@ fun NavGraphBuilder.writeNavGraph(
             WriteFolderRoute(
                 onBackClick = onBackClick,
                 onWriteFolderNewClick = onWriteFolderNewClick,
+                onAdRequest = onAdRequest,
                 writeViewModel = hiltViewModel(parentStackEntry),
                 profileViewModel = hiltViewModel(parentStackEntry),
                 accountViewModel = hiltViewModel(parentStackEntry),

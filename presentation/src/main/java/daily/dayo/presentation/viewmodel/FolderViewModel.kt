@@ -269,6 +269,3 @@ val DEFAULT_FOLDER_INFO = FolderInfo(
     subheading = "",
     thumbnailImage = ""
 )
-
-const val FOLDER_NAME_MAX_LENGTH = 12
-const val FOLDER_DESCRIPTION_MAX_LENGTH = 20
