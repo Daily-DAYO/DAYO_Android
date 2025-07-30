@@ -1,6 +1,5 @@
 package daily.dayo.presentation.screen.write
 
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -8,8 +7,11 @@ import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import daily.dayo.presentation.viewmodel.WriteViewModel
 
 fun NavController.navigateWrite() {
     navigate(WriteRoute.route)
@@ -26,7 +28,10 @@ fun NavController.navigateWriteFolderNew() {
     navigate(WriteRoute.folderNew)
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+fun NavController.navigateCrop(index: Int) {
+    navigate(WriteRoute.getCropRoute(index))
+}
+
 fun NavGraphBuilder.writeNavGraph(
     snackBarHostState: SnackbarHostState,
     navController: NavController,
@@ -43,13 +48,14 @@ fun NavGraphBuilder.writeNavGraph(
     ) {
         composable(route = WriteRoute.route) {
             val parentStackEntry = remember(it) {
-                navController.getBackStackEntry(WriteRoute.route)
+                navController.getBackStackEntry(WriteRoute.writeRouteNavigation)
             }
             WriteRoute(
                 snackBarHostState = snackBarHostState,
                 onBackClick = onBackClick,
                 onTagClick = onTagClick,
                 onWriteFolderClick = onWriteFolderClick,
+                onCropImageClick = { imgIdx -> navController.navigateCrop(imgIdx) },
                 writeViewModel = hiltViewModel(parentStackEntry),
                 bottomSheetState = bottomSheetState,
                 bottomSheetContent = bottomSheetContent
@@ -58,7 +64,7 @@ fun NavGraphBuilder.writeNavGraph(
 
         composable(route = WriteRoute.tag) {
             val parentStackEntry = remember(it) {
-                navController.getBackStackEntry(WriteRoute.route)
+                navController.getBackStackEntry(WriteRoute.writeRouteNavigation)
             }
             WriteTagRoute(
                 onBackClick = onBackClick,
@@ -68,7 +74,7 @@ fun NavGraphBuilder.writeNavGraph(
 
         composable(route = WriteRoute.folder) {
             val parentStackEntry = remember(it) {
-                navController.getBackStackEntry(WriteRoute.route)
+                navController.getBackStackEntry(WriteRoute.writeRouteNavigation)
             }
             WriteFolderRoute(
                 onBackClick = onBackClick,
@@ -81,11 +87,31 @@ fun NavGraphBuilder.writeNavGraph(
 
         composable(route = WriteRoute.folderNew) {
             val parentStackEntry = remember(it) {
-                navController.getBackStackEntry(WriteRoute.route)
+                navController.getBackStackEntry(WriteRoute.writeRouteNavigation)
             }
             WriteFolderNewRoute(
                 onBackClick = onBackClick,
                 writeViewModel = hiltViewModel(parentStackEntry),
+            )
+        }
+
+        composable(
+            route = WriteRoute.crop,
+            arguments = listOf(navArgument("index") {
+                type = NavType.IntType
+            })
+        ) { backStackEntry ->
+            val parentStackEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(WriteRoute.writeRouteNavigation)
+            }
+            val vm: WriteViewModel = hiltViewModel(parentStackEntry)
+            val index = backStackEntry.arguments!!.getInt("index")
+
+            ImageCropScreen(
+                onBackClick = onBackClick,
+                imageIndex = index,
+                viewModel = vm,
+                navController = navController,
             )
         }
     }
@@ -93,8 +119,14 @@ fun NavGraphBuilder.writeNavGraph(
 
 object WriteRoute {
     const val route = "write"
+    const val writeRouteNavigation = "writeNavigation"
 
     const val tag = "${route}/tag"
     const val folder = "${route}/folder"
     const val folderNew = "${route}/folder/new"
+
+    const val crop = "$route/crop/{index}"
+    fun getCropRoute(index: Int): String {
+        return crop.replace("{index}", index.toString())
+    }
 }
