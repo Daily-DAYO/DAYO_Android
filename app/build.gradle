@@ -11,6 +11,7 @@ plugins {
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 def NATIVE_APP_KEY = properties.getProperty('NATIVE_APP_KEY')
+def ADS_APPLICATION_ID = properties.getProperty('ADS_APPLICATION_ID')
 def keystorePropertiesFile = rootProject.file("app/keystore-release.properties")
 
 sentry {
@@ -38,7 +39,10 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField ("String", "NATIVE_APP_KEY", properties['NATIVE_APP_KEY_STR'])
-        manifestPlaceholders = [NATIVE_APP_KEY: NATIVE_APP_KEY]
+        manifestPlaceholders = [
+                NATIVE_APP_KEY    : NATIVE_APP_KEY,
+                ADS_APPLICATION_ID: ADS_APPLICATION_ID
+        ]
     }
 
     signingConfigs {
@@ -115,4 +119,7 @@ dependencies {
     // Firebase
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    // Google Ads
+    implementation 'com.google.android.gms:play-services-ads:23.6.0'
 }

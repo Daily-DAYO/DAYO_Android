@@ -64,6 +64,7 @@ import daily.dayo.presentation.viewmodel.ProfileViewModel
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 internal fun MainScreen(
+    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit,
     navigator: MainNavigator = rememberMainNavigator(),
     profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
@@ -149,10 +150,11 @@ internal fun MainScreen(
                                     onTagClick = { navigator.navigateWriteTag() },
                                     onWriteFolderClick = { navigator.navigateWriteFolder() },
                                     onWriteFolderNewClick = { navigator.navigateWriteFolderNew() },
+                                    onAdRequest = onAdRequest,
                                     bottomSheetState = bottomSheetState,
                                     bottomSheetContent = { content ->
                                         bottomSheetContent = content
-                                    },
+                                    }
                                 )
                                 myPageNavGraph(
                                     navController = navigator.navController,
@@ -185,6 +187,7 @@ internal fun MainScreen(
                                             folderId
                                         )
                                     },
+                                    onAdRequest = onAdRequest,
                                     navigateBackToFolder = { folderId ->
                                         navigator.navigateBackToFolder(
                                             folderId
