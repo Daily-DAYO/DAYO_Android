@@ -7,6 +7,11 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomNavigation
@@ -77,180 +82,183 @@ internal fun MainScreen(
     var bottomSheetContent by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
     SharedTransitionLayout {
         Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
+            bottomBar = {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    // TODO 네비게이션 바 위쪽에 선 추가
+                    MainBottomNavigation(
+                        visible = navigator.shouldShowBottomBar(),
+                        navController = navigator.navController,
+                        modifier = Modifier.navigationBarsPadding()
+                    )
+
+                    // TODO 네이베이션 바 뒤에 비쳐서 보이지 않도록 수정
+                    Box(modifier = Modifier.navigationBarsPadding()) {
+                        bottomSheetContent?.invoke()
+                    }
+                }
+            }
         ) {
-            Scaffold(
-                bottomBar = { bottomSheetContent?.invoke() }
+            NavHost(
+                modifier = Modifier.fillMaxSize(),
+                navController = navigator.navController,
+                startDestination = Screen.Home.route
             ) {
-                Scaffold(
-                    content = { innerPadding ->
-                        Box(Modifier.padding(innerPadding)) {
-                            NavHost(
-                                navController = navigator.navController,
-                                startDestination = Screen.Home.route
-                            ) {
-                                homeNavGraph(
-                                    onPostClick = { navigator.navigatePost(it) },
-                                    onProfileClick = { memberId ->
-                                        navigator.navigateProfile(
-                                            currentMemberId,
-                                            memberId
-                                        )
-                                    },
-                                    onSearchClick = { navigator.navigateSearch() },
-                                    coroutineScope = coroutineScope,
-                                    bottomSheetState = bottomSheetState,
-                                    bottomSheetContent = { content ->
-                                        bottomSheetContent = content
-                                    },
-                                )
-                                feedNavGraph(
-                                    snackBarHostState = snackBarHostState,
-                                    onEmptyViewClick = { navigator.navigateHome() },
-                                    onPostClick = { navigator.navigatePost(it) },
-                                    onProfileClick = { memberId ->
-                                        navigator.navigateProfile(
-                                            currentMemberId,
-                                            memberId
-                                        )
-                                    },
-                                    onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
-                                    onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) },
-                                    bottomSheetState = bottomSheetState,
-                                    bottomSheetContent = { content -> bottomSheetContent = content }
-                                )
-                                postNavGraph(
-                                    snackBarHostState = snackBarHostState,
-                                    onProfileClick = { memberId ->
-                                        navigator.navigateProfile(
-                                            currentMemberId,
-                                            memberId
-                                        )
-                                    },
-                                    onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
-                                    onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) },
-                                    onBackClick = { navigator.popBackStack() }
-                                )
-                                searchNavGraph(
-                                    onBackClick = { navigator.popBackStack() },
-                                    onSearch = { navigator.navigateSearchResult(it) },
-                                    onPostClick = { navigator.navigatePost(it) },
-                                    onProfileClick = { memberId ->
-                                        navigator.navigateProfile(
-                                            currentMemberId,
-                                            memberId
-                                        )
-                                    },
-                                    navController = navigator.navController,
-                                )
-                                writeNavGraph(
-                                    snackBarHostState = snackBarHostState,
-                                    navController = navigator.navController,
-                                    onBackClick = { navigator.navigateUp() },
-                                    onTagClick = { navigator.navigateWriteTag() },
-                                    onWriteFolderClick = { navigator.navigateWriteFolder() },
-                                    onWriteFolderNewClick = { navigator.navigateWriteFolderNew() },
-                                    onAdRequest = onAdRequest,
-                                    bottomSheetState = bottomSheetState,
-                                    bottomSheetContent = { content ->
-                                        bottomSheetContent = content
-                                    }
-                                )
-                                myPageNavGraph(
-                                    navController = navigator.navController,
-                                    onBackClick = { navigator.popBackStack() },
-                                    onSettingsClick = { navigator.navigateSettings() },
-                                    onFollowButtonClick = { memberId, tabNum ->
-                                        navigator.navigateFollowMenu(
-                                            memberId,
-                                            tabNum
-                                        )
-                                    },
-                                    onProfileClick = { memberId ->
-                                        navigator.navigateProfile(
-                                            currentMemberId,
-                                            memberId
-                                        )
-                                    },
-                                    onProfileEditClick = { navigator.navigateProfileEdit() },
-                                    onBookmarkClick = { navigator.navigateBookmark() },
-                                    onFolderClick = { folderId -> navigator.navigateFolder(folderId) },
-                                    onFolderCreateClick = { navigator.navigateFolderCreate() },
-                                    onFolderEditClick = { folderId ->
-                                        navigator.navigateFolderEdit(
-                                            folderId
-                                        )
-                                    },
-                                    onPostClick = { postId -> navigator.navigatePost(postId) },
-                                    onPostMoveClick = { folderId ->
-                                        navigator.navigateFolderPostMove(
-                                            folderId
-                                        )
-                                    },
-                                    onAdRequest = onAdRequest,
-                                    navigateBackToFolder = { folderId ->
-                                        navigator.navigateBackToFolder(
-                                            folderId
-                                        )
-                                    }
-                                )
-                                profileNavGraph(
-                                    snackBarHostState = snackBarHostState,
-                                    onFollowMenuClick = { memberId, tabNum ->
-                                        navigator.navigateFollowMenu(
-                                            memberId,
-                                            tabNum
-                                        )
-                                    },
-                                    onFolderClick = { folderId -> navigator.navigateFolder(folderId) },
-                                    onPostClick = { postId -> navigator.navigatePost(postId) },
-                                    onBackClick = { navigator.popBackStack() }
-                                )
-                                notificationNavGraph(
-                                    onPostClick = { navigator.navigatePost(it) },
-                                    onProfileClick = { memberId ->
-                                        navigator.navigateProfile(
-                                            currentMemberId,
-                                            memberId
-                                        )
-                                    },
-                                    onNoticeClick = { noticeId ->
-                                        navigator.navigateNoticeDetail(
-                                            noticeId
-                                        )
-                                    },
-                                )
-                                settingsNavGraph(
-                                    coroutineScope = coroutineScope,
-                                    snackBarHostState = snackBarHostState,
-                                    onProfileEditClick = { navigator.navigateProfileEdit() },
-                                    onBlockUsersClick = { navigator.navigateBlockedUsers() },
-                                    onPasswordChangeClick = { navigator.navigateChangePassword() },
-                                    onSettingNotificationClick = { navigator.navigateSettingsNotification() },
-                                    onNoticesClick = { navigator.navigateNotices() },
-                                    onInformationClick = { navigator.navigateInformation() },
-                                    onRulesClick = { ruleType -> navigator.navigateRules(ruleType) },
-                                    onBackClick = { navigator.popBackStack() }
-                                )
-                                noticeNavGraph(
-                                    noticeViewModel = noticeViewModel,
-                                    onBackClick = { navigator.popBackStack() },
-                                    onNoticeDetailClick = { noticeId ->
-                                        navigator.navigateNoticeDetail(
-                                            noticeId
-                                        )
-                                    },
-                                    sharedTransitionScope = this@SharedTransitionLayout,
-                                )
-                            }
-                        }
+                homeNavGraph(
+                    onPostClick = { navigator.navigatePost(it) },
+                    onProfileClick = { memberId ->
+                        navigator.navigateProfile(
+                            currentMemberId,
+                            memberId
+                        )
                     },
-                    bottomBar = {
-                        MainBottomNavigation(
-                            visible = navigator.shouldShowBottomBar(),
-                            navController = navigator.navController
+                    onSearchClick = { navigator.navigateSearch() },
+                    coroutineScope = coroutineScope,
+                    bottomSheetState = bottomSheetState,
+                    bottomSheetContent = { content ->
+                        bottomSheetContent = content
+                    },
+                )
+                feedNavGraph(
+                    snackBarHostState = snackBarHostState,
+                    onEmptyViewClick = { navigator.navigateHome() },
+                    onPostClick = { navigator.navigatePost(it) },
+                    onProfileClick = { memberId ->
+                        navigator.navigateProfile(
+                            currentMemberId,
+                            memberId
+                        )
+                    },
+                    onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
+                    onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) },
+                    bottomSheetState = bottomSheetState,
+                    bottomSheetContent = { content -> bottomSheetContent = content }
+                )
+                postNavGraph(
+                    snackBarHostState = snackBarHostState,
+                    onProfileClick = { memberId ->
+                        navigator.navigateProfile(
+                            currentMemberId,
+                            memberId
+                        )
+                    },
+                    onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
+                    onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) },
+                    onBackClick = { navigator.popBackStack() }
+                )
+                searchNavGraph(
+                    onBackClick = { navigator.popBackStack() },
+                    onSearch = { navigator.navigateSearchResult(it) },
+                    onPostClick = { navigator.navigatePost(it) },
+                    onProfileClick = { memberId ->
+                        navigator.navigateProfile(
+                            currentMemberId,
+                            memberId
+                        )
+                    },
+                    navController = navigator.navController,
+                )
+                writeNavGraph(
+                    snackBarHostState = snackBarHostState,
+                    navController = navigator.navController,
+                    onBackClick = { navigator.navigateUp() },
+                    onTagClick = { navigator.navigateWriteTag() },
+                    onWriteFolderClick = { navigator.navigateWriteFolder() },
+                    onWriteFolderNewClick = { navigator.navigateWriteFolderNew() },
+                    onAdRequest = onAdRequest,
+                    bottomSheetState = bottomSheetState,
+                    bottomSheetContent = { content ->
+                        bottomSheetContent = content
+                    }
+                )
+                myPageNavGraph(
+                    navController = navigator.navController,
+                    onBackClick = { navigator.popBackStack() },
+                    onSettingsClick = { navigator.navigateSettings() },
+                    onFollowButtonClick = { memberId, tabNum ->
+                        navigator.navigateFollowMenu(
+                            memberId,
+                            tabNum
+                        )
+                    },
+                    onProfileClick = { memberId ->
+                        navigator.navigateProfile(
+                            currentMemberId,
+                            memberId
+                        )
+                    },
+                    onProfileEditClick = { navigator.navigateProfileEdit() },
+                    onBookmarkClick = { navigator.navigateBookmark() },
+                    onFolderClick = { folderId -> navigator.navigateFolder(folderId) },
+                    onFolderCreateClick = { navigator.navigateFolderCreate() },
+                    onFolderEditClick = { folderId ->
+                        navigator.navigateFolderEdit(
+                            folderId
+                        )
+                    },
+                    onPostClick = { postId -> navigator.navigatePost(postId) },
+                    onPostMoveClick = { folderId ->
+                        navigator.navigateFolderPostMove(
+                            folderId
+                        )
+                    },
+                    onAdRequest = onAdRequest,
+                    navigateBackToFolder = { folderId ->
+                        navigator.navigateBackToFolder(
+                            folderId
                         )
                     }
+                )
+                profileNavGraph(
+                    snackBarHostState = snackBarHostState,
+                    onFollowMenuClick = { memberId, tabNum ->
+                        navigator.navigateFollowMenu(
+                            memberId,
+                            tabNum
+                        )
+                    },
+                    onFolderClick = { folderId -> navigator.navigateFolder(folderId) },
+                    onPostClick = { postId -> navigator.navigatePost(postId) },
+                    onBackClick = { navigator.popBackStack() }
+                )
+                notificationNavGraph(
+                    onPostClick = { navigator.navigatePost(it) },
+                    onProfileClick = { memberId ->
+                        navigator.navigateProfile(
+                            currentMemberId,
+                            memberId
+                        )
+                    },
+                    onNoticeClick = { noticeId ->
+                        navigator.navigateNoticeDetail(
+                            noticeId
+                        )
+                    },
+                )
+                settingsNavGraph(
+                    coroutineScope = coroutineScope,
+                    snackBarHostState = snackBarHostState,
+                    onProfileEditClick = { navigator.navigateProfileEdit() },
+                    onBlockUsersClick = { navigator.navigateBlockedUsers() },
+                    onPasswordChangeClick = { navigator.navigateChangePassword() },
+                    onSettingNotificationClick = { navigator.navigateSettingsNotification() },
+                    onNoticesClick = { navigator.navigateNotices() },
+                    onInformationClick = { navigator.navigateInformation() },
+                    onRulesClick = { ruleType -> navigator.navigateRules(ruleType) },
+                    onBackClick = { navigator.popBackStack() }
+                )
+                noticeNavGraph(
+                    noticeViewModel = noticeViewModel,
+                    onBackClick = { navigator.popBackStack() },
+                    onNoticeDetailClick = { noticeId ->
+                        navigator.navigateNoticeDetail(
+                            noticeId
+                        )
+                    },
+                    sharedTransitionScope = this@SharedTransitionLayout,
                 )
             }
         }
@@ -260,7 +268,8 @@ internal fun MainScreen(
 @Composable
 fun MainBottomNavigation(
     visible: Boolean,
-    navController: NavController
+    navController: NavController,
+    modifier: Modifier
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -275,7 +284,9 @@ fun MainBottomNavigation(
     if (visible) {
         BottomNavigation(
             backgroundColor = White_FFFFFF,
-            contentColor = Gray2_767B83
+            contentColor = Gray2_767B83,
+            elevation = 0.dp,
+            modifier = modifier
         ) {
             items.forEach { screen ->
                 val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
@@ -290,12 +301,14 @@ fun MainBottomNavigation(
                                 modifier = Modifier.size(if (screen.route != Screen.Write.route) 24.dp else 36.dp)
                             )
 
+                            Spacer(Modifier.height(2.dp))
+
                             if (screen.route != Screen.Write.route) {
                                 Text(text = stringResource(screen.resourceId), style = DayoTheme.typography.caption5)
                             }
                         }
                     },
-                    modifier = Modifier.padding(top = 12.dp, bottom = 16.dp),
+                    modifier = Modifier.padding(vertical = 8.dp),
                     selected = selected,
                     selectedContentColor = Dark,
                     onClick = {
@@ -335,6 +348,7 @@ sealed class Screen(val route: String, @StringRes val resourceId: Int, @Drawable
 private fun PreviewMainBottomNavigation() {
     MainBottomNavigation(
         visible = true,
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        modifier = Modifier
     )
 }
