@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -60,6 +61,7 @@ import daily.dayo.presentation.screen.write.writeNavGraph
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
+import daily.dayo.presentation.theme.Gray7_F6F6F7
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 import daily.dayo.presentation.viewmodel.NoticeViewModel
@@ -88,7 +90,6 @@ internal fun MainScreen(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.BottomCenter
                 ) {
-                    // TODO 네비게이션 바 위쪽에 선 추가
                     MainBottomNavigation(
                         visible = navigator.shouldShowBottomBar(),
                         navController = navigator.navController,
@@ -282,48 +283,52 @@ fun MainBottomNavigation(
     )
 
     if (visible) {
-        BottomNavigation(
-            backgroundColor = White_FFFFFF,
-            contentColor = Gray2_767B83,
-            elevation = 0.dp,
-            modifier = modifier
-        ) {
-            items.forEach { screen ->
-                val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
-                BottomNavigationItem(
-                    icon = {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = if (selected) screen.selectedIcon else screen.defaultIcon),
-                                contentDescription = stringResource(id = screen.resourceId),
-                                modifier = Modifier.size(if (screen.route != Screen.Write.route) 24.dp else 36.dp)
-                            )
+        Column {
+            Divider(color = Gray7_F6F6F7, thickness = 1.dp)
 
-                            Spacer(Modifier.height(2.dp))
+            BottomNavigation(
+                backgroundColor = White_FFFFFF,
+                contentColor = Gray2_767B83,
+                elevation = 0.dp,
+                modifier = modifier
+            ) {
+                items.forEach { screen ->
+                    val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
+                    BottomNavigationItem(
+                        icon = {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(id = if (selected) screen.selectedIcon else screen.defaultIcon),
+                                    contentDescription = stringResource(id = screen.resourceId),
+                                    modifier = Modifier.size(if (screen.route != Screen.Write.route) 24.dp else 36.dp)
+                                )
 
-                            if (screen.route != Screen.Write.route) {
-                                Text(text = stringResource(screen.resourceId), style = DayoTheme.typography.caption5)
-                            }
-                        }
-                    },
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    selected = selected,
-                    selectedContentColor = Dark,
-                    onClick = {
-                        navController.navigate(screen.route) {
-                            if (screen.route != Screen.Write.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
+                                Spacer(Modifier.height(2.dp))
+
+                                if (screen.route != Screen.Write.route) {
+                                    Text(text = stringResource(screen.resourceId), style = DayoTheme.typography.caption5)
                                 }
                             }
-                            launchSingleTop =
-                                if (screen.route == Screen.Write.route) false else true
-                            restoreState = true
+                        },
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        selected = selected,
+                        selectedContentColor = Dark,
+                        onClick = {
+                            navController.navigate(screen.route) {
+                                if (screen.route != Screen.Write.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                }
+                                launchSingleTop =
+                                    if (screen.route == Screen.Write.route) false else true
+                                restoreState = true
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }
