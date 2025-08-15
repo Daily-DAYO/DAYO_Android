@@ -5,6 +5,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -96,9 +97,10 @@ internal fun MainScreen(
                         modifier = Modifier.navigationBarsPadding()
                     )
 
-                    // TODO 네이베이션 바 뒤에 비쳐서 보이지 않도록 수정
-                    Box(modifier = Modifier.navigationBarsPadding()) {
-                        bottomSheetContent?.invoke()
+                    if (bottomSheetState.isVisible) {
+                        Box(modifier = Modifier.navigationBarsPadding()) {
+                            bottomSheetContent?.invoke()
+                        }
                     }
                 }
             }
