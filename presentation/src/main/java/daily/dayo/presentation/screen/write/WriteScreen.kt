@@ -10,7 +10,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,10 +29,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Surface
+import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -100,7 +99,7 @@ const val WRITE_POST_DETAIL_MAX_LENGTH = 200
 const val WRITE_POST_IMAGE_SIZE = 220
 const val WRITE_POST_TOP_Z_INDEX = 1f
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun WriteRoute(
     snackBarHostState: SnackbarHostState,
@@ -108,7 +107,7 @@ internal fun WriteRoute(
     onTagClick: () -> Unit,
     onWriteFolderClick: () -> Unit,
     writeViewModel: WriteViewModel = hiltViewModel(),
-    bottomSheetState: ModalBottomSheetState,
+    bottomSheetState: BottomSheetScaffoldState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
 ) {
     val context = LocalContext.current
@@ -126,7 +125,7 @@ internal fun WriteRoute(
     val selectedCategory by writeViewModel.writeCategory.collectAsState() // name, index
     val onClickCategory: (CategoryMenu, Int) -> Unit = { categoryMenu, index ->
         writeViewModel.setPostCategory(Pair(categoryMenu.category, index))
-        coroutineScope.launch { bottomSheetState.hide() }
+        coroutineScope.launch { bottomSheetState.bottomSheetState.hide() }
     }
     val categoryMenus = listOf(
         CategoryMenu.Scheduler,
@@ -142,9 +141,9 @@ internal fun WriteRoute(
         onBackClick()
     }
 
-    BackHandler(enabled = bottomSheetState.isVisible) {
+    BackHandler(enabled = bottomSheetState.bottomSheetState.isVisible) {
         coroutineScope.launch {
-            bottomSheetState.hide()
+            bottomSheetState.bottomSheetState.hide()
         }
     }
 
@@ -196,7 +195,7 @@ internal fun WriteRoute(
         },
         processedImages = processedImages,
         navigateToCategory = {
-            coroutineScope.launch { bottomSheetState.show() }
+            coroutineScope.launch { bottomSheetState.bottomSheetState.expand() }
         },
         categoryMenus = categoryMenus,
         category = selectedCategory,
@@ -219,14 +218,14 @@ internal fun WriteRoute(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoryBottomSheetDialog(
     categoryMenus: List<CategoryMenu>,
     onCategorySelected: (CategoryMenu, Int) -> Unit,
     selectedCategory: Pair<Category?, Int>,
     coroutineScope: CoroutineScope,
-    bottomSheetState: ModalBottomSheetState
+    bottomSheetState: BottomSheetScaffoldState
 ) {
 
     BottomSheetDialog(
@@ -246,7 +245,7 @@ private fun CategoryBottomSheetDialog(
         normalColor = Gray2_767B83,
         checkedColor = Primary_23C882,
         checkedButtonIndex = selectedCategory.second,
-        closeButtonAction = { coroutineScope.launch { bottomSheetState.hide() } }
+        closeButtonAction = { coroutineScope.launch { bottomSheetState.bottomSheetState.hide() } }
     )
 }
 
