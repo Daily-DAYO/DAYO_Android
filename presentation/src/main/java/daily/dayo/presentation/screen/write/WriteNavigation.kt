@@ -1,6 +1,7 @@
 package daily.dayo.presentation.screen.write
 
-import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -26,6 +27,7 @@ fun NavController.navigateWriteFolderNew() {
     navigate(WriteRoute.folderNew)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.writeNavGraph(
     snackBarHostState: SnackbarHostState,
     navController: NavController,
@@ -34,7 +36,7 @@ fun NavGraphBuilder.writeNavGraph(
     onWriteFolderClick: () -> Unit,
     onWriteFolderNewClick: () -> Unit,
     onAdRequest: (onRewardSuccess: () -> Unit) -> Unit,
-    bottomSheetState: ModalBottomSheetState,
+    bottomSheetState: BottomSheetScaffoldState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
 ) {
     navigation(
