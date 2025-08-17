@@ -10,11 +10,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -48,6 +49,7 @@ import daily.dayo.presentation.common.Event
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
+import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.CommentListView
 import daily.dayo.presentation.view.CommentMentionSearchView
 import daily.dayo.presentation.view.CommentReplyDescriptionView
@@ -59,10 +61,11 @@ import daily.dayo.presentation.viewmodel.ReportViewModel
 import daily.dayo.presentation.viewmodel.SearchViewModel
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentBottomSheetDialog(
     postId: Long,
-    sheetState: ModalBottomSheetState,
+    sheetState: BottomSheetScaffoldState,
     snackBarHostState: SnackbarHostState,
     onClickProfile: (String) -> Unit,
     onClickClose: () -> Unit,
@@ -176,65 +179,64 @@ fun CommentBottomSheetDialog(
         postViewModel.requestPostComment(postId)
     }
 
-    BackHandler(enabled = sheetState.isVisible) {
+    BackHandler(enabled = sheetState.bottomSheetState.isVisible) {
         coroutineScope.launch {
             clearComment()
-            sheetState.hide()
+            sheetState.bottomSheetState.hide()
         }
     }
 
-    LaunchedEffect(sheetState.currentValue) {
-        if (sheetState.currentValue == ModalBottomSheetValue.Hidden) {
+    LaunchedEffect(sheetState.bottomSheetState.currentValue) {
+        if (sheetState.bottomSheetState.currentValue == SheetValue.Hidden) {
             keyboardController?.hide()
         }
     }
 
-    ModalBottomSheetLayout(
-        sheetState = sheetState,
-        sheetShape = RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp),
+    Surface(
         modifier = modifier,
-        sheetContent = {
-            Box(
+        shape = RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp),
+        color = White_FFFFFF
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+        ) {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
+                    .padding(top = 12.dp, bottom = 65.dp)
+                    .wrapContentHeight(),
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp, bottom = 65.dp)
-                        .wrapContentHeight(),
-                ) {
-                    CommentBottomSheetDialogTitle(clearComment, onClickClose)
-                    CommentBottomSheetDialogContent(
-                        currentMemberId = currentMemberId,
-                        postComments = when (postComments.value?.status) {
-                            Status.SUCCESS -> postComments.value?.data ?: DEFAULT_COMMENTS
-                            else -> DEFAULT_COMMENTS
-                        },
-                        onClickCommentProfile = onClickCommentProfile,
-                        onClickReply = onClickReply,
-                        onClickDelete = onClickDelete,
-                        onClickReport = onClickReport
-                    )
-                }
+                CommentBottomSheetDialogTitle(clearComment, onClickClose)
+                CommentBottomSheetDialogContent(
+                    currentMemberId = currentMemberId,
+                    postComments = when (postComments.value?.status) {
+                        Status.SUCCESS -> postComments.value?.data ?: DEFAULT_COMMENTS
+                        else -> DEFAULT_COMMENTS
+                    },
+                    onClickCommentProfile = onClickCommentProfile,
+                    onClickReply = onClickReply,
+                    onClickDelete = onClickDelete,
+                    onClickReport = onClickReport
+                )
+            }
 
-                Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-                    if (showMentionSearchView.value) CommentMentionSearchView(userResults, onClickFollowUser)
-                    if (replyCommentState.value != null) CommentReplyDescriptionView(replyCommentState, onClickCancelReply)
-                    CommentTextField(
-                        enabled = commentEnabled,
-                        commentText = commentText,
-                        replyCommentState = replyCommentState,
-                        userSearchKeyword = userSearchKeyword,
-                        showMentionSearchView = showMentionSearchView,
-                        focusRequester = commentFocusRequester,
-                        onClickPostComment = onClickPostComment
-                    )
-                }
+            Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+                if (showMentionSearchView.value) CommentMentionSearchView(userResults, onClickFollowUser)
+                if (replyCommentState.value != null) CommentReplyDescriptionView(replyCommentState, onClickCancelReply)
+                CommentTextField(
+                    enabled = commentEnabled,
+                    commentText = commentText,
+                    replyCommentState = replyCommentState,
+                    userSearchKeyword = userSearchKeyword,
+                    showMentionSearchView = showMentionSearchView,
+                    focusRequester = commentFocusRequester,
+                    onClickPostComment = onClickPostComment
+                )
             }
         }
-    ) {
+
         reportCommentId?.let { commentId ->
             if (showReportDialog) {
                 CommentReportDialog(

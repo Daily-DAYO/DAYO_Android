@@ -1,15 +1,15 @@
 package daily.dayo.presentation.view.dialog
 
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import daily.dayo.presentation.R
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileImageBottomSheetDialog(
-    bottomSheetState: ModalBottomSheetState,
+    bottomSheetState: BottomSheetScaffoldState,
     onClickProfileSelect: () -> Unit,
     onClickProfileCapture: () -> Unit,
     onClickProfileReset: () -> Unit,

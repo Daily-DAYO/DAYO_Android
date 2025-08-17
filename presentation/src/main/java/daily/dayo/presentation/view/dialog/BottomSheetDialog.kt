@@ -19,18 +19,17 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.ImageSearch
-import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -56,10 +55,10 @@ import kotlinx.coroutines.launch
 // 3. 가운데 정렬과 좌측 정렬 설정
 // 4. 좌측 정렬하는 경우 좌측과 우측에 아이콘 존재 가능.
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheetDialog(
-    sheetState: ModalBottomSheetState,
+    sheetState: BottomSheetScaffoldState,
     buttons: List<Pair<String, () -> Unit>>,
     leftIconButtons: List<ImageVector>? = null,
     leftIconCheckedButtons: List<ImageVector>? = null,
@@ -72,144 +71,143 @@ fun BottomSheetDialog(
     checkedButtonIndex: Int = -1,
     closeButtonAction: (() -> Unit)? = null
 ) {
-    ModalBottomSheetLayout(
-        sheetState = sheetState,
-        sheetShape = RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp),
-        sheetContent = {
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            ) {
-                Column(
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        shape = RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp),
+        color = White_FFFFFF
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+        ) {
+            Spacer(modifier = Modifier.height(2.dp))
+            if (title.isNotEmpty()) {
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
+                        .background(DayoTheme.colorScheme.background)
                 ) {
-                    Spacer(modifier = Modifier.height(2.dp))
-                    if (title.isNotEmpty()) {
-                        Box(
+                    Text(
+                        text = title,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .padding(12.dp),
+                        textAlign = TextAlign.Center,
+                        color = Dark,
+                        style = DayoTheme.typography.b1
+                    )
+                    androidx.compose.material3.IconButton(
+                        onClick = titleButtonAction,
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .wrapContentSize()
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_x_sign),
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                                .background(DayoTheme.colorScheme.background)
-                        ) {
-                            Text(
-                                text = title,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                                    .padding(12.dp),
-                                textAlign = TextAlign.Center,
-                                color = Dark,
-                                style = DayoTheme.typography.b1
-                            )
-                            androidx.compose.material3.IconButton(
-                                onClick = titleButtonAction,
-                                modifier = Modifier
-                                    .align(Alignment.CenterEnd)
-                                    .wrapContentSize()
-                            ) {
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_x_sign),
-                                    modifier = Modifier
-                                        .padding(12.dp)
-                                        .wrapContentSize()
-                                        .align(Alignment.CenterEnd)
-                                        .clickable(onClick = closeButtonAction ?: { }),
-                                    contentDescription = "x sign",
-                                )
-                            }
-                        }
+                                .padding(12.dp)
+                                .wrapContentSize()
+                                .align(Alignment.CenterEnd)
+                                .clickable(onClick = closeButtonAction ?: { }),
+                            contentDescription = "x sign",
+                        )
                     }
+                }
+            }
 
-                    buttons.forEachIndexed { index, button ->
-                        val interactionSource = remember { MutableInteractionSource() }
-                        val isPressed = interactionSource.collectIsPressedAsState().value
+            buttons.forEachIndexed { index, button ->
+                val interactionSource = remember { MutableInteractionSource() }
+                val isPressed = interactionSource.collectIsPressedAsState().value
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                                .background(
-                                    if (isPressed) Gray6_F0F1F3 else White_FFFFFF,
-                                    RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp)
-                                )
-                                .padding(if (leftIconButtons == null) 16.dp else 12.dp)
-                                .clickable(
-                                    onClick = button.second,
-                                    interactionSource = interactionSource,
-                                    indication = null
-                                ),
-                            horizontalArrangement = if (leftIconButtons == null) Arrangement.Center else Arrangement.SpaceBetween,
-                        ) {
-                            if (leftIconButtons != null && leftIconCheckedButtons != null) {
-                                Icon(
-                                    imageVector = if (checkedButtonIndex == index) leftIconCheckedButtons[index] else leftIconButtons[index],
-                                    contentDescription = "",
-                                    modifier = Modifier.align(Alignment.CenterVertically),
-                                    tint = Color.Unspecified
-                                )
-                            }
-                            Text(
-                                text = button.first,
-                                modifier = Modifier.offset(
-                                    if (leftIconButtons == null) 0.dp else 8.dp,
-                                    0.dp
-                                ),
-                                color = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) checkedColor else normalColor,
-                                fontSize = 16.sp,
-                                style = DayoTheme.typography.b4
-                            )
-                            if (leftIconButtons != null) {
-                                Spacer(modifier = Modifier.weight(1f))
-                                if (checkedButtonIndex == index) {
-                                    Icon(
-                                        imageVector = rightIcon,
-                                        contentDescription = "",
-                                        modifier = Modifier.align(Alignment.CenterVertically),
-                                        tint = Color.Unspecified
-                                    )
-                                }
-                            }
-                        }
-                        if (index < buttons.size - 1 && title.isEmpty()) {
-                            Divider(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                                    .padding(0.dp),
-                                color = Gray6_F0F1F3
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .background(
+                            if (isPressed) Gray6_F0F1F3 else White_FFFFFF,
+                            RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp)
+                        )
+                        .padding(if (leftIconButtons == null) 16.dp else 12.dp)
+                        .clickable(
+                            onClick = button.second,
+                            interactionSource = interactionSource,
+                            indication = null
+                        ),
+                    horizontalArrangement = if (leftIconButtons == null) Arrangement.Center else Arrangement.SpaceBetween,
+                ) {
+                    if (leftIconButtons != null && leftIconCheckedButtons != null) {
+                        Icon(
+                            imageVector = if (checkedButtonIndex == index) leftIconCheckedButtons[index] else leftIconButtons[index],
+                            contentDescription = "",
+                            modifier = Modifier.align(Alignment.CenterVertically),
+                            tint = Color.Unspecified
+                        )
+                    }
+                    Text(
+                        text = button.first,
+                        modifier = Modifier.offset(
+                            if (leftIconButtons == null) 0.dp else 8.dp,
+                            0.dp
+                        ),
+                        color = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) checkedColor else normalColor,
+                        fontSize = 16.sp,
+                        style = DayoTheme.typography.b4
+                    )
+                    if (leftIconButtons != null) {
+                        Spacer(modifier = Modifier.weight(1f))
+                        if (checkedButtonIndex == index) {
+                            Icon(
+                                imageVector = rightIcon,
+                                contentDescription = "",
+                                modifier = Modifier.align(Alignment.CenterVertically),
+                                tint = Color.Unspecified
                             )
                         }
                     }
                 }
+                if (index < buttons.size - 1 && title.isEmpty()) {
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .padding(0.dp),
+                        color = Gray6_F0F1F3
+                    )
+                }
             }
         }
-    ) { }
+    }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun getBottomSheetDialogState(
     disableFullExpanded: Boolean = false,
-    skipHalfExpanded: Boolean = true
-): ModalBottomSheetState {
-    val bottomSheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
+    skipHiddenState: Boolean = false
+): BottomSheetScaffoldState {
+    val bottomSheetState = rememberStandardBottomSheetState(
+        initialValue = SheetValue.Hidden,
         confirmValueChange = {
-            if (disableFullExpanded)
-                it != ModalBottomSheetValue.Expanded
-            else
+            if (disableFullExpanded) {
+                it != SheetValue.Expanded
+            } else {
                 true
+            }
         },
-        skipHalfExpanded = skipHalfExpanded
+        skipHiddenState = skipHiddenState
     )
 
-    return bottomSheetState
+    return rememberBottomSheetScaffoldState(
+        bottomSheetState = bottomSheetState
+    )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun PreviewMyBottomSheetDialog() {
@@ -231,25 +229,25 @@ fun PreviewMyBottomSheetDialog() {
             // 구현 본문 내용
 
             // BottomSheetDialog를 보여주는 경우 클릭하는 Button
-            Button(onClick = { coroutineScope.launch { bottomSheetState1.show() } }) {
+            Button(onClick = { coroutineScope.launch { bottomSheetState1.bottomSheetState.expand() } }) {
                 Text(text = "Bottom Sheet Dialog / buton 1 / non-primary")
             }
-            Button(onClick = { coroutineScope.launch { bottomSheetState2.show() } }) {
+            Button(onClick = { coroutineScope.launch { bottomSheetState2.bottomSheetState.expand() } }) {
                 Text(text = "Bottom Sheet Dialog / buton 1 / primary")
             }
-            Button(onClick = { coroutineScope.launch { bottomSheetState3.show() } }) {
+            Button(onClick = { coroutineScope.launch { bottomSheetState3.bottomSheetState.expand() } }) {
                 Text(text = "Bottom Sheet Dialog / buton 2 / non-primary")
             }
-            Button(onClick = { coroutineScope.launch { bottomSheetState4.show() } }) {
+            Button(onClick = { coroutineScope.launch { bottomSheetState4.bottomSheetState.expand() } }) {
                 Text(text = "Bottom Sheet Dialog / buton 2 / primary")
             }
-            Button(onClick = { coroutineScope.launch { bottomSheetState5.show() } }) {
+            Button(onClick = { coroutineScope.launch { bottomSheetState5.bottomSheetState.expand() } }) {
                 Text(text = "Bottom Sheet Dialog / buton 3 / non-primary")
             }
-            Button(onClick = { coroutineScope.launch { bottomSheetState6.show() } }) {
+            Button(onClick = { coroutineScope.launch { bottomSheetState6.bottomSheetState.expand() } }) {
                 Text(text = "Bottom Sheet Dialog / buton 3 / primary")
             }
-            Button(onClick = { coroutineScope.launch { bottomSheetState7.show() } }) {
+            Button(onClick = { coroutineScope.launch { bottomSheetState7.bottomSheetState.expand() } }) {
                 Text(text = "Bottom Sheet Dialog / Category")
             }
         }
