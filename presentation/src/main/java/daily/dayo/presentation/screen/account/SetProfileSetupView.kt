@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -34,12 +34,12 @@ import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun SetProfileSetupView(
     context: Context = LocalContext.current,
-    bottomSheetState: ModalBottomSheetState = getBottomSheetDialogState(),
+    bottomSheetState: BottomSheetScaffoldState = getBottomSheetDialogState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     isNextButtonEnabled: MutableState<Boolean> = remember { mutableStateOf(false) },
     isNextButtonClickable: MutableState<Boolean> = remember { mutableStateOf(false) },
@@ -63,7 +63,7 @@ fun SetProfileSetupView(
                 interactionSource = interactionSource,
                 indication = null,
                 onClick = {
-                    coroutineScope.launch { bottomSheetState.show() }
+                    coroutineScope.launch { bottomSheetState.bottomSheetState.expand() }
                 }
             )
     }
