@@ -19,6 +19,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -75,8 +76,8 @@ internal fun MainScreen(
     val currentMemberId = profileViewModel.currentMemberId
     val coroutineScope = rememberCoroutineScope()
     val noticeViewModel = hiltViewModel<NoticeViewModel>()
-    val snackBarHostState = remember { SnackbarHostState() }
 
+    val snackBarHostState = remember { SnackbarHostState() }
     var bottomSheetContent by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
     val bottomSheetState = getBottomSheetDialogState()
 
@@ -89,7 +90,8 @@ internal fun MainScreen(
                     bottomSheetContent?.invoke()
                 }
             },
-            sheetPeekHeight = 0.dp
+            sheetPeekHeight = 0.dp,
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
         ) {
             Column(modifier = Modifier.navigationBarsPadding()) {
                 NavHost(
