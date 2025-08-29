@@ -383,11 +383,12 @@ fun WriteUploadImages(
         ) { index, imageAsset ->
             val context = LocalContext.current
 
-            // 캐시 키를 uri및 마지막 수정시간으로 지정해 이미지 편집하는 경우 갱신될수 있도록 수정
+            // 캐시 키를 uri, 수정시간, EXIF 정보로 지정해 이미지 편집하는 경우 갱신될수 있도록 수정
+            val cacheKey = "${imageAsset.uriString}-${imageAsset.lastModified}-${imageAsset.exifInfo?.orientation ?: "none"}"
             val imageRequest = ImageRequest.Builder(context)
                 .data(imageAsset.uriString)
-                .memoryCacheKey("${imageAsset.uriString}-${imageAsset.lastModified}")
-                .diskCacheKey("${imageAsset.uriString}-${imageAsset.lastModified}")
+                .memoryCacheKey(cacheKey)
+                .diskCacheKey(cacheKey)
                 .crossfade(true)
                 .build()
 

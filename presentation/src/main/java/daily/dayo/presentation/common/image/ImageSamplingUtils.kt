@@ -24,8 +24,14 @@ fun decodeSampledBitmapFromUri(
 
     // 계산된 inSampleSize로 실제 비트맵 디코딩 (메모리 할당 O)
     options.inJustDecodeBounds = false
-    return contentResolver.openInputStream(uri)
+    val bitmap = contentResolver.openInputStream(uri)
         ?.use { BitmapFactory.decodeStream(it, null, options) }
+    
+    // EXIF 정보를 읽어서 이미지를 올바르게 회전
+    return bitmap?.let { bmp ->
+        val exifInfo = contentResolver.readExifInfo(uri)
+        bmp.applyExif(exifInfo)
+    }
 }
 
 /**

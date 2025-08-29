@@ -37,7 +37,9 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.image.ExifInfo
 import daily.dayo.presentation.common.image.decodeSampledBitmapFromUri
+import daily.dayo.presentation.common.image.readExifInfo
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.view.DayoTextButton
@@ -72,25 +74,33 @@ fun ImageCropScreen(
         }
     }
 
-    // Uri로부터 비동기적으로 비트맵 로드 (로딩 상태 처리)
+    // Uri로부터 비동기적으로 비트맵과 EXIF 정보 로드 (로딩 상태 처리)
     val bitmapState =
-        produceState<Bitmap?>(initialValue = null, key1 = imageAsset, key2 = containerSize) {
+        produceState<Pair<Bitmap?, ExifInfo?>?>(
+            initialValue = null, 
+            key1 = imageAsset, 
+            key2 = containerSize
+        ) {
             // containerSize가 정해진 후에야 이 블록이 실행됨
             if (imageAsset != null && containerSize != null) {
                 value = withContext(Dispatchers.IO) {
+                    val uri = Uri.parse(imageAsset.uriString)
+                    val exifInfo = context.contentResolver.readExifInfo(uri)
                     // 이미지를 직접 가져오지 않고, 기기에 맞게 디코딩해서 가져옴
-                    decodeSampledBitmapFromUri(
+                    val bitmap = decodeSampledBitmapFromUri(
                         context.contentResolver,
-                        Uri.parse(imageAsset.uriString),
+                        uri,
                         containerSize!!.width,
                         containerSize!!.height
                     )
+                    Pair(bitmap, exifInfo)
                 }
             } else {
                 null
             }
         }
-    val sampledBitmap = bitmapState.value
+    val sampledBitmap = bitmapState.value?.first
+    val exifInfo = bitmapState.value?.second
 
     // 이미지 로드 실패 또는 Uri가 없는 경우 처리
     if (imageAsset == null) {
@@ -99,11 +109,12 @@ fun ImageCropScreen(
     }
 
     // 비트맵과 컨테이너 사이즈가 준비되면 stateHolder를 생성
-    LaunchedEffect(sampledBitmap, containerSize) {
+    LaunchedEffect(sampledBitmap, containerSize, exifInfo) {
         if (sampledBitmap != null && containerSize != null) {
             stateHolder = ImageCropStateHolder(
                 originalBitmap = sampledBitmap,
-                containerSize = containerSize!!
+                containerSize = containerSize!!,
+                exifInfo = exifInfo
             )
         }
     }

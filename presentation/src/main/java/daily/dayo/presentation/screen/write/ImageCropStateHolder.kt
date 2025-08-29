@@ -5,11 +5,13 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
+import daily.dayo.presentation.common.image.ExifInfo
 import kotlin.math.min
 
 data class ImageAsset(
     val uriString: String,
-    val lastModified: Long = System.currentTimeMillis()
+    val lastModified: Long = System.currentTimeMillis(),
+    val exifInfo: ExifInfo? = null
 )
 
 data class CropProperties(
@@ -20,7 +22,8 @@ data class CropProperties(
 class ImageCropStateHolder(
     private val originalBitmap: Bitmap,
     private val containerSize: IntSize,
-    private val minCropSize: Float = 100f
+    private val minCropSize: Float = 100f,
+    val exifInfo: ExifInfo? = null
 ) {
     private val _cropProperties = mutableStateOf(CropProperties())
     val cropProperties: State<CropProperties> = _cropProperties
