@@ -5,8 +5,6 @@ import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.BitmapRegionDecoder
-import android.graphics.Rect
 import android.net.Uri
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
@@ -33,6 +31,8 @@ import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.image.ImageResizeUtil.POST_IMAGE_RESIZE_SIZE
 import daily.dayo.presentation.common.image.ImageResizeUtil.cropCenterBitmap
 import daily.dayo.presentation.common.image.ImageResizeUtil.resizeBitmap
+import daily.dayo.presentation.common.image.readExifInfo
+import daily.dayo.presentation.common.image.applyExif
 import daily.dayo.presentation.common.toFile
 import daily.dayo.presentation.screen.write.ImageAsset
 import daily.dayo.presentation.screen.write.ImageCropStateHolder
@@ -287,11 +287,16 @@ class WriteViewModel @Inject constructor(
 
     /**
      * 갤러리에서 가져온 이미지들을 ViewModel에 추가
-     * Bitmap을 로드하지 않고 Uri만 ImageAsset 형태로 저장
+     * Bitmap을 로드하지 않고 Uri와 EXIF 정보를 ImageAsset 형태로 저장
      */
     fun addOriginalImages(uris: List<Uri>) {
         viewModelScope.launch {
-            val newImageAssets = uris.map { ImageAsset(uriString = it.toString()) }
+            val newImageAssets = withContext(Dispatchers.IO) {
+                uris.map { uri ->
+                    val exifInfo = applicationContext.contentResolver.readExifInfo(uri)
+                    ImageAsset(uriString = uri.toString(), exifInfo = exifInfo)
+                }
+            }
             _writeImagesUri.emit(newImageAssets)
         }
     }
@@ -306,35 +311,58 @@ class WriteViewModel @Inject constructor(
             try {
                 val newUri = withContext(Dispatchers.IO) {
                     val originalUri = Uri.parse(imageAsset.uriString)
-                    val inputStream =
-                        applicationContext.contentResolver.openInputStream(originalUri)
-                            ?: throw IOException("원본 이미지 스트림 열기 실패")
+                    
+                    // 전체 이미지를 로드하고 EXIF 정보를 적용
+                    val originalBitmap = applicationContext.contentResolver.openInputStream(originalUri)?.use { inputStream ->
+                        BitmapFactory.decodeStream(inputStream)
+                    } ?: throw IOException("원본 이미지 로드 실패")
+                    
+                    val exifInfo = stateHolder.exifInfo
+                    
+                    // EXIF 정보가 있으면 적용하여 올바른 방향으로 회전
+                    val rotatedBitmap = if (exifInfo != null) {
+                        originalBitmap.applyExif(exifInfo)
+                    } else {
+                        originalBitmap
+                    }
+                    
+                    // 원본 비트맵이 다르면 리사이클
+                    if (rotatedBitmap != originalBitmap) {
+                        originalBitmap.recycle()
+                    }
 
-                    // BitmapRegionDecoder 생성 (전체 이미지를 로드하지 않음)
-                    val decoder = BitmapRegionDecoder.newInstance(inputStream, false)
-                        ?: throw IOException("BitmapRegionDecoder 생성 실패")
-
-                    // 화면의 '미리보기용' 비트맵과 '원본' 비트맵의 크기 비율 계산
-                    // ImageCropStateHolder가 가진 비트맵은 이제 sampledBitmap이므로,
-                    // 최종 크롭은 원본 파일의 너비를 기준으로 해야 함
-                    val scale = decoder.width.toFloat() / stateHolder.imageWidth
                     val cropProps = stateHolder.cropProperties.value
+                    
+                    // 미리보기 비트맵과 실제 로드된 비트맵 간의 스케일 계산
+                    val scaleX = rotatedBitmap.width.toFloat() / stateHolder.imageWidth
+                    val scaleY = rotatedBitmap.height.toFloat() / stateHolder.imageHeight
+                    
+                    // 크롭 좌표를 실제 비트맵 크기에 맞게 변환
+                    val left = (cropProps.cropOffset.x * scaleX).roundToInt()
+                    val top = ((cropProps.cropOffset.y - stateHolder.imageTop) * scaleY).roundToInt()
+                    val size = (cropProps.cropSize * scaleX).roundToInt()
+                    
+                    // 크롭 영역이 비트맵 범위를 벗어나지 않도록 보정
+                    val finalLeft = left.coerceIn(0, rotatedBitmap.width)
+                    val finalTop = top.coerceIn(0, rotatedBitmap.height)
+                    val finalRight = (left + size).coerceIn(0, rotatedBitmap.width)
+                    val finalBottom = (top + size).coerceIn(0, rotatedBitmap.height)
+                    val finalWidth = finalRight - finalLeft
+                    val finalHeight = finalBottom - finalTop
 
-                    // 미리보기 기준 좌표 -> 원본 기준 좌표로 변환
-                    val left = (cropProps.cropOffset.x * scale).roundToInt()
-                    val top = ((cropProps.cropOffset.y - stateHolder.imageTop) * scale).roundToInt()
-                    val size = (cropProps.cropSize * scale).roundToInt()
-                    val cropRect = Rect(left, top, left + size, top + size)
+                    // 크롭된 비트맵 생성
+                    val croppedBitmap = Bitmap.createBitmap(
+                        rotatedBitmap,
+                        finalLeft,
+                        finalTop,
+                        finalWidth,
+                        finalHeight
+                    )
+                    
+                    // 원본 회전된 비트맵 리사이클
+                    rotatedBitmap.recycle()
 
-                    // 크롭 영역이 원본 이미지 범위를 벗어나지 않도록 보정
-                    cropRect.intersect(0, 0, decoder.width, decoder.height)
-
-                    // 4. 필요한 영역만 정확히 디코딩
-                    val croppedBitmap = decoder.decodeRegion(cropRect, null)
-                    decoder.recycle()
-                    inputStream.close()
-
-                    // 크롭된 이미지를 새 캐시 파일로 저장
+                    // 크롭된 이미지를 새 캐시 파일로 저장 (EXIF 정보는 제거됨)
                     val cacheFile = File(
                         applicationContext.cacheDir,
                         "cropped_${System.currentTimeMillis()}.jpg"
@@ -348,7 +376,8 @@ class WriteViewModel @Inject constructor(
 
                 _writeImagesUri.getAndUpdate { currentList ->
                     currentList.toMutableList().apply {
-                        this[imageIndex] = ImageAsset(uriString = newUri.toString())
+                        // 편집된 이미지는 EXIF 정보가 제거되므로 null로 설정
+                        this[imageIndex] = ImageAsset(uriString = newUri.toString(), exifInfo = null)
                     }
                 }
             } catch (e: Exception) {
