@@ -131,6 +131,7 @@
     <string name="feed_empty_button">팔로우하러 가기</string>
 
     <!-- Write -->
+    <string name="write_post_image_edit">이미지 편집</string>
     <string name="write_post_image_crop_title">이미지 편집</string>
     <string name="write_post_title">게시글 작성</string>
     <string name="write_post_upload">올리기</string>
