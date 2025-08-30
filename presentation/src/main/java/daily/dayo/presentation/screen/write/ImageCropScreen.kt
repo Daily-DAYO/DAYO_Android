@@ -335,8 +335,6 @@ private fun ImageCropActionbarLayout(
             DayoTextButton(
                 onClick = {
                     if (isCropEnabled) onCropClick()
-                    else {
-                    }
                 },
                 text = stringResource(R.string.complete),
                 textStyle = DayoTheme.typography.b3.copy(
