@@ -1,13 +1,13 @@
 package daily.dayo.presentation.screen.feed
 
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.feedNavGraph(
     snackBarHostState: SnackbarHostState,
     onEmptyViewClick: () -> Unit,
@@ -15,7 +15,7 @@ fun NavGraphBuilder.feedNavGraph(
     onProfileClick: (String) -> Unit,
     onPostLikeUsersClick: (Long) -> Unit,
     onPostHashtagClick: (String) -> Unit,
-    bottomSheetState: ModalBottomSheetState,
+    bottomSheetState: BottomSheetScaffoldState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
 ) {
     composable(FeedRoute.route) {

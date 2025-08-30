@@ -1,7 +1,7 @@
 package daily.dayo.presentation.screen.account
 
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -36,6 +36,7 @@ fun NavController.navigateProfileSetting() {
     this.navigate(SignInRoute.profileSetting)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.signInNavGraph(
     coroutineScope: CoroutineScope,
     snackBarHostState: SnackbarHostState,
@@ -47,7 +48,7 @@ fun NavGraphBuilder.signInNavGraph(
     navigateToSignUpEmail: () -> Unit,
     navigateToRules: (RuleType) -> Unit,
     navigateToProfileSetting: () -> Unit,
-    bottomSheetState: ModalBottomSheetState,
+    bottomSheetState: BottomSheetScaffoldState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
 ) {
     composable(route = SignInRoute.route) {

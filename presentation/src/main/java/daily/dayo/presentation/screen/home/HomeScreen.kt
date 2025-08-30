@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,31 +45,31 @@ import kotlinx.coroutines.launch
 const val HOME_DAYOPICK_PAGE_TAB_ID = 0
 const val HOME_NEW_PAGE_TAB_ID = 1
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onPostClick: (Long) -> Unit,
     onProfileClick: (String) -> Unit,
     onSearchClick: () -> Unit,
     coroutineScope: CoroutineScope,
-    bottomSheetState: ModalBottomSheetState,
+    bottomSheetState: BottomSheetScaffoldState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     var homeTabState by rememberSaveable { mutableIntStateOf(HOME_DAYOPICK_PAGE_TAB_ID) }
     var selectedCategory by rememberSaveable { mutableStateOf(Pair(CategoryMenu.All.name, 0)) } // name, index
     val onCategoryClick: () -> Unit = {
-        coroutineScope.launch { bottomSheetState.show() }
+        coroutineScope.launch { bottomSheetState.bottomSheetState.expand() }
     }
 
     val onCategorySelect: (CategoryMenu, Int) -> Unit = { categoryMenu, index ->
         selectedCategory = Pair(categoryMenu.name, index)
         homeViewModel.setCategory(categoryMenu.category)
-        coroutineScope.launch { bottomSheetState.hide() }
+        coroutineScope.launch { bottomSheetState.bottomSheetState.hide() }
     }
 
-    BackHandler(enabled = bottomSheetState.isVisible) {
-        coroutineScope.launch { bottomSheetState.hide() }
+    BackHandler(enabled = bottomSheetState.bottomSheetState.isVisible) {
+        coroutineScope.launch { bottomSheetState.bottomSheetState.hide() }
     }
 
     Scaffold(
@@ -149,13 +149,13 @@ fun HomeScreen(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoryBottomSheetDialog(
     onCategorySelected: (CategoryMenu, Int) -> Unit,
     selectedCategory: Pair<String, Int>,
     coroutineScope: CoroutineScope,
-    bottomSheetState: ModalBottomSheetState
+    bottomSheetState: BottomSheetScaffoldState
 ) {
     val categoryMenus = listOf(
         CategoryMenu.All,
@@ -184,11 +184,11 @@ private fun CategoryBottomSheetDialog(
         normalColor = Gray2_767B83,
         checkedColor = Primary_23C882,
         checkedButtonIndex = selectedCategory.second,
-        closeButtonAction = { coroutineScope.launch { bottomSheetState.hide() } }
+        closeButtonAction = { coroutineScope.launch { bottomSheetState.bottomSheetState.hide() } }
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview(showBackground = true)
 private fun PreviewHomeScreen() {
