@@ -13,7 +13,6 @@ import daily.dayo.presentation.screen.folder.FolderEditScreen
 import daily.dayo.presentation.screen.folder.FolderPostMoveScreen
 import daily.dayo.presentation.screen.folder.FolderScreen
 import daily.dayo.presentation.screen.settings.BlockedUsersScreen
-import kotlinx.coroutines.CoroutineScope
 
 fun NavController.navigateMyPage() {
     navigate(MyPageRoute.route) {
@@ -75,6 +74,7 @@ fun NavGraphBuilder.myPageNavGraph(
     onFolderEditClick: (Long) -> Unit,
     onPostClick: (Long) -> Unit,
     onPostMoveClick: (Long) -> Unit,
+    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit,
     navigateBackToFolder: (Long) -> Unit
 ) {
     composable(MyPageRoute.route) {
@@ -84,7 +84,8 @@ fun NavGraphBuilder.myPageNavGraph(
             onProfileEditClick = onProfileEditClick,
             onBookmarkClick = onBookmarkClick,
             onFolderClick = onFolderClick,
-            onFolderCreateClick = onFolderCreateClick
+            onFolderCreateClick = onFolderCreateClick,
+            onAdRequest = onAdRequest
         )
     }
 
@@ -186,6 +187,7 @@ fun NavGraphBuilder.myPageNavGraph(
                 currentFolderId = folderId,
                 navigateToCreateNewFolder = onFolderCreateClick,
                 navigateBackToFolder = { navigateBackToFolder(folderId) },
+                onAdRequest = onAdRequest,
                 onBackClick = onBackClick,
                 folderViewModel = hiltViewModel(parentStackEntry)
             )

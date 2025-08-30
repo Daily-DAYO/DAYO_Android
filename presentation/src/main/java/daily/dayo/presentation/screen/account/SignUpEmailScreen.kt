@@ -16,9 +16,9 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -59,8 +59,8 @@ import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.dialog.ProfileImageBottomSheetDialog
 import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 import daily.dayo.presentation.viewmodel.AccountViewModel
-import daily.dayo.presentation.viewmodel.AccountViewModel.Companion.SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_FAIL
 import daily.dayo.presentation.viewmodel.AccountViewModel.Companion.EMAIL_CERTIFICATE_AUTH_CODE_INITIAL
+import daily.dayo.presentation.viewmodel.AccountViewModel.Companion.SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_FAIL
 import daily.dayo.presentation.viewmodel.ProfileSettingViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -76,7 +76,7 @@ const val PASSWORD_PERMIT_FORMAT = "^[a-z0-9]{8,16}$"
 const val IMAGE_TEMP_FILE_NAME_FORMAT = "yyyy-MM-d-HH-mm-ss-SSS"
 const val IMAGE_TEMP_FILE_EXTENSION = ".jpg"
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SignUpEmailRoute(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
@@ -229,19 +229,19 @@ internal fun SignUpEmailRoute(
         onClickProfileSelect = {
             coroutineScope.launch {
                 showProfileGallery = true
-                bottomSheetState.hide()
+                bottomSheetState.bottomSheetState.hide()
             }
         },
         onClickProfileCapture = {
             coroutineScope.launch {
                 showProfileCapture = true
-                bottomSheetState.hide()
+                bottomSheetState.bottomSheetState.hide()
             }
         },
         onClickProfileReset = {
             profileImgState.value = null
             coroutineScope.launch {
-                bottomSheetState.hide()
+                bottomSheetState.bottomSheetState.hide()
             }
         },
     )
@@ -272,13 +272,13 @@ fun SignUpEmailTitleLayout(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
 fun SignUpEmailScreen(
     context: Context = LocalContext.current,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    bottomSheetState: ModalBottomSheetState = getBottomSheetDialogState(),
+    bottomSheetState: BottomSheetScaffoldState = getBottomSheetDialogState(),
     hideKeyboard: () -> Unit = {},
     onBackClick: () -> Unit = {},
     requestIsEmailDuplicate: (email: String) -> Unit = {},

@@ -1,6 +1,7 @@
 package daily.dayo.presentation.screen.write
 
-import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -24,6 +25,7 @@ fun NavController.navigateWriteTag() {
 fun NavController.navigateWriteFolder() {
     navigate(WriteRoute.folder)
 }
+
 fun NavController.navigateWriteFolderNew() {
     navigate(WriteRoute.folderNew)
 }
@@ -32,6 +34,7 @@ fun NavController.navigateCrop(index: Int) {
     navigate(WriteRoute.getCropRoute(index))
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.writeNavGraph(
     snackBarHostState: SnackbarHostState,
     navController: NavController,
@@ -39,7 +42,8 @@ fun NavGraphBuilder.writeNavGraph(
     onTagClick: () -> Unit,
     onWriteFolderClick: () -> Unit,
     onWriteFolderNewClick: () -> Unit,
-    bottomSheetState: ModalBottomSheetState,
+    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit,
+    bottomSheetState: BottomSheetScaffoldState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
 ) {
     navigation(
@@ -79,6 +83,7 @@ fun NavGraphBuilder.writeNavGraph(
             WriteFolderRoute(
                 onBackClick = onBackClick,
                 onWriteFolderNewClick = onWriteFolderNewClick,
+                onAdRequest = onAdRequest,
                 writeViewModel = hiltViewModel(parentStackEntry),
                 profileViewModel = hiltViewModel(parentStackEntry),
                 accountViewModel = hiltViewModel(parentStackEntry),

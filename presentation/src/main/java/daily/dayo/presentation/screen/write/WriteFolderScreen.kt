@@ -44,6 +44,10 @@ import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.Privacy
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.constant.FolderConstants.FOLDER_AD_START_COUNT
+import daily.dayo.presentation.common.constant.FolderConstants.FOLDER_THUMBNAIL_RADIUS_SIZE
+import daily.dayo.presentation.common.constant.FolderConstants.FOLDER_THUMBNAIL_SIZE
+import daily.dayo.presentation.common.constant.FolderConstants.MAX_FOLDER_COUNT
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.common.extension.limitTo
 import daily.dayo.presentation.theme.Dark
@@ -60,14 +64,11 @@ import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.ProfileViewModel
 import daily.dayo.presentation.viewmodel.WriteViewModel
 
-const val MAX_FOLDER_COUNT = 5
-const val FOLDER_THUMBNAIL_SIZE = 72
-const val FOLDER_THUMBNAIL_RADIUS_SIZE = 12
-
 @Composable
 fun WriteFolderRoute(
     onBackClick: () -> Unit,
     onWriteFolderNewClick: () -> Unit,
+    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit,
     writeViewModel: WriteViewModel = hiltViewModel(),
     accountViewModel: AccountViewModel = hiltViewModel(),
     profileViewModel: ProfileViewModel = hiltViewModel(),
@@ -93,7 +94,8 @@ fun WriteFolderRoute(
         },
         navigateToCreateNewFolder = { onWriteFolderNewClick() },
         folders = folders.data.orEmpty(),
-        currentFolderId = folderId
+        currentFolderId = folderId,
+        onAdRequest = onAdRequest
     )
 
 }
@@ -106,6 +108,7 @@ fun WriteFolderScreen(
     navigateToCreateNewFolder: () -> Unit,
     folders: List<Folder>,
     currentFolderId: Long?,
+    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit
 ) {
     Surface(
         color = White_FFFFFF,
@@ -122,7 +125,8 @@ fun WriteFolderScreen(
                 onFolderClick = onFolderClick,
                 navigateToCreateNewFolder = navigateToCreateNewFolder,
                 folders = folders,
-                currentFolderId = currentFolderId
+                currentFolderId = currentFolderId,
+                onAdRequest = onAdRequest
             )
         }
     }
@@ -152,6 +156,7 @@ fun WriteFolderContent(
     navigateToCreateNewFolder: () -> Unit = {},
     folders: List<Folder> = emptyList(),
     currentFolderId: Long? = null,
+    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -160,7 +165,9 @@ fun WriteFolderContent(
     ) {
         if (showCreateFolder) {
             WriteFolderNewLayout(
-                navigateToCreateNewFolder = navigateToCreateNewFolder
+                shouldShowAd = folders.size + 1 in FOLDER_AD_START_COUNT..MAX_FOLDER_COUNT,
+                navigateToCreateNewFolder = navigateToCreateNewFolder,
+                onAdRequest = onAdRequest
             )
             Spacer(
                 modifier = Modifier
@@ -176,17 +183,27 @@ fun WriteFolderContent(
     }
 }
 
-@Preview
 @Composable
 fun WriteFolderNewLayout(
-    navigateToCreateNewFolder: () -> Unit = {}
+    shouldShowAd: Boolean,
+    navigateToCreateNewFolder: () -> Unit,
+    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(FOLDER_THUMBNAIL_SIZE.dp)
             .background(White_FFFFFF)
-            .clickableSingle { navigateToCreateNewFolder() },
+            .clickableSingle {
+                // 광고 보기
+                if (shouldShowAd) {
+                    onAdRequest {
+                        navigateToCreateNewFolder()
+                    }
+                } else {
+                    navigateToCreateNewFolder()
+                }
+            }
     ) {
         Image(
             contentDescription = "new folderThumbnail",
@@ -331,4 +348,14 @@ fun WriteFolderItemLayout(
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun PreviewWriteFolderNewLayout() {
+    WriteFolderNewLayout(
+        shouldShowAd = false,
+        navigateToCreateNewFolder = {},
+        onAdRequest = {}
+    )
 }
