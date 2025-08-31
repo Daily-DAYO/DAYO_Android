@@ -24,8 +24,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHostState
@@ -80,7 +80,7 @@ import daily.dayo.presentation.viewmodel.ReportViewModel
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedPostView(
     post: Post,
@@ -92,7 +92,7 @@ fun FeedPostView(
     onClickBookmark: () -> Unit,
     onPostLikeUsersClick: (Long) -> Unit,
     onPostHashtagClick: (String) -> Unit,
-    bottomSheetState: ModalBottomSheetState,
+    bottomSheetState: BottomSheetScaffoldState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
     reportViewModel: ReportViewModel = hiltViewModel()
 ) {
@@ -103,14 +103,14 @@ fun FeedPostView(
     val context = LocalContext.current
 
     val onClickComment: (Long) -> Unit = { postId ->
-        coroutineScope.launch { bottomSheetState.show() }
+        coroutineScope.launch { bottomSheetState.bottomSheetState.expand() }
         bottomSheetContent {
             CommentBottomSheetDialog(
                 postId = postId,
                 sheetState = bottomSheetState,
                 snackBarHostState = snackBarHostState,
                 onClickProfile = onClickProfile,
-                onClickClose = { coroutineScope.launch { bottomSheetState.hide() } },
+                onClickClose = { coroutineScope.launch { bottomSheetState.bottomSheetState.hide() } },
             )
         }
     }
@@ -302,7 +302,8 @@ fun FeedPostView(
             val dec = DecimalFormat("#,###")
             Row(modifier = Modifier.weight(1f)) {
                 Text(text = stringResource(id = R.string.post_like_count_message_1), style = DayoTheme.typography.caption1.copy(Gray2_767B83))
-                Text(text = " ${dec.format(post.heartCount)} ",
+                Text(
+                    text = " ${dec.format(post.heartCount)} ",
                     style = DayoTheme.typography.caption1,
                     modifier = if (post.heartCount != 0) Modifier.clickableSingle { post.postId?.let { onPostLikeUsersClick(it) } } else Modifier,
                     color = if (post.heartCount != 0) Primary_23C882 else Gray4_C5CAD2)

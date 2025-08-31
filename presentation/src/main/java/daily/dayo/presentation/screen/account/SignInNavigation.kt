@@ -1,7 +1,7 @@
 package daily.dayo.presentation.screen.account
 
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -13,6 +13,12 @@ import daily.dayo.presentation.screen.account.model.SignUpStep
 import daily.dayo.presentation.screen.rules.RuleRoute
 import daily.dayo.presentation.screen.rules.RuleType
 import kotlinx.coroutines.CoroutineScope
+
+fun NavController.navigateSignIn() {
+    this.navigate(SignInRoute.route) {
+        popUpTo(SignInRoute.route) { inclusive = true }
+    }
+}
 
 fun NavController.navigateSignInEmail() {
     this.navigate(SignInRoute.signInEmail)
@@ -30,18 +36,19 @@ fun NavController.navigateProfileSetting() {
     this.navigate(SignInRoute.profileSetting)
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.signInNavGraph(
     coroutineScope: CoroutineScope,
     snackBarHostState: SnackbarHostState,
     navController: NavController,
     onBackClick: () -> Unit,
+    navigateToSignIn: () -> Unit,
     navigateToSignInEmail: () -> Unit,
     navigateToResetPassword: () -> Unit,
     navigateToSignUpEmail: () -> Unit,
     navigateToRules: (RuleType) -> Unit,
     navigateToProfileSetting: () -> Unit,
-    bottomSheetState: ModalBottomSheetState,
+    bottomSheetState: BottomSheetScaffoldState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
 ) {
     composable(route = SignInRoute.route) {
@@ -77,6 +84,7 @@ fun NavGraphBuilder.signInNavGraph(
             coroutineScope = coroutineScope,
             snackBarHostState = snackBarHostState,
             onBackClick = onBackClick,
+            navigateToSignIn = navigateToSignIn,
             accountViewModel = hiltViewModel(parentStackEntry),
         )
     }

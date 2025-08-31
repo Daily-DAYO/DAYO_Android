@@ -10,10 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -48,6 +49,7 @@ import daily.dayo.presentation.common.Event
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
+import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.CommentListView
 import daily.dayo.presentation.view.CommentMentionSearchView
 import daily.dayo.presentation.view.CommentReplyDescriptionView
@@ -59,11 +61,11 @@ import daily.dayo.presentation.viewmodel.ReportViewModel
 import daily.dayo.presentation.viewmodel.SearchViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentBottomSheetDialog(
     postId: Long,
-    sheetState: ModalBottomSheetState,
+    sheetState: BottomSheetScaffoldState,
     snackBarHostState: SnackbarHostState,
     onClickProfile: (String) -> Unit,
     onClickClose: () -> Unit,
@@ -79,6 +81,7 @@ fun CommentBottomSheetDialog(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val commentFocusRequester = FocusRequester()
+    val keyboardController = LocalSoftwareKeyboardController.current
     val onClickCommentProfile: (String) -> Unit = { memberId ->
         onClickClose()
         onClickProfile(memberId)
@@ -136,8 +139,13 @@ fun CommentBottomSheetDialog(
     // create comment
     val replyCommentState = remember { mutableStateOf<Pair<Long, Comment>?>(null) } // parent comment Id, reply comment
     val onClickPostComment: () -> Unit = {
-        if (replyCommentState.value == null) postViewModel.requestCreatePostComment(commentText.value.text, postId, mentionedMemberIds)
-        else postViewModel.requestCreatePostCommentReply(replyCommentState.value!!, commentText.value.text, postId, mentionedMemberIds)
+        if (replyCommentState.value == null) {
+            if (commentText.value.text.isNotBlank()) {
+                postViewModel.requestCreatePostComment(commentText.value.text, postId, mentionedMemberIds)
+            }
+        } else {
+            postViewModel.requestCreatePostCommentReply(replyCommentState.value!!, commentText.value.text, postId, mentionedMemberIds)
+        }
     }
     val onClickReply: (Pair<Long, Comment>?) -> Unit = { reply ->
         // set reply comment state
@@ -147,6 +155,12 @@ fun CommentBottomSheetDialog(
         val replyUsername = "@${replyCommentState.value?.second?.nickname} "
         commentText.value = TextFieldValue(text = replyUsername, selection = TextRange(replyUsername.length))
         commentFocusRequester.requestFocus()
+    }
+    val commentEnabled = if (replyCommentState.value == null) {
+        commentText.value.text.isNotBlank()
+    } else {
+        val replyUsername = "@${replyCommentState.value?.second?.nickname} "
+        commentText.value.text.drop(replyUsername.length).isNotBlank()
     }
 
     // clear comment
@@ -161,51 +175,68 @@ fun CommentBottomSheetDialog(
     val postCommentCreateSuccess by postViewModel.postCommentCreateSuccess.observeAsState(Event(false))
     if (postCommentCreateSuccess.getContentIfNotHandled() == true) {
         clearComment()
+        keyboardController?.hide()
         postViewModel.requestPostComment(postId)
     }
 
-    BackHandler(enabled = sheetState.isVisible) {
+    BackHandler(enabled = sheetState.bottomSheetState.isVisible) {
         coroutineScope.launch {
             clearComment()
-            sheetState.hide()
+            sheetState.bottomSheetState.hide()
         }
     }
 
-    ModalBottomSheetLayout(
-        sheetState = sheetState,
-        sheetShape = RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp),
+    LaunchedEffect(sheetState.bottomSheetState.currentValue) {
+        if (sheetState.bottomSheetState.currentValue == SheetValue.Hidden) {
+            keyboardController?.hide()
+        }
+    }
+
+    Surface(
         modifier = modifier,
-        sheetContent = {
-            Surface(
+        shape = RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp),
+        color = White_FFFFFF
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+        ) {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
+                    .padding(top = 12.dp, bottom = 65.dp)
+                    .wrapContentHeight(),
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp)
-                        .wrapContentHeight(),
-                ) {
-                    CommentBottomSheetDialogTitle(clearComment, onClickClose)
-                    CommentBottomSheetDialogContent(
-                        currentMemberId = currentMemberId,
-                        postComments = when (postComments.value?.status) {
-                            Status.SUCCESS -> postComments.value?.data ?: DEFAULT_COMMENTS
-                            else -> DEFAULT_COMMENTS
-                        },
-                        onClickCommentProfile = onClickCommentProfile,
-                        onClickReply = onClickReply,
-                        onClickDelete = onClickDelete,
-                        onClickReport = onClickReport
-                    )
-                    if (showMentionSearchView.value) CommentMentionSearchView(userResults, onClickFollowUser)
-                    if (replyCommentState.value != null) CommentReplyDescriptionView(replyCommentState, onClickCancelReply)
-                    CommentTextField(commentText, replyCommentState, userSearchKeyword, showMentionSearchView, commentFocusRequester, onClickPostComment)
-                }
+                CommentBottomSheetDialogTitle(clearComment, onClickClose)
+                CommentBottomSheetDialogContent(
+                    currentMemberId = currentMemberId,
+                    postComments = when (postComments.value?.status) {
+                        Status.SUCCESS -> postComments.value?.data ?: DEFAULT_COMMENTS
+                        else -> DEFAULT_COMMENTS
+                    },
+                    onClickCommentProfile = onClickCommentProfile,
+                    onClickReply = onClickReply,
+                    onClickDelete = onClickDelete,
+                    onClickReport = onClickReport
+                )
+            }
+
+            Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+                if (showMentionSearchView.value) CommentMentionSearchView(userResults, onClickFollowUser)
+                if (replyCommentState.value != null) CommentReplyDescriptionView(replyCommentState, onClickCancelReply)
+                CommentTextField(
+                    enabled = commentEnabled,
+                    commentText = commentText,
+                    replyCommentState = replyCommentState,
+                    userSearchKeyword = userSearchKeyword,
+                    showMentionSearchView = showMentionSearchView,
+                    focusRequester = commentFocusRequester,
+                    onClickPostComment = onClickPostComment
+                )
             }
         }
-    ) {
+
         reportCommentId?.let { commentId ->
             if (showReportDialog) {
                 CommentReportDialog(
@@ -263,7 +294,7 @@ private fun CommentBottomSheetDialogContent(
         modifier = Modifier
             .background(DayoTheme.colorScheme.background)
             .fillMaxWidth()
-            .fillMaxHeight(0.5f)
+            .fillMaxHeight(0.8f)
     ) {
         item {
             CommentListView(

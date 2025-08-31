@@ -1,6 +1,8 @@
 package daily.dayo.presentation.screen.settings
 
-import android.content.Intent
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.DrawableRes
@@ -32,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
@@ -41,13 +44,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import daily.dayo.domain.model.Profile
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
-import daily.dayo.presentation.activity.LoginActivity
-import daily.dayo.presentation.activity.MainActivity
-import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
@@ -57,47 +56,30 @@ import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.view.Loading
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
 import daily.dayo.presentation.view.dialog.ConfirmDialog
-import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.ProfileViewModel
 
 @Composable
 fun SettingsScreen(
     onProfileEditClick: () -> Unit,
-    onWithdrawClick: () -> Unit,
     onBackClick: () -> Unit,
     onPasswordChangeClick: () -> Unit,
     onBlockUsersClick: () -> Unit,
     onSettingNotificationClick: () -> Unit,
     onNoticesClick: () -> Unit,
-    profileViewModel: ProfileViewModel = hiltViewModel(),
-    accountViewModel: AccountViewModel = hiltViewModel(),
+    onInformationClick: () -> Unit = {},
+    profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val signOutSuccess by accountViewModel.signOutSuccess.collectAsStateWithLifecycle()
     val profileInfo = profileViewModel.profileInfo.observeAsState()
-    val showSignOutDialog = remember { mutableStateOf(false) }
+    var showInquiryGuideDialog by remember { mutableStateOf(false) }
+    val inquiryEmail = stringResource(id = R.string.inquiry_email)
 
     LaunchedEffect(Unit) {
         profileViewModel.requestMyProfile()
-    }
-
-    LaunchedEffect(signOutSuccess) {
-        if (signOutSuccess == Status.SUCCESS) {
-            accountViewModel.clearCurrentUser()
-            val intent = Intent(context, LoginActivity::class.java).apply {
-                flags =
-                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            }
-            (context as? MainActivity)?.let {
-                it.startActivity(intent)
-                it.finish()
-            }
-        }
     }
 
     SettingsScreen(
@@ -108,36 +90,34 @@ fun SettingsScreen(
         onPasswordChangeClick = onPasswordChangeClick,
         onNoticesClick = onNoticesClick,
         onBlockUsersClick = onBlockUsersClick,
-        onWithdrawClick = onWithdrawClick,
-        onSignOutClick = { showSignOutDialog.value = true },
+        onInquiryClick = {
+            copyInquiryEmail(context, inquiryEmail)
+            showInquiryGuideDialog = true
+        },
+        onInformationClick = onInformationClick,
     )
 
-    if (showSignOutDialog.value) {
-        SignOutDialog(
-            onConfirmClick = {
-                accountViewModel.requestSignOut()
-                showSignOutDialog.value = false
-            },
-            onDismissClick = { showSignOutDialog.value = false },
+    if (showInquiryGuideDialog) {
+        ConfirmDialog(
+            title = stringResource(R.string.setting_contact_message),
+            description = stringResource(R.string.setting_contact_explanation_message),
+            onClickCancel = null,
+            onClickConfirm = { showInquiryGuideDialog = false },
         )
     }
-
-    Loading(
-        isVisible = (signOutSuccess == Status.LOADING || signOutSuccess == Status.SUCCESS),
-    )
 }
 
 @Composable
 private fun SettingsScreen(
     profile: Profile?,
     onProfileEditClick: () -> Unit,
+    onBackClick: () -> Unit,
     onSettingNotificationClick: () -> Unit,
     onPasswordChangeClick: () -> Unit,
     onNoticesClick: () -> Unit = {},
     onBlockUsersClick: () -> Unit,
-    onWithdrawClick: () -> Unit,
-    onBackClick: () -> Unit,
-    onSignOutClick: () -> Unit = {},
+    onInquiryClick: () -> Unit = {},
+    onInformationClick: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -177,8 +157,8 @@ private fun SettingsScreen(
             SettingItem(R.string.setting_menu_notification, R.drawable.ic_notification, onClickMenu = onSettingNotificationClick),
             null, // Divider
             SettingItem(R.string.setting_menu_notice, R.drawable.ic_setting_notice, onClickMenu = onNoticesClick),
-            SettingItem(R.string.setting_menu_information, R.drawable.ic_setting_information, onClickMenu = {}, description = appVersion),
-            SettingItem(R.string.setting_menu_contact, R.drawable.ic_setting_contact, onClickMenu = {}),
+            SettingItem(R.string.setting_menu_information, R.drawable.ic_setting_information, onClickMenu = onInformationClick, description = appVersion),
+            SettingItem(R.string.setting_menu_contact, R.drawable.ic_setting_contact, onClickMenu = onInquiryClick),
             null // Divider
         )
 
@@ -206,16 +186,13 @@ private fun SettingsScreen(
             }
             Text(
                 text = stringResource(id = R.string.sign_out),
-                modifier = Modifier
-                    .padding(vertical = 11.5.dp, horizontal = 8.dp)
-                    .clickable { onSignOutClick() },
+                modifier = Modifier.padding(vertical = 11.5.dp, horizontal = 8.dp),
                 color = Primary_23C882,
-                style = DayoTheme.typography.b6,
+                style = DayoTheme.typography.b6
             )
             Text(
                 text = stringResource(id = R.string.delete_account),
-                modifier = Modifier.padding(vertical = 11.5.dp, horizontal = 8.dp)
-                    .clickable { onWithdrawClick() },
+                modifier = Modifier.padding(vertical = 11.5.dp, horizontal = 8.dp),
                 color = Gray3_9FA5AE,
                 style = DayoTheme.typography.b6
             )
@@ -323,20 +300,13 @@ private fun SettingMenu(
     }
 }
 
-@Composable
-@Preview
-fun SignOutDialog(
-    onConfirmClick: () -> Unit = {},
-    onDismissClick: () -> Unit = {}
+fun copyInquiryEmail(
+    context: Context,
+    inquiryEmail: String,
 ) {
-    ConfirmDialog(
-        title = stringResource(R.string.sign_out_message),
-        description = "",
-        onClickConfirmText = stringResource(R.string.confirm),
-        onClickConfirm = onConfirmClick,
-        onClickCancelText = stringResource(R.string.cancel),
-        onClickCancel = onDismissClick,
-    )
+    val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clipData = ClipData.newPlainText("inquiry_email", inquiryEmail)
+    clipboardManager.setPrimaryClip(clipData)
 }
 
 @Preview
@@ -351,7 +321,7 @@ private fun PreviewSettingsScreen() {
             onSettingNotificationClick = {},
             onNoticesClick = {},
             onBlockUsersClick = {},
-            onWithdrawClick = {},
+            onInformationClick = {}
         )
     }
 }

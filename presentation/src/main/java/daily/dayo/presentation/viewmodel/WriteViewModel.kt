@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -27,19 +28,30 @@ import daily.dayo.presentation.common.Event
 import daily.dayo.presentation.common.ListLiveData
 import daily.dayo.presentation.common.Resource
 import daily.dayo.presentation.common.Status
+import daily.dayo.presentation.common.image.ImageResizeUtil.POST_IMAGE_RESIZE_SIZE
 import daily.dayo.presentation.common.image.ImageResizeUtil.cropCenterBitmap
 import daily.dayo.presentation.common.image.ImageResizeUtil.resizeBitmap
+import daily.dayo.presentation.common.image.readExifInfo
+import daily.dayo.presentation.common.image.applyExif
 import daily.dayo.presentation.common.toFile
+import daily.dayo.presentation.screen.write.ImageAsset
+import daily.dayo.presentation.screen.write.ImageCropStateHolder
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @SuppressLint("StaticFieldLeak")
 @HiltViewModel
@@ -56,6 +68,9 @@ class WriteViewModel @Inject constructor(
 
     // Show Dialog
     val showWriteOptionDialog = MutableLiveData<Event<Boolean>>()
+
+    private val _errorEvent = MutableSharedFlow<String>()
+    val errorEvent = _errorEvent.asSharedFlow()
 
     // WriteInfo
     private val _postId = MutableLiveData(0L)
@@ -76,12 +91,8 @@ class WriteViewModel @Inject constructor(
     val writeFolderId get() = _writeFolderId
     private val _writeFolderName = MutableStateFlow(null as String?)
     val writeFolderName get() = _writeFolderName
-    private val _postImageUriList = ListLiveData<String>() // 갤러리에서 불러온 이미지 리스트
-    val postImageUriList get() = _postImageUriList
-    val writeImagesUri get() = _writeImagesUri.asStateFlow()
-    private val _writeImagesUri = MutableStateFlow(emptyList<String>())
-    val writeImages get() = _writeImages.asStateFlow()
-    private val _writeImages = MutableStateFlow(emptyList<Bitmap>())
+    private val _writeImagesUri = MutableStateFlow<List<ImageAsset>>(emptyList())
+    val writeImagesUri = _writeImagesUri.asStateFlow()
     private val _postTagList = ListLiveData<String>()
     val postTagList: ListLiveData<String> get() = _postTagList
     private val _writeTags = MutableStateFlow(emptyList<String>())
@@ -125,30 +136,53 @@ class WriteViewModel @Inject constructor(
             return "${applicationContext.cacheDir}/$fileName"
         }
 
+    /**
+     * 새 게시글 업로드
+     * 업로드 시점에만 Uri로부터 Bitmap을 로드하여 사용 (OOM 방지)
+     */
     private fun requestUploadNewPost() = viewModelScope.launch(Dispatchers.IO) {
         _uploadSuccess.emit(Status.LOADING)
-        val resizedImages =
-            writeImages.value.map { item -> item.cropCenterBitmap().toFile(uploadImagePath) }
-        resizedImages.let {
-            requestUploadPostUseCase(
-                category = writeCategory.value.first!!,
-                contents = writeText.value,
-                files = it.toTypedArray(),
-                folderId = writeFolderId.value ?: 0L,
-                tags = if (writeTags.value.isNotEmpty()) writeTags.value.toTypedArray() else emptyArray()
-            ).let { ApiResponse ->
-                when (ApiResponse) {
-                    is NetworkResponse.Success -> {
-                        _uploadSuccess.emit(Status.SUCCESS)
-                    }
+        val imageFiles = _writeImagesUri.value.mapNotNull { imageAsset ->
+            // 각 Uri로부터 비트맵을 열고, 리사이즈하고, 파일로 변환
+            applicationContext.contentResolver.openInputStream(Uri.parse(imageAsset.uriString))
+                ?.use { inputStream ->
+                    val bitmap = BitmapFactory.decodeStream(inputStream)
+                    val resizedBitmap = resizeBitmap(
+                        bitmap.cropCenterBitmap(),
+                        POST_IMAGE_RESIZE_SIZE,
+                        POST_IMAGE_RESIZE_SIZE
+                    )
+                    val file = resizedBitmap.toFile(uploadImagePath)
+                    bitmap.recycle()
+                    resizedBitmap.recycle()
+                    file
+                }
+        }
 
-                    else -> {
-                        _uploadSuccess.emit(Status.ERROR)
-                    }
+        if (imageFiles.isEmpty() && _writeImagesUri.value.isNotEmpty()) {
+            _errorEvent.emit("이미지를 파일로 변환하는 데 실패했습니다.")
+            _uploadSuccess.emit(Status.ERROR)
+            return@launch
+        }
+
+        requestUploadPostUseCase(
+            category = writeCategory.value.first!!,
+            contents = writeText.value,
+            files = imageFiles.toTypedArray(),
+            folderId = writeFolderId.value ?: 0L,
+            tags = if (writeTags.value.isNotEmpty()) writeTags.value.toTypedArray() else emptyArray()
+        ).let { apiResponse ->
+            when (apiResponse) {
+                is NetworkResponse.Success -> {
+                    _uploadSuccess.emit(Status.SUCCESS)
                 }
-                if (ApiResponse is NetworkResponse.Success) {
-                    _writePostId.postValue(ApiResponse.body?.let { Event(it.id) })
+
+                else -> {
+                    _uploadSuccess.emit(Status.ERROR)
                 }
+            }
+            if (apiResponse is NetworkResponse.Success) {
+                _writePostId.postValue(apiResponse.body?.let { Event(it.id) })
             }
         }
     }
@@ -166,41 +200,6 @@ class WriteViewModel @Inject constructor(
                 _writePostId.postValue(ApiResponse.body?.let { Event(it.postId) })
             }
         }
-    }
-
-    fun requestPostDetail(postId: Long) = viewModelScope.launch(Dispatchers.IO) {
-        withContext(Dispatchers.Main) {
-            resetWriteInfoValue()
-            requestPostDetailUseCase(postId = postId)
-        }.let { ApiResponse ->
-            if (ApiResponse is NetworkResponse.Success) {
-                ApiResponse.body.let { postDetail ->
-                    postDetail?.let {
-                        withContext(Dispatchers.Main) {
-                            setOriginalPostDetail(postDetail)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun setOriginalPostDetail(postDetail: PostDetail) = viewModelScope.launch {
-        _writeCurrentPostDetail.postValue(postDetail)
-        postDetail.images.map { element ->
-            addUploadImage(
-                Uri.parse("${BuildConfig.BASE_URL}/images/$element")
-                    .toString(),
-                true
-            )
-        }
-
-        postDetail.hashtags.let { _postTagList.addAll(it, false) }
-        postDetail.hashtags.let { _writeTags.emit(it) }
-        _postFolderId.postValue(postDetail.folderId)
-        _postFolderName.postValue(postDetail.folderName)
-        _writeFolderId.emit(postDetail.folderId)
-        _writeFolderName.emit(postDetail.folderName)
     }
 
     fun requestAllMyFolderList() = viewModelScope.launch(Dispatchers.IO) {
@@ -244,6 +243,9 @@ class WriteViewModel @Inject constructor(
             }
         }
 
+    /**
+     * 상태 초기화
+     */
     fun resetWriteInfoValue() = viewModelScope.launch {
         _postId.postValue(0)
         _postContents.postValue("")
@@ -251,12 +253,9 @@ class WriteViewModel @Inject constructor(
         _postFolderName.postValue("")
         _writeFolderId.emit(0)
         _writeFolderName.emit("")
-        _postImageUriList.postValue(arrayListOf())
         _postTagList.clear(notify = false)
         _writeTags.emit(emptyList())
-        viewModelScope.launch {
-            _writeImagesUri.emit(emptyList())
-        }
+        _writeImagesUri.emit(emptyList())
     }
 
     fun setPostId(id: Long) {
@@ -286,68 +285,127 @@ class WriteViewModel @Inject constructor(
         _writeFolderName.emit(name)
     }
 
-    fun addUploadImage(uriPath: String, notify: Boolean = false) {
-        _postImageUriList.add(uriPath, notify)
-        _writeImagesUri.getAndUpdate { it + uriPath }
+    /**
+     * 갤러리에서 가져온 이미지들을 ViewModel에 추가
+     * Bitmap을 로드하지 않고 Uri와 EXIF 정보를 ImageAsset 형태로 저장
+     */
+    fun addOriginalImages(uris: List<Uri>) {
+        viewModelScope.launch {
+            val newImageAssets = withContext(Dispatchers.IO) {
+                uris.map { uri ->
+                    val exifInfo = applicationContext.contentResolver.readExifInfo(uri)
+                    ImageAsset(uriString = uri.toString(), exifInfo = exifInfo)
+                }
+            }
+            _writeImagesUri.emit(newImageAssets)
+        }
     }
 
-    fun addAndResizeUploadImages(
-        uris: List<Uri>,
-        contentResolver: ContentResolver,
-        option: BitmapFactory.Options
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            uris.forEach { uri ->
-                val inputStream = contentResolver.openInputStream(uri)
-                inputStream?.use {
-                    val bitmap = BitmapFactory.decodeStream(it, null, option)
-                    val resizedBitmap = bitmap?.let { resizeBitmap(it, 220, 500) }
-                    resizedBitmap?.let {
-                        val currentList = _writeImages.value.toMutableList()
-                        currentList.add(it)
-                        _writeImages.emit(currentList)
+    /**
+     * 이미지를 편집하고, 완료되면 리스트의 해당 ImageAsset을 새 정보로 교체
+     */
+    fun cropImageAndUpdate(imageIndex: Int, stateHolder: ImageCropStateHolder) {
+        val imageAsset = _writeImagesUri.value.getOrNull(imageIndex) ?: return
+
+        viewModelScope.launch {
+            try {
+                val newUri = withContext(Dispatchers.IO) {
+                    val originalUri = Uri.parse(imageAsset.uriString)
+                    
+                    // 전체 이미지를 로드하고 EXIF 정보를 적용
+                    val originalBitmap = applicationContext.contentResolver.openInputStream(originalUri)?.use { inputStream ->
+                        BitmapFactory.decodeStream(inputStream)
+                    } ?: throw IOException("원본 이미지 로드 실패")
+                    
+                    val exifInfo = stateHolder.exifInfo
+                    
+                    // EXIF 정보가 있으면 적용하여 올바른 방향으로 회전
+                    val rotatedBitmap = if (exifInfo != null) {
+                        originalBitmap.applyExif(exifInfo)
+                    } else {
+                        originalBitmap
+                    }
+                    
+                    // 원본 비트맵이 다르면 리사이클
+                    if (rotatedBitmap != originalBitmap) {
+                        originalBitmap.recycle()
+                    }
+
+                    val cropProps = stateHolder.cropProperties.value
+                    
+                    // 미리보기 비트맵과 실제 로드된 비트맵 간의 스케일 계산
+                    val scaleX = rotatedBitmap.width.toFloat() / stateHolder.imageWidth
+                    val scaleY = rotatedBitmap.height.toFloat() / stateHolder.imageHeight
+                    
+                    // 크롭 좌표를 실제 비트맵 크기에 맞게 변환
+                    val left = (cropProps.cropOffset.x * scaleX).roundToInt()
+                    val top = ((cropProps.cropOffset.y - stateHolder.imageTop) * scaleY).roundToInt()
+                    val size = (cropProps.cropSize * scaleX).roundToInt()
+                    
+                    // 크롭 영역이 비트맵 범위를 벗어나지 않도록 보정
+                    val finalLeft = left.coerceIn(0, rotatedBitmap.width)
+                    val finalTop = top.coerceIn(0, rotatedBitmap.height)
+                    val finalRight = (left + size).coerceIn(0, rotatedBitmap.width)
+                    val finalBottom = (top + size).coerceIn(0, rotatedBitmap.height)
+                    val finalWidth = finalRight - finalLeft
+                    val finalHeight = finalBottom - finalTop
+
+                    // 크롭된 비트맵 생성
+                    val croppedBitmap = Bitmap.createBitmap(
+                        rotatedBitmap,
+                        finalLeft,
+                        finalTop,
+                        finalWidth,
+                        finalHeight
+                    )
+                    
+                    // 원본 회전된 비트맵 리사이클
+                    rotatedBitmap.recycle()
+
+                    // 크롭된 이미지를 새 캐시 파일로 저장 (EXIF 정보는 제거됨)
+                    val cacheFile = File(
+                        applicationContext.cacheDir,
+                        "cropped_${System.currentTimeMillis()}.jpg"
+                    )
+                    FileOutputStream(cacheFile).use { out ->
+                        croppedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
+                    }
+                    croppedBitmap.recycle()
+                    cacheFile.toUri()
+                }
+
+                _writeImagesUri.getAndUpdate { currentList ->
+                    currentList.toMutableList().apply {
+                        // 편집된 이미지는 EXIF 정보가 제거되므로 null로 설정
+                        this[imageIndex] = ImageAsset(uriString = newUri.toString(), exifInfo = null)
                     }
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _errorEvent.emit("이미지 처리에 실패했습니다. 다시 시도해 주세요.")
             }
         }
     }
 
-    fun removeUploadImage(pos: Int, notify: Boolean = false) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _writeImages.getAndUpdate { it.filterIndexed { index, _ -> index != pos } }
+    /**
+     * 지정된 인덱스의 이미지 제거
+     */
+    fun removeUploadImage(pos: Int) {
+        viewModelScope.launch {
+            _writeImagesUri.getAndUpdate { currentList ->
+                currentList.filterIndexed { index, _ -> index != pos }
+            }
         }
-    }
-
-    fun deleteUploadImage(pos: Int, notify: Boolean = false) {
-        _postImageUriList.removeAt(pos, notify)
-        _writeImagesUri.getAndUpdate { it.filterIndexed { index, _ -> index != pos } }
     }
 
     fun clearUploadImage() {
-        _postImageUriList.clear(notify = true)
-        viewModelScope.launch { _writeImagesUri.emit(emptyList()) }
-    }
-
-    fun addPostTag(tagText: String, notify: Boolean = false) = viewModelScope.launch {
-        _postTagList.add(tagText, notify)
-        _writeTags.emit(
-            writeTags.value.toMutableList().apply {
-                add(tagText)
-            }
-        )
+        viewModelScope.launch {
+            _writeImagesUri.emit(emptyList())
+        }
     }
 
     fun updatePostTags(tagTextList: List<String>, notify: Boolean = false) = viewModelScope.launch {
         _postTagList.replaceAll(tagTextList, notify)
         _writeTags.emit(tagTextList)
-    }
-
-    fun removePostTag(tagText: String, notify: Boolean = false) = viewModelScope.launch {
-        _postTagList.remove(tagText, notify)
-        _writeTags.emit(
-            writeTags.value.toMutableList().apply {
-                remove(tagText)
-            }
-        )
     }
 }

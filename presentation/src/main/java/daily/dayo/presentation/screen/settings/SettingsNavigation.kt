@@ -1,20 +1,15 @@
 package daily.dayo.presentation.screen.settings
 
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import daily.dayo.presentation.screen.rules.RuleRoute
+import daily.dayo.presentation.screen.rules.RuleType
 import kotlinx.coroutines.CoroutineScope
-import daily.dayo.presentation.screen.account.WithdrawScreen
 
 fun NavController.navigateSettings() {
     navigate(SettingsRoute.route)
-}
-
-fun NavController.navigateWithdraw() {
-    navigate(SettingsRoute.withdraw)
 }
 
 fun NavController.navigateChangePassword() {
@@ -25,28 +20,31 @@ fun NavController.navigateSettingsNotification() {
     navigate(SettingsRoute.notification)
 }
 
+fun NavController.navigateInformation() {
+    navigate(SettingsRoute.information)
+}
+
 fun NavGraphBuilder.settingsNavGraph(
     coroutineScope: CoroutineScope,
     snackBarHostState: SnackbarHostState,
     onProfileEditClick: () -> Unit,
-    onWithdrawClick: () -> Unit,
-    onBackClick: () -> Unit,
-    bottomSheetState: ModalBottomSheetState,
-    bottomSheetContent: (@Composable () -> Unit) -> Unit,
     onBlockUsersClick: () -> Unit,
+    onBackClick: () -> Unit,
     onSettingNotificationClick: () -> Unit,
     onPasswordChangeClick: () -> Unit,
     onNoticesClick: () -> Unit,
+    onInformationClick: () -> Unit,
+    onRulesClick: (RuleType) -> Unit,
 ) {
     composable(SettingsRoute.route) {
         SettingsScreen(
             onProfileEditClick = onProfileEditClick,
-            onWithdrawClick = onWithdrawClick,
             onBackClick = onBackClick,
             onPasswordChangeClick = onPasswordChangeClick,
             onBlockUsersClick = onBlockUsersClick,
             onSettingNotificationClick = onSettingNotificationClick,
             onNoticesClick = onNoticesClick,
+            onInformationClick = onInformationClick
         )
     }
 
@@ -64,12 +62,24 @@ fun NavGraphBuilder.settingsNavGraph(
         )
     }
 
-    composable(SettingsRoute.withdraw) {
-        WithdrawScreen(
+    composable(SettingsRoute.information) {
+        AppInformationScreen(
             onBackClick = onBackClick,
-            snackBarHostState = snackBarHostState,
-            bottomSheetState = bottomSheetState,
-            bottomSheetContent = bottomSheetContent
+            onRulesClick = onRulesClick,
+        )
+    }
+
+    composable(route = RuleRoute.privacyPolicy) {
+        RuleRoute(
+            onBackClick = onBackClick,
+            ruleType = RuleType.PRIVACY_POLICY
+        )
+    }
+
+    composable(route = RuleRoute.termsAndConditions) {
+        RuleRoute(
+            onBackClick = onBackClick,
+            ruleType = RuleType.TERMS_AND_CONDITIONS
         )
     }
 }
@@ -77,7 +87,7 @@ fun NavGraphBuilder.settingsNavGraph(
 object SettingsRoute {
     const val route = "settings"
 
-    const val withdraw = "${route}/withdraw"
     const val changePassword = "${route}/changePassword"
     const val notification = "${route}/notification"
+    const val information = "${route}/information"
 }

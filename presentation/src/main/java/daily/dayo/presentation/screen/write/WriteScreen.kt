@@ -10,7 +10,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,21 +23,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Surface
+import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
@@ -51,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -65,11 +65,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.size.Size
-import com.canhub.cropper.CropImageContract
-import com.canhub.cropper.CropImageContractOptions
-import com.canhub.cropper.CropImageOptions
-import com.canhub.cropper.CropImageView
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import daily.dayo.domain.model.Category
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
@@ -87,7 +85,6 @@ import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.DayoTextButton
 import daily.dayo.presentation.view.NoRippleIconButton
-import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
 import daily.dayo.presentation.view.dialog.BottomSheetDialog
@@ -100,15 +97,16 @@ const val WRITE_POST_DETAIL_MAX_LENGTH = 200
 const val WRITE_POST_IMAGE_SIZE = 220
 const val WRITE_POST_TOP_Z_INDEX = 1f
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun WriteRoute(
     snackBarHostState: SnackbarHostState,
     onBackClick: () -> Unit,
     onTagClick: () -> Unit,
     onWriteFolderClick: () -> Unit,
+    onCropImageClick: (Int) -> Unit = {},
     writeViewModel: WriteViewModel = hiltViewModel(),
-    bottomSheetState: ModalBottomSheetState,
+    bottomSheetState: BottomSheetScaffoldState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
 ) {
     val context = LocalContext.current
@@ -117,16 +115,16 @@ internal fun WriteRoute(
         inPreferredConfig = Bitmap.Config.ARGB_8888
     }
 
-    val writeText by writeViewModel.writeText.collectAsState()
-    val processedImages by writeViewModel.writeImages.collectAsState()
-    val tags by writeViewModel.writeTags.collectAsState()
-    val folderId by writeViewModel.writeFolderId.collectAsState()
-    val folderName by writeViewModel.writeFolderName.collectAsState()
+    val writeText by writeViewModel.writeText.collectAsStateWithLifecycle()
+    val imageAssets by writeViewModel.writeImagesUri.collectAsStateWithLifecycle()
+    val tags by writeViewModel.writeTags.collectAsStateWithLifecycle()
+    val folderId by writeViewModel.writeFolderId.collectAsStateWithLifecycle()
+    val folderName by writeViewModel.writeFolderName.collectAsStateWithLifecycle()
     val writePostId by writeViewModel.writePostId.observeAsState()
-    val selectedCategory by writeViewModel.writeCategory.collectAsState() // name, index
+    val selectedCategory by writeViewModel.writeCategory.collectAsStateWithLifecycle() // name, index
     val onClickCategory: (CategoryMenu, Int) -> Unit = { categoryMenu, index ->
         writeViewModel.setPostCategory(Pair(categoryMenu.category, index))
-        coroutineScope.launch { bottomSheetState.hide() }
+        coroutineScope.launch { bottomSheetState.bottomSheetState.hide() }
     }
     val categoryMenus = listOf(
         CategoryMenu.Scheduler,
@@ -136,15 +134,15 @@ internal fun WriteRoute(
         CategoryMenu.Digital,
         CategoryMenu.ETC
     )
-    val uploadSuccess by writeViewModel.uploadSuccess.collectAsState()
+    val uploadSuccess by writeViewModel.uploadSuccess.collectAsStateWithLifecycle()
 
     BackHandler {
         onBackClick()
     }
 
-    BackHandler(enabled = bottomSheetState.isVisible) {
+    BackHandler(enabled = bottomSheetState.bottomSheetState.isVisible) {
         coroutineScope.launch {
-            bottomSheetState.hide()
+            bottomSheetState.bottomSheetState.hide()
         }
     }
 
@@ -186,17 +184,20 @@ internal fun WriteRoute(
         },
         writeText = writeText,
         addImages = { uris ->
-            writeViewModel.addAndResizeUploadImages(uris, context.contentResolver, option)
+            writeViewModel.addOriginalImages(uris)
+        },
+        editImage = { index ->
+            onCropImageClick(index)
         },
         deleteImageUri = { position ->
-            writeViewModel.removeUploadImage(position, true)
+            writeViewModel.removeUploadImage(position)
         },
         clearImages = {
             writeViewModel.clearUploadImage()
         },
-        processedImages = processedImages,
+        processedImages = imageAssets,
         navigateToCategory = {
-            coroutineScope.launch { bottomSheetState.show() }
+            coroutineScope.launch { bottomSheetState.bottomSheetState.expand() }
         },
         categoryMenus = categoryMenus,
         category = selectedCategory,
@@ -219,14 +220,14 @@ internal fun WriteRoute(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoryBottomSheetDialog(
     categoryMenus: List<CategoryMenu>,
     onCategorySelected: (CategoryMenu, Int) -> Unit,
     selectedCategory: Pair<Category?, Int>,
     coroutineScope: CoroutineScope,
-    bottomSheetState: ModalBottomSheetState
+    bottomSheetState: BottomSheetScaffoldState
 ) {
 
     BottomSheetDialog(
@@ -246,7 +247,7 @@ private fun CategoryBottomSheetDialog(
         normalColor = Gray2_767B83,
         checkedColor = Primary_23C882,
         checkedButtonIndex = selectedCategory.second,
-        closeButtonAction = { coroutineScope.launch { bottomSheetState.hide() } }
+        closeButtonAction = { coroutineScope.launch { bottomSheetState.bottomSheetState.hide() } }
     )
 }
 
@@ -258,9 +259,10 @@ fun WriteScreen(
     setWriteText: (String) -> Unit,
     writeText: String,
     addImages: (List<Uri>) -> Unit,
+    editImage: (Int) -> Unit = {},
     deleteImageUri: (Int) -> Unit,
     clearImages: () -> Unit = {},
-    processedImages: List<Bitmap>,
+    processedImages: List<ImageAsset>,
     navigateToCategory: () -> Unit,
     categoryMenus: List<CategoryMenu>,
     category: Pair<Category?, Int> = Pair(null, -1),
@@ -273,43 +275,17 @@ fun WriteScreen(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
-    var selectedUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
-    var currentImageIndex by remember { mutableStateOf(0) }
-    var isCropping by remember { mutableStateOf(false) }
-    val croppedUris = remember { mutableStateListOf<Uri>() } // 임시 리스트
+    val selectedUris = remember { mutableStateListOf<Uri>() }
 
     // 이미지 선택 런처
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenMultipleDocuments(),
         onResult = { uris ->
             if (uris.isNotEmpty()) {
-                selectedUris = uris
-                currentImageIndex = 0
-                croppedUris.clear() // 임시 리스트 초기화
+                selectedUris.addAll(uris)
                 clearImages()
-                isCropping = true
+                addImages(uris)
             } else {
-                isCropping = false
-                onBackClick.invoke()
-            }
-        }
-    )
-
-    // 이미지 크롭 런처
-    val cropImageLauncher = rememberLauncherForActivityResult(
-        contract = CropImageContract(),
-        onResult = { result ->
-            if (result.isSuccessful) {
-                result.uriContent?.let { croppedUri ->
-                    croppedUris.add(croppedUri) // 임시 리스트에 추가
-                }
-                currentImageIndex += 1
-                if (currentImageIndex >= selectedUris.size) {
-                    isCropping = false
-                    addImages(croppedUris)
-                }
-            } else {
-                isCropping = false
                 onBackClick.invoke()
             }
         }
@@ -318,27 +294,6 @@ fun WriteScreen(
     LaunchedEffect(Unit) {
         if (processedImages.isEmpty()) {
             imagePickerLauncher.launch(arrayOf("image/*"))
-        }
-    }
-
-    // 크롭 진행 중인 경우
-    if (isCropping && currentImageIndex < selectedUris.size) {
-        val uri = selectedUris[currentImageIndex]
-        LaunchedEffect(uri) {
-            val options = CropImageContractOptions(
-                uri = uri,
-                cropImageOptions = CropImageOptions(
-                    cropShape = CropImageView.CropShape.RECTANGLE,
-                    outputCompressFormat = Bitmap.CompressFormat.JPEG,
-                    outputCompressQuality = 100,
-                    fixAspectRatio = true,
-                    aspectRatioX = 1,
-                    aspectRatioY = 1,
-                    activityTitle = ContextCompat.getString(context, R.string.write_post_image_crop_title),
-                    cropMenuCropButtonTitle = ContextCompat.getString(context, R.string.complete),
-                )
-            )
-            cropImageLauncher.launch(options)
         }
     }
 
@@ -356,7 +311,8 @@ fun WriteScreen(
             )
             WriteUploadImages(
                 images = processedImages,
-                deleteImage = { index -> deleteImageUri(index) }
+                deleteImage = { index -> deleteImageUri(index) },
+                onEditImage = { index -> editImage(index) },
             )
             WritePostDetail(
                 setWriteText = setWriteText,
@@ -414,20 +370,72 @@ fun WriteScreen(
 }
 
 @Composable
-fun WriteUploadImages(images: List<Bitmap>, deleteImage: (Int) -> Unit = {}) {
+fun WriteUploadImages(
+    images: List<ImageAsset>,
+    deleteImage: (Int) -> Unit,
+    onEditImage: (Int) -> Unit,
+) {
     LazyRow(
         contentPadding = PaddingValues(start = 18.dp, end = 18.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.height(WRITE_POST_IMAGE_SIZE.dp)
     ) {
-        itemsIndexed(items = images, key = { index, uri -> uri.hashCode() }) { index, image ->
+        itemsIndexed(
+            items = images,
+            key = { _, imageAsset -> imageAsset.uriString }
+        ) { index, imageAsset ->
+            val context = LocalContext.current
+
+            // 캐시 키를 uri, 수정시간, EXIF 정보로 지정해 이미지 편집하는 경우 갱신될수 있도록 수정
+            val cacheKey = "${imageAsset.uriString}-${imageAsset.lastModified}-${imageAsset.exifInfo?.orientation ?: "none"}"
+            val imageRequest = ImageRequest.Builder(context)
+                .data(imageAsset.uriString)
+                .memoryCacheKey(cacheKey)
+                .diskCacheKey(cacheKey)
+                .crossfade(true)
+                .build()
+
             Box(modifier = Modifier.size(WRITE_POST_IMAGE_SIZE.dp)) {
-                RoundImageView(
-                    context = LocalContext.current,
-                    imageUrl = image,
-                    modifier = Modifier.size(WRITE_POST_IMAGE_SIZE.dp),
-                    imageSize = Size(WRITE_POST_IMAGE_SIZE, WRITE_POST_IMAGE_SIZE)
+                AsyncImage(
+                    model = imageRequest,
+                    contentDescription = "업로드 이미지 $index",
+                    modifier = Modifier
+                        .size(WRITE_POST_IMAGE_SIZE.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
                 )
+                Surface(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(start = 16.dp, bottom = 16.dp),
+                    shape = RoundedCornerShape(99.dp),
+                    color = Dark,
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .width(112.dp)
+                            .height(36.dp)
+                            .clickable {
+                                onEditImage(index)
+                            }
+                            .padding(horizontal = 12.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_crop),
+                            contentDescription = "edit image",
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = stringResource(R.string.write_post_image_edit),
+                            style = DayoTheme.typography.b5,
+                            color = White_FFFFFF,
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                    }
+                }
                 if (images.size == WRITE_POST_IMAGE_MIN_SIZE) return@itemsIndexed
 
                 Image(

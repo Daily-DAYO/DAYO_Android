@@ -13,6 +13,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.image.ImageResizeUtil.cropCenterBitmap
 import daily.dayo.presentation.common.toFile
+import daily.dayo.presentation.screen.account.model.CheckOAuthEmailStatus
+import daily.dayo.presentation.screen.account.model.EmailExistenceStatus
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +35,7 @@ class AccountViewModel @Inject constructor(
     private val requestResignUseCase: RequestResignUseCase,
     private val requestSignOutUseCase: RequestSignOutUseCase,
     private val requestCheckEmailUseCase: RequestCheckEmailUseCase,
+    private val requestCheckOAuthEmailUseCase: RequestCheckOAuthEmailUseCase,
     private val requestCertificateEmailPasswordResetUseCase: RequestCertificateEmailPasswordResetUseCase,
     private val requestCheckCurrentPasswordUseCase: RequestCheckCurrentPasswordUseCase,
     private val requestChangePasswordUseCase: RequestChangePasswordUseCase,
@@ -75,8 +78,11 @@ class AccountViewModel @Inject constructor(
     private val _signOutSuccess = MutableStateFlow<Status?>(null)
     val signOutSuccess: StateFlow<Status?> get() = _signOutSuccess
 
-    private val _checkEmailSuccess = MutableStateFlow<Status>(Status.LOADING)
-    val checkEmailSuccess: StateFlow<Status> get() = _checkEmailSuccess
+    private val _checkEmailSuccess = MutableStateFlow<EmailExistenceStatus>(EmailExistenceStatus.IDLE)
+    val checkEmailSuccess: StateFlow<EmailExistenceStatus> get() = _checkEmailSuccess
+
+    private val _checkOAuthEmailSuccess = MutableStateFlow<CheckOAuthEmailStatus>(CheckOAuthEmailStatus.LOADING)
+    val checkOAuthEmailSuccess: StateFlow<CheckOAuthEmailStatus> get() = _checkOAuthEmailSuccess
 
     private val _resetPasswordSuccess = MutableStateFlow<Status?>(null)
     val resetPasswordSuccess: StateFlow<Status?> get() = _resetPasswordSuccess
@@ -364,22 +370,53 @@ class AccountViewModel @Inject constructor(
     }
 
     fun requestCheckEmail(inputEmail: String) = viewModelScope.launch {
-        _checkEmailSuccess.emit(Status.LOADING)
+        _checkEmailSuccess.emit(EmailExistenceStatus.LOADING)
         requestCheckEmailUseCase(email = inputEmail).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _checkEmailSuccess.emit(Status.SUCCESS)
+                    _checkEmailSuccess.emit(EmailExistenceStatus.EXISTS)
                 }
 
                 is NetworkResponse.NetworkError -> {
-                    _checkEmailSuccess.emit(Status.ERROR)
+                    _checkEmailSuccess.emit(EmailExistenceStatus.ERROR)
                 }
 
                 is NetworkResponse.ApiError -> {
-                    _checkEmailSuccess.emit(Status.ERROR)
+                    if (ApiResponse.code == 404) {
+                        _checkEmailSuccess.emit(EmailExistenceStatus.NOT_EXISTS)
+                    } else {
+                        _checkEmailSuccess.emit(EmailExistenceStatus.ERROR)
+                    }
+                }
+                is NetworkResponse.UnknownError -> {
+                    _checkEmailSuccess.emit(EmailExistenceStatus.ERROR)
+                }
+            }
+        }
+    }
+
+    fun requestCheckOAuthEmail(inputEmail: String) = viewModelScope.launch {
+        _checkOAuthEmailSuccess.emit(CheckOAuthEmailStatus.LOADING)
+        requestCheckOAuthEmailUseCase(email = inputEmail).let { ApiResponse ->
+            when (ApiResponse) {
+                is NetworkResponse.Success -> {
+                    _checkOAuthEmailSuccess.emit(CheckOAuthEmailStatus.NORMAL_EMAIL)
                 }
 
-                else -> {}
+                is NetworkResponse.NetworkError -> {
+                    _checkOAuthEmailSuccess.emit(CheckOAuthEmailStatus.ERROR)
+                }
+
+                is NetworkResponse.ApiError -> {
+                    if (ApiResponse.code == 400) {
+                        _checkOAuthEmailSuccess.emit(CheckOAuthEmailStatus.OAUTH_ACCOUNT)
+                    } else {
+                        _checkOAuthEmailSuccess.emit(CheckOAuthEmailStatus.ERROR)
+                    }
+                }
+                is NetworkResponse.UnknownError -> {
+                    _checkOAuthEmailSuccess.emit(CheckOAuthEmailStatus.ERROR)
+                }
             }
         }
     }

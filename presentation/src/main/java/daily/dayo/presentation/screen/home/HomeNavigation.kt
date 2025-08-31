@@ -2,6 +2,8 @@ package daily.dayo.presentation.screen.home
 
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -12,13 +14,13 @@ fun NavController.navigateHome() {
     this.navigate(HomeRoute.route)
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.homeNavGraph(
     onPostClick: (Long) -> Unit,
     onProfileClick: (String) -> Unit,
     onSearchClick: () -> Unit,
     coroutineScope: CoroutineScope,
-    bottomSheetState: ModalBottomSheetState,
+    bottomSheetState: BottomSheetScaffoldState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit
 ) {
     composable(HomeRoute.route) {
