@@ -31,6 +31,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import daily.dayo.domain.model.FolderInfo
 import daily.dayo.domain.model.Privacy
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.constant.FolderConstants.FOLDER_DESCRIPTION_MAX_LENGTH
+import daily.dayo.presentation.common.constant.FolderConstants.FOLDER_NAME_MAX_LENGTH
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog.createLoadingDialog
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog.hideLoadingDialog
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog.resizeDialogFragment
@@ -43,8 +45,6 @@ import daily.dayo.presentation.view.DayoTextField
 import daily.dayo.presentation.view.ToggleButtonWithLabel
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
-import daily.dayo.presentation.viewmodel.FOLDER_DESCRIPTION_MAX_LENGTH
-import daily.dayo.presentation.viewmodel.FOLDER_NAME_MAX_LENGTH
 import daily.dayo.presentation.viewmodel.FolderViewModel
 
 @Composable

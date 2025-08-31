@@ -13,6 +13,7 @@ fun AlarmDto.toNotification(): Notification {
         image = image,
         nickname = nickname,
         memberId = memberId,
-        postId = postId
+        postId = postId,
+        profileImage = profileImage,
     )
 }

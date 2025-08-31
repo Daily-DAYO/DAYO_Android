@@ -3,8 +3,8 @@ package daily.dayo.presentation.screen.account
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -18,7 +18,7 @@ import androidx.navigation.compose.NavHost
 import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AccountScreen(
     navigator: AccountNavigator = rememberAccountNavigator()
@@ -48,6 +48,7 @@ internal fun AccountScreen(
                                 snackBarHostState = snackBarHostState,
                                 navController = navigator.navController,
                                 onBackClick = { navigator.popBackStack() },
+                                navigateToSignIn = { navigator.navigateSignIn() },
                                 navigateToSignInEmail = { navigator.navigateSignInEmail() },
                                 navigateToResetPassword = { navigator.navigateResetPassword() },
                                 navigateToSignUpEmail = { navigator.navigateSignUpEmail() },

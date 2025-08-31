@@ -1,5 +1,6 @@
 package daily.dayo.presentation.screen.search
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -66,6 +67,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -101,10 +103,15 @@ internal fun SearchResultRoute(
     onBackClick: () -> Unit,
     onPostClick: (Long) -> Unit,
     onClickProfile: (String) -> Unit,
+    navController: NavController,
     searchViewModel: SearchViewModel = hiltViewModel(),
     followViewModel: FollowViewModel = hiltViewModel(),
-    accountViewModel: AccountViewModel = hiltViewModel()
+    accountViewModel: AccountViewModel = hiltViewModel(),
 ) {
+    BackHandler {
+        onBackClick()
+    }
+
     val searchKeywordResultsTag = searchViewModel.searchTagList.collectAsLazyPagingItems()
     val searchKeywordResultsUser = searchViewModel.searchUserList.collectAsLazyPagingItems()
     val searchKeywordResultsTagTotalCount by searchViewModel.searchTagTotalCount.collectAsStateWithLifecycle(
@@ -132,9 +139,12 @@ internal fun SearchResultRoute(
         searchKeywordResultsUserTotalCount = searchKeywordResultsUserTotalCount,
         onBackClick = onBackClick,
         onPostClick = onPostClick,
-        onSearchClick = { keyword ->
-            searchViewModel.searchKeyword(keyword, SearchHistoryType.TAG)
-            searchViewModel.searchKeyword(keyword, SearchHistoryType.USER)
+        onSearchClick = { newKeyword ->
+            navController.navigate(SearchRoute.resultSearch(newKeyword)) {
+                launchSingleTop = true
+                popUpTo(SearchRoute.route) { inclusive = false } // 이전 결과 화면 스택에서 제거
+                restoreState = true
+            }
         },
         onFollowClick = { memberId, isFollower ->
             followViewModel.requestFollow(
@@ -205,7 +215,6 @@ fun SearchResultScreen(
                 initialKeyword = searchKeyword,
                 onBackClick = onBackClick,
                 onSearchClick = { keyword ->
-                    onSearchClick(keyword)
                     onSearchClick(keyword)
                 }
             )
@@ -318,6 +327,7 @@ fun SearchResultEmpty() {
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_search_empty),
             contentDescription = "search tag empty"
         )
+        Spacer(modifier = Modifier.height(20.dp))
         Text(
             text = stringResource(R.string.search_result_empty_title),
             style = DayoTheme.typography.b3

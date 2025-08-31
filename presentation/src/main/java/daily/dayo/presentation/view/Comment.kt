@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,16 +22,19 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TextFieldDefaults.TextFieldDecorationBox
+import androidx.compose.material.TextFieldDefaults.textFieldColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,11 +71,14 @@ import daily.dayo.presentation.common.TimeChangerUtil
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
+import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.Gray7_F6F6F7
+import daily.dayo.presentation.theme.PrimaryL1_8FD9B9
+import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
 
@@ -205,8 +212,9 @@ fun CommentView(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // comment nickname
-                    Text(text = comment.nickname,
-                        style = DayoTheme.typography.caption2.copy(Dark),
+                    Text(
+                        text = comment.nickname,
+                        style = DayoTheme.typography.caption3.copy(Gray1_50545B),
                         modifier = Modifier
                             .clickableSingle(
                                 indication = null,
@@ -219,7 +227,7 @@ fun CommentView(
                     // comment create time
                     Text(
                         text = TimeChangerUtil.timeChange(context = LocalContext.current, time = comment.createTime),
-                        style = DayoTheme.typography.caption5.copy(Gray4_C5CAD2)
+                        style = DayoTheme.typography.caption6.copy(Gray4_C5CAD2)
                     )
                 }
 
@@ -252,21 +260,21 @@ fun CommentView(
                         Spacer(Modifier.width(3.dp))
                         Text(
                             text = "답글쓰기",
-                            style = DayoTheme.typography.b6.copy(Gray3_9FA5AE),
+                            style = DayoTheme.typography.caption4.copy(Gray3_9FA5AE),
                         )
                         Spacer(Modifier.width(8.dp))
                     }
 
                     Text(
                         text = "•",
-                        style = DayoTheme.typography.b6.copy(Gray3_9FA5AE)
+                        style = DayoTheme.typography.caption4.copy(Gray3_9FA5AE)
                     )
                     Spacer(Modifier.width(8.dp))
 
                     // comment option
                     Text(
                         text = if (isMine) "삭제" else "신고",
-                        style = DayoTheme.typography.b6.copy(Gray3_9FA5AE),
+                        style = DayoTheme.typography.caption4.copy(Gray3_9FA5AE),
                         modifier = Modifier
                             .clickableSingle(
                                 indication = ripple(bounded = false, radius = 8.dp),
@@ -375,7 +383,7 @@ fun CommentReplyDescriptionView(replyCommentState: MutableState<Pair<Long, Comme
             )
             Text(
                 text = "님에게 답글 남기는 중",
-                style = DayoTheme.typography.caption4.copy(Color(0xFF50545B))
+                style = DayoTheme.typography.caption4.copy(Gray1_50545B)
             )
             Spacer(modifier = Modifier.weight(1f))
             DayoTextButton(
@@ -390,6 +398,7 @@ fun CommentReplyDescriptionView(replyCommentState: MutableState<Pair<Long, Comme
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CommentTextField(
+    enabled: Boolean,
     commentText: MutableState<TextFieldValue>,
     replyCommentState: MutableState<Pair<Long, Comment>?>,
     userSearchKeyword: MutableState<String>,
@@ -455,10 +464,6 @@ fun CommentTextField(
             modifier = Modifier
                 .padding(end = 8.dp)
                 .heightIn(min = 36.dp)
-                .background(
-                    color = Gray7_F6F6F7,
-                    shape = RoundedCornerShape(12.dp)
-                )
                 .weight(1f)
                 .focusRequester(focusRequester),
             textStyle = DayoTheme.typography.b6,
@@ -473,21 +478,30 @@ fun CommentTextField(
                     visualTransformation = VisualTransformation.None,
                     interactionSource = interactionSource,
                     placeholder = { Text(text = "댓글을 남겨주세요", style = DayoTheme.typography.b6.copy(Gray4_C5CAD2)) },
+                    shape = DayoTheme.shapes.small.copy(all = CornerSize(12.dp)),
+                    colors = textFieldColors(backgroundColor = Gray7_F6F6F7),
                     contentPadding = TextFieldDefaults.textFieldWithLabelPadding(top = 8.dp, bottom = 8.dp, start = 12.dp)
                 )
             }
         )
 
-        Text(
-            text = stringResource(R.string.comment_button_text),
-            textAlign = TextAlign.Center,
-            style = DayoTheme.typography.b5.copy(color = White_FFFFFF, fontWeight = FontWeight.SemiBold),
+        Box(
             modifier = Modifier
                 .defaultMinSize(minWidth = 64.dp, minHeight = 36.dp)
-                .background(Primary_23C882, shape = RoundedCornerShape(8.dp))
-                .clickableSingle { onClickPostComment() }
-                .padding(vertical = 8.dp, horizontal = 12.dp)
-        )
+                .clip(RoundedCornerShape(12.dp))
+                .background(color = if (enabled) Primary_23C882 else PrimaryL1_8FD9B9)
+                .clickableSingle(enabled = enabled) { onClickPostComment() }
+                .padding(vertical = 8.dp, horizontal = 12.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = stringResource(R.string.comment_button_text),
+                color = if (enabled) White_FFFFFF else PrimaryL3_F2FBF7,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center,
+                style = DayoTheme.typography.b5
+            )
+        }
     }
 }
 
@@ -510,5 +524,24 @@ private fun PreviewCommentView() {
             .padding(12.dp)
             .fillMaxWidth()
             .wrapContentHeight()
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewCommentTextField() {
+    val commentText = remember { mutableStateOf(TextFieldValue("")) }
+    val replyCommentState = remember { mutableStateOf<Pair<Long, Comment>?>(null) } // parent comment Id, reply comment
+    val userSearchKeyword = remember { mutableStateOf("") }
+    val showMentionSearchView = remember { mutableStateOf(false) }
+    val commentFocusRequester = FocusRequester()
+    CommentTextField(
+        enabled = commentText.value.text.isNotBlank(),
+        commentText = commentText,
+        replyCommentState = replyCommentState,
+        userSearchKeyword = userSearchKeyword,
+        showMentionSearchView = showMentionSearchView,
+        focusRequester = commentFocusRequester,
+        onClickPostComment = { }
     )
 }

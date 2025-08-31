@@ -11,7 +11,6 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
@@ -26,12 +25,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
+import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -72,7 +71,6 @@ import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray6_F0F1F3
-import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.BadgeRoundImageView
 import daily.dayo.presentation.view.DayoTextField
 import daily.dayo.presentation.view.TopNavigation
@@ -85,7 +83,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.regex.Pattern
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MyPageEditScreen(
     onBackClick: () -> Unit,
@@ -166,19 +164,19 @@ internal fun MyPageEditScreen(
         onClickProfileSelect = {
             coroutineScope.launch {
                 showProfileGallery = true
-                bottomSheetState.hide()
+                bottomSheetState.bottomSheetState.hide()
             }
         },
         onClickProfileCapture = {
             coroutineScope.launch {
                 showProfileCapture = true
-                bottomSheetState.hide()
+                bottomSheetState.bottomSheetState.hide()
             }
         },
         onClickProfileReset = {
             modifiedProfileImage.value = ""
             coroutineScope.launch {
-                bottomSheetState.hide()
+                bottomSheetState.bottomSheetState.hide()
             }
         },
         onBackClick = onBackClick,
@@ -197,13 +195,13 @@ internal fun MyPageEditScreen(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun MyPageEditScreen(
     profileInfo: MutableState<Profile?>,
     modifiedProfileImage: String,
     nickNameErrorMessage: String,
-    bottomSheetState: ModalBottomSheetState,
+    bottomSheetState: BottomSheetScaffoldState,
     onClickProfileSelect: () -> Unit,
     onClickProfileCapture: () -> Unit,
     onClickProfileReset: () -> Unit,
@@ -253,7 +251,7 @@ private fun MyPageEditScreen(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
                             onClick = {
-                                coroutineScope.launch { bottomSheetState.show() }
+                                coroutineScope.launch { bottomSheetState.bottomSheetState.expand() }
                             }
                         )
                 )
@@ -342,10 +340,10 @@ private fun MyPageEditTopNavigation(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProfileImageBottomSheetDialog(
-    bottomSheetState: ModalBottomSheetState,
+    bottomSheetState: BottomSheetScaffoldState,
     onClickProfileSelect: () -> Unit,
     onClickProfileCapture: () -> Unit,
     onClickProfileReset: () -> Unit,
@@ -474,7 +472,7 @@ fun bitmapToUri(context: Context, bitmap: Bitmap): Uri? {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 internal fun PreviewMyPageEditScreen() {

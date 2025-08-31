@@ -136,6 +136,7 @@ fun NotificationContent(
                     nickname = "",
                     memberId = "",
                     postId = 0,
+                    profileImage = "",
                 )
             )
         )
@@ -310,6 +311,7 @@ fun NotificationView(
         nickname = "",
         memberId = "",
         postId = 0,
+        profileImage = "",
     ),
     context: Context = LocalContext.current,
     onClick: () -> Unit = {},
@@ -353,7 +355,7 @@ fun NotificationView(
             modifier = Modifier.weight(1f),
         ) {
             RoundImageView(
-                imageUrl = "", // TODO USER IMAGE Format: ${BuildConfig.BASE_URL}/images/
+                imageUrl = "${BuildConfig.BASE_URL}/images/${notification.profileImage}",
                 context = context,
                 modifier = Modifier
                     .size(28.dp)
