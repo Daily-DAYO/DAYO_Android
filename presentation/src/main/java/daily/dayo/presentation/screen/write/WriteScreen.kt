@@ -70,6 +70,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import daily.dayo.domain.model.Category
+import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.extension.clickableSingle
@@ -111,6 +112,7 @@ internal fun WriteRoute(
     bottomSheetState: BottomSheetScaffoldState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
 ) {
+    val isPostEditMode = postId != null
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val option = BitmapFactory.Options().apply {
@@ -119,6 +121,7 @@ internal fun WriteRoute(
 
     val writeText by writeViewModel.writeText.collectAsStateWithLifecycle()
     val imageAssets by writeViewModel.writeImagesUri.collectAsStateWithLifecycle()
+    val postImages by writeViewModel.postImages.collectAsStateWithLifecycle()
     val tags by writeViewModel.writeTags.collectAsStateWithLifecycle()
     val folderId by writeViewModel.writeFolderId.collectAsStateWithLifecycle()
     val folderName by writeViewModel.writeFolderName.collectAsStateWithLifecycle()
@@ -149,10 +152,9 @@ internal fun WriteRoute(
     }
 
     LaunchedEffect(postId) {
-        if (postId != null) {
-            // viewModel에서 현재 게시글 정보 갱신
+        if (isPostEditMode) {
             // TODO 로딩, 게시글 정보를 불러올 수 없는 경우 뒤로가기
-            writeViewModel.requestPostDetail(postId, categoryMenus)
+            writeViewModel.requestPostDetail(postId!!, categoryMenus)
         }
     }
 
@@ -182,6 +184,8 @@ internal fun WriteRoute(
     }
 
     WriteScreen(
+        isPostEditMode = isPostEditMode,
+        postImages = postImages,
         context = context,
         onBackClick = onBackClick,
         onUploadClick = {
@@ -263,6 +267,8 @@ private fun CategoryBottomSheetDialog(
 
 @Composable
 fun WriteScreen(
+    isPostEditMode: Boolean,
+    postImages: List<String>,
     context: Context = LocalContext.current,
     onBackClick: () -> Unit,
     onUploadClick: () -> Unit,
@@ -302,7 +308,7 @@ fun WriteScreen(
     )
 
     LaunchedEffect(Unit) {
-        if (processedImages.isEmpty()) {
+        if (!isPostEditMode && processedImages.isEmpty()) {
             imagePickerLauncher.launch(arrayOf("image/*"))
         }
     }
@@ -315,15 +321,26 @@ fun WriteScreen(
             modifier = Modifier.fillMaxHeight()
         ) {
             WriteActionbarLayout(
-                onBackClick,
-                onUploadClick,
-                isUploadEnable = processedImages.isNotEmpty() && category.first != null && folderId != null && folderName != null
+                title = if (isPostEditMode) stringResource(R.string.write_post_edit_title) else stringResource(R.string.write_post_title),
+                rightText = if (isPostEditMode) stringResource(R.string.save) else stringResource(R.string.write_post_upload),
+                onBackClick = onBackClick,
+                onUploadClick = onUploadClick,
+                isUploadEnable =
+                    if (isPostEditMode) {
+                        postImages.isNotEmpty() && category.first != null && folderId != null && folderName != null
+                    } else {
+                        processedImages.isNotEmpty() && category.first != null && folderId != null && folderName != null
+                    }
             )
-            WriteUploadImages(
-                images = processedImages,
-                deleteImage = { index -> deleteImageUri(index) },
-                onEditImage = { index -> editImage(index) },
-            )
+            if (isPostEditMode) {
+                PostEditImages(images = postImages)
+            } else {
+                WriteUploadImages(
+                    images = processedImages,
+                    deleteImage = { index -> deleteImageUri(index) },
+                    onEditImage = { index -> editImage(index) },
+                )
+            }
             WritePostDetail(
                 setWriteText = setWriteText,
                 writeText = writeText
@@ -375,6 +392,37 @@ fun WriteScreen(
                         // DO NOTHING FOR BLOCKING CLICK
                     }
             )
+        }
+    }
+}
+
+@Composable
+fun PostEditImages(images: List<String>) {
+    LazyRow(
+        contentPadding = PaddingValues(start = 18.dp, end = 18.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.height(WRITE_POST_IMAGE_SIZE.dp)
+    ) {
+        itemsIndexed(
+            items = images,
+            key = { _, image -> image }
+        ) { index, image ->
+            val context = LocalContext.current
+            val imageRequest = ImageRequest.Builder(context)
+                .data("${BuildConfig.BASE_URL}/images/${image}")
+                .crossfade(true)
+                .build()
+
+            Box(modifier = Modifier.size(WRITE_POST_IMAGE_SIZE.dp)) {
+                AsyncImage(
+                    model = imageRequest,
+                    contentDescription = "post image $index",
+                    modifier = Modifier
+                        .size(WRITE_POST_IMAGE_SIZE.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
     }
 }
@@ -466,12 +514,14 @@ fun WriteUploadImages(
 
 @Composable
 fun WriteActionbarLayout(
+    title: String,
+    rightText: String,
     onBackClick: () -> Unit,
     onUploadClick: () -> Unit,
     isUploadEnable: Boolean = false
 ) {
     TopNavigation(
-        title = stringResource(R.string.write_post_title),
+        title = title,
         leftIcon = {
             NoRippleIconButton(
                 onClick = {
@@ -484,7 +534,7 @@ fun WriteActionbarLayout(
         rightIcon = {
             DayoTextButton(
                 onClick = { if (isUploadEnable) onUploadClick() },
-                text = stringResource(R.string.write_post_upload),
+                text = rightText,
                 textStyle = DayoTheme.typography.b3.copy(
                     textAlign = TextAlign.Center,
                     color = if (isUploadEnable) Primary_23C882 else Gray5_E8EAEE
