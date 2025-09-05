@@ -55,6 +55,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -144,6 +145,14 @@ internal fun WriteRoute(
     BackHandler(enabled = bottomSheetState.bottomSheetState.isVisible) {
         coroutineScope.launch {
             bottomSheetState.bottomSheetState.hide()
+        }
+    }
+
+    LaunchedEffect(postId) {
+        if (postId != null) {
+            // viewModel에서 현재 게시글 정보 갱신
+            // TODO 로딩, 게시글 정보를 불러올 수 없는 경우 뒤로가기
+            writeViewModel.requestPostDetail(postId, categoryMenus)
         }
     }
 
@@ -494,6 +503,15 @@ fun WritePostDetail(
     writeText: String = ""
 ) {
     var writeContentValue by remember { mutableStateOf(TextFieldValue(writeText)) }
+    LaunchedEffect(writeText) {
+        if (writeText != writeContentValue.text) {
+            writeContentValue = TextFieldValue(
+                text = writeText,
+                selection = TextRange(writeText.length)
+            )
+        }
+    }
+
     Column(
         modifier = Modifier
             .padding(top = 20.dp, start = 20.dp, end = 20.dp)
