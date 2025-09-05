@@ -100,6 +100,7 @@ const val WRITE_POST_TOP_Z_INDEX = 1f
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun WriteRoute(
+    postId: Long?,
     snackBarHostState: SnackbarHostState,
     onBackClick: () -> Unit,
     onTagClick: () -> Unit,
