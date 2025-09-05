@@ -73,8 +73,6 @@ class WriteViewModel @Inject constructor(
     // WriteInfo
     private val _postId: MutableLiveData<Long?> = MutableLiveData(null)
     val postId get() = _postId
-    private val _postCategory = MutableLiveData<Category?>(null)
-    val postCategory get() = _postCategory
     private val _writeCategory = MutableStateFlow<Pair<Category?, Int>>(Pair(null, -1))
     val writeCategory get() = _writeCategory
     private val _writeText = MutableStateFlow("")
@@ -85,6 +83,8 @@ class WriteViewModel @Inject constructor(
     val writeFolderName get() = _writeFolderName
     private val _writeImagesUri = MutableStateFlow<List<ImageAsset>>(emptyList())
     val writeImagesUri = _writeImagesUri.asStateFlow()
+    private val _postImages = MutableStateFlow<List<String>>(emptyList())
+    val postImages = _postImages.asStateFlow()
     private val _writeTags = MutableStateFlow(emptyList<String>())
     val writeTags get() = _writeTags
 
@@ -261,9 +261,8 @@ class WriteViewModel @Inject constructor(
                             setWriteText(contents)
                             setFolderId(folderId)
                             setFolderName(folderName)
-                            // TODO 가져올 정보
-                            // setImages
-                            // setHashtags
+                            updatePostTags(hashtags)
+                            setPostEditImages(images)
                         }
                     }
 
@@ -284,7 +283,6 @@ class WriteViewModel @Inject constructor(
     }
 
     fun setPostCategory(category: Pair<Category?, Int>) = viewModelScope.launch {
-        _postCategory.value = category.first
         _writeCategory.emit(category)
     }
 
@@ -294,6 +292,12 @@ class WriteViewModel @Inject constructor(
 
     fun setFolderName(name: String) = viewModelScope.launch {
         _writeFolderName.emit(name)
+    }
+
+    private fun setPostEditImages(images: List<String>) {
+        viewModelScope.launch {
+            _postImages.emit(images)
+        }
     }
 
     /**
@@ -415,7 +419,7 @@ class WriteViewModel @Inject constructor(
         }
     }
 
-    fun updatePostTags(tagTextList: List<String>, notify: Boolean = false) = viewModelScope.launch {
+    fun updatePostTags(tagTextList: List<String>) = viewModelScope.launch {
         _writeTags.emit(tagTextList)
     }
 }
