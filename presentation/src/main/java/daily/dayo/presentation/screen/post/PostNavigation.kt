@@ -17,6 +17,7 @@ fun NavController.navigatePostLikeUsers(postId: Long) {
 
 fun NavGraphBuilder.postNavGraph(
     snackBarHostState: SnackbarHostState,
+    onPostEditClick: (Long) -> Unit,
     onProfileClick: (String) -> Unit,
     onPostLikeUsersClick: (Long) -> Unit,
     onPostHashtagClick: (String) -> Unit,
@@ -34,6 +35,7 @@ fun NavGraphBuilder.postNavGraph(
             PostScreen(
                 postId = postId,
                 snackBarHostState = snackBarHostState,
+                onPostEditClick = onPostEditClick,
                 onProfileClick = onProfileClick,
                 onPostLikeUsersClick = onPostLikeUsersClick,
                 onPostHashtagClick = onPostHashtagClick,

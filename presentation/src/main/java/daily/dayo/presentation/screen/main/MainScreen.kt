@@ -131,6 +131,7 @@ internal fun MainScreen(
                     )
                     postNavGraph(
                         snackBarHostState = snackBarHostState,
+                        onPostEditClick = { navigator.navigatePostEdit(it) },
                         onProfileClick = { memberId ->
                             navigator.navigateProfile(
                                 currentMemberId,
