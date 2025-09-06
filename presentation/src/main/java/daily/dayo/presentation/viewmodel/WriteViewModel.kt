@@ -87,6 +87,8 @@ class WriteViewModel @Inject constructor(
     val postImages = _postImages.asStateFlow()
     private val _writeTags = MutableStateFlow(emptyList<String>())
     val writeTags get() = _writeTags
+    private val _postInfoSuccess = MutableSharedFlow<Boolean>()
+    val postInfoSuccess = _postInfoSuccess.asSharedFlow()
 
     // WritePost
     private val _writePostId = MutableLiveData<Event<Long>>()
@@ -271,7 +273,7 @@ class WriteViewModel @Inject constructor(
                     }
 
                     else -> {
-                        // TODO 정보를 불러오지 못했을 경우 처리
+                        _postInfoSuccess.emit(false)
                     }
                 }
             }
