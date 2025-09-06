@@ -141,6 +141,7 @@ internal fun WriteRoute(
         CategoryMenu.ETC
     )
     val uploadSuccess by writeViewModel.uploadSuccess.collectAsStateWithLifecycle()
+    val postInfoSuccess by writeViewModel.postInfoSuccess.collectAsStateWithLifecycle(null)
 
     BackHandler {
         onBackClick()
@@ -153,11 +154,8 @@ internal fun WriteRoute(
     }
 
     LaunchedEffect(postId) {
-        if (isPostEditMode) {
-            // TODO 로딩, 게시글 정보를 불러올 수 없는 경우 뒤로가기
-            if (postEditId == null) {
-                writeViewModel.requestPostDetail(postId!!, categoryMenus)
-            }
+        if (isPostEditMode && postEditId == null) {
+            writeViewModel.requestPostDetail(postId!!, categoryMenus)
         }
     }
 
@@ -183,6 +181,15 @@ internal fun WriteRoute(
             }
 
             null -> {}
+        }
+    }
+
+    LaunchedEffect(postInfoSuccess) {
+        if (postInfoSuccess == false) {
+            launch {
+                snackBarHostState.showSnackbar(ContextCompat.getString(context, R.string.write_post_edit_state_fail))
+            }
+            onBackClick()
         }
     }
 
