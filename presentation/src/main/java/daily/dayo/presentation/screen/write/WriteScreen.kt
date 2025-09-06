@@ -119,6 +119,7 @@ internal fun WriteRoute(
         inPreferredConfig = Bitmap.Config.ARGB_8888
     }
 
+    val postEditId by writeViewModel.postEditId.collectAsStateWithLifecycle()
     val writeText by writeViewModel.writeText.collectAsStateWithLifecycle()
     val imageAssets by writeViewModel.writeImagesUri.collectAsStateWithLifecycle()
     val postImages by writeViewModel.postImages.collectAsStateWithLifecycle()
@@ -154,7 +155,9 @@ internal fun WriteRoute(
     LaunchedEffect(postId) {
         if (isPostEditMode) {
             // TODO 로딩, 게시글 정보를 불러올 수 없는 경우 뒤로가기
-            writeViewModel.requestPostDetail(postId!!, categoryMenus)
+            if (postEditId == null) {
+                writeViewModel.requestPostDetail(postId!!, categoryMenus)
+            }
         }
     }
 
