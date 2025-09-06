@@ -97,8 +97,6 @@ class WriteViewModel @Inject constructor(
     val uploadSuccess get() = _uploadSuccess
     private val _writeCurrentPostDetail = MutableLiveData<PostDetail>()
     val writeCurrentPostDetail: LiveData<PostDetail> get() = _writeCurrentPostDetail
-    private val _writeEditSuccess = MutableLiveData<Event<Boolean>>()
-    val writeEditSuccess: LiveData<Event<Boolean>> get() = _writeEditSuccess
 
     // WriteFolder
     private val _folderList = MutableLiveData<Resource<List<Folder>>>()
@@ -178,16 +176,22 @@ class WriteViewModel @Inject constructor(
     }
 
     private fun requestUploadEditingPost() = viewModelScope.launch(Dispatchers.IO) {
+        _uploadSuccess.emit(Status.LOADING)
         requestEditPostUseCase(
             postId = postEditId.value!!,
             category = writeCategory.value.first!!,
             contents = writeText.value,
             folderId = writeFolderId.value!!,
             hashtags = writeTags.value.ifEmpty { emptyList() }
-        ).let { ApiResponse ->
-            _writeEditSuccess.postValue(Event(ApiResponse is NetworkResponse.Success))
-            if (ApiResponse is NetworkResponse.Success) {
-                _writePostId.postValue(ApiResponse.body?.let { Event(it.postId) })
+        ).let { apiResponse ->
+            when (apiResponse) {
+                is NetworkResponse.Success -> {
+                    _uploadSuccess.emit(Status.SUCCESS)
+                }
+
+                else -> {
+                    _uploadSuccess.emit(Status.ERROR)
+                }
             }
         }
     }
