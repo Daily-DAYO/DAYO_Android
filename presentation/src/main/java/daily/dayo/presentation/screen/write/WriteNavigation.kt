@@ -42,6 +42,7 @@ fun NavController.navigateCrop(index: Int) {
 fun NavGraphBuilder.writeNavGraph(
     snackBarHostState: SnackbarHostState,
     navController: NavController,
+    navigateToWritePost: (Long) -> Unit,
     onBackClick: () -> Unit,
     onTagClick: () -> Unit,
     onWriteFolderClick: () -> Unit,
@@ -61,6 +62,7 @@ fun NavGraphBuilder.writeNavGraph(
             WriteRoute(
                 postId = null,
                 snackBarHostState = snackBarHostState,
+                navigateToWritePost = navigateToWritePost,
                 onBackClick = onBackClick,
                 onTagClick = onTagClick,
                 onWriteFolderClick = onWriteFolderClick,
@@ -85,6 +87,7 @@ fun NavGraphBuilder.writeNavGraph(
                 WriteRoute(
                     postId = it,
                     snackBarHostState = snackBarHostState,
+                    navigateToWritePost = navigateToWritePost,
                     onBackClick = onBackClick,
                     onTagClick = onTagClick,
                     onWriteFolderClick = onWriteFolderClick,

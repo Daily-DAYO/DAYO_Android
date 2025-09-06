@@ -91,8 +91,8 @@ class WriteViewModel @Inject constructor(
     val postInfoSuccess = _postInfoSuccess.asSharedFlow()
 
     // WritePost
-    private val _writePostId = MutableLiveData<Event<Long>>()
-    val writePostId: LiveData<Event<Long>> get() = _writePostId
+    private val _writePostId = MutableSharedFlow<Long?>()
+    val writePostId = _writePostId.asSharedFlow()
     private val _writeSuccess = MutableLiveData<Event<Boolean>>()
     val writeSuccess: LiveData<Event<Boolean>> get() = _writeSuccess
     private val _uploadSuccess: MutableStateFlow<Status?> = MutableStateFlow(null)
@@ -164,15 +164,13 @@ class WriteViewModel @Inject constructor(
         ).let { apiResponse ->
             when (apiResponse) {
                 is NetworkResponse.Success -> {
+                    _writePostId.emit(apiResponse.body?.id)
                     _uploadSuccess.emit(Status.SUCCESS)
                 }
 
                 else -> {
                     _uploadSuccess.emit(Status.ERROR)
                 }
-            }
-            if (apiResponse is NetworkResponse.Success) {
-                _writePostId.postValue(apiResponse.body?.let { Event(it.id) })
             }
         }
     }

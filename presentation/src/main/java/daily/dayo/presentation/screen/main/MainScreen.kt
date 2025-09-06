@@ -162,6 +162,7 @@ internal fun MainScreen(
                     writeNavGraph(
                         snackBarHostState = snackBarHostState,
                         navController = navigator.navController,
+                        navigateToWritePost = { navigator.navigatePost(it) },
                         onBackClick = { navigator.navigateUp() },
                         onTagClick = { navigator.navigateWriteTag() },
                         onWriteFolderClick = { navigator.navigateWriteFolder() },

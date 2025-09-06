@@ -38,8 +38,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -104,6 +104,7 @@ const val WRITE_POST_TOP_Z_INDEX = 1f
 internal fun WriteRoute(
     postId: Long?,
     snackBarHostState: SnackbarHostState,
+    navigateToWritePost: (Long) -> Unit,
     onBackClick: () -> Unit,
     onTagClick: () -> Unit,
     onWriteFolderClick: () -> Unit,
@@ -126,7 +127,7 @@ internal fun WriteRoute(
     val tags by writeViewModel.writeTags.collectAsStateWithLifecycle()
     val folderId by writeViewModel.writeFolderId.collectAsStateWithLifecycle()
     val folderName by writeViewModel.writeFolderName.collectAsStateWithLifecycle()
-    val writePostId by writeViewModel.writePostId.observeAsState()
+    val writePostId by writeViewModel.writePostId.collectAsState(null)
     val selectedCategory by writeViewModel.writeCategory.collectAsStateWithLifecycle() // name, index
     val onClickCategory: (CategoryMenu, Int) -> Unit = { categoryMenu, index ->
         writeViewModel.setPostCategory(Pair(categoryMenu.category, index))
@@ -169,8 +170,8 @@ internal fun WriteRoute(
 
             Status.SUCCESS -> {
                 onBackClick()
-                writePostId?.let {
-                    // TODO: 게시글 상세 화면으로 이동
+                writePostId?.let { newPostId ->
+                    navigateToWritePost(newPostId)
                 }
             }
 
