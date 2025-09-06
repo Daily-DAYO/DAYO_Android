@@ -71,8 +71,8 @@ class WriteViewModel @Inject constructor(
     val errorEvent = _errorEvent.asSharedFlow()
 
     // WriteInfo
-    private val _postId: MutableLiveData<Long?> = MutableLiveData(null)
-    val postId get() = _postId
+    private val _postEditId = MutableStateFlow(null as Long?)
+    val postEditId = _postEditId.asStateFlow()
     private val _writeCategory = MutableStateFlow<Pair<Category?, Int>>(Pair(null, -1))
     val writeCategory get() = _writeCategory
     private val _writeText = MutableStateFlow("")
@@ -109,7 +109,7 @@ class WriteViewModel @Inject constructor(
     val writeFolderAddSuccess get() = _writeFolderAddSuccess
 
     fun requestUploadPost() {
-        if (this@WriteViewModel.postId.value != null) {
+        if (postEditId.value != null) {
             requestUploadEditingPost()
         } else {
             requestUploadNewPost()
@@ -179,7 +179,7 @@ class WriteViewModel @Inject constructor(
 
     private fun requestUploadEditingPost() = viewModelScope.launch(Dispatchers.IO) {
         requestEditPostUseCase(
-            postId = postId.value!!,
+            postId = postEditId.value!!,
             category = writeCategory.value.first!!,
             contents = writeText.value,
             folderId = writeFolderId.value!!,
@@ -237,7 +237,7 @@ class WriteViewModel @Inject constructor(
      * 상태 초기화
      */
     fun resetWriteInfoValue() = viewModelScope.launch {
-        _postId.postValue(null)
+        _postEditId.emit(null)
         _writeFolderId.emit(0)
         _writeFolderName.emit("")
         _writeTags.emit(emptyList())
@@ -250,7 +250,7 @@ class WriteViewModel @Inject constructor(
                 when (response) {
                     is NetworkResponse.Success -> {
                         response.body?.run {
-                            setPostId(postId)
+                            setPostEditId(postId)
                             setPostCategory(
                                 categoryMenus
                                     .withIndex()
@@ -274,8 +274,8 @@ class WriteViewModel @Inject constructor(
         }
     }
 
-    private fun setPostId(id: Long) {
-        _postId.value = id
+    private fun setPostEditId(id: Long) {
+        _postEditId.value = id
     }
 
     fun setWriteText(text: String) {
