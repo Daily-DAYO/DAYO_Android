@@ -91,7 +91,12 @@ internal fun MainScreen(
                 }
             },
             sheetPeekHeight = 0.dp,
-            snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackBarHostState,
+                    modifier = Modifier.navigationBarsPadding()
+                )
+            }
         ) {
             Column(modifier = Modifier.navigationBarsPadding()) {
                 NavHost(
