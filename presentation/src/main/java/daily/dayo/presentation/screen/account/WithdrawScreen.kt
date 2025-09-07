@@ -145,6 +145,17 @@ fun WithdrawScreen(
             }
     }
 
+    // BottomSheet가 열려있을 때의 뒤로가기 처리
+    if (bottomSheetState.bottomSheetState.currentValue == SheetValue.Expanded) {
+        BackHandler {
+            coroutineScope.launch {
+                keyboardController?.hide()
+                focusManager.clearFocus()
+                bottomSheetState.bottomSheetState.hide()
+            }
+        }
+    }
+
     val onBackClickInWithdraw = {
         when (withdrawStep.value) {
             WithdrawStep.REASON_SELECT -> {
@@ -161,14 +172,11 @@ fun WithdrawScreen(
     val withdrawSuccess by accountViewModel.withdrawSuccess.collectAsStateWithLifecycle()
 
     BackHandler {
-        if (bottomSheetState.bottomSheetState.isVisible) {
-            coroutineScope.launch {
-                keyboardController?.hide()
-                focusManager.clearFocus()
-                bottomSheetState.bottomSheetState.hide()
-            }
+        if (withdrawStep.value == WithdrawStep.CONFIRM) {
+            withdrawStep.value = WithdrawStep.REASON_SELECT
+            selectedReason = null
         } else {
-            onBackClickInWithdraw()
+            onBackClick()
         }
     }
 
@@ -591,10 +599,6 @@ fun WithdrawConfirmScreen(
 ) {
     val withdrawCheckLists =
         remember { context.resources.getStringArray(R.array.withdraw_confirm_check_list) }
-
-    BackHandler {
-        onBackClick()
-    }
 
     Scaffold(
         topBar = {
