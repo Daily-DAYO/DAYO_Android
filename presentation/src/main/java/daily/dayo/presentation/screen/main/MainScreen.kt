@@ -211,6 +211,11 @@ internal fun MainScreen(
                                     folderId
                                 )
                             },
+                            onWritePostWithFolderClick = { folderId ->
+                                navigator.navigateToWritePostWithFolder(
+                                    folderId
+                                )
+                            },
                             onPostClick = { postId -> navigator.navigatePost(postId) },
                             onPostMoveClick = { folderId ->
                                 navigator.navigateFolderPostMove(

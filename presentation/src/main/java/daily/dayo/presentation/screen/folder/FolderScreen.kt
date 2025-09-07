@@ -90,6 +90,7 @@ fun FolderScreen(
     onPostClick: (Long) -> Unit,
     onFolderEditClick: () -> Unit,
     onPostMoveClick: () -> Unit,
+    onWritePostWithFolderClick: () -> Unit,
     onBackClick: () -> Unit,
     folderViewModel: FolderViewModel = hiltViewModel()
 ) {
@@ -159,6 +160,7 @@ fun FolderScreen(
         optionMenu = optionMenu,
         onPostClick = { postId -> onPostClick(postId) },
         onPostSelect = { postId -> folderViewModel.toggleSelection(postId) },
+        onWritePostWithFolderClick = onWritePostWithFolderClick,
         onCancelClick = { folderViewModel.toggleEditMode() },
         onPostDeleteClick = { showPostDeleteAlertDialog = true },
         onClickSort = { folderViewModel.toggleFolderOrder(folderId) },
@@ -200,6 +202,7 @@ private fun FolderScreen(
     optionMenu: List<FolderOptionMenu>,
     onPostClick: (Long) -> Unit,
     onPostSelect: (Long) -> Unit,
+    onWritePostWithFolderClick: () -> Unit,
     onPostDeleteClick: () -> Unit,
     onPostMoveClick: () -> Unit,
     onClickSort: () -> Unit,
@@ -294,7 +297,7 @@ private fun FolderScreen(
         ) { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding)) {
                 if (!isEditMode) {
-                    FolderInformation(folderInfo)
+                    FolderInformation(folderInfo, onWritePostWithFolderClick)
                 }
                 FolderHeader(
                     postCount = folderInfo.postCount,
@@ -315,7 +318,7 @@ private fun FolderScreen(
 }
 
 @Composable
-private fun FolderInformation(folderInfo: FolderInfo) {
+private fun FolderInformation(folderInfo: FolderInfo, onWritePostWithFolderClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -357,7 +360,7 @@ private fun FolderInformation(folderInfo: FolderInfo) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = {},
+            onClick = onWritePostWithFolderClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(40.dp),
@@ -636,6 +639,7 @@ private fun PreviewFolderScreen() {
             optionMenu = listOf(),
             onPostClick = { },
             onPostSelect = { },
+            onWritePostWithFolderClick = { },
             onPostDeleteClick = { },
             onPostMoveClick = { },
             onClickSort = { },
@@ -675,6 +679,7 @@ private fun PreviewFolderScreenEditMode() {
             optionMenu = listOf(),
             onPostClick = { },
             onPostSelect = { },
+            onWritePostWithFolderClick = { },
             onPostDeleteClick = { },
             onPostMoveClick = { },
             onClickSort = { },
