@@ -3,6 +3,7 @@ package daily.dayo.presentation.screen.main
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavDestination
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -47,6 +48,31 @@ class MainNavigator(
 
     fun navigateHome() {
         navController.navigateHome()
+    }
+
+    fun navigateToBottomTab(route: String) {
+        navController.navigate(route) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
+    fun navigateToBottomTabWithClearStack(route: String) {
+        // 전체 백스택을 정리하고 탭 이동
+        
+        // 현재 destination과 다른 경우에만 navigation 수행
+        if (navController.currentDestination?.route != route) {
+            navController.popBackStack(navController.graph.findStartDestination().id, false)
+            navController.navigate(route) {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    inclusive = false
+                }
+                launchSingleTop = true
+            }
+        }
     }
 
     fun navigatePost(postId: Long) {

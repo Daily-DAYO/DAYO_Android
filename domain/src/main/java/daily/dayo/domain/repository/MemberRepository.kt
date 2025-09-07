@@ -33,6 +33,10 @@ interface MemberRepository {
     suspend fun requestMyProfile(): NetworkResponse<Profile>
     suspend fun requestOtherProfile(memberId: String): NetworkResponse<Profile>
     suspend fun requestResign(content: String): NetworkResponse<Void>
+    suspend fun requestResignGuideRecordImage(guideFileName: String): NetworkResponse<ByteArray>
+    suspend fun requestResignGuideRecordWords(): NetworkResponse<List<String>>
+    suspend fun requestResignGuideFollowImage(guideFileName: String): NetworkResponse<ByteArray>
+    suspend fun requestResignGuideFollowWords(): NetworkResponse<List<String>>
     suspend fun requestReceiveAlarm(): NetworkResponse<Boolean>
     suspend fun requestChangeReceiveAlarm(onReceiveAlarm: Boolean): NetworkResponse<Void>
     suspend fun requestSignOut(): NetworkResponse<Void>
