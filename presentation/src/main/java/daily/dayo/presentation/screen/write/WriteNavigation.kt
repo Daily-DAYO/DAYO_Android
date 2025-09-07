@@ -22,6 +22,10 @@ fun NavController.navigatePostEdit(postId: Long) {
     navigate(WriteRoute.postEdit(postId))
 }
 
+fun NavController.navigateToWritePostWithFolder(folderId: Long) {
+    navigate(WriteRoute.writeWithQueries(folderId))
+}
+
 fun NavController.navigateWriteTag() {
     navigate(WriteRoute.tag)
 }
@@ -55,7 +59,16 @@ fun NavGraphBuilder.writeNavGraph(
         startDestination = WriteRoute.route,
         route = "writeNavigation"
     ) {
-        composable(route = WriteRoute.route) {
+        composable(
+            route = WriteRoute.routeWithQueries,
+            arguments = listOf(
+                navArgument("folderId") {
+                    type = NavType.StringType
+                    defaultValue = null
+                    nullable = true
+                }
+            )
+        ) {
             val parentStackEntry = remember(it) {
                 navController.getBackStackEntry(WriteRoute.writeRouteNavigation)
             }
@@ -157,6 +170,9 @@ fun NavGraphBuilder.writeNavGraph(
 
 object WriteRoute {
     const val route = "write"
+    private const val folderIdQuery = "folderId={folderId}"
+    const val routeWithQueries = "$route?$folderIdQuery"
+
     const val postEditRoute = "$route/{postId}"
     const val writeRouteNavigation = "writeNavigation"
 
@@ -165,8 +181,15 @@ object WriteRoute {
     const val folderNew = "${route}/folder/new"
 
     const val crop = "$route/crop/{index}"
+
     fun getCropRoute(index: Int): String {
         return crop.replace("{index}", index.toString())
+    }
+
+    fun writeWithQueries(folderId: Long? = null): String {
+        val params = mutableListOf<String>()
+        folderId?.let { params.add("folderId=$it") }
+        return if (params.isEmpty()) route else "$route?${params.joinToString("&")}"
     }
 
     fun postEdit(postId: Long) = "$route/$postId"
