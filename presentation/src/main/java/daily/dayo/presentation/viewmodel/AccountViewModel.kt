@@ -370,26 +370,25 @@ class AccountViewModel @Inject constructor(
                 }
                 is NetworkResponse.ApiError -> {
                     // 에러 발생 시 해당 이미지를 캐시에서 제거
-                    val currentImages = _guideImages.value.toMutableMap()
-                    currentImages.remove(fileName)
-                    _guideImages.emit(currentImages)
+                    removeGuideImageFromCache(fileName)
                 }
                 is NetworkResponse.NetworkError -> {
                     // 네트워크 에러 시 해당 이미지를 캐시에서 제거
-                    val currentImages = _guideImages.value.toMutableMap()
-                    currentImages.remove(fileName)
-                    _guideImages.emit(currentImages)
+                    removeGuideImageFromCache(fileName)
                 }
                 is NetworkResponse.UnknownError -> {
                     // 알 수 없는 에러 시 해당 이미지를 캐시에서 제거
-                    val currentImages = _guideImages.value.toMutableMap()
-                    currentImages.remove(fileName)
-                    _guideImages.emit(currentImages)
+                    removeGuideImageFromCache(fileName)
                 }
             }
         }
     }
 
+    private suspend fun removeGuideImageFromCache(fileName: String) {
+        val currentImages = _guideImages.value.toMutableMap()
+        currentImages.remove(fileName)
+        _guideImages.emit(currentImages)
+    }
     fun clearGuideImages() = viewModelScope.launch {
         _guideImages.emit(emptyMap())
     }
