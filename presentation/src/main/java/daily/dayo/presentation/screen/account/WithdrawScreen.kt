@@ -448,6 +448,13 @@ fun WithdrawHoldBottomSheet(
     )
     val isOtherReason = (content.reasonTextResId == R.string.withdraw_reason_other)
     var otherReasonContentValue by remember { mutableStateOf(TextFieldValue(otherReasonText)) }
+    
+    // otherReasonText가 변경될 때 로컬 상태도 동기화
+    LaunchedEffect(otherReasonText) {
+        if (otherReasonContentValue.text != otherReasonText) {
+            otherReasonContentValue = TextFieldValue(otherReasonText)
+        }
+    }
 
     Column(
         modifier = modifier
