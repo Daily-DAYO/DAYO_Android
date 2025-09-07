@@ -234,13 +234,20 @@ internal fun MainScreen(
                         coroutineScope = coroutineScope,
                         snackBarHostState = snackBarHostState,
                         onProfileEditClick = { navigator.navigateProfileEdit() },
+                        onWithdrawClick = { navigator.navigateWithdraw() },
                         onBlockUsersClick = { navigator.navigateBlockedUsers() },
                         onPasswordChangeClick = { navigator.navigateChangePassword() },
                         onSettingNotificationClick = { navigator.navigateSettingsNotification() },
                         onNoticesClick = { navigator.navigateNotices() },
                         onInformationClick = { navigator.navigateInformation() },
                         onRulesClick = { ruleType -> navigator.navigateRules(ruleType) },
-                        onBackClick = { navigator.popBackStack() }
+                        onBackClick = { navigator.popBackStack() },
+                        bottomSheetState = bottomSheetState,
+                        bottomSheetContent = { content ->
+                            bottomSheetContent = content
+                        },
+                        onNavigateToHome = { navigator.navigateToBottomTabWithClearStack(Screen.Home.route) },
+                        onNavigateToMyPage = { navigator.navigateToBottomTabWithClearStack(Screen.MyPage.route) },
                     )
                     noticeNavGraph(
                         noticeViewModel = noticeViewModel,
