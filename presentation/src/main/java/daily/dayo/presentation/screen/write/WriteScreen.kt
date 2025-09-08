@@ -123,7 +123,6 @@ internal fun WriteRoute(
     val postEditId by writeViewModel.postEditId.collectAsStateWithLifecycle()
     val writeText by writeViewModel.writeText.collectAsStateWithLifecycle()
     val imageAssets by writeViewModel.writeImagesUri.collectAsStateWithLifecycle()
-    val postImages by writeViewModel.postImages.collectAsStateWithLifecycle()
     val tags by writeViewModel.writeTags.collectAsStateWithLifecycle()
     val folderId by writeViewModel.writeFolderId.collectAsStateWithLifecycle()
     val folderName by writeViewModel.writeFolderName.collectAsStateWithLifecycle()
@@ -196,7 +195,6 @@ internal fun WriteRoute(
 
     WriteScreen(
         isPostEditMode = isPostEditMode,
-        postImages = postImages,
         context = context,
         onBackClick = onBackClick,
         onUploadClick = {
@@ -279,7 +277,6 @@ private fun CategoryBottomSheetDialog(
 @Composable
 fun WriteScreen(
     isPostEditMode: Boolean,
-    postImages: List<String>,
     context: Context = LocalContext.current,
     onBackClick: () -> Unit,
     onUploadClick: () -> Unit,
@@ -336,22 +333,14 @@ fun WriteScreen(
                 rightText = if (isPostEditMode) stringResource(R.string.save) else stringResource(R.string.write_post_upload),
                 onBackClick = onBackClick,
                 onUploadClick = onUploadClick,
-                isUploadEnable =
-                    if (isPostEditMode) {
-                        postImages.isNotEmpty() && category.first != null && folderId != null && folderName != null
-                    } else {
-                        processedImages.isNotEmpty() && category.first != null && folderId != null && folderName != null
-                    }
+                isUploadEnable = processedImages.isNotEmpty() && category.first != null && folderId != null && folderName != null
             )
-            if (isPostEditMode) {
-                PostEditImages(images = postImages)
-            } else {
-                WriteUploadImages(
-                    images = processedImages,
-                    deleteImage = { index -> deleteImageUri(index) },
-                    onEditImage = { index -> editImage(index) },
-                )
-            }
+            WriteUploadImages(
+                isPostEditMode = isPostEditMode,
+                images = processedImages,
+                deleteImage = { index -> deleteImageUri(index) },
+                onEditImage = { index -> editImage(index) },
+            )
             WritePostDetail(
                 setWriteText = setWriteText,
                 writeText = writeText
@@ -408,38 +397,8 @@ fun WriteScreen(
 }
 
 @Composable
-fun PostEditImages(images: List<String>) {
-    LazyRow(
-        contentPadding = PaddingValues(start = 18.dp, end = 18.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.height(WRITE_POST_IMAGE_SIZE.dp)
-    ) {
-        itemsIndexed(
-            items = images,
-            key = { _, image -> image }
-        ) { index, image ->
-            val context = LocalContext.current
-            val imageRequest = ImageRequest.Builder(context)
-                .data("${BuildConfig.BASE_URL}/images/${image}")
-                .crossfade(true)
-                .build()
-
-            Box(modifier = Modifier.size(WRITE_POST_IMAGE_SIZE.dp)) {
-                AsyncImage(
-                    model = imageRequest,
-                    contentDescription = "post image $index",
-                    modifier = Modifier
-                        .size(WRITE_POST_IMAGE_SIZE.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop
-                )
-            }
-        }
-    }
-}
-
-@Composable
 fun WriteUploadImages(
+    isPostEditMode: Boolean,
     images: List<ImageAsset>,
     deleteImage: (Int) -> Unit,
     onEditImage: (Int) -> Unit,
@@ -458,7 +417,13 @@ fun WriteUploadImages(
             // 캐시 키를 uri, 수정시간, EXIF 정보로 지정해 이미지 편집하는 경우 갱신될수 있도록 수정
             val cacheKey = "${imageAsset.uriString}-${imageAsset.lastModified}-${imageAsset.exifInfo?.orientation ?: "none"}"
             val imageRequest = ImageRequest.Builder(context)
-                .data(imageAsset.uriString)
+                .data(
+                    if (isPostEditMode) {
+                        "${BuildConfig.BASE_URL}/images/${imageAsset.uriString}"
+                    } else {
+                        imageAsset.uriString
+                    }
+                )
                 .memoryCacheKey(cacheKey)
                 .diskCacheKey(cacheKey)
                 .crossfade(true)
@@ -473,51 +438,54 @@ fun WriteUploadImages(
                         .clip(RoundedCornerShape(8.dp)),
                     contentScale = ContentScale.Crop
                 )
-                Surface(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(start = 16.dp, bottom = 16.dp),
-                    shape = RoundedCornerShape(99.dp),
-                    color = Dark,
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .width(112.dp)
-                            .height(36.dp)
-                            .clickable {
-                                onEditImage(index)
-                            }
-                            .padding(horizontal = 12.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_crop),
-                            contentDescription = "edit image",
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = stringResource(R.string.write_post_image_edit),
-                            style = DayoTheme.typography.b5,
-                            color = White_FFFFFF,
-                            modifier = Modifier.align(Alignment.CenterVertically)
-                        )
-                    }
-                }
-                if (images.size == WRITE_POST_IMAGE_MIN_SIZE) return@itemsIndexed
 
-                Image(
-                    painter = painterResource(id = R.drawable.ic_img_delete),
-                    contentDescription = "delete image",
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding((11.19).dp)
-                        .size((22.4).dp)
-                        .clickable {
-                            deleteImage(index)
+                if (!isPostEditMode) {
+                    Surface(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(start = 16.dp, bottom = 16.dp),
+                        shape = RoundedCornerShape(99.dp),
+                        color = Dark,
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .width(112.dp)
+                                .height(36.dp)
+                                .clickable {
+                                    onEditImage(index)
+                                }
+                                .padding(horizontal = 12.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_crop),
+                                contentDescription = "edit image",
+                                modifier = Modifier
+                                    .align(Alignment.CenterVertically)
+                                    .size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = stringResource(R.string.write_post_image_edit),
+                                style = DayoTheme.typography.b5,
+                                color = White_FFFFFF,
+                                modifier = Modifier.align(Alignment.CenterVertically)
+                            )
                         }
-                )
+                    }
+                    if (images.size == WRITE_POST_IMAGE_MIN_SIZE) return@itemsIndexed
+
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_img_delete),
+                        contentDescription = "delete image",
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding((11.19).dp)
+                            .size((22.4).dp)
+                            .clickable {
+                                deleteImage(index)
+                            }
+                    )
+                }
             }
         }
     }

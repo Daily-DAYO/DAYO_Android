@@ -83,8 +83,6 @@ class WriteViewModel @Inject constructor(
     val writeFolderName get() = _writeFolderName
     private val _writeImagesUri = MutableStateFlow<List<ImageAsset>>(emptyList())
     val writeImagesUri = _writeImagesUri.asStateFlow()
-    private val _postImages = MutableStateFlow<List<String>>(emptyList())
-    val postImages = _postImages.asStateFlow()
     private val _writeTags = MutableStateFlow(emptyList<String>())
     val writeTags get() = _writeTags
     private val _postInfoSuccess = MutableSharedFlow<Boolean>()
@@ -300,7 +298,11 @@ class WriteViewModel @Inject constructor(
 
     private fun setPostEditImages(images: List<String>) {
         viewModelScope.launch {
-            _postImages.emit(images)
+            _writeImagesUri.emit(
+                images.map {
+                    ImageAsset(uriString = it, exifInfo = null)
+                }
+            )
         }
     }
 
