@@ -34,6 +34,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -144,12 +145,10 @@ internal fun WriteRoute(
     val postInfoSuccess by writeViewModel.postInfoSuccess.collectAsStateWithLifecycle(null)
 
     BackHandler {
-        onBackClick()
-    }
-
-    BackHandler(enabled = bottomSheetState.bottomSheetState.isVisible) {
-        coroutineScope.launch {
-            bottomSheetState.bottomSheetState.hide()
+        if (bottomSheetState.bottomSheetState.currentValue == SheetValue.Expanded) {
+            coroutineScope.launch { bottomSheetState.bottomSheetState.hide() }
+        } else {
+            onBackClick()
         }
     }
 
