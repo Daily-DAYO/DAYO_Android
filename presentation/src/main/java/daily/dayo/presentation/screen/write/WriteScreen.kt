@@ -34,12 +34,13 @@ import androidx.compose.material.Surface
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,6 +56,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -69,6 +71,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import daily.dayo.domain.model.Category
+import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.extension.clickableSingle
@@ -100,7 +103,9 @@ const val WRITE_POST_TOP_Z_INDEX = 1f
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun WriteRoute(
+    postId: Long?,
     snackBarHostState: SnackbarHostState,
+    navigateToWritePost: (Long) -> Unit,
     onBackClick: () -> Unit,
     onTagClick: () -> Unit,
     onWriteFolderClick: () -> Unit,
@@ -109,18 +114,20 @@ internal fun WriteRoute(
     bottomSheetState: BottomSheetScaffoldState,
     bottomSheetContent: (@Composable () -> Unit) -> Unit,
 ) {
+    val isPostEditMode = postId != null
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val option = BitmapFactory.Options().apply {
         inPreferredConfig = Bitmap.Config.ARGB_8888
     }
 
+    val postEditId by writeViewModel.postEditId.collectAsStateWithLifecycle()
     val writeText by writeViewModel.writeText.collectAsStateWithLifecycle()
     val imageAssets by writeViewModel.writeImagesUri.collectAsStateWithLifecycle()
     val tags by writeViewModel.writeTags.collectAsStateWithLifecycle()
     val folderId by writeViewModel.writeFolderId.collectAsStateWithLifecycle()
     val folderName by writeViewModel.writeFolderName.collectAsStateWithLifecycle()
-    val writePostId by writeViewModel.writePostId.observeAsState()
+    val writePostId by writeViewModel.writePostId.collectAsState(null)
     val selectedCategory by writeViewModel.writeCategory.collectAsStateWithLifecycle() // name, index
     val onClickCategory: (CategoryMenu, Int) -> Unit = { categoryMenu, index ->
         writeViewModel.setPostCategory(Pair(categoryMenu.category, index))
@@ -135,14 +142,19 @@ internal fun WriteRoute(
         CategoryMenu.ETC
     )
     val uploadSuccess by writeViewModel.uploadSuccess.collectAsStateWithLifecycle()
+    val postInfoSuccess by writeViewModel.postInfoSuccess.collectAsStateWithLifecycle(null)
 
     BackHandler {
-        onBackClick()
+        if (bottomSheetState.bottomSheetState.currentValue == SheetValue.Expanded) {
+            coroutineScope.launch { bottomSheetState.bottomSheetState.hide() }
+        } else {
+            onBackClick()
+        }
     }
 
-    BackHandler(enabled = bottomSheetState.bottomSheetState.isVisible) {
-        coroutineScope.launch {
-            bottomSheetState.bottomSheetState.hide()
+    LaunchedEffect(postId) {
+        if (isPostEditMode && postEditId == null) {
+            writeViewModel.requestPostDetail(postId!!, categoryMenus)
         }
     }
 
@@ -156,8 +168,8 @@ internal fun WriteRoute(
 
             Status.SUCCESS -> {
                 onBackClick()
-                writePostId?.let {
-                    // TODO: 게시글 상세 화면으로 이동
+                writePostId?.let { newPostId ->
+                    navigateToWritePost(newPostId)
                 }
             }
 
@@ -171,7 +183,17 @@ internal fun WriteRoute(
         }
     }
 
+    LaunchedEffect(postInfoSuccess) {
+        if (postInfoSuccess == false) {
+            launch {
+                snackBarHostState.showSnackbar(ContextCompat.getString(context, R.string.write_post_edit_state_fail))
+            }
+            onBackClick()
+        }
+    }
+
     WriteScreen(
+        isPostEditMode = isPostEditMode,
         context = context,
         onBackClick = onBackClick,
         onUploadClick = {
@@ -253,6 +275,7 @@ private fun CategoryBottomSheetDialog(
 
 @Composable
 fun WriteScreen(
+    isPostEditMode: Boolean,
     context: Context = LocalContext.current,
     onBackClick: () -> Unit,
     onUploadClick: () -> Unit,
@@ -292,7 +315,7 @@ fun WriteScreen(
     )
 
     LaunchedEffect(Unit) {
-        if (processedImages.isEmpty()) {
+        if (!isPostEditMode && processedImages.isEmpty()) {
             imagePickerLauncher.launch(arrayOf("image/*"))
         }
     }
@@ -305,11 +328,14 @@ fun WriteScreen(
             modifier = Modifier.fillMaxHeight()
         ) {
             WriteActionbarLayout(
-                onBackClick,
-                onUploadClick,
+                title = if (isPostEditMode) stringResource(R.string.write_post_edit_title) else stringResource(R.string.write_post_title),
+                rightText = if (isPostEditMode) stringResource(R.string.save) else stringResource(R.string.write_post_upload),
+                onBackClick = onBackClick,
+                onUploadClick = onUploadClick,
                 isUploadEnable = processedImages.isNotEmpty() && category.first != null && folderId != null && folderName != null
             )
             WriteUploadImages(
+                isPostEditMode = isPostEditMode,
                 images = processedImages,
                 deleteImage = { index -> deleteImageUri(index) },
                 onEditImage = { index -> editImage(index) },
@@ -371,6 +397,7 @@ fun WriteScreen(
 
 @Composable
 fun WriteUploadImages(
+    isPostEditMode: Boolean,
     images: List<ImageAsset>,
     deleteImage: (Int) -> Unit,
     onEditImage: (Int) -> Unit,
@@ -389,7 +416,13 @@ fun WriteUploadImages(
             // 캐시 키를 uri, 수정시간, EXIF 정보로 지정해 이미지 편집하는 경우 갱신될수 있도록 수정
             val cacheKey = "${imageAsset.uriString}-${imageAsset.lastModified}-${imageAsset.exifInfo?.orientation ?: "none"}"
             val imageRequest = ImageRequest.Builder(context)
-                .data(imageAsset.uriString)
+                .data(
+                    if (isPostEditMode) {
+                        "${BuildConfig.BASE_URL}/images/${imageAsset.uriString}"
+                    } else {
+                        imageAsset.uriString
+                    }
+                )
                 .memoryCacheKey(cacheKey)
                 .diskCacheKey(cacheKey)
                 .crossfade(true)
@@ -404,51 +437,54 @@ fun WriteUploadImages(
                         .clip(RoundedCornerShape(8.dp)),
                     contentScale = ContentScale.Crop
                 )
-                Surface(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(start = 16.dp, bottom = 16.dp),
-                    shape = RoundedCornerShape(99.dp),
-                    color = Dark,
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .width(112.dp)
-                            .height(36.dp)
-                            .clickable {
-                                onEditImage(index)
-                            }
-                            .padding(horizontal = 12.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_crop),
-                            contentDescription = "edit image",
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = stringResource(R.string.write_post_image_edit),
-                            style = DayoTheme.typography.b5,
-                            color = White_FFFFFF,
-                            modifier = Modifier.align(Alignment.CenterVertically)
-                        )
-                    }
-                }
-                if (images.size == WRITE_POST_IMAGE_MIN_SIZE) return@itemsIndexed
 
-                Image(
-                    painter = painterResource(id = R.drawable.ic_img_delete),
-                    contentDescription = "delete image",
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding((11.19).dp)
-                        .size((22.4).dp)
-                        .clickable {
-                            deleteImage(index)
+                if (!isPostEditMode) {
+                    Surface(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(start = 16.dp, bottom = 16.dp),
+                        shape = RoundedCornerShape(99.dp),
+                        color = Dark,
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .width(112.dp)
+                                .height(36.dp)
+                                .clickable {
+                                    onEditImage(index)
+                                }
+                                .padding(horizontal = 12.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_crop),
+                                contentDescription = "edit image",
+                                modifier = Modifier
+                                    .align(Alignment.CenterVertically)
+                                    .size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = stringResource(R.string.write_post_image_edit),
+                                style = DayoTheme.typography.b5,
+                                color = White_FFFFFF,
+                                modifier = Modifier.align(Alignment.CenterVertically)
+                            )
                         }
-                )
+                    }
+                    if (images.size == WRITE_POST_IMAGE_MIN_SIZE) return@itemsIndexed
+
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_img_delete),
+                        contentDescription = "delete image",
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding((11.19).dp)
+                            .size((22.4).dp)
+                            .clickable {
+                                deleteImage(index)
+                            }
+                    )
+                }
             }
         }
     }
@@ -456,12 +492,14 @@ fun WriteUploadImages(
 
 @Composable
 fun WriteActionbarLayout(
+    title: String,
+    rightText: String,
     onBackClick: () -> Unit,
     onUploadClick: () -> Unit,
     isUploadEnable: Boolean = false
 ) {
     TopNavigation(
-        title = stringResource(R.string.write_post_title),
+        title = title,
         leftIcon = {
             NoRippleIconButton(
                 onClick = {
@@ -474,7 +512,7 @@ fun WriteActionbarLayout(
         rightIcon = {
             DayoTextButton(
                 onClick = { if (isUploadEnable) onUploadClick() },
-                text = stringResource(R.string.write_post_upload),
+                text = rightText,
                 textStyle = DayoTheme.typography.b3.copy(
                     textAlign = TextAlign.Center,
                     color = if (isUploadEnable) Primary_23C882 else Gray5_E8EAEE
@@ -493,6 +531,15 @@ fun WritePostDetail(
     writeText: String = ""
 ) {
     var writeContentValue by remember { mutableStateOf(TextFieldValue(writeText)) }
+    LaunchedEffect(writeText) {
+        if (writeText != writeContentValue.text) {
+            writeContentValue = TextFieldValue(
+                text = writeText,
+                selection = TextRange(writeText.length)
+            )
+        }
+    }
+
     Column(
         modifier = Modifier
             .padding(top = 20.dp, start = 20.dp, end = 20.dp)

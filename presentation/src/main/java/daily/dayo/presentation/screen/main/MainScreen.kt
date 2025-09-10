@@ -103,7 +103,12 @@ internal fun MainScreen(
                 }
             },
             sheetPeekHeight = 0.dp,
-            snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackBarHostState,
+                    modifier = Modifier.navigationBarsPadding()
+                )
+            }
         ) {
             Box {
                 Column(modifier = Modifier.navigationBarsPadding()) {
@@ -144,6 +149,7 @@ internal fun MainScreen(
                         )
                         postNavGraph(
                             snackBarHostState = snackBarHostState,
+                            onPostEditClick = { navigator.navigatePostEdit(it) },
                             onProfileClick = { memberId ->
                                 navigator.navigateProfile(
                                     currentMemberId,
@@ -169,6 +175,7 @@ internal fun MainScreen(
                         writeNavGraph(
                             snackBarHostState = snackBarHostState,
                             navController = navigator.navController,
+                            navigateToWritePost = { navigator.navigatePost(it) },
                             onBackClick = { navigator.navigateUp() },
                             onTagClick = { navigator.navigateWriteTag() },
                             onWriteFolderClick = { navigator.navigateWriteFolder() },

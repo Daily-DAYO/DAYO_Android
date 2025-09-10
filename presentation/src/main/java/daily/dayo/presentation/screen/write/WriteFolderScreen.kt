@@ -75,7 +75,6 @@ fun WriteFolderRoute(
 ) {
     val folders by profileViewModel.folders.collectAsStateWithLifecycle()
     val folderId by writeViewModel.writeFolderId.collectAsState()
-    val writePostId by writeViewModel.writePostId.observeAsState()
 
     LaunchedEffect(Unit) {
         profileViewModel.requestFolderList(

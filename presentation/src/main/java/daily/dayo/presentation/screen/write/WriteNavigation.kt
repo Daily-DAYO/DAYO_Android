@@ -18,6 +18,10 @@ fun NavController.navigateWrite() {
     navigate(WriteRoute.route)
 }
 
+fun NavController.navigatePostEdit(postId: Long) {
+    navigate(WriteRoute.postEdit(postId))
+}
+
 fun NavController.navigateWriteTag() {
     navigate(WriteRoute.tag)
 }
@@ -38,6 +42,7 @@ fun NavController.navigateCrop(index: Int) {
 fun NavGraphBuilder.writeNavGraph(
     snackBarHostState: SnackbarHostState,
     navController: NavController,
+    navigateToWritePost: (Long) -> Unit,
     onBackClick: () -> Unit,
     onTagClick: () -> Unit,
     onWriteFolderClick: () -> Unit,
@@ -55,7 +60,9 @@ fun NavGraphBuilder.writeNavGraph(
                 navController.getBackStackEntry(WriteRoute.writeRouteNavigation)
             }
             WriteRoute(
+                postId = null,
                 snackBarHostState = snackBarHostState,
+                navigateToWritePost = navigateToWritePost,
                 onBackClick = onBackClick,
                 onTagClick = onTagClick,
                 onWriteFolderClick = onWriteFolderClick,
@@ -64,6 +71,32 @@ fun NavGraphBuilder.writeNavGraph(
                 bottomSheetState = bottomSheetState,
                 bottomSheetContent = bottomSheetContent
             )
+        }
+
+        composable(
+            route = WriteRoute.postEditRoute,
+            arguments = listOf(navArgument("postId") { type = NavType.LongType })
+        ) { navBackStackEntry ->
+            val postId = navBackStackEntry.arguments?.getLong("postId")
+            val parentStackEntry = remember(navBackStackEntry) {
+                navController.getBackStackEntry(WriteRoute.writeRouteNavigation)
+            }
+
+            // postId가 null이 아닐 때만 수정 가능
+            postId?.let {
+                WriteRoute(
+                    postId = it,
+                    snackBarHostState = snackBarHostState,
+                    navigateToWritePost = navigateToWritePost,
+                    onBackClick = onBackClick,
+                    onTagClick = onTagClick,
+                    onWriteFolderClick = onWriteFolderClick,
+                    onCropImageClick = { imgIdx -> navController.navigateCrop(imgIdx) },
+                    writeViewModel = hiltViewModel(parentStackEntry),
+                    bottomSheetState = bottomSheetState,
+                    bottomSheetContent = bottomSheetContent
+                )
+            }
         }
 
         composable(route = WriteRoute.tag) {
@@ -124,6 +157,7 @@ fun NavGraphBuilder.writeNavGraph(
 
 object WriteRoute {
     const val route = "write"
+    const val postEditRoute = "$route/{postId}"
     const val writeRouteNavigation = "writeNavigation"
 
     const val tag = "${route}/tag"
@@ -134,4 +168,6 @@ object WriteRoute {
     fun getCropRoute(index: Int): String {
         return crop.replace("{index}", index.toString())
     }
+
+    fun postEdit(postId: Long) = "$route/$postId"
 }
