@@ -72,6 +72,7 @@ import java.text.DecimalFormat
 fun PostScreen(
     postId: Long,
     snackBarHostState: SnackbarHostState,
+    onPostEditClick: (Long) -> Unit,
     onProfileClick: (String) -> Unit,
     onPostLikeUsersClick: (Long) -> Unit,
     onPostHashtagClick: (String) -> Unit,
@@ -87,10 +88,8 @@ fun PostScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     // post option
-    val onPostModifyClick: (Long) -> Unit = { postId ->  /* TODO 게시글 수정 */ }
-    val onPostDeleteClick: (Long) -> Unit = {
-        postViewModel.requestDeletePost(postId)
-    }
+    val onPostModifyClick: (Long) -> Unit = { onPostEditClick(postId) }
+    val onPostDeleteClick: (Long) -> Unit = { postViewModel.requestDeletePost(postId) }
     val postDeleteSuccess by postViewModel.postDeleteSuccess.collectAsStateWithLifecycle(false)
 
     // comment

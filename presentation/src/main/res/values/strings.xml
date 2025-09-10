@@ -134,6 +134,7 @@
     <string name="write_post_image_edit">이미지 편집</string>
     <string name="write_post_image_crop_title">이미지 편집</string>
     <string name="write_post_title">게시글 작성</string>
+    <string name="write_post_edit_title">게시글 수정</string>
     <string name="write_post_upload">올리기</string>
     <string name="write_post_detail_placeholder">꾸민 다이어리에 대해 설명해주세요.</string>
     <string name="write_post_detail_count_limit"> / %d</string>
@@ -190,6 +191,7 @@
     <!-- Write State Description-->
     <string name="write_post_upload_state_loading">게시글을 올리고 있어요! 잠시만 기다려주세요.</string>
     <string name="write_post_upload_state_fail">게시글을 업로드할 수 없어요. 다시 시도해주세요.</string>
+    <string name="write_post_edit_state_fail">게시글을 불러올 수 없습니다. 다시 시도해주세요.</string>
 
 
     <!-- Post -->
