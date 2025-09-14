@@ -5,9 +5,10 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Log
 import androidx.core.net.toUri
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import daily.dayo.domain.model.Category
 import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.NetworkResponse
-import daily.dayo.domain.model.PostDetail
 import daily.dayo.domain.model.Privacy
 import daily.dayo.domain.usecase.folder.RequestAllMyFolderListUseCase
 import daily.dayo.domain.usecase.folder.RequestCreateFolderInPostUseCase
@@ -57,6 +57,7 @@ class WriteViewModel @Inject constructor(
     // There isn't really a leak here in the context constructor, it is just the lint check doesn't know that is the application context
     @ApplicationContext
     private val applicationContext: Context,
+    savedStateHandle: SavedStateHandle,
     private val requestUploadPostUseCase: RequestUploadPostUseCase,
     private val requestEditPostUseCase: RequestEditPostUseCase,
     private val requestPostDetailUseCase: RequestPostDetailUseCase,
@@ -91,20 +92,18 @@ class WriteViewModel @Inject constructor(
     // WritePost
     private val _writePostId = MutableSharedFlow<Long?>()
     val writePostId = _writePostId.asSharedFlow()
-    private val _writeSuccess = MutableLiveData<Event<Boolean>>()
-    val writeSuccess: LiveData<Event<Boolean>> get() = _writeSuccess
     private val _uploadSuccess: MutableStateFlow<Status?> = MutableStateFlow(null)
     val uploadSuccess get() = _uploadSuccess
-    private val _writeCurrentPostDetail = MutableLiveData<PostDetail>()
-    val writeCurrentPostDetail: LiveData<PostDetail> get() = _writeCurrentPostDetail
 
     // WriteFolder
-    private val _folderList = MutableLiveData<Resource<List<Folder>>>()
-    val folderList: LiveData<Resource<List<Folder>>> get() = _folderList
-    private val _folderAddSuccess = MutableLiveData<Event<Boolean>>()
-    val folderAddAccess: LiveData<Event<Boolean>> get() = _folderAddSuccess
     private val _writeFolderAddSuccess = MutableStateFlow(Event(false))
     val writeFolderAddSuccess get() = _writeFolderAddSuccess
+
+    init {
+        savedStateHandle.get<String>("folderId")?.toLongOrNull()?.let { folderId ->
+            setInitFolder(folderId)
+        }
+    }
 
     fun requestUploadPost() {
         if (postEditId.value != null) {
@@ -194,29 +193,19 @@ class WriteViewModel @Inject constructor(
         }
     }
 
-    fun requestAllMyFolderList() = viewModelScope.launch(Dispatchers.IO) {
-        _folderList.postValue(Resource.loading(null))
-        requestAllMyFolderListUseCase()?.let { ApiResponse ->
-            _folderList.postValue(
-                when (ApiResponse) {
-                    is NetworkResponse.Success -> {
-                        Resource.success(ApiResponse.body?.data)
-                    }
-
-                    is NetworkResponse.NetworkError -> {
-                        Resource.error(ApiResponse.exception.toString(), null)
-                    }
-
-                    is NetworkResponse.ApiError -> {
-                        Resource.error(ApiResponse.error.toString(), null)
-                    }
-
-                    is NetworkResponse.UnknownError -> {
-                        Resource.error(ApiResponse.throwable.toString(), null)
-                    }
-                }
-            )
+    private suspend fun requestAllMyFolderList(): List<Folder>? {
+        val resource = when (val response = requestAllMyFolderListUseCase()) {
+            is NetworkResponse.Success -> Resource.success(response.body?.data)
+            is NetworkResponse.NetworkError -> Resource.error(response.exception.toString(), null)
+            is NetworkResponse.ApiError -> Resource.error(response.error.toString(), null)
+            is NetworkResponse.UnknownError -> Resource.error(response.throwable.toString(), null)
         }
+
+        if (resource.data == null) {
+            Log.e("WriteViewModel", "폴더 리스트 불러오기 실패: ${resource.message}")
+        }
+
+        return resource.data
     }
 
     fun requestCreateFolderInPost(
@@ -230,7 +219,6 @@ class WriteViewModel @Inject constructor(
                 description = description,
                 privacy = privacy
             ).let { ApiResponse ->
-                _folderAddSuccess.postValue(Event(ApiResponse is NetworkResponse.Success))
                 _writeFolderAddSuccess.emit(Event(ApiResponse is NetworkResponse.Success))
             }
         }
@@ -240,7 +228,7 @@ class WriteViewModel @Inject constructor(
      */
     fun resetWriteInfoValue() = viewModelScope.launch {
         _postEditId.emit(null)
-        _writeFolderId.emit(0)
+        _writeFolderId.emit(null)
         _writeFolderName.emit("")
         _writeTags.emit(emptyList())
         _writeImagesUri.emit(emptyList())
@@ -286,6 +274,15 @@ class WriteViewModel @Inject constructor(
 
     fun setPostCategory(category: Pair<Category?, Int>) = viewModelScope.launch {
         _writeCategory.emit(category)
+    }
+
+    private fun setInitFolder(id: Long) {
+        viewModelScope.launch {
+            _writeFolderId.emit(id)
+            val folders = requestAllMyFolderList()
+            val folderTitle = folders?.find { it.folderId == id }?.title
+            _writeFolderName.emit(folderTitle)
+        }
     }
 
     fun setFolderId(id: Long) = viewModelScope.launch {

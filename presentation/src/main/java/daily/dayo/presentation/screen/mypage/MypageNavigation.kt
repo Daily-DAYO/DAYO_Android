@@ -72,6 +72,7 @@ fun NavGraphBuilder.myPageNavGraph(
     onFolderClick: (Long) -> Unit,
     onFolderCreateClick: () -> Unit,
     onFolderEditClick: (Long) -> Unit,
+    onWritePostWithFolderClick: (Long) -> Unit,
     onPostClick: (Long) -> Unit,
     onPostMoveClick: (Long) -> Unit,
     onAdRequest: (onRewardSuccess: () -> Unit) -> Unit,
@@ -148,6 +149,7 @@ fun NavGraphBuilder.myPageNavGraph(
                 onPostClick = onPostClick,
                 onFolderEditClick = { onFolderEditClick(folderId) },
                 onPostMoveClick = { onPostMoveClick(folderId) },
+                onWritePostWithFolderClick = { onWritePostWithFolderClick(folderId) },
                 onBackClick = onBackClick,
                 folderViewModel = hiltViewModel(navBackStackEntry)
             )
