@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.Flow
 interface AlarmRepository {
 
     suspend fun requestAllAlarmList(): Flow<PagingData<Notification>>
-    suspend fun requestIsCheckAlarm(alarmId: Int): NetworkResponse<Void>
+    suspend fun markAlarmAsChecked(alarmId: Int): NetworkResponse<Void>
 }

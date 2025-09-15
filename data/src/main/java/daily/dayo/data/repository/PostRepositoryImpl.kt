@@ -2,8 +2,9 @@ package daily.dayo.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import daily.dayo.data.datasource.remote.post.*
-import daily.dayo.data.mapper.toLikePostDeleteResponse
+import daily.dayo.data.datasource.remote.post.EditPostRequest
+import daily.dayo.data.datasource.remote.post.FeedPagingSource
+import daily.dayo.data.datasource.remote.post.PostApiService
 import daily.dayo.data.mapper.toPostCreateResponse
 import daily.dayo.data.mapper.toPostDetail
 import daily.dayo.data.mapper.toPostEditResponse
@@ -11,7 +12,6 @@ import daily.dayo.data.mapper.toPosts
 import daily.dayo.data.mapper.toPostsCategorized
 import daily.dayo.data.mapper.toPostsDayoPick
 import daily.dayo.domain.model.Category
-import daily.dayo.domain.model.LikePostDeleteResponse
 import daily.dayo.domain.model.NetworkResponse
 import daily.dayo.domain.model.PostCreateResponse
 import daily.dayo.domain.model.PostDetail
@@ -31,7 +31,7 @@ class PostRepositoryImpl @Inject constructor(
         category: Category,
         contents: String,
         files: List<MultipartBody.Part>,
-        folderId: Int,
+        folderId: Long,
         tags: Array<String>
     ): NetworkResponse<PostCreateResponse> =
         when (val response =
@@ -43,10 +43,10 @@ class PostRepositoryImpl @Inject constructor(
         }
 
     override suspend fun requestEditPost(
-        postId: Int,
+        postId: Long,
         category: Category,
         contents: String,
-        folderId: Int,
+        folderId: Long,
         hashtags: List<String>
     ): NetworkResponse<PostEditResponse> =
         when (
@@ -93,7 +93,7 @@ class PostRepositoryImpl @Inject constructor(
             is NetworkResponse.UnknownError -> response
         }
 
-    override suspend fun requestPostDetail(postId: Int): NetworkResponse<PostDetail> =
+    override suspend fun requestPostDetail(postId: Long): NetworkResponse<PostDetail> =
         when (val response = postApiService.requestPostDetail(postId)) {
             is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toPostDetail())
             is NetworkResponse.NetworkError -> response
@@ -101,16 +101,16 @@ class PostRepositoryImpl @Inject constructor(
             is NetworkResponse.UnknownError -> response
         }
 
-    override suspend fun requestDeletePost(postId: Int): NetworkResponse<LikePostDeleteResponse> =
+    override suspend fun requestDeletePost(postId: Long): NetworkResponse<Void> =
         when (val response = postApiService.requestDeletePost(postId)) {
-            is NetworkResponse.Success -> NetworkResponse.Success(response.body?.toLikePostDeleteResponse())
+            is NetworkResponse.Success -> NetworkResponse.Success(response.body)
             is NetworkResponse.NetworkError -> response
             is NetworkResponse.ApiError -> response
             is NetworkResponse.UnknownError -> response
         }
 
-    override suspend fun requestFeedList() = Pager(PagingConfig(pageSize = FEED_PAGE_SIZE)) {
-        FeedPagingSource(postApiService, FEED_PAGE_SIZE)
+    override suspend fun requestFeedList(category: Category) = Pager(PagingConfig(pageSize = FEED_PAGE_SIZE)) {
+        FeedPagingSource(category, postApiService, FEED_PAGE_SIZE)
     }.flow
 
     companion object {

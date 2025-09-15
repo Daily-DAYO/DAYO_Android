@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface NoticeRepository {
     suspend fun requestAllNoticeList(): Flow<PagingData<Notice>>
-    suspend fun requestDetailNotice(noticeId: Int): NetworkResponse<NoticeDetail>
+    suspend fun requestDetailNotice(noticeId: Long): NetworkResponse<NoticeDetail>
 }

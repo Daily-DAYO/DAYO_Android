@@ -104,7 +104,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun initSearchKeywordRecentList() {
-        searchKeywordRecentList = searchViewModel.getSearchKeywordRecent()
+//        searchKeywordRecentList = searchViewModel.getSearchKeywordRecent()
         searchKeywordRecentAdapter?.submitList(searchKeywordRecentList)
     }
 
@@ -116,15 +116,17 @@ class SearchFragment : Fragment() {
             }
 
             override fun deleteSearchKeywordRecentClick(keyword: String, pos: Int) {
-                searchViewModel.deleteSearchKeywordRecent(keyword)
-                searchKeywordRecentList = searchViewModel.getSearchKeywordRecent()
+//                searchViewModel.searchHistory.value?.data?.get(pos)?.let {
+//                    searchViewModel.deleteSearchKeywordRecent(it.history, it.searchHistoryType)
+//                }
+//                searchKeywordRecentList = searchViewModel.getSearchKeywordRecent()
                 searchKeywordRecentAdapter?.submitList(searchKeywordRecentList)
             }
         })
 
         binding.tvSearchAllDelete.setOnDebounceClickListener {
-            searchViewModel.clearSearchKeywordRecent()
-            searchKeywordRecentList = searchViewModel.getSearchKeywordRecent()
+//            searchViewModel.clearSearchKeywordRecent()
+//            searchKeywordRecentList = searchViewModel.getSearchKeywordRecent()
             searchKeywordRecentAdapter?.submitList(searchKeywordRecentList)
         }
     }

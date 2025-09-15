@@ -2,7 +2,6 @@ package daily.dayo.domain.repository
 
 import androidx.paging.PagingData
 import daily.dayo.domain.model.Category
-import daily.dayo.domain.model.LikePostDeleteResponse
 import daily.dayo.domain.model.NetworkResponse
 import daily.dayo.domain.model.Post
 import daily.dayo.domain.model.PostCreateResponse
@@ -20,7 +19,7 @@ interface PostRepository {
         category: Category,
         contents: String,
         files: List<MultipartBody.Part>,
-        folderId: Int,
+        folderId: Long,
         tags: Array<String>
     ): NetworkResponse<PostCreateResponse>
 
@@ -28,15 +27,15 @@ interface PostRepository {
     suspend fun requestNewPostListCategory(category: Category): NetworkResponse<PostsCategorized>
     suspend fun requestDayoPickPostList(): NetworkResponse<PostsDayoPick>
     suspend fun requestDayoPickPostListCategory(category: Category): NetworkResponse<PostsDayoPick>
-    suspend fun requestPostDetail(postId: Int): NetworkResponse<PostDetail>
-    suspend fun requestDeletePost(postId: Int): NetworkResponse<LikePostDeleteResponse>
+    suspend fun requestPostDetail(postId: Long): NetworkResponse<PostDetail>
+    suspend fun requestDeletePost(postId: Long): NetworkResponse<Void>
     suspend fun requestEditPost(
-        postId: Int,
+        postId: Long,
         category: Category,
         contents: String,
-        folderId: Int,
+        folderId: Long,
         hashtags: List<String>
     ): NetworkResponse<PostEditResponse>
 
-    suspend fun requestFeedList(): Flow<PagingData<Post>>
+    suspend fun requestFeedList(category: Category): Flow<PagingData<Post>>
 }

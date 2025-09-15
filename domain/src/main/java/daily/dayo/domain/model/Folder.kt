@@ -1,7 +1,15 @@
 package daily.dayo.domain.model
 
+enum class FolderOrder {
+    NEW, OLD;
+
+    override fun toString(): String {
+        return name.lowercase()
+    }
+}
+
 data class Folder(
-    val folderId: Int?,
+    val folderId: Long?,
     val title: String,
     val memberId: String?,
     val privacy: Privacy,
@@ -14,6 +22,7 @@ data class Folders(
     val count: Int,
     val data: List<Folder>
 )
+
 data class FoldersMine(
     val count: Int,
     val data: List<Folder>
@@ -21,25 +30,20 @@ data class FoldersMine(
 
 data class FolderPost(
     val createDate: String,
-    val postId: Int,
+    val postId: Long,
     val thumbnailImage: String
 )
 
-data class FolderOrder(
-    var folderId: Int,
-    var orderIndex: Int
-)
-
 data class FolderCreateResponse(
-    val folderId: Int
+    val folderId: Long
 )
 
 data class FolderCreateInPostResponse(
-    val folderId: Int
+    val folderId: Long
 )
 
 data class FolderEditResponse(
-    val folderId: Int
+    val folderId: Long
 )
 
 data class FolderInfo(
@@ -47,6 +51,6 @@ data class FolderInfo(
     val name: String,
     val postCount: Int,
     val privacy: Privacy,
-    var subheading: String?,
+    var subheading: String,
     val thumbnailImage: String
 )

@@ -72,10 +72,6 @@ class ProfileOptionFragment : DialogFragment() {
 
     private fun setOptionFolderSettingClickListener() {
         binding.layoutProfileOptionFolderSetting.setOnDebounceClickListener {
-            findNavController().navigateSafe(
-                currentDestinationId = R.id.ProfileOptionFragment,
-                action = R.id.action_profileOptionFragment_to_folderSettingFragment
-            )
         }
     }
 
@@ -90,10 +86,6 @@ class ProfileOptionFragment : DialogFragment() {
 
     private fun setOptionSettingClickListener() {
         binding.layoutProfileOptionSetting.setOnDebounceClickListener {
-            findNavController().navigateSafe(
-                currentDestinationId = R.id.ProfileOptionFragment,
-                action = R.id.action_profileOptionFragment_to_settingFragment
-            )
         }
     }
 
@@ -122,17 +114,6 @@ class ProfileOptionFragment : DialogFragment() {
     }
 
     private fun blockUser() {
-        profileViewModel.requestBlockMember(args.memberId)
-        profileViewModel.blockSuccess.observe(viewLifecycleOwner) {
-            if (it.getContentIfNotHandled() == true) {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.other_profile_block_success_message,
-                    Toast.LENGTH_SHORT
-                ).show()
-                findNavController().navigateUp()
-            }
-        }
     }
 
     private fun setOptionReportUserClickListener() {

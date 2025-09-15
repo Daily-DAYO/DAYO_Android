@@ -16,15 +16,26 @@ data class ListAllCommentResponse(
 
 data class CommentDto(
     @SerializedName("commentId")
-    val commentId: Int,
-    @SerializedName("contents")
-    val contents: String,
-    @SerializedName("createTime")
-    val createTime: String,
+    val commentId: Long,
     @SerializedName("memberId")
     val memberId: String,
     @SerializedName("nickname")
     val nickname: String,
     @SerializedName("profileImg")
-    val profileImg: String
+    val profileImg: String,
+    @SerializedName("contents")
+    val contents: String,
+    @SerializedName("createTime")
+    val createTime: String,
+    @SerializedName("replyList")
+    val replyList: List<CommentDto>,
+    @SerializedName("mentionList")
+    val mentionList: List<MentionUserDto>
+)
+
+data class MentionUserDto(
+    @SerializedName("memberId")
+    val memberId: String,
+    @SerializedName("nickname")
+    val nickname: String
 )

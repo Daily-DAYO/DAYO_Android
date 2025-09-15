@@ -15,7 +15,29 @@ data class SearchResultResponse(
 
 data class SearchDto(
     @SerializedName("postId")
-    val postId: Int,
+    val postId: Long,
     @SerializedName("thumbnailImage")
     val thumbnailImage: String,
+)
+
+data class SearchUserResponse(
+    @SerializedName("allCount")
+    val totalCount: Int,
+    @SerializedName("count")
+    val count: Int,
+    @SerializedName("last")
+    val last: Boolean,
+    @SerializedName("data")
+    val data: List<SearchUserDto>,
+)
+
+data class SearchUserDto(
+    @SerializedName("memberId")
+    val memberId: String,
+    @SerializedName("nickname")
+    val nickname: String,
+    @SerializedName("profileImg")
+    val profileImg: String,
+    @SerializedName("isFollow")
+    val isFollow: Boolean,
 )

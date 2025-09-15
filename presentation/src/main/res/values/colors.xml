@@ -18,6 +18,7 @@
 
     <color name="black_000000">#FF000000</color>
     <color name="white_FFFFFF">#FFFFFFFF</color>
+    <color name="white_alpha_30_FFFFFF">#4DFFFFFF</color>
     <color name="gray_1_313131">#FF313131</color>
     <color name="gray_1_313131_alpha_40">#66313131</color>
     <color name="gray_2_767B83">#FF767B83</color>

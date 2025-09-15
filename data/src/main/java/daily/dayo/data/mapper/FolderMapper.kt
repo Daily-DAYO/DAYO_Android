@@ -34,7 +34,7 @@ fun FolderInfoResponse.toFolderInfo(): FolderInfo =
         name = name,
         postCount = postCount,
         privacy = privacy,
-        subheading = subheading,
+        subheading = subheading ?: "",
         thumbnailImage = thumbnailImage
     )
 
@@ -81,16 +81,4 @@ fun FolderPostDto.toFolderPost(): FolderPost =
         createDate = createDate,
         postId = postId,
         thumbnailImage = thumbnailImage
-    )
-
-fun FolderOrder.toEditOrderDto(): EditOrderDto =
-    EditOrderDto(
-        folderId = folderId,
-        orderIndex = orderIndex
-    )
-
-fun EditOrderDto.toFolderOrder(): FolderOrder =
-    FolderOrder(
-        folderId = folderId,
-        orderIndex = orderIndex
     )

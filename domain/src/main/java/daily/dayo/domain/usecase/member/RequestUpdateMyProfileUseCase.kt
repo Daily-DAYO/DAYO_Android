@@ -5,6 +5,7 @@ import daily.dayo.domain.repository.MemberRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import javax.inject.Inject
 
@@ -20,7 +21,7 @@ class RequestUpdateMyProfileUseCase @Inject constructor(
             MultipartBody.Part.createFormData(
                 "profileImg",
                 profileImg.name,
-                RequestBody.create("image/*".toMediaTypeOrNull(), profileImg)
+                profileImg.asRequestBody("image/*".toMediaTypeOrNull())
             )
         else null
         return memberRepository.requestUpdateMyProfile(

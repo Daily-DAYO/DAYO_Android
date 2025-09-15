@@ -5,15 +5,14 @@ import daily.dayo.data.datasource.remote.heart.DeleteHeartResponse
 import daily.dayo.data.datasource.remote.heart.HeartMemberDto
 import daily.dayo.data.datasource.remote.heart.MyHeartPostDto
 import daily.dayo.domain.model.LikePost
-import daily.dayo.domain.model.LikePostDeleteResponse
 import daily.dayo.domain.model.LikePostResponse
 import daily.dayo.domain.model.LikeUser
 
 fun CreateHeartResponse.toLikePostResponse(): LikePostResponse =
-    LikePostResponse(memberId = memberId, postId = postId, allCount = allCount)
+    LikePostResponse(allCount = allCount)
 
-fun DeleteHeartResponse.toLikePostDeleteResponse(): LikePostDeleteResponse =
-    LikePostDeleteResponse(allCount = allCount)
+fun DeleteHeartResponse.toLikePostDeleteResponse(): LikePostResponse =
+    LikePostResponse(allCount = allCount)
 
 fun MyHeartPostDto.toLikePost(): LikePost =
     LikePost(
