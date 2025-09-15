@@ -11,4 +11,8 @@ interface ReportApiService {
 
     @POST("/api/v1/reports/post")
     suspend fun requestSavePostReport(@Body body: CreateReportPostRequest): NetworkResponse<Void>
+
+    @POST("/api/v2/reports/comment")
+    suspend fun requestSaveCommentReport(@Body body: CreateReportCommentRequest): NetworkResponse<Void>
+
 }

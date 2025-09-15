@@ -3,48 +3,81 @@ package daily.dayo.presentation.activity
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.view.MotionEvent
-import android.view.View
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.forEach
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
-import daily.dayo.presentation.common.extension.navigateSafe
-import daily.dayo.presentation.databinding.ActivityMainBinding
-import daily.dayo.presentation.fragment.home.HomeFragmentDirections
+import daily.dayo.presentation.screen.main.MainScreen
+import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.SettingNotificationViewModel
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
     private val accountViewModel by viewModels<AccountViewModel>()
     private val settingNotificationViewModel by viewModels<SettingNotificationViewModel>()
+    private var rewardedAd: RewardedAd? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         setSystemBackClickListener()
         checkCurrentNotification()
-        initBottomNavigation()
-        setBottomNaviVisibility()
-        disableBottomNaviTooltip()
         getNotificationData()
         askNotificationPermission()
+        loadRewardedAd()
+        setContent {
+            DayoTheme {
+                MainScreen(
+                    onAdRequest = { onRewardSuccess ->
+                        showAdIfAvailable(onRewardSuccess)
+                    }
+                )
+            }
+        }
+    }
+
+    private fun loadRewardedAd() {
+        val adRequest = AdRequest.Builder().build()
+        RewardedAd.load(this, BuildConfig.REWARDED_AD_UNIT_ID_FOLDER, adRequest, object : RewardedAdLoadCallback() {
+            override fun onAdLoaded(ad: RewardedAd) {
+                rewardedAd = ad
+            }
+
+            override fun onAdFailedToLoad(error: LoadAdError) {
+                rewardedAd = null
+            }
+        })
+    }
+
+    private fun showAdIfAvailable(onRewardSuccess: () -> Unit) {
+        rewardedAd?.let { ad ->
+            ad.show(this) {
+                // 광고를 끝까지 봤을 때만 호출됨
+                onRewardSuccess()
+
+                // 광고 다시 로드
+                rewardedAd = null
+                loadRewardedAd()
+            }
+        } ?: run {
+            Log.d("Ad", "The rewarded ad wasn't ready yet.")
+            loadRewardedAd()
+        }
     }
 
     private fun setSystemBackClickListener() {
@@ -59,8 +92,6 @@ class MainActivity : AppCompatActivity() {
 
                     if (backStackEntryCount == 0) {
                         this@MainActivity.finish()
-                    } else {
-                        findNavController().popBackStack()
                     }
                 }
             }
@@ -82,24 +113,6 @@ class MainActivity : AppCompatActivity() {
         if (extraFragment != null && extraFragment == "Notification") {
             val postId = intent.getStringExtra("PostId")?.toInt()
             val memberId = intent.getStringExtra("MemberId")
-            if (postId != null) findNavController().navigateSafe(
-                currentDestinationId = R.id.HomeFragment,
-                action = R.id.action_homeFragment_to_postFragment,
-                args = HomeFragmentDirections.actionHomeFragmentToPostFragment(
-                    postId = postId
-                ).arguments
-            )
-            else if (memberId != null) findNavController().navigateSafe(
-                currentDestinationId = R.id.HomeFragment,
-                action = R.id.action_homeFragment_to_profileFragment,
-                args = HomeFragmentDirections.actionHomeFragmentToProfileFragment(
-                    memberId = memberId
-                ).arguments
-            )
-            else findNavController().navigateSafe(
-                currentDestinationId = R.id.HomeFragment,
-                action = R.id.action_homeFragment_to_notificationFragment
-            )
         }
     }
 
@@ -114,7 +127,7 @@ class MainActivity : AppCompatActivity() {
             when {
                 deniedList.isNotEmpty() -> {
                     accountViewModel.requestCurrentUserNotiDevicePermit(false)
-                    accountViewModel.requestCurrentUserNotiNoticePermit(false)
+                    accountViewModel.changeNoticeNotificationSetting(false)
                     val map = deniedList.groupBy { permission ->
                         if (shouldShowRequestPermissionRationale(permission)) getString(R.string.permission_fail_second) else getString(
                             R.string.permission_fail_final
@@ -150,7 +163,7 @@ class MainActivity : AppCompatActivity() {
                     //All request are permitted
                     // 알림 최초 허용시에 모든 알림 허용처리
                     accountViewModel.requestCurrentUserNotiDevicePermit(true)
-                    accountViewModel.requestCurrentUserNotiNoticePermit(true)
+                    accountViewModel.changeNoticeNotificationSetting(true)
                     settingNotificationViewModel.registerDeviceToken()
                     settingNotificationViewModel.requestReceiveAlarm()
                 }
@@ -174,86 +187,6 @@ class MainActivity : AppCompatActivity() {
             } else {
                 // Directly ask for the permission
                 permissionLauncherNotification.launch(notificationPermission)
-            }
-        }
-    }
-
-    private fun initBottomNavigation() {
-        binding.bottomNavigationMainBar.setupWithNavController(findNavController())
-    }
-
-    private fun findNavController(): NavController {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        return navHostFragment.navController
-    }
-
-    private fun setBottomNaviVisibility() {
-        binding.bottomNavigationMainBar.itemIconTintList = null
-        findNavController().addOnDestinationChangedListener { _, destination, _ ->
-            binding.layoutBottomNavigationMain.visibility = when (destination.id) {
-                R.id.HomeFragment -> View.VISIBLE
-                R.id.FeedFragment -> View.VISIBLE
-                R.id.NotificationFragment -> View.VISIBLE
-                R.id.MyPageFragment -> View.VISIBLE
-                else -> View.GONE
-            }
-        }
-        // WriteFragment
-        binding.bottomNavigationMainBar.setItemOnTouchListener(R.id.WriteFragment,
-            object : View.OnTouchListener {
-                var rect = Rect()
-                var isInside = true
-                override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                    when (event?.action) {
-                        MotionEvent.ACTION_DOWN -> {
-                            binding.bottomNavigationMainBar.menu.findItem(R.id.WriteFragment)
-                                .setIcon(R.drawable.ic_write_filled)
-                            rect = Rect(v!!.left, v.top, v.right, v.bottom)
-                            isInside = true
-                            return true
-                        }
-
-                        MotionEvent.ACTION_MOVE -> {
-                            isInside =
-                                rect.contains(v!!.left + event.x.toInt(), v.top + event.y.toInt())
-                            binding.bottomNavigationMainBar.clearFocus()
-                            return false
-                        }
-
-                        MotionEvent.ACTION_UP -> {
-                            binding.bottomNavigationMainBar.menu.findItem(R.id.WriteFragment)
-                                .setIcon(R.drawable.ic_write)
-                            if (isInside) {
-                                when (findNavController().currentDestination!!.id) {
-                                    R.id.HomeFragment -> findNavController().navigate(R.id.action_homeFragment_to_writeFragment)
-                                    R.id.FeedFragment -> findNavController().navigate(R.id.action_feedFragment_to_writeFragment)
-                                    R.id.NotificationFragment -> findNavController().navigate(R.id.action_notificationFragment_to_writeFragment)
-                                    R.id.MyPageFragment -> findNavController().navigate(R.id.action_myPageFragment_to_writeFragment)
-                                }
-                            }
-                            return true
-                        }
-
-                        else -> return true
-                    }
-                }
-            })
-    }
-
-    private fun disableBottomNaviTooltip() {
-        binding.bottomNavigationMainBar.menu.forEach {
-            val view = binding.bottomNavigationMainBar.findViewById<View>(it.itemId)
-            view.setOnLongClickListener {
-                true
-            }
-        }
-    }
-
-    fun setBottomNavigationIconClickListener(reselectedIconId: Int, reselectAction: () -> Unit) {
-        binding.bottomNavigationMainBar.setOnItemReselectedListener {
-            when (it.itemId) {
-                reselectedIconId -> reselectAction()
             }
         }
     }

@@ -1,15 +1,12 @@
 package daily.dayo.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
-import daily.dayo.presentation.common.Resource
-import daily.dayo.domain.model.BookmarkPostResponse
-import daily.dayo.domain.model.LikePostResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
+import daily.dayo.domain.model.Category
 import daily.dayo.domain.model.NetworkResponse
 import daily.dayo.domain.model.Post
 import daily.dayo.domain.usecase.bookmark.RequestBookmarkPostUseCase
@@ -17,8 +14,8 @@ import daily.dayo.domain.usecase.bookmark.RequestDeleteBookmarkPostUseCase
 import daily.dayo.domain.usecase.like.RequestLikePostUseCase
 import daily.dayo.domain.usecase.like.RequestUnlikePostUseCase
 import daily.dayo.domain.usecase.post.RequestFeedListUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,110 +29,97 @@ class FeedViewModel @Inject constructor(
     private val requestDeleteBookmarkPostUseCase: RequestDeleteBookmarkPostUseCase
 ) : ViewModel() {
 
-    private val _feedList = MutableLiveData<PagingData<Post>>()
-    val feedList: LiveData<PagingData<Post>> get() = _feedList
+    private var _currentCategory = Category.ALL
+    private val currentCategory get() = _currentCategory
 
-    private val _postLiked = MutableLiveData<Resource<LikePostResponse>>()
-    val postLiked: LiveData<Resource<LikePostResponse>> get() = _postLiked
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
 
-    private val _postBookmarked = MutableLiveData<Resource<BookmarkPostResponse>>()
-    val postBookmarked: LiveData<Resource<BookmarkPostResponse>> get() = _postBookmarked
+    private val _feedPosts = MutableStateFlow<PagingData<Post>>(PagingData.empty())
+    val feedPosts = _feedPosts.asStateFlow()
 
-    fun requestFeedList() = viewModelScope.launch(Dispatchers.IO) {
-        requestFeedListUseCase()
-            .cachedIn(viewModelScope)
-            .collectLatest { _feedList.postValue(it) }
+    fun loadFeedPosts() {
+        viewModelScope.launch {
+            _isRefreshing.emit(true)
+            requestFeedList()
+            _isRefreshing.emit(false)
+        }
     }
 
-    fun requestLikePost(postId: Int) = viewModelScope.launch(Dispatchers.IO) {
-        requestLikePostUseCase(postId = postId)?.let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _feedList.postValue(
-                        _feedList.value?.map {
-                            if (it.postId == postId) {
-                                it.copy(
-                                    heart = true,
-                                    heartCount = ApiResponse.body?.allCount ?: 0
-                                )
-                            } else {
-                                it
-                            }
+    fun setCurrentCategory(category: Category) {
+        _currentCategory = category
+    }
+
+    fun toggleLikePost(post: Post) {
+        viewModelScope.launch {
+            post.postId?.let { postId ->
+                if (post.heart) {
+                    requestUnlikePostUseCase(postId = postId)
+                } else {
+                    requestLikePostUseCase(postId = postId)
+                }.let { response ->
+                    when (response) {
+                        is NetworkResponse.Success -> {
+                            _feedPosts.emit(
+                                _feedPosts.value.map {
+                                    if (it.postId == post.postId) {
+                                        it.copy(
+                                            heart = !post.heart,
+                                            heartCount = response.body?.allCount ?: 0
+                                        )
+                                    } else {
+                                        it
+                                    }
+                                }
+                            )
                         }
-                    )
-                    _postLiked.postValue(Resource.success(ApiResponse.body))
+
+                        else -> Unit
+                    }
                 }
-                is NetworkResponse.NetworkError -> { _postLiked.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                is NetworkResponse.ApiError -> { _postLiked.postValue(Resource.error(ApiResponse.error.toString(), null)) }
-                is NetworkResponse.UnknownError -> { _postLiked.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
             }
         }
     }
 
-    fun requestUnlikePost(postId: Int) = viewModelScope.launch(Dispatchers.IO) {
-        requestUnlikePostUseCase(postId = postId)?.let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _feedList.postValue(
-                        _feedList.value?.map {
-                            if (it.postId == postId) {
-                                it.copy(
-                                    heart = false,
-                                    heartCount = ApiResponse.body?.allCount ?: 0
+    fun toggleBookmarkPost(post: Post) {
+        viewModelScope.launch {
+            post.postId?.let { postId ->
+                post.bookmark?.let { bookmark ->
+                    if (bookmark) {
+                        requestDeleteBookmarkPostUseCase(postId = postId)
+                    } else {
+                        requestBookmarkPostUseCase(postId = postId)
+                    }.let { response ->
+                        when (response) {
+                            is NetworkResponse.Success -> {
+                                _feedPosts.emit(
+                                    _feedPosts.value.map {
+                                        if (it.postId == post.postId) {
+                                            it.copy(
+                                                bookmark = !bookmark
+                                            )
+                                        } else {
+                                            it
+                                        }
+                                    }
                                 )
-                            } else {
-                                it
                             }
+
+                            else -> Unit
                         }
-                    )
+                    }
                 }
-                else -> {}
             }
         }
     }
 
-    fun requestBookmarkPost(postId: Int) = viewModelScope.launch(Dispatchers.IO) {
-        requestBookmarkPostUseCase(postId = postId).let { ApiResponse ->
-            when (ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _feedList.postValue(
-                        _feedList.value?.map {
-                            if (it.postId == postId) {
-                                it.copy(
-                                    bookmark = true
-                                )
-                            } else {
-                                it
-                            }
-                        }
-                    )
-                    _postBookmarked.postValue(Resource.success(ApiResponse.body))
+    private fun requestFeedList() {
+        viewModelScope.launch {
+            requestFeedListUseCase(currentCategory)
+                .cachedIn(viewModelScope)
+                .collectLatest {
+                    _feedPosts.emit(it)
                 }
-                is NetworkResponse.NetworkError -> { _postBookmarked.postValue(Resource.error(ApiResponse.exception.toString(), null)) }
-                is NetworkResponse.ApiError -> { _postBookmarked.postValue(Resource.error(ApiResponse.error.toString(), null)) }
-                is NetworkResponse.UnknownError -> { _postBookmarked.postValue(Resource.error(ApiResponse.throwable.toString(), null)) }
-            }
-        }
-    }
-
-    fun requestDeleteBookmarkPost(postId: Int) = viewModelScope.launch(Dispatchers.IO) {
-        requestDeleteBookmarkPostUseCase(postId = postId)?.let { ApiResponse ->
-            when(ApiResponse) {
-                is NetworkResponse.Success -> {
-                    _feedList.postValue(
-                        _feedList.value?.map {
-                            if (it.postId == postId) {
-                                it.copy(
-                                    bookmark = false
-                                )
-                            } else {
-                                it
-                            }
-                        }
-                    )
-                }
-                else -> {}
-            }
         }
     }
 }

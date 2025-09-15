@@ -20,14 +20,14 @@ kotlin {
 
 android {
     namespace 'daily.dayo.presentation'
-    compileSdk 33
+    compileSdk rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        minSdk 26
+        minSdk rootProject.ext.minSdkVersion
         versionCode 10000
         versionName "1.0.0"
 
-        buildConfigField ("String", "NATIVE_APP_KEY", properties['NATIVE_APP_KEY_STR'])
+        buildConfigField("String", "NATIVE_APP_KEY", properties['NATIVE_APP_KEY_STR'])
         manifestPlaceholders = [NATIVE_APP_KEY: NATIVE_APP_KEY]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -43,10 +43,19 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField("String", "BASE_URL", properties['BASE_URL_RELEASE'])
         }
-        debug {
-            buildConfigField("String", "BASE_URL", properties['BASE_URL_DEBUG'])
+    }
+    flavorDimensions = ["environment"]
+    productFlavors {
+        dev {
+            dimension "environment"
+            buildConfigField("String", "BASE_URL", properties['BASE_URL_DEV'])
+            buildConfigField("String", "REWARDED_AD_UNIT_ID_FOLDER", properties['REWARDED_AD_UNIT_ID_FOLDER_DEV'])
+        }
+        prod {
+            dimension "environment"
+            buildConfigField("String", "BASE_URL", properties['BASE_URL_PROD'])
+            buildConfigField("String", "REWARDED_AD_UNIT_ID_FOLDER", properties['REWARDED_AD_UNIT_ID_FOLDER_PROD'])
         }
     }
     compileOptions {
@@ -64,7 +73,7 @@ android {
     buildFeatures {
         dataBinding true
         viewBinding true
-        compose = true
+        compose true
     }
 }
 
@@ -79,9 +88,11 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     // Compose
-    def composeBom = platform("androidx.compose:compose-bom:2023.06.01")
-    implementation(composeBom)
-    androidTestImplementation(composeBom)
+    Dependency composeBom = platform('androidx.compose:compose-bom:2025.05.00')
+    implementation composeBom
+    testImplementation composeBom
+    androidTestImplementation composeBom
+    implementation "androidx.compose.material:material:1.5.4"
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     def nav_version = "2.8.3"
@@ -92,10 +103,10 @@ dependencies {
     def landscapist_glide_version = "2.2.5"
     def fragment_version = "1.6.1"
     def activity_version = "1.7.2"
+    def emoji_version = "1.0.0-alpha03"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.10.1'
-    implementation("androidx.compose.material3:material3")
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     // Java language implementation
@@ -108,6 +119,9 @@ dependencies {
     implementation("androidx.activity:activity-ktx:$activity_version")
 
     // Jetpack Compose
+    // Material
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
     // Android Studio Preview support
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
@@ -115,13 +129,13 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     // Optional - Integration with activities
-    implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.activity:activity-compose:1.10.1")
     // Optional - Integration with LiveData
     implementation("androidx.compose.runtime:runtime-livedata")
     // Optional - Integration with RxJava
     implementation("androidx.compose.runtime:runtime-rxjava2")
     // To use constraintlayout in compose
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.1")
 
     // Jetpack Navigation
     // Java language implementation
@@ -135,7 +149,8 @@ dependencies {
     // Testing Navigation
     androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
     // Jetpack Compose Integration
-    implementation("androidx.navigation:navigation-compose:$nav_version")
+    implementation "androidx.navigation:navigation-compose:$nav_version"
+    implementation "androidx.hilt:hilt-navigation-compose:1.2.0"
 
     // ViewPager2
     implementation "androidx.viewpager2:viewpager2:1.0.0"
@@ -194,6 +209,9 @@ dependencies {
     // Glide-For-Compose
     implementation "com.github.skydoves:landscapist-glide:$landscapist_glide_version"
 
+    // Coil
+    implementation "io.coil-kt:coil-compose:2.5.0"
+
     // Preference
     implementation 'androidx.preference:preference-ktx:1.1.1'
 
@@ -217,6 +235,10 @@ dependencies {
     // optional - Jetpack Compose integration
     implementation "androidx.paging:paging-compose:3.2.0"
 
+    // emoji
+    implementation "androidx.emoji2:emoji2:$emoji_version"
+    implementation "androidx.emoji2:emoji2-views:$emoji_version"
+
     // Google In-App Update
     implementation 'com.google.android.play:app-update-ktx:2.1.0'
 
@@ -235,4 +257,7 @@ dependencies {
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.2"
 
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
+
+    // Google Ads
+    implementation 'com.google.android.gms:play-services-ads:23.6.0'
 }

@@ -6,6 +6,6 @@ import javax.inject.Inject
 class RequestDetailNoticeUseCase @Inject constructor(
     private val noticeRepository: NoticeRepository
 ) {
-    suspend operator fun invoke(noticeId: Int) =
+    suspend operator fun invoke(noticeId: Long) =
         noticeRepository.requestDetailNotice(noticeId)
 }

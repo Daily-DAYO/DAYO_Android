@@ -30,5 +30,7 @@ data class AlarmDto(
     @SerializedName("memberId")
     val memberId: String?,
     @SerializedName("postId")
-    val postId: Int?
+    val postId: Long?,
+    @SerializedName("profileImage")
+    val profileImage: String?,
 )

@@ -11,5 +11,5 @@ interface NoticeApiService {
     suspend fun requestAllNoticeList(@Query("end") end: Int): NetworkResponse<NoticeListResponse>
 
     @GET("/api/v1/notice/{noticeId}")
-    suspend fun requestDetailNotice(@Path("noticeId") noticeId: Int): NetworkResponse<NoticeDetailResponse>
+    suspend fun requestDetailNotice(@Path("noticeId") noticeId: Long): NetworkResponse<NoticeDetailResponse>
 }

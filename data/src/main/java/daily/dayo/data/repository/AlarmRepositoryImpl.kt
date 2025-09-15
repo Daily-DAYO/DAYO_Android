@@ -17,8 +17,8 @@ class AlarmRepositoryImpl @Inject constructor(
             AlarmPagingSource(alarmApiService, ALARM_PAGE_SIZE)
         }.flow
 
-    override suspend fun requestIsCheckAlarm(alarmId: Int): NetworkResponse<Void> =
-        alarmApiService.requestIsCheckAlarm(alarmId)
+    override suspend fun markAlarmAsChecked(alarmId: Int): NetworkResponse<Void> =
+        alarmApiService.markAlarmAsChecked(alarmId)
 
     companion object {
         private const val ALARM_PAGE_SIZE = 10

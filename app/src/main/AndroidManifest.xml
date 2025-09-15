@@ -30,6 +30,11 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_dayo_logo" />
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${ADS_APPLICATION_ID}" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -43,6 +48,7 @@
         <activity android:name="daily.dayo.presentation.activity.LoginActivity"
             android:theme="@style/Theme.DAYO.Splash"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -64,7 +70,7 @@
         </activity>
         <activity android:name="daily.dayo.presentation.activity.MainActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustNothing" />
+            android:windowSoftInputMode="adjustResize" />
         <service
             android:name="daily.dayo.presentation.service.firebase.FirebaseMessagingService"
             android:exported="false">

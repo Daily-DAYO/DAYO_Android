@@ -11,6 +11,7 @@ plugins {
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 def NATIVE_APP_KEY = properties.getProperty('NATIVE_APP_KEY')
+def ADS_APPLICATION_ID = properties.getProperty('ADS_APPLICATION_ID')
 def keystorePropertiesFile = rootProject.file("app/keystore-release.properties")
 
 sentry {
@@ -26,18 +27,22 @@ kotlin {
 }
 
 android {
+    compileSdk rootProject.ext.compileSdkVersion
+
     defaultConfig {
         applicationId "com.daily.dayo"
-        compileSdk 34
-        minSdkVersion 26
-        targetSdkVersion 34
-        versionCode 11500
-        versionName "1.1.5"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 20000
+        versionName "2.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField ("String", "NATIVE_APP_KEY", properties['NATIVE_APP_KEY_STR'])
-        manifestPlaceholders = [NATIVE_APP_KEY: NATIVE_APP_KEY]
+        manifestPlaceholders = [
+                NATIVE_APP_KEY    : NATIVE_APP_KEY,
+                ADS_APPLICATION_ID: ADS_APPLICATION_ID
+        ]
     }
 
     signingConfigs {
@@ -59,6 +64,7 @@ android {
 
     buildTypes {
         debug {
+            minifyEnabled false
             applicationIdSuffix ".debug"
             versionNameSuffix "-debug"
             resValue "string", "app_name", "DAYO (Debug)"
@@ -68,6 +74,17 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+        }
+    }
+    flavorDimensions = ["environment"]
+    productFlavors {
+        dev {
+            dimension "environment"
+            buildConfigField("String", "BASE_URL", properties['BASE_URL_DEV'])
+        }
+        prod {
+            dimension "environment"
+            buildConfigField("String", "BASE_URL", properties['BASE_URL_PROD'])
         }
     }
     kotlinOptions {
@@ -102,4 +119,7 @@ dependencies {
     // Firebase
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    // Google Ads
+    implementation 'com.google.android.gms:play-services-ads:23.6.0'
 }

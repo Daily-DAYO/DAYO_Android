@@ -7,5 +7,20 @@ import retrofit2.http.Query
 interface SearchApiService {
 
     @GET("/api/v1/search")
-    suspend fun requestSearchTag(@Query("tag") tag: String, @Query("end") end: Int): NetworkResponse<SearchResultResponse>
+    suspend fun requestSearchTag(
+        @Query("tag") tag: String,
+        @Query("end") end: Int
+    ): NetworkResponse<SearchResultResponse>
+
+    @GET("/api/v1/search/member")
+    suspend fun requestSearchUser(
+        @Query("nickname") nickname: String,
+        @Query("end") end: Int
+    ): NetworkResponse<SearchUserResponse>
+
+    @GET("/api/v1/search/comment/member")
+    suspend fun requestSearchFollowUser(
+        @Query("nickname") nickname: String,
+        @Query("end") end: Int
+    ): NetworkResponse<SearchUserResponse>
 }

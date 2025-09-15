@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class CreateBookmarkRequest(
     @SerializedName("postId")
-    val postId: Int
+    val postId: Long
 )
