@@ -55,17 +55,31 @@ jobs:
         echo '${{ secrets.SENTRY_PROPERTIES }}' > ./app/src/main/resources/sentry.properties
 
     # Build AAB Release
-    - name: Build release Bundle
+    - name: Build release Bundle (1.x.x)
       run: ./gradlew clean bundleRelease
+      if: startsWith(github.ref, 'refs/heads/release/1.')
+
+    - name: Build prodRelease Bundle (2.x.x+)
+      run: ./gradlew clean bundleProdRelease
+      if: startsWith(github.ref, 'refs/heads/release/') && !startsWith(github.ref, 'refs/heads/release/1.')
 
     # Upload Google Play
-    - name: Deploy to Play Store 🚀
+    - name: Deploy to Play Store 🚀 (1.x.x)
       uses: r0adkll/upload-google-play@v1
       with:
         serviceAccountJsonPlainText: ${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }}
-        packageName: ${{secrets.AOS_PACKAGE_NAME}}
-        releaseFiles: ./app/build/outputs/bundle/release/app-release.aab
+        packageName: ${{ secrets.AOS_PACKAGE_NAME }}
+        releaseFiles: app/build/outputs/bundle/release/app-release.aab
         track: production
         status: draft
-      if: github.ref != 'refs/heads/main'
-      
+      if: startsWith(github.ref, 'refs/heads/release/1.')
+
+    - name: Deploy to Play Store 🚀 (2.0.0+)
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJsonPlainText: ${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }}
+        packageName: ${{ secrets.AOS_PACKAGE_NAME }}
+        releaseFiles: app/build/outputs/bundle/prodRelease/app-prod-release.aab
+        track: production
+        status: draft
+      if: startsWith(github.ref, 'refs/heads/release/') && !startsWith(github.ref, 'refs/heads/release/1.')
