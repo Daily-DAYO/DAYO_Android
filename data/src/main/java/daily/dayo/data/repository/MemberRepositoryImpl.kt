@@ -138,6 +138,38 @@ class MemberRepositoryImpl @Inject constructor(
     override suspend fun requestResign(content: String): NetworkResponse<Void> =
         memberApiService.requestResign(content)
 
+    override suspend fun requestResignGuideRecordImage(guideFileName: String): NetworkResponse<ByteArray> =
+        when (val response = memberApiService.requestResignGuideRecordImage(guideFileName)) {
+            is NetworkResponse.Success -> NetworkResponse.Success(response.body?.bytes())
+            is NetworkResponse.NetworkError -> response
+            is NetworkResponse.ApiError -> response
+            is NetworkResponse.UnknownError -> response
+        }
+
+    override suspend fun requestResignGuideRecordWords(): NetworkResponse<List<String>> =
+        when (val response = memberApiService.requestResignGuideRecordWords()) {
+            is NetworkResponse.Success -> NetworkResponse.Success(response.body ?: emptyList())
+            is NetworkResponse.NetworkError -> response
+            is NetworkResponse.ApiError -> response
+            is NetworkResponse.UnknownError -> response
+        }
+
+    override suspend fun requestResignGuideFollowImage(guideFileName: String): NetworkResponse<ByteArray> =
+        when (val response = memberApiService.requestResignGuideFollowImage(guideFileName)) {
+            is NetworkResponse.Success -> NetworkResponse.Success(response.body?.bytes())
+            is NetworkResponse.NetworkError -> response
+            is NetworkResponse.ApiError -> response
+            is NetworkResponse.UnknownError -> response
+        }
+
+    override suspend fun requestResignGuideFollowWords(): NetworkResponse<List<String>> =
+        when (val response = memberApiService.requestResignGuideFollowWords()) {
+            is NetworkResponse.Success -> NetworkResponse.Success(response.body ?: emptyList())
+            is NetworkResponse.NetworkError -> response
+            is NetworkResponse.ApiError -> response
+            is NetworkResponse.UnknownError -> response
+        }
+
     override suspend fun requestReceiveAlarm(): NetworkResponse<Boolean> =
         when (val response = memberApiService.requestReceiveAlarm()) {
             is NetworkResponse.Success -> NetworkResponse.Success(response.body?.onReceiveAlarm)
@@ -149,8 +181,8 @@ class MemberRepositoryImpl @Inject constructor(
     override suspend fun requestChangeReceiveAlarm(onReceiveAlarm: Boolean): NetworkResponse<Void> =
         memberApiService.requestChangeReceiveAlarm(ChangeReceiveAlarmRequest(onReceiveAlarm))
 
-    override suspend fun requestLogout(): NetworkResponse<Void> =
-        memberApiService.requestLogout()
+    override suspend fun requestSignOut(): NetworkResponse<Void> =
+        memberApiService.requestSignOut()
 
     override suspend fun requestCheckEmail(email: String): NetworkResponse<Void> =
         memberApiService.requestCheckEmail(email)
