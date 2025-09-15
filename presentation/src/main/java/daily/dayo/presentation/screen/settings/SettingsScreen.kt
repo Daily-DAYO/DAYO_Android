@@ -3,6 +3,7 @@ package daily.dayo.presentation.screen.settings
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.DrawableRes
@@ -44,9 +45,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import daily.dayo.domain.model.Profile
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
+import daily.dayo.presentation.activity.LoginActivity
+import daily.dayo.presentation.activity.MainActivity
+import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
@@ -56,30 +61,51 @@ import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
+import daily.dayo.presentation.view.Loading
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
 import daily.dayo.presentation.view.dialog.ConfirmDialog
+import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.ProfileViewModel
 
 @Composable
 fun SettingsScreen(
     onProfileEditClick: () -> Unit,
+    onWithdrawClick: () -> Unit,
     onBackClick: () -> Unit,
     onPasswordChangeClick: () -> Unit,
     onBlockUsersClick: () -> Unit,
     onSettingNotificationClick: () -> Unit,
     onNoticesClick: () -> Unit,
     onInformationClick: () -> Unit = {},
-    profileViewModel: ProfileViewModel = hiltViewModel()
+    profileViewModel: ProfileViewModel = hiltViewModel(),
+    accountViewModel: AccountViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    val signOutSuccess by accountViewModel.signOutSuccess.collectAsStateWithLifecycle()
     val profileInfo = profileViewModel.profileInfo.observeAsState()
+    val showSignOutDialog = remember { mutableStateOf(false) }
     var showInquiryGuideDialog by remember { mutableStateOf(false) }
     val inquiryEmail = stringResource(id = R.string.inquiry_email)
 
     LaunchedEffect(Unit) {
         profileViewModel.requestMyProfile()
+    }
+
+    LaunchedEffect(signOutSuccess) {
+        if (signOutSuccess == Status.SUCCESS) {
+            accountViewModel.clearCurrentUser()
+            val intent = Intent(context, LoginActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+            (context as? MainActivity)?.let {
+                it.startActivity(intent)
+                it.finish()
+            }
+        }
     }
 
     SettingsScreen(
@@ -95,6 +121,8 @@ fun SettingsScreen(
             showInquiryGuideDialog = true
         },
         onInformationClick = onInformationClick,
+        onWithdrawClick = onWithdrawClick,
+        onSignOutClick = { showSignOutDialog.value = true },
     )
 
     if (showInquiryGuideDialog) {
@@ -105,6 +133,21 @@ fun SettingsScreen(
             onClickConfirm = { showInquiryGuideDialog = false },
         )
     }
+
+    if (showSignOutDialog.value) {
+        SignOutDialog(
+            onConfirmClick = {
+                accountViewModel.requestSignOut()
+                showSignOutDialog.value = false
+            },
+            onDismissClick = { showSignOutDialog.value = false },
+        )
+    }
+
+    Loading(
+        isVisible = (signOutSuccess == Status.LOADING ||
+                signOutSuccess == Status.SUCCESS),
+    )
 }
 
 @Composable
@@ -118,6 +161,8 @@ private fun SettingsScreen(
     onBlockUsersClick: () -> Unit,
     onInquiryClick: () -> Unit = {},
     onInformationClick: () -> Unit = {},
+    onWithdrawClick: () -> Unit,
+    onSignOutClick: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -186,13 +231,17 @@ private fun SettingsScreen(
             }
             Text(
                 text = stringResource(id = R.string.sign_out),
-                modifier = Modifier.padding(vertical = 11.5.dp, horizontal = 8.dp),
+                modifier = Modifier
+                    .padding(vertical = 11.5.dp, horizontal = 8.dp)
+                    .clickable { onSignOutClick() },
                 color = Primary_23C882,
                 style = DayoTheme.typography.b6
             )
             Text(
                 text = stringResource(id = R.string.delete_account),
-                modifier = Modifier.padding(vertical = 11.5.dp, horizontal = 8.dp),
+                modifier = Modifier
+                    .padding(vertical = 11.5.dp, horizontal = 8.dp)
+                    .clickable { onWithdrawClick() },
                 color = Gray3_9FA5AE,
                 style = DayoTheme.typography.b6
             )
@@ -309,6 +358,23 @@ fun copyInquiryEmail(
     clipboardManager.setPrimaryClip(clipData)
 }
 
+
+@Composable
+@Preview
+fun SignOutDialog(
+    onConfirmClick: () -> Unit = {},
+    onDismissClick: () -> Unit = {}
+) {
+    ConfirmDialog(
+        title = stringResource(R.string.sign_out_message),
+        description = "",
+        onClickConfirmText = stringResource(R.string.confirm),
+        onClickConfirm = onConfirmClick,
+        onClickCancelText = stringResource(R.string.cancel),
+        onClickCancel = onDismissClick,
+    )
+}
+
 @Preview
 @Composable
 private fun PreviewSettingsScreen() {
@@ -321,7 +387,8 @@ private fun PreviewSettingsScreen() {
             onSettingNotificationClick = {},
             onNoticesClick = {},
             onBlockUsersClick = {},
-            onInformationClick = {}
+            onInformationClick = {},
+            onWithdrawClick = {},
         )
     }
 }

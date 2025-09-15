@@ -72,10 +72,6 @@ class ProfileOptionFragment : DialogFragment() {
 
     private fun setOptionFolderSettingClickListener() {
         binding.layoutProfileOptionFolderSetting.setOnDebounceClickListener {
-            findNavController().navigateSafe(
-                currentDestinationId = R.id.ProfileOptionFragment,
-                action = R.id.action_profileOptionFragment_to_folderSettingFragment
-            )
         }
     }
 
@@ -90,10 +86,6 @@ class ProfileOptionFragment : DialogFragment() {
 
     private fun setOptionSettingClickListener() {
         binding.layoutProfileOptionSetting.setOnDebounceClickListener {
-            findNavController().navigateSafe(
-                currentDestinationId = R.id.ProfileOptionFragment,
-                action = R.id.action_profileOptionFragment_to_settingFragment
-            )
         }
     }
 

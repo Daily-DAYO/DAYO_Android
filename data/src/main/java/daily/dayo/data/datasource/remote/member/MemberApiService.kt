@@ -56,6 +56,18 @@ interface MemberApiService {
     @POST("/api/v1/members/resign")
     suspend fun requestResign(@Query("content") content: String): NetworkResponse<Void>
 
+    @GET("/api/v2/members/delete-member/record/images/{guideFileName}")
+    suspend fun requestResignGuideRecordImage(@Path("guideFileName") guideFileName: String): NetworkResponse<okhttp3.ResponseBody>
+
+    @GET("/api/v2/members/delete-member/record/words")
+    suspend fun requestResignGuideRecordWords(): NetworkResponse<List<String>>
+
+    @GET("/api/v2/members/delete-member/follow/images/{guideFileName}")
+    suspend fun requestResignGuideFollowImage(@Path("guideFileName") guideFileName: String): NetworkResponse<okhttp3.ResponseBody>
+
+    @GET("/api/v2/members/delete-member/follow/words")
+    suspend fun requestResignGuideFollowWords(): NetworkResponse<List<String>>
+
     @GET("/api/v1/members/receiveAlarm")
     suspend fun requestReceiveAlarm(): NetworkResponse<ReceiveAlarmResponse>
 
@@ -63,7 +75,7 @@ interface MemberApiService {
     suspend fun requestChangeReceiveAlarm(@Body body: ChangeReceiveAlarmRequest): NetworkResponse<Void>
 
     @POST("/api/v1/members/logout")
-    suspend fun requestLogout(): NetworkResponse<Void>
+    suspend fun requestSignOut(): NetworkResponse<Void>
 
     @GET("/api/v1/members/search/{email}")
     suspend fun requestCheckEmail(@Path("email") email: String): NetworkResponse<Void>

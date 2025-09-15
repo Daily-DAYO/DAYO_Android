@@ -496,7 +496,6 @@
     <!-- Setting -->
     <string name="setting_title">환경설정</string>
     <string name="setting_my_profile_image_description">나의 프로필 이미지</string>
-    <string name="setting_logout_message">계정을 로그아웃 할까요?</string>
     <string name="setting_withdraw_message">계정을 삭제할까요?</string>
     <string name="setting_withdraw_explanation_message">모든 정보가 삭제되며, 복구가 불가능합니다.</string>
     <string name="setting_contact_message">메일 주소 복사 완료!</string>
@@ -508,6 +507,7 @@
     <string name="setting_menu_information">정보</string>
     <string name="setting_menu_contact">문의하기</string>
     <string name="sign_out">로그아웃</string>
+    <string name="sign_out_message">로그아웃 할까요?</string>
     <string name="delete_account">계정 삭제</string>
 
     <!-- Change Password -->
@@ -537,14 +537,42 @@
     <string name="withdraw_subheading">정말 계정을 삭제하시겠어요?</string>
     <string name="withdraw_subheading_explanation">계정을 삭제하는 이유에 대해 알려주세요. 적어주신 내용은 좀 더 나은 서비스를 제공하는데 사용됩니다.</string>
     <string name="withdraw_button">계정 삭제</string>
-    <string name="withdraw_reason_1">이용이 불편해요.</string>
-    <string name="withdraw_reason_2">기록을 삭제하고 싶어요.</string>
-    <string name="withdraw_reason_3">자주 사용하지 않아요.</string>
-    <string name="withdraw_reason_4">개인정보 유출이 우려돼요.</string>
-    <string name="withdraw_reason_5">콘텐츠가 마음에 들지않아요.</string>
+    <string name="withdraw_reason_title">계정을 삭제하는 이유가 무엇인가요?</string>
+    <string name="withdraw_reason_inconvenient_use">이용이 불편해요</string>
+    <string name="withdraw_reason_inconvenient_use_hold_title">곧 새로운 버전이 업데이트 될거예요</string>
+    <string name="withdraw_reason_inconvenient_use_hold_description">더 사용하기 편리해진 다요를 만나볼 수 있어요.</string>
+    <string name="withdraw_reason_inconvenient_use_hold_confirm">그래도 삭제하기</string>
+    <string name="withdraw_reason_inconvenient_use_hold_cancel">업데이트 기다리기</string>
+    <string name="withdraw_reason_want_to_delete_history">기록을 삭제하고 싶어요</string>
+    <string name="withdraw_reason_want_to_delete_history_hold_title">계정을 삭제하지 않아도\n사용 기록을 지울 수 있어요</string>
+    <string name="withdraw_reason_want_to_delete_history_hold_description"></string>
+    <string name="withdraw_reason_want_to_delete_history_hold_confirm">그래도 삭제하기</string>
+    <string name="withdraw_reason_want_to_delete_history_hold_cancel">마이페이지로 이동</string>
+    <string name="withdraw_reason_rarely_used">자주 사용하지 않아요</string>
+    <string name="withdraw_reason_rarely_used_hold_title">곧 새로운 버전이 업데이트 될거예요</string>
+    <string name="withdraw_reason_rarely_used_hold_description">더 다양한 기능이 있는 다요를 만날 수 있어요.</string>
+    <string name="withdraw_reason_rarely_used_hold_confirm">그래도 삭제하기</string>
+    <string name="withdraw_reason_rarely_used_hold_cancel">업데이트 기다리기</string>
+    <string name="withdraw_reason_content_not_satisfying">콘텐츠가 마음에 들지않아요</string>
+    <string name="withdraw_reason_content_not_satisfying_hold_title">취향에 맞는 사람을 팔로우하면\n피드에서 모아볼 수 있어요</string>
+    <string name="withdraw_reason_content_not_satisfying_hold_description"></string>
+    <string name="withdraw_reason_content_not_satisfying_hold_confirm">그래도 삭제하기</string>
+    <string name="withdraw_reason_content_not_satisfying_hold_cancel">팔로우하러 가기</string>
     <string name="withdraw_reason_other">기타</string>
-    <string name="withdraw_reason_other_hint">탈퇴 사유를 작성해주세요. (100자 이내)</string>
-    <string name="withdraw_final_message">계정 삭제시 정보가 회원님의 모든 콘텐츠와 활동기록이 함께 삭제됩니다. 삭제된 정보는 복구할 수 없습니다.</string>
+    <string name="withdraw_reason_other_hold_title">삭제하는 이유를 알려주세요</string>
+    <string name="withdraw_reason_other_hold_description">남겨주신 의견을 바탕으로 더 나은 다요를 만들어볼게요.</string>
+    <string name="withdraw_reason_other_hint">삭제하는 이유에 대해 적어주세요</string>
+    <string name="withdraw_reason_other_hold_confirm">그래도 삭제하기</string>
+    <string name="withdraw_reason_other_hold_cancel">다음에 삭제하기</string>
+    <string name="withdraw_confirm_title">잠깐!\n계정 삭제 전에 확인했나요?</string>
+    <string-array name="withdraw_confirm_check_list">
+        <item>그동안 기록했던 모든 다이어리가 사라져요</item>
+        <item>나의 활동 기록이 모두 사라져요</item>
+        <item>사라진 데이터는 복구할 수 없어요</item>
+    </string-array>
+    <string name="withdraw_confirm">확인했어요</string>
+    <string name="withdraw_final_message">계정을 정말 삭제할까요?</string>
+    <string name="withdraw_final_confirm">삭제하기</string>
 
     <!-- Blocked Users -->
     <string name="blocked_users_title">차단 관리</string>

@@ -11,6 +11,7 @@ import daily.dayo.domain.usecase.member.*
 import daily.dayo.presentation.service.firebase.FirebaseMessagingService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import daily.dayo.presentation.common.Status
+import daily.dayo.domain.model.WithdrawalReason
 import daily.dayo.presentation.common.image.ImageResizeUtil.cropCenterBitmap
 import daily.dayo.presentation.common.toFile
 import daily.dayo.presentation.screen.account.model.CheckOAuthEmailStatus
@@ -33,7 +34,9 @@ class AccountViewModel @Inject constructor(
     private val requestCertificateEmailUseCase: RequestCertificateEmailUseCase,
     private val requestDeviceTokenUseCase: RequestDeviceTokenUseCase,
     private val requestResignUseCase: RequestResignUseCase,
-    private val requestLogoutUseCase: RequestLogoutUseCase,
+    private val requestResignGuideImageUseCase: RequestResignGuideImageUseCase,
+    private val requestResignGuideWordsUseCase: RequestResignGuideWordsUseCase,
+    private val requestSignOutUseCase: RequestSignOutUseCase,
     private val requestCheckEmailUseCase: RequestCheckEmailUseCase,
     private val requestCheckOAuthEmailUseCase: RequestCheckOAuthEmailUseCase,
     private val requestCertificateEmailPasswordResetUseCase: RequestCertificateEmailPasswordResetUseCase,
@@ -45,7 +48,7 @@ class AccountViewModel @Inject constructor(
     private val requestSaveCurrentUserAccessTokenUseCase: RequestSaveCurrentUserAccessTokenUseCase,
     private val requestCurrentUserNotiDevicePermitUseCase: RequestCurrentUserNotiDevicePermitUseCase,
     private val requestCurrentUserNotiNoticePermitUseCase: RequestCurrentUserNotiNoticePermitUseCase,
-    private val requestClearCurrentUserUseCase: RequestClearCurrentUserUseCase
+    private val requestClearCurrentUserUseCase: RequestClearCurrentUserUseCase,
 ) : ViewModel() {
     companion object {
         const val EMAIL_CERTIFICATE_AUTH_CODE_INITIAL = Int.MIN_VALUE + 10
@@ -72,11 +75,11 @@ class AccountViewModel @Inject constructor(
         MutableStateFlow<String?>(EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString())
     val certificateEmailAuthCode: StateFlow<String?> get() = _certificateEmailAuthCode
 
-    private val _withdrawSuccess = MutableLiveData<Event<Boolean>>()
-    val withdrawSuccess: LiveData<Event<Boolean>> get() = _withdrawSuccess
+    private val _withdrawSuccess = MutableStateFlow<Status?>(null)
+    val withdrawSuccess: StateFlow<Status?> get() = _withdrawSuccess
 
-    private val _logoutSuccess = MutableLiveData<Event<Boolean>>()
-    val logoutSuccess: LiveData<Event<Boolean>> get() = _logoutSuccess
+    private val _signOutSuccess = MutableStateFlow<Status?>(null)
+    val signOutSuccess: StateFlow<Status?> get() = _signOutSuccess
 
     private val _checkEmailSuccess = MutableStateFlow<EmailExistenceStatus>(EmailExistenceStatus.IDLE)
     val checkEmailSuccess: StateFlow<EmailExistenceStatus> get() = _checkEmailSuccess
@@ -92,6 +95,15 @@ class AccountViewModel @Inject constructor(
 
     private val _changePasswordSuccess = MutableStateFlow<Status?>(null)
     val changePasswordSuccess: StateFlow<Status?> get() = _changePasswordSuccess
+
+    private val _recordGuideWords = MutableStateFlow<List<String>>(emptyList())
+    val recordGuideWords: StateFlow<List<String>> get() = _recordGuideWords
+
+    private val _followGuideWords = MutableStateFlow<List<String>>(emptyList())
+    val followGuideWords: StateFlow<List<String>> get() = _followGuideWords
+
+    private val _guideImages = MutableStateFlow<Map<String, ByteArray>>(emptyMap())
+    val guideImages: StateFlow<Map<String, ByteArray>> get() = _guideImages
 
     private val _isErrorExceptionOccurred = MutableLiveData<Event<Boolean>>()
     val isErrorExceptionOccurred get() = _isErrorExceptionOccurred
@@ -324,20 +336,21 @@ class AccountViewModel @Inject constructor(
     suspend fun getCurrentFcmToken() = FirebaseMessagingService().getCurrentToken()
 
     fun requestWithdraw(content: String) = viewModelScope.launch {
+        _withdrawSuccess.emit(Status.LOADING)
         requestResignUseCase(content).let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _withdrawSuccess.postValue(Event(true))
+                    _withdrawSuccess.emit(Status.SUCCESS)
                 }
 
                 is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
-                    _withdrawSuccess.postValue(Event(false))
+                    _withdrawSuccess.emit(Status.ERROR)
                 }
 
                 is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
-                    _withdrawSuccess.postValue(Event(false))
+                    _withdrawSuccess.emit(Status.ERROR)
                 }
 
                 else -> {}
@@ -345,21 +358,93 @@ class AccountViewModel @Inject constructor(
         }
     }
 
-    fun requestLogout() = viewModelScope.launch {
-        requestLogoutUseCase().let { ApiResponse ->
+    fun requestWithdrawGuideImage(fileName: String, withdrawalReason: WithdrawalReason) = viewModelScope.launch {
+        requestResignGuideImageUseCase(fileName, withdrawalReason)?.let { apiResponse ->
+            when (apiResponse) {
+                is NetworkResponse.Success -> {
+                    apiResponse.body?.let { imageData ->
+                        val currentImages = _guideImages.value.toMutableMap()
+                        currentImages[fileName] = imageData
+                        _guideImages.emit(currentImages)
+                    }
+                }
+                is NetworkResponse.ApiError -> {
+                    // 에러 발생 시 해당 이미지를 캐시에서 제거
+                    removeGuideImageFromCache(fileName)
+                }
+                is NetworkResponse.NetworkError -> {
+                    // 네트워크 에러 시 해당 이미지를 캐시에서 제거
+                    removeGuideImageFromCache(fileName)
+                }
+                is NetworkResponse.UnknownError -> {
+                    // 알 수 없는 에러 시 해당 이미지를 캐시에서 제거
+                    removeGuideImageFromCache(fileName)
+                }
+            }
+        }
+    }
+
+    private suspend fun removeGuideImageFromCache(fileName: String) {
+        val currentImages = _guideImages.value.toMutableMap()
+        currentImages.remove(fileName)
+        _guideImages.emit(currentImages)
+    }
+    fun clearGuideImages() = viewModelScope.launch {
+        _guideImages.emit(emptyMap())
+    }
+
+    fun requestWithdrawGuideWords(withdrawalReason: WithdrawalReason) = viewModelScope.launch {
+        requestResignGuideWordsUseCase(withdrawalReason)?.let { apiResponse ->
+            when (apiResponse) {
+                is NetworkResponse.Success -> {
+                    val words = apiResponse.body ?: emptyList()
+                    when (withdrawalReason) {
+                        WithdrawalReason.WANT_TO_DELETE_HISTORY -> _recordGuideWords.emit(words)
+                        WithdrawalReason.CONTENT_NOT_SATISFYING -> _followGuideWords.emit(words)
+                        else -> { /* DO NOTHING */ }
+                    }
+                }
+                is NetworkResponse.ApiError -> {
+                    when (withdrawalReason) {
+                        WithdrawalReason.WANT_TO_DELETE_HISTORY -> _recordGuideWords.emit(emptyList())
+                        WithdrawalReason.CONTENT_NOT_SATISFYING -> _followGuideWords.emit(emptyList())
+                        else -> { /* DO NOTHING */ }
+                    }
+                }
+                is NetworkResponse.NetworkError -> {
+                    when (withdrawalReason) {
+                        WithdrawalReason.WANT_TO_DELETE_HISTORY -> _recordGuideWords.emit(emptyList())
+                        WithdrawalReason.CONTENT_NOT_SATISFYING -> _followGuideWords.emit(emptyList())
+                        else -> { /* DO NOTHING */ }
+                    }
+                }
+                is NetworkResponse.UnknownError -> {
+                    when (withdrawalReason) {
+                        WithdrawalReason.WANT_TO_DELETE_HISTORY -> _recordGuideWords.emit(emptyList())
+                        WithdrawalReason.CONTENT_NOT_SATISFYING -> _followGuideWords.emit(emptyList())
+                        else -> { /* DO NOTHING */ }
+                    }
+                }
+            }
+        }
+    }
+
+    fun requestSignOut() = viewModelScope.launch {
+        _signOutSuccess.emit(Status.LOADING)
+        requestSignOutUseCase().let { ApiResponse ->
             when (ApiResponse) {
                 is NetworkResponse.Success -> {
-                    _logoutSuccess.postValue(Event(true))
+                    _signOutSuccess.emit(Status.SUCCESS)
                 }
 
                 is NetworkResponse.NetworkError -> {
                     _isErrorExceptionOccurred.postValue(Event(true))
-                    _logoutSuccess.postValue(Event(false))
+                    _signOutSuccess.emit(Status.ERROR)
                 }
 
                 is NetworkResponse.ApiError -> {
                     _isApiErrorExceptionOccurred.postValue(Event(true))
-                    _logoutSuccess.postValue(Event(false))
+                    _signOutSuccess.emit(Status.ERROR)
                 }
 
                 else -> {}
