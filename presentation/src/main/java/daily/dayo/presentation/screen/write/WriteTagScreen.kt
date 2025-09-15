@@ -91,7 +91,7 @@ fun WriteTagRoute(
             currentTags.value = currentTags.value.toMutableList().apply { remove(it) }
         },
         onSaveClick = {
-            writeViewModel.updatePostTags(currentTags.value.limitTo(TAG_MAX_COUNT), true)
+            writeViewModel.updatePostTags(currentTags.value.limitTo(TAG_MAX_COUNT))
             onBackClick()
         }
     )
