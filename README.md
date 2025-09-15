@@ -16,7 +16,7 @@
 - Clean Architecture With MVVM Pattern
 
 ## Team Members for Android
-- 주윤겸(<a href="https://github.com/gemiJ">@gemiJ</a>)
+- 주윤겸(<a href="https://github.com/yuni-ju">@yuni-ju</a>)
 - 허동준(<a href="https://github.com/DongJun-H">@DongJun-H</a>)
 
 ## Installation
@@ -68,4 +68,4 @@ git clone git@github.com:Daily-DAYO/DAYO_Android.git
   e.g. border_white_fill_12
 
 ## Copyright
-Copyrightⓒ 2021-2023 DAYO, All rights reserved.
+Copyrightⓒ 2021- DAYO, All rights reserved.
