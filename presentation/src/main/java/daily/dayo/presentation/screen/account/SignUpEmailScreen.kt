@@ -81,6 +81,8 @@ const val IMAGE_TEMP_FILE_EXTENSION = ".jpg"
 internal fun SignUpEmailRoute(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     snackBarHostState: SnackbarHostState,
+    bottomSheetState: BottomSheetScaffoldState,
+    bottomSheetContent: (@Composable () -> Unit) -> Unit,
     onBackClick: () -> Unit = {},
     accountViewModel: AccountViewModel = hiltViewModel(),
     profileSettingViewModel: ProfileSettingViewModel = hiltViewModel(),
@@ -88,7 +90,6 @@ internal fun SignUpEmailRoute(
 ) {
     val context = LocalContext.current
     val contentResolver = context.contentResolver
-    val bottomSheetState = getBottomSheetDialogState()
     val keyboardController = LocalSoftwareKeyboardController.current
     val bitmapOptions =
         BitmapFactory.Options().apply { inPreferredConfig = Bitmap.Config.ARGB_8888 }
@@ -224,27 +225,29 @@ internal fun SignUpEmailRoute(
         message = stringResource(R.string.signup_email_alert_message_loading)
     )
 
-    ProfileImageBottomSheetDialog(
-        bottomSheetState,
-        onClickProfileSelect = {
-            coroutineScope.launch {
-                showProfileGallery = true
-                bottomSheetState.bottomSheetState.hide()
-            }
-        },
-        onClickProfileCapture = {
-            coroutineScope.launch {
-                showProfileCapture = true
-                bottomSheetState.bottomSheetState.hide()
-            }
-        },
-        onClickProfileReset = {
-            profileImgState.value = null
-            coroutineScope.launch {
-                bottomSheetState.bottomSheetState.hide()
-            }
-        },
-    )
+    bottomSheetContent {
+        ProfileImageBottomSheetDialog(
+            bottomSheetState = bottomSheetState,
+            onClickProfileSelect = {
+                coroutineScope.launch {
+                    showProfileGallery = true
+                    bottomSheetState.bottomSheetState.hide()
+                }
+            },
+            onClickProfileCapture = {
+                coroutineScope.launch {
+                    showProfileCapture = true
+                    bottomSheetState.bottomSheetState.hide()
+                }
+            },
+            onClickProfileReset = {
+                profileImgState.value = null
+                coroutineScope.launch {
+                    bottomSheetState.bottomSheetState.hide()
+                }
+            },
+        )
+    }
 }
 
 @Composable
