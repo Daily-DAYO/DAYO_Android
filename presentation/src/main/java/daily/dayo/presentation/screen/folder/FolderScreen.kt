@@ -490,7 +490,8 @@ private fun FolderSortSelector(folderOrder: FolderOrder, onClickSort: () -> Unit
     }
 
     Row(
-        modifier = Modifier.clickableSingle { onClickSort() }
+        modifier = Modifier.clickableSingle { onClickSort() },
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_sort),
