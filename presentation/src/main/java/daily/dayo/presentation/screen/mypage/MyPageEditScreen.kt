@@ -11,30 +11,36 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
+import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -195,7 +201,7 @@ internal fun MyPageEditScreen(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MyPageEditScreen(
     profileInfo: MutableState<Profile?>,
@@ -208,18 +214,18 @@ private fun MyPageEditScreen(
     onBackClick: () -> Unit,
     onConfirmClick: () -> Unit,
 ) {
+    val bottomSheetDimAlpha by remember {
+        derivedStateOf { if (bottomSheetState.bottomSheetState.currentValue == SheetValue.Expanded) 0.6f else 0f }
+    }
+    val animatedDimAlpha by animateFloatAsState(targetValue = bottomSheetDimAlpha)
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
 
-    Scaffold(
-        topBar = {
-            MyPageEditTopNavigation(
-                confirmEnabled = nickNameErrorMessage.isEmpty(),
-                onBackClick = onBackClick,
-                onConfirmClick = onConfirmClick
-            )
-        },
-        bottomBar = {
+
+    BottomSheetScaffold(
+        scaffoldState = bottomSheetState,
+        sheetDragHandle = null,
+        sheetContent = {
             ProfileImageBottomSheetDialog(
                 bottomSheetState,
                 onClickProfileSelect,
@@ -227,76 +233,100 @@ private fun MyPageEditScreen(
                 onClickProfileReset
             )
         },
-        content = { contentPadding ->
-            Column(
-                modifier = Modifier
-                    .background(DayoTheme.colorScheme.background)
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .padding(contentPadding)
-                    .padding(vertical = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                val placeholderResId = remember { R.drawable.ic_profile_default_user_profile }
-                BadgeRoundImageView(
-                    context = LocalContext.current,
-                    imageUrl = modifiedProfileImage,
-                    imageDescription = "my page profile image",
-                    placeholderResId = placeholderResId,
-                    contentModifier = Modifier
-                        .size(100.dp)
-                        .aspectRatio(1f)
-                        .clip(RoundedCornerShape(percent = 50))
-                        .clickableSingle(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = {
-                                coroutineScope.launch { bottomSheetState.bottomSheetState.expand() }
+        content = {
+            Box {
+                Scaffold(
+                    modifier = Modifier.navigationBarsPadding(),
+                    topBar = {
+                        MyPageEditTopNavigation(
+                            confirmEnabled = nickNameErrorMessage.isEmpty(),
+                            onBackClick = onBackClick,
+                            onConfirmClick = onConfirmClick
+                        )
+                    }
+                ) { contentPadding ->
+
+                    Column(
+                        modifier = Modifier
+                            .background(DayoTheme.colorScheme.background)
+                            .fillMaxSize()
+                            .verticalScroll(scrollState)
+                            .padding(contentPadding)
+                            .padding(vertical = 32.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        val placeholderResId = remember { R.drawable.ic_profile_default_user_profile }
+                        BadgeRoundImageView(
+                            context = LocalContext.current,
+                            imageUrl = modifiedProfileImage,
+                            imageDescription = "my page profile image",
+                            placeholderResId = placeholderResId,
+                            contentModifier = Modifier
+                                .size(100.dp)
+                                .aspectRatio(1f)
+                                .clip(RoundedCornerShape(percent = 50))
+                                .clickableSingle(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null,
+                                    onClick = {
+                                        coroutineScope.launch { bottomSheetState.bottomSheetState.expand() }
+                                    }
+                                )
+                        )
+
+                        Spacer(modifier = Modifier.height(36.dp))
+
+                        DayoTextField(
+                            value = profileInfo.value?.nickname ?: "",
+                            onValueChange = { textValue ->
+                                profileInfo.value = profileInfo.value?.copy(
+                                    nickname = textValue
+                                )
+                            },
+                            label = stringResource(id = R.string.nickname),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 18.dp),
+                            isError = nickNameErrorMessage.isNotEmpty(),
+                            errorMessage = nickNameErrorMessage
+                        )
+
+                        Spacer(modifier = Modifier.height(32.dp))
+
+                        Column(modifier = Modifier.padding(horizontal = 18.dp)) {
+                            Text(
+                                text = stringResource(id = R.string.email),
+                                style = DayoTheme.typography.caption3.copy(
+                                    color = Gray4_C5CAD2,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            )
+
+                            Text(
+                                text = profileInfo.value?.email ?: "",
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                style = DayoTheme.typography.b4.copy(
+                                    color = Gray2_767B83,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            )
+
+                            HorizontalDivider(
+                                modifier = Modifier.fillMaxWidth(),
+                                thickness = 1.dp,
+                                color = Gray6_F0F1F3
+                            )
+                        }
+                    }
+                }
+                if (animatedDimAlpha > 0f) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Dark.copy(alpha = animatedDimAlpha))
+                            .clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) {
+                                coroutineScope.launch { bottomSheetState.bottomSheetState.hide() }
                             }
-                        )
-                )
-
-                Spacer(modifier = Modifier.height(36.dp))
-
-                DayoTextField(
-                    value = profileInfo.value?.nickname ?: "",
-                    onValueChange = { textValue ->
-                        profileInfo.value = profileInfo.value?.copy(
-                            nickname = textValue
-                        )
-                    },
-                    label = stringResource(id = R.string.nickname),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 18.dp),
-                    isError = nickNameErrorMessage.isNotEmpty(),
-                    errorMessage = nickNameErrorMessage
-                )
-
-                Spacer(modifier = Modifier.height(32.dp))
-
-                Column(modifier = Modifier.padding(horizontal = 18.dp)) {
-                    Text(
-                        text = stringResource(id = R.string.email),
-                        style = DayoTheme.typography.caption3.copy(
-                            color = Gray4_C5CAD2,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    )
-
-                    Text(
-                        text = profileInfo.value?.email ?: "",
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        style = DayoTheme.typography.b4.copy(
-                            color = Gray2_767B83,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    )
-
-                    Divider(
-                        modifier = Modifier.fillMaxWidth(),
-                        thickness = 1.dp,
-                        color = Gray6_F0F1F3
                     )
                 }
             }
