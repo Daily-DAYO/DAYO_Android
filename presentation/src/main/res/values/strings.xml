@@ -55,6 +55,9 @@
     <string name="permission_fail_second">DENIED</string>
     <string name="permission_fail_final">EXPLAINED</string>
 
+    <!-- Main -->
+    <string name="main_finish_toast">한 번 더 누르면 앱이 종료됩니다.</string>
+
     <!-- OnBoarding -->
     <string name="onboarding_first_message">인기가 많은 다꾸들을 구경할 수 있어요</string>
     <string name="onboarding_second_message">내 취향의 다꾸러들을 팔로우하고 모아볼 수 있어요</string>
