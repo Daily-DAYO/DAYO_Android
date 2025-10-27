@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,6 +31,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -204,21 +206,24 @@ fun SearchResultScreen(
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState { 2 }
 
-    Surface(
-        color = colorResource(id = R.color.white_FFFFFF),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
+    Scaffold(
+        topBar = {
             SearchActionbarLayout(
+                modifier = Modifier.statusBarsPadding(),
                 initialKeyword = searchKeyword,
                 onBackClick = onBackClick,
                 onSearchClick = { keyword ->
                     onSearchClick(keyword)
                 }
             )
-
+        },
+        containerColor = DayoTheme.colorScheme.background
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
                 containerColor = White,
