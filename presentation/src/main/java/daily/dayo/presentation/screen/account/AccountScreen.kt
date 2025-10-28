@@ -1,6 +1,5 @@
 package daily.dayo.presentation.screen.account
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetValue
@@ -28,7 +28,6 @@ import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 import kotlinx.coroutines.launch
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AccountScreen(
@@ -44,6 +43,7 @@ internal fun AccountScreen(
     val animatedDimAlpha by animateFloatAsState(targetValue = bottomSheetDimAlpha)
 
     BottomSheetScaffold(
+        modifier = Modifier.systemBarsPadding(),
         scaffoldState = bottomSheetState,
         sheetDragHandle = null,
         sheetContent = {
