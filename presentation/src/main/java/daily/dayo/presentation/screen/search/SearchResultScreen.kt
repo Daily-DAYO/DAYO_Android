@@ -420,6 +420,7 @@ fun SearchResultTagView(
                             imageDescription = "searched Image",
                             modifier = Modifier
                                 .matchParentSize()
+                                .aspectRatio(1f)
                                 .clickableSingle(
                                     interactionSource = imageInteractionSource,
                                     indication = null,
