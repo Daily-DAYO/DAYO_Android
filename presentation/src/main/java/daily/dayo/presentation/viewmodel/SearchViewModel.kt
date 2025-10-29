@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import daily.dayo.domain.model.Search
 import daily.dayo.domain.model.SearchHistory
 import daily.dayo.domain.model.SearchHistoryType
+import daily.dayo.domain.model.SearchOrder
 import daily.dayo.domain.model.SearchUser
 import daily.dayo.domain.usecase.search.ClearSearchKeywordRecentUseCase
 import daily.dayo.domain.usecase.search.DeleteSearchKeywordRecentUseCase
@@ -37,6 +38,9 @@ class SearchViewModel @Inject constructor(
 
     var searchKeyword = ""
 
+    private val _searchHashtagOrder = MutableStateFlow(SearchOrder.NEW)
+    val searchHashtagOrder get() = _searchHashtagOrder
+
     private val _searchTagTotalCount = MutableStateFlow(0)
     val searchTagTotalCount get() = _searchTagTotalCount
 
@@ -59,7 +63,11 @@ class SearchViewModel @Inject constructor(
         _searchHistory.emit(it)
     }
 
-    fun searchKeyword(keyword: String, keywordType: SearchHistoryType = SearchHistoryType.TAG) =
+    fun searchKeyword(
+        keyword: String,
+        keywordType: SearchHistoryType = SearchHistoryType.TAG,
+        searchOrder: SearchOrder = SearchOrder.NEW
+    ) {
         viewModelScope.launch {
             updateSearchKeywordRecentUseCase(keyword, keywordType)
             when (keywordType) {
@@ -67,7 +75,7 @@ class SearchViewModel @Inject constructor(
                     requestSearchTotalCountUseCase(keyword, SearchHistoryType.TAG).let {
                         _searchTagTotalCount.emit(it)
                     }
-                    requestSearchTagUseCase(tag = keyword)
+                    requestSearchTagUseCase(tag = keyword, searchOrder = searchOrder)
                         .cachedIn(viewModelScope)
                         .collectLatest {
                             _searchTagList.emit(it)
@@ -93,6 +101,7 @@ class SearchViewModel @Inject constructor(
                 }
             }
         }
+    }
 
     suspend fun searchFollowUser(keyword: String) {
         requestSearchFollowUserUseCase(nickname = keyword)
@@ -114,17 +123,26 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    fun searchHashtag(hashtag: String) {
+    fun searchHashtag(hashtag: String, searchOrder: SearchOrder) {
         viewModelScope.launch {
-            requestSearchTotalCountUseCase(tag = hashtag, SearchHistoryType.TAG).let {
+            requestSearchTotalCountUseCase(tag = hashtag, searchHistoryType = SearchHistoryType.TAG).let {
                 _searchTagTotalCount.emit(it)
             }
 
-            requestSearchTagUseCase(tag = hashtag)
+            requestSearchTagUseCase(tag = hashtag, searchOrder = searchOrder)
                 .cachedIn(viewModelScope)
                 .collectLatest {
                     _searchTagList.emit(it)
                 }
         }
+    }
+
+    fun toggleSearchHashtagOrder(hashtag: String) {
+        val newOrder = when (_searchHashtagOrder.value) {
+            SearchOrder.NEW -> SearchOrder.OLD
+            SearchOrder.OLD -> SearchOrder.NEW
+        }
+        _searchHashtagOrder.value = newOrder
+        searchHashtag(hashtag, newOrder)
     }
 }

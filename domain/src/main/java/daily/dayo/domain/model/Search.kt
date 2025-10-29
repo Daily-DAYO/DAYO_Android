@@ -28,3 +28,11 @@ enum class SearchHistoryType {
     USER,
     TAG
 }
+
+enum class SearchOrder {
+    NEW, OLD;
+
+    override fun toString(): String {
+        return name.lowercase()
+    }
+}

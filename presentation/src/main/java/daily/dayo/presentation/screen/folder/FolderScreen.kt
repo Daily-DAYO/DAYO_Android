@@ -82,6 +82,7 @@ import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.dialog.ConfirmDialog
 import daily.dayo.presentation.viewmodel.FolderUiState
 import daily.dayo.presentation.viewmodel.FolderViewModel
+import daily.dayo.presentation.viewmodel.ProfileViewModel
 import kotlinx.coroutines.flow.flowOf
 
 @Composable
@@ -92,10 +93,12 @@ fun FolderScreen(
     onPostMoveClick: () -> Unit,
     onWritePostWithFolderClick: () -> Unit,
     onBackClick: () -> Unit,
-    folderViewModel: FolderViewModel = hiltViewModel()
+    folderViewModel: FolderViewModel = hiltViewModel(),
+    profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
     val folderUiState by folderViewModel.uiState.collectAsStateWithLifecycle()
     val folderPosts = folderUiState.folderPosts.collectAsLazyPagingItems()
+    val isMine = folderUiState.folderInfo.memberId == profileViewModel.currentMemberId
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -155,6 +158,7 @@ fun FolderScreen(
     }
 
     FolderScreen(
+        isMine = isMine,
         folderUiState = folderUiState,
         folderPosts = folderPosts,
         optionMenu = optionMenu,
@@ -197,6 +201,7 @@ fun FolderScreen(
 
 @Composable
 private fun FolderScreen(
+    isMine: Boolean,
     folderUiState: FolderUiState,
     folderPosts: LazyPagingItems<FolderPost>,
     optionMenu: List<FolderOptionMenu>,
@@ -243,20 +248,22 @@ private fun FolderScreen(
                             }
                         },
                         rightIcon = {
-                            IconButton(
-                                onClick = { optionExpanded.value = optionExpanded.value.not() }
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_option_horizontal),
-                                    contentDescription = stringResource(id = R.string.folder_option),
-                                    tint = Dark
+                            if (isMine) {
+                                IconButton(
+                                    onClick = { optionExpanded.value = optionExpanded.value.not() }
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_option_horizontal),
+                                        contentDescription = stringResource(id = R.string.folder_option),
+                                        tint = Dark
+                                    )
+                                }
+
+                                FolderDropdownMenu(
+                                    menuItems = optionMenu,
+                                    expanded = optionExpanded
                                 )
                             }
-
-                            FolderDropdownMenu(
-                                menuItems = optionMenu,
-                                expanded = optionExpanded
-                            )
                         }
                     )
                 }
@@ -297,7 +304,7 @@ private fun FolderScreen(
         ) { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding)) {
                 if (!isEditMode) {
-                    FolderInformation(folderInfo, onWritePostWithFolderClick)
+                    FolderInformation(isMine, folderInfo, onWritePostWithFolderClick)
                 }
                 FolderHeader(
                     postCount = folderInfo.postCount,
@@ -318,7 +325,11 @@ private fun FolderScreen(
 }
 
 @Composable
-private fun FolderInformation(folderInfo: FolderInfo, onWritePostWithFolderClick: () -> Unit) {
+private fun FolderInformation(
+    isMine: Boolean,
+    folderInfo: FolderInfo,
+    onWritePostWithFolderClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -357,32 +368,34 @@ private fun FolderInformation(folderInfo: FolderInfo, onWritePostWithFolderClick
             style = DayoTheme.typography.b6
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        if (isMine) {
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
-            onClick = onWritePostWithFolderClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(40.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Gray6_F0F1F3,
-                contentColor = Gray2_767B83
-            ),
-            contentPadding = PaddingValues(vertical = 9.5.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = stringResource(id = R.string.folder_post_add_icon_description)
-            )
+            Button(
+                onClick = onWritePostWithFolderClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Gray6_F0F1F3,
+                    contentColor = Gray2_767B83
+                ),
+                contentPadding = PaddingValues(vertical = 9.5.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = stringResource(id = R.string.folder_post_add_icon_description)
+                )
 
-            Spacer(modifier = Modifier.width(4.dp))
+                Spacer(modifier = Modifier.width(4.dp))
 
-            Text(
-                text = stringResource(id = R.string.folder_post_add),
-                color = Gray2_767B83,
-                style = DayoTheme.typography.b5
-            )
+                Text(
+                    text = stringResource(id = R.string.folder_post_add),
+                    color = Gray2_767B83,
+                    style = DayoTheme.typography.b5
+                )
+            }
         }
     }
 }
@@ -477,7 +490,8 @@ private fun FolderSortSelector(folderOrder: FolderOrder, onClickSort: () -> Unit
     }
 
     Row(
-        modifier = Modifier.clickableSingle { onClickSort() }
+        modifier = Modifier.clickableSingle { onClickSort() },
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_sort),
@@ -632,8 +646,11 @@ private fun PreviewFolderScreen() {
         selectedPosts = emptySet()
     )
 
+    val isMine = false
+
     DayoTheme {
         FolderScreen(
+            isMine = isMine,
             folderUiState = folderUiState,
             folderPosts = folderUiState.folderPosts.collectAsLazyPagingItems(),
             optionMenu = listOf(),
@@ -672,8 +689,11 @@ private fun PreviewFolderScreenEditMode() {
         selectedPosts = emptySet()
     )
 
+    val isMine = true
+
     DayoTheme {
         FolderScreen(
+            isMine = isMine,
             folderUiState = folderUiState,
             folderPosts = folderUiState.folderPosts.collectAsLazyPagingItems(),
             optionMenu = listOf(),

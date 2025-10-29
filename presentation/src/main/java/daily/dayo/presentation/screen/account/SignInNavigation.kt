@@ -96,6 +96,8 @@ fun NavGraphBuilder.signInNavGraph(
         SignUpEmailRoute(
             coroutineScope = coroutineScope,
             snackBarHostState = snackBarHostState,
+            bottomSheetState = bottomSheetState,
+            bottomSheetContent = bottomSheetContent,
             onBackClick = onBackClick,
             accountViewModel = hiltViewModel(parentStackEntry),
             profileSettingViewModel = hiltViewModel(parentStackEntry),
@@ -109,6 +111,8 @@ fun NavGraphBuilder.signInNavGraph(
         SignUpEmailRoute(
             coroutineScope = coroutineScope,
             snackBarHostState = snackBarHostState,
+            bottomSheetState = bottomSheetState,
+            bottomSheetContent = bottomSheetContent,
             onBackClick = onBackClick,
             accountViewModel = hiltViewModel(parentStackEntry),
             profileSettingViewModel = hiltViewModel(parentStackEntry),

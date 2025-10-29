@@ -212,8 +212,13 @@ class MainNavigator(
         navController.navigatePostLikeUsers(postId = postId)
     }
 
-    fun navigateUp() {
-        navController.navigateUp()
+    fun navigateUp(): Boolean {
+        return if (navController.previousBackStackEntry != null) {
+            navController.navigateUp()
+            true
+        } else {
+            false
+        }
     }
 
     @Composable
