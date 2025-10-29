@@ -45,7 +45,8 @@ class MainActivity : AppCompatActivity() {
                 MainScreen(
                     onAdRequest = { onRewardSuccess ->
                         showAdIfAvailable(onRewardSuccess)
-                    }
+                    },
+                    onExit = { finish() }
                 )
             }
         }
