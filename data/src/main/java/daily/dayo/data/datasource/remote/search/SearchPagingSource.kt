@@ -5,18 +5,20 @@ import androidx.paging.PagingState
 import daily.dayo.data.mapper.toSearch
 import daily.dayo.domain.model.NetworkResponse
 import daily.dayo.domain.model.Search
+import daily.dayo.domain.model.SearchOrder
 
 class SearchPagingSource(
     private val apiService: SearchApiService,
     private val size: Int,
-    private val tag: String
+    private val tag: String,
+    private val searchOrder: SearchOrder
 ) : PagingSource<Int, Search>() {
 
     override suspend fun load(
         params: LoadParams<Int>
     ): LoadResult<Int, Search> {
         val nextPageNumber = params.key ?: 0
-        apiService.requestSearchTag(tag = tag, end = nextPageNumber).let { ApiResponse ->
+        apiService.requestSearchTag(tag = tag, end = nextPageNumber, order = searchOrder.toString()).let { ApiResponse ->
             return try {
                 when (ApiResponse) {
                     is NetworkResponse.Success -> {
