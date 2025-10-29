@@ -137,51 +137,46 @@ fun SignInEmailScreen(
         emailState.value.isNotBlank() && passwordState.value.isNotBlank()
     }
 
-    Surface(
+    Column(
         modifier = Modifier
-            .background(White_FFFFFF)
             .fillMaxSize()
+            .background(DayoTheme.colorScheme.background),
+        verticalArrangement = Arrangement.Top
     ) {
+        SignInEmailActionbarLayout(onBackClick = onBackClick)
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .padding(horizontal = 20.dp, vertical = 0.dp)
+                .fillMaxWidth()
+                .wrapContentSize(),
             verticalArrangement = Arrangement.Top
         ) {
-            SignInEmailActionbarLayout(onBackClick = onBackClick)
-            Column(
+            Spacer(
                 modifier = Modifier
-                    .background(White_FFFFFF)
-                    .padding(horizontal = 20.dp, vertical = 0.dp)
                     .fillMaxWidth()
-                    .wrapContentSize(),
-                verticalArrangement = Arrangement.Top
-            ) {
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp)
-                )
-                SignInEmailTitle()
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(20.dp)
-                )
-                SignInEmailInputLayout(
-                    emailValue = emailState.value,
-                    onEmailChange = { emailState.value = it },
-                    passwordValue = passwordState.value,
-                    onPasswordChange = { passwordState.value = it },
-                    onForgetPasswordClick = onForgetPasswordClick,
-                    onSignInClick = { onSignInClick(emailState.value, passwordState.value) }
-                )
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            SignInEmailBottomLayout(
-                onSignUpClick = onSignUpClick,
-                onSignInClick = { onSignInClick(emailState.value, passwordState.value) },
-                isSignInButtonEnabled = isSignInButtonEnabled
+                    .height(8.dp)
+            )
+            SignInEmailTitle()
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+            )
+            SignInEmailInputLayout(
+                emailValue = emailState.value,
+                onEmailChange = { emailState.value = it },
+                passwordValue = passwordState.value,
+                onPasswordChange = { passwordState.value = it },
+                onForgetPasswordClick = onForgetPasswordClick,
+                onSignInClick = { onSignInClick(emailState.value, passwordState.value) }
             )
         }
+        Spacer(modifier = Modifier.weight(1f))
+        SignInEmailBottomLayout(
+            onSignUpClick = onSignUpClick,
+            onSignInClick = { onSignInClick(emailState.value, passwordState.value) },
+            isSignInButtonEnabled = isSignInButtonEnabled
+        )
     }
 }
 
