@@ -52,7 +52,7 @@ fun SetProfileSetupView(
     requestIsNicknameDuplicate: (String) -> Unit = {},
     profileImg: Bitmap? = null,
 ) {
-    val placeholderResId = remember { R.drawable.ic_profile_default_user_profile }
+    val placeholderResId = remember { R.drawable.ic_profile_default }
     val interactionSource = remember { MutableInteractionSource() }
     val profileImageClickModifier = remember {
         Modifier

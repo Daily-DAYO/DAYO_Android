@@ -53,7 +53,6 @@ import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -81,7 +80,6 @@ import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Event
 import daily.dayo.presentation.common.extension.clickableSingle
-import daily.dayo.presentation.common.toSp
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
@@ -205,7 +203,7 @@ fun SearchResultScreen(
     val pagerState = rememberPagerState { 2 }
 
     Surface(
-        color = colorResource(id = R.color.white_FFFFFF),
+        color = White_FFFFFF,
         modifier = Modifier.fillMaxSize()
     ) {
         Column(
@@ -238,11 +236,7 @@ fun SearchResultScreen(
                         text = {
                             Text(
                                 text = title,
-                                style = TextStyle(
-                                    fontSize = 14.dp.toSp(),
-                                    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                                    fontWeight = FontWeight(500)
-                                )
+                                style = DayoTheme.typography.b6
                             )
                         },
                         selected = pagerState.currentPage == index,
@@ -352,7 +346,7 @@ fun SearchResultEmpty() {
 @Preview
 fun SearchResultsCount(resultCount: Int = 0) {
     Surface(
-        color = colorResource(id = R.color.white_FFFFFF),
+        color = White_FFFFFF,
         modifier = Modifier
             .fillMaxWidth()
             .height(44.dp),
@@ -490,7 +484,7 @@ fun SearchResultUserView(
     onClickProfile: (String) -> Unit
 ) {
     Surface(
-        color = colorResource(id = R.color.white_FFFFFF),
+        color = White_FFFFFF,
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -617,8 +611,8 @@ private fun SearchResultUserFollowLayout(
             }
         },
         iconContentDescription = "follow button",
-        iconPainter = if (isFollowButton) painterResource(R.drawable.ic_plus_sign_green)
-        else painterResource(R.drawable.ic_check_sign_gray),
+        iconPainter = if (isFollowButton) painterResource(R.drawable.ic_plus_green)
+        else painterResource(R.drawable.ic_check_2_gray),
         iconButtonModifier = Modifier
             .width(85.dp)
             .height(36.dp)

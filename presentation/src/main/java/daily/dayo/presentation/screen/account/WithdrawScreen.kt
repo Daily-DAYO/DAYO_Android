@@ -314,7 +314,7 @@ private fun WithdrawReasonItem(
         Spacer(modifier = Modifier.weight(1f))
 
         Icon(
-            painter = painterResource(id = R.drawable.ic_next),
+            painter = painterResource(id = R.drawable.ic_chevron_r_3),
             contentDescription = stringResource(id = reason.content.reasonTextResId),
             tint = Gray4_C5CAD2
         )
@@ -708,7 +708,7 @@ fun WithdrawConfirmCheckItems(
             .wrapContentHeight()
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_check_mark),
+            painter = painterResource(id = R.drawable.ic_check),
             contentDescription = null,
             tint = Primary_23C882,
         )
