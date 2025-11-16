@@ -1,4 +1,4 @@
-package daily.dayo.presentation.common
+package daily.dayo.presentation.common.extension
 
 import android.view.View
 

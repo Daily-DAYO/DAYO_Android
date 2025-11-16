@@ -275,7 +275,7 @@ private fun CommentBottomSheetDialogTitle(clearComment: () -> Unit, onClickClose
                 onClickClose()
             },
             iconContentDescription = "close",
-            iconPainter = painterResource(id = R.drawable.ic_x_sign),
+            iconPainter = painterResource(id = R.drawable.ic_x),
             iconButtonModifier = Modifier.align(Alignment.CenterEnd)
         )
     }
