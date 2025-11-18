@@ -60,6 +60,7 @@ import daily.dayo.presentation.view.DEFAULT_POST
 import daily.dayo.presentation.view.DetailPostView
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.dialog.CommentReportDialog
+import daily.dayo.presentation.view.dialog.ConfirmDialog
 import daily.dayo.presentation.view.dialog.DEFAULT_COMMENTS
 import daily.dayo.presentation.viewmodel.PostViewModel
 import daily.dayo.presentation.viewmodel.ReportViewModel
@@ -89,8 +90,9 @@ fun PostScreen(
 
     // post option
     val onPostModifyClick: (Long) -> Unit = { onPostEditClick(postId) }
-    val onPostDeleteClick: (Long) -> Unit = { postViewModel.requestDeletePost(postId) }
     val postDeleteSuccess by postViewModel.postDeleteSuccess.collectAsStateWithLifecycle(false)
+    var showPostDeleteAlertDialog by remember { mutableStateOf(false) }
+    val onPostDeleteClick: (Long) -> Unit = { showPostDeleteAlertDialog = true }
 
     // comment
     val commentState = postViewModel.postComments.observeAsState()
@@ -256,6 +258,18 @@ fun PostScreen(
             )
         }
     }
+
+    if (showPostDeleteAlertDialog) {
+        PostDeleteAlertDialog(
+            onClickConfirm = {
+                showPostDeleteAlertDialog = false
+                postViewModel.requestDeletePost(postId)
+            },
+            onClickCancel = {
+                showPostDeleteAlertDialog = false
+            }
+        )
+    }
 }
 
 @Composable
@@ -379,6 +393,20 @@ private fun PostScreen(
             )
         }
     }
+}
+
+@Composable
+private fun PostDeleteAlertDialog(
+    onClickConfirm: () -> Unit,
+    onClickCancel: () -> Unit,
+) {
+    ConfirmDialog(
+        title = stringResource(R.string.post_option_mine_delete_alert_description),
+        description = stringResource(R.string.post_option_mine_delete_alert_explanation),
+        onClickConfirm = onClickConfirm,
+        onClickConfirmText = stringResource(R.string.delete),
+        onClickCancel = onClickCancel
+    )
 }
 
 @Preview
