@@ -1,5 +1,6 @@
 package daily.dayo.presentation.screen.post
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,7 +37,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -58,6 +58,7 @@ import daily.dayo.presentation.view.CommentReplyDescriptionView
 import daily.dayo.presentation.view.CommentTextField
 import daily.dayo.presentation.view.DEFAULT_POST
 import daily.dayo.presentation.view.DetailPostView
+import daily.dayo.presentation.view.Loading
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.dialog.CommentReportDialog
 import daily.dayo.presentation.view.dialog.ConfirmDialog
@@ -87,10 +88,10 @@ fun PostScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
+    var loadingVisible by remember { mutableStateOf(false) }
 
     // post option
     val onPostModifyClick: (Long) -> Unit = { onPostEditClick(postId) }
-    val postDeleteSuccess by postViewModel.postDeleteSuccess.collectAsStateWithLifecycle(false)
     var showPostDeleteAlertDialog by remember { mutableStateOf(false) }
     val onPostDeleteClick: (Long) -> Unit = { showPostDeleteAlertDialog = true }
 
@@ -186,9 +187,35 @@ fun PostScreen(
         postViewModel.requestPostComment(postId)
     }
 
+    BackHandler(enabled = loadingVisible) {}
+
     LaunchedEffect(Unit) {
         postViewModel.requestPostDetail(postId)
         postViewModel.requestPostComment(postId)
+
+        launch {
+            postViewModel.postDeleteSuccess.collect { status ->
+                when (status) {
+                    Status.LOADING -> {
+                        loadingVisible = true
+                    }
+
+                    Status.SUCCESS -> {
+                        loadingVisible = false
+                        onBackClick()
+                    }
+
+                    Status.ERROR -> {
+                        loadingVisible = false
+                        coroutineScope.launch {
+                            snackBarHostState.showSnackbar(
+                                context.getString(R.string.post_option_mine_delete_message_fail)
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 
     LaunchedEffect(postState.value) {
@@ -198,11 +225,7 @@ fun PostScreen(
         }
     }
 
-    LaunchedEffect(postDeleteSuccess) {
-        if (postDeleteSuccess) {
-            onBackClick()
-        }
-    }
+    Loading(isVisible = loadingVisible)
 
     PostScreen(
         postId = postId,
@@ -398,7 +421,7 @@ private fun PostScreen(
 @Composable
 private fun PostDeleteAlertDialog(
     onClickConfirm: () -> Unit,
-    onClickCancel: () -> Unit,
+    onClickCancel: () -> Unit
 ) {
     ConfirmDialog(
         title = stringResource(R.string.post_option_mine_delete_alert_description),
