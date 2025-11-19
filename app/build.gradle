@@ -5,7 +5,6 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
-    id 'io.sentry.android.gradle'
 }
 
 Properties properties = new Properties()
@@ -13,14 +12,6 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 def NATIVE_APP_KEY = properties.getProperty('NATIVE_APP_KEY')
 def ADS_APPLICATION_ID = properties.getProperty('ADS_APPLICATION_ID')
 def keystorePropertiesFile = rootProject.file("app/keystore-release.properties")
-
-sentry {
-    setIncludeProguardMapping(true)
-    setAutoUploadProguardMapping(true)
-    setUploadNativeSymbols(false)
-    setIncludeNativeSources(false)
-    setAutoUpload(true)
-}
 
 kotlin {
     jvmToolchain(17)
@@ -114,9 +105,6 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:$glide_version"
     kapt "com.github.bumptech.glide:compiler:$glide_version"
     // Sentry
-    implementation platform("io.sentry:sentry-bom:$sentry_version")
-    implementation('io.sentry:sentry-android')
-    implementation('io.sentry:sentry-android-fragment')
     implementation 'org.slf4j:slf4j-nop:2.0.17'
     // Firebase
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
