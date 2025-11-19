@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
@@ -15,6 +17,9 @@ def keystorePropertiesFile = rootProject.file("app/keystore-release.properties")
 
 kotlin {
     jvmToolchain(17)
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+    }
 }
 
 android {
@@ -78,12 +83,6 @@ android {
             buildConfigField("String", "BASE_URL", properties['BASE_URL_PROD'])
         }
     }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-    }
-    buildFeatures {
-        dataBinding true
-    }
     namespace 'com.daily.dayo'
 }
 
@@ -93,23 +92,22 @@ dependencies {
     implementation project(':domain')
     implementation project(':data')
 
-    def sentry_version = "8.24.0"
-    def glide_version = "4.15.1"
+    def glide_version = "5.0.5"
 
     // Hilt
-    implementation "com.google.dagger:hilt-android:2.44"
-    kapt "com.google.dagger:hilt-android-compiler:2.44"
+    implementation "com.google.dagger:hilt-android:2.57.2"
+    kapt "com.google.dagger:hilt-android-compiler:2.57.2"
     // Kakao sdk
     implementation "com.kakao.sdk:v2-user:2.9.0"
     // Glide
     implementation "com.github.bumptech.glide:glide:$glide_version"
-    kapt "com.github.bumptech.glide:compiler:$glide_version"
     // Sentry
     implementation 'org.slf4j:slf4j-nop:2.0.17'
     // Firebase
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation platform('com.google.firebase:firebase-bom:34.6.0')
+    implementation "com.google.firebase:firebase-crashlytics"
+    implementation "com.google.firebase:firebase-analytics"
 
     // Google Ads
-    implementation 'com.google.android.gms:play-services-ads:23.6.0'
+    implementation 'com.google.android.gms:play-services-ads:24.7.0'
 }
