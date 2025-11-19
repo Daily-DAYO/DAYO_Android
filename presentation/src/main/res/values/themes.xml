@@ -30,12 +30,5 @@
         parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/dialog_bottom_sheet_default</item>
     </style>
-    <style name="roundedImageViewRoundedCorner">
-        <item name="cornerSize">14dp</item>
-    </style>
 
-    <style name="roundedImageViewRounded">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">50%</item>
-    </style>
 </resources>
