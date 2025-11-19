@@ -474,7 +474,7 @@ fun WriteUploadImages(
                     if (images.size == WRITE_POST_IMAGE_MIN_SIZE) return@itemsIndexed
 
                     Image(
-                        painter = painterResource(id = R.drawable.ic_img_delete),
+                        painter = painterResource(id = R.drawable.ic_x_with_circle),
                         contentDescription = "delete image",
                         modifier = Modifier
                             .align(Alignment.TopEnd)
@@ -650,7 +650,7 @@ fun WriteCategoryLayout(
             Spacer(modifier = Modifier.weight(1f))
             Image(
                 modifier = Modifier.fillMaxHeight(),
-                painter = painterResource(id = R.drawable.ic_arrow_category_green),
+                painter = painterResource(id = R.drawable.ic_chevron_r_primary_green),
                 contentDescription = stringResource(R.string.write_post_select_category_title)
             )
         }
@@ -720,7 +720,7 @@ fun WriteTagLayout(
             modifier = Modifier
                 .fillMaxHeight()
                 .padding(start = 2.dp),
-            painter = painterResource(id = R.drawable.ic_arrow_tag_gray),
+            painter = painterResource(id = R.drawable.ic_chevron_r_gray),
             contentDescription = stringResource(R.string.write_post_select_tag_title)
         )
     }
@@ -786,7 +786,7 @@ fun WriteFolderLayout(
             modifier = Modifier
                 .fillMaxHeight()
                 .padding(start = 2.dp),
-            painter = painterResource(id = R.drawable.ic_arrow_tag_gray),
+            painter = painterResource(id = R.drawable.ic_chevron_r_gray),
             contentDescription = stringResource(R.string.write_post_select_folder_title)
         )
     }

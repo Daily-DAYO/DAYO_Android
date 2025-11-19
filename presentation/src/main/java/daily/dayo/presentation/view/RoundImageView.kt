@@ -66,7 +66,7 @@ fun BadgeRoundImageView(
         )
 
         Icon(
-            painter = painterResource(id = R.drawable.ic_camera_button),
+            painter = painterResource(id = R.drawable.ic_camera_with_circle),
             contentDescription = "set image",
             modifier = Modifier
                 .align(Alignment.BottomEnd)

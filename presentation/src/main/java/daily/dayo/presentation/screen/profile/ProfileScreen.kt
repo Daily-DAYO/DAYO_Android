@@ -246,7 +246,7 @@ private fun UserFollowButton(
             modifier = Modifier.fillMaxWidth(),
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_check_sign_gray),
+                    painter = painterResource(id = R.drawable.ic_check_2_gray),
                     contentDescription = stringResource(R.string.follow_already_icon_description),
                     modifier = Modifier.size(20.dp)
                 )
@@ -259,7 +259,7 @@ private fun UserFollowButton(
             modifier = Modifier.fillMaxWidth(),
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_plus_sign_green),
+                    painter = painterResource(id = R.drawable.ic_plus_green),
                     contentDescription = stringResource(R.string.follow_yet_icon_description),
                     modifier = Modifier.size(20.dp)
                 )
@@ -408,7 +408,7 @@ private fun ProfileTopNavigation(
         leftIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_x_sign),
+                    painter = painterResource(id = R.drawable.ic_x),
                     contentDescription = stringResource(id = R.string.back_sign),
                     tint = Dark
                 )

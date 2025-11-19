@@ -3,9 +3,9 @@ package com.daily.dayo
 import android.app.Application
 import com.bumptech.glide.Glide
 import com.google.android.gms.ads.MobileAds
+import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.analytics.analytics
 import com.kakao.sdk.common.KakaoSdk
 import dagger.hilt.android.HiltAndroidApp
 

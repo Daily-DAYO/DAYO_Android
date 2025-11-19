@@ -67,7 +67,7 @@ fun BottomSheetDialog(
     checkedColor: Color = Primary_23C882,
     title: String = "",
     titleButtonAction: () -> Unit = {},
-    rightIcon: ImageVector = ImageVector.vectorResource(id = R.drawable.ic_check_mark),
+    rightIcon: ImageVector = ImageVector.vectorResource(id = R.drawable.ic_check),
     checkedButtonIndex: Int = -1,
     closeButtonAction: (() -> Unit)? = null
 ) {
@@ -108,7 +108,7 @@ fun BottomSheetDialog(
                             .wrapContentSize()
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_x_sign),
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_x),
                             modifier = Modifier
                                 .padding(12.dp)
                                 .wrapContentSize()

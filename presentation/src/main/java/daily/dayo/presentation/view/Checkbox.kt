@@ -32,7 +32,7 @@ fun DayoCheckbox(
         modifier = modifier
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_check_ok_sign),
+            painter = painterResource(id = R.drawable.ic_check_with_circle),
             tint = if (checked) Color.Unspecified else White_FFFFFF.copy(0.4f),
             modifier = modifier
                 .border(

@@ -45,8 +45,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.ktx.messaging
+import com.google.firebase.Firebase
+import com.google.firebase.messaging.messaging
 import daily.dayo.presentation.R
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme

@@ -25,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -292,7 +291,7 @@ fun WriteFolderItemLayout(
                         .background(Primary_23C882.copy(alpha = 0.6f))
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_check_mark),
+                        painter = painterResource(id = R.drawable.ic_check),
                         contentDescription = "Selected",
                         contentScale = ContentScale.Crop,
                         colorFilter = ColorFilter.tint(White_FFFFFF),

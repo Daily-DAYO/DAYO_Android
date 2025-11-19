@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="15dp"
-            android:textColor="@color/gray_1_313131"
+            android:textColor="#FF313131"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/tv_default_dialog_explanation"
             app:layout_constraintStart_toStartOf="parent"
@@ -31,7 +31,7 @@
             android:id="@+id/tv_default_dialog_explanation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/gray_4_C5CAD2"
+            android:textColor="#FFC5CAD2"
             android:textSize="11dp"
             android:gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/tv_default_dialog_description"
@@ -50,7 +50,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="20dp"
-        android:background="@color/gray_4_C5CAD2"/>
+        android:background="#FFC5CAD2"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_default_dialog_explanation_confirm_contents_confirmation"
@@ -84,7 +84,7 @@
             android:gravity="center"
             android:text="@string/cancel"
             android:textSize="13dp"
-            android:textColor="@color/gray_3_9FA5AE"
+            android:textColor="#FF9FA5AE"
             app:layout_constraintTop_toTopOf="@id/guideline_default_dialog_explanation_confirm_description"
             app:layout_constraintBottom_toBottomOf="@id/guideline_default_dialog_explanation_confirm_description"
             app:layout_constraintStart_toStartOf="parent"
@@ -99,7 +99,7 @@
             android:gravity="center"
             android:text="@string/confirm"
             android:textSize="13dp"
-            android:textColor="@color/primary_green_23C882"
+            android:textColor="#FF23C882"
             app:layout_constraintTop_toTopOf="@id/guideline_default_dialog_explanation_confirm_description"
             app:layout_constraintBottom_toBottomOf="@id/guideline_default_dialog_explanation_confirm_description"
             app:layout_constraintStart_toEndOf="@id/tv_default_dialog_explanation_cancel"

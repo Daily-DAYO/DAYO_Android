@@ -146,7 +146,7 @@ private fun FollowScreen(
                         )
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_back_sign),
+                            painter = painterResource(id = R.drawable.ic_arrow_left_2),
                             contentDescription = stringResource(id = R.string.back_sign),
                             tint = Gray1_50545B
                         )
@@ -338,7 +338,7 @@ private fun FollowUserInfo(
                     label = stringResource(id = R.string.follow_already),
                     icon = {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_check_sign_gray),
+                            painter = painterResource(id = R.drawable.ic_check_2_gray),
                             contentDescription = stringResource(R.string.follow_already_icon_description),
                             modifier = Modifier.size(20.dp)
                         )
@@ -350,7 +350,7 @@ private fun FollowUserInfo(
                     label = stringResource(id = R.string.follow_yet),
                     icon = {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_plus_sign_green),
+                            painter = painterResource(id = R.drawable.ic_plus_green),
                             contentDescription = stringResource(R.string.follow_yet_icon_description),
                             modifier = Modifier.size(20.dp)
                         )

@@ -12,7 +12,7 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import daily.dayo.presentation.R
-import daily.dayo.presentation.common.setOnDebounceClickListener
+import daily.dayo.presentation.common.extension.setOnDebounceClickListener
 import daily.dayo.presentation.databinding.DialogDefaltExplanationConfirmBinding
 import daily.dayo.presentation.databinding.DialogDefaultAlertBinding
 import daily.dayo.presentation.databinding.DialogDefaultConfirmBinding

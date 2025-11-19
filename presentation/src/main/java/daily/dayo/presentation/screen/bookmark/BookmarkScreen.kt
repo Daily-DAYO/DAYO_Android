@@ -148,7 +148,7 @@ private fun BookmarkTopNavigation(
                     )
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_back_sign),
+                        painter = painterResource(id = R.drawable.ic_arrow_left_2),
                         contentDescription = "back sign",
                         tint = Gray1_50545B
                     )

@@ -593,7 +593,7 @@ fun SignUpEmailScaffold(
                                 }
                             },
                             iconContentDescription = stringResource(R.string.close_sign),
-                            iconPainter = painterResource(id = R.drawable.ic_x_sign),
+                            iconPainter = painterResource(id = R.drawable.ic_x),
                         )
                     }
                 },

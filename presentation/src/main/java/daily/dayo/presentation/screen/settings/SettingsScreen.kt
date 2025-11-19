@@ -176,7 +176,7 @@ private fun SettingsScreen(
                         )
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_back_sign),
+                            painter = painterResource(id = R.drawable.ic_arrow_left_2),
                             contentDescription = stringResource(id = R.string.back_sign),
                             tint = Gray1_50545B
                         )
@@ -342,7 +342,7 @@ private fun SettingMenu(
         )
 
         Icon(
-            painter = painterResource(id = R.drawable.ic_next),
+            painter = painterResource(id = R.drawable.ic_chevron_r_3),
             contentDescription = stringResource(id = titleId),
             tint = Gray4_C5CAD2
         )

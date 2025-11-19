@@ -228,7 +228,7 @@ fun BlockedUser(
             imageDescription = "User Profile Image",
             imageSize = Size(36, 36),
             roundSize = 18.dp,
-            placeholderResId = R.drawable.ic_profile_default_user_profile,
+            placeholderResId = R.drawable.ic_profile_default,
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(

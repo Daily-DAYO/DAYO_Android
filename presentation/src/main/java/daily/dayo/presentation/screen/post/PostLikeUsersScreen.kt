@@ -33,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,6 +53,7 @@ import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Primary_23C882
+import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.DayoOutlinedButton
 import daily.dayo.presentation.view.FilledButton
 import daily.dayo.presentation.view.TopNavigation
@@ -131,7 +131,7 @@ private fun PostLikeUsersScreen(
                             .indication(interactionSource = remember { MutableInteractionSource() }, indication = null)
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_back_sign),
+                            painter = painterResource(id = R.drawable.ic_arrow_left_2),
                             contentDescription = "back sign",
                             tint = Dark
                         )
@@ -198,7 +198,7 @@ private fun LikeUserItem(
     onFollowClick: (LikeUser) -> Unit
 ) {
     Surface(
-        color = colorResource(id = R.color.white_FFFFFF),
+        color = White_FFFFFF,
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 20.dp)

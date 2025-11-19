@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
     private var rewardedAd: RewardedAd? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setSystemBackClickListener()
         checkCurrentNotification()
         getNotificationData()
         askNotificationPermission()
@@ -79,24 +78,6 @@ class MainActivity : AppCompatActivity() {
             Log.d("Ad", "The rewarded ad wasn't ready yet.")
             loadRewardedAd()
         }
-    }
-
-    private fun setSystemBackClickListener() {
-        this.onBackPressedDispatcher.addCallback(
-            this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    val navHostFragment =
-                        supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
-                    val backStackEntryCount =
-                        navHostFragment?.childFragmentManager?.backStackEntryCount
-
-                    if (backStackEntryCount == 0) {
-                        this@MainActivity.finish()
-                    }
-                }
-            }
-        )
     }
 
     private fun checkCurrentNotification() {
