@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -56,7 +57,6 @@ import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
-import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.view.DayoOutlinedButton
 import daily.dayo.presentation.view.FilledButton
 import daily.dayo.presentation.view.FolderView
@@ -107,8 +107,10 @@ fun ProfileScreen(
                 }
                 onBackClick()
             }
+
             Status.ERROR -> {
             }
+
             else -> {}
         }
     }
@@ -296,27 +298,19 @@ private fun UserProfile(
                 )
         )
 
-        // nickname, email
-        Column(
+        // nickname
+        Text(
+            text = profile.nickname,
             modifier = Modifier
                 .weight(1f)
-                .padding(start = 8.dp)
-        ) {
-            Text(
-                text = profile.nickname,
-                style = DayoTheme.typography.h1.copy(
-                    color = Dark,
-                    fontWeight = FontWeight.SemiBold
-                )
+                .padding(horizontal = 8.dp),
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            style = DayoTheme.typography.h1.copy(
+                color = Dark,
+                fontWeight = FontWeight.SemiBold
             )
-
-            Text(
-                text = profile.email,
-                style = DayoTheme.typography.caption5.copy(
-                    color = Gray4_C5CAD2
-                )
-            )
-        }
+        )
 
         // follower
         Column(
@@ -483,7 +477,7 @@ private const val FOLLOWING = 1
 private val DEFAULT_PROFILE = Profile(
     memberId = null,
     email = "",
-    nickname = "nickname",
+    nickname = "",
     profileImg = "",
     postCount = 10,
     followerCount = 10,
