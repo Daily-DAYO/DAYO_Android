@@ -6,10 +6,11 @@ import retrofit2.http.Query
 
 interface SearchApiService {
 
-    @GET("/api/v1/search")
+    @GET("/api/v2/search")
     suspend fun requestSearchTag(
         @Query("tag") tag: String,
-        @Query("end") end: Int
+        @Query("end") end: Int,
+        @Query("order") order: String
     ): NetworkResponse<SearchResultResponse>
 
     @GET("/api/v1/search/member")

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,8 +25,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -116,36 +118,36 @@ fun SearchScreen(
     onKeywordDeleteClick: (String, SearchHistoryType) -> Unit,
     onHistoryClearClick: () -> Unit
 ) {
-    Surface(
-        color = White_FFFFFF,
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-    ) {
-        Column {
+    Scaffold(
+        topBar = {
             SearchActionbarLayout(
+                modifier = Modifier.statusBarsPadding(),
                 onBackClick = onBackClick,
                 onSearchClick = onSearchClick
             )
-            SetSearchHistoryLayout(
-                onKeywordClick = onSearchClick,
-                onKeywordDeleteClick = onKeywordDeleteClick,
-                onHistoryClearClick = onHistoryClearClick,
-                searchHistory = searchHistory
-            )
-        }
+        },
+        containerColor = DayoTheme.colorScheme.background
+    ) { innerPadding ->
+        SetSearchHistoryLayout(
+            modifier = Modifier.padding(innerPadding),
+            onKeywordClick = onSearchClick,
+            onKeywordDeleteClick = onKeywordDeleteClick,
+            onHistoryClearClick = onHistoryClearClick,
+            searchHistory = searchHistory
+        )
     }
 }
 
 @Composable
 fun SearchActionbarLayout(
     initialKeyword: String = "",
+    modifier: Modifier,
     onBackClick: () -> Unit,
     onSearchClick: (String) -> Unit
 ) {
     Surface(
         color = White_FFFFFF,
-        modifier = Modifier
+        modifier = modifier
             .height(IntrinsicSize.Min)
             .fillMaxWidth()
     ) {
@@ -267,13 +269,14 @@ private fun SetClearSearchHistoryLayout(onHistoryClearClick: () -> Unit) {
 
 @Composable
 private fun SetSearchHistoryLayout(
+    modifier: Modifier,
     onKeywordClick: (String) -> Unit,
     onKeywordDeleteClick: (String, SearchHistoryType) -> Unit,
     onHistoryClearClick: () -> Unit,
     searchHistory: SearchHistory
 ) {
     LazyColumn(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(DayoTheme.colorScheme.background)
     ) {
