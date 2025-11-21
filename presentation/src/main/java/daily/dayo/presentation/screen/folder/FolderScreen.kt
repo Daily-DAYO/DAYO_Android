@@ -598,7 +598,8 @@ private fun FolderDeleteAlertDialog(
         title = folderDeleteDescription,
         description = folderDeleteExplanation,
         onClickConfirm = onClickConfirm,
-        onClickCancel = { onShowChange(false) }
+        onClickCancel = { onShowChange(false) },
+        onClickConfirmText = stringResource(R.string.delete)
     )
 }
 
