@@ -22,13 +22,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.ImageSearch
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
-import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -55,7 +51,6 @@ import daily.dayo.presentation.theme.White_FFFFFF
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheetDialog(
-    sheetState: BottomSheetScaffoldState? = null, // TODO 제거하기
     buttons: List<Pair<String, () -> Unit>>,
     leftIconButtons: List<ImageVector>? = null,
     leftIconCheckedButtons: List<ImageVector>? = null,
@@ -179,30 +174,6 @@ fun BottomSheetDialog(
             }
         }
     }
-}
-
-// TODO 제거하기
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun getBottomSheetDialogState(
-    disableFullExpanded: Boolean = false,
-    skipHiddenState: Boolean = false
-): BottomSheetScaffoldState {
-    val bottomSheetState = rememberStandardBottomSheetState(
-        initialValue = SheetValue.Hidden,
-        confirmValueChange = {
-            if (disableFullExpanded) {
-                it != SheetValue.Expanded
-            } else {
-                true
-            }
-        },
-        skipHiddenState = skipHiddenState
-    )
-
-    return rememberBottomSheetScaffoldState(
-        bottomSheetState = bottomSheetState
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
