@@ -58,7 +58,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheetDialog(
-    sheetState: BottomSheetScaffoldState,
+    sheetState: BottomSheetScaffoldState? = null, // TODO 제거하기
     buttons: List<Pair<String, () -> Unit>>,
     leftIconButtons: List<ImageVector>? = null,
     leftIconCheckedButtons: List<ImageVector>? = null,

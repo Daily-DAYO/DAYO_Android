@@ -1,20 +1,21 @@
 package daily.dayo.presentation.screen.home
 
-import androidx.activity.compose.BackHandler
+import BottomSheetController
+import LocalBottomSheetController
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -37,10 +38,7 @@ import daily.dayo.presentation.view.DayoTextButton
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.dialog.BottomSheetDialog
-import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 import daily.dayo.presentation.viewmodel.HomeViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 const val HOME_DAYOPICK_PAGE_TAB_ID = 0
 const val HOME_NEW_PAGE_TAB_ID = 1
@@ -51,25 +49,35 @@ fun HomeScreen(
     onPostClick: (Long) -> Unit,
     onProfileClick: (String) -> Unit,
     onSearchClick: () -> Unit,
-    coroutineScope: CoroutineScope,
-    bottomSheetState: BottomSheetScaffoldState,
-    bottomSheetContent: (@Composable () -> Unit) -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
+    val bottomSheetController = LocalBottomSheetController.current
     var homeTabState by rememberSaveable { mutableIntStateOf(HOME_DAYOPICK_PAGE_TAB_ID) }
     var selectedCategory by rememberSaveable { mutableStateOf(Pair(CategoryMenu.All.name, 0)) } // name, index
     val onCategoryClick: () -> Unit = {
-        coroutineScope.launch { bottomSheetState.bottomSheetState.expand() }
+        bottomSheetController.show()
     }
 
     val onCategorySelect: (CategoryMenu, Int) -> Unit = { categoryMenu, index ->
         selectedCategory = Pair(categoryMenu.name, index)
         homeViewModel.setCategory(categoryMenu.category)
-        coroutineScope.launch { bottomSheetState.bottomSheetState.hide() }
+        bottomSheetController.hide()
+    }
+    val bottomSheetContent: @Composable () -> Unit = remember {
+        {
+            CategoryBottomSheetDialog(
+                onCategorySelect = onCategorySelect,
+                selectedCategory = selectedCategory,
+                bottomSheetController = bottomSheetController
+            )
+        }
     }
 
-    BackHandler(enabled = bottomSheetState.bottomSheetState.isVisible) {
-        coroutineScope.launch { bottomSheetState.bottomSheetState.hide() }
+    DisposableEffect(Unit) {
+        bottomSheetController.setContent(bottomSheetContent)
+        onDispose {
+            bottomSheetController.clear()
+        }
     }
 
     Scaffold(
@@ -143,19 +151,14 @@ fun HomeScreen(
             }
         }
     }
-
-    bottomSheetContent {
-        CategoryBottomSheetDialog(onCategorySelect, selectedCategory, coroutineScope, bottomSheetState)
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoryBottomSheetDialog(
-    onCategorySelected: (CategoryMenu, Int) -> Unit,
+    onCategorySelect: (CategoryMenu, Int) -> Unit,
     selectedCategory: Pair<String, Int>,
-    coroutineScope: CoroutineScope,
-    bottomSheetState: BottomSheetScaffoldState
+    bottomSheetController: BottomSheetController
 ) {
     val categoryMenus = listOf(
         CategoryMenu.All,
@@ -168,10 +171,9 @@ private fun CategoryBottomSheetDialog(
     )
 
     BottomSheetDialog(
-        sheetState = bottomSheetState,
         buttons = categoryMenus.mapIndexed { index, category ->
             Pair(category.name) {
-                onCategorySelected(category, index)
+                onCategorySelect(category, index)
             }
         },
         title = stringResource(id = R.string.filter),
@@ -184,7 +186,7 @@ private fun CategoryBottomSheetDialog(
         normalColor = Gray2_767B83,
         checkedColor = Primary_23C882,
         checkedButtonIndex = selectedCategory.second,
-        closeButtonAction = { coroutineScope.launch { bottomSheetState.bottomSheetState.hide() } }
+        closeButtonAction = { bottomSheetController.hide() }
     )
 }
 
@@ -196,10 +198,7 @@ private fun PreviewHomeScreen() {
         HomeScreen(
             onPostClick = {},
             onProfileClick = {},
-            onSearchClick = {},
-            coroutineScope = rememberCoroutineScope(),
-            bottomSheetState = getBottomSheetDialogState(),
-            bottomSheetContent = {},
+            onSearchClick = {}
         )
     }
 }
