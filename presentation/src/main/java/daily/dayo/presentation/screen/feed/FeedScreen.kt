@@ -1,5 +1,6 @@
 package daily.dayo.presentation.screen.feed
 
+import LocalBottomSheetController
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,12 +15,12 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +47,7 @@ import daily.dayo.presentation.view.CategoryHorizontalGroup
 import daily.dayo.presentation.view.FeedPostView
 import daily.dayo.presentation.view.FilledButton
 import daily.dayo.presentation.view.TopNavigation
+import daily.dayo.presentation.view.dialog.CommentBottomSheetDialog
 import daily.dayo.presentation.viewmodel.FeedViewModel
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
@@ -57,8 +59,6 @@ fun FeedScreen(
     onProfileClick: (String) -> Unit,
     onPostLikeUsersClick: (Long) -> Unit,
     onPostHashtagClick: (String) -> Unit,
-    bottomSheetState: BottomSheetScaffoldState,
-    bottomSheetContent: (@Composable () -> Unit) -> Unit,
     feedViewModel: FeedViewModel = hiltViewModel()
 ) {
     val feedPosts = feedViewModel.feedPosts.collectAsLazyPagingItems()
@@ -82,6 +82,44 @@ fun FeedScreen(
         feedViewModel.loadFeedPosts()
     }
 
+    // bottom sheet
+    val bottomSheetController = LocalBottomSheetController.current
+    var currentCommentPostId by remember { mutableStateOf<Long?>(null) }
+    val onClickComment: (Long) -> Unit = { postId ->
+        currentCommentPostId = postId
+        bottomSheetController.show()
+    }
+    val bottomSheetContent: @Composable () -> Unit = remember(currentCommentPostId) {
+        {
+            currentCommentPostId?.let { postId ->
+                CommentBottomSheetDialog(
+                    postId = postId,
+                    snackBarHostState = snackBarHostState,
+                    onClickProfile = { memberId ->
+                        bottomSheetController.hide()
+                        onProfileClick(memberId)
+                    },
+                    onClickClose = {
+                        bottomSheetController.hide()
+                    }
+                )
+            }
+        }
+    }
+
+    LaunchedEffect(currentCommentPostId) {
+        if (currentCommentPostId != null) {
+            bottomSheetController.setContent(bottomSheetContent)
+        }
+    }
+
+    DisposableEffect(Unit) {
+        bottomSheetController.setContent(bottomSheetContent)
+        onDispose {
+            bottomSheetController.hide()
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -94,9 +132,7 @@ fun FeedScreen(
                         Text(
                             text = stringResource(id = R.string.feed),
                             modifier = Modifier.padding(start = 18.dp),
-                            style = DayoTheme.typography.h1.copy(
-                                color = Dark
-                            )
+                            style = DayoTheme.typography.h1.copy(color = Dark)
                         )
                     }
                 )
@@ -133,8 +169,7 @@ fun FeedScreen(
                                 onClickBookmark = { feedViewModel.toggleBookmarkPost(post = post) },
                                 onPostLikeUsersClick = onPostLikeUsersClick,
                                 onPostHashtagClick = onPostHashtagClick,
-                                bottomSheetState = bottomSheetState,
-                                bottomSheetContent = bottomSheetContent
+                                onClickComment = { post.postId?.let { onClickComment(it) } },
                             )
                         }
                     }

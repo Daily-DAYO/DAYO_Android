@@ -24,11 +24,6 @@ class BottomSheetController {
     fun hide() {
         isVisible = false
     }
-
-    fun clear() {
-        isVisible = false
-        sheetContent = {}
-    }
 }
 
 val LocalBottomSheetController = compositionLocalOf<BottomSheetController> {

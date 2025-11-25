@@ -51,9 +51,11 @@ fun HomeScreen(
     onSearchClick: () -> Unit,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
-    val bottomSheetController = LocalBottomSheetController.current
     var homeTabState by rememberSaveable { mutableIntStateOf(HOME_DAYOPICK_PAGE_TAB_ID) }
     var selectedCategory by rememberSaveable { mutableStateOf(Pair(CategoryMenu.All.name, 0)) } // name, index
+
+    // bottom sheet
+    val bottomSheetController = LocalBottomSheetController.current
     val onCategoryClick: () -> Unit = {
         bottomSheetController.show()
     }
@@ -76,7 +78,7 @@ fun HomeScreen(
     DisposableEffect(Unit) {
         bottomSheetController.setContent(bottomSheetContent)
         onDispose {
-            bottomSheetController.clear()
+            bottomSheetController.hide()
         }
     }
 

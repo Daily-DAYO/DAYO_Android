@@ -92,7 +92,7 @@ internal fun MainScreen(
 
     val snackBarHostState = remember { SnackbarHostState() }
     val bottomSheetController = remember { BottomSheetController() }
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     // TODO 아래 바텀시트 코드 제거 예정
     var bottomSheetContent by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
@@ -157,9 +157,7 @@ internal fun MainScreen(
                                 )
                             },
                             onPostLikeUsersClick = { navigator.navigatePostLikeUsers(it) },
-                            onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) },
-                            bottomSheetState = bottomSheetState,
-                            bottomSheetContent = { content -> bottomSheetContent = content }
+                            onPostHashtagClick = { navigator.navigateSearchPostHashtag(it) }
                         )
                         postNavGraph(
                             snackBarHostState = snackBarHostState,
