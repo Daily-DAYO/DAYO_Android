@@ -1,19 +1,17 @@
 package daily.dayo.presentation.screen.main
 
+import BottomSheetController
+import LocalBottomSheetController
+import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -24,12 +22,15 @@ import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -59,7 +60,6 @@ import daily.dayo.presentation.screen.home.HomeRoute
 import daily.dayo.presentation.screen.home.homeNavGraph
 import daily.dayo.presentation.screen.mypage.MyPageRoute
 import daily.dayo.presentation.screen.mypage.myPageNavGraph
-import daily.dayo.presentation.screen.notice.noticeNavGraph
 import daily.dayo.presentation.screen.notification.NotificationRoute
 import daily.dayo.presentation.screen.notification.notificationNavGraph
 import daily.dayo.presentation.screen.post.postNavGraph
@@ -76,8 +76,8 @@ import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 import daily.dayo.presentation.viewmodel.NoticeViewModel
 import daily.dayo.presentation.viewmodel.ProfileViewModel
-import kotlinx.coroutines.launch
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun MainScreen(
@@ -91,12 +91,18 @@ internal fun MainScreen(
     val noticeViewModel = hiltViewModel<NoticeViewModel>()
 
     val snackBarHostState = remember { SnackbarHostState() }
+    val bottomSheetController = remember { BottomSheetController() }
+    val sheetState = rememberModalBottomSheetState()
+
+    // TODO 아래 바텀시트 코드 제거 예정
     var bottomSheetContent by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
     val bottomSheetState = getBottomSheetDialogState()
     val bottomSheetDimAlpha by remember {
         derivedStateOf { if (bottomSheetState.bottomSheetState.currentValue == SheetValue.Expanded) 0.6f else 0f }
     }
     val animatedDimAlpha by animateFloatAsState(targetValue = bottomSheetDimAlpha)
+
+
     val context = LocalContext.current
     var lastBackPressedTime by remember { mutableLongStateOf(0L) }
     val toast = remember { Toast.makeText(context, context.getString(R.string.main_finish_toast), Toast.LENGTH_SHORT) }
@@ -114,16 +120,8 @@ internal fun MainScreen(
         }
     }
 
-    SharedTransitionLayout {
-        BottomSheetScaffold(
-            scaffoldState = bottomSheetState,
-            sheetDragHandle = null,
-            sheetContent = {
-                Box(modifier = Modifier.navigationBarsPadding()) {
-                    bottomSheetContent?.invoke()
-                }
-            },
-            sheetPeekHeight = 0.dp,
+    CompositionLocalProvider(LocalBottomSheetController provides bottomSheetController) {
+        Scaffold(
             snackbarHost = {
                 SnackbarHost(
                     hostState = snackBarHostState,
@@ -146,12 +144,7 @@ internal fun MainScreen(
                                     memberId
                                 )
                             },
-                            onSearchClick = { navigator.navigateSearch() },
-                            coroutineScope = coroutineScope,
-                            bottomSheetState = bottomSheetState,
-                            bottomSheetContent = { content ->
-                                bottomSheetContent = content
-                            },
+                            onSearchClick = { navigator.navigateSearch() }
                         )
                         feedNavGraph(
                             snackBarHostState = snackBarHostState,
@@ -295,16 +288,18 @@ internal fun MainScreen(
                             onNavigateToHome = { navigator.navigateToBottomTabWithClearStack(Screen.Home.route) },
                             onNavigateToMyPage = { navigator.navigateToBottomTabWithClearStack(Screen.MyPage.route) },
                         )
-                        noticeNavGraph(
-                            noticeViewModel = noticeViewModel,
-                            onBackClick = { navigator.popBackStack() },
-                            onNoticeDetailClick = { noticeId ->
-                                navigator.navigateNoticeDetail(
-                                    noticeId
-                                )
-                            },
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                        )
+                        /* TODO 고치기
+                    noticeNavGraph(
+                        noticeViewModel = noticeViewModel,
+                        onBackClick = { navigator.popBackStack() },
+                        onNoticeDetailClick = { noticeId ->
+                            navigator.navigateNoticeDetail(
+                                noticeId
+                            )
+                        },
+                        sharedTransitionScope = this as SharedTransitionScope
+                    )
+                     */
                     }
 
                     // bottom navigation
@@ -315,15 +310,16 @@ internal fun MainScreen(
                     )
                 }
 
-                if (animatedDimAlpha > 0f) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Dark.copy(alpha = animatedDimAlpha))
-                            .clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) {
-                                coroutineScope.launch { bottomSheetState.bottomSheetState.hide() }
-                            }
-                    )
+                // modal bottom sheet
+                if (bottomSheetController.isVisible) {
+                    ModalBottomSheet(
+                        onDismissRequest = { bottomSheetController.hide() },
+                        modifier = Modifier.navigationBarsPadding(),
+                        sheetState = sheetState,
+                        dragHandle = null
+                    ) {
+                        bottomSheetController.sheetContent()
+                    }
                 }
             }
         }
