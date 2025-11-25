@@ -4,20 +4,20 @@
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white_FFFFFF</item>
+        <item name="colorOnPrimary">#FFFFFFFF</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/black_000000</item>
+        <item name="colorOnSecondary">#FF000000</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">@color/white_FFFFFF</item>
+        <item name="android:statusBarColor" tools:targetApi="l">#FFFFFFFF</item>
         <item name="android:windowLightStatusBar" tools:targetApi="1">true</item>
         <!-- Customize your theme here. -->
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
     </style>
     <style name="Theme.DAYO.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/white_FFFFFF</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="windowSplashScreenBackground">#FFFFFFFF</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_dayo_logo_splash</item>
         <item name="postSplashScreenTheme">@style/Theme.DAYO</item>
     </style>
 
@@ -31,37 +31,4 @@
         <item name="android:background">@drawable/dialog_bottom_sheet_default</item>
     </style>
 
-    <style name="WritePostTagTextStyle">
-        <item name="android:textSize">13dp</item>
-        <item name="android:textColor">@color/gray_1_313131</item>
-    </style>
-    <style name="WritePostTagEditTextStyle" parent="Theme.DAYO">
-        <!-- EditText Color -->
-        <item name="android:textCursorDrawable">@drawable/background_cursor_color_gray_1</item>
-        <item name="colorAccent">@color/gray_1_313131</item>
-    </style>
-
-    <style name="WriteEditTextStyle" parent="Theme.DAYO">
-        <!-- EditText Color -->
-        <item name="colorControlActivated">@android:color/transparent</item>
-        <item name="colorControlNormal">@android:color/transparent</item>
-        <item name="android:textCursorDrawable">@drawable/background_cursor_color_gray_1</item>
-        <item name="colorAccent">@color/gray_1_313131</item>
-    </style>
-
-    <style name="EditTextStyle" parent="Theme.DAYO">
-        <!-- EditText Color -->
-        <item name="colorControlActivated">@color/gray_1_313131</item>
-        <item name="colorControlNormal">@color/gray_4_C5CAD2</item>
-        <item name="colorAccent">@color/gray_1_313131</item>
-    </style>
-
-    <style name="roundedImageViewRoundedCorner">
-        <item name="cornerSize">14dp</item>
-    </style>
-
-    <style name="roundedImageViewRounded">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">50%</item>
-    </style>
 </resources>

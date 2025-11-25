@@ -2,11 +2,15 @@ plugins {
     id 'kotlin'
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 dependencies {
     // Dependency Injection
     implementation "javax.inject:javax.inject:$javaInjectVersion"
     // OKHttp
-    implementation "com.squareup.okhttp3:okhttp:4.9.2"
+    implementation "com.squareup.okhttp3:okhttp:5.3.0"
     // alternatively - without Android dependencies for tests
     implementation "androidx.paging:paging-common-ktx:$paging_version"
 }

@@ -367,7 +367,7 @@ fun NotificationView(
                 imageDescription = "notification thumbnail",
                 imageSize = Size.ORIGINAL,
                 roundSize = 14.dp,
-                placeholderResId = R.drawable.ic_profile_default_user_profile,
+                placeholderResId = R.drawable.ic_profile_default,
             )
             Spacer(
                 modifier = Modifier

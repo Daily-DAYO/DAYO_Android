@@ -170,7 +170,7 @@ private fun SignInScreen(
         Column {
             FilledRoundedCornerButton(
                 onClick = { onClickKakaoLoginButton(context, requestSignInKakao) },
-                label = stringResource(id = R.string.login_select_method_kakao),
+                label = stringResource(id = R.string.sign_in_select_method_kakao),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(44.dp)
@@ -187,7 +187,7 @@ private fun SignInScreen(
 
             FilledRoundedCornerButton(
                 onClick = { navigateToSignInEmail() },
-                label = stringResource(id = R.string.login_select_method_email),
+                label = stringResource(id = R.string.sign_in_select_method_email),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(44.dp)
