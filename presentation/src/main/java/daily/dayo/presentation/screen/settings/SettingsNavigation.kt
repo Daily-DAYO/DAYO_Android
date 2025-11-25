@@ -40,8 +40,6 @@ fun NavGraphBuilder.settingsNavGraph(
     onBlockUsersClick: () -> Unit,
     onWithdrawClick: () -> Unit,
     onBackClick: () -> Unit,
-    bottomSheetState: BottomSheetScaffoldState,
-    bottomSheetContent: (@Composable () -> Unit) -> Unit,
     onSettingNotificationClick: () -> Unit,
     onPasswordChangeClick: () -> Unit,
     onNoticesClick: () -> Unit,
@@ -101,8 +99,6 @@ fun NavGraphBuilder.settingsNavGraph(
     composable(SettingsRoute.withdraw) {
         WithdrawScreen(
             onBackClick = onBackClick,
-            bottomSheetState = bottomSheetState,
-            bottomSheetContent = bottomSheetContent,
             snackBarHostState = snackBarHostState,
             onNavigateToHome = onNavigateToHome,
             onNavigateToMyPage = onNavigateToMyPage
