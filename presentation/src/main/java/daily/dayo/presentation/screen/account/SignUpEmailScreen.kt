@@ -1,5 +1,6 @@
 package daily.dayo.presentation.screen.account
 
+import LocalBottomSheetController
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -17,11 +18,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -57,7 +58,6 @@ import daily.dayo.presentation.view.Loading
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.dialog.ProfileImageBottomSheetDialog
-import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.AccountViewModel.Companion.EMAIL_CERTIFICATE_AUTH_CODE_INITIAL
 import daily.dayo.presentation.viewmodel.AccountViewModel.Companion.SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_FAIL
@@ -81,8 +81,6 @@ const val IMAGE_TEMP_FILE_EXTENSION = ".jpg"
 internal fun SignUpEmailRoute(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     snackBarHostState: SnackbarHostState,
-    bottomSheetState: BottomSheetScaffoldState,
-    bottomSheetContent: (@Composable () -> Unit) -> Unit,
     onBackClick: () -> Unit = {},
     accountViewModel: AccountViewModel = hiltViewModel(),
     profileSettingViewModel: ProfileSettingViewModel = hiltViewModel(),
@@ -91,8 +89,7 @@ internal fun SignUpEmailRoute(
     val context = LocalContext.current
     val contentResolver = context.contentResolver
     val keyboardController = LocalSoftwareKeyboardController.current
-    val bitmapOptions =
-        BitmapFactory.Options().apply { inPreferredConfig = Bitmap.Config.ARGB_8888 }
+    val bitmapOptions = BitmapFactory.Options().apply { inPreferredConfig = Bitmap.Config.ARGB_8888 }
 
     var signUpStep by remember { mutableStateOf(startSignUpStep) }
     val isEmailDuplicate by accountViewModel.isEmailDuplicate.collectAsStateWithLifecycle()
@@ -136,6 +133,34 @@ internal fun SignUpEmailRoute(
         }
     )
 
+    // bottom sheet
+    val bottomSheetController = LocalBottomSheetController.current
+    val bottomSheetContent: @Composable () -> Unit = remember {
+        {
+            ProfileImageBottomSheetDialog(
+                onClickProfileSelect = {
+                    showProfileGallery = true
+                    bottomSheetController.hide()
+                },
+                onClickProfileCapture = {
+                    showProfileCapture = true
+                    bottomSheetController.hide()
+
+                },
+                onClickProfileReset = {
+                    profileImgState.value = null
+                    bottomSheetController.hide()
+                }
+            )
+        }
+    }
+    DisposableEffect(Unit) {
+        bottomSheetController.setContent(bottomSheetContent)
+        onDispose {
+            bottomSheetController.hide()
+        }
+    }
+
     if (showProfileGallery) {
         openGallery()
         showProfileGallery = false
@@ -148,8 +173,6 @@ internal fun SignUpEmailRoute(
 
     SignUpEmailScreen(
         context = context,
-        coroutineScope = coroutineScope,
-        bottomSheetState = bottomSheetState,
         hideKeyboard = { keyboardController?.hide() },
         onBackClick = onBackClick,
         requestIsEmailDuplicate = { accountViewModel.requestCheckEmailDuplicate(it) },
@@ -224,30 +247,6 @@ internal fun SignUpEmailRoute(
         isVisible = (signUpStatus == Status.LOADING || updateProfileStatus == Status.LOADING),
         message = stringResource(R.string.signup_email_alert_message_loading)
     )
-
-    bottomSheetContent {
-        ProfileImageBottomSheetDialog(
-            bottomSheetState = bottomSheetState,
-            onClickProfileSelect = {
-                coroutineScope.launch {
-                    showProfileGallery = true
-                    bottomSheetState.bottomSheetState.hide()
-                }
-            },
-            onClickProfileCapture = {
-                coroutineScope.launch {
-                    showProfileCapture = true
-                    bottomSheetState.bottomSheetState.hide()
-                }
-            },
-            onClickProfileReset = {
-                profileImgState.value = null
-                coroutineScope.launch {
-                    bottomSheetState.bottomSheetState.hide()
-                }
-            },
-        )
-    }
 }
 
 @Composable
@@ -280,8 +279,6 @@ fun SignUpEmailTitleLayout(
 @Preview
 fun SignUpEmailScreen(
     context: Context = LocalContext.current,
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    bottomSheetState: BottomSheetScaffoldState = getBottomSheetDialogState(),
     hideKeyboard: () -> Unit = {},
     onBackClick: () -> Unit = {},
     requestIsEmailDuplicate: (email: String) -> Unit = {},
@@ -538,8 +535,6 @@ fun SignUpEmailScreen(
 
             SignUpStep.PROFILE_SETUP -> {
                 SetProfileSetupView(
-                    bottomSheetState = bottomSheetState,
-                    coroutineScope = coroutineScope,
                     isNextButtonEnabled = isNextButtonEnabled,
                     isNextButtonClickable = isNextButtonClickable,
                     nicknameState = nicknameState,

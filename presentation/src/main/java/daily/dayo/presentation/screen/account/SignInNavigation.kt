@@ -1,9 +1,7 @@
 package daily.dayo.presentation.screen.account
 
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -47,9 +45,7 @@ fun NavGraphBuilder.signInNavGraph(
     navigateToResetPassword: () -> Unit,
     navigateToSignUpEmail: () -> Unit,
     navigateToRules: (RuleType) -> Unit,
-    navigateToProfileSetting: () -> Unit,
-    bottomSheetState: BottomSheetScaffoldState,
-    bottomSheetContent: (@Composable () -> Unit) -> Unit,
+    navigateToProfileSetting: () -> Unit
 ) {
     composable(route = SignInRoute.route) {
         val parentStackEntry = remember(it) {
@@ -96,8 +92,6 @@ fun NavGraphBuilder.signInNavGraph(
         SignUpEmailRoute(
             coroutineScope = coroutineScope,
             snackBarHostState = snackBarHostState,
-            bottomSheetState = bottomSheetState,
-            bottomSheetContent = bottomSheetContent,
             onBackClick = onBackClick,
             accountViewModel = hiltViewModel(parentStackEntry),
             profileSettingViewModel = hiltViewModel(parentStackEntry),
@@ -111,8 +105,6 @@ fun NavGraphBuilder.signInNavGraph(
         SignUpEmailRoute(
             coroutineScope = coroutineScope,
             snackBarHostState = snackBarHostState,
-            bottomSheetState = bottomSheetState,
-            bottomSheetContent = bottomSheetContent,
             onBackClick = onBackClick,
             accountViewModel = hiltViewModel(parentStackEntry),
             profileSettingViewModel = hiltViewModel(parentStackEntry),
