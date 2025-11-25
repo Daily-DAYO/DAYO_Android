@@ -255,7 +255,7 @@ private fun MyPageEditScreen(
                             .padding(vertical = 32.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        val placeholderResId = remember { R.drawable.ic_profile_default_user_profile }
+                        val placeholderResId = remember { R.drawable.ic_profile_default }
                         BadgeRoundImageView(
                             context = LocalContext.current,
                             imageUrl = modifiedProfileImage,
@@ -345,7 +345,7 @@ private fun MyPageEditTopNavigation(
         leftIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_back_sign),
+                    painter = painterResource(id = R.drawable.ic_arrow_left_2),
                     contentDescription = "back",
                     tint = Gray1_50545B
                 )
