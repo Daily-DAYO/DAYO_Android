@@ -1,6 +1,5 @@
 package daily.dayo.presentation.view.dialog
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,9 +10,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -65,7 +62,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun CommentBottomSheetDialog(
     postId: Long,
-    sheetState: BottomSheetScaffoldState,
     snackBarHostState: SnackbarHostState,
     onClickProfile: (String) -> Unit,
     onClickClose: () -> Unit,
@@ -177,19 +173,6 @@ fun CommentBottomSheetDialog(
         clearComment()
         keyboardController?.hide()
         postViewModel.requestPostComment(postId)
-    }
-
-    BackHandler(enabled = sheetState.bottomSheetState.isVisible) {
-        coroutineScope.launch {
-            clearComment()
-            sheetState.bottomSheetState.hide()
-        }
-    }
-
-    LaunchedEffect(sheetState.bottomSheetState.currentValue) {
-        if (sheetState.bottomSheetState.currentValue == SheetValue.Hidden) {
-            keyboardController?.hide()
-        }
     }
 
     Surface(
