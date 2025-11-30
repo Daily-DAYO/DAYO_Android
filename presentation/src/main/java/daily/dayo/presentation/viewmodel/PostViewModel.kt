@@ -29,6 +29,7 @@ import daily.dayo.domain.usecase.post.RequestDeletePostUseCase
 import daily.dayo.domain.usecase.post.RequestPostDetailUseCase
 import daily.dayo.presentation.common.Event
 import daily.dayo.presentation.common.Resource
+import daily.dayo.presentation.common.Status
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -62,7 +63,7 @@ class PostViewModel @Inject constructor(
     private val _postComments = MutableLiveData<Resource<Comments>>()
     val postComments: LiveData<Resource<Comments>> = _postComments
 
-    private val _postDeleteSuccess = MutableSharedFlow<Boolean>()
+    private val _postDeleteSuccess = MutableSharedFlow<Status>()
     val postDeleteSuccess = _postDeleteSuccess.asSharedFlow()
 
     private val _postCommentCreateSuccess = MutableLiveData<Event<Boolean>>()
@@ -114,10 +115,11 @@ class PostViewModel @Inject constructor(
 
     fun requestDeletePost(postId: Long) {
         viewModelScope.launch {
+            _postDeleteSuccess.emit(Status.LOADING)
             requestDeletePostUseCase(postId).let { response ->
                 when (response) {
-                    is NetworkResponse.Success -> _postDeleteSuccess.emit(true)
-                    else -> _postDeleteSuccess.emit(false)
+                    is NetworkResponse.Success -> _postDeleteSuccess.emit(Status.SUCCESS)
+                    else -> _postDeleteSuccess.emit(Status.ERROR)
                 }
             }
         }

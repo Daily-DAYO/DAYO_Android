@@ -4,6 +4,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
+val Transparent = Color(0x00000000)
 val Dark = Color(0xFF313131)
 val Primary_23C882 = Color(0xFF23C882)
 val White_FFFFFF = Color(0xFFFFFFFF)
