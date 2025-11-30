@@ -1,5 +1,6 @@
 package daily.dayo.presentation.screen.account
 
+import LocalBottomSheetController
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -11,13 +12,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,17 +29,12 @@ import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.screen.account.model.NicknameCertificationState
 import daily.dayo.presentation.view.BadgeRoundImageView
 import daily.dayo.presentation.view.DayoTextField
-import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun SetProfileSetupView(
     context: Context = LocalContext.current,
-    bottomSheetState: BottomSheetScaffoldState = getBottomSheetDialogState(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
     isNextButtonEnabled: MutableState<Boolean> = remember { mutableStateOf(false) },
     isNextButtonClickable: MutableState<Boolean> = remember { mutableStateOf(false) },
     nicknameState: MutableState<String> = remember { mutableStateOf("") },
@@ -52,6 +46,7 @@ fun SetProfileSetupView(
     requestIsNicknameDuplicate: (String) -> Unit = {},
     profileImg: Bitmap? = null,
 ) {
+    val bottomSheetController = LocalBottomSheetController.current
     val placeholderResId = remember { R.drawable.ic_profile_default }
     val interactionSource = remember { MutableInteractionSource() }
     val profileImageClickModifier = remember {
@@ -62,9 +57,7 @@ fun SetProfileSetupView(
             .clickableSingle(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = {
-                    coroutineScope.launch { bottomSheetState.bottomSheetState.expand() }
-                }
+                onClick = { bottomSheetController.show() }
             )
     }
 

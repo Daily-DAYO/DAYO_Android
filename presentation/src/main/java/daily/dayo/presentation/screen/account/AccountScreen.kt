@@ -1,32 +1,23 @@
 package daily.dayo.presentation.screen.account
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import BottomSheetController
+import LocalBottomSheetController
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SheetValue
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
-import daily.dayo.presentation.theme.Dark
-import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,30 +26,19 @@ internal fun AccountScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
-    var bottomSheetContent by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
-    val bottomSheetState = getBottomSheetDialogState()
-    val bottomSheetDimAlpha by remember {
-        derivedStateOf { if (bottomSheetState.bottomSheetState.currentValue == SheetValue.Expanded) 0.6f else 0f }
-    }
-    val animatedDimAlpha by animateFloatAsState(targetValue = bottomSheetDimAlpha)
+    val bottomSheetController = remember { BottomSheetController() }
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    BottomSheetScaffold(
-        modifier = Modifier.systemBarsPadding(),
-        scaffoldState = bottomSheetState,
-        sheetDragHandle = null,
-        sheetContent = {
-            Box(modifier = Modifier.navigationBarsPadding()) {
-                bottomSheetContent?.invoke()
+    CompositionLocalProvider(LocalBottomSheetController provides bottomSheetController) {
+        Scaffold(
+            modifier = Modifier.systemBarsPadding(),
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackBarHostState,
+                    modifier = Modifier.navigationBarsPadding()
+                )
             }
-        },
-        sheetPeekHeight = 0.dp,
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackBarHostState,
-                modifier = Modifier.navigationBarsPadding()
-            )
-        },
-        content = { innerPadding ->
+        ) { innerPadding ->
             Box(Modifier.padding(innerPadding)) {
                 NavHost(
                     navController = navigator.navController,
@@ -74,27 +54,23 @@ internal fun AccountScreen(
                         navigateToResetPassword = { navigator.navigateResetPassword() },
                         navigateToSignUpEmail = { navigator.navigateSignUpEmail() },
                         navigateToProfileSetting = { navigator.navigateProfileSetting() },
-                        navigateToRules = { route -> navigator.navigateRules(route) },
-                        bottomSheetState = bottomSheetState,
-                        bottomSheetContent = { content ->
-                            bottomSheetContent = content
-                        }
+                        navigateToRules = { route -> navigator.navigateRules(route) }
                     )
                 }
 
-                if (animatedDimAlpha > 0f) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Dark.copy(alpha = animatedDimAlpha))
-                            .clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) {
-                                coroutineScope.launch { bottomSheetState.bottomSheetState.hide() }
-                            }
-                    )
+                if (bottomSheetController.isVisible) {
+                    ModalBottomSheet(
+                        onDismissRequest = { bottomSheetController.hide() },
+                        modifier = Modifier.navigationBarsPadding(),
+                        sheetState = bottomSheetState,
+                        dragHandle = null
+                    ) {
+                        bottomSheetController.sheetContent()
+                    }
                 }
             }
         }
-    )
+    }
 }
 
 sealed class AccountScreen(val route: String) {
