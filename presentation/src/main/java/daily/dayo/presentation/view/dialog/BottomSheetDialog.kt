@@ -17,22 +17,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.ImageSearch
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
-import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,7 +42,6 @@ import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
-import kotlinx.coroutines.launch
 
 // 1. 기본과 Hover 상태 구분
 // 2. primary가 설정되는 경우 가장 1번째 색이 항상 prmiary color로 설정, 아닌 경우 모두 같은 색
@@ -58,7 +51,6 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheetDialog(
-    sheetState: BottomSheetScaffoldState,
     buttons: List<Pair<String, () -> Unit>>,
     leftIconButtons: List<ImageVector>? = null,
     leftIconCheckedButtons: List<ImageVector>? = null,
@@ -185,75 +177,13 @@ fun BottomSheetDialog(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun getBottomSheetDialogState(
-    disableFullExpanded: Boolean = false,
-    skipHiddenState: Boolean = false
-): BottomSheetScaffoldState {
-    val bottomSheetState = rememberStandardBottomSheetState(
-        initialValue = SheetValue.Hidden,
-        confirmValueChange = {
-            if (disableFullExpanded) {
-                it != SheetValue.Expanded
-            } else {
-                true
-            }
-        },
-        skipHiddenState = skipHiddenState
-    )
-
-    return rememberBottomSheetScaffoldState(
-        bottomSheetState = bottomSheetState
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun PreviewMyBottomSheetDialog() {
 
     // BottomSheetDialog를 사용하는 경우 Box를 이용해서 겹쳐보일 수 있도록 설정해야 합니다
-    Box(modifier = Modifier.fillMaxSize()) {
-        val coroutineScope = rememberCoroutineScope()
-
-        // BottomSheetDialog를 사용하는 경우에 같이 사용하는 State
-        val bottomSheetState1 = getBottomSheetDialogState()
-        val bottomSheetState2 = getBottomSheetDialogState()
-        val bottomSheetState3 = getBottomSheetDialogState()
-        val bottomSheetState4 = getBottomSheetDialogState()
-        val bottomSheetState5 = getBottomSheetDialogState()
-        val bottomSheetState6 = getBottomSheetDialogState()
-        val bottomSheetState7 = getBottomSheetDialogState()
-
-        Column(modifier = Modifier.fillMaxSize()) {
-            // 구현 본문 내용
-
-            // BottomSheetDialog를 보여주는 경우 클릭하는 Button
-            Button(onClick = { coroutineScope.launch { bottomSheetState1.bottomSheetState.expand() } }) {
-                Text(text = "Bottom Sheet Dialog / buton 1 / non-primary")
-            }
-            Button(onClick = { coroutineScope.launch { bottomSheetState2.bottomSheetState.expand() } }) {
-                Text(text = "Bottom Sheet Dialog / buton 1 / primary")
-            }
-            Button(onClick = { coroutineScope.launch { bottomSheetState3.bottomSheetState.expand() } }) {
-                Text(text = "Bottom Sheet Dialog / buton 2 / non-primary")
-            }
-            Button(onClick = { coroutineScope.launch { bottomSheetState4.bottomSheetState.expand() } }) {
-                Text(text = "Bottom Sheet Dialog / buton 2 / primary")
-            }
-            Button(onClick = { coroutineScope.launch { bottomSheetState5.bottomSheetState.expand() } }) {
-                Text(text = "Bottom Sheet Dialog / buton 3 / non-primary")
-            }
-            Button(onClick = { coroutineScope.launch { bottomSheetState6.bottomSheetState.expand() } }) {
-                Text(text = "Bottom Sheet Dialog / buton 3 / primary")
-            }
-            Button(onClick = { coroutineScope.launch { bottomSheetState7.bottomSheetState.expand() } }) {
-                Text(text = "Bottom Sheet Dialog / Category")
-            }
-        }
-
+    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         BottomSheetDialog(
-            sheetState = bottomSheetState1,
             buttons = listOf(
                 Pair("text") {
                     // 버튼 클릭시 동작 의
@@ -261,35 +191,29 @@ fun PreviewMyBottomSheetDialog() {
             isFirstButtonColored = false,
         )
         BottomSheetDialog(
-            sheetState = bottomSheetState2,
             buttons = listOf(Pair("text") { }),
             isFirstButtonColored = true
         )
 
         BottomSheetDialog(
-            sheetState = bottomSheetState3,
             buttons = listOf(Pair("text") { }, Pair("text") { }),
             isFirstButtonColored = false,
         )
         BottomSheetDialog(
-            sheetState = bottomSheetState4,
             buttons = listOf(Pair("text") { }, Pair("text") { }),
             isFirstButtonColored = true
         )
 
         BottomSheetDialog(
-            sheetState = bottomSheetState5,
             buttons = listOf(Pair("text") { }, Pair("text") { }, Pair("text") { }),
             isFirstButtonColored = false,
         )
         BottomSheetDialog(
-            sheetState = bottomSheetState6,
             buttons = listOf(Pair("text") { }, Pair("text") { }, Pair("text") { }),
             isFirstButtonColored = true
         )
 
         BottomSheetDialog(
-            sheetState = bottomSheetState7,
             buttons = listOf(Pair("contents") { }, Pair("contents") { }, Pair("contents") { }),
             title = "title",
             leftIconButtons = listOf(Icons.Default.Image, Icons.Default.Image, Icons.Default.Image),
