@@ -24,7 +24,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -74,7 +73,6 @@ import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.Transparent_White30
 import daily.dayo.presentation.theme.White_FFFFFF
-import daily.dayo.presentation.view.dialog.CommentBottomSheetDialog
 import daily.dayo.presentation.view.dialog.PostReportDialog
 import daily.dayo.presentation.viewmodel.ReportViewModel
 import kotlinx.coroutines.launch
@@ -92,8 +90,7 @@ fun FeedPostView(
     onClickBookmark: () -> Unit,
     onPostLikeUsersClick: (Long) -> Unit,
     onPostHashtagClick: (String) -> Unit,
-    bottomSheetState: BottomSheetScaffoldState,
-    bottomSheetContent: (@Composable () -> Unit) -> Unit,
+    onClickComment: () -> Unit,
     reportViewModel: ReportViewModel = hiltViewModel()
 ) {
     val imageInteractionSource = remember { MutableInteractionSource() }
@@ -101,19 +98,6 @@ fun FeedPostView(
     var showDialog by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-
-    val onClickComment: (Long) -> Unit = { postId ->
-        coroutineScope.launch { bottomSheetState.bottomSheetState.expand() }
-        bottomSheetContent {
-            CommentBottomSheetDialog(
-                postId = postId,
-                sheetState = bottomSheetState,
-                snackBarHostState = snackBarHostState,
-                onClickProfile = onClickProfile,
-                onClickClose = { coroutineScope.launch { bottomSheetState.bottomSheetState.hide() } },
-            )
-        }
-    }
 
     Column(modifier = modifier) {
         // publisher info
@@ -269,7 +253,7 @@ fun FeedPostView(
                     .clickableSingle(
                         indication = ripple(bounded = false),
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = { post.postId?.let { onClickComment(it) } }
+                        onClick = onClickComment
                     ),
                 contentDescription = "comment",
             )

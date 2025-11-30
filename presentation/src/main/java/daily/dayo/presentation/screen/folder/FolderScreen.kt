@@ -241,7 +241,7 @@ private fun FolderScreen(
                         leftIcon = {
                             IconButton(onClick = onBackClick) {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.ic_back_sign),
+                                    painter = painterResource(id = R.drawable.ic_arrow_left_2),
                                     contentDescription = stringResource(id = R.string.back_sign),
                                     tint = Dark
                                 )
@@ -598,7 +598,8 @@ private fun FolderDeleteAlertDialog(
         title = folderDeleteDescription,
         description = folderDeleteExplanation,
         onClickConfirm = onClickConfirm,
-        onClickCancel = { onShowChange(false) }
+        onClickCancel = { onShowChange(false) },
+        onClickConfirmText = stringResource(R.string.delete)
     )
 }
 

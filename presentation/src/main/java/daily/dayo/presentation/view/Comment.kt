@@ -323,7 +323,7 @@ fun getAnnotatedCommentContent(content: String, mentionList: List<MentionUser>):
 
 @Composable
 fun CommentMentionSearchView(userResults: LazyPagingItems<SearchUser>, onClickFollowUser: (SearchUser) -> Unit) {
-    val placeholder = AppCompatResources.getDrawable(LocalContext.current, R.drawable.ic_profile_default_user_profile)
+    val placeholder = AppCompatResources.getDrawable(LocalContext.current, R.drawable.ic_profile_default)
     LazyColumn(
         modifier = Modifier
             .background(DayoTheme.colorScheme.background)
