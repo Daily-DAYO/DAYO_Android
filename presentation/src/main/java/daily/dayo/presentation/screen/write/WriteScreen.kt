@@ -1,10 +1,11 @@
 package daily.dayo.presentation.screen.write
 
+import BottomSheetController
+import LocalBottomSheetController
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -31,13 +32,12 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Surface
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -92,7 +92,6 @@ import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
 import daily.dayo.presentation.view.dialog.BottomSheetDialog
 import daily.dayo.presentation.viewmodel.WriteViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 const val WRITE_POST_IMAGE_MIN_SIZE = 1
@@ -110,9 +109,7 @@ internal fun WriteRoute(
     onTagClick: () -> Unit,
     onWriteFolderClick: () -> Unit,
     onCropImageClick: (Int) -> Unit = {},
-    writeViewModel: WriteViewModel = hiltViewModel(),
-    bottomSheetState: BottomSheetScaffoldState,
-    bottomSheetContent: (@Composable () -> Unit) -> Unit,
+    writeViewModel: WriteViewModel = hiltViewModel()
 ) {
     val isPostEditMode = postId != null
     val context = LocalContext.current
@@ -129,9 +126,11 @@ internal fun WriteRoute(
     val folderName by writeViewModel.writeFolderName.collectAsStateWithLifecycle()
     val writePostId by writeViewModel.writePostId.collectAsState(null)
     val selectedCategory by writeViewModel.writeCategory.collectAsStateWithLifecycle() // name, index
+
+    val bottomSheetController = LocalBottomSheetController.current
     val onClickCategory: (CategoryMenu, Int) -> Unit = { categoryMenu, index ->
         writeViewModel.setPostCategory(Pair(categoryMenu.category, index))
-        coroutineScope.launch { bottomSheetState.bottomSheetState.hide() }
+        bottomSheetController.hide()
     }
     val categoryMenus = listOf(
         CategoryMenu.Scheduler,
@@ -141,16 +140,26 @@ internal fun WriteRoute(
         CategoryMenu.Digital,
         CategoryMenu.ETC
     )
-    val uploadSuccess by writeViewModel.uploadSuccess.collectAsStateWithLifecycle()
-    val postInfoSuccess by writeViewModel.postInfoSuccess.collectAsStateWithLifecycle(null)
-
-    BackHandler {
-        if (bottomSheetState.bottomSheetState.currentValue == SheetValue.Expanded) {
-            coroutineScope.launch { bottomSheetState.bottomSheetState.hide() }
-        } else {
-            onBackClick()
+    val bottomSheetContent: @Composable () -> Unit = remember {
+        {
+            CategoryBottomSheetDialog(
+                categoryMenus,
+                onClickCategory,
+                selectedCategory,
+                bottomSheetController
+            )
         }
     }
+
+    DisposableEffect(Unit) {
+        bottomSheetController.setContent(bottomSheetContent)
+        onDispose {
+            bottomSheetController.hide()
+        }
+    }
+
+    val uploadSuccess by writeViewModel.uploadSuccess.collectAsStateWithLifecycle()
+    val postInfoSuccess by writeViewModel.postInfoSuccess.collectAsStateWithLifecycle(null)
 
     LaunchedEffect(postId) {
         if (isPostEditMode && postEditId == null) {
@@ -219,7 +228,7 @@ internal fun WriteRoute(
         },
         processedImages = imageAssets,
         navigateToCategory = {
-            coroutineScope.launch { bottomSheetState.bottomSheetState.expand() }
+            coroutineScope.launch { bottomSheetController.show() }
         },
         categoryMenus = categoryMenus,
         category = selectedCategory,
@@ -230,16 +239,6 @@ internal fun WriteRoute(
         folderName = folderName,
         uploadSuccess = uploadSuccess,
     )
-
-    bottomSheetContent {
-        CategoryBottomSheetDialog(
-            categoryMenus,
-            onClickCategory,
-            selectedCategory,
-            coroutineScope,
-            bottomSheetState
-        )
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -248,12 +247,10 @@ private fun CategoryBottomSheetDialog(
     categoryMenus: List<CategoryMenu>,
     onCategorySelected: (CategoryMenu, Int) -> Unit,
     selectedCategory: Pair<Category?, Int>,
-    coroutineScope: CoroutineScope,
-    bottomSheetState: BottomSheetScaffoldState
+    bottomSheetController: BottomSheetController
 ) {
 
     BottomSheetDialog(
-        sheetState = bottomSheetState,
         buttons = categoryMenus.mapIndexed { index, category ->
             Pair(category.name) {
                 onCategorySelected(category, index)
@@ -269,7 +266,7 @@ private fun CategoryBottomSheetDialog(
         normalColor = Gray2_767B83,
         checkedColor = Primary_23C882,
         checkedButtonIndex = selectedCategory.second,
-        closeButtonAction = { coroutineScope.launch { bottomSheetState.bottomSheetState.hide() } }
+        closeButtonAction = { bottomSheetController.hide() }
     )
 }
 
@@ -474,7 +471,7 @@ fun WriteUploadImages(
                     if (images.size == WRITE_POST_IMAGE_MIN_SIZE) return@itemsIndexed
 
                     Image(
-                        painter = painterResource(id = R.drawable.ic_img_delete),
+                        painter = painterResource(id = R.drawable.ic_x_with_circle),
                         contentDescription = "delete image",
                         modifier = Modifier
                             .align(Alignment.TopEnd)
@@ -650,7 +647,7 @@ fun WriteCategoryLayout(
             Spacer(modifier = Modifier.weight(1f))
             Image(
                 modifier = Modifier.fillMaxHeight(),
-                painter = painterResource(id = R.drawable.ic_arrow_category_green),
+                painter = painterResource(id = R.drawable.ic_chevron_r_primary_green),
                 contentDescription = stringResource(R.string.write_post_select_category_title)
             )
         }
@@ -720,7 +717,7 @@ fun WriteTagLayout(
             modifier = Modifier
                 .fillMaxHeight()
                 .padding(start = 2.dp),
-            painter = painterResource(id = R.drawable.ic_arrow_tag_gray),
+            painter = painterResource(id = R.drawable.ic_chevron_r_gray),
             contentDescription = stringResource(R.string.write_post_select_tag_title)
         )
     }
@@ -786,7 +783,7 @@ fun WriteFolderLayout(
             modifier = Modifier
                 .fillMaxHeight()
                 .padding(start = 2.dp),
-            painter = painterResource(id = R.drawable.ic_arrow_tag_gray),
+            painter = painterResource(id = R.drawable.ic_chevron_r_gray),
             contentDescription = stringResource(R.string.write_post_select_folder_title)
         )
     }

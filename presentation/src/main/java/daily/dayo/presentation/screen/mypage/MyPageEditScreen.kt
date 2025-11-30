@@ -1,5 +1,7 @@
 package daily.dayo.presentation.screen.mypage
 
+import BottomSheetController
+import LocalBottomSheetController
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -11,9 +13,7 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,23 +29,19 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
-import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetValue
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -82,9 +78,7 @@ import daily.dayo.presentation.view.DayoTextField
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.TopNavigationAlign
 import daily.dayo.presentation.view.dialog.BottomSheetDialog
-import daily.dayo.presentation.view.dialog.getBottomSheetDialogState
 import daily.dayo.presentation.viewmodel.ProfileSettingViewModel
-import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.util.regex.Pattern
@@ -97,9 +91,8 @@ internal fun MyPageEditScreen(
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
-    val bottomSheetState = getBottomSheetDialogState()
-    val coroutineScope = rememberCoroutineScope()
     val alertDialog = remember { mutableStateOf(createLoadingDialog(context)) }
+    val bottomSheetController = LocalBottomSheetController.current
 
     val profileUiState by profileSettingViewModel.profileInfo.observeAsState(Resource.loading(null))
     val isNicknameDuplicate by profileSettingViewModel.isNicknameDuplicate.collectAsStateWithLifecycle(false)
@@ -164,26 +157,20 @@ internal fun MyPageEditScreen(
 
     MyPageEditScreen(
         profileInfo = profileInfo,
-        bottomSheetState = bottomSheetState,
         modifiedProfileImage = modifiedProfileImage.value,
         nickNameErrorMessage = nickNameErrorMessage.value,
+        bottomSheetController = bottomSheetController,
         onClickProfileSelect = {
-            coroutineScope.launch {
-                showProfileGallery = true
-                bottomSheetState.bottomSheetState.hide()
-            }
+            showProfileGallery = true
+            bottomSheetController.hide()
         },
         onClickProfileCapture = {
-            coroutineScope.launch {
-                showProfileCapture = true
-                bottomSheetState.bottomSheetState.hide()
-            }
+            showProfileCapture = true
+            bottomSheetController.hide()
         },
         onClickProfileReset = {
             modifiedProfileImage.value = ""
-            coroutineScope.launch {
-                bottomSheetState.bottomSheetState.hide()
-            }
+            bottomSheetController.hide()
         },
         onBackClick = onBackClick,
         onConfirmClick = {
@@ -207,131 +194,116 @@ private fun MyPageEditScreen(
     profileInfo: MutableState<Profile?>,
     modifiedProfileImage: String,
     nickNameErrorMessage: String,
-    bottomSheetState: BottomSheetScaffoldState,
+    bottomSheetController: BottomSheetController,
     onClickProfileSelect: () -> Unit,
     onClickProfileCapture: () -> Unit,
     onClickProfileReset: () -> Unit,
     onBackClick: () -> Unit,
     onConfirmClick: () -> Unit,
 ) {
-    val bottomSheetDimAlpha by remember {
-        derivedStateOf { if (bottomSheetState.bottomSheetState.currentValue == SheetValue.Expanded) 0.6f else 0f }
-    }
-    val animatedDimAlpha by animateFloatAsState(targetValue = bottomSheetDimAlpha)
     val scrollState = rememberScrollState()
-    val coroutineScope = rememberCoroutineScope()
-
-
-    BottomSheetScaffold(
-        scaffoldState = bottomSheetState,
-        sheetDragHandle = null,
-        sheetContent = {
+    val bottomSheetContent: @Composable () -> Unit = remember {
+        {
             ProfileImageBottomSheetDialog(
-                bottomSheetState,
                 onClickProfileSelect,
                 onClickProfileCapture,
                 onClickProfileReset
             )
-        },
-        content = {
-            Box {
-                Scaffold(
-                    modifier = Modifier.navigationBarsPadding(),
-                    topBar = {
-                        MyPageEditTopNavigation(
-                            confirmEnabled = nickNameErrorMessage.isEmpty(),
-                            onBackClick = onBackClick,
-                            onConfirmClick = onConfirmClick
-                        )
-                    }
-                ) { contentPadding ->
+        }
+    }
+    DisposableEffect(Unit) {
+        bottomSheetController.setContent(bottomSheetContent)
+        onDispose {
+            bottomSheetController.hide()
+        }
+    }
 
-                    Column(
-                        modifier = Modifier
-                            .background(DayoTheme.colorScheme.background)
-                            .fillMaxSize()
-                            .verticalScroll(scrollState)
-                            .padding(contentPadding)
-                            .padding(vertical = 32.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        val placeholderResId = remember { R.drawable.ic_profile_default_user_profile }
-                        BadgeRoundImageView(
-                            context = LocalContext.current,
-                            imageUrl = modifiedProfileImage,
-                            imageDescription = "my page profile image",
-                            placeholderResId = placeholderResId,
-                            contentModifier = Modifier
-                                .size(100.dp)
-                                .aspectRatio(1f)
-                                .clip(RoundedCornerShape(percent = 50))
-                                .clickableSingle(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null,
-                                    onClick = {
-                                        coroutineScope.launch { bottomSheetState.bottomSheetState.expand() }
-                                    }
-                                )
-                        )
-
-                        Spacer(modifier = Modifier.height(36.dp))
-
-                        DayoTextField(
-                            value = profileInfo.value?.nickname ?: "",
-                            onValueChange = { textValue ->
-                                profileInfo.value = profileInfo.value?.copy(
-                                    nickname = textValue
-                                )
-                            },
-                            label = stringResource(id = R.string.nickname),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 18.dp),
-                            isError = nickNameErrorMessage.isNotEmpty(),
-                            errorMessage = nickNameErrorMessage
-                        )
-
-                        Spacer(modifier = Modifier.height(32.dp))
-
-                        Column(modifier = Modifier.padding(horizontal = 18.dp)) {
-                            Text(
-                                text = stringResource(id = R.string.email),
-                                style = DayoTheme.typography.caption3.copy(
-                                    color = Gray4_C5CAD2,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            )
-
-                            Text(
-                                text = profileInfo.value?.email ?: "",
-                                modifier = Modifier.padding(vertical = 8.dp),
-                                style = DayoTheme.typography.b4.copy(
-                                    color = Gray2_767B83,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            )
-
-                            HorizontalDivider(
-                                modifier = Modifier.fillMaxWidth(),
-                                thickness = 1.dp,
-                                color = Gray6_F0F1F3
-                            )
-                        }
-                    }
-                }
-                if (animatedDimAlpha > 0f) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Dark.copy(alpha = animatedDimAlpha))
-                            .clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) {
-                                coroutineScope.launch { bottomSheetState.bottomSheetState.hide() }
-                            }
+    Scaffold {
+        Box {
+            Scaffold(
+                modifier = Modifier.navigationBarsPadding(),
+                topBar = {
+                    MyPageEditTopNavigation(
+                        confirmEnabled = nickNameErrorMessage.isEmpty(),
+                        onBackClick = onBackClick,
+                        onConfirmClick = onConfirmClick
                     )
+                }
+            ) { contentPadding ->
+
+                Column(
+                    modifier = Modifier
+                        .background(DayoTheme.colorScheme.background)
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(contentPadding)
+                        .padding(vertical = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    val placeholderResId = remember { R.drawable.ic_profile_default }
+                    BadgeRoundImageView(
+                        context = LocalContext.current,
+                        imageUrl = modifiedProfileImage,
+                        imageDescription = "my page profile image",
+                        placeholderResId = placeholderResId,
+                        contentModifier = Modifier
+                            .size(100.dp)
+                            .aspectRatio(1f)
+                            .clip(RoundedCornerShape(percent = 50))
+                            .clickableSingle(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = { bottomSheetController.show() }
+                            )
+                    )
+
+                    Spacer(modifier = Modifier.height(36.dp))
+
+                    DayoTextField(
+                        value = profileInfo.value?.nickname ?: "",
+                        onValueChange = { textValue ->
+                            profileInfo.value = profileInfo.value?.copy(
+                                nickname = textValue
+                            )
+                        },
+                        label = stringResource(id = R.string.nickname),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 18.dp),
+                        isError = nickNameErrorMessage.isNotEmpty(),
+                        errorMessage = nickNameErrorMessage
+                    )
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    Column(modifier = Modifier.padding(horizontal = 18.dp)) {
+                        Text(
+                            text = stringResource(id = R.string.email),
+                            style = DayoTheme.typography.caption3.copy(
+                                color = Gray4_C5CAD2,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        )
+
+                        Text(
+                            text = profileInfo.value?.email ?: "",
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            style = DayoTheme.typography.b4.copy(
+                                color = Gray2_767B83,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        )
+
+                        HorizontalDivider(
+                            modifier = Modifier.fillMaxWidth(),
+                            thickness = 1.dp,
+                            color = Gray6_F0F1F3
+                        )
+                    }
                 }
             }
         }
-    )
+    }
 }
 
 @Composable
@@ -345,7 +317,7 @@ private fun MyPageEditTopNavigation(
         leftIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_back_sign),
+                    painter = painterResource(id = R.drawable.ic_arrow_left_2),
                     contentDescription = "back",
                     tint = Gray1_50545B
                 )
@@ -373,13 +345,11 @@ private fun MyPageEditTopNavigation(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProfileImageBottomSheetDialog(
-    bottomSheetState: BottomSheetScaffoldState,
     onClickProfileSelect: () -> Unit,
     onClickProfileCapture: () -> Unit,
     onClickProfileReset: () -> Unit,
 ) {
     BottomSheetDialog(
-        sheetState = bottomSheetState,
         buttons = listOf(
             Pair(stringResource(id = R.string.my_profile_edit_image_select_gallery)) {
                 onClickProfileSelect()
@@ -505,7 +475,8 @@ fun bitmapToUri(context: Context, bitmap: Bitmap): Uri? {
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-internal fun PreviewMyPageEditScreen() {
+private fun PreviewMyPageEditScreen() {
+    val bottomSheetController = remember { BottomSheetController() }
     DayoTheme {
         MyPageEditScreen(
             profileInfo = remember {
@@ -524,10 +495,10 @@ internal fun PreviewMyPageEditScreen() {
             },
             modifiedProfileImage = "",
             nickNameErrorMessage = "",
-            bottomSheetState = getBottomSheetDialogState(),
+            bottomSheetController = bottomSheetController,
             onClickProfileSelect = {},
             onClickProfileCapture = {},
-            onClickProfileReset = { },
+            onClickProfileReset = {},
             onBackClick = {},
             onConfirmClick = {}
         )

@@ -85,7 +85,7 @@ fun PreviewTopNavigation() {
             rightIcon = {
                 IconButton(onClick = { /* do something */ }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_option),
+                        painter = painterResource(id = R.drawable.ic_option_vertical),
                         contentDescription = "Option"
                     )
                 }

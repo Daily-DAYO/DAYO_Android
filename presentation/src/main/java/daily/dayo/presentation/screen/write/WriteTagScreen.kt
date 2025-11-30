@@ -261,7 +261,7 @@ fun WriteTags(
                                     .fillMaxSize()
                                     .clickable { onRemoveTagClick(tagText) }
                                     .padding(4.dp),
-                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_x_sign),
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_x),
                                 contentDescription = "Remove $tagText",
                                 tint = Gray4_C5CAD2,
                             )

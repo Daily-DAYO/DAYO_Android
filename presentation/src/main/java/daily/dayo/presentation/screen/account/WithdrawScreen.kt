@@ -1,5 +1,7 @@
 package daily.dayo.presentation.screen.account
 
+import BottomSheetController
+import LocalBottomSheetController
 import android.content.Context
 import android.content.Intent
 import androidx.activity.compose.BackHandler
@@ -25,24 +27,21 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -68,6 +67,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import daily.dayo.domain.model.WithdrawalReason
 import daily.dayo.presentation.R
 import daily.dayo.presentation.activity.LoginActivity
 import daily.dayo.presentation.activity.MainActivity
@@ -88,9 +88,6 @@ import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.TopNavigation
 import daily.dayo.presentation.view.dialog.ConfirmDialog
 import daily.dayo.presentation.viewmodel.AccountViewModel
-import daily.dayo.domain.model.WithdrawalReason
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 const val OTHER_REASON_TEXT_MAX_LENGTH = 100
 
@@ -98,26 +95,27 @@ const val OTHER_REASON_TEXT_MAX_LENGTH = 100
 @Composable
 fun WithdrawScreen(
     onBackClick: () -> Unit,
-    bottomSheetState: BottomSheetScaffoldState,
-    bottomSheetContent: (@Composable () -> Unit) -> Unit,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     accountViewModel: AccountViewModel = hiltViewModel(),
     onNavigateToHome: () -> Unit = {},
     onNavigateToMyPage: () -> Unit = {},
 ) {
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val withdrawStep = remember { mutableStateOf(WithdrawStep.REASON_SELECT) }
     var selectedReason by remember { mutableStateOf<SelectedWithdrawReason?>(null) }
+
+    val bottomSheetController = LocalBottomSheetController.current
     val onClickWithdrawContinue: (WithdrawalReason) -> Unit = { reason ->
-        coroutineScope.launch { bottomSheetState.bottomSheetState.expand() }
-        bottomSheetContent {
+        bottomSheetController.show()
+        selectedReason = SelectedWithdrawReason(reason)
+    }
+    val bottomSheetContent: @Composable () -> Unit = remember {
+        {
             selectedReason?.let { selected ->
                 WithdrawContinueBottomSheetDialog(
-                    coroutineScope = coroutineScope,
-                    bottomSheetState = bottomSheetState,
+                    bottomSheetController = bottomSheetController,
                     keyboardController = keyboardController,
                     focusManager = focusManager,
                     setWithdrawStep = { withdrawStep.value = it },
@@ -126,32 +124,27 @@ fun WithdrawScreen(
                     snackBarHostState = snackBarHostState,
                     accountViewModel = accountViewModel,
                     onNavigateToHome = onNavigateToHome,
-                    onNavigateToMyPage = onNavigateToMyPage,
+                    onNavigateToMyPage = onNavigateToMyPage
                 )
             }
         }
     }
 
-    LaunchedEffect(bottomSheetState) {
-        snapshotFlow { bottomSheetState.bottomSheetState.currentValue }
-            .collect { value ->
-                if (value == SheetValue.Hidden) {
-                    focusManager.clearFocus(force = true)
-                    keyboardController?.hide()
-                    if (withdrawStep.value == WithdrawStep.REASON_SELECT) {
-                        selectedReason = null
-                    }
-                }
-            }
+    DisposableEffect(Unit) {
+        bottomSheetController.setContent(bottomSheetContent)
+        onDispose {
+            keyboardController?.hide()
+            focusManager.clearFocus()
+            bottomSheetController.hide()
+        }
     }
 
-    // BottomSheet가 열려있을 때의 뒤로가기 처리
-    if (bottomSheetState.bottomSheetState.currentValue == SheetValue.Expanded) {
-        BackHandler {
-            coroutineScope.launch {
-                keyboardController?.hide()
-                focusManager.clearFocus()
-                bottomSheetState.bottomSheetState.hide()
+    LaunchedEffect(bottomSheetController) {
+        if (!bottomSheetController.isVisible) {
+            focusManager.clearFocus(force = true)
+            keyboardController?.hide()
+            if (withdrawStep.value == WithdrawStep.REASON_SELECT) {
+                selectedReason = null
             }
         }
     }
@@ -314,7 +307,7 @@ private fun WithdrawReasonItem(
         Spacer(modifier = Modifier.weight(1f))
 
         Icon(
-            painter = painterResource(id = R.drawable.ic_next),
+            painter = painterResource(id = R.drawable.ic_chevron_r_3),
             contentDescription = stringResource(id = reason.content.reasonTextResId),
             tint = Gray4_C5CAD2
         )
@@ -324,8 +317,7 @@ private fun WithdrawReasonItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WithdrawContinueBottomSheetDialog(
-    coroutineScope: CoroutineScope,
-    bottomSheetState: BottomSheetScaffoldState,
+    bottomSheetController: BottomSheetController,
     keyboardController: SoftwareKeyboardController?,
     focusManager: FocusManager,
     setWithdrawStep: (WithdrawStep) -> Unit,
@@ -384,10 +376,8 @@ fun WithdrawContinueBottomSheetDialog(
                                 if (selected.otherReasonText.isBlank()) {
                                     return@WithdrawHoldBottomSheet
                                 } else {
-                                    coroutineScope.launch {
-                                        keyboardController?.hide()
-                                        focusManager.clearFocus()
-                                    }
+                                    keyboardController?.hide()
+                                    focusManager.clearFocus()
                                 }
                             }
 
@@ -395,18 +385,13 @@ fun WithdrawContinueBottomSheetDialog(
 
                             }
                         }
-
-                        coroutineScope.launch {
-                            setWithdrawStep(WithdrawStep.CONFIRM)
-                            bottomSheetState.bottomSheetState.hide()
-                        }
+                        setWithdrawStep(WithdrawStep.CONFIRM)
+                        bottomSheetController.hide()
                     },
                     onCancel = {
-                        coroutineScope.launch {
-                            keyboardController?.hide()
-                            focusManager.clearFocus()
-                            bottomSheetState.bottomSheetState.hide()
-                        }
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                        bottomSheetController.hide()
                         when (selected.reason) {
                             WithdrawalReason.WANT_TO_DELETE_HISTORY -> {
                                 onNavigateToMyPage()
@@ -448,7 +433,7 @@ fun WithdrawHoldBottomSheet(
     )
     val isOtherReason = (content.reasonTextResId == R.string.withdraw_reason_other)
     var otherReasonContentValue by remember { mutableStateOf(TextFieldValue(otherReasonText)) }
-    
+
     // otherReasonText가 변경될 때 로컬 상태도 동기화
     LaunchedEffect(otherReasonText) {
         if (otherReasonContentValue.text != otherReasonText) {
@@ -708,7 +693,7 @@ fun WithdrawConfirmCheckItems(
             .wrapContentHeight()
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_check_mark),
+            painter = painterResource(id = R.drawable.ic_check),
             contentDescription = null,
             tint = Primary_23C882,
         )
