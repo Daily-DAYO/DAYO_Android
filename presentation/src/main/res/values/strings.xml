@@ -138,6 +138,9 @@
     <string name="post_comment_empty_description">이 게시글에 대해 댓글을 남겨주세요</string>
     <string name="post_option_mine_modify">게시물 수정</string>
     <string name="post_option_mine_delete">게시물 삭제</string>
+    <string name="post_option_mine_delete_alert_description">이 게시글을 정말 삭제할까요?</string>
+    <string name="post_option_mine_delete_alert_explanation">삭제된 게시글은 다시 되돌릴 수 없어요.</string>
+    <string name="post_option_mine_delete_message_fail">게시글을 삭제 할 수 없어요. 다시 시도해주세요.</string>
 
     <!-- Comment -->
     <string name="comment_button_text">남기기</string>
