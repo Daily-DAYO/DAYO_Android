@@ -241,7 +241,7 @@ private fun FolderScreen(
                         leftIcon = {
                             IconButton(onClick = onBackClick) {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.ic_back_sign),
+                                    painter = painterResource(id = R.drawable.ic_arrow_left_2),
                                     contentDescription = stringResource(id = R.string.back_sign),
                                     tint = Dark
                                 )

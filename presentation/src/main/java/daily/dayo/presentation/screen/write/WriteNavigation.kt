@@ -1,9 +1,7 @@
 package daily.dayo.presentation.screen.write
 
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -51,9 +49,7 @@ fun NavGraphBuilder.writeNavGraph(
     onTagClick: () -> Unit,
     onWriteFolderClick: () -> Unit,
     onWriteFolderNewClick: () -> Unit,
-    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit,
-    bottomSheetState: BottomSheetScaffoldState,
-    bottomSheetContent: (@Composable () -> Unit) -> Unit,
+    onAdRequest: (onRewardSuccess: () -> Unit) -> Unit
 ) {
     navigation(
         startDestination = WriteRoute.route,
@@ -80,9 +76,7 @@ fun NavGraphBuilder.writeNavGraph(
                 onTagClick = onTagClick,
                 onWriteFolderClick = onWriteFolderClick,
                 onCropImageClick = { imgIdx -> navController.navigateCrop(imgIdx) },
-                writeViewModel = hiltViewModel(parentStackEntry),
-                bottomSheetState = bottomSheetState,
-                bottomSheetContent = bottomSheetContent
+                writeViewModel = hiltViewModel(parentStackEntry)
             )
         }
 
@@ -105,9 +99,7 @@ fun NavGraphBuilder.writeNavGraph(
                     onTagClick = onTagClick,
                     onWriteFolderClick = onWriteFolderClick,
                     onCropImageClick = { imgIdx -> navController.navigateCrop(imgIdx) },
-                    writeViewModel = hiltViewModel(parentStackEntry),
-                    bottomSheetState = bottomSheetState,
-                    bottomSheetContent = bottomSheetContent
+                    writeViewModel = hiltViewModel(parentStackEntry)
                 )
             }
         }

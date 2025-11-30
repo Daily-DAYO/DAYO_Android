@@ -42,14 +42,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -63,10 +58,13 @@ import daily.dayo.domain.model.SearchHistoryType
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.ReplaceUnicode.trimBlankText
 import daily.dayo.presentation.common.extension.clickableSingle
-import daily.dayo.presentation.common.toSp
+import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
+import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
+import daily.dayo.presentation.theme.Gray7_F6F6F7
+import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.viewmodel.SearchViewModel
 import kotlinx.coroutines.launch
@@ -148,7 +146,7 @@ fun SearchActionbarLayout(
     onSearchClick: (String) -> Unit
 ) {
     Surface(
-        color = colorResource(id = R.color.white_FFFFFF),
+        color = White_FFFFFF,
         modifier = modifier
             .height(IntrinsicSize.Min)
             .fillMaxWidth()
@@ -172,10 +170,7 @@ fun SearchActionbarLayout(
                     .fillMaxHeight()
                     .weight(1F)
                     .padding(vertical = 4.dp)
-                    .background(
-                        colorResource(id = R.color.gray_7_F6F6F7),
-                        RoundedCornerShape(8.dp)
-                    ),
+                    .background(Gray7_F6F6F7, RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.CenterStart
             ) {
                 BasicTextField(
@@ -187,23 +182,12 @@ fun SearchActionbarLayout(
                         .wrapContentHeight(align = Alignment.CenterVertically)
                         .fillMaxWidth()
                         .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
-                    textStyle = TextStyle(
-                        fontSize = 16.dp.toSp(),
-                        fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                        fontWeight = FontWeight(500),
-                        color = colorResource(id = R.color.gray_1_313131),
-                    ),
+                    textStyle = DayoTheme.typography.b6.copy(color = Dark),
                     decorationBox = { innerTextField ->
                         if (textFieldValue.text.isEmpty()) {
                             Text(
                                 text = stringResource(id = R.string.hint_search_keyword_input),
-                                style = TextStyle(
-                                    fontSize = 14.dp.toSp(),
-                                    lineHeight = 20.dp.toSp(),
-                                    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                                    fontWeight = FontWeight(500),
-                                    color = colorResource(id = R.color.gray_3_9FA5AE),
-                                )
+                                style = DayoTheme.typography.b6.copy(color = Gray3_9FA5AE)
                             )
                         }
                         innerTextField()
@@ -221,7 +205,7 @@ fun SearchActionbarLayout(
                 NoRippleIconButton(
                     onClick = { textFieldValue = TextFieldValue() },
                     iconContentDescription = "Input Clear Button",
-                    iconPainter = painterResource(id = R.drawable.ic_x_sign_circle_gray),
+                    iconPainter = painterResource(id = R.drawable.ic_x_with_circle_2),
                     iconTintColor = Color.Unspecified,
                     iconButtonModifier = Modifier
                         .align(Alignment.CenterEnd)
@@ -236,7 +220,7 @@ fun SearchActionbarLayout(
 @Preview
 private fun SearchHistoryGuideLayout() {
     Surface(
-        color = colorResource(id = R.color.white_FFFFFF),
+        color = White_FFFFFF,
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
@@ -244,13 +228,7 @@ private fun SearchHistoryGuideLayout() {
     ) {
         Text(
             text = "최근 검색",
-            style = TextStyle(
-                fontSize = 14.dp.toSp(),
-                lineHeight = 20.dp.toSp(),
-                fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                fontWeight = FontWeight(500),
-                color = colorResource(id = R.color.gray_2_767B83),
-            ),
+            style = DayoTheme.typography.b6.copy(color = Gray2_767B83),
             modifier = Modifier
                 .padding(start = 2.dp, top = 8.dp, bottom = 8.dp)
         )
@@ -260,7 +238,7 @@ private fun SearchHistoryGuideLayout() {
 @Composable
 private fun SetClearSearchHistoryLayout(onHistoryClearClick: () -> Unit) {
     Surface(
-        color = colorResource(id = R.color.white_FFFFFF),
+        color = White_FFFFFF,
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
@@ -272,22 +250,16 @@ private fun SetClearSearchHistoryLayout(onHistoryClearClick: () -> Unit) {
                 .background(DayoTheme.colorScheme.background)
                 .padding(horizontal = 12.dp, vertical = 4.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.white_FFFFFF),
-                contentColor = colorResource(id = R.color.gray_2_767B83),
+                containerColor = White_FFFFFF,
+                contentColor = Gray2_767B83,
             ),
             shape = RoundedCornerShape(100.dp),
-            border = BorderStroke(1.dp, colorResource(id = R.color.gray_2_767B83)),
+            border = BorderStroke(1.dp, Gray2_767B83),
             onClick = { onHistoryClearClick() }
         ) {
             Text(
                 text = stringResource(id = R.string.search_history_clear),
-                style = TextStyle(
-                    fontSize = 12.dp.toSp(),
-                    lineHeight = 18.dp.toSp(),
-                    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                    fontWeight = FontWeight(500),
-                    color = colorResource(id = R.color.gray_2_767B83),
-                ),
+                style = DayoTheme.typography.caption4.copy(color = Gray2_767B83),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 0.dp)
             )
@@ -372,7 +344,7 @@ private fun SearchHistoryLayout(
     searchHistoryDetail: SearchHistoryDetail
 ) {
     Surface(
-        color = colorResource(id = R.color.white_FFFFFF),
+        color = White_FFFFFF,
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
@@ -419,12 +391,7 @@ private fun PreviewSearchHistoryLayout() {
 private fun SearchHistoryDetailLayout(searchedText: String) {
     Text(
         text = searchedText,
-        style = TextStyle(
-            fontSize = 16.dp.toSp(),
-            fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-            fontWeight = FontWeight(500),
-            color = colorResource(id = R.color.gray_1_313131),
-        ),
+        style = DayoTheme.typography.b4.copy(color = Dark),
         modifier = Modifier
             .wrapContentSize()
             .padding(start = 8.dp)
@@ -443,6 +410,6 @@ private fun SearchHistoryDeleteButton(
             }
         },
         iconContentDescription = "History Delete Button",
-        iconPainter = painterResource(id = R.drawable.ic_x_sign)
+        iconPainter = painterResource(id = R.drawable.ic_x)
     )
 }

@@ -332,7 +332,7 @@ private fun PostScreen(
                 leftIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_x_sign),
+                            painter = painterResource(id = R.drawable.ic_x),
                             contentDescription = stringResource(id = R.string.back_sign),
                             tint = Dark
                         )
