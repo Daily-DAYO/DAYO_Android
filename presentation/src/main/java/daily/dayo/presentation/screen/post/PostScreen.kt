@@ -99,7 +99,7 @@ fun PostScreen(
     val commentState = postViewModel.postComments.observeAsState()
     val commentText = remember { mutableStateOf(TextFieldValue("")) }
     val showMentionSearchView = remember { mutableStateOf(false) }
-    val commentFocusRequester = FocusRequester()
+    val commentFocusRequester = remember { FocusRequester() }
 
     // comment option
     val onClickCommentDelete: (Long) -> Unit = { commentId ->
@@ -180,11 +180,30 @@ fun PostScreen(
     val onClickCancelReply: () -> Unit = {
         clearComment()
     }
-    val postCommentCreateSuccess by postViewModel.postCommentCreateSuccess.observeAsState(Event(false))
-    if (postCommentCreateSuccess.getContentIfNotHandled() == true) {
-        clearComment()
-        keyboardController?.hide()
-        postViewModel.requestPostComment(postId)
+
+    val postCommentCreateState by postViewModel.postCommentCreateState.observeAsState()
+    LaunchedEffect(postCommentCreateState) {
+        postCommentCreateState?.status?.let { state ->
+            when (state) {
+                Status.LOADING -> {
+                    coroutineScope.launch {
+                        snackBarHostState.showSnackbar(context.getString(R.string.loading_default_message))
+                    }
+                }
+
+                Status.SUCCESS -> {
+                    clearComment()
+                    keyboardController?.hide()
+                    postViewModel.requestPostComment(postId)
+                }
+
+                Status.ERROR -> {
+                    coroutineScope.launch {
+                        snackBarHostState.showSnackbar(context.getString(R.string.network_error_dialog_default_message))
+                    }
+                }
+            }
+        }
     }
 
     BackHandler(enabled = loadingVisible) {}
@@ -454,7 +473,7 @@ private fun PreviewPostScreen() {
             userSearchKeyword = userSearchKeyword,
             showMentionSearchView = showMentionSearchView,
             userResults = userResults,
-            commentFocusRequester = FocusRequester(),
+            commentFocusRequester = remember { FocusRequester() },
             onClickPostComment = { },
             onClickProfile = { },
             onClickPost = { },

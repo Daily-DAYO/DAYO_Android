@@ -168,11 +168,30 @@ fun CommentBottomSheetDialog(
     val onClickCancelReply: () -> Unit = {
         clearComment()
     }
-    val postCommentCreateSuccess by postViewModel.postCommentCreateSuccess.observeAsState(Event(false))
-    if (postCommentCreateSuccess.getContentIfNotHandled() == true) {
-        clearComment()
-        keyboardController?.hide()
-        postViewModel.requestPostComment(postId)
+
+    val postCommentCreateState by postViewModel.postCommentCreateState.observeAsState()
+    LaunchedEffect(postCommentCreateState) {
+        postCommentCreateState?.status?.let { state ->
+            when (state) {
+                Status.LOADING -> {
+                    coroutineScope.launch {
+                        snackBarHostState.showSnackbar(context.getString(R.string.loading_default_message))
+                    }
+                }
+
+                Status.SUCCESS -> {
+                    clearComment()
+                    keyboardController?.hide()
+                    postViewModel.requestPostComment(postId)
+                }
+
+                Status.ERROR -> {
+                    coroutineScope.launch {
+                        snackBarHostState.showSnackbar(context.getString(R.string.network_error_dialog_default_message))
+                    }
+                }
+            }
+        }
     }
 
     Surface(

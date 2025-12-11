@@ -66,8 +66,8 @@ class PostViewModel @Inject constructor(
     private val _postDeleteSuccess = MutableSharedFlow<Status>()
     val postDeleteSuccess = _postDeleteSuccess.asSharedFlow()
 
-    private val _postCommentCreateSuccess = MutableLiveData<Event<Boolean>>()
-    val postCommentCreateSuccess get() = _postCommentCreateSuccess
+    private val _postCommentCreateState = MutableLiveData<Resource<Boolean>>()
+    val postCommentCreateState: LiveData<Resource<Boolean>> get() = _postCommentCreateState
 
     private val _postCommentDeleteSuccess = MutableLiveData<Event<Boolean>>()
     val postCommentDeleteSuccess get() = _postCommentDeleteSuccess
@@ -241,17 +241,19 @@ class PostViewModel @Inject constructor(
     }
 
     fun requestCreatePostComment(contents: String, postId: Long, mentionedUser: List<SearchUser>) {
-        if (contents.isEmpty()) return
+        if (contents.isEmpty() || _postCommentCreateState.value?.status == Status.LOADING) return
+
         viewModelScope.launch {
+            _postCommentCreateState.postValue(Resource.loading(null))
             val mentionList = getMentionList(contents, mentionedUser)
             requestCreatePostCommentUseCase(contents = contents, postId = postId, mentionList = mentionList).let { response ->
                 when (response) {
                     is NetworkResponse.Success -> {
-                        _postCommentCreateSuccess.postValue(Event(true))
+                        _postCommentCreateState.postValue(Resource.success(true))
                     }
 
                     else -> {
-                        _postCommentCreateSuccess.postValue(Event(false))
+                        _postCommentCreateState.postValue(Resource.error("댓글 작성 실패", false))
                     }
                 }
             }
@@ -259,19 +261,21 @@ class PostViewModel @Inject constructor(
     }
 
     fun requestCreatePostCommentReply(reply: Pair<Long, Comment>, contents: String, postId: Long, mentionedUser: List<SearchUser>) {
-        if (contents.isEmpty()) return
+        if (contents.isEmpty() || _postCommentCreateState.value?.status == Status.LOADING) return
+
         viewModelScope.launch {
+            _postCommentCreateState.postValue(Resource.loading(null))
             val mentionList = getMentionList(contents, mentionedUser).toMutableList()
             val (parentCommentId, comment) = reply
             mentionList.add(MentionUser(comment.memberId, comment.nickname)) // 언급된 유저 리스트에 원본 댓글 유저 추가 (팔로우하지 않아도 답글 가능하므로 따로 추가)
             requestCreatePostCommentReplyUseCase(commentId = parentCommentId, contents = contents, postId = postId, mentionList = mentionList).let { response ->
                 when (response) {
                     is NetworkResponse.Success -> {
-                        _postCommentCreateSuccess.postValue(Event(true))
+                        _postCommentCreateState.postValue(Resource.success(true))
                     }
 
                     else -> {
-                        _postCommentCreateSuccess.postValue(Event(false))
+                        _postCommentCreateState.postValue(Resource.error("답글 작성 실패", false))
                     }
                 }
             }
