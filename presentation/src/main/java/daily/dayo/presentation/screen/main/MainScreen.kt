@@ -112,10 +112,9 @@ internal fun MainScreen(
         SharedTransitionLayout {
             Scaffold(
                 snackbarHost = {
-                    SnackbarHost(
-                        hostState = snackBarHostState,
-                        modifier = Modifier.navigationBarsPadding()
-                    )
+                    if (!bottomSheetController.isVisible) {
+                        SnackbarHost(hostState = snackBarHostState)
+                    }
                 }
             ) {
                 Box {
@@ -295,7 +294,13 @@ internal fun MainScreen(
                             sheetState = bottomSheetState,
                             dragHandle = null
                         ) {
-                            bottomSheetController.sheetContent()
+                            Box {
+                                bottomSheetController.sheetContent()
+                                SnackbarHost(
+                                    hostState = snackBarHostState,
+                                    modifier = Modifier.align(Alignment.BottomCenter)
+                                )
+                            }
                         }
                     }
                 }
