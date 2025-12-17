@@ -671,7 +671,7 @@ fun WithdrawButton(
         FilledRoundedCornerButton(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(52.dp),
+                .defaultMinSize(minHeight = 52.dp),
             label = stringResource(R.string.withdraw_confirm),
             color = ButtonDefaults.buttonColors(
                 containerColor = Primary_23C882,
