@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -551,7 +552,7 @@ fun WithdrawHoldBottomSheet(
                     label = stringResource(id = content.cancelButtonTextResId),
                     modifier = Modifier
                         .weight(1f)
-                        .height(52.dp),
+                        .defaultMinSize(minHeight = 52.dp),
                     color = ButtonDefaults.buttonColors(
                         containerColor = PrimaryL3_F2FBF7,
                         contentColor = Primary_23C882
@@ -567,7 +568,7 @@ fun WithdrawHoldBottomSheet(
                     label = stringResource(id = content.confirmButtonTextResId),
                     modifier = Modifier
                         .weight(1f)
-                        .height(52.dp),
+                        .defaultMinSize(minHeight = 52.dp),
                     enabled = !(reason == WithdrawalReason.OTHER && otherReasonText.isBlank()),
                     color = ButtonDefaults.buttonColors(
                         containerColor = Primary_23C882,
