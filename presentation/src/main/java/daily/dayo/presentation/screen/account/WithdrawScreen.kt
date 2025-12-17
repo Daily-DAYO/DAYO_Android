@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -815,30 +816,36 @@ private fun WithdrawGuideContentUI(
         Spacer(modifier = Modifier.height(20.dp))
         val guideStrings = words.ifEmpty { emptyList() }
 
-        Row(
+        FlowRow(
             modifier = Modifier
                 .padding(bottom = 16.dp)
-                .wrapContentHeight()
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
+            verticalArrangement = Arrangement.Center
         ) {
             guideStrings.forEachIndexed { index, guide ->
                 Text(
                     text = guide,
+                    modifier = Modifier.align(Alignment.CenterVertically),
                     color = Gray1_50545B,
                     textAlign = TextAlign.Center,
-                    style = DayoTheme.typography.caption4
+                    style = DayoTheme.typography.caption4,
                 )
                 if (index != guideStrings.lastIndex) {
-                    Spacer(modifier = Modifier.width(6.dp))
+                    Spacer(modifier = Modifier
+                        .width(6.dp)
+                        .align(Alignment.CenterVertically))
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right),
                         contentDescription = null,
+                        modifier = Modifier
+                            .size(12.dp)
+                            .align(Alignment.CenterVertically),
                         tint = Gray3_9FA5AE,
-                        modifier = Modifier.size(12.dp)
                     )
-                    Spacer(modifier = Modifier.width(6.dp))
+                    Spacer(modifier = Modifier
+                        .width(6.dp)
+                        .align(Alignment.CenterVertically))
                 }
             }
         }
