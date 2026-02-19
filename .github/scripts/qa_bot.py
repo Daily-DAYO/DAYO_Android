@@ -389,12 +389,14 @@ def call_gemini(prompt: str) -> dict:
     }
 
 
-def apply_changes(changes: list[dict]) -> list[str]:
-    applied = []
+def apply_changes(changes: list[dict]) -> tuple[list[str], list[str]]:
+    applied: list[str] = []
+    skipped: list[str] = []
     for change in changes:
         path = Path(change["file"])
         if not path.exists():
             print(f"SKIP: file not found — {path}")
+            skipped.append(f"file not found: {path}")
             continue
 
         content = path.read_text(encoding="utf-8")
@@ -403,6 +405,7 @@ def apply_changes(changes: list[dict]) -> list[str]:
         if original not in content:
             print(f"SKIP: original snippet not found in {path}")
             print(f"  Looking for: {original[:80]!r}")
+            skipped.append(f"snippet not found in {path}: {original[:80]!r}")
             continue
 
         new_content = content.replace(original, change["replacement"], 1)
@@ -410,7 +413,7 @@ def apply_changes(changes: list[dict]) -> list[str]:
         applied.append(str(path))
         print(f"CHANGED: {path}")
 
-    return applied
+    return applied, skipped
 
 
 def write_outputs(can_fix: bool, commit_msg: str, explanation: str, pr_body: str):
@@ -458,13 +461,16 @@ def main():
         )
         return
 
-    changed = apply_changes(result["changes"])
+    changed, skipped = apply_changes(result["changes"])
 
     if not changed:
         write_outputs(
             can_fix=False,
             commit_msg="",
-            explanation="Code snippets could not be matched in any file.",
+            explanation=(
+                "Code snippets could not be matched in any file. "
+                + "; ".join(skipped[:3])
+            )[:500],
             pr_body="",
         )
         return
