@@ -5,8 +5,8 @@ import json
 import subprocess
 from pathlib import Path
 
-import google.generativeai as genai
-from github import Github
+from google import genai
+from github import Github, Auth
 
 
 SKIP_SCREEN_PREFIXES = {"main", "sub"}
@@ -29,7 +29,7 @@ def fetch_issue():
     repo_name = os.environ["REPO_FULL_NAME"]
     issue_number = int(os.environ["ISSUE_NUMBER"])
 
-    g = Github(token)
+    g = Github(auth=Auth.Token(token))
     repo = g.get_repo(repo_name)
     issue = repo.get_issue(issue_number)
 
@@ -201,9 +201,11 @@ If auto-fix is not safe or the issue requires logic changes beyond styling, resp
 
 
 def call_gemini(prompt: str) -> dict:
-    genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-    model = genai.GenerativeModel("gemini-1.5-flash")
-    response = model.generate_content(prompt)
+    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=prompt,
+    )
     text = response.text.strip()
 
     json_fence = re.search(r"```(?:json)?\n(.+?)\n```", text, re.DOTALL)

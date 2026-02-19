@@ -30,7 +30,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install Python dependencies
-        run: pip install google-generativeai PyGithub
+        run: pip install google-genai PyGithub
 
       - name: Run QA Bot
         id: qa_bot
