@@ -490,7 +490,14 @@ fun SearchResultUserView(
     onClickProfile: (String) -> Unit
 ) {
     Surface(
-        color = White_FFFFFF,
+                color = DayoTheme.colorScheme.background,
+                modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp)
+            )
+            Divider( // Add Divider here
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 1.dp,
+                color = Color(0xFFF0F1F3) // #F0F1F3
+            )
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
