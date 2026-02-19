@@ -226,8 +226,8 @@ fun SignInEmailInputLayout(
     ) {
         DayoTextField(
             modifier = Modifier.focusRequester(focusRequesterEmail),
-            label = stringResource(R.string.sign_in_email_input_email_title),
-            placeholder = stringResource(R.string.sign_in_email_input_email_title),
+            label = if (emailValue.isBlank()) " " else stringResource(R.string.sign_in_email_input_email_title),
+            placeholder = if (emailValue.isBlank()) stringResource(R.string.sign_in_email_input_email_title) else "",
             value = emailValue,
             onValueChange = onEmailChange,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email).copy(
@@ -242,8 +242,8 @@ fun SignInEmailInputLayout(
         )
         DayoPasswordTextField(
             modifier = Modifier.focusRequester(focusRequesterPassword),
-            label = stringResource(R.string.sign_in_email_input_password_title),
-            placeholder = stringResource(R.string.sign_in_email_input_password_placeholder),
+            label = if (passwordValue.isBlank()) " " else stringResource(R.string.sign_in_email_input_password_title),
+            placeholder = if (passwordValue.isBlank()) stringResource(R.string.sign_in_email_input_password_placeholder) else "",
             value = passwordValue,
             onValueChange = onPasswordChange,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password).copy(
