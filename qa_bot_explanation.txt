@@ -1,0 +1,1 @@
+Removed the `label` parameter from DayoTextField and DayoPasswordTextField in the login email screen to prevent the label from displaying before input, aligning with the `label: false` design specification.
