@@ -54,8 +54,13 @@ jobs:
           git push origin --delete "$BRANCH" 2>/dev/null || true
 
           git checkout -b "$BRANCH"
-          git add -A
-          git commit -m "#${{ github.event.issue.number }} [bug] $(cat qa_bot_commit_msg.txt)"
+          git add -A -- . \
+            ':(exclude)pr_body.md' \
+            ':(exclude)qa_bot_commit_msg.txt' \
+            ':(exclude)qa_bot_explanation.txt' \
+            ':(exclude).tmp_runner' \
+            ':(exclude).tmp_runner/**'
+          git commit -m "#${{ github.event.issue.number }} [bug] $(cat .tmp_runner/qa-bot/qa_bot_commit_msg.txt)"
           git push origin "$BRANCH"
 
           echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
@@ -67,8 +72,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_URL=$(gh pr create \
-            --title "#${{ github.event.issue.number }} [bug] $(cat qa_bot_commit_msg.txt)" \
-            --body-file pr_body.md \
+            --title "#${{ github.event.issue.number }} [bug] $(cat .tmp_runner/qa-bot/qa_bot_commit_msg.txt)" \
+            --body-file .tmp_runner/qa-bot/pr_body.md \
             --base develop \
             --head "feature/issue-${{ github.event.issue.number }}")
 
@@ -92,7 +97,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          REASON=$(cat qa_bot_explanation.txt 2>/dev/null || echo "분석 결과 자동 수정이 어렵습니다.")
+          REASON=$(cat .tmp_runner/qa-bot/qa_bot_explanation.txt 2>/dev/null || echo "분석 결과 자동 수정이 어렵습니다.")
           gh issue comment ${{ github.event.issue.number }} \
             --body "🤖 **QA 봇**이 이슈를 분석했지만 자동 수정이 어렵습니다.
 

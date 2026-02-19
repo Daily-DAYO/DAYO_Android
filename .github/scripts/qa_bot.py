@@ -629,9 +629,12 @@ def apply_changes(
 
 
 def write_outputs(can_fix: bool, commit_msg: str, explanation: str, pr_body: str):
-    Path("qa_bot_commit_msg.txt").write_text(commit_msg, encoding="utf-8")
-    Path("qa_bot_explanation.txt").write_text(explanation, encoding="utf-8")
-    Path("pr_body.md").write_text(pr_body, encoding="utf-8")
+    out_dir = Path(".tmp_runner/qa-bot")
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    (out_dir / "qa_bot_commit_msg.txt").write_text(commit_msg, encoding="utf-8")
+    (out_dir / "qa_bot_explanation.txt").write_text(explanation, encoding="utf-8")
+    (out_dir / "pr_body.md").write_text(pr_body, encoding="utf-8")
 
     output_file = os.environ.get("GITHUB_OUTPUT", "")
     if output_file:

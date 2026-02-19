@@ -130,4 +130,13 @@ __pycache__/
 .venv*/
 venv*/
 
+# QA bot artifacts (should not be committed)
+qa_bot_commit_msg.txt
+qa_bot_explanation.txt
+pr_body.md
+
+# Local QA bot debug artifacts
+tmp_github_output.txt
+.tmp_runner/
+
 # End of https://www.toptal.com/developers/gitignore/api/androidstudio
