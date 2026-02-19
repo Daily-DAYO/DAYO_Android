@@ -146,7 +146,41 @@ fun SignInEmailScreen(
         SignInEmailActionbarLayout(onBackClick = onBackClick)
         Column(
             modifier = Modifier
+val snackBarHostState = remember { SnackbarHostState() }
+
+    Scaffold(snackbarHost = { SnackbarHost(hostState = snackBarHostState) }) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
                 .padding(horizontal = 20.dp, vertical = 0.dp)
+        ) {
+            SignInEmailActionbarLayout(onBackClick = onBackClick)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(horizontal = 20.dp, vertical = 0.dp)
+            ) {
+                SignInEmailTitle()
+                SignInEmailInputLayout(
+                    emailValue = emailState.value,
+                    onEmailChange = { emailState.value = it },
+                    passwordValue = passwordState.value,
+                    onPasswordChange = { passwordState.value = it },
+                    onForgetPasswordClick = onForgetPasswordClick,
+                    onSignInClick = { onSignInClick(emailState.value, passwordState.value) }
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            SignInEmailBottomLayout(
+                onSignUpClick = onSignUpClick,
+                onSignInClick = { onSignInClick(emailState.value, passwordState.value) },
+                isSignInButtonEnabled = isSignInButtonEnabled
+            )
+        }
+    }
+}
                 .fillMaxWidth()
                 .wrapContentSize(),
             verticalArrangement = Arrangement.Top
