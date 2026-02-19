@@ -124,4 +124,10 @@ fabric.properties
 sentry.properties
 /*/sentry.properties
 
+# Python
+__pycache__/
+*.pyc
+.venv*/
+venv*/
+
 # End of https://www.toptal.com/developers/gitignore/api/androidstudio

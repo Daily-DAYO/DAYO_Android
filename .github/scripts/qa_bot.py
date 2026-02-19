@@ -12,6 +12,22 @@ from urllib import error, request
 
 SKIP_SCREEN_PREFIXES = {"main", "sub"}
 
+ALLOWED_EDIT_PREFIXES = (
+    "app/src/main/java/",
+    "data/src/main/java/",
+    "domain/src/main/java/",
+    "presentation/src/main/java/",
+)
+
+DENIED_EDIT_CONTAINS = (
+    "local.properties",
+    ".keystore",
+    ".jks",
+    "keystore",
+    "sentry.properties",
+    ".github/",
+)
+
 FONT_WEIGHT_MAP = {
     100: "FontWeight.Thin",
     200: "FontWeight.ExtraLight",
@@ -23,6 +39,63 @@ FONT_WEIGHT_MAP = {
     800: "FontWeight.ExtraBold",
     900: "FontWeight.Black",
 }
+
+
+def build_snippet_catalog(files: list[Path]) -> dict[str, dict[str, str]]:
+    def is_interesting(line: str) -> bool:
+        tokens = (
+            "DayoTextField(",
+            "DayoPasswordTextField(",
+            "label =",
+            "placeholder =",
+            ".padding(",
+            "Modifier.",
+            "Text(",
+            "fontSize =",
+            "fontWeight =",
+            "color =",
+            "shape =",
+            "border =",
+            "keyboardOptions",
+            "keyboardActions",
+        )
+        return any(t in line for t in tokens)
+
+    catalog: dict[str, dict[str, str]] = {}
+    for file_idx, f in enumerate(files):
+        try:
+            content = f.read_text(encoding="utf-8")
+        except Exception:
+            continue
+
+        snippets: dict[str, str] = {}
+        count = 0
+        for line_idx, line in enumerate(content.splitlines(), start=1):
+            if not is_interesting(line):
+                continue
+            text = line.rstrip("\n")
+            if not text.strip():
+                continue
+
+            snippet_id = f"F{file_idx}S{count}L{line_idx}"
+            snippets[snippet_id] = text
+            count += 1
+            if count >= 35:
+                break
+
+        if snippets:
+            catalog[str(f)] = snippets
+
+    return catalog
+
+
+def is_allowed_edit_path(path: Path) -> bool:
+    s = path.as_posix().lstrip("./")
+    if any(x in s for x in DENIED_EDIT_CONTAINS):
+        return False
+    if not s.endswith(".kt"):
+        return False
+    return s.startswith(ALLOWED_EDIT_PREFIXES)
 
 
 def fetch_issue():
@@ -119,18 +192,56 @@ def find_relevant_files(screen: str, component: str) -> list[Path]:
     return sorted(candidates, key=score, reverse=True)[:6]
 
 
-def build_prompt(issue: dict, parsed: dict, files: list[Path]) -> str:
+def build_prompt(
+    issue: dict,
+    parsed: dict,
+    files: list[Path],
+    snippet_catalog: dict[str, dict[str, str]],
+) -> str:
     file_sections = []
+    catalog_sections: list[str] = []
     for f in files:
         try:
             content = f.read_text(encoding="utf-8")
+
+            snippets = snippet_catalog.get(str(f), {})
+            if snippets:
+                lines = [
+                    f"- [{sid}] {text}"
+                    for sid, text in list(snippets.items())[:35]
+                    if isinstance(text, str)
+                ]
+                catalog_sections.append(
+                    "### "
+                    + str(f)
+                    + "\n"
+                    + "Pick snippet_id(s) from this catalog:\n"
+                    + "\n".join(lines)
+                )
+
             if len(content) > 4000:
-                content = content[:4000] + "\n... (truncated)"
+                pivot = content.find("DayoTextField(")
+                if pivot == -1:
+                    pivot = content.find("DayoPasswordTextField(")
+                if pivot == -1:
+                    pivot = content.find("@Composable")
+
+                if pivot != -1:
+                    start = max(pivot - 1800, 0)
+                    end = min(start + 4000, len(content))
+                    content = content[start:end] + "\n... (truncated)"
+                else:
+                    content = content[:4000] + "\n... (truncated)"
             file_sections.append(f"### {f}\n```kotlin\n{content}\n```")
         except Exception:
             pass
 
     files_str = "\n\n".join(file_sections) if file_sections else "No relevant files found."
+    catalog_str = (
+        "\n\n".join(catalog_sections)
+        if catalog_sections
+        else "(No snippet catalog available.)"
+    )
 
     color_hint = ""
     props = parsed.get("properties", "")
@@ -172,13 +283,18 @@ def build_prompt(issue: dict, parsed: dict, files: list[Path]) -> str:
 ## Relevant Source Files
 {files_str}
 
+## Snippet Catalog (Preferred)
+To avoid mismatches, prefer returning snippet_id(s) from the catalog below instead of retyping "original":
+{catalog_str}
+
 ## Rules
 1. Make the smallest possible change that fixes the issue.
 2. Only modify EXISTING files — never create new files.
-3. The "original" field must be an exact verbatim substring of the file content.
+ 3. Prefer snippet_id. If you use "original", it must be an exact verbatim substring of the file content.
 4. Use existing color/style constants from the codebase if they match the required value.
 5. For color fills: prefer the closest existing color constant over hardcoding a new hex.
 6. For fontWeight: use the Compose FontWeight constant shown in the hint above.
+7. Do not retype resource identifiers (e.g., R.string.*). Copy from the provided source or snippets.
 
 ## Required Response Format
 Respond with ONLY a JSON object — no markdown fences, no extra text:
@@ -189,7 +305,8 @@ Respond with ONLY a JSON object — no markdown fences, no extra text:
   "changes": [
     {{
       "file": "relative/path/to/File.kt",
-      "original": "exact verbatim code snippet to replace",
+      "snippet_id": "F0S0L123",
+      "original": "(optional) exact verbatim code snippet to replace",
       "replacement": "new code snippet"
     }}
   ]
@@ -389,18 +506,74 @@ def call_gemini(prompt: str) -> dict:
     }
 
 
-def apply_changes(changes: list[dict]) -> tuple[list[str], list[str]]:
+def apply_changes(
+    changes: list[dict],
+    snippet_catalog: dict[str, dict[str, str]],
+) -> tuple[list[str], list[str]]:
+    repo_root = Path(".").resolve()
     applied: list[str] = []
     skipped: list[str] = []
     for change in changes:
-        path = Path(change["file"])
+        file_str = change.get("file") if isinstance(change, dict) else None
+        if not isinstance(file_str, str) or not file_str.strip():
+            skipped.append("missing file in change")
+            print("SKIP: missing file in change")
+            continue
+
+        path = Path(file_str)
+        if path.is_absolute():
+            skipped.append(f"absolute path not allowed: {path}")
+            print(f"SKIP: absolute path not allowed — {path}")
+            continue
+
+        try:
+            resolved = path.resolve()
+        except Exception:
+            skipped.append(f"invalid path: {path}")
+            print(f"SKIP: invalid path — {path}")
+            continue
+
+        try:
+            if not resolved.is_relative_to(repo_root):
+                skipped.append(f"path escapes repo: {path}")
+                print(f"SKIP: path escapes repo — {path}")
+                continue
+        except AttributeError:
+            if str(resolved).startswith(str(repo_root)) is False:
+                skipped.append(f"path escapes repo: {path}")
+                print(f"SKIP: path escapes repo — {path}")
+                continue
+
+        if not is_allowed_edit_path(path):
+            skipped.append(f"path not allowed: {path}")
+            print(f"SKIP: path not allowed — {path}")
+            continue
+
         if not path.exists():
             print(f"SKIP: file not found — {path}")
             skipped.append(f"file not found: {path}")
             continue
 
         content = path.read_text(encoding="utf-8")
-        original = change["original"]
+
+        original = ""
+        snippet_id = change.get("snippet_id") if isinstance(change, dict) else None
+        if isinstance(snippet_id, str) and snippet_id:
+            file_snips = snippet_catalog.get(str(path)) or snippet_catalog.get(str(path.as_posix()))
+            if isinstance(file_snips, dict) and isinstance(file_snips.get(snippet_id), str):
+                original = file_snips[snippet_id]
+            else:
+                skipped.append(f"snippet_id not found for {path}: {snippet_id}")
+                print(f"SKIP: snippet_id not found for {path} — {snippet_id}")
+                continue
+        else:
+            original = change.get("original", "") if isinstance(change, dict) else ""
+
+        replacement = change.get("replacement", "") if isinstance(change, dict) else ""
+        if not isinstance(replacement, str) or not replacement:
+            skipped.append(f"missing replacement for {path}")
+            print(f"SKIP: missing replacement for {path}")
+            continue
 
         if original not in content:
             print(f"SKIP: original snippet not found in {path}")
@@ -408,7 +581,33 @@ def apply_changes(changes: list[dict]) -> tuple[list[str], list[str]]:
             skipped.append(f"snippet not found in {path}: {original[:80]!r}")
             continue
 
-        new_content = content.replace(original, change["replacement"], 1)
+        replaced = False
+        line_no = None
+        if isinstance(snippet_id, str) and snippet_id:
+            m = re.search(r"L(\d+)$", snippet_id)
+            if m:
+                try:
+                    line_no = int(m.group(1))
+                except ValueError:
+                    line_no = None
+
+        if isinstance(line_no, int) and line_no >= 1:
+            lines = content.splitlines(True)
+            idx = line_no - 1
+            if idx < len(lines):
+                current_line = lines[idx].rstrip("\r\n")
+                if current_line == original:
+                    suffix = ""
+                    if lines[idx].endswith("\r\n") and not replacement.endswith("\r\n"):
+                        suffix = "\r\n"
+                    elif lines[idx].endswith("\n") and not replacement.endswith("\n"):
+                        suffix = "\n"
+                    lines[idx] = replacement + suffix
+                    new_content = "".join(lines)
+                    replaced = True
+
+        if not replaced:
+            new_content = content.replace(original, replacement, 1)
         path.write_text(new_content, encoding="utf-8")
         applied.append(str(path))
         print(f"CHANGED: {path}")
@@ -425,6 +624,24 @@ def write_outputs(can_fix: bool, commit_msg: str, explanation: str, pr_body: str
     if output_file:
         with open(output_file, "a") as f:
             f.write(f"can_fix={'true' if can_fix else 'false'}\n")
+
+
+def build_repair_prompt(
+    issue: dict,
+    parsed: dict,
+    files: list[Path],
+    snippet_catalog: dict[str, dict[str, str]],
+    skipped: list[str],
+) -> str:
+    base = build_prompt(issue, parsed, files, snippet_catalog)
+    details = "\n".join(f"- {s}" for s in skipped[:5]) if skipped else "- (none)"
+    return (
+        base
+        + "\n\n## Apply Failure\n"
+        + "The previous JSON could not be applied because the exact 'original' snippet was not found.\n"
+        + "Fix this by returning snippet_id from the Snippet Catalog, or by copying 'original' from the provided files/snippets exactly.\n\n"
+        + details
+    )
 
 
 def main():
@@ -444,7 +661,8 @@ def main():
     for f in relevant_files:
         print(f"  {f}")
 
-    prompt = build_prompt(issue, parsed, relevant_files)
+    snippet_catalog = build_snippet_catalog(relevant_files)
+    prompt = build_prompt(issue, parsed, relevant_files, snippet_catalog)
     print("Calling Gemini...")
     result = call_gemini(prompt)
 
@@ -461,16 +679,25 @@ def main():
         )
         return
 
-    changed, skipped = apply_changes(result["changes"])
+    changed, skipped = apply_changes(result["changes"], snippet_catalog)
+    if skipped:
+        repair_prompt = build_repair_prompt(issue, parsed, relevant_files, snippet_catalog, skipped)
+        print("Retrying Gemini for exact snippet match...")
+        repaired = call_gemini(repair_prompt)
+        if repaired.get("can_fix") and repaired.get("changes"):
+            changed2, skipped2 = apply_changes(repaired["changes"], snippet_catalog)
+            changed = list(dict.fromkeys(changed + changed2))
+            skipped = skipped2
 
-    if not changed:
+    if not changed or skipped:
+        reason = (
+            "Code snippets could not be matched in file content. "
+            + "; ".join(skipped[:3])
+        )[:500]
         write_outputs(
             can_fix=False,
             commit_msg="",
-            explanation=(
-                "Code snippets could not be matched in any file. "
-                + "; ".join(skipped[:3])
-            )[:500],
+            explanation=reason,
             pr_body="",
         )
         return
