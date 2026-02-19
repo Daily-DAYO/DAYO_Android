@@ -604,7 +604,7 @@ fun SignUpEmailScaffold(
             Column(
                 modifier = Modifier
                     .background(DayoTheme.colorScheme.background)
-                    .padding(horizontal = 20.dp, vertical = 0.dp)
+.padding(horizontal = 20.dp, vertical = 8.dp)
                     .fillMaxWidth()
                     .wrapContentSize()
             ) {
