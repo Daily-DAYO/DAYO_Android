@@ -1,0 +1,101 @@
+name: QA Issue Auto-Fix Bot
+
+on:
+  issues:
+    types: [opened, labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  qa-fix:
+    # QA 라벨이 붙은 이슈가 열릴 때, 또는 기존 이슈에 QA 라벨이 붙을 때 실행
+    if: |
+      (github.event.action == 'opened' && contains(github.event.issue.labels.*.name, 'QA')) ||
+      (github.event.action == 'labeled' && github.event.label.name == 'QA')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install google-generativeai PyGithub
+
+      - name: Run QA Bot
+        id: qa_bot
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO_FULL_NAME: ${{ github.repository }}
+        run: python .github/scripts/qa_bot.py
+
+      - name: Create branch, commit and push
+        id: git_push
+        if: steps.qa_bot.outputs.can_fix == 'true'
+        run: |
+          git config user.name "qa-bot[bot]"
+          git config user.email "qa-bot[bot]@users.noreply.github.com"
+
+          BRANCH="feature/issue-${{ github.event.issue.number }}"
+
+          # 동일 브랜치가 이미 존재하면 삭제 (재실행 안전성)
+          git push origin --delete "$BRANCH" 2>/dev/null || true
+
+          git checkout -b "$BRANCH"
+          git add -A
+          git commit -m "#${{ github.event.issue.number }} [bug] $(cat qa_bot_commit_msg.txt)"
+          git push origin "$BRANCH"
+
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Create Pull Request
+        id: create_pr
+        if: steps.qa_bot.outputs.can_fix == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_URL=$(gh pr create \
+            --title "#${{ github.event.issue.number }} [bug] $(cat qa_bot_commit_msg.txt)" \
+            --body-file pr_body.md \
+            --base develop \
+            --head "feature/issue-${{ github.event.issue.number }}")
+
+          echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
+
+      - name: Comment on issue — success
+        if: steps.qa_bot.outputs.can_fix == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_URL=$(cat pr_url.txt 2>/dev/null || echo "${{ steps.create_pr.outputs.pr_url }}")
+          gh issue comment ${{ github.event.issue.number }} \
+            --body "🤖 **QA 봇**이 자동으로 수정 PR을 생성했습니다!
+
+          PR: ${{ steps.create_pr.outputs.pr_url }}
+
+          수정 내용을 검토한 후 머지해주세요. 문제가 있으면 PR에 코멘트를 남겨주세요."
+
+      - name: Comment on issue — cannot fix
+        if: steps.qa_bot.outputs.can_fix == 'false' || steps.qa_bot.outputs.can_fix == ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REASON=$(cat qa_bot_explanation.txt 2>/dev/null || echo "분석 결과 자동 수정이 어렵습니다.")
+          gh issue comment ${{ github.event.issue.number }} \
+            --body "🤖 **QA 봇**이 이슈를 분석했지만 자동 수정이 어렵습니다.
+
+          **사유**: $REASON
+
+          수동 검토가 필요합니다."
