@@ -201,7 +201,10 @@ If auto-fix is not safe or the issue requires logic changes beyond styling, resp
 
 
 def call_gemini(prompt: str) -> dict:
-    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    client = genai.Client(
+        api_key=os.environ["GEMINI_API_KEY"],
+        http_options={"api_version": "v1"},
+    )
     response = client.models.generate_content(
         model="gemini-1.5-flash",
         contents=prompt,
