@@ -3,10 +3,11 @@ import os
 import re
 import json
 import subprocess
+import time
 from pathlib import Path
+from urllib import error, request
 
-from google import genai
-from github import Github, Auth
+
 
 
 SKIP_SCREEN_PREFIXES = {"main", "sub"}
@@ -25,6 +26,8 @@ FONT_WEIGHT_MAP = {
 
 
 def fetch_issue():
+    from github import Auth, Github
+
     token = os.environ["GITHUB_TOKEN"]
     repo_name = os.environ["REPO_FULL_NAME"]
     issue_number = int(os.environ["ISSUE_NUMBER"])
@@ -201,32 +204,146 @@ If auto-fix is not safe or the issue requires logic changes beyond styling, resp
 
 
 def call_gemini(prompt: str) -> dict:
-    models_to_try = [
-        ("gemini-2.0-flash", "v1beta"),
-        ("gemini-2.0-flash-lite", "v1beta"),
-        ("gemini-1.5-flash", "v1beta"),
-        ("gemini-1.5-flash", "v1"),
-        ("gemini-1.5-flash-8b", "v1beta"),
+    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    if not api_key:
+        return {
+            "can_fix": False,
+            "explanation": "Missing GEMINI_API_KEY",
+            "changes": [],
+        }
+
+    def http_json(method: str, url: str, payload: dict | None = None) -> dict:
+        data = None
+        if payload is not None:
+            data = json.dumps(payload).encode("utf-8")
+
+        req = request.Request(
+            url=url,
+            method=method,
+            data=data,
+            headers={
+                "Content-Type": "application/json",
+            },
+        )
+
+        try:
+            with request.urlopen(req, timeout=30) as resp:
+                body = resp.read().decode("utf-8")
+                return json.loads(body) if body else {}
+        except error.HTTPError as e:
+            raw = e.read().decode("utf-8", errors="replace")
+            try:
+                detail = json.loads(raw) if raw else {"error": {"code": e.code, "message": raw}}
+            except json.JSONDecodeError:
+                detail = {"error": {"code": e.code, "message": raw}}
+            raise RuntimeError(json.dumps(detail, ensure_ascii=True)) from e
+
+    def list_models(api_version: str) -> list[dict]:
+        url = f"https://generativelanguage.googleapis.com/{api_version}/models?key={api_key}"
+        data = http_json("GET", url)
+        models = data.get("models")
+        return models if isinstance(models, list) else []
+
+    def extract_text(resp: dict) -> str:
+        candidates = resp.get("candidates")
+        if not isinstance(candidates, list) or not candidates:
+            return ""
+        content = candidates[0].get("content") if isinstance(candidates[0], dict) else None
+        parts = content.get("parts") if isinstance(content, dict) else None
+        if not isinstance(parts, list) or not parts:
+            return ""
+        texts: list[str] = []
+        for p in parts:
+            if isinstance(p, dict) and isinstance(p.get("text"), str):
+                texts.append(p["text"])
+        return "".join(texts).strip()
+
+    preferred_tokens = [
+        "gemini-2.0-flash-lite",
+        "gemini-2.0-flash",
+        "gemini-2.0",
+        "gemini-1.5-flash",
+        "gemini-1.5-pro",
+        "gemini-1.0-pro",
+        "gemini-pro",
     ]
 
-    last_error = None
+    attempts: list[tuple[str, str]] = []
+    errors_seen: list[str] = []
 
-    for model, version in models_to_try:
-        print(f"Trying Gemini model: {model} (version: {version or 'default'})")
+    for api_version in ("v1beta", "v1", "v1alpha"):
         try:
-            client_kwargs = {"api_key": os.environ["GEMINI_API_KEY"]}
-            if version:
-                client_kwargs["http_options"] = {"api_version": version}
+            models = list_models(api_version)
+        except Exception as e:
+            errors_seen.append(f"{api_version} list models failed: {e}")
+            continue
 
-            client = genai.Client(**client_kwargs)
-            
-            response = client.models.generate_content(
-                model=model,
-                contents=prompt,
-            )
-            
-            text = response.text.strip()
-            
+        generate_models: list[str] = []
+        for m in models:
+            if not isinstance(m, dict):
+                continue
+            name = m.get("name")
+            methods = m.get("supportedGenerationMethods")
+            if not isinstance(name, str):
+                continue
+            if isinstance(methods, list) and "generateContent" in methods:
+                generate_models.append(name)
+
+        if not generate_models:
+            errors_seen.append(f"{api_version}: no generateContent-capable models returned")
+            continue
+
+        print(f"{api_version}: {len(generate_models)} generateContent-capable model(s)")
+
+        ordered: list[str] = []
+        for token in preferred_tokens:
+            for name in generate_models:
+                if token in name and name not in ordered:
+                    ordered.append(name)
+        for name in generate_models:
+            if name not in ordered:
+                ordered.append(name)
+
+        for model_name in ordered[:8]:
+            attempts.append((api_version, model_name))
+
+    if not attempts:
+        return {
+            "can_fix": False,
+            "explanation": "Unable to list any usable Gemini models. " + "; ".join(errors_seen)[:500],
+            "changes": [],
+        }
+
+    last_err = ""
+    saw_limit_zero = False
+    saw_not_found = False
+    saw_other = False
+    for api_version, model_name in attempts:
+        print(f"Trying Gemini model: {model_name} (api: {api_version})")
+        url = f"https://generativelanguage.googleapis.com/{api_version}/{model_name}:generateContent?key={api_key}"
+        payload = {
+            "contents": [
+                {
+                    "role": "user",
+                    "parts": [
+                        {
+                            "text": prompt,
+                        }
+                    ],
+                }
+            ]
+        }
+
+        try:
+            resp = http_json("POST", url, payload)
+            text = extract_text(resp)
+            if not text:
+                return {
+                    "can_fix": False,
+                    "explanation": f"Gemini returned empty response for {model_name}",
+                    "changes": [],
+                }
+
             json_fence = re.search(r"```(?:json)?\n(.+?)\n```", text, re.DOTALL)
             if json_fence:
                 text = json_fence.group(1).strip()
@@ -236,18 +353,38 @@ def call_gemini(prompt: str) -> dict:
             except json.JSONDecodeError:
                 return {
                     "can_fix": False,
-                    "explanation": f"Failed to parse AI response from {model}: {text[:200]}",
+                    "explanation": f"Failed to parse AI response from {model_name}: {text[:200]}",
                     "changes": [],
                 }
-
         except Exception as e:
-            print(f"  Failed with {model}: {e}")
-            last_error = e
+            err_str = str(e)
+            last_err = err_str
+            if "RESOURCE_EXHAUSTED" in err_str and "limit\": 0" in err_str:
+                saw_limit_zero = True
+                continue
+            if "NOT_FOUND" in err_str:
+                saw_not_found = True
+                continue
+            saw_other = True
+            retry_delay = re.search(r"retryDelay\":\s*\"(\d+)s\"", err_str)
+            if retry_delay:
+                time.sleep(min(int(retry_delay.group(1)), 15))
+                continue
             continue
+
+    if saw_limit_zero and not saw_other:
+        msg = "Gemini API free-tier quota appears to be 0 for all usable models in this project. Enable billing or use a different API key/project."
+        if saw_not_found:
+            msg += " Some model IDs were also not found."
+        return {
+            "can_fix": False,
+            "explanation": msg,
+            "changes": [],
+        }
 
     return {
         "can_fix": False,
-        "explanation": f"All Gemini models failed. Last error: {last_error}",
+        "explanation": f"All Gemini models failed. Last error: {last_err}"[:500],
         "changes": [],
     }
 
