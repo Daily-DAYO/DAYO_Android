@@ -86,6 +86,7 @@ import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
+import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray5_E8EAEE
 import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
 import daily.dayo.presentation.theme.Primary_23C882
@@ -228,7 +229,7 @@ fun SearchResultScreen(
                 indicator = { tabPositions ->
                     TabRowDefaults.Indicator(
                         Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-                        color = Primary_23C882,
+    color = Gray4_C5CAD2,
                     )
                 },
                 divider = { Divider(color = Color.Transparent, thickness = 0.dp) },
@@ -365,7 +366,7 @@ fun SearchResultsCount(resultCount: Int = 0) {
                 style = TextStyle(
                     fontSize = 13.sp,
                     fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                    fontWeight = FontWeight(500),
+fontWeight = FontWeight.W500
                     color = Primary_23C882
                 ),
                 text = "$resultCount",
