@@ -54,12 +54,8 @@ jobs:
           git push origin --delete "$BRANCH" 2>/dev/null || true
 
           git checkout -b "$BRANCH"
-          git add -A -- . \
-            ':(exclude)pr_body.md' \
-            ':(exclude)qa_bot_commit_msg.txt' \
-            ':(exclude)qa_bot_explanation.txt' \
-            ':(exclude).tmp_runner' \
-            ':(exclude).tmp_runner/**'
+          # NOTE: do not pass ignored paths as pathspecs; git add exits 1 when an ignored path is explicitly mentioned
+          git add -A
           git commit -m "#${{ github.event.issue.number }} [bug] $(cat .tmp_runner/qa-bot/qa_bot_commit_msg.txt)"
           git push origin "$BRANCH"
 
