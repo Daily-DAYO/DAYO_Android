@@ -254,7 +254,7 @@ fun SignUpEmailTitleLayout(
     title: String = "",
     subTitle: String = "",
 ) {
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(16.dp))
     Text(
         text = title,
         style = DayoTheme.typography.h1.copy(color = Dark),
