@@ -616,6 +616,12 @@ fun SignUpEmailScaffold(
 
             if (signUpStep != SignUpStep.SIGNUP_COMPLETE) {
                 Spacer(modifier = Modifier.weight(1f))
+                IconButton(onClick = { /*TODO*/ })
+                {
+                    Icon(painter = painterResource(id = R.drawable.ic_close), contentDescription = "clear button")
+                }
+            }
+            
                 SignUpEmailBottomLayout(
                     signUpStep = signUpStep,
                     onNextClick = { onNextClick() },
