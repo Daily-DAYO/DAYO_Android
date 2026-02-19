@@ -201,28 +201,55 @@ If auto-fix is not safe or the issue requires logic changes beyond styling, resp
 
 
 def call_gemini(prompt: str) -> dict:
-    client = genai.Client(
-        api_key=os.environ["GEMINI_API_KEY"],
-        http_options={"api_version": "v1"},
-    )
-    response = client.models.generate_content(
-        model="gemini-1.5-flash",
-        contents=prompt,
-    )
-    text = response.text.strip()
+    models_to_try = [
+        ("gemini-2.0-flash", "v1beta"),
+        ("gemini-2.0-flash-lite", "v1beta"),
+        ("gemini-1.5-flash", "v1beta"),
+        ("gemini-1.5-flash", "v1"),
+        ("gemini-1.5-flash-8b", "v1beta"),
+    ]
 
-    json_fence = re.search(r"```(?:json)?\n(.+?)\n```", text, re.DOTALL)
-    if json_fence:
-        text = json_fence.group(1).strip()
+    last_error = None
 
-    try:
-        return json.loads(text)
-    except json.JSONDecodeError:
-        return {
-            "can_fix": False,
-            "explanation": f"Failed to parse AI response: {text[:200]}",
-            "changes": [],
-        }
+    for model, version in models_to_try:
+        print(f"Trying Gemini model: {model} (version: {version or 'default'})")
+        try:
+            client_kwargs = {"api_key": os.environ["GEMINI_API_KEY"]}
+            if version:
+                client_kwargs["http_options"] = {"api_version": version}
+
+            client = genai.Client(**client_kwargs)
+            
+            response = client.models.generate_content(
+                model=model,
+                contents=prompt,
+            )
+            
+            text = response.text.strip()
+            
+            json_fence = re.search(r"```(?:json)?\n(.+?)\n```", text, re.DOTALL)
+            if json_fence:
+                text = json_fence.group(1).strip()
+
+            try:
+                return json.loads(text)
+            except json.JSONDecodeError:
+                return {
+                    "can_fix": False,
+                    "explanation": f"Failed to parse AI response from {model}: {text[:200]}",
+                    "changes": [],
+                }
+
+        except Exception as e:
+            print(f"  Failed with {model}: {e}")
+            last_error = e
+            continue
+
+    return {
+        "can_fix": False,
+        "explanation": f"All Gemini models failed. Last error: {last_error}",
+        "changes": [],
+    }
 
 
 def apply_changes(changes: list[dict]) -> list[str]:
