@@ -331,16 +331,16 @@ fun SearchResultEmpty() {
             text = stringResource(R.string.search_result_empty_title),
             style = DayoTheme.typography.b3
                 .copy(
-                    color = Gray3_9FA5AE,
+                    color = Gray1_50545B,
                     textAlign = TextAlign.Center
                 ),
         )
         Text(
-            modifier = Modifier.padding(vertical = 2.dp),
+            modifier = Modifier.padding(vertical = 6.dp),
             text = stringResource(id = R.string.search_result_empty_description),
             style = DayoTheme.typography.caption1
                 .copy(
-                    color = Gray3_9FA5AE,
+                    color = Gray1_50545B,
                     textAlign = TextAlign.Center
                 ),
         )
