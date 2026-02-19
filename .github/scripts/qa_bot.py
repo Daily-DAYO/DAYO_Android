@@ -182,11 +182,24 @@ def find_relevant_files(screen: str, component: str) -> list[Path]:
 
     def score(f: Path) -> int:
         s = 0
-        if "screen" in str(f):
-            s += 10
+        p = f.as_posix().lower()
+        stem = f.stem.lower()
+        if "/screen/" in p:
+            s += 25
+        if "screen" in stem:
+            s += 15
+        if "screen" in p:
+            s += 5
+        if "/view/" in p or stem.endswith("view"):
+            s += 4
+
+        if "/model/" in p or "model" in stem:
+            s -= 6
         for p in meaningful:
             if p.lower() in f.stem.lower():
                 s += 5
+            if p.lower() in f.as_posix().lower():
+                s += 2
         return s
 
     return sorted(candidates, key=score, reverse=True)[:6]
