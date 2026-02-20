@@ -40,6 +40,111 @@ FONT_WEIGHT_MAP = {
     900: "FontWeight.Black",
 }
 
+def parse_gemini_error(err_str: str) -> dict:
+    if not err_str:
+        return {}
+    try:
+        parsed = json.loads(err_str)
+        if isinstance(parsed, dict):
+            return parsed
+    except json.JSONDecodeError:
+        pass
+    return {}
+
+
+def extract_retry_delay_seconds(err_str: str, fallback: int = 0) -> int:
+    parsed = parse_gemini_error(err_str)
+    raw = parsed.get("retryDelay") if isinstance(parsed, dict) else None
+    if isinstance(raw, str):
+        m = re.fullmatch(r"(\d+)s", raw.strip())
+        if m:
+            return int(m.group(1))
+
+    m = re.search(r'retryDelay\":\s*\"(\d+)s\"', err_str)
+    if m:
+        return int(m.group(1))
+
+    return fallback
+
+
+def is_quota_exhausted_error(err_str: str) -> bool:
+    parsed = parse_gemini_error(err_str)
+    err = parsed.get("error") if isinstance(parsed, dict) else None
+    code = err.get("code") if isinstance(err, dict) else None
+    status = err.get("status") if isinstance(err, dict) else ""
+    message = err.get("message") if isinstance(err, dict) else ""
+
+    details = err.get("details") if isinstance(err, dict) else None
+    reasons: list[str] = []
+    if isinstance(details, list):
+        for d in details:
+            if isinstance(d, dict):
+                reason = d.get("reason")
+                if isinstance(reason, str):
+                    reasons.append(reason)
+
+    haystack = " ".join(
+        [
+            str(status),
+            str(message),
+            " ".join(reasons),
+            err_str,
+        ]
+    ).lower()
+
+    if code == 429:
+        return True
+    if "resource_exhausted" in haystack:
+        return True
+    if "rate_limit" in haystack:
+        return True
+    if "quota exceeded" in haystack:
+        return True
+    if "generativelanguage.googleapis.com/generate_content" in haystack:
+        return True
+    return False
+
+
+def rank_model_metadata(model: dict) -> tuple[int, int, str]:
+    name = model.get("name")
+    display_name = model.get("displayName")
+    description = model.get("description")
+
+    safe_name = name if isinstance(name, str) else ""
+    lower_name = safe_name.lower()
+    lower_display = display_name.lower() if isinstance(display_name, str) else ""
+    lower_description = description.lower() if isinstance(description, str) else ""
+    meta = " ".join([lower_name, lower_display, lower_description])
+
+    deprecated_penalty = 1 if "deprecated" in meta else 0
+    preview_penalty = 1 if ("preview" in meta or "experimental" in meta or "-exp" in lower_name) else 0
+    return (deprecated_penalty, preview_penalty, lower_name)
+
+
+def order_candidate_models(models: list[dict]) -> list[str]:
+    candidate_models: list[dict] = []
+    seen_names: set[str] = set()
+
+    for m in models:
+        if not isinstance(m, dict):
+            continue
+        name = m.get("name")
+        methods = m.get("supportedGenerationMethods")
+        if not isinstance(name, str):
+            continue
+        if not name.startswith("models/gemini"):
+            continue
+        if not (isinstance(methods, list) and "generateContent" in methods):
+            continue
+        if name in seen_names:
+            continue
+
+        seen_names.add(name)
+        candidate_models.append(m)
+
+    candidate_models.sort(key=rank_model_metadata)
+    return [m["name"] for m in candidate_models if isinstance(m.get("name"), str)]
+
 
 def build_snippet_catalog(files: list[Path]) -> dict[str, dict[str, str]]:
     def is_interesting(line: str) -> bool:
@@ -369,10 +474,25 @@ def call_gemini(prompt: str) -> dict:
             raise RuntimeError(json.dumps(detail, ensure_ascii=True)) from e
 
     def list_models(api_version: str) -> list[dict]:
-        url = f"https://generativelanguage.googleapis.com/{api_version}/models?key={api_key}"
-        data = http_json("GET", url)
-        models = data.get("models")
-        return models if isinstance(models, list) else []
+        all_models: list[dict] = []
+        page_token = ""
+
+        while True:
+            url = f"https://generativelanguage.googleapis.com/{api_version}/models?pageSize=100&key={api_key}"
+            if page_token:
+                url = f"{url}&pageToken={page_token}"
+
+            data = http_json("GET", url)
+            models = data.get("models")
+            if isinstance(models, list):
+                all_models.extend(m for m in models if isinstance(m, dict))
+
+            next_token = data.get("nextPageToken")
+            if not isinstance(next_token, str) or not next_token:
+                break
+            page_token = next_token
+
+        return all_models
 
     def extract_text(resp: dict) -> str:
         candidates = resp.get("candidates")
@@ -388,18 +508,9 @@ def call_gemini(prompt: str) -> dict:
                 texts.append(p["text"])
         return "".join(texts).strip()
 
-    preferred_tokens = [
-        "gemini-2.0-flash-lite",
-        "gemini-2.0-flash",
-        "gemini-2.0",
-        "gemini-1.5-flash",
-        "gemini-1.5-pro",
-        "gemini-1.0-pro",
-        "gemini-pro",
-    ]
-
     attempts: list[tuple[str, str]] = []
     errors_seen: list[str] = []
+    seen_attempt_keys: set[str] = set()
 
     for api_version in ("v1beta", "v1", "v1alpha"):
         try:
@@ -408,16 +519,7 @@ def call_gemini(prompt: str) -> dict:
             errors_seen.append(f"{api_version} list models failed: {e}")
             continue
 
-        generate_models: list[str] = []
-        for m in models:
-            if not isinstance(m, dict):
-                continue
-            name = m.get("name")
-            methods = m.get("supportedGenerationMethods")
-            if not isinstance(name, str):
-                continue
-            if isinstance(methods, list) and "generateContent" in methods:
-                generate_models.append(name)
+        generate_models = order_candidate_models(models)
 
         if not generate_models:
             errors_seen.append(f"{api_version}: no generateContent-capable models returned")
@@ -425,16 +527,11 @@ def call_gemini(prompt: str) -> dict:
 
         print(f"{api_version}: {len(generate_models)} generateContent-capable model(s)")
 
-        ordered: list[str] = []
-        for token in preferred_tokens:
-            for name in generate_models:
-                if token in name and name not in ordered:
-                    ordered.append(name)
-        for name in generate_models:
-            if name not in ordered:
-                ordered.append(name)
-
-        for model_name in ordered[:8]:
+        for model_name in generate_models:
+            attempt_key = f"{api_version}:{model_name}"
+            if attempt_key in seen_attempt_keys:
+                continue
+            seen_attempt_keys.add(attempt_key)
             attempts.append((api_version, model_name))
 
     if not attempts:
@@ -445,6 +542,7 @@ def call_gemini(prompt: str) -> dict:
         }
 
     last_err = ""
+    saw_quota_error = False
     saw_limit_zero = False
     saw_not_found = False
     saw_other = False
@@ -489,26 +587,38 @@ def call_gemini(prompt: str) -> dict:
         except Exception as e:
             err_str = str(e)
             last_err = err_str
-            if "RESOURCE_EXHAUSTED" in err_str and "limit\": 0" in err_str:
-                saw_limit_zero = True
+            if is_quota_exhausted_error(err_str):
+                saw_quota_error = True
+                if '"limit": 0' in err_str or "limit\\\": 0" in err_str:
+                    saw_limit_zero = True
+                retry_seconds = extract_retry_delay_seconds(err_str)
+                if retry_seconds > 0:
+                    time.sleep(min(retry_seconds, 15))
                 continue
             if "NOT_FOUND" in err_str:
                 saw_not_found = True
                 continue
             saw_other = True
-            retry_delay = re.search(r"retryDelay\":\s*\"(\d+)s\"", err_str)
-            if retry_delay:
-                time.sleep(min(int(retry_delay.group(1)), 15))
+            retry_seconds = extract_retry_delay_seconds(err_str)
+            if retry_seconds > 0:
+                time.sleep(min(retry_seconds, 15))
                 continue
             continue
 
-    if saw_limit_zero and not saw_other:
+    if saw_limit_zero and saw_quota_error and not saw_other:
         msg = "Gemini API free-tier quota appears to be 0 for all usable models in this project. Enable billing or use a different API key/project."
         if saw_not_found:
             msg += " Some model IDs were also not found."
         return {
             "can_fix": False,
             "explanation": msg,
+            "changes": [],
+        }
+
+    if saw_quota_error and not saw_other:
+        return {
+            "can_fix": False,
+            "explanation": "All discovered Gemini models hit quota/rate limits. Consider increasing quota or switching API key/project.",
             "changes": [],
         }
 
