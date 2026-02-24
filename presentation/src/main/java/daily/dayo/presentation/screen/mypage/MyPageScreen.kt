@@ -315,6 +315,7 @@ private fun MyPageDiaryHeader(
             .background(color = DayoTheme.colorScheme.background)
             .fillMaxWidth()
             .padding(bottom = 12.dp),
+            modifier = Modifier.height(36.dp)
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
