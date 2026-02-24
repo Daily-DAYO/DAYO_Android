@@ -206,7 +206,7 @@ private fun ImageCropCanvas(stateHolder: ImageCropStateHolder) {
             )
 
             // Dimmed Background
-            drawPath(path = dimPath, color = Color.Black.copy(alpha = 0.4f))
+drawPath(path = dimPath, color = Color.Black.copy(alpha = 0.4f), style = Fill)
 
             // Grid lines
             val guideLineColor = Color.White.copy(alpha = 0.5f)
