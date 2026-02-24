@@ -112,7 +112,7 @@ private fun DialogHeader(title: String, description: String) {
                 color = Dark,
                 fontWeight = FontWeight.SemiBold
             ),
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 4.dp)
         )
         Text(
             text = description,
