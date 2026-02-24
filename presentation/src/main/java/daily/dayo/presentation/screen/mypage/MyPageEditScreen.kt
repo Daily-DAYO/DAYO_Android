@@ -71,6 +71,7 @@ import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
+import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.view.BadgeRoundImageView
@@ -280,7 +281,7 @@ private fun MyPageEditScreen(
                         Text(
                             text = stringResource(id = R.string.email),
                             style = DayoTheme.typography.caption3.copy(
-                                color = Gray4_C5CAD2,
+                                color = Gray3_9FA5AE,
                                 fontWeight = FontWeight.SemiBold
                             )
                         )
