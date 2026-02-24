@@ -220,7 +220,7 @@ fun WriteFolderNewLayout(
                 .wrapContentHeight(Alignment.CenterVertically),
             text = stringResource(R.string.write_post_folder_navigate_create_folder),
             style = DayoTheme.typography.b4.copy(
-                color = Gray2_767B83,
+color = Dark,
                 textAlign = TextAlign.Center
             )
         )
