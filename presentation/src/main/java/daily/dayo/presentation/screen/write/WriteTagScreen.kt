@@ -173,7 +173,10 @@ fun WriteTagContent(
     onRemoveTagClick: (String) -> Unit
 ) {
     Box(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 18.dp, top = 28.dp, end = 18.dp)
+            .height(36.dp)
     ) {
         Column(
             modifier = Modifier
@@ -313,7 +316,7 @@ fun WriteTadAdd(
                 ),
                 text = stringResource(R.string.write_post_tag_subheading),
                 style = DayoTheme.typography.b6.copy(
-                    color = Gray1_50545B
+                    color = Gray1_50545B,
                 )
             )
             Spacer(modifier = Modifier.width(10.dp))
@@ -339,7 +342,7 @@ fun WriteTadAdd(
                         }
                         withStyle(
                             style = DayoTheme.typography.caption2.toSpanStyle()
-                                .copy(color = Gray4_C5CAD2)
+                                 .copy(color = Gray4_C5CAD2)
                         ) {
                             append(
                                 stringResource(R.string.write_post_tag_count_limit).format(
