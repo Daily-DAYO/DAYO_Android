@@ -215,7 +215,7 @@ private fun SettingsScreen(
                 .padding(horizontal = 20.dp)
         ) {
             SettingProfile(profile, onProfileEditClick)
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             settingMenus.forEach { menu ->
                 menu?.run {
                     SettingMenu(
