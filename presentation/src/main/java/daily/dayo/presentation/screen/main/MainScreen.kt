@@ -89,7 +89,7 @@ internal fun MainScreen(
 
     val snackBarHostState = remember { SnackbarHostState() }
     val bottomSheetController = remember { BottomSheetController() }
-    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true, confirmValueChange = { it != SheetValue.Hidden })
 
     val context = LocalContext.current
     var lastBackPressedTime by remember { mutableLongStateOf(0L) }
