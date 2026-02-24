@@ -225,7 +225,15 @@ fun WriteTags(
                     selected = false,
                     onClick = { /* 클릭 동작 없음 */ },
                     label = {
-                        Text(
+Text(
+                            text = stringResource(R.string.write_tag_add),
+                            style = DayoTheme.typography.b2.copy(
+                                color = Primary_23C882,
+                                textAlign = TextAlign.Center
+                            ),
+                            modifier = Modifier
+                                .padding(start = 4.dp, end = 0.dp)
+                        )
                             text = tagText,
                             style = DayoTheme.typography.b5.copy(
                                 color = Primary_23C882
