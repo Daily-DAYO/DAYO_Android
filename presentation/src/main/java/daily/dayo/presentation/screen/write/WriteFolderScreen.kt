@@ -160,6 +160,7 @@ fun WriteFolderContent(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 18.dp)
+                .padding(vertical = 4.dp)
     ) {
         if (showCreateFolder) {
             WriteFolderNewLayout(
