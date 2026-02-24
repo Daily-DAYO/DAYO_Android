@@ -460,7 +460,14 @@ fun WriteUploadImages(
                                     .size(20.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text(
+                                        Text(
+                                            text = stringResource(id = R.string.write_post_image_edit),
+                                            style = DayoTheme.typography.caption2,
+                                            color = White_FFFFFF,
+                                            modifier = Modifier.align(Alignment.CenterVertically),
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
                                 text = stringResource(R.string.write_post_image_edit),
                                 style = DayoTheme.typography.b5,
                                 color = White_FFFFFF,
