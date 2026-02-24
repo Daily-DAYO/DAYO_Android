@@ -43,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.Profile
@@ -203,12 +204,12 @@ private fun MyPageProfile(
                 Image(
                     painter = painterResource(id = R.drawable.ic_follower),
                     contentDescription = stringResource(id = R.string.follower),
-                    modifier = Modifier.size(12.dp)
+                    modifier = Modifier.size(10.dp)
                 )
 
                 Text(
                     text = stringResource(id = R.string.follower),
-                    style = DayoTheme.typography.caption4.copy(color = Gray1_50545B)
+                    style = DayoTheme.typography.caption4.copy(fontSize = 10.sp, color = Gray1_50545B)
                 )
             }
             Text(
