@@ -133,7 +133,7 @@ fun CommentListView(
                     postComments.forEach { comment ->
                         Column(
                             modifier = Modifier
-                                .padding(bottom = 8.dp)
+.padding(bottom = 4.dp)
                                 .background(color = DayoTheme.colorScheme.background, shape = RoundedCornerShape(20.dp))
                                 .border(width = 1.dp, color = Gray7_F6F6F7, shape = RoundedCornerShape(20.dp))
                                 .padding(12.dp),
