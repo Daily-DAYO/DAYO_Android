@@ -203,6 +203,6 @@ private fun FeedEmptyView(onEmptyViewClick: () -> Unit) {
         Text(text = stringResource(id = R.string.feed_empty_description), style = DayoTheme.typography.caption1.copy(Gray4_C5CAD2))
 
         Spacer(modifier = Modifier.height(36.dp))
-        FilledButton(onClick = onEmptyViewClick, label = stringResource(id = R.string.feed_empty_button))
+FilledButton(onClick = onEmptyViewClick, label = stringResource(id = R.string.feed_empty_button), modifier = Modifier.height(36.dp))
     }
 }
