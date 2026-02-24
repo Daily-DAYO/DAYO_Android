@@ -181,7 +181,7 @@ private fun MyPageProfile(
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
             style = DayoTheme.typography.h1.copy(
-                color = Dark,
+color = Color(0xFF303030),
                 fontWeight = FontWeight.SemiBold
             )
         )
