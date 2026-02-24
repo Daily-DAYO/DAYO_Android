@@ -396,7 +396,24 @@ private fun PostScreen(
                         onClickReport = onClickReport,
                         onPostLikeUsersClick = onPostLikeUsersClick,
                         onPostHashtagClick = onPostHashtagClick,
-                        modifier = Modifier.fillMaxWidth()
+    val postCommentDeleteSuccess by postViewModel.postCommentDeleteSuccess.observeAsState(Event(false))
+    if (postCommentDeleteSuccess.getContentIfNotHandled() == true) {
+        postViewModel.requestPostComment(postId)
+        LaunchedEffect(Unit) {
+            coroutineScope.launch {
+                snackBarHostState.showSnackbar(context.getString(R.string.comment_delete_message))
+            }
+        }
+    }
+    var showReportDialog by remember { mutableStateOf(false) }
+    var reportCommentId by remember { mutableStateOf<Long?>(null) }
+    val onClickCommentReport: (Long) -> Unit = { commentId ->
+        reportCommentId = commentId
+        showReportDialog = true
+    }
+
+    // search follow user
+    val userResults = searchViewModel.se
                     )
                 }
 
