@@ -332,7 +332,7 @@ fun WriteFolderItemLayout(
                     )
                 )
             }
-            Spacer(modifier = Modifier.height(2.dp))
+Spacer(modifier = Modifier.height(4.dp))
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
