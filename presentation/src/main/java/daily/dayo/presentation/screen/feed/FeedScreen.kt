@@ -131,7 +131,7 @@ fun FeedScreen(
                     leftIcon = {
                         Text(
                             text = stringResource(id = R.string.feed),
-                            modifier = Modifier.padding(start = 18.dp),
+- modifier = Modifier.padding(start = 18.dp, end = 12.dp),
                             style = DayoTheme.typography.h1.copy(color = Dark)
                         )
                     }
