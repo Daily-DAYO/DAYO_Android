@@ -196,6 +196,8 @@ fun CommentBottomSheetDialog(
 
     Surface(
         modifier = modifier,
+        onDismissRequest = { /* do nothing */ },
+        dismissOnClickOutside = false,
         shape = RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp),
         color = White_FFFFFF
     ) {
