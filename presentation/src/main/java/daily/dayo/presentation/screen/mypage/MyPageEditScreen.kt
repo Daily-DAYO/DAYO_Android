@@ -280,7 +280,7 @@ private fun MyPageEditScreen(
                         Text(
                             text = stringResource(id = R.string.email),
                             style = DayoTheme.typography.caption3.copy(
-                                color = Gray4_C5CAD2,
+                                color = Gray2_767B83,
                                 fontWeight = FontWeight.SemiBold
                             )
                         )
