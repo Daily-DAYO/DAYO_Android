@@ -222,7 +222,12 @@ private fun FolderScreen(
                 if (isEditMode) {
                     TopNavigation(
                         leftIcon = {
-                            androidx.compose.material.Text(
+            Text(
+                text = optionMenu.name,
+                style = DayoTheme.typography.b6.copy(color = optionMenu.color),
+                modifier = Modifier
+                    .padding(vertical = 14.dp)
+                    .padding(start = 18.dp, end = 27.dp)
                                 modifier = Modifier
                                     .padding(vertical = 14.dp)
                                     .padding(start = 18.dp, end = 27.dp)
