@@ -225,7 +225,14 @@ fun WriteTags(
                     selected = false,
                     onClick = { /* 클릭 동작 없음 */ },
                     label = {
-                        Text(
+                            Text(
+                                text = tag,
+                                style = DayoTheme.typography.b5.copy(
+                                    color = Primary_23C882
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
                             text = tagText,
                             style = DayoTheme.typography.b5.copy(
                                 color = Primary_23C882
