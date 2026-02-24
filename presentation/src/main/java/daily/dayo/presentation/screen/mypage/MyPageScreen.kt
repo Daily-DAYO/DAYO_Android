@@ -268,7 +268,8 @@ private fun MyPageMenu(
         // edit
         androidx.compose.material3.TextButton(
             onClick = onProfileEditClick,
-            shape = RoundedCornerShape(size = 12.dp),
+            modifier = Modifier.height(36.dp)
+                .background(color = DayoTheme.colorScheme.background, shape = RoundedCornerShape(12.dp)),
             border = BorderStroke(width = 1.dp, color = Gray6_F0F1F3),
             colors = ButtonDefaults.outlinedButtonColors(
                 containerColor = White_FFFFFF,
