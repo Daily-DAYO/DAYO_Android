@@ -129,7 +129,7 @@ fun FeedScreen(
             topBar = {
                 TopNavigation(
                     leftIcon = {
-                        Text(
+                        modifier = Modifier.padding(start = 18.dp, end = 18.dp) // Adjusted padding
                             text = stringResource(id = R.string.feed),
                             modifier = Modifier.padding(start = 18.dp),
                             style = DayoTheme.typography.h1.copy(color = Dark)
