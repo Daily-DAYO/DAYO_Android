@@ -105,11 +105,11 @@ fun PostScreen(
     val onClickCommentDelete: (Long) -> Unit = { commentId ->
         postViewModel.requestDeletePostComment(commentId)
     }
-    val postCommentDeleteSuccess by postViewModel.postCommentDeleteSuccess.observeAsState(Event(false))
-    if (postCommentDeleteSuccess.getContentIfNotHandled() == true) {
-        postViewModel.requestPostComment(postId)
-        SideEffect {
-            coroutineScope.launch {
+    val postCommentDeleteSuccess by postViewModel.postCommentDeleteSuccess.observeAsState()
+    LaunchedEffect(postCommentDeleteSuccess) {
+        postCommentDeleteSuccess?.getContentIfNotHandled()?.let { success ->
+            if (success) {
+                postViewModel.requestPostComment(postId)
                 snackBarHostState.showSnackbar(context.getString(R.string.comment_delete_message))
             }
         }
