@@ -261,7 +261,21 @@ private fun MyPageMenu(
     onBookmarkClick: () -> Unit
 ) {
     Row(
-        modifier = Modifier.padding(bottom = 20.dp),
+        Spacer(modifier = Modifier.width(20.dp))
+
+                Text(
+                    text = folder.name,
+                    style = DayoTheme.typography.b5.copy(color = Dark, fontWeight = FontWeight.SemiBold),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(bottom = 8.dp) // Increased padding here
+                )
+
+                Text(
+                    text = "${folder.folderImageCount} ${stringResource(R.string.mypage_folder_image_count)}",
+                    style = DayoTheme.typography.caption4.copy(color = Gray2_767B83),
+                    modifier = Modifier.padding(bottom = 12.dp) // Existing padding
+                )
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
