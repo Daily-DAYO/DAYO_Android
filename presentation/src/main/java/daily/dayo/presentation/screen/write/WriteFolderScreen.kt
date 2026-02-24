@@ -279,7 +279,7 @@ fun WriteFolderItemLayout(
             RoundImageView(
                 context = LocalContext.current,
                 imageUrl = "${BuildConfig.BASE_URL}/images/${folder.thumbnailImage}",
-                modifier = Modifier.size(FOLDER_THUMBNAIL_SIZE.dp),
+modifier = Modifier.size(FOLDER_THUMBNAIL_SIZE.dp).padding(1.dp) // Added padding to prevent clipping of the check icon
                 imageSize = Size(FOLDER_THUMBNAIL_SIZE, FOLDER_THUMBNAIL_SIZE),
                 roundSize = FOLDER_THUMBNAIL_RADIUS_SIZE.dp,
             )
