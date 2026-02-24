@@ -146,7 +146,12 @@ fun FeedScreen(
                     categoryMenus = categoryMenus,
                     selectedCategory = selectedCategory,
                     onCategorySelect = { category -> selectedCategory = category },
-                    modifier = Modifier.padding(top = 8.dp, bottom = 12.dp)
+                    modifier = Modifier
+                        .clickable(interactionSource = remember { MutableInteractionSource() },
+                            indication = rememberRipple(color = DayoTheme.colorScheme.surfaceVariant)) {
+                            // TODO: Add interaction logic if needed
+                        }
+                        .padding(top = 8.dp, bottom = 12.dp)
                 )
 
                 // feed post list
