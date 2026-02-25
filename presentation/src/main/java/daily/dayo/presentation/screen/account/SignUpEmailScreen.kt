@@ -678,7 +678,18 @@ fun SignUpEmailNextButton(
                 SignUpStep.PROFILE_SETUP -> stringResource(R.string.sign_up_email_set_profile_next_button)
                 else -> ""
             },
-            textStyle = DayoTheme.typography.b3.copy(color = White_FFFFFF),
+        textStyle = DayoTheme.typography.b3.copy(color = White_FFFFFF),
+        trailingIcon = {
+            if (text.isNotEmpty()) {
+                IconButton(onClick = { onValueChange("") }) {
+                    Icon(painter = painterResource(id = R.drawable.ic_text_field_clear),
+                         contentDescription = "Clear input",
+                         tint = Gray2_767B83
+                    )
+                }
+            }
+        }
+    )
             onClick = { if (isSignUpButtonClickable) onButtonClick() },
             enabled = isSignUpButtonEnabled,
         )
