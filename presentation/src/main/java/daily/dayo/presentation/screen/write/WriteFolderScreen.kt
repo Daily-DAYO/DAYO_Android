@@ -316,7 +316,7 @@ fun WriteFolderItemLayout(
                             .wrapContentHeight(Alignment.CenterVertically),
                         painter = painterResource(id = R.drawable.ic_lock),
                         contentDescription = "Only Me",
-                        colorFilter = ColorFilter.tint(Dark)
+                        colorFilter = ColorFilter.tint(Gray3_9FA5AE)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                 }
