@@ -152,7 +152,7 @@ private fun SearchResultDescription(
                 modifier = Modifier.padding(end = 2.dp)
             )
             Text(
-                style = DayoTheme.typography.caption1.copy(color = Gray2_767B83),
+                style = DayoTheme.typography.caption1.copy(color = Gray4_C5CAD2),
                 text = "개의 태그"
             )
         }
@@ -170,7 +170,7 @@ private fun SearchResultDescription(
                 tint = Gray1_50545B
             )
             Text(
-                style = DayoTheme.typography.caption1.copy(color = Gray2_767B83),
+                style = DayoTheme.typography.caption1.copy(color = Gray4_C5CAD2),
                 text = stringResource(id = sortResId)
             )
         }
