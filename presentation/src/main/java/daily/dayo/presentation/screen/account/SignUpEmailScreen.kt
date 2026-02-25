@@ -671,6 +671,14 @@ fun SignUpEmailNextButton(
                 .fillMaxWidth()
                 .height(52.dp),
             label = when (signUpStep) {
+                SignUpStep.EMAIL_INPUT -> stringResource(R.string.signup_email_input_label)
+                else -> stringResource(R.string.signup_email_input_label)
+            },
+            trailingIcon = {
+                if (email.isNotEmpty()) {
+                    NoRippleIconButton(onClick = { email = "" })
+                }
+            },
                 SignUpStep.EMAIL_INPUT -> stringResource(R.string.sign_up_email_set_address_next_button)
                 SignUpStep.EMAIL_VERIFICATION -> stringResource(R.string.sign_up_email_set_address_certification_next_button)
                 SignUpStep.PASSWORD_INPUT -> stringResource(R.string.sign_up_email_set_password_next_button)
