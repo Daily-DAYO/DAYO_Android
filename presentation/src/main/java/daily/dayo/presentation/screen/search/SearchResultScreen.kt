@@ -231,7 +231,7 @@ fun SearchResultScreen(
                         color = Primary_23C882,
                     )
                 },
-                divider = { Divider(color = Color.Transparent, thickness = 0.dp) },
+divider = { Divider(color = Gray6_F0F1F3, thickness = 1.dp) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(18.dp, 0.dp, 18.dp, 0.dp),
