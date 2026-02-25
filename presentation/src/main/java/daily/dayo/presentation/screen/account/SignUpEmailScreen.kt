@@ -255,6 +255,21 @@ fun SignUpEmailTitleLayout(
     subTitle: String = "",
 ) {
     Spacer(modifier = Modifier.height(8.dp))
+    Button(
+        onClick = {
+            accountViewModel.clearCertificateEmailAuthCode()
+        },
+        label = {
+            Text(stringResource(R.string.resend_email_certification_code))
+        },
+        type = ButtonType.GHOST,
+        size = ButtonSize.SMALL,
+        rounded = false,
+        enabled = true,
+        icon = false
+    )
+    Spacer(modifier = Modifier.height(10.dp))
+    Text(
     Text(
         text = title,
         style = DayoTheme.typography.h1.copy(color = Dark),
