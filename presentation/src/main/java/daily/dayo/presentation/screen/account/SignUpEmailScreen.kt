@@ -671,6 +671,13 @@ fun SignUpEmailNextButton(
                 .fillMaxWidth()
                 .height(52.dp),
             label = when (signUpStep) {
+                SignUpStep.EMAIL_INPUT -> stringResource(R.string.email)
+                SignUpStep.NICKNAME_INPUT -> stringResource(R.string.nickname)
+                SignUpStep.PASSWORD_INPUT -> stringResource(R.string.password)
+                SignUpStep.PROFILE_PHOTO -> stringResource(R.string.profile_photo)
+                SignUpStep.COMPLETE -> ""
+            },
+            labelColor = DayoTheme.color.Red,
                 SignUpStep.EMAIL_INPUT -> stringResource(R.string.sign_up_email_set_address_next_button)
                 SignUpStep.EMAIL_VERIFICATION -> stringResource(R.string.sign_up_email_set_address_certification_next_button)
                 SignUpStep.PASSWORD_INPUT -> stringResource(R.string.sign_up_email_set_password_next_button)
