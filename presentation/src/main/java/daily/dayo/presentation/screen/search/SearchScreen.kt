@@ -331,7 +331,7 @@ fun SearchHistoryEmpty() {
         Text(
             modifier = Modifier.padding(vertical = 2.dp),
             text = stringResource(id = R.string.search_history_empty_description),
-            style = DayoTheme.typography.caption2,
+            style = DayoTheme.typography.caption2.copy(fontWeight = FontWeight(500)),
             color = Gray4_C5CAD2,
         )
     }
