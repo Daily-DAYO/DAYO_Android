@@ -183,6 +183,53 @@ fun PreviewMyBottomSheetDialog() {
 
     // BottomSheetDialog를 사용하는 경우 Box를 이용해서 겹쳐보일 수 있도록 설정해야 합니다
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        buttons.forEachIndexed {
+            index,
+            buttonData ->
+            val (text, action) = buttonData
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                    .fillMaxWidth()
+                    .clickable { action() },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (leftIconButtons != null) {
+                    Icon(
+                        imageVector = leftIconButtons[index],
+                        contentDescription = null,
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        tint = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) checkedColor else normalColor
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+
+                Text(
+                    text = text,
+                    style = DayoTheme.typography.b2,
+                    color = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) checkedColor else normalColor,
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                if (leftIconCheckedButtons != null && checkedButtonIndex == index) {
+                    Icon(
+                        imageVector = leftIconCheckedButtons[index],
+                        contentDescription = null,
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        tint = checkedColor
+                    )
+                } else if (checkedButtonIndex == index) {
+                    Icon(
+                        imageVector = rightIcon,
+                        contentDescription = null,
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        tint = checkedColor
+                    )
+                }
+            }
+        }
+    }
         BottomSheetDialog(
             buttons = listOf(
                 Pair("text") {
