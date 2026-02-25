@@ -235,7 +235,10 @@ fun WriteTags(
                     leadingIcon = {
                         Box(
                             modifier = Modifier
-                                .padding(start = 4.dp, end = 0.dp)
+                                 color = Primary_23C882
+                                 .padding(start = 4.dp, end = 0.dp),
+                                 maxLines = 1,
+                                 overflow = TextOverflow.Ellipsis
                                 .background(
                                     color = PrimaryL1_8FD9B9,
                                     shape = CircleShape
