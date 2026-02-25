@@ -367,6 +367,10 @@ private fun PostScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .clickable {
+                    // Handle click event for mention item
+                }
+                .background(Color(0xFFF6F6F7)) // Applying the specified color
         ) {
             LazyColumn(
                 state = lazyListState,
