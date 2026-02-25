@@ -549,7 +549,8 @@ fun WritePostDetail(
                 if (it.text.length > WRITE_POST_DETAIL_MAX_LENGTH) return@BasicTextField
 
                 writeContentValue = it
-                setWriteText(it.text)
+writeViewModel.setWriteText(it.text)
+                writeViewModel.clearInputErrorState() // Assuming such a function exists or can be added
             },
             singleLine = false,
             modifier = Modifier
