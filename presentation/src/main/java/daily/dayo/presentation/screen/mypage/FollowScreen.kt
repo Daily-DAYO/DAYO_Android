@@ -319,6 +319,10 @@ private fun FollowUserInfo(
             )
 
             Text(
+                text = stringResource(id = R.string.follow),
+                style = DayoTheme.typography.b3.copy(color = Dark),
+                modifier = Modifier.padding(vertical = 10.dp) // Adjusted height here
+            )
                 text = follow.nickname,
                 modifier = Modifier
                     .wrapContentWidth()
