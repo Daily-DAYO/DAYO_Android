@@ -110,7 +110,7 @@ fun OthersPostDropdownMenu(
                     .clip(RoundedCornerShape(12.dp)),
                 text = {
                     Row(
-                        modifier = Modifier.width(128.dp),
+                        modifier = Modifier.width(128.dp).height(36.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -150,7 +150,7 @@ fun ProfileDropdownMenu(
                     .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
                 text = {
                     Row(
-                        modifier = Modifier.width(128.dp),
+                        modifier = Modifier.width(128.dp).height(36.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -173,7 +173,7 @@ fun ProfileDropdownMenu(
                     .clip(RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)),
                 text = {
                     Row(
-                        modifier = Modifier.width(128.dp),
+                        modifier = Modifier.width(128.dp).height(36.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
