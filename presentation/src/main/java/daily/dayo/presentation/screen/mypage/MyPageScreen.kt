@@ -100,7 +100,8 @@ fun MyPageScreen(
                 modifier = Modifier
                     .background(DayoTheme.colorScheme.background)
                     .fillMaxSize()
-                    .padding(contentPadding)
+            .padding(contentPadding)
+            .padding(horizontal = 20.dp)
                     .padding(horizontal = 20.dp),
             ) {
                 item(span = { GridItemSpan(2) }) {
