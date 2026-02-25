@@ -107,7 +107,16 @@ fun WriteTagScreen(
 ) {
     Surface {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            Text(
+                text = stringResource(R.string.write_post_edit_image),
+                style = DayoTheme.typography.b3.copy(
+                    color = Primary_23C882,
+                    textAlign = TextAlign.Center,
+                    platformStyle = PlatformTextStyle(includeFontPadding = false)
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
