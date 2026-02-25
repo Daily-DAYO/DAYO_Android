@@ -124,7 +124,7 @@ fun BottomSheetDialog(
                             if (isPressed) Gray6_F0F1F3 else White_FFFFFF,
                             RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp)
                         )
-                        .padding(if (leftIconButtons == null) 16.dp else 12.dp)
+.padding(horizontal = 8.dp, vertical = 4.dp)
                         .clickable(
                             onClick = button.second,
                             interactionSource = interactionSource,
