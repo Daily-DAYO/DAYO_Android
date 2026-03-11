@@ -631,7 +631,11 @@ fun EmailInputLayout(
                 // INVALID FORMAT 에러 메시지가 다음 에러 메시지가 표시될 떄 남아 있지 않도록 value Clear
             }
         },
-        label = stringResource(R.string.email),
+        label = if (email.isNotEmpty()) {
+            stringResource(R.string.email)
+        } else {
+            " "
+        },
         placeholder = stringResource(R.string.reset_password_email_placeholder),
         trailingIconId = if (email.isNotBlank()) R.drawable.ic_trailing_check else null,
         errorTrailingIconId = R.drawable.ic_trailing_error,
