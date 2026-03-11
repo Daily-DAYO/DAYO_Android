@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -198,6 +199,8 @@ fun DayoPasswordTextField(
     textAlign: TextAlign = TextAlign.Left,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onErrorIconClick: (() -> Unit) = { },
+    showClearIcon: Boolean = true,
+    showVisibilityIcon: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     isEnabled: Boolean = true,
@@ -207,6 +210,15 @@ fun DayoPasswordTextField(
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         var passwordHidden by remember { mutableStateOf(true) }
+        val showError = isError == true
+        val shouldShowClear = showClearIcon && isEnabled && value.isNotBlank() && !showError
+        val shouldShowVisibility = showVisibilityIcon && !showError
+        val trailingContentWidth = when {
+            showError -> 20.dp
+            shouldShowClear && shouldShowVisibility -> 48.dp
+            shouldShowClear || shouldShowVisibility -> 20.dp
+            else -> 0.dp
+        }
 
         if (label.isNotEmpty()) {
             Text(
@@ -254,7 +266,7 @@ fun DayoPasswordTextField(
                         contentPadding = PaddingValues(
                             start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
                             top = contentPadding.calculateTopPadding(),
-                            end = contentPadding.calculateEndPadding(LayoutDirection.Ltr) + 20.dp,
+                            end = contentPadding.calculateEndPadding(LayoutDirection.Ltr) + trailingContentWidth,
                             bottom = contentPadding.calculateBottomPadding()
                         ),
                         colors = TextFieldDefaults.colors(
@@ -279,22 +291,42 @@ fun DayoPasswordTextField(
             Box(
                 modifier = Modifier.align(alignment = Alignment.CenterEnd)
             ) {
-                if (isError != null && isError == true) {
+                if (showError) {
                     NoRippleIconButton(
                         onClick = onErrorIconClick,
                         iconContentDescription = "error icon",
                         iconPainter = painterResource(id = errorTrailingIconId),
                         iconButtonModifier = Modifier.size(20.dp)
                     )
-                } else {
-                    val trailingIconId = if (passwordHidden) R.drawable.ic_trailing_invisible else R.drawable.ic_trailing_visible
-                    val description = if (passwordHidden) "Show password" else "Hide password"
-                    NoRippleIconButton(
-                        onClick = { passwordHidden = passwordHidden.not() },
-                        iconContentDescription = description,
-                        iconPainter = painterResource(id = trailingIconId),
-                        iconButtonModifier = Modifier.size(20.dp)
-                    )
+                } else if (shouldShowClear || shouldShowVisibility) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        if (shouldShowClear) {
+                            NoRippleIconButton(
+                                onClick = { onValueChange("") },
+                                iconContentDescription = "Clear password",
+                                iconPainter = painterResource(id = R.drawable.ic_trailing_delete),
+                                iconButtonModifier = Modifier.size(20.dp)
+                            )
+                        }
+
+                        if (shouldShowVisibility) {
+                            val trailingIconId = if (passwordHidden) {
+                                R.drawable.ic_trailing_invisible
+                            } else {
+                                R.drawable.ic_trailing_visible
+                            }
+                            val description = if (passwordHidden) "Show password" else "Hide password"
+                            NoRippleIconButton(
+                                onClick = { passwordHidden = passwordHidden.not() },
+                                iconContentDescription = description,
+                                iconPainter = painterResource(id = trailingIconId),
+                                iconButtonModifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
