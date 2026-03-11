@@ -3,6 +3,8 @@ package daily.dayo.presentation.screen.account
 import android.app.Activity
 import android.content.Intent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +19,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -109,8 +110,7 @@ internal fun SignInEmailRoute(
                 email = email,
                 password = password
             )
-        },
-        accountViewModel = accountViewModel
+        }
     )
 
     Loading(
@@ -128,11 +128,11 @@ fun SignInEmailScreen(
     onBackClick: () -> Unit = {},
     onForgetPasswordClick: () -> Unit = {},
     onSignUpClick: () -> Unit = {},
-    onSignInClick: (email: String, password: String) -> Unit = { _, _ -> },
-    accountViewModel: AccountViewModel = hiltViewModel()
+    onSignInClick: (email: String, password: String) -> Unit = { _, _ -> }
 ) {
     val emailState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
+    val contentScrollState = rememberScrollState()
     val isSignInButtonEnabled = remember(emailState.value, passwordState.value) {
         emailState.value.isNotBlank() && passwordState.value.isNotBlank()
     }
@@ -146,9 +146,10 @@ fun SignInEmailScreen(
         SignInEmailActionbarLayout(onBackClick = onBackClick)
         Column(
             modifier = Modifier
+                .weight(1f)
                 .padding(horizontal = 20.dp, vertical = 0.dp)
                 .fillMaxWidth()
-                .wrapContentSize(),
+                .verticalScroll(contentScrollState),
             verticalArrangement = Arrangement.Top
         ) {
             Spacer(
@@ -171,7 +172,6 @@ fun SignInEmailScreen(
                 onSignInClick = { onSignInClick(emailState.value, passwordState.value) }
             )
         }
-        Spacer(modifier = Modifier.weight(1f))
         SignInEmailBottomLayout(
             onSignUpClick = onSignUpClick,
             onSignInClick = { onSignInClick(emailState.value, passwordState.value) },

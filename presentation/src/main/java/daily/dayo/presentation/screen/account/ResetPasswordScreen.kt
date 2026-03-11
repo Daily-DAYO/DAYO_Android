@@ -9,6 +9,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -276,6 +278,8 @@ fun ResetPasswordScreen(
     isCheckingEmail: Boolean = false,
     setIsCheckingEmail: (Boolean) -> Unit = {},
 ) {
+    val contentScrollState = rememberScrollState()
+
     Surface(
         modifier = Modifier
             .background(DayoTheme.colorScheme.background)
@@ -333,9 +337,10 @@ fun ResetPasswordScreen(
             Column(
                 modifier = Modifier
                     .background(DayoTheme.colorScheme.background)
+                    .weight(1f)
                     .padding(horizontal = 20.dp, vertical = 0.dp)
                     .fillMaxWidth()
-                    .wrapContentSize()
+                    .verticalScroll(contentScrollState)
             ) {
                 // Title 영역
                 Spacer(modifier = Modifier.height(8.dp))
@@ -432,7 +437,6 @@ fun ResetPasswordScreen(
                     }
                 }
             }
-            Spacer(modifier = Modifier.weight(1f))
             ResetPasswordBottomLayout(
                 resetPasswordStep = resetPasswordStep,
                 onNextClick = {
