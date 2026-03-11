@@ -25,6 +25,7 @@ import daily.dayo.presentation.screen.account.model.EmailCertificationState
 import daily.dayo.presentation.screen.account.model.SignUpStep
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
+import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.view.DayoTextButton
 import daily.dayo.presentation.view.DayoTimerTextField
 import daily.dayo.presentation.viewmodel.AccountViewModel
@@ -85,6 +86,7 @@ fun SetEmailCertificationView(
             isError = isEmailCertificateError ?: false,
             errorMessage = stringResource(timerErrorMessageRedId.value),
             timeOutErrorMessage = stringResource(R.string.sign_up_email_set_address_certification_fail_time_out),
+            labelColor = Gray3_9FA5AE,
             onTimeOut = {
                 isTimeOut.value = true
                 setNextButtonEnabled(false)

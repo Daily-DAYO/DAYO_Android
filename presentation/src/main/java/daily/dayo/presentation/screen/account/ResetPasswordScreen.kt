@@ -53,6 +53,7 @@ import daily.dayo.presentation.screen.account.model.EmailExistenceStatus
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
+import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.DayoPasswordTextField
 import daily.dayo.presentation.view.DayoTextButton
@@ -685,6 +686,7 @@ private fun EmailCertificationLayout(
             isError = isEmailCertificateError ?: false,
             errorMessage = stringResource(timerErrorMessageRedId.value),
             timeOutErrorMessage = stringResource(R.string.reset_password_email_certification_fail_time_out),
+            labelColor = Gray3_9FA5AE,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         )
     }

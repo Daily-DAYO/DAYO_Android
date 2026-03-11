@@ -323,6 +323,7 @@ fun DayoTimerTextField(
     isError: Boolean = false,
     errorMessage: String = "",
     timeOutErrorMessage: String = stringResource(id = R.string.email_address_certificate_alert_message_time_fail),
+    labelColor: Color = Gray4_C5CAD2,
     onTimeOut: (() -> Unit) = { },
     textAlign: TextAlign = TextAlign.Left,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
@@ -351,7 +352,7 @@ fun DayoTimerTextField(
             Text(
                 text = label,
                 style = DayoTheme.typography.caption3.copy(
-                    color = Gray4_C5CAD2,
+                    color = labelColor,
                     fontWeight = FontWeight.SemiBold
                 )
             )
