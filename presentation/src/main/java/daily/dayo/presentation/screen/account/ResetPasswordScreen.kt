@@ -712,6 +712,10 @@ private fun EmailCertificationLayout(
                 text = stringResource(R.string.reset_password_email_certification_resend_button),
                 onClick = {
                     tryCount++
+                    setCertificationInputCode("")
+                    timerErrorMessageRedId.value =
+                        R.string.reset_password_email_certification_fail_wrong
+                    setIsEmailCertificateError(false)
                     requestEmailCertification(email)
                 },
                 underline = true,

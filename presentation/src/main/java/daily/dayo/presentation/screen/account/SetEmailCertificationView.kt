@@ -117,7 +117,11 @@ fun SetEmailCertificationView(
                 text = stringResource(R.string.sign_up_email_set_address_resend_button),
                 onClick = {
                     tryCount++
+                    setCertificationInputCode("")
                     isTimeOut.value = false
+                    timerErrorMessageRedId.value =
+                        R.string.sign_up_email_set_address_certification_fail_wrong
+                    setIsEmailCertificateError(false)
                     requestEmailCertification(email)
                 },
                 underline = true,
