@@ -354,19 +354,21 @@ fun ResetPasswordScreen(
                 AnimatedVisibility(
                     visible = (resetPasswordStep.stepNum in 1..2),
                 ) {
-                    Spacer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(4.dp)
-                    )
-                    Text(
-                        text = if (resetPasswordStep == ResetPasswordStep.EMAIL_INPUT)
-                            stringResource(R.string.reset_password_email_sub_title)
-                        else if (resetPasswordStep == ResetPasswordStep.EMAIL_VERIFICATION)
-                            stringResource(R.string.reset_password_new_password_sub_title)
-                        else "",
-                        style = DayoTheme.typography.b6.copy(color = Gray2_767B83),
-                    )
+                    Column {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(4.dp)
+                        )
+                        Text(
+                            text = if (resetPasswordStep == ResetPasswordStep.EMAIL_INPUT)
+                                stringResource(R.string.reset_password_email_sub_title)
+                            else if (resetPasswordStep == ResetPasswordStep.EMAIL_VERIFICATION)
+                                stringResource(R.string.reset_password_new_password_sub_title)
+                            else "",
+                            style = DayoTheme.typography.b6.copy(color = Gray2_767B83),
+                        )
+                    }
                 }
 
                 // Contents 영역

@@ -263,15 +263,17 @@ fun SignUpEmailTitleLayout(
 
     // SubTitle 영역
     AnimatedVisibility(visible = subTitle.isNotBlank()) {
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(4.dp)
-        )
-        Text(
-            text = subTitle,
-            style = DayoTheme.typography.b6.copy(color = Gray2_767B83),
-        )
+        Column {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+            )
+            Text(
+                text = subTitle,
+                style = DayoTheme.typography.b6.copy(color = Gray2_767B83),
+            )
+        }
     }
 }
 
