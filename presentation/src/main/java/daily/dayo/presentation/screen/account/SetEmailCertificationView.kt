@@ -48,6 +48,9 @@ fun SetEmailCertificationView(
     requestEmailCertification: (String) -> Unit = {},
 ) {
     val certificateEmailAuthCodeFormat = Regex("^\\d{6}$")
+    val isServerCertificationCodeReady =
+        certificationCode != AccountViewModel.EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString() &&
+                certificationCode != AccountViewModel.SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_FAIL.toString()
 
     var tryCount by remember { mutableStateOf(1) }
     val isPaused = remember { mutableStateOf(false) }
@@ -57,10 +60,14 @@ fun SetEmailCertificationView(
     val isTimeOut = remember { mutableStateOf(false) }
 
     setNextButtonEnabled(
-        certificateEmailAuthCodeFormat.matches(certificationInputCode) && !isTimeOut.value
+        certificateEmailAuthCodeFormat.matches(certificationInputCode) &&
+                isServerCertificationCodeReady &&
+                !isTimeOut.value
     )
     setIsNextButtonClickable(
-        certificateEmailAuthCodeFormat.matches(certificationInputCode) && !isTimeOut.value
+        certificateEmailAuthCodeFormat.matches(certificationInputCode) &&
+                isServerCertificationCodeReady &&
+                !isTimeOut.value
     )
 
     key(tryCount) {

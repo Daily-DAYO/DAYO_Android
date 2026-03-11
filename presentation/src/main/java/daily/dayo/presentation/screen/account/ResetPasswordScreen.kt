@@ -647,6 +647,9 @@ private fun EmailCertificationLayout(
     requestEmailCertification: (String) -> Unit = {},
 ) {
     val certificateEmailAuthCodeFormat = Regex("^\\d{6}$")
+    val isServerCertificationCodeReady =
+        certificationCode != EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString() &&
+                certificationCode != RESET_PASSWORD_EMAIL_CERTIFICATE_AUTH_CODE_FAIL.toString()
 
     var tryCount by remember { mutableStateOf(1) }
     val isPaused = remember { mutableStateOf(false) }
@@ -657,10 +660,12 @@ private fun EmailCertificationLayout(
         remember { mutableStateOf((R.string.reset_password_email_certification_fail_wrong)) }
 
     setNextButtonEnabled(
-        certificateEmailAuthCodeFormat.matches(certificationInputCode)
+        certificateEmailAuthCodeFormat.matches(certificationInputCode) &&
+                isServerCertificationCodeReady
     )
     setIsNextButtonClickable(
-        certificateEmailAuthCodeFormat.matches(certificationInputCode)
+        certificateEmailAuthCodeFormat.matches(certificationInputCode) &&
+                isServerCertificationCodeReady
     )
 
     key(tryCount) {
