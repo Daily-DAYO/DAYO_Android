@@ -738,7 +738,7 @@ private fun EmailCertificationLayout(
 
 @Composable
 @Preview
-private fun NewPasswordLayout(
+internal fun NewPasswordLayout(
     resetPasswordStep: ResetPasswordStep = ResetPasswordStep.NEW_PASSWORD_INPUT,
     isNextButtonEnabled: Boolean = false,
     setNextButtonEnabled: (Boolean) -> Unit = {},
