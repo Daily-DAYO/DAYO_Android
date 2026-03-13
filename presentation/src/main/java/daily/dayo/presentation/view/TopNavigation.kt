@@ -1,6 +1,7 @@
 package daily.dayo.presentation.view
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -25,7 +26,8 @@ fun TopNavigation(
     title: String = "",
     leftIcon: @Composable () -> Unit = {},
     rightIcon: @Composable () -> Unit = {},
-    titleAlignment: TopNavigationAlign = TopNavigationAlign.LEFT
+    titleAlignment: TopNavigationAlign = TopNavigationAlign.LEFT,
+    windowInsets: WindowInsets = TopAppBarDefaults.windowInsets
 ) {
     when (titleAlignment) {
         TopNavigationAlign.LEFT -> {
@@ -34,6 +36,7 @@ fun TopNavigation(
                     containerColor = White_FFFFFF,
                     titleContentColor = Dark,
                 ),
+                windowInsets = windowInsets,
                 navigationIcon = leftIcon,
                 actions = { rightIcon() },
                 title = {
@@ -48,6 +51,7 @@ fun TopNavigation(
                     containerColor = White_FFFFFF,
                     titleContentColor = Dark,
                 ),
+                windowInsets = windowInsets,
                 navigationIcon = leftIcon,
                 actions = { rightIcon() },
                 title = {

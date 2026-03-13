@@ -55,6 +55,7 @@ import daily.dayo.presentation.screen.account.model.EmailExistenceStatus
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
+import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.DayoPasswordTextField
 import daily.dayo.presentation.view.DayoTextButton
@@ -359,19 +360,21 @@ fun ResetPasswordScreen(
                 AnimatedVisibility(
                     visible = (resetPasswordStep.stepNum in 1..2),
                 ) {
-                    Spacer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(4.dp)
-                    )
-                    Text(
-                        text = if (resetPasswordStep == ResetPasswordStep.EMAIL_INPUT)
-                            stringResource(R.string.reset_password_email_sub_title)
-                        else if (resetPasswordStep == ResetPasswordStep.EMAIL_VERIFICATION)
-                            stringResource(R.string.reset_password_new_password_sub_title)
-                        else "",
-                        style = DayoTheme.typography.b6.copy(color = Gray2_767B83),
-                    )
+                    Column {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(4.dp)
+                        )
+                        Text(
+                            text = if (resetPasswordStep == ResetPasswordStep.EMAIL_INPUT)
+                                stringResource(R.string.reset_password_email_sub_title)
+                            else if (resetPasswordStep == ResetPasswordStep.EMAIL_VERIFICATION)
+                                stringResource(R.string.reset_password_new_password_sub_title)
+                            else "",
+                            style = DayoTheme.typography.b6.copy(color = Gray2_767B83),
+                        )
+                    }
                 }
 
                 // Contents 영역
@@ -667,6 +670,9 @@ private fun EmailCertificationLayout(
     requestEmailCertification: (String) -> Unit = {},
 ) {
     val certificateEmailAuthCodeFormat = Regex("^\\d{6}$")
+    val isServerCertificationCodeReady =
+        certificationCode != EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString() &&
+                certificationCode != RESET_PASSWORD_EMAIL_CERTIFICATE_AUTH_CODE_FAIL.toString()
 
     var tryCount by remember { mutableStateOf(1) }
     val isPaused = remember { mutableStateOf(false) }
@@ -677,10 +683,12 @@ private fun EmailCertificationLayout(
         remember { mutableStateOf((R.string.reset_password_email_certification_fail_wrong)) }
 
     setNextButtonEnabled(
-        certificateEmailAuthCodeFormat.matches(certificationInputCode)
+        certificateEmailAuthCodeFormat.matches(certificationInputCode) &&
+                isServerCertificationCodeReady
     )
     setIsNextButtonClickable(
-        certificateEmailAuthCodeFormat.matches(certificationInputCode)
+        certificateEmailAuthCodeFormat.matches(certificationInputCode) &&
+                isServerCertificationCodeReady
     )
 
     key(tryCount) {
@@ -698,6 +706,7 @@ private fun EmailCertificationLayout(
             isError = isEmailCertificateError ?: false,
             errorMessage = stringResource(timerErrorMessageRedId.value),
             timeOutErrorMessage = stringResource(R.string.reset_password_email_certification_fail_time_out),
+            labelColor = Gray3_9FA5AE,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         )
     }
@@ -732,6 +741,10 @@ private fun EmailCertificationLayout(
                 text = stringResource(R.string.reset_password_email_certification_resend_button),
                 onClick = {
                     tryCount++
+                    setCertificationInputCode("")
+                    timerErrorMessageRedId.value =
+                        R.string.reset_password_email_certification_fail_wrong
+                    setIsEmailCertificateError(false)
                     requestEmailCertification(email)
                 },
                 underline = true,
@@ -745,7 +758,7 @@ private fun EmailCertificationLayout(
 
 @Composable
 @Preview
-private fun NewPasswordLayout(
+internal fun NewPasswordLayout(
     resetPasswordStep: ResetPasswordStep = ResetPasswordStep.NEW_PASSWORD_INPUT,
     isNextButtonEnabled: Boolean = false,
     setNextButtonEnabled: (Boolean) -> Unit = {},

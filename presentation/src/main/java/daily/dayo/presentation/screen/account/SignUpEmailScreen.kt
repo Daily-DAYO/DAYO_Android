@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -264,15 +265,17 @@ fun SignUpEmailTitleLayout(
 
     // SubTitle 영역
     AnimatedVisibility(visible = subTitle.isNotBlank()) {
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(4.dp)
-        )
-        Text(
-            text = subTitle,
-            style = DayoTheme.typography.b6.copy(color = Gray2_767B83),
-        )
+        Column {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+            )
+            Text(
+                text = subTitle,
+                style = DayoTheme.typography.b6.copy(color = Gray2_767B83),
+            )
+        }
     }
 }
 
@@ -596,6 +599,7 @@ fun SignUpEmailScaffold(
                         )
                     }
                 },
+                windowInsets = WindowInsets(0, 0, 0, 0),
             )
         }
     ) { innerPadding ->
