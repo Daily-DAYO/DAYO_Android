@@ -596,6 +596,14 @@ fun EmailInputLayout(
     requestEmailCertification: (String) -> Unit = {},
 ) {
     val lastErrorMessage = remember { mutableStateOf("") }
+    val isEmailError = when {
+        email.isBlank() -> null
+        emailCertification == EmailCertificationState.INVALID_FORMAT ||
+                emailCertification == EmailCertificationState.NOT_EXIST_EMAIL ||
+                emailCertification == EmailCertificationState.OAUTH_EMAIL -> true
+
+        else -> false
+    }
 
     LaunchedEffect(emailCertification) {
         lastErrorMessage.value = when (emailCertification) {
@@ -616,19 +624,27 @@ fun EmailInputLayout(
             val formatValid = android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches()
             setNextButtonEnabled(formatValid)
             setIsNextButtonClickable(formatValid)
-            if (!formatValid) {
+            if (it.isBlank()) {
+                setEmailCertification(EmailCertificationState.BEFORE_CERTIFICATION)
+                lastErrorMessage.value = ""
+            } else if (!formatValid) {
                 setEmailCertification(EmailCertificationState.INVALID_FORMAT)
             } else {
+                setEmailCertification(EmailCertificationState.BEFORE_CERTIFICATION)
                 lastErrorMessage.value = ""
                 // INVALID FORMAT 에러 메시지가 다음 에러 메시지가 표시될 떄 남아 있지 않도록 value Clear
             }
         },
-        label = stringResource(R.string.email),
+        label = if (email.isNotEmpty()) {
+            stringResource(R.string.email)
+        } else {
+            " "
+        },
         placeholder = stringResource(R.string.reset_password_email_placeholder),
         trailingIconId = if (email.isNotBlank()) R.drawable.ic_trailing_check else null,
         errorTrailingIconId = R.drawable.ic_trailing_error,
         errorMessage = lastErrorMessage.value,
-        isError = if (email.isBlank()) null else !isNextButtonEnabled,
+        isError = isEmailError,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
     )
 }
