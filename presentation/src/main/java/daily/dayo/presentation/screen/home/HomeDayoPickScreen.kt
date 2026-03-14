@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -25,6 +26,7 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -181,21 +183,41 @@ private fun HomeDayoPickEmptyView() {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CategoryButton(
     selectedCategory: String,
     onCategoryClick: () -> Unit
 ) {
+
     Button(
         onClick = onCategoryClick,
         shape = RoundedCornerShape(8.dp),
-        contentPadding = PaddingValues(top = 6.dp, bottom = 6.dp, start = 12.dp, end = 4.dp),
-        colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = White_FFFFFF, contentColor = Gray2_767B83),
-        modifier = Modifier.border(1.dp, Gray6_F0F1F3, shape = RoundedCornerShape(8.dp))
+        contentPadding = PaddingValues(start = 12.dp, end = 4.dp),
+        modifier = Modifier
+            .border(1.dp, Gray6_F0F1F3, shape = RoundedCornerShape(8.dp))
+            .height(36.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = White_FFFFFF,
+            contentColor = Gray2_767B83
+        )
     ) {
-        Text(text = selectedCategory, style = DayoTheme.typography.caption3)
-        Spacer(modifier = Modifier.width(8.dp))
-        Icon(Icons.Filled.ArrowDropDown, "category menu")
+        Row(
+            modifier = Modifier.height(36.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = selectedCategory,
+                style = DayoTheme.typography.caption3
+            )
+            Spacer(Modifier.width(8.dp))
+            Icon(
+                imageVector = Icons.Filled.ArrowDropDown,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp)
+            )
+        }
     }
+
 }
 

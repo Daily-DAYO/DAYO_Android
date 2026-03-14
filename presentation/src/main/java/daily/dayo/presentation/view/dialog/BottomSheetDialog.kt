@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -115,42 +116,36 @@ fun BottomSheetDialog(
             buttons.forEachIndexed { index, button ->
                 val interactionSource = remember { MutableInteractionSource() }
                 val isPressed = interactionSource.collectIsPressedAsState().value
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .background(
-                            if (isPressed) Gray6_F0F1F3 else White_FFFFFF,
-                            RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp)
+                if (leftIconButtons != null) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp, horizontal = 8.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable(
+                                onClick = button.second,
+                                interactionSource = interactionSource
+                            )
+                            .background(White_FFFFFF)
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (leftIconCheckedButtons != null) {
+                            Icon(
+                                imageVector = if (checkedButtonIndex == index) leftIconCheckedButtons[index] else leftIconButtons[index],
+                                contentDescription = "",
+                                modifier = Modifier.align(Alignment.CenterVertically),
+                                tint = Color.Unspecified
+                            )
+                        }
+                        Text(
+                            text = button.first,
+                            modifier = Modifier.offset(8.dp, 0.dp),
+                            color = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) checkedColor else normalColor,
+                            fontSize = 16.sp,
+                            style = DayoTheme.typography.b4
                         )
-                        .padding(if (leftIconButtons == null) 16.dp else 12.dp)
-                        .clickable(
-                            onClick = button.second,
-                            interactionSource = interactionSource,
-                            indication = null
-                        ),
-                    horizontalArrangement = if (leftIconButtons == null) Arrangement.Center else Arrangement.SpaceBetween,
-                ) {
-                    if (leftIconButtons != null && leftIconCheckedButtons != null) {
-                        Icon(
-                            imageVector = if (checkedButtonIndex == index) leftIconCheckedButtons[index] else leftIconButtons[index],
-                            contentDescription = "",
-                            modifier = Modifier.align(Alignment.CenterVertically),
-                            tint = Color.Unspecified
-                        )
-                    }
-                    Text(
-                        text = button.first,
-                        modifier = Modifier.offset(
-                            if (leftIconButtons == null) 0.dp else 8.dp,
-                            0.dp
-                        ),
-                        color = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) checkedColor else normalColor,
-                        fontSize = 16.sp,
-                        style = DayoTheme.typography.b4
-                    )
-                    if (leftIconButtons != null) {
                         Spacer(modifier = Modifier.weight(1f))
                         if (checkedButtonIndex == index) {
                             Icon(
@@ -161,7 +156,32 @@ fun BottomSheetDialog(
                             )
                         }
                     }
+                } else {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .background(
+                                if (isPressed) Gray6_F0F1F3 else White_FFFFFF,
+                                RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp)
+                            )
+                            .padding(16.dp)
+                            .clickable(
+                                onClick = button.second,
+                                interactionSource = interactionSource,
+                                indication = null
+                            ),
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        Text(
+                            text = button.first,
+                            color = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) checkedColor else normalColor,
+                            fontSize = 16.sp,
+                            style = DayoTheme.typography.b4
+                        )
+                    }
                 }
+
                 if (index < buttons.size - 1 && title.isEmpty()) {
                     Divider(
                         modifier = Modifier
