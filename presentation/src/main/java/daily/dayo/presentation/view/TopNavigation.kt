@@ -40,7 +40,7 @@ fun TopNavigation(
                 navigationIcon = leftIcon,
                 actions = { rightIcon() },
                 title = {
-                    Text(text = title, maxLines = 1, style = DayoTheme.typography.h3)
+                    Text(text = title, maxLines = 1, style = DayoTheme.typography.b3)
                 }
             )
         }
@@ -55,7 +55,7 @@ fun TopNavigation(
                 navigationIcon = leftIcon,
                 actions = { rightIcon() },
                 title = {
-                    Text(text = title, maxLines = 1, style = DayoTheme.typography.h3)
+                    Text(text = title, maxLines = 1, style = DayoTheme.typography.b3)
                 }
             )
         }
