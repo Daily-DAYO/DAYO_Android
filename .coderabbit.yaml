@@ -1,0 +1,139 @@
+language: ko-KR
+early_access: false
+tone_instructions: >
+  Be concise, constructive, and production-focused. Prioritize architecture
+  boundaries, crash safety, and maintainability over stylistic trivia.
+
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  high_level_summary_instructions: |
+    Summarize the PR by module and risk:
+    1) functional impact and user-facing behavior changes,
+    2) risk points (network/error handling, threading, state consistency),
+    3) required follow-up tests and verification.
+  review_status: true
+  review_details: false
+  commit_status: true
+  fail_commit_status: false
+  collapse_walkthrough: false
+  changed_files_summary: true
+  sequence_diagrams: false
+  estimate_code_review_effort: false
+  suggested_labels: false
+  auto_apply_labels: false
+  suggested_reviewers: false
+  auto_assign_reviewers: false
+  poem: false
+  in_progress_fortune: false
+  path_filters:
+    - "!**/build/**"
+    - "!**/.gradle/**"
+    - "!**/.idea/**"
+    - "!**/.venv_qa_bot/**"
+    - "!**/.venv*/**"
+    - "!**/venv*/**"
+    - "!**/__pycache__/**"
+    - "!**/*.pyc"
+    - "!**/bin/**"
+    - "!**/gen/**"
+    - "!**/out/**"
+    - "!**/obj/**"
+    - "!**/.externalNativeBuild/**"
+    - "!**/.signing/**"
+    - "!**/release/**"
+    - "!**/*.apk"
+    - "!**/*.aab"
+    - "!**/*.ap_"
+    - "!**/*.dex"
+    - "!**/*.class"
+    - "!**/*.iml"
+    - "!**/*.iws"
+    - "!**/*.swp"
+    - "!**/.DS_Store"
+    - "!**/qa_bot_commit_msg.txt"
+    - "!**/qa_bot_explanation.txt"
+    - "!**/pr_body.md"
+    - "!**/tmp_github_output.txt"
+    - "!**/.tmp_runner/**"
+    - "!**/.claude/**"
+    - "!**/captures/**"
+    - "!**/.classpath"
+    - "!**/.project"
+    - "!**/.cproject"
+    - "!**/.settings/**"
+    - "!**/local.properties"
+    - "!**/sentry.properties"
+    - "!**/dayo_keystore*"
+    - "!**/*.jks"
+    - "!**/*.keystore"
+    - "!**/*keystore*.properties"
+    - "!**/crashlytics.properties"
+    - "!**/crashlytics-build.properties"
+    - "!**/fabric.properties"
+    - "!**/com_crashlytics_export_strings.xml"
+    - "!**/google-services*.json"
+    - "!**/output-metadata.json"
+    - "!**/*.log"
+  path_instructions:
+    - path: "app/src/main/**/*.kt"
+      instructions: |
+        This layer is app-level wiring only.
+        Review for:
+        - lifecycle-safe initialization in Application class,
+        - SDK initialization order and error handling,
+        - accidental business logic leakage into app module.
+    - path: "domain/src/main/**/*.kt"
+      instructions: |
+        Enforce Domain Layer boundaries.
+        Ensure:
+        - no Android imports in domain files,
+        - repository interfaces stay thin and naming is consistent,
+        - UseCases are small and usually delegate with `operator fun invoke()`,
+        - no business logic placed in repository interfaces.
+    - path: "data/src/main/**/*.kt"
+      instructions: |
+        Data layer should be implementation and mapping only.
+        Check:
+        - API services are suspend and return `NetworkResponse<T>`,
+        - `when` handles all 4 `NetworkResponse` cases (no `else`),
+        - errors are passed through without swallowing,
+        - mappers convert DTO → domain clearly and handle nullable API fields,
+        - repository methods remain thin and include DI wiring updates for new APIs.
+    - path: "presentation/src/main/**/*.kt"
+      instructions: |
+        Review for clean Compose/VM architecture.
+        Verify:
+        - Route/Screen split is maintained (routing + state in Route, UI-only Screen),
+        - ViewModel injections stay in Route/RouteOwner only,
+        - state exposure uses Flow/StateFlow and/or LiveData intentionally,
+        - one `when` expression handles all `NetworkResponse` branches,
+        - no hardcoded colors (use theme Color constants),
+        - no direct navigation from composables using `NavController`.
+    - path: "**/src/main/res/**/*.xml"
+      instructions: |
+        For UI resources and layouts, ensure existing naming conventions and
+        resource organization are preserved. Avoid introducing unused IDs or
+        hardcoded values where theme resources already exist.
+    - path: ".github/**/*"
+      instructions: |
+        Check workflow safety and reproducibility:
+        - no plaintext secrets in files,
+        - pinned and maintained actions when practical,
+        - Gradle/JDK matrix changes remain consistent with app requirements.
+
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    ignore_title_keywords:
+      - "WIP"
+      - "wip"
+    labels:
+      - "!wip"
+    drafts: false
+    base_branches:
+      - ".*"
+
+chat:
+  auto_reply: true
