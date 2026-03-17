@@ -28,7 +28,7 @@
     <string name="loading_default_message">잠시만 기다려 주세요</string>
     <string name="network_error_dialog_default_message">인터넷 연결 상태를 확인해주세요</string>
     <string name="close_sign">닫기</string>
-    <string name="re_try">재시도</string>
+    <string name="re_try">다시 시도</string>
 
     <!-- Time -->
     <string name="time_now">방금 전</string>

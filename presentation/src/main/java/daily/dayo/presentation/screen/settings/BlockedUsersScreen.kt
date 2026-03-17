@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -97,19 +98,25 @@ fun BlockedUsersScreen(
         topBar = { BlockedUsersActionbarLayout(onBackClick = onBackClick) },
         snackbarHost = { SnackbarHost(snackBarHostState) },
         content = { innerPadding ->
-            Column(
+            Box(
                 modifier = Modifier
                     .background(DayoTheme.colorScheme.background)
                     .padding(innerPadding)
                     .fillMaxSize()
-                    .padding(top = 12.dp, start = 20.dp, end = 20.dp)
+                    .padding(top = 12.dp)
             ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    contentPadding = PaddingValues(vertical = 16.dp)
-                ) {
-                    if (blockedUsers.status != Status.ERROR) {
+                if (blockedUsers.status == Status.ERROR) {
+                    BlockedUsersErrorLayout(
+                        onRetry = { profileSettingViewModel.requestBlockList() },
+                    )
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(start = 20.dp, end = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        contentPadding = PaddingValues(vertical = 16.dp)
+                    ) {
                         blockedUsers.data.orEmpty().let { blockedUsers ->
                             if (blockedUsers.isEmpty()) {
                                 item {
@@ -160,46 +167,55 @@ fun BlockedUsersScreen(
                                 }
                             }
                         }
-                    } else {
-                        item {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(top = 164.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.ic_blocked_users_empty),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .width(136.dp)
-                                        .wrapContentHeight()
-                                        .padding(6.5.dp)
-                                )
-                                Spacer(modifier = Modifier.height(20.dp))
-                                Text(
-                                    text = stringResource(R.string.blocked_users_error_description),
-                                    color = Gray3_9FA5AE,
-                                    style = DayoTheme.typography.b3,
-                                    modifier = Modifier
-                                        .wrapContentSize()
-                                )
-                                Spacer(modifier = Modifier.height(20.dp))
-                                FilledRoundedCornerButton(
-                                    modifier = Modifier
-                                        .padding(horizontal = 20.dp)
-                                        .wrapContentSize(),
-                                    onClick = { profileSettingViewModel.requestBlockList() },
-                                    label = stringResource(R.string.re_try)
-                                )
-                            }
-                        }
                     }
                 }
             }
         }
     )
+}
+
+@Composable
+private fun BlockedUsersErrorLayout(
+    onRetry: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Spacer(modifier = Modifier.weight(176f))
+
+        Column(
+            modifier = Modifier.wrapContentHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_blocked_users_empty),
+                contentDescription = null,
+                modifier = Modifier
+                    .width(136.dp)
+                    .height(100.dp)
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = stringResource(R.string.blocked_users_error_description),
+                style = DayoTheme.typography.h3.copy(color = Gray3_9FA5AE),
+                modifier = Modifier.wrapContentSize()
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(336f))
+
+        FilledRoundedCornerButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp)
+                .padding(bottom = 20.dp),
+            onClick = onRetry,
+            label = stringResource(R.string.re_try),
+        )
+    }
 }
 
 @Preview
