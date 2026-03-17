@@ -49,6 +49,7 @@ import daily.dayo.presentation.view.FilledRoundedCornerButton
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.RoundImageView
 import daily.dayo.presentation.view.TopNavigation
+import daily.dayo.presentation.view.TopNavigationAlign
 import daily.dayo.presentation.viewmodel.ProfileSettingViewModel
 import daily.dayo.presentation.viewmodel.ProfileViewModel
 import kotlinx.coroutines.launch
@@ -261,5 +262,6 @@ fun BlockedUsersActionbarLayout(
             )
         },
         title = stringResource(R.string.blocked_users_title),
+        titleAlignment = TopNavigationAlign.CENTER,
     )
 }
