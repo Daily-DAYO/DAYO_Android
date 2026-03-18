@@ -50,7 +50,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -87,6 +86,7 @@ import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray5_E8EAEE
+import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
@@ -231,7 +231,7 @@ fun SearchResultScreen(
                         color = Primary_23C882,
                     )
                 },
-                divider = { Divider(color = Color.Transparent, thickness = 0.dp) },
+                divider = { Divider(color = Gray6_F0F1F3, thickness = 1.dp) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(18.dp, 0.dp, 18.dp, 0.dp),
