@@ -85,6 +85,7 @@ import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
+import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray5_E8EAEE
 import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
@@ -337,13 +338,11 @@ fun SearchResultEmpty() {
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
-            modifier = Modifier.padding(vertical = 2.dp),
             text = stringResource(id = R.string.search_result_empty_description),
-            style = DayoTheme.typography.caption1
-                .copy(
-                    color = Gray3_9FA5AE,
-                    textAlign = TextAlign.Center
-                ),
+            modifier = Modifier.padding(vertical = 2.dp),
+            color = Gray4_C5CAD2,
+            fontWeight = FontWeight(500),
+            style = DayoTheme.typography.caption2,
         )
     }
 }
