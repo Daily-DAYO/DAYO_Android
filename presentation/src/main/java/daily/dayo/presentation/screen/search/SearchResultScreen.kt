@@ -360,7 +360,9 @@ fun SearchResultsCount(resultCount: Int = 0) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(2.dp),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.height(20.dp)
+            modifier = Modifier
+                .height(20.dp)
+                .background(White_FFFFFF)
         ) {
             Text(
                 text = "$resultCount",
