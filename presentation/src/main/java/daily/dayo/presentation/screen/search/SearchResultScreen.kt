@@ -339,7 +339,6 @@ fun SearchResultEmpty() {
         Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = stringResource(id = R.string.search_result_empty_description),
-            modifier = Modifier.padding(vertical = 2.dp),
             color = Gray4_C5CAD2,
             fontWeight = FontWeight(500),
             style = DayoTheme.typography.caption2,
@@ -366,7 +365,6 @@ fun SearchResultsCount(resultCount: Int = 0) {
         ) {
             Text(
                 text = "$resultCount",
-                modifier = Modifier.padding(end = 2.dp),
                 style = TextStyle(
                     fontSize = 13.sp,
                     lineHeight = 19.5.sp,
