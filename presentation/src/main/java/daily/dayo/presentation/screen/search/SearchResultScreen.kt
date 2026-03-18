@@ -351,33 +351,37 @@ fun SearchResultEmpty() {
 @Preview
 fun SearchResultsCount(resultCount: Int = 0) {
     Surface(
-        color = White_FFFFFF,
         modifier = Modifier
             .fillMaxWidth()
-            .height(44.dp),
+            .height(44.dp)
+            .background(White_FFFFFF)
+            .padding(horizontal = 18.dp, vertical = 12.dp)
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(0.dp),
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 18.dp, vertical = 12.dp)
+            modifier = Modifier.height(20.dp)
         ) {
             Text(
+                text = "$resultCount",
+                modifier = Modifier.padding(end = 2.dp),
                 style = TextStyle(
                     fontSize = 13.sp,
+                    lineHeight = 19.5.sp,
                     fontFamily = FontFamily(Font(R.font.pretendard_medium)),
                     fontWeight = FontWeight(500),
                     color = Primary_23C882
-                ),
-                text = "$resultCount",
-                modifier = Modifier.padding(end = 2.dp)
+                )
             )
             Text(
+                text = stringResource(R.string.search_result_count_description),
                 style = TextStyle(
                     fontSize = 13.sp,
+                    lineHeight = 19.5.sp,
                     fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                    fontWeight = FontWeight(500)
-                ),
-                text = "개의 검색결과"
+                    fontWeight = FontWeight(500),
+                    color = Gray2_767B83,
+                )
             )
         }
     }
