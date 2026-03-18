@@ -335,6 +335,7 @@ fun SearchResultEmpty() {
                     textAlign = TextAlign.Center
                 ),
         )
+        Spacer(modifier = Modifier.height(2.dp))
         Text(
             modifier = Modifier.padding(vertical = 2.dp),
             text = stringResource(id = R.string.search_result_empty_description),
