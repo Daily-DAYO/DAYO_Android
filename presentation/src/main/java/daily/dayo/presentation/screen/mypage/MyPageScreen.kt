@@ -383,9 +383,10 @@ private fun MyPageTopNavigation(onSettingsClick: () -> Unit) {
                 onClick = onSettingsClick,
                 iconContentDescription = "setting button",
                 iconPainter = painterResource(id = R.drawable.ic_setting),
+                iconButtonModifier = Modifier.padding(end = 8.dp),
                 iconModifier = Modifier
-                    .padding(end = 18.dp)
-                    .size(24.dp),
+                    .size(44.dp)
+                    .padding(10.dp),
                 iconTintColor = Dark
             )
         }
