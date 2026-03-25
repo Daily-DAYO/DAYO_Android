@@ -372,7 +372,7 @@ private fun MyPageTopNavigation(onSettingsClick: () -> Unit) {
                 Text(
                     text = stringResource(id = R.string.my_page),
                     style = DayoTheme.typography.h1.copy(
-                        color = Gray1_50545B,
+                        color = Dark,
                         fontWeight = FontWeight.SemiBold
                     )
                 )
