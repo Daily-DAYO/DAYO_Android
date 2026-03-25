@@ -50,7 +50,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -86,7 +85,9 @@ import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
+import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray5_E8EAEE
+import daily.dayo.presentation.theme.Gray6_F0F1F3
 import daily.dayo.presentation.theme.PrimaryL3_F2FBF7
 import daily.dayo.presentation.theme.Primary_23C882
 import daily.dayo.presentation.theme.White_FFFFFF
@@ -231,7 +232,7 @@ fun SearchResultScreen(
                         color = Primary_23C882,
                     )
                 },
-                divider = { Divider(color = Color.Transparent, thickness = 0.dp) },
+                divider = { Divider(color = Gray6_F0F1F3, thickness = 1.dp) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(18.dp, 0.dp, 18.dp, 0.dp),
@@ -335,14 +336,12 @@ fun SearchResultEmpty() {
                     textAlign = TextAlign.Center
                 ),
         )
+        Spacer(modifier = Modifier.height(2.dp))
         Text(
-            modifier = Modifier.padding(vertical = 2.dp),
             text = stringResource(id = R.string.search_result_empty_description),
-            style = DayoTheme.typography.caption1
-                .copy(
-                    color = Gray3_9FA5AE,
-                    textAlign = TextAlign.Center
-                ),
+            color = Gray4_C5CAD2,
+            fontWeight = FontWeight(500),
+            style = DayoTheme.typography.caption2,
         )
     }
 }
@@ -351,33 +350,38 @@ fun SearchResultEmpty() {
 @Preview
 fun SearchResultsCount(resultCount: Int = 0) {
     Surface(
-        color = White_FFFFFF,
         modifier = Modifier
             .fillMaxWidth()
-            .height(44.dp),
+            .height(44.dp)
+            .background(White_FFFFFF)
+            .padding(horizontal = 18.dp, vertical = 12.dp)
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(0.dp),
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 18.dp, vertical = 12.dp)
+            modifier = Modifier
+                .height(20.dp)
+                .background(White_FFFFFF)
         ) {
             Text(
+                text = "$resultCount",
                 style = TextStyle(
                     fontSize = 13.sp,
+                    lineHeight = 19.5.sp,
                     fontFamily = FontFamily(Font(R.font.pretendard_medium)),
                     fontWeight = FontWeight(500),
                     color = Primary_23C882
-                ),
-                text = "$resultCount",
-                modifier = Modifier.padding(end = 2.dp)
+                )
             )
             Text(
+                text = stringResource(R.string.search_result_count_description),
                 style = TextStyle(
                     fontSize = 13.sp,
+                    lineHeight = 19.5.sp,
                     fontFamily = FontFamily(Font(R.font.pretendard_medium)),
-                    fontWeight = FontWeight(500)
-                ),
-                text = "개의 검색결과"
+                    fontWeight = FontWeight(500),
+                    color = Gray2_767B83,
+                )
             )
         }
     }
