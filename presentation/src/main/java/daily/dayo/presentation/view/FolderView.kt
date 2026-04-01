@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.Privacy
 import daily.dayo.presentation.BuildConfig
@@ -77,10 +78,18 @@ fun FolderView(
 
         // folder info
         Column {
-            Text(text = folder.title, style = DayoTheme.typography.b6.copy(Dark))
+            Text(
+                text = folder.title,
+                lineHeight = 21.sp,
+                style = DayoTheme.typography.b6.copy(Dark)
+            )
 
             val dec = DecimalFormat("#,###")
-            Text(text = "${dec.format(folder.postCount)}개", style = DayoTheme.typography.b6.copy(Gray3_9FA5AE))
+            Text(
+                text = "${dec.format(folder.postCount)}개",
+                lineHeight = 21.sp,
+                style = DayoTheme.typography.b6.copy(Gray3_9FA5AE)
+            )
         }
     }
 }
