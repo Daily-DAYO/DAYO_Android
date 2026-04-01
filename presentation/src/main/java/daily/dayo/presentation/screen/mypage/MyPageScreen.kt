@@ -299,6 +299,7 @@ private fun MyPageMenu(
             Icon(
                 painter = painterResource(R.drawable.ic_bookmark_default),
                 contentDescription = stringResource(id = R.string.bookmark),
+                modifier = Modifier.size(20.dp),
                 tint = Gray1_50545B
             )
         }
