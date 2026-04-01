@@ -340,12 +340,13 @@ private fun MyPageDiaryHeader(
         ) {
             Icon(
                 imageVector = Icons.Filled.Add,
-                contentDescription = stringResource(id = R.string.my_profile_new_folder)
+                contentDescription = stringResource(id = R.string.my_profile_new_folder),
+                modifier = Modifier.size(12.dp)
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = stringResource(id = R.string.my_profile_new_folder),
-                style = DayoTheme.typography.b6.copy(
+                style = DayoTheme.typography.caption4.copy(
                     if (isCreateFolderEnabled) Primary_23C882 else Gray4_C5CAD2
                 )
             )
