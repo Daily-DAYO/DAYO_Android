@@ -224,7 +224,9 @@ private fun BookmarkPostItem(
     isSelected: Boolean,
     onBookmarkClick: () -> Unit
 ) {
-    Box {
+    Box(
+        modifier = Modifier.clickableSingle(onClick = { onBookmarkClick() })
+    ) {
         RoundImageView(
             context = LocalContext.current,
             imageUrl = "${BuildConfig.BASE_URL}/images/${post.thumbnailImage}",
