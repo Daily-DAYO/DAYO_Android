@@ -107,7 +107,7 @@ private fun FolderCreateScreen(
                 .background(DayoTheme.colorScheme.background)
                 .fillMaxSize()
                 .padding(contentPadding)
-                .padding(horizontal = 18.dp, vertical = 16.dp),
+                .padding(horizontal = 20.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             DayoTextField(
@@ -143,7 +143,10 @@ private fun FolderCreateScreen(
             ToggleButtonWithLabel(
                 label = stringResource(R.string.write_post_folder_new_folder_privacy_title),
                 isToggled = privacy.value == Privacy.ONLY_ME,
-                onToggleChanged = { privacy.value = if (it) Privacy.ONLY_ME else Privacy.ALL }
+                onToggleChanged = { privacy.value = if (it) Privacy.ONLY_ME else Privacy.ALL },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.End),
             )
         }
     }
