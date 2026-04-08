@@ -50,6 +50,7 @@ import java.text.DecimalFormat
 
 @Composable
 fun BookmarkScreen(
+    onPostClick: (Long) -> Unit,
     onBackClick: () -> Unit,
     bookmarkViewModel: BookmarkViewModel = hiltViewModel()
 ) {
@@ -105,7 +106,8 @@ fun BookmarkScreen(
                             post = post,
                             isEditMode = bookmarkUiState.isEditMode,
                             isSelected = bookmarkUiState.selectedBookmarks.contains(post.postId),
-                            onBookmarkClick = { bookmarkViewModel.toggleSelection(post.postId) }
+                            onBookmarkPostClick = { onPostClick(post.postId) },
+                            onBookmarkEditClick = { bookmarkViewModel.toggleSelection(post.postId) }
                         )
                     }
                 }
@@ -222,11 +224,10 @@ private fun BookmarkPostItem(
     post: BookmarkPost,
     isEditMode: Boolean,
     isSelected: Boolean,
-    onBookmarkClick: () -> Unit
+    onBookmarkPostClick: (BookmarkPost) -> Unit,
+    onBookmarkEditClick: () -> Unit
 ) {
-    Box(
-        modifier = Modifier.clickableSingle(onClick = { onBookmarkClick() })
-    ) {
+    Box {
         RoundImageView(
             context = LocalContext.current,
             imageUrl = "${BuildConfig.BASE_URL}/images/${post.thumbnailImage}",
@@ -234,12 +235,19 @@ private fun BookmarkPostItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
+                .clickableSingle(onClick = {
+                    if (isEditMode) {
+                        onBookmarkEditClick()
+                    } else {
+                        onBookmarkPostClick(post)
+                    }
+                })
         )
 
         if (isEditMode) {
             DayoCheckbox(
                 checked = isSelected,
-                onCheckedChange = { onBookmarkClick() },
+                onCheckedChange = { onBookmarkEditClick() },
                 modifier = Modifier.align(Alignment.TopEnd)
             )
         }
