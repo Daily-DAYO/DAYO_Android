@@ -125,6 +125,7 @@ fun NavGraphBuilder.myPageNavGraph(
 
     composable(MyPageRoute.bookmark()) {
         BookmarkScreen(
+            onPostClick = onPostClick,
             onBackClick = onBackClick
         )
     }
