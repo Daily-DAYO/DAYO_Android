@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -101,6 +100,8 @@ const val WRITE_POST_IMAGE_MIN_SIZE = 1
 const val WRITE_POST_DETAIL_MAX_LENGTH = 200
 const val WRITE_POST_IMAGE_SIZE = 220
 const val WRITE_POST_TOP_Z_INDEX = 1f
+
+private val WriteSummaryLabelSpacing = 12.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -688,7 +689,7 @@ fun WriteTagLayout(
             style = DayoTheme.typography.b3,
             color = Dark
         )
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(WriteSummaryLabelSpacing))
         if (tags.isNotEmpty()) {
             val tag = tags.joinToString(separator = ", ") {
                 ContextCompat.getString(context, R.string.write_post_select_tag_contents).format(it)
@@ -753,11 +754,7 @@ fun WriteFolderLayout(
             style = DayoTheme.typography.b3,
             color = Dark
         )
-        Spacer(
-            modifier = Modifier
-                .weight(1f)
-                .widthIn(min = 54.dp)
-        )
+        Spacer(modifier = Modifier.width(WriteSummaryLabelSpacing))
         if (!folderName.isNullOrEmpty()) {
             Text(
                 modifier = Modifier
