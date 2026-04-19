@@ -688,13 +688,9 @@ fun WriteTagLayout(
             style = DayoTheme.typography.b3,
             color = Dark
         )
-        Spacer(
-            modifier = Modifier
-                .weight(1f)
-                .widthIn(min = 54.dp)
-        )
+        Spacer(modifier = Modifier.width(12.dp))
         if (tags.isNotEmpty()) {
-            val tag = tags.joinToString(separator = ", ", postfix = " ") {
+            val tag = tags.joinToString(separator = ", ") {
                 ContextCompat.getString(context, R.string.write_post_select_tag_contents).format(it)
             }
             Text(
