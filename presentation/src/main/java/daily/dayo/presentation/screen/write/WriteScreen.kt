@@ -31,7 +31,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.Surface
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
@@ -64,6 +66,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -445,26 +448,33 @@ fun WriteUploadImages(
                     ) {
                         Row(
                             modifier = Modifier
-                                .width(112.dp)
+                                .width(116.dp)
                                 .height(36.dp)
                                 .clickable {
                                     onEditImage(index)
                                 }
-                                .padding(horizontal = 12.dp)
+                                .padding(horizontal = 12.dp),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_crop),
-                                contentDescription = "edit image",
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .size(20.dp)
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_plus_green),
+                                contentDescription = stringResource(R.string.write_post_image_edit),
+                                tint = White_FFFFFF,
+                                modifier = Modifier.size(20.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = stringResource(R.string.write_post_image_edit),
                                 style = DayoTheme.typography.b5,
                                 color = White_FFFFFF,
-                                modifier = Modifier.align(Alignment.CenterVertically)
+                                autoSize = TextAutoSize.StepBased(
+                                    minFontSize = 12.sp,
+                                    maxFontSize = 14.sp,
+                                    stepSize = 0.25.sp,
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
