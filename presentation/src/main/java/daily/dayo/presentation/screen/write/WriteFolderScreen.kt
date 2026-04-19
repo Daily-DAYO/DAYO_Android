@@ -290,17 +290,17 @@ fun WriteFolderItemLayout(
                         .clip(RoundedCornerShape(size = FOLDER_THUMBNAIL_RADIUS_SIZE.dp))
                         .background(Primary_23C882.copy(alpha = 0.6f))
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_check),
-                        contentDescription = "Selected",
-                        contentScale = ContentScale.Crop,
-                        colorFilter = ColorFilter.tint(White_FFFFFF),
-                        modifier = Modifier
-                            .size(18.dp)
-                            .align(Alignment.Center)
-                    )
-                }
-            }
+                      Image(
+                          painter = painterResource(id = R.drawable.ic_check_corner_round),
+                          contentDescription = "Selected",
+                          contentScale = ContentScale.Fit,
+                          colorFilter = ColorFilter.tint(White_FFFFFF),
+                          modifier = Modifier
+                              .align(Alignment.Center)
+                              .size(18.dp)
+                      )
+                  }
+              }
         }
         Spacer(modifier = Modifier.width(12.dp))
         Column(
