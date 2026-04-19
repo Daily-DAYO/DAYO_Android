@@ -51,6 +51,7 @@ import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.common.extension.limitTo
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
+import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Primary_23C882
@@ -308,24 +309,20 @@ fun WriteFolderItemLayout(
                 .fillMaxHeight()
                 .wrapContentHeight(Alignment.CenterVertically)
         ) {
-            Row {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 if (folder.privacy == Privacy.ONLY_ME) {
                     Image(
                         modifier = Modifier
-                            .height(24.dp)
-                            .wrapContentHeight(Alignment.CenterVertically),
+                            .size(16.dp),
                         painter = painterResource(id = R.drawable.ic_lock),
                         contentDescription = "Only Me",
-                        colorFilter = ColorFilter.tint(Dark)
+                        colorFilter = ColorFilter.tint(Gray1_50545B)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                 }
                 Text(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(24.dp)
-                        .wrapContentWidth(Alignment.Start)
-                        .wrapContentHeight(Alignment.CenterVertically),
+                        .fillMaxWidth(),
                     text = folder.title,
                     style = DayoTheme.typography.b4.copy(
                         color = Dark,
