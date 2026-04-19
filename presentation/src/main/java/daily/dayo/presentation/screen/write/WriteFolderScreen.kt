@@ -265,6 +265,11 @@ fun WriteFolderItemLayout(
     isSelected: Boolean = true,
     onFolderClick: (Long, String) -> Unit = { _, _ -> },
 ) {
+    val thumbnailModel: Any = folder.thumbnailImage
+        .takeIf { it.isNotBlank() }
+        ?.let { "${BuildConfig.BASE_URL}/images/$it" }
+        ?: R.drawable.img_default_folder_dayo_logo
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -279,10 +284,11 @@ fun WriteFolderItemLayout(
         ) {
             RoundImageView(
                 context = LocalContext.current,
-                imageUrl = "${BuildConfig.BASE_URL}/images/${folder.thumbnailImage}",
+                imageUrl = thumbnailModel,
                 modifier = Modifier.size(FOLDER_THUMBNAIL_SIZE.dp),
                 imageSize = Size(FOLDER_THUMBNAIL_SIZE, FOLDER_THUMBNAIL_SIZE),
                 roundSize = FOLDER_THUMBNAIL_RADIUS_SIZE.dp,
+                placeholderResId = R.drawable.img_default_folder_dayo_logo,
             )
             if (isSelected) {
                 Box(
