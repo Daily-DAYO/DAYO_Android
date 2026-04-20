@@ -53,6 +53,7 @@ import daily.dayo.presentation.common.TextLimitUtil
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
+import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray5_E8EAEE
 import daily.dayo.presentation.theme.Gray6_F0F1F3
@@ -90,7 +91,7 @@ fun DayoTextField(
             Text(
                 text = label,
                 style = DayoTheme.typography.caption3.copy(
-                    color = Gray4_C5CAD2,
+                    color = Gray3_9FA5AE,
                     fontWeight = FontWeight.SemiBold
                 )
             )
@@ -143,7 +144,7 @@ fun DayoTextField(
                             errorContainerColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
                             unfocusedLabelColor = Color.Transparent, // 라벨
-                            focusedLabelColor = Gray4_C5CAD2,
+                            focusedLabelColor = Gray3_9FA5AE,
                             errorLabelColor = Red_FF4545,
                             focusedPlaceholderColor = Gray5_E8EAEE, // 힌트
                             unfocusedPlaceholderColor = Gray5_E8EAEE,
@@ -224,7 +225,7 @@ fun DayoPasswordTextField(
             Text(
                 text = label,
                 style = DayoTheme.typography.caption3.copy(
-                    color = Gray4_C5CAD2,
+                    color = Gray3_9FA5AE,
                     fontWeight = FontWeight.SemiBold
                 )
             )
@@ -278,7 +279,7 @@ fun DayoPasswordTextField(
                             errorContainerColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
                             unfocusedLabelColor = Color.Transparent, // 라벨
-                            focusedLabelColor = Gray4_C5CAD2,
+                            focusedLabelColor = Gray3_9FA5AE,
                             errorLabelColor = Red_FF4545,
                             focusedPlaceholderColor = Gray5_E8EAEE, // 힌트
                             unfocusedPlaceholderColor = Gray5_E8EAEE,
@@ -355,7 +356,7 @@ fun DayoTimerTextField(
     isError: Boolean = false,
     errorMessage: String = "",
     timeOutErrorMessage: String = stringResource(id = R.string.email_address_certificate_alert_message_time_fail),
-    labelColor: Color = Gray4_C5CAD2,
+    labelColor: Color = Gray3_9FA5AE,
     onTimeOut: (() -> Unit) = { },
     textAlign: TextAlign = TextAlign.Left,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
@@ -437,7 +438,7 @@ fun DayoTimerTextField(
                             errorContainerColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
                             unfocusedLabelColor = Color.Transparent, // 라벨
-                            focusedLabelColor = Gray4_C5CAD2,
+                            focusedLabelColor = Gray3_9FA5AE,
                             errorLabelColor = Red_FF4545,
                             focusedPlaceholderColor = Gray5_E8EAEE, // 힌트
                             unfocusedPlaceholderColor = Gray5_E8EAEE,
