@@ -39,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -410,7 +411,8 @@ private fun FolderDropdownMenu(
         onDismissRequest = { expanded.value = false },
         modifier = Modifier
             .background(DayoTheme.colorScheme.background)
-            .width(140.dp)
+            .width(140.dp),
+        shape = RoundedCornerShape(16.dp)
     ) {
         menuItems.forEach {
             DropdownMenuItem(
@@ -436,6 +438,9 @@ private fun FolderDropdownMenu(
                     it.onClickMenu()
                     expanded.value = false
                 },
+                modifier = Modifier
+                    .padding(horizontal = 4.dp)
+                    .clip(RoundedCornerShape(12.dp)),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 11.5.dp)
             )
         }
