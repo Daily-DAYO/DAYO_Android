@@ -46,9 +46,9 @@ fun ConfirmDialog(
             modifier = modifier
                 .background(
                     DayoTheme.colorScheme.background,
-                    RoundedCornerShape(10.dp)
+                    RoundedCornerShape(16.dp)
                 )
-                .clip(RoundedCornerShape(10.dp))
+                .clip(RoundedCornerShape(16.dp))
         ) {
             Column {
                 DialogHeader(title, description)
