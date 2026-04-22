@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -127,7 +127,7 @@ fun BottomSheetDialog(
                                 interactionSource = interactionSource
                             )
                             .background(White_FFFFFF)
-                            .padding(12.dp),
+                            .padding(vertical = 8.dp, horizontal = 12.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -139,14 +139,14 @@ fun BottomSheetDialog(
                                 tint = Color.Unspecified
                             )
                         }
+                        Spacer(modifier = Modifier.width(12.dp))
                         Text(
                             text = button.first,
-                            modifier = Modifier.offset(8.dp, 0.dp),
+                            modifier = Modifier.weight(1f),
                             color = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) checkedColor else normalColor,
                             fontSize = 16.sp,
                             style = DayoTheme.typography.b4
                         )
-                        Spacer(modifier = Modifier.weight(1f))
                         if (checkedButtonIndex == index) {
                             Icon(
                                 imageVector = rightIcon,

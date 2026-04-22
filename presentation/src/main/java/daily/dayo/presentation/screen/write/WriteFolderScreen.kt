@@ -51,6 +51,7 @@ import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.common.extension.limitTo
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
+import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
 import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Primary_23C882
@@ -264,6 +265,11 @@ fun WriteFolderItemLayout(
     isSelected: Boolean = true,
     onFolderClick: (Long, String) -> Unit = { _, _ -> },
 ) {
+    val thumbnailModel: Any = folder.thumbnailImage
+        .takeIf { it.isNotBlank() }
+        ?.let { "${BuildConfig.BASE_URL}/images/$it" }
+        ?: R.drawable.img_default_folder_dayo_logo
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -278,10 +284,11 @@ fun WriteFolderItemLayout(
         ) {
             RoundImageView(
                 context = LocalContext.current,
-                imageUrl = "${BuildConfig.BASE_URL}/images/${folder.thumbnailImage}",
+                imageUrl = thumbnailModel,
                 modifier = Modifier.size(FOLDER_THUMBNAIL_SIZE.dp),
                 imageSize = Size(FOLDER_THUMBNAIL_SIZE, FOLDER_THUMBNAIL_SIZE),
                 roundSize = FOLDER_THUMBNAIL_RADIUS_SIZE.dp,
+                placeholderResId = R.drawable.img_default_folder_dayo_logo,
             )
             if (isSelected) {
                 Box(
@@ -290,17 +297,17 @@ fun WriteFolderItemLayout(
                         .clip(RoundedCornerShape(size = FOLDER_THUMBNAIL_RADIUS_SIZE.dp))
                         .background(Primary_23C882.copy(alpha = 0.6f))
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_check),
-                        contentDescription = "Selected",
-                        contentScale = ContentScale.Crop,
-                        colorFilter = ColorFilter.tint(White_FFFFFF),
-                        modifier = Modifier
-                            .size(18.dp)
-                            .align(Alignment.Center)
-                    )
-                }
-            }
+                      Image(
+                          painter = painterResource(id = R.drawable.ic_check_corner_round),
+                          contentDescription = "Selected",
+                          contentScale = ContentScale.Fit,
+                          colorFilter = ColorFilter.tint(White_FFFFFF),
+                          modifier = Modifier
+                              .align(Alignment.Center)
+                              .size(18.dp)
+                      )
+                  }
+              }
         }
         Spacer(modifier = Modifier.width(12.dp))
         Column(
@@ -308,24 +315,20 @@ fun WriteFolderItemLayout(
                 .fillMaxHeight()
                 .wrapContentHeight(Alignment.CenterVertically)
         ) {
-            Row {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 if (folder.privacy == Privacy.ONLY_ME) {
                     Image(
                         modifier = Modifier
-                            .height(24.dp)
-                            .wrapContentHeight(Alignment.CenterVertically),
+                            .size(16.dp),
                         painter = painterResource(id = R.drawable.ic_lock),
                         contentDescription = "Only Me",
-                        colorFilter = ColorFilter.tint(Dark)
+                        colorFilter = ColorFilter.tint(Gray1_50545B)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                 }
                 Text(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(24.dp)
-                        .wrapContentWidth(Alignment.Start)
-                        .wrapContentHeight(Alignment.CenterVertically),
+                        .fillMaxWidth(),
                     text = folder.title,
                     style = DayoTheme.typography.b4.copy(
                         color = Dark,
