@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -87,6 +89,7 @@ private fun DialogHeader(title: String, description: String) {
         }
 
         if (description.isNotBlank()) {
+            Spacer(Modifier.height(8.dp))
             Text(
                 text = description,
                 color = Gray2_767B83,
