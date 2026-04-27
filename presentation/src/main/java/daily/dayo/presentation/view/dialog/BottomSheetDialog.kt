@@ -68,7 +68,7 @@ fun BottomSheetDialog(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
-        shape = RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp),
+        shape = RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp),
         color = White_FFFFFF
     ) {
         Column(

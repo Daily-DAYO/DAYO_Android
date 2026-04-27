@@ -12,23 +12,11 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">#FFFFFFFF</item>
         <item name="android:windowLightStatusBar" tools:targetApi="1">true</item>
-        <!-- Customize your theme here. -->
-        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
     </style>
     <style name="Theme.DAYO.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">#FFFFFFFF</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_dayo_logo_splash</item>
         <item name="postSplashScreenTheme">@style/Theme.DAYO</item>
-    </style>
-
-    <style name="AppBottomSheetDialogTheme"
-        parent="Theme.Design.Light.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/AppModalStyle</item>
-    </style>
-
-    <style name="AppModalStyle"
-        parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@drawable/dialog_bottom_sheet_default</item>
     </style>
 
 </resources>
