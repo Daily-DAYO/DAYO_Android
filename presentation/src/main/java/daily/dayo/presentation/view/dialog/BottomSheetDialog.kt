@@ -160,21 +160,22 @@ fun BottomSheetDialog(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .wrapContentHeight()
+                            .height(56.dp)
                             .background(
                                 if (isPressed) Gray6_F0F1F3 else White_FFFFFF,
                                 RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp)
                             )
-                            .padding(16.dp)
                             .clickable(
                                 onClick = button.second,
                                 interactionSource = interactionSource,
                                 indication = null
                             ),
                         horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = button.first,
+                            textAlign = TextAlign.Center,
                             color = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) checkedColor else normalColor,
                             fontSize = 16.sp,
                             style = DayoTheme.typography.b4
