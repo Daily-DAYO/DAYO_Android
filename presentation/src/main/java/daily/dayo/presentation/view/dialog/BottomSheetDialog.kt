@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -160,7 +161,7 @@ fun BottomSheetDialog(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp)
+                            .heightIn(min = 56.dp)
                             .background(
                                 if (isPressed) Gray6_F0F1F3 else White_FFFFFF,
                                 RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp)
