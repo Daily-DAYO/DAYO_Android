@@ -3,10 +3,7 @@ package daily.dayo.presentation.view
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Text
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -24,15 +21,13 @@ import daily.dayo.presentation.theme.White_FFFFFF
 fun ToggleButtonWithLabel(
     label: String,
     isToggled: Boolean,
-    onToggleChanged: (Boolean) -> Unit
+    onToggleChanged: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,
-        modifier = Modifier
-            .padding(18.dp)
-            .fillMaxWidth()
-            .wrapContentHeight()
+        modifier = modifier
     ) {
         Text(
             text = label,
