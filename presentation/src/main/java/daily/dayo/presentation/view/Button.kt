@@ -50,7 +50,9 @@ fun FilledButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isTonal: Boolean = false,
-    icon: @Composable (() -> Unit)? = null
+    icon: @Composable (() -> Unit)? = null,
+    contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
+    textStyle: TextStyle = DayoTheme.typography.b6
 ) {
     val buttonColors = if (isTonal)
         ButtonDefaults.buttonColors(
@@ -73,10 +75,10 @@ fun FilledButton(
         modifier = modifier,
         enabled = enabled,
         colors = buttonColors,
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+        contentPadding = contentPadding,
         content = {
             if (icon != null) icon()
-            Text(text = label, style = DayoTheme.typography.b6)
+            Text(text = label, style = textStyle)
         }
     )
 }
