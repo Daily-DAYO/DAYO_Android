@@ -12,25 +12,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.TextFieldDefaults.TextFieldDecorationBox
-import androidx.compose.material.TextFieldDefaults.textFieldColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -56,7 +49,6 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -396,7 +388,6 @@ fun CommentReplyDescriptionView(replyCommentState: MutableState<Pair<Long, Comme
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CommentTextField(
     enabled: Boolean,
@@ -417,10 +408,10 @@ fun CommentTextField(
         modifier = Modifier
             .background(DayoTheme.colorScheme.background)
             .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(horizontal = 18.dp)
+            .height(64.dp)
+            .padding(horizontal = 16.dp)
             .padding(top = 12.dp, bottom = 16.dp),
-        verticalAlignment = Alignment.Bottom
+        verticalAlignment = Alignment.CenterVertically
     ) {
         val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
         BasicTextField(
@@ -463,32 +454,36 @@ fun CommentTextField(
                 }
             },
             modifier = Modifier
-                .padding(end = 8.dp)
-                .heightIn(min = 36.dp)
                 .weight(1f)
+                .height(36.dp)
                 .focusRequester(focusRequester),
             textStyle = DayoTheme.typography.b6,
             interactionSource = interactionSource,
             cursorBrush = SolidColor(Primary_23C882),
             decorationBox = @Composable { innerTextField ->
-                TextFieldDecorationBox(
-                    value = commentText.value.text,
-                    innerTextField = innerTextField,
-                    enabled = true,
-                    singleLine = false,
-                    visualTransformation = VisualTransformation.None,
-                    interactionSource = interactionSource,
-                    placeholder = { Text(text = "댓글을 남겨주세요", style = DayoTheme.typography.b6.copy(Gray4_C5CAD2)) },
-                    shape = DayoTheme.shapes.small.copy(all = CornerSize(12.dp)),
-                    colors = textFieldColors(backgroundColor = Gray7_F6F6F7),
-                    contentPadding = TextFieldDefaults.textFieldWithLabelPadding(top = 8.dp, bottom = 8.dp, start = 12.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Gray7_F6F6F7, RoundedCornerShape(12.dp))
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    if (commentText.value.text.isEmpty()) {
+                        Text(
+                            text = "댓글을 남겨주세요",
+                            style = DayoTheme.typography.b6.copy(Gray4_C5CAD2)
+                        )
+                    }
+                    innerTextField()
+                }
             }
         )
 
+        Spacer(modifier = Modifier.width(8.dp))
+
         Box(
             modifier = Modifier
-                .defaultMinSize(minWidth = 64.dp, minHeight = 36.dp)
+                .height(36.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(color = if (enabled) Primary_23C882 else PrimaryL1_8FD9B9)
                 .clickableSingle(enabled = enabled) { onClickPostComment() }
