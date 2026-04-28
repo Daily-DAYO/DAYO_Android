@@ -115,12 +115,13 @@ fun CommentListView(
 
                     Text(
                         text = stringResource(id = R.string.post_comment_empty),
-                        style = DayoTheme.typography.b3.copy(Gray3_9FA5AE),
+                        style = DayoTheme.typography.b5.copy(Gray2_767B83),
                         modifier = Modifier.padding(top = 12.dp, bottom = 2.dp)
                     )
+                    Spacer(Modifier.height(2.dp))
                     Text(
                         text = stringResource(id = R.string.post_comment_empty_description),
-                        style = DayoTheme.typography.caption1.copy(Gray4_C5CAD2)
+                        style = DayoTheme.typography.caption4.copy(Gray3_9FA5AE)
                     )
                 }
             } else {
