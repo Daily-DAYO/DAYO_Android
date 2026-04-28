@@ -18,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
@@ -106,12 +105,10 @@ fun PostScreen(
         postViewModel.requestDeletePostComment(commentId)
     }
     val postCommentDeleteSuccess by postViewModel.postCommentDeleteSuccess.observeAsState(Event(false))
-    if (postCommentDeleteSuccess.getContentIfNotHandled() == true) {
-        postViewModel.requestPostComment(postId)
-        SideEffect {
-            coroutineScope.launch {
-                snackBarHostState.showSnackbar(context.getString(R.string.comment_delete_message))
-            }
+    LaunchedEffect(postCommentDeleteSuccess) {
+        if (postCommentDeleteSuccess.getContentIfNotHandled() == true) {
+            postViewModel.requestPostComment(postId)
+            snackBarHostState.showSnackbar(context.getString(R.string.comment_delete_message))
         }
     }
     var showReportDialog by remember { mutableStateOf(false) }
@@ -493,4 +490,3 @@ private fun PreviewPostScreen() {
         )
     }
 }
-
