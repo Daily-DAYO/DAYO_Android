@@ -164,7 +164,7 @@ fun BottomSheetDialog(
                             .heightIn(min = 56.dp)
                             .background(
                                 if (isPressed) Gray6_F0F1F3 else White_FFFFFF,
-                                RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp)
+                                RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp)
                             )
                             .clickable(
                                 onClick = button.second,
