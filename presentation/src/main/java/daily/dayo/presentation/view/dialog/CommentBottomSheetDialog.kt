@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -92,7 +94,11 @@ fun CommentBottomSheetDialog(
     val onClickDelete: (Long) -> Unit = { commentId ->
         postViewModel.requestDeletePostComment(commentId)
     }
-    val postCommentDeleteSuccess by postViewModel.postCommentDeleteSuccess.observeAsState(Event(false))
+    val postCommentDeleteSuccess by postViewModel.postCommentDeleteSuccess.observeAsState(
+        Event(
+            false
+        )
+    )
     LaunchedEffect(postCommentDeleteSuccess) {
         if (postCommentDeleteSuccess.getContentIfNotHandled() == true) {
             postViewModel.requestPostComment(postId)
@@ -130,14 +136,24 @@ fun CommentBottomSheetDialog(
     }
 
     // create comment
-    val replyCommentState = remember { mutableStateOf<Pair<Long, Comment>?>(null) } // parent comment Id, reply comment
+    val replyCommentState =
+        remember { mutableStateOf<Pair<Long, Comment>?>(null) } // parent comment Id, reply comment
     val onClickPostComment: () -> Unit = {
         if (replyCommentState.value == null) {
             if (commentText.value.text.isNotBlank()) {
-                postViewModel.requestCreatePostComment(commentText.value.text, postId, mentionedMemberIds)
+                postViewModel.requestCreatePostComment(
+                    commentText.value.text,
+                    postId,
+                    mentionedMemberIds
+                )
             }
         } else {
-            postViewModel.requestCreatePostCommentReply(replyCommentState.value!!, commentText.value.text, postId, mentionedMemberIds)
+            postViewModel.requestCreatePostCommentReply(
+                replyCommentState.value!!,
+                commentText.value.text,
+                postId,
+                mentionedMemberIds
+            )
         }
     }
     val onClickReply: (Pair<Long, Comment>?) -> Unit = { reply ->
@@ -146,7 +162,8 @@ fun CommentBottomSheetDialog(
 
         // show mention user name
         val replyUsername = "@${replyCommentState.value?.second?.nickname} "
-        commentText.value = TextFieldValue(text = replyUsername, selection = TextRange(replyUsername.length))
+        commentText.value =
+            TextFieldValue(text = replyUsername, selection = TextRange(replyUsername.length))
         commentFocusRequester.requestFocus()
     }
     val commentEnabled = if (replyCommentState.value == null) {
@@ -204,7 +221,7 @@ fun CommentBottomSheetDialog(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp, bottom = 65.dp)
+                    .padding(bottom = 65.dp)
                     .wrapContentHeight(),
             ) {
                 CommentBottomSheetDialogTitle(clearComment, onClickClose)
@@ -222,8 +239,14 @@ fun CommentBottomSheetDialog(
             }
 
             Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-                if (showMentionSearchView.value) CommentMentionSearchView(userResults, onClickFollowUser)
-                if (replyCommentState.value != null) CommentReplyDescriptionView(replyCommentState, onClickCancelReply)
+                if (showMentionSearchView.value) CommentMentionSearchView(
+                    userResults,
+                    onClickFollowUser
+                )
+                if (replyCommentState.value != null) CommentReplyDescriptionView(
+                    replyCommentState,
+                    onClickCancelReply
+                )
                 CommentTextField(
                     enabled = commentEnabled,
                     commentText = commentText,
@@ -258,12 +281,15 @@ private fun CommentBottomSheetDialogTitle(clearComment: () -> Unit, onClickClose
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight()
+            .height(48.dp)
             .background(DayoTheme.colorScheme.background)
     ) {
         Text(
             text = stringResource(id = R.string.comment),
-            modifier = Modifier.align(Alignment.Center),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(top = 15.dp, bottom = 6.dp)
+                .height(27.dp),
             textAlign = TextAlign.Center,
             style = DayoTheme.typography.b1.copy(color = Dark, fontWeight = FontWeight.SemiBold)
         )
@@ -275,7 +301,10 @@ private fun CommentBottomSheetDialogTitle(clearComment: () -> Unit, onClickClose
             },
             iconContentDescription = "close",
             iconPainter = painterResource(id = R.drawable.ic_x),
-            iconButtonModifier = Modifier.align(Alignment.CenterEnd)
+            iconButtonModifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 8.dp)
+                .size(32.dp)
         )
     }
 }
