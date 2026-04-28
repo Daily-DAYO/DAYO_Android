@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -329,20 +330,24 @@ fun CommentMentionSearchView(userResults: LazyPagingItems<SearchUser>, onClickFo
         modifier = Modifier
             .background(DayoTheme.colorScheme.background)
             .fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 18.dp)
+        contentPadding = PaddingValues(start = 18.dp, end = 18.dp, top = 16.dp, bottom = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         items(userResults.itemCount) { index ->
             userResults[index]?.let { user ->
+                val interactionSource = remember { MutableInteractionSource() }
+                val isPressed = interactionSource.collectIsPressedAsState().value
                 Row(
                     modifier = Modifier
-                        .background(DayoTheme.colorScheme.background)
                         .fillMaxWidth()
-                        .padding(vertical = 4.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(if (isPressed) Gray7_F6F6F7 else DayoTheme.colorScheme.background)
                         .clickableSingle(
-                            indication = ripple(bounded = false, radius = 8.dp, color = Gray7_F6F6F7),
-                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            interactionSource = interactionSource,
                             onClick = { onClickFollowUser(user) }
-                        ),
+                        )
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     RoundImageView(
@@ -350,12 +355,7 @@ fun CommentMentionSearchView(userResults: LazyPagingItems<SearchUser>, onClickFo
                         context = LocalContext.current,
                         modifier = Modifier
                             .clip(CircleShape)
-                            .size(24.dp)
-                            .clickableSingle(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null,
-                                onClick = { }
-                            ),
+                            .size(24.dp),
                         imageDescription = "search users profile image",
                     )
                     Spacer(modifier = Modifier.width(12.dp))
