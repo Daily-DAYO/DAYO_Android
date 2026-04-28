@@ -91,31 +91,35 @@ fun CommentListView(
             if (postComments.isEmpty()) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .background(DayoTheme.colorScheme.background)
                         .fillMaxSize()
-                        .padding(top = 12.dp, bottom = 30.dp)
                         .then(modifier)
                 ) {
-                    if (showEmptyIcon) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_comment_empty),
-                            contentDescription = "empty",
-                            tint = Color.Unspecified
+                    Spacer(modifier = Modifier.weight(64f))
+
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        if (showEmptyIcon) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_comment_empty),
+                                contentDescription = "empty",
+                                tint = Color.Unspecified
+                            )
+                        }
+
+                        Text(
+                            text = stringResource(id = R.string.post_comment_empty),
+                            style = DayoTheme.typography.b5.copy(Gray2_767B83),
+                            modifier = Modifier.padding(top = 12.dp, bottom = 2.dp)
+                        )
+                        Spacer(Modifier.height(2.dp))
+                        Text(
+                            text = stringResource(id = R.string.post_comment_empty_description),
+                            style = DayoTheme.typography.caption4.copy(Gray3_9FA5AE)
                         )
                     }
 
-                    Text(
-                        text = stringResource(id = R.string.post_comment_empty),
-                        style = DayoTheme.typography.b5.copy(Gray2_767B83),
-                        modifier = Modifier.padding(top = 12.dp, bottom = 2.dp)
-                    )
-                    Spacer(Modifier.height(2.dp))
-                    Text(
-                        text = stringResource(id = R.string.post_comment_empty_description),
-                        style = DayoTheme.typography.caption4.copy(Gray3_9FA5AE)
-                    )
+                    Spacer(modifier = Modifier.weight(135f))
                 }
             } else {
                 Column(

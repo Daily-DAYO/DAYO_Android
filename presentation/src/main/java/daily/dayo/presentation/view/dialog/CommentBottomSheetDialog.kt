@@ -325,16 +325,35 @@ private fun CommentBottomSheetDialogContent(
             .fillMaxHeight(0.8f)
     ) {
         item {
-            CommentListView(
-                currentMemberId = currentMemberId,
-                postComments = postComments,
-                onClickProfile = onClickCommentProfile,
-                onClickReply = onClickReply,
-                onClickDelete = onClickDelete,
-                onClickReport = onClickReport,
-                modifier = Modifier.padding(horizontal = 18.dp),
-                showEmptyIcon = true
-            )
+            if (postComments.data.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillParentMaxHeight()
+                        .fillMaxWidth()
+                ) {
+                    CommentListView(
+                        currentMemberId = currentMemberId,
+                        postComments = postComments,
+                        onClickProfile = onClickCommentProfile,
+                        onClickReply = onClickReply,
+                        onClickDelete = onClickDelete,
+                        onClickReport = onClickReport,
+                        modifier = Modifier.padding(horizontal = 18.dp),
+                        showEmptyIcon = true
+                    )
+                }
+            } else {
+                CommentListView(
+                    currentMemberId = currentMemberId,
+                    postComments = postComments,
+                    onClickProfile = onClickCommentProfile,
+                    onClickReply = onClickReply,
+                    onClickDelete = onClickDelete,
+                    onClickReport = onClickReport,
+                    modifier = Modifier.padding(horizontal = 18.dp),
+                    showEmptyIcon = true
+                )
+            }
         }
     }
 }
