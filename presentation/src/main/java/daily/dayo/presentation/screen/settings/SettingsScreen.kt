@@ -42,8 +42,10 @@ import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import daily.dayo.domain.model.Profile
@@ -273,14 +275,16 @@ private fun SettingProfile(
         Text(
             text = profile?.nickname ?: "",
             color = Dark,
-            style = DayoTheme.typography.b2
+            textAlign = TextAlign.Center,
+            style = DayoTheme.typography.b1
         )
 
         // email
         Text(
             text = profile?.email ?: "",
             color = Gray3_9FA5AE,
-            style = DayoTheme.typography.b6
+            textAlign = TextAlign.Center,
+            style = DayoTheme.typography.b6.copy(lineHeight = 21.sp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
