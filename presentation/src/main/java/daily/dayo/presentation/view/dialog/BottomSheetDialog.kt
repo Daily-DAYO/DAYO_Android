@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -68,7 +69,7 @@ fun BottomSheetDialog(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
-        shape = RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp),
+        shape = RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp),
         color = White_FFFFFF
     ) {
         Column(
@@ -160,21 +161,22 @@ fun BottomSheetDialog(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .wrapContentHeight()
+                            .heightIn(min = 56.dp)
                             .background(
                                 if (isPressed) Gray6_F0F1F3 else White_FFFFFF,
-                                RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp)
+                                RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp)
                             )
-                            .padding(16.dp)
                             .clickable(
                                 onClick = button.second,
                                 interactionSource = interactionSource,
                                 indication = null
                             ),
                         horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = button.first,
+                            textAlign = TextAlign.Center,
                             color = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) checkedColor else normalColor,
                             fontSize = 16.sp,
                             style = DayoTheme.typography.b4
