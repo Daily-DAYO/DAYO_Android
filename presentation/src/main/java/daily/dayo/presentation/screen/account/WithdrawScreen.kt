@@ -617,11 +617,11 @@ fun WithdrawConfirmScreen(
                         fontWeight = FontWeight.SemiBold
                     ),
                 )
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(32.dp))
                 withdrawCheckLists.forEachIndexed { index, text ->
                     WithdrawConfirmCheckItems(checkText = text)
                     if (index != withdrawCheckLists.lastIndex) {
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
             }
