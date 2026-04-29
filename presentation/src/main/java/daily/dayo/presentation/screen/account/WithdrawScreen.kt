@@ -687,11 +687,13 @@ fun WithdrawConfirmCheckItems(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight()
+            .wrapContentHeight(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_check),
             contentDescription = null,
+            modifier = Modifier.size(20.dp),
             tint = Primary_23C882,
         )
         Spacer(modifier = Modifier.width(4.dp))
