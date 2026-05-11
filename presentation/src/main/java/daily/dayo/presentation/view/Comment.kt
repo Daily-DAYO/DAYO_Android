@@ -5,31 +5,25 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.TextFieldDefaults.TextFieldDecorationBox
-import androidx.compose.material.TextFieldDefaults.textFieldColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -55,7 +49,6 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -98,31 +91,35 @@ fun CommentListView(
             if (postComments.isEmpty()) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .background(DayoTheme.colorScheme.background)
                         .fillMaxSize()
-                        .padding(top = 12.dp, bottom = 30.dp)
                         .then(modifier)
                 ) {
-                    if (showEmptyIcon) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_comment_empty),
-                            contentDescription = "empty",
-                            tint = Color.Unspecified
+                    Spacer(modifier = Modifier.weight(64f))
+
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        if (showEmptyIcon) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_comment_empty),
+                                contentDescription = "empty",
+                                tint = Color.Unspecified
+                            )
+                        }
+
+                        Text(
+                            text = stringResource(id = R.string.post_comment_empty),
+                            style = DayoTheme.typography.b5.copy(Gray2_767B83),
+                            modifier = Modifier.padding(top = 12.dp, bottom = 2.dp)
+                        )
+                        Spacer(Modifier.height(2.dp))
+                        Text(
+                            text = stringResource(id = R.string.post_comment_empty_description),
+                            style = DayoTheme.typography.caption4.copy(Gray3_9FA5AE)
                         )
                     }
 
-                    Text(
-                        text = stringResource(id = R.string.post_comment_empty),
-                        style = DayoTheme.typography.b5.copy(Gray2_767B83),
-                        modifier = Modifier.padding(top = 12.dp, bottom = 2.dp)
-                    )
-                    Spacer(Modifier.height(2.dp))
-                    Text(
-                        text = stringResource(id = R.string.post_comment_empty_description),
-                        style = DayoTheme.typography.caption4.copy(Gray3_9FA5AE)
-                    )
+                    Spacer(modifier = Modifier.weight(135f))
                 }
             } else {
                 Column(
@@ -329,20 +326,24 @@ fun CommentMentionSearchView(userResults: LazyPagingItems<SearchUser>, onClickFo
         modifier = Modifier
             .background(DayoTheme.colorScheme.background)
             .fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 18.dp)
+        contentPadding = PaddingValues(start = 18.dp, end = 18.dp, top = 16.dp, bottom = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         items(userResults.itemCount) { index ->
             userResults[index]?.let { user ->
+                val interactionSource = remember { MutableInteractionSource() }
+                val isPressed = interactionSource.collectIsPressedAsState().value
                 Row(
                     modifier = Modifier
-                        .background(DayoTheme.colorScheme.background)
                         .fillMaxWidth()
-                        .padding(vertical = 4.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(if (isPressed) Gray7_F6F6F7 else DayoTheme.colorScheme.background)
                         .clickableSingle(
-                            indication = ripple(bounded = false, radius = 8.dp, color = Gray7_F6F6F7),
-                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            interactionSource = interactionSource,
                             onClick = { onClickFollowUser(user) }
-                        ),
+                        )
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     RoundImageView(
@@ -350,12 +351,7 @@ fun CommentMentionSearchView(userResults: LazyPagingItems<SearchUser>, onClickFo
                         context = LocalContext.current,
                         modifier = Modifier
                             .clip(CircleShape)
-                            .size(24.dp)
-                            .clickableSingle(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null,
-                                onClick = { }
-                            ),
+                            .size(24.dp),
                         imageDescription = "search users profile image",
                     )
                     Spacer(modifier = Modifier.width(12.dp))
@@ -396,7 +392,6 @@ fun CommentReplyDescriptionView(replyCommentState: MutableState<Pair<Long, Comme
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CommentTextField(
     enabled: Boolean,
@@ -417,10 +412,10 @@ fun CommentTextField(
         modifier = Modifier
             .background(DayoTheme.colorScheme.background)
             .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(horizontal = 18.dp)
+            .height(64.dp)
+            .padding(horizontal = 16.dp)
             .padding(top = 12.dp, bottom = 16.dp),
-        verticalAlignment = Alignment.Bottom
+        verticalAlignment = Alignment.CenterVertically
     ) {
         val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
         BasicTextField(
@@ -463,32 +458,36 @@ fun CommentTextField(
                 }
             },
             modifier = Modifier
-                .padding(end = 8.dp)
-                .heightIn(min = 36.dp)
                 .weight(1f)
+                .height(36.dp)
                 .focusRequester(focusRequester),
             textStyle = DayoTheme.typography.b6,
             interactionSource = interactionSource,
             cursorBrush = SolidColor(Primary_23C882),
             decorationBox = @Composable { innerTextField ->
-                TextFieldDecorationBox(
-                    value = commentText.value.text,
-                    innerTextField = innerTextField,
-                    enabled = true,
-                    singleLine = false,
-                    visualTransformation = VisualTransformation.None,
-                    interactionSource = interactionSource,
-                    placeholder = { Text(text = "댓글을 남겨주세요", style = DayoTheme.typography.b6.copy(Gray4_C5CAD2)) },
-                    shape = DayoTheme.shapes.small.copy(all = CornerSize(12.dp)),
-                    colors = textFieldColors(backgroundColor = Gray7_F6F6F7),
-                    contentPadding = TextFieldDefaults.textFieldWithLabelPadding(top = 8.dp, bottom = 8.dp, start = 12.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Gray7_F6F6F7, RoundedCornerShape(12.dp))
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    if (commentText.value.text.isEmpty()) {
+                        Text(
+                            text = "댓글을 남겨주세요",
+                            style = DayoTheme.typography.b6.copy(Gray4_C5CAD2)
+                        )
+                    }
+                    innerTextField()
+                }
             }
         )
 
+        Spacer(modifier = Modifier.width(8.dp))
+
         Box(
             modifier = Modifier
-                .defaultMinSize(minWidth = 64.dp, minHeight = 36.dp)
+                .height(36.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(color = if (enabled) Primary_23C882 else PrimaryL1_8FD9B9)
                 .clickableSingle(enabled = enabled) { onClickPostComment() }

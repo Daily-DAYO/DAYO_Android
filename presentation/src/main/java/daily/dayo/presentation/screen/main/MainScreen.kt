@@ -292,6 +292,7 @@ internal fun MainScreen(
                             onDismissRequest = { bottomSheetController.hide() },
                             modifier = Modifier.navigationBarsPadding(),
                             sheetState = bottomSheetState,
+                            sheetGesturesEnabled = false,
                             dragHandle = null
                         ) {
                             Box {
