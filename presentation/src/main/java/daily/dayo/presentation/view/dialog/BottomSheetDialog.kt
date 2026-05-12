@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -152,7 +153,9 @@ fun BottomSheetDialog(
                             Icon(
                                 imageVector = rightIcon,
                                 contentDescription = "",
-                                modifier = Modifier.align(Alignment.CenterVertically),
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .align(Alignment.CenterVertically),
                                 tint = Color.Unspecified
                             )
                         }

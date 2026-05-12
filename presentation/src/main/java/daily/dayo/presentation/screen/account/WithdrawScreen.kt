@@ -455,33 +455,28 @@ fun WithdrawHoldBottomSheet(
                 .fillMaxWidth()
                 .wrapContentHeight()
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(bottom = 8.dp)
-            ) {
+            Text(
+                text = stringResource(id = content.titleResId),
+                style = DayoTheme.typography.b1,
+                color = Dark,
+            )
 
-                Text(
-                    text = stringResource(id = content.titleResId),
-                    style = DayoTheme.typography.b1,
-                    color = Dark,
+            val descriptionText = stringResource(id = content.descriptionResId)
+            if (descriptionText.isNotBlank()) {
+                Spacer(
+                    modifier = Modifier.height(
+                        if (isOtherReason) 2.dp else 4.dp
+                    )
                 )
-
-                val descriptionText = stringResource(id = content.descriptionResId)
-                if (descriptionText.isNotBlank()) {
-                    Spacer(
-                        modifier = Modifier.height(
-                            if (isOtherReason) 2.dp else 4.dp
-                        )
+                Text(
+                    text = descriptionText,
+                    style = DayoTheme.typography.caption2.copy(
+                        color = Gray2_767B83,
+                        fontWeight = FontWeight.Medium
                     )
-                    Text(
-                        text = descriptionText,
-                        style = DayoTheme.typography.caption2.copy(
-                            color = Gray2_767B83,
-                            fontWeight = FontWeight.Medium
-                        )
-                    )
-                }
+                )
             }
+
             Spacer(
                 modifier = Modifier.height(
                     if (isOtherReason || hasWithdrawReasonGuide) 8.dp
@@ -622,11 +617,11 @@ fun WithdrawConfirmScreen(
                         fontWeight = FontWeight.SemiBold
                     ),
                 )
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(32.dp))
                 withdrawCheckLists.forEachIndexed { index, text ->
                     WithdrawConfirmCheckItems(checkText = text)
                     if (index != withdrawCheckLists.lastIndex) {
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
             }
@@ -692,11 +687,13 @@ fun WithdrawConfirmCheckItems(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight()
+            .wrapContentHeight(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_check),
             contentDescription = null,
+            modifier = Modifier.size(20.dp),
             tint = Primary_23C882,
         )
         Spacer(modifier = Modifier.width(4.dp))
@@ -832,9 +829,11 @@ private fun WithdrawGuideContentUI(
                     style = DayoTheme.typography.caption4,
                 )
                 if (index != guideStrings.lastIndex) {
-                    Spacer(modifier = Modifier
-                        .width(6.dp)
-                        .align(Alignment.CenterVertically))
+                    Spacer(
+                        modifier = Modifier
+                            .width(6.dp)
+                            .align(Alignment.CenterVertically)
+                    )
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right),
                         contentDescription = null,
@@ -843,9 +842,11 @@ private fun WithdrawGuideContentUI(
                             .align(Alignment.CenterVertically),
                         tint = Gray3_9FA5AE,
                     )
-                    Spacer(modifier = Modifier
-                        .width(6.dp)
-                        .align(Alignment.CenterVertically))
+                    Spacer(
+                        modifier = Modifier
+                            .width(6.dp)
+                            .align(Alignment.CenterVertically)
+                    )
                 }
             }
         }
