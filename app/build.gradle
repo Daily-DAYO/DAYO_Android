@@ -29,8 +29,8 @@ android {
         applicationId "com.daily.dayo"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 21020
-        versionName "2.1.2"
+        versionCode 22000
+        versionName "2.2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
