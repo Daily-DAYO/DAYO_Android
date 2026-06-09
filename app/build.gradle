@@ -99,14 +99,12 @@ android {
     productFlavors {
         dev {
             dimension "environment"
-            buildConfigField("String", "BASE_URL", FALLBACK_BASE_URL_DEV)
             buildConfigField("String", "FALLBACK_BASE_URL", FALLBACK_BASE_URL_DEV)
             buildConfigField("String", "REMOTE_CONFIG_BASE_URL_KEY", "\"api_base_url_dev\"")
             buildConfigField("String", "REMOTE_CONFIG_BASE_URL_SIGNATURE_KEY", "\"api_base_url_dev_signature\"")
         }
         prod {
             dimension "environment"
-            buildConfigField("String", "BASE_URL", FALLBACK_BASE_URL_PROD)
             buildConfigField("String", "FALLBACK_BASE_URL", FALLBACK_BASE_URL_PROD)
             buildConfigField("String", "REMOTE_CONFIG_BASE_URL_KEY", "\"api_base_url_prod\"")
             buildConfigField("String", "REMOTE_CONFIG_BASE_URL_SIGNATURE_KEY", "\"api_base_url_prod_signature\"")

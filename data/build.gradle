@@ -52,12 +52,10 @@ android {
     productFlavors {
         dev {
             dimension "environment"
-            buildConfigField("String", "BASE_URL", FALLBACK_BASE_URL_DEV)
             buildConfigField("String", "FALLBACK_BASE_URL", FALLBACK_BASE_URL_DEV)
         }
         prod {
             dimension "environment"
-            buildConfigField("String", "BASE_URL", FALLBACK_BASE_URL_PROD)
             buildConfigField("String", "FALLBACK_BASE_URL", FALLBACK_BASE_URL_PROD)
         }
     }
