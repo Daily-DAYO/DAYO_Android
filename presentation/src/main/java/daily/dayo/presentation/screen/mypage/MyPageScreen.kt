@@ -299,6 +299,7 @@ private fun MyPageMenu(
             Icon(
                 painter = painterResource(R.drawable.ic_bookmark_default),
                 contentDescription = stringResource(id = R.string.bookmark),
+                modifier = Modifier.size(20.dp),
                 tint = Gray1_50545B
             )
         }
@@ -339,12 +340,13 @@ private fun MyPageDiaryHeader(
         ) {
             Icon(
                 imageVector = Icons.Filled.Add,
-                contentDescription = stringResource(id = R.string.my_profile_new_folder)
+                contentDescription = stringResource(id = R.string.my_profile_new_folder),
+                modifier = Modifier.size(12.dp)
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = stringResource(id = R.string.my_profile_new_folder),
-                style = DayoTheme.typography.b6.copy(
+                style = DayoTheme.typography.caption4.copy(
                     if (isCreateFolderEnabled) Primary_23C882 else Gray4_C5CAD2
                 )
             )
@@ -372,7 +374,7 @@ private fun MyPageTopNavigation(onSettingsClick: () -> Unit) {
                 Text(
                     text = stringResource(id = R.string.my_page),
                     style = DayoTheme.typography.h1.copy(
-                        color = Gray1_50545B,
+                        color = Dark,
                         fontWeight = FontWeight.SemiBold
                     )
                 )
@@ -383,9 +385,10 @@ private fun MyPageTopNavigation(onSettingsClick: () -> Unit) {
                 onClick = onSettingsClick,
                 iconContentDescription = "setting button",
                 iconPainter = painterResource(id = R.drawable.ic_setting),
+                iconButtonModifier = Modifier.padding(end = 8.dp),
                 iconModifier = Modifier
-                    .padding(end = 18.dp)
-                    .size(24.dp),
+                    .size(44.dp)
+                    .padding(10.dp),
                 iconTintColor = Dark
             )
         }

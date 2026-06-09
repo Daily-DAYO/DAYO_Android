@@ -18,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
@@ -99,19 +98,17 @@ fun PostScreen(
     val commentState = postViewModel.postComments.observeAsState()
     val commentText = remember { mutableStateOf(TextFieldValue("")) }
     val showMentionSearchView = remember { mutableStateOf(false) }
-    val commentFocusRequester = FocusRequester()
+    val commentFocusRequester = remember { FocusRequester() }
 
     // comment option
     val onClickCommentDelete: (Long) -> Unit = { commentId ->
         postViewModel.requestDeletePostComment(commentId)
     }
     val postCommentDeleteSuccess by postViewModel.postCommentDeleteSuccess.observeAsState(Event(false))
-    if (postCommentDeleteSuccess.getContentIfNotHandled() == true) {
-        postViewModel.requestPostComment(postId)
-        SideEffect {
-            coroutineScope.launch {
-                snackBarHostState.showSnackbar(context.getString(R.string.comment_delete_message))
-            }
+    LaunchedEffect(postCommentDeleteSuccess) {
+        if (postCommentDeleteSuccess.getContentIfNotHandled() == true) {
+            postViewModel.requestPostComment(postId)
+            snackBarHostState.showSnackbar(context.getString(R.string.comment_delete_message))
         }
     }
     var showReportDialog by remember { mutableStateOf(false) }
@@ -180,11 +177,30 @@ fun PostScreen(
     val onClickCancelReply: () -> Unit = {
         clearComment()
     }
-    val postCommentCreateSuccess by postViewModel.postCommentCreateSuccess.observeAsState(Event(false))
-    if (postCommentCreateSuccess.getContentIfNotHandled() == true) {
-        clearComment()
-        keyboardController?.hide()
-        postViewModel.requestPostComment(postId)
+
+    val postCommentCreateState by postViewModel.postCommentCreateState.observeAsState()
+    LaunchedEffect(postCommentCreateState) {
+        postCommentCreateState?.status?.let { state ->
+            when (state) {
+                Status.LOADING -> {
+                    coroutineScope.launch {
+                        snackBarHostState.showSnackbar(context.getString(R.string.loading_default_message))
+                    }
+                }
+
+                Status.SUCCESS -> {
+                    clearComment()
+                    keyboardController?.hide()
+                    postViewModel.requestPostComment(postId)
+                }
+
+                Status.ERROR -> {
+                    coroutineScope.launch {
+                        snackBarHostState.showSnackbar(context.getString(R.string.network_error_dialog_default_message))
+                    }
+                }
+            }
+        }
     }
 
     BackHandler(enabled = loadingVisible) {}
@@ -454,7 +470,7 @@ private fun PreviewPostScreen() {
             userSearchKeyword = userSearchKeyword,
             showMentionSearchView = showMentionSearchView,
             userResults = userResults,
-            commentFocusRequester = FocusRequester(),
+            commentFocusRequester = remember { FocusRequester() },
             onClickPostComment = { },
             onClickProfile = { },
             onClickPost = { },
@@ -474,4 +490,3 @@ private fun PreviewPostScreen() {
         )
     }
 }
-

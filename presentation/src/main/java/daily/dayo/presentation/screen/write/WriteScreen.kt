@@ -25,13 +25,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.Surface
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
@@ -64,6 +65,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -98,6 +100,8 @@ const val WRITE_POST_IMAGE_MIN_SIZE = 1
 const val WRITE_POST_DETAIL_MAX_LENGTH = 200
 const val WRITE_POST_IMAGE_SIZE = 220
 const val WRITE_POST_TOP_Z_INDEX = 1f
+
+private val WriteSummaryLabelSpacing = 12.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -445,26 +449,33 @@ fun WriteUploadImages(
                     ) {
                         Row(
                             modifier = Modifier
-                                .width(112.dp)
+                                .width(116.dp)
                                 .height(36.dp)
                                 .clickable {
                                     onEditImage(index)
                                 }
-                                .padding(horizontal = 12.dp)
+                                .padding(horizontal = 12.dp),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_crop),
-                                contentDescription = "edit image",
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .size(20.dp)
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_plus_green),
+                                contentDescription = stringResource(R.string.write_post_image_edit),
+                                tint = White_FFFFFF,
+                                modifier = Modifier.size(20.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = stringResource(R.string.write_post_image_edit),
                                 style = DayoTheme.typography.b5,
                                 color = White_FFFFFF,
-                                modifier = Modifier.align(Alignment.CenterVertically)
+                                autoSize = TextAutoSize.StepBased(
+                                    minFontSize = 12.sp,
+                                    maxFontSize = 14.sp,
+                                    stepSize = 0.25.sp,
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
@@ -678,13 +689,9 @@ fun WriteTagLayout(
             style = DayoTheme.typography.b3,
             color = Dark
         )
-        Spacer(
-            modifier = Modifier
-                .weight(1f)
-                .widthIn(min = 54.dp)
-        )
+        Spacer(modifier = Modifier.width(WriteSummaryLabelSpacing))
         if (tags.isNotEmpty()) {
-            val tag = tags.joinToString(separator = ", ", postfix = " ") {
+            val tag = tags.joinToString(separator = ", ") {
                 ContextCompat.getString(context, R.string.write_post_select_tag_contents).format(it)
             }
             Text(
@@ -747,11 +754,7 @@ fun WriteFolderLayout(
             style = DayoTheme.typography.b3,
             color = Dark
         )
-        Spacer(
-            modifier = Modifier
-                .weight(1f)
-                .widthIn(min = 54.dp)
-        )
+        Spacer(modifier = Modifier.width(WriteSummaryLabelSpacing))
         if (!folderName.isNullOrEmpty()) {
             Text(
                 modifier = Modifier

@@ -25,6 +25,7 @@ import daily.dayo.presentation.screen.account.model.EmailCertificationState
 import daily.dayo.presentation.screen.account.model.SignUpStep
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
+import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.view.DayoTextButton
 import daily.dayo.presentation.view.DayoTimerTextField
 import daily.dayo.presentation.viewmodel.AccountViewModel
@@ -48,6 +49,9 @@ fun SetEmailCertificationView(
     requestEmailCertification: (String) -> Unit = {},
 ) {
     val certificateEmailAuthCodeFormat = Regex("^\\d{6}$")
+    val isServerCertificationCodeReady =
+        certificationCode != AccountViewModel.EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString() &&
+                certificationCode != AccountViewModel.SIGN_UP_EMAIL_CERTIFICATE_AUTH_CODE_FAIL.toString()
 
     var tryCount by remember { mutableStateOf(1) }
     val isPaused = remember { mutableStateOf(false) }
@@ -57,10 +61,14 @@ fun SetEmailCertificationView(
     val isTimeOut = remember { mutableStateOf(false) }
 
     setNextButtonEnabled(
-        certificateEmailAuthCodeFormat.matches(certificationInputCode) && !isTimeOut.value
+        certificateEmailAuthCodeFormat.matches(certificationInputCode) &&
+                isServerCertificationCodeReady &&
+                !isTimeOut.value
     )
     setIsNextButtonClickable(
-        certificateEmailAuthCodeFormat.matches(certificationInputCode) && !isTimeOut.value
+        certificateEmailAuthCodeFormat.matches(certificationInputCode) &&
+                isServerCertificationCodeReady &&
+                !isTimeOut.value
     )
 
     key(tryCount) {
@@ -78,6 +86,7 @@ fun SetEmailCertificationView(
             isError = isEmailCertificateError ?: false,
             errorMessage = stringResource(timerErrorMessageRedId.value),
             timeOutErrorMessage = stringResource(R.string.sign_up_email_set_address_certification_fail_time_out),
+            labelColor = Gray3_9FA5AE,
             onTimeOut = {
                 isTimeOut.value = true
                 setNextButtonEnabled(false)
@@ -117,7 +126,11 @@ fun SetEmailCertificationView(
                 text = stringResource(R.string.sign_up_email_set_address_resend_button),
                 onClick = {
                     tryCount++
+                    setCertificationInputCode("")
                     isTimeOut.value = false
+                    timerErrorMessageRedId.value =
+                        R.string.sign_up_email_set_address_certification_fail_wrong
+                    setIsEmailCertificateError(false)
                     requestEmailCertification(email)
                 },
                 underline = true,

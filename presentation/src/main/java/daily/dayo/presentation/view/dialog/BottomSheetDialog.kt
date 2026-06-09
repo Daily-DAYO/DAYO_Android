@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -67,7 +70,7 @@ fun BottomSheetDialog(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
-        shape = RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp),
+        shape = RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp),
         color = White_FFFFFF
     ) {
         Column(
@@ -115,53 +118,75 @@ fun BottomSheetDialog(
             buttons.forEachIndexed { index, button ->
                 val interactionSource = remember { MutableInteractionSource() }
                 val isPressed = interactionSource.collectIsPressedAsState().value
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .background(
-                            if (isPressed) Gray6_F0F1F3 else White_FFFFFF,
-                            RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp)
-                        )
-                        .padding(if (leftIconButtons == null) 16.dp else 12.dp)
-                        .clickable(
-                            onClick = button.second,
-                            interactionSource = interactionSource,
-                            indication = null
-                        ),
-                    horizontalArrangement = if (leftIconButtons == null) Arrangement.Center else Arrangement.SpaceBetween,
-                ) {
-                    if (leftIconButtons != null && leftIconCheckedButtons != null) {
-                        Icon(
-                            imageVector = if (checkedButtonIndex == index) leftIconCheckedButtons[index] else leftIconButtons[index],
-                            contentDescription = "",
-                            modifier = Modifier.align(Alignment.CenterVertically),
-                            tint = Color.Unspecified
-                        )
-                    }
-                    Text(
-                        text = button.first,
-                        modifier = Modifier.offset(
-                            if (leftIconButtons == null) 0.dp else 8.dp,
-                            0.dp
-                        ),
-                        color = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) checkedColor else normalColor,
-                        fontSize = 16.sp,
-                        style = DayoTheme.typography.b4
-                    )
-                    if (leftIconButtons != null) {
-                        Spacer(modifier = Modifier.weight(1f))
-                        if (checkedButtonIndex == index) {
+                if (leftIconButtons != null) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp, horizontal = 8.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable(
+                                onClick = button.second,
+                                interactionSource = interactionSource
+                            )
+                            .background(White_FFFFFF)
+                            .padding(vertical = 8.dp, horizontal = 12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (leftIconCheckedButtons != null) {
                             Icon(
-                                imageVector = rightIcon,
+                                imageVector = if (checkedButtonIndex == index) leftIconCheckedButtons[index] else leftIconButtons[index],
                                 contentDescription = "",
                                 modifier = Modifier.align(Alignment.CenterVertically),
                                 tint = Color.Unspecified
                             )
                         }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = button.first,
+                            modifier = Modifier.weight(1f),
+                            color = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) checkedColor else normalColor,
+                            fontSize = 16.sp,
+                            style = DayoTheme.typography.b4
+                        )
+                        if (checkedButtonIndex == index) {
+                            Icon(
+                                imageVector = rightIcon,
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .align(Alignment.CenterVertically),
+                                tint = Color.Unspecified
+                            )
+                        }
+                    }
+                } else {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 56.dp)
+                            .background(
+                                if (isPressed) Gray6_F0F1F3 else White_FFFFFF,
+                                RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp)
+                            )
+                            .clickable(
+                                onClick = button.second,
+                                interactionSource = interactionSource,
+                                indication = null
+                            ),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = button.first,
+                            textAlign = TextAlign.Center,
+                            color = if ((isFirstButtonColored && index == 0) || (checkedButtonIndex == index)) checkedColor else normalColor,
+                            fontSize = 16.sp,
+                            style = DayoTheme.typography.b4
+                        )
                     }
                 }
+
                 if (index < buttons.size - 1 && title.isEmpty()) {
                     Divider(
                         modifier = Modifier

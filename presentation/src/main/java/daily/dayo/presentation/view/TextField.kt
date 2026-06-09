@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -52,6 +53,7 @@ import daily.dayo.presentation.common.TextLimitUtil
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
+import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.Gray4_C5CAD2
 import daily.dayo.presentation.theme.Gray5_E8EAEE
 import daily.dayo.presentation.theme.Gray6_F0F1F3
@@ -89,7 +91,7 @@ fun DayoTextField(
             Text(
                 text = label,
                 style = DayoTheme.typography.caption3.copy(
-                    color = Gray4_C5CAD2,
+                    color = Gray3_9FA5AE,
                     fontWeight = FontWeight.SemiBold
                 )
             )
@@ -142,7 +144,7 @@ fun DayoTextField(
                             errorContainerColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
                             unfocusedLabelColor = Color.Transparent, // 라벨
-                            focusedLabelColor = Gray4_C5CAD2,
+                            focusedLabelColor = Gray3_9FA5AE,
                             errorLabelColor = Red_FF4545,
                             focusedPlaceholderColor = Gray5_E8EAEE, // 힌트
                             unfocusedPlaceholderColor = Gray5_E8EAEE,
@@ -198,6 +200,8 @@ fun DayoPasswordTextField(
     textAlign: TextAlign = TextAlign.Left,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onErrorIconClick: (() -> Unit) = { },
+    showClearIcon: Boolean = true,
+    showVisibilityIcon: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     isEnabled: Boolean = true,
@@ -207,12 +211,21 @@ fun DayoPasswordTextField(
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         var passwordHidden by remember { mutableStateOf(true) }
+        val showError = isError == true
+        val shouldShowClear = showClearIcon && isEnabled && value.isNotBlank() && !showError
+        val shouldShowVisibility = showVisibilityIcon && !showError
+        val trailingContentWidth = when {
+            showError -> 20.dp
+            shouldShowClear && shouldShowVisibility -> 48.dp
+            shouldShowClear || shouldShowVisibility -> 20.dp
+            else -> 0.dp
+        }
 
         if (label.isNotEmpty()) {
             Text(
                 text = label,
                 style = DayoTheme.typography.caption3.copy(
-                    color = Gray4_C5CAD2,
+                    color = Gray3_9FA5AE,
                     fontWeight = FontWeight.SemiBold
                 )
             )
@@ -254,7 +267,7 @@ fun DayoPasswordTextField(
                         contentPadding = PaddingValues(
                             start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
                             top = contentPadding.calculateTopPadding(),
-                            end = contentPadding.calculateEndPadding(LayoutDirection.Ltr) + 20.dp,
+                            end = contentPadding.calculateEndPadding(LayoutDirection.Ltr) + trailingContentWidth,
                             bottom = contentPadding.calculateBottomPadding()
                         ),
                         colors = TextFieldDefaults.colors(
@@ -266,7 +279,7 @@ fun DayoPasswordTextField(
                             errorContainerColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
                             unfocusedLabelColor = Color.Transparent, // 라벨
-                            focusedLabelColor = Gray4_C5CAD2,
+                            focusedLabelColor = Gray3_9FA5AE,
                             errorLabelColor = Red_FF4545,
                             focusedPlaceholderColor = Gray5_E8EAEE, // 힌트
                             unfocusedPlaceholderColor = Gray5_E8EAEE,
@@ -279,22 +292,42 @@ fun DayoPasswordTextField(
             Box(
                 modifier = Modifier.align(alignment = Alignment.CenterEnd)
             ) {
-                if (isError != null && isError == true) {
+                if (showError) {
                     NoRippleIconButton(
                         onClick = onErrorIconClick,
                         iconContentDescription = "error icon",
                         iconPainter = painterResource(id = errorTrailingIconId),
                         iconButtonModifier = Modifier.size(20.dp)
                     )
-                } else {
-                    val trailingIconId = if (passwordHidden) R.drawable.ic_trailing_invisible else R.drawable.ic_trailing_visible
-                    val description = if (passwordHidden) "Show password" else "Hide password"
-                    NoRippleIconButton(
-                        onClick = { passwordHidden = passwordHidden.not() },
-                        iconContentDescription = description,
-                        iconPainter = painterResource(id = trailingIconId),
-                        iconButtonModifier = Modifier.size(20.dp)
-                    )
+                } else if (shouldShowClear || shouldShowVisibility) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        if (shouldShowClear) {
+                            NoRippleIconButton(
+                                onClick = { onValueChange("") },
+                                iconContentDescription = "Clear password",
+                                iconPainter = painterResource(id = R.drawable.ic_trailing_delete),
+                                iconButtonModifier = Modifier.size(20.dp)
+                            )
+                        }
+
+                        if (shouldShowVisibility) {
+                            val trailingIconId = if (passwordHidden) {
+                                R.drawable.ic_trailing_invisible
+                            } else {
+                                R.drawable.ic_trailing_visible
+                            }
+                            val description = if (passwordHidden) "Show password" else "Hide password"
+                            NoRippleIconButton(
+                                onClick = { passwordHidden = passwordHidden.not() },
+                                iconContentDescription = description,
+                                iconPainter = painterResource(id = trailingIconId),
+                                iconButtonModifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -323,6 +356,7 @@ fun DayoTimerTextField(
     isError: Boolean = false,
     errorMessage: String = "",
     timeOutErrorMessage: String = stringResource(id = R.string.email_address_certificate_alert_message_time_fail),
+    labelColor: Color = Gray3_9FA5AE,
     onTimeOut: (() -> Unit) = { },
     textAlign: TextAlign = TextAlign.Left,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
@@ -351,7 +385,7 @@ fun DayoTimerTextField(
             Text(
                 text = label,
                 style = DayoTheme.typography.caption3.copy(
-                    color = Gray4_C5CAD2,
+                    color = labelColor,
                     fontWeight = FontWeight.SemiBold
                 )
             )
@@ -404,7 +438,7 @@ fun DayoTimerTextField(
                             errorContainerColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
                             unfocusedLabelColor = Color.Transparent, // 라벨
-                            focusedLabelColor = Gray4_C5CAD2,
+                            focusedLabelColor = Gray3_9FA5AE,
                             errorLabelColor = Red_FF4545,
                             focusedPlaceholderColor = Gray5_E8EAEE, // 힌트
                             unfocusedPlaceholderColor = Gray5_E8EAEE,

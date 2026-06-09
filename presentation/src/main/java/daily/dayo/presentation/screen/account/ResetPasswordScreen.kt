@@ -9,6 +9,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,6 +55,7 @@ import daily.dayo.presentation.screen.account.model.EmailExistenceStatus
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
+import daily.dayo.presentation.theme.Gray3_9FA5AE
 import daily.dayo.presentation.theme.White_FFFFFF
 import daily.dayo.presentation.view.DayoPasswordTextField
 import daily.dayo.presentation.view.DayoTextButton
@@ -276,6 +279,8 @@ fun ResetPasswordScreen(
     isCheckingEmail: Boolean = false,
     setIsCheckingEmail: (Boolean) -> Unit = {},
 ) {
+    val contentScrollState = rememberScrollState()
+
     Surface(
         modifier = Modifier
             .background(DayoTheme.colorScheme.background)
@@ -333,9 +338,10 @@ fun ResetPasswordScreen(
             Column(
                 modifier = Modifier
                     .background(DayoTheme.colorScheme.background)
+                    .weight(1f)
                     .padding(horizontal = 20.dp, vertical = 0.dp)
                     .fillMaxWidth()
-                    .wrapContentSize()
+                    .verticalScroll(contentScrollState)
             ) {
                 // Title 영역
                 Spacer(modifier = Modifier.height(8.dp))
@@ -354,19 +360,21 @@ fun ResetPasswordScreen(
                 AnimatedVisibility(
                     visible = (resetPasswordStep.stepNum in 1..2),
                 ) {
-                    Spacer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(4.dp)
-                    )
-                    Text(
-                        text = if (resetPasswordStep == ResetPasswordStep.EMAIL_INPUT)
-                            stringResource(R.string.reset_password_email_sub_title)
-                        else if (resetPasswordStep == ResetPasswordStep.EMAIL_VERIFICATION)
-                            stringResource(R.string.reset_password_new_password_sub_title)
-                        else "",
-                        style = DayoTheme.typography.b6.copy(color = Gray2_767B83),
-                    )
+                    Column {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(4.dp)
+                        )
+                        Text(
+                            text = if (resetPasswordStep == ResetPasswordStep.EMAIL_INPUT)
+                                stringResource(R.string.reset_password_email_sub_title)
+                            else if (resetPasswordStep == ResetPasswordStep.EMAIL_VERIFICATION)
+                                stringResource(R.string.reset_password_new_password_sub_title)
+                            else "",
+                            style = DayoTheme.typography.b6.copy(color = Gray2_767B83),
+                        )
+                    }
                 }
 
                 // Contents 영역
@@ -432,7 +440,6 @@ fun ResetPasswordScreen(
                     }
                 }
             }
-            Spacer(modifier = Modifier.weight(1f))
             ResetPasswordBottomLayout(
                 resetPasswordStep = resetPasswordStep,
                 onNextClick = {
@@ -592,6 +599,14 @@ fun EmailInputLayout(
     requestEmailCertification: (String) -> Unit = {},
 ) {
     val lastErrorMessage = remember { mutableStateOf("") }
+    val isEmailError = when {
+        email.isBlank() -> null
+        emailCertification == EmailCertificationState.INVALID_FORMAT ||
+                emailCertification == EmailCertificationState.NOT_EXIST_EMAIL ||
+                emailCertification == EmailCertificationState.OAUTH_EMAIL -> true
+
+        else -> false
+    }
 
     LaunchedEffect(emailCertification) {
         lastErrorMessage.value = when (emailCertification) {
@@ -612,19 +627,27 @@ fun EmailInputLayout(
             val formatValid = android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches()
             setNextButtonEnabled(formatValid)
             setIsNextButtonClickable(formatValid)
-            if (!formatValid) {
+            if (it.isBlank()) {
+                setEmailCertification(EmailCertificationState.BEFORE_CERTIFICATION)
+                lastErrorMessage.value = ""
+            } else if (!formatValid) {
                 setEmailCertification(EmailCertificationState.INVALID_FORMAT)
             } else {
+                setEmailCertification(EmailCertificationState.BEFORE_CERTIFICATION)
                 lastErrorMessage.value = ""
                 // INVALID FORMAT 에러 메시지가 다음 에러 메시지가 표시될 떄 남아 있지 않도록 value Clear
             }
         },
-        label = stringResource(R.string.email),
+        label = if (email.isNotEmpty()) {
+            stringResource(R.string.email)
+        } else {
+            " "
+        },
         placeholder = stringResource(R.string.reset_password_email_placeholder),
         trailingIconId = if (email.isNotBlank()) R.drawable.ic_trailing_check else null,
         errorTrailingIconId = R.drawable.ic_trailing_error,
         errorMessage = lastErrorMessage.value,
-        isError = if (email.isBlank()) null else !isNextButtonEnabled,
+        isError = isEmailError,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
     )
 }
@@ -647,6 +670,9 @@ private fun EmailCertificationLayout(
     requestEmailCertification: (String) -> Unit = {},
 ) {
     val certificateEmailAuthCodeFormat = Regex("^\\d{6}$")
+    val isServerCertificationCodeReady =
+        certificationCode != EMAIL_CERTIFICATE_AUTH_CODE_INITIAL.toString() &&
+                certificationCode != RESET_PASSWORD_EMAIL_CERTIFICATE_AUTH_CODE_FAIL.toString()
 
     var tryCount by remember { mutableStateOf(1) }
     val isPaused = remember { mutableStateOf(false) }
@@ -657,10 +683,12 @@ private fun EmailCertificationLayout(
         remember { mutableStateOf((R.string.reset_password_email_certification_fail_wrong)) }
 
     setNextButtonEnabled(
-        certificateEmailAuthCodeFormat.matches(certificationInputCode)
+        certificateEmailAuthCodeFormat.matches(certificationInputCode) &&
+                isServerCertificationCodeReady
     )
     setIsNextButtonClickable(
-        certificateEmailAuthCodeFormat.matches(certificationInputCode)
+        certificateEmailAuthCodeFormat.matches(certificationInputCode) &&
+                isServerCertificationCodeReady
     )
 
     key(tryCount) {
@@ -678,6 +706,7 @@ private fun EmailCertificationLayout(
             isError = isEmailCertificateError ?: false,
             errorMessage = stringResource(timerErrorMessageRedId.value),
             timeOutErrorMessage = stringResource(R.string.reset_password_email_certification_fail_time_out),
+            labelColor = Gray3_9FA5AE,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         )
     }
@@ -712,6 +741,10 @@ private fun EmailCertificationLayout(
                 text = stringResource(R.string.reset_password_email_certification_resend_button),
                 onClick = {
                     tryCount++
+                    setCertificationInputCode("")
+                    timerErrorMessageRedId.value =
+                        R.string.reset_password_email_certification_fail_wrong
+                    setIsEmailCertificateError(false)
                     requestEmailCertification(email)
                 },
                 underline = true,
@@ -725,7 +758,7 @@ private fun EmailCertificationLayout(
 
 @Composable
 @Preview
-private fun NewPasswordLayout(
+internal fun NewPasswordLayout(
     resetPasswordStep: ResetPasswordStep = ResetPasswordStep.NEW_PASSWORD_INPUT,
     isNextButtonEnabled: Boolean = false,
     setNextButtonEnabled: (Boolean) -> Unit = {},

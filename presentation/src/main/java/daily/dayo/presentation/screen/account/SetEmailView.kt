@@ -54,7 +54,11 @@ fun SetEmailView(
                 requestEmailCertification(it)
             }
         },
-        label = stringResource(R.string.email),
+        label = if (email.isNotEmpty()) {
+            stringResource(R.string.email)
+        } else {
+            " "
+        },
         placeholder = stringResource(R.string.sign_up_email_set_address_placeholder),
         trailingIconId = if (email.isNotBlank()) R.drawable.ic_trailing_check else null,
         errorTrailingIconId = R.drawable.ic_trailing_error,

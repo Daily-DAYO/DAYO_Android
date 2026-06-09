@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -31,8 +32,10 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
@@ -50,7 +53,9 @@ fun FilledButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isTonal: Boolean = false,
-    icon: @Composable (() -> Unit)? = null
+    icon: @Composable (() -> Unit)? = null,
+    contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
+    textStyle: TextStyle = DayoTheme.typography.b6
 ) {
     val buttonColors = if (isTonal)
         ButtonDefaults.buttonColors(
@@ -73,10 +78,10 @@ fun FilledButton(
         modifier = modifier,
         enabled = enabled,
         colors = buttonColors,
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+        contentPadding = contentPadding,
         content = {
             if (icon != null) icon()
-            Text(text = label, style = DayoTheme.typography.b6)
+            Text(text = label, style = textStyle)
         }
     )
 }
@@ -116,7 +121,14 @@ fun FilledRoundedCornerButton(
                     text = label,
                     textAlign = TextAlign.Center,
                     style = textStyle,
-                    modifier = contentModifier ?: Modifier.fillMaxWidth()
+                    modifier = contentModifier ?: Modifier.fillMaxWidth(),
+                    maxLines = 1,
+                    softWrap = false,
+                    overflow = TextOverflow.Clip,
+                    autoSize = TextAutoSize.StepBased(
+                        minFontSize = 12.sp,
+                        maxFontSize = textStyle.fontSize
+                    )
                 )
             }
         },

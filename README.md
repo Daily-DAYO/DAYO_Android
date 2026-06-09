@@ -67,5 +67,37 @@ git clone git@github.com:Daily-DAYO/DAYO_Android.git
 - shape drawable → border _(color) _ ([fill/line/fill_line]) _ (radius)
   e.g. border_white_fill_12
 
+## QA Auto-Fix Bot
+
+QA 라벨이 붙은 이슈가 생성되면 Gemini AI가 자동으로 코드를 수정하고 PR을 생성합니다.
+
+### Setup
+
+1. [Google AI Studio](https://aistudio.google.com/app/apikey)에서 Gemini API Key 발급 (무료)
+2. GitHub 저장소 Settings → Secrets and variables → Actions → **New repository secret**
+   - Name: `GEMINI_API_KEY`
+   - Value: 발급받은 API Key
+3. `.github/workflows/qa-bot.yml`이 `develop` 브랜치에 존재하면 자동 활성화
+
+### How it works
+
+```
+QA 이슈 생성 (label: QA)
+        ↓
+GitHub Actions 트리거
+        ↓
+이슈 파싱 → 화면명·컴포넌트·스펙 추출
+        ↓
+관련 Kotlin 파일 탐색
+        ↓
+Gemini 1.5 Flash 호출 → 수정 코드 생성
+        ↓
+feature/issue-{N} 브랜치 생성 → 커밋
+        ↓
+PR 자동 생성 + 이슈에 코멘트
+```
+
+자동 수정이 어려운 이슈(로직 변경 필요 등)는 이슈에 사유를 코멘트합니다.
+
 ## Copyright
 Copyrightⓒ 2021- DAYO, All rights reserved.

@@ -7,9 +7,12 @@ import android.graphics.BitmapFactory
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -262,15 +265,17 @@ fun SignUpEmailTitleLayout(
 
     // SubTitle 영역
     AnimatedVisibility(visible = subTitle.isNotBlank()) {
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(4.dp)
-        )
-        Text(
-            text = subTitle,
-            style = DayoTheme.typography.b6.copy(color = Gray2_767B83),
-        )
+        Column {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+            )
+            Text(
+                text = subTitle,
+                style = DayoTheme.typography.b6.copy(color = Gray2_767B83),
+            )
+        }
     }
 }
 
@@ -564,6 +569,8 @@ fun SignUpEmailScaffold(
     onNextClick: () -> Unit = {},
     content: @Composable (ColumnScope.() -> Unit),
 ) {
+    val contentScrollState = rememberScrollState()
+
     BackHandler { onBackClick() }
     Scaffold(
         topBar = {
@@ -592,6 +599,7 @@ fun SignUpEmailScaffold(
                         )
                     }
                 },
+                windowInsets = WindowInsets(0, 0, 0, 0),
             )
         }
     ) { innerPadding ->
@@ -604,9 +612,10 @@ fun SignUpEmailScaffold(
             Column(
                 modifier = Modifier
                     .background(DayoTheme.colorScheme.background)
+                    .weight(1f)
                     .padding(horizontal = 20.dp, vertical = 0.dp)
                     .fillMaxWidth()
-                    .wrapContentSize()
+                    .verticalScroll(contentScrollState)
             ) {
                 if (signUpStep.stepNum <= SignUpStep.PASSWORD_CONFIRM.stepNum) {
                     SignUpEmailTitleLayout(title = title, subTitle = subTitle)
@@ -615,7 +624,6 @@ fun SignUpEmailScaffold(
             }
 
             if (signUpStep != SignUpStep.SIGNUP_COMPLETE) {
-                Spacer(modifier = Modifier.weight(1f))
                 SignUpEmailBottomLayout(
                     signUpStep = signUpStep,
                     onNextClick = { onNextClick() },
