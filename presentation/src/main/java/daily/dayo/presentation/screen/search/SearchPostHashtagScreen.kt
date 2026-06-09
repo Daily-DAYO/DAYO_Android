@@ -32,9 +32,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import daily.dayo.domain.model.SearchOrder
-import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.extension.clickableSingle
+import daily.dayo.presentation.common.url.LocalBaseUrl
+import daily.dayo.presentation.common.url.remoteImageUrl
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
@@ -54,6 +55,7 @@ fun SearchPostHashtagScreen(
     val searchHashtagOrder by searchViewModel.searchHashtagOrder.collectAsStateWithLifecycle()
     val hashtagPosts = searchViewModel.searchTagList.collectAsLazyPagingItems()
     val hashtagPostsCount by searchViewModel.searchTagTotalCount.collectAsStateWithLifecycle(0)
+    val baseUrl = LocalBaseUrl.current
 
     LaunchedEffect(Unit) {
         with(searchViewModel) {
@@ -110,7 +112,7 @@ fun SearchPostHashtagScreen(
                 item.let { post ->
                     RoundImageView(
                         context = LocalContext.current,
-                        imageUrl = "${BuildConfig.BASE_URL}/images/${post?.thumbnailImage}",
+                        imageUrl = remoteImageUrl(baseUrl, post?.thumbnailImage),
                         imageDescription = "searched Image",
                         modifier = Modifier
                             .fillMaxWidth()

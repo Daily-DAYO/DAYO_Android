@@ -77,10 +77,11 @@ import com.skydoves.landscapist.glide.GlideImage
 import daily.dayo.domain.model.Search
 import daily.dayo.domain.model.SearchHistoryType
 import daily.dayo.domain.model.SearchUser
-import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Event
 import daily.dayo.presentation.common.extension.clickableSingle
+import daily.dayo.presentation.common.url.LocalBaseUrl
+import daily.dayo.presentation.common.url.remoteImageUrl
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
 import daily.dayo.presentation.theme.Gray2_767B83
@@ -393,6 +394,7 @@ fun SearchResultTagView(
     onPostClick: (Long) -> Unit
 ) {
     val imageInteractionSource = remember { MutableInteractionSource() }
+    val baseUrl = LocalBaseUrl.current
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -414,7 +416,7 @@ fun SearchResultTagView(
                     item?.let { post ->
                         RoundImageView(
                             context = LocalContext.current,
-                            imageUrl = "${BuildConfig.BASE_URL}/images/${post.thumbnailImage}",
+                            imageUrl = remoteImageUrl(baseUrl, post.thumbnailImage),
                             imageDescription = "searched Image",
                             modifier = Modifier
                                 .matchParentSize()
@@ -523,8 +525,9 @@ fun SearchResultUserView(
 @Composable
 private fun SearchResultUserImageLayout(user: SearchUser, onClickProfile: (String) -> Unit) {
     val imageInteractionSource = remember { MutableInteractionSource() }
+    val baseUrl = LocalBaseUrl.current
     GlideImage(
-        imageModel = { "${BuildConfig.BASE_URL}/images/${user.profileImg}" },
+        imageModel = { remoteImageUrl(baseUrl, user.profileImg) },
         imageOptions = ImageOptions(
             contentDescription = "image description",
             contentScale = ContentScale.Crop,
