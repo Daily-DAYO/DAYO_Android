@@ -10,22 +10,30 @@ import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.UpdateAvailability
-import daily.dayo.presentation.viewmodel.AccountViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.domain.provider.BaseUrlProvider
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.dialog.DefaultDialogAlert
+import daily.dayo.presentation.common.url.LocalBaseUrl
 import daily.dayo.presentation.screen.account.AccountScreen
 import daily.dayo.presentation.theme.DayoTheme
+import daily.dayo.presentation.viewmodel.AccountViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
+    @Inject
+    lateinit var baseUrlProvider: BaseUrlProvider
+
     private val loginViewModel by viewModels<AccountViewModel>()
     private var isReady = false
     private lateinit var updateDialog: AlertDialog
@@ -37,12 +45,25 @@ class LoginActivity : AppCompatActivity() {
         }
         super.onCreate(savedInstanceState)
         createDialogUpdate()
-        checkUpdate()
         observeNetworkException()
         observeApiException()
+        refreshBaseUrlAndContinue()
+    }
+
+    private fun refreshBaseUrlAndContinue() {
+        lifecycleScope.launch {
+            baseUrlProvider.refreshBaseUrl()
+            setLoginContent()
+            checkUpdate()
+        }
+    }
+
+    private fun setLoginContent() {
         setContent {
             DayoTheme {
-                AccountScreen()
+                CompositionLocalProvider(LocalBaseUrl provides baseUrlProvider.getBaseUrl()) {
+                    AccountScreen()
+                }
             }
         }
     }

@@ -13,40 +13,63 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
+import daily.dayo.domain.provider.BaseUrlProvider
 import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.url.LocalBaseUrl
 import daily.dayo.presentation.screen.main.MainScreen
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.viewmodel.AccountViewModel
 import daily.dayo.presentation.viewmodel.SettingNotificationViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+    @Inject
+    lateinit var baseUrlProvider: BaseUrlProvider
+
     private val accountViewModel by viewModels<AccountViewModel>()
     private val settingNotificationViewModel by viewModels<SettingNotificationViewModel>()
     private var rewardedAd: RewardedAd? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkCurrentNotification()
         getNotificationData()
         askNotificationPermission()
         loadRewardedAd()
+        refreshBaseUrlAndSetContent()
+    }
+
+    private fun refreshBaseUrlAndSetContent() {
+        lifecycleScope.launch {
+            baseUrlProvider.refreshBaseUrl()
+            setMainContent()
+        }
+    }
+
+    private fun setMainContent() {
         setContent {
             DayoTheme {
-                MainScreen(
-                    onAdRequest = { onRewardSuccess ->
-                        showAdIfAvailable(onRewardSuccess)
-                    },
-                    onExit = { finish() }
-                )
+                CompositionLocalProvider(LocalBaseUrl provides baseUrlProvider.getBaseUrl()) {
+                    MainScreen(
+                        onAdRequest = { onRewardSuccess ->
+                            showAdIfAvailable(onRewardSuccess)
+                        },
+                        onExit = { finish() }
+                    )
+                }
             }
         }
     }
