@@ -49,11 +49,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import daily.dayo.domain.model.Profile
-import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.activity.LoginActivity
 import daily.dayo.presentation.activity.MainActivity
 import daily.dayo.presentation.common.Status
+import daily.dayo.presentation.common.url.LocalBaseUrl
+import daily.dayo.presentation.common.url.remoteImageUrl
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
@@ -256,6 +257,8 @@ private fun SettingProfile(
     profile: Profile?,
     onProfileEditClick: () -> Unit
 ) {
+    val baseUrl = LocalBaseUrl.current
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -263,7 +266,7 @@ private fun SettingProfile(
         // profile image
         RoundImageView(
             context = LocalContext.current,
-            imageUrl = "${BuildConfig.BASE_URL}/images/${profile?.profileImg}",
+            imageUrl = remoteImageUrl(baseUrl, profile?.profileImg),
             imageDescription = stringResource(id = R.string.setting_my_profile_image_description),
             roundSize = 28.dp,
             modifier = Modifier.size(56.dp)
