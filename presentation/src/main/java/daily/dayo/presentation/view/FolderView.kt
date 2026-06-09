@@ -24,9 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.Privacy
-import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.extension.clickableSingle
+import daily.dayo.presentation.common.url.LocalBaseUrl
+import daily.dayo.presentation.common.url.remoteImageUrl
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray3_9FA5AE
@@ -40,6 +41,7 @@ fun FolderView(
     modifier: Modifier = Modifier,
 ) {
     val imageInteractionSource = remember { MutableInteractionSource() }
+    val baseUrl = LocalBaseUrl.current
     Column(modifier = modifier
         .clickableSingle(
             interactionSource = imageInteractionSource,
@@ -55,7 +57,7 @@ fun FolderView(
             // thumbnail image
             RoundImageView(
                 context = LocalContext.current,
-                imageUrl = "${BuildConfig.BASE_URL}/images/${folder.thumbnailImage}",
+                imageUrl = remoteImageUrl(baseUrl, folder.thumbnailImage),
                 imageDescription = folder.title,
                 modifier = Modifier
                     .border(BorderStroke(1.dp, Gray5_E8EAEE), RoundedCornerShape(8.dp))
