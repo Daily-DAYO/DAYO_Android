@@ -41,7 +41,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.size.Size
 import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.Privacy
-import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.constant.FolderConstants.FOLDER_AD_START_COUNT
 import daily.dayo.presentation.common.constant.FolderConstants.FOLDER_THUMBNAIL_RADIUS_SIZE
@@ -49,6 +48,8 @@ import daily.dayo.presentation.common.constant.FolderConstants.FOLDER_THUMBNAIL_
 import daily.dayo.presentation.common.constant.FolderConstants.MAX_FOLDER_COUNT
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.common.extension.limitTo
+import daily.dayo.presentation.common.url.LocalBaseUrl
+import daily.dayo.presentation.common.url.remoteImageUrl
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
@@ -265,9 +266,10 @@ fun WriteFolderItemLayout(
     isSelected: Boolean = true,
     onFolderClick: (Long, String) -> Unit = { _, _ -> },
 ) {
+    val baseUrl = LocalBaseUrl.current
     val thumbnailModel: Any = folder.thumbnailImage
         .takeIf { it.isNotBlank() }
-        ?.let { "${BuildConfig.BASE_URL}/images/$it" }
+        ?.let { remoteImageUrl(baseUrl, it) }
         ?: R.drawable.img_default_folder_dayo_logo
 
     Row(

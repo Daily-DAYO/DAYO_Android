@@ -73,10 +73,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import daily.dayo.domain.model.Category
-import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.extension.clickableSingle
+import daily.dayo.presentation.common.url.LocalBaseUrl
+import daily.dayo.presentation.common.url.remoteImageUrl
 import daily.dayo.presentation.screen.home.CategoryMenu
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
@@ -403,6 +404,8 @@ fun WriteUploadImages(
     deleteImage: (Int) -> Unit,
     onEditImage: (Int) -> Unit,
 ) {
+    val baseUrl = LocalBaseUrl.current
+
     LazyRow(
         contentPadding = PaddingValues(start = 18.dp, end = 18.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -419,7 +422,7 @@ fun WriteUploadImages(
             val imageRequest = ImageRequest.Builder(context)
                 .data(
                     if (isPostEditMode) {
-                        "${BuildConfig.BASE_URL}/images/${imageAsset.uriString}"
+                        remoteImageUrl(baseUrl, imageAsset.uriString)
                     } else {
                         imageAsset.uriString
                     }
