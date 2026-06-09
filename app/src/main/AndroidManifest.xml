@@ -12,7 +12,7 @@
 
     <application
         android:name=".DayoApplication"
-        android:usesCleartextTraffic="true"
+        android:usesCleartextTraffic="${USES_CLEARTEXT_TRAFFIC}"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

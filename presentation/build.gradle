@@ -12,6 +12,15 @@ apply plugin: "org.jetbrains.kotlin.plugin.compose"
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 def NATIVE_APP_KEY = properties.getProperty('NATIVE_APP_KEY')
+def fallbackBaseUrlProperty = { String fallbackKey, String legacyKey ->
+    def value = properties.getProperty(fallbackKey) ?: properties.getProperty(legacyKey)
+    if (!value) {
+        throw new GradleException("Missing ${fallbackKey} in local.properties")
+    }
+    return value
+}
+def FALLBACK_BASE_URL_DEV = fallbackBaseUrlProperty('FALLBACK_BASE_URL_DEV', 'BASE_URL_DEV')
+def FALLBACK_BASE_URL_PROD = fallbackBaseUrlProperty('FALLBACK_BASE_URL_PROD', 'BASE_URL_PROD')
 
 kapt {
     correctErrorTypes true
@@ -57,12 +66,14 @@ android {
     productFlavors {
         dev {
             dimension "environment"
-            buildConfigField("String", "BASE_URL", properties['BASE_URL_DEV'])
+            buildConfigField("String", "BASE_URL", FALLBACK_BASE_URL_DEV)
+            buildConfigField("String", "FALLBACK_BASE_URL", FALLBACK_BASE_URL_DEV)
             buildConfigField("String", "REWARDED_AD_UNIT_ID_FOLDER", properties['REWARDED_AD_UNIT_ID_FOLDER_DEV'])
         }
         prod {
             dimension "environment"
-            buildConfigField("String", "BASE_URL", properties['BASE_URL_PROD'])
+            buildConfigField("String", "BASE_URL", FALLBACK_BASE_URL_PROD)
+            buildConfigField("String", "FALLBACK_BASE_URL", FALLBACK_BASE_URL_PROD)
             buildConfigField("String", "REWARDED_AD_UNIT_ID_FOLDER", properties['REWARDED_AD_UNIT_ID_FOLDER_PROD'])
         }
     }
