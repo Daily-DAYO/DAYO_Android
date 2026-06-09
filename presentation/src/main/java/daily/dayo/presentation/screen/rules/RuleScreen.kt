@@ -15,8 +15,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
-import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.url.LocalBaseUrl
+import daily.dayo.presentation.common.url.remoteUrl
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.view.NoRippleIconButton
 import daily.dayo.presentation.view.TopNavigation
@@ -36,6 +37,8 @@ fun RuleScreen(
     onBackClick: () -> Unit = {},
     ruleType: RuleType = RuleType.PRIVACY_POLICY
 ) {
+    val baseUrl = LocalBaseUrl.current
+
     Surface(
         modifier = Modifier
             .background(DayoTheme.colorScheme.background)
@@ -59,7 +62,7 @@ fun RuleScreen(
                         webViewClient = WebViewClient()
                         settings.javaScriptEnabled = false
                         overScrollMode = View.OVER_SCROLL_NEVER
-                        loadUrl("${BuildConfig.BASE_URL}/${ruleType.fileName}.html")
+                        loadUrl(remoteUrl(baseUrl, "${ruleType.fileName}.html"))
 
                         setOnKeyListener(
                             View.OnKeyListener { v, keyCode, event ->
