@@ -46,9 +46,10 @@ import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import daily.dayo.domain.model.LikeUser
-import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.extension.clickableSingle
+import daily.dayo.presentation.common.url.LocalBaseUrl
+import daily.dayo.presentation.common.url.remoteImageUrl
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
@@ -197,6 +198,8 @@ private fun LikeUserItem(
     onProfileClick: (String) -> Unit,
     onFollowClick: (LikeUser) -> Unit
 ) {
+    val baseUrl = LocalBaseUrl.current
+
     Surface(
         color = White_FFFFFF,
         modifier = Modifier
@@ -211,7 +214,7 @@ private fun LikeUserItem(
             // profile
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("${BuildConfig.BASE_URL}/images/${likeUser.profileImg}")
+                    .data(remoteImageUrl(baseUrl, likeUser.profileImg))
                     .build(),
                 contentDescription = "${likeUser.nickname} + profile",
                 contentScale = ContentScale.Crop,
