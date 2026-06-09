@@ -31,8 +31,9 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import daily.dayo.domain.model.Post
-import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
+import daily.dayo.presentation.common.url.LocalBaseUrl
+import daily.dayo.presentation.common.url.remoteImageUrl
 import daily.dayo.presentation.common.extension.clickableSingle
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
@@ -49,6 +50,7 @@ fun HomePostView(
     onClickProfile: () -> Unit
 ) {
     val imageInteractionSource = remember { MutableInteractionSource() }
+    val baseUrl = LocalBaseUrl.current
     Column(modifier = modifier) {
         Box(
             modifier = Modifier
@@ -58,7 +60,7 @@ fun HomePostView(
             // thumbnail image
             RoundImageView(
                 context = LocalContext.current,
-                imageUrl = "${BuildConfig.BASE_URL}/images/${post.thumbnailImage}",
+                imageUrl = remoteImageUrl(baseUrl, post.thumbnailImage),
                 imageDescription = "dayo pick image",
                 modifier = Modifier
                     .matchParentSize()
@@ -110,7 +112,7 @@ fun HomePostView(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("${BuildConfig.BASE_URL}/images/${post.userProfileImage}")
+                    .data(remoteImageUrl(baseUrl, post.userProfileImage))
                     .build(),
                 contentDescription = "${post.nickname} + profile",
                 contentScale = ContentScale.Crop,
