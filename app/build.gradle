@@ -31,8 +31,8 @@ def fallbackBaseUrlProperty = { String fallbackKey, String legacyKey ->
 }
 def FALLBACK_BASE_URL_DEV = fallbackBaseUrlProperty('FALLBACK_BASE_URL_DEV', 'BASE_URL_DEV')
 def FALLBACK_BASE_URL_PROD = fallbackBaseUrlProperty('FALLBACK_BASE_URL_PROD', 'BASE_URL_PROD')
-def USES_RELEASE_CLEARTEXT_TRAFFIC = [FALLBACK_BASE_URL_DEV, FALLBACK_BASE_URL_PROD]
-        .any { it?.contains('http://') == true }
+def USES_DEV_CLEARTEXT_TRAFFIC = FALLBACK_BASE_URL_DEV?.contains('http://') == true
+def USES_PROD_CLEARTEXT_TRAFFIC = FALLBACK_BASE_URL_PROD?.contains('http://') == true
 
 kotlin {
     jvmToolchain(17)
@@ -58,7 +58,7 @@ android {
         manifestPlaceholders = [
                 NATIVE_APP_KEY        : NATIVE_APP_KEY,
                 ADS_APPLICATION_ID    : ADS_APPLICATION_ID,
-                USES_CLEARTEXT_TRAFFIC: USES_RELEASE_CLEARTEXT_TRAFFIC
+                USES_CLEARTEXT_TRAFFIC: false
         ]
     }
 
@@ -92,19 +92,20 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
-            manifestPlaceholders.USES_CLEARTEXT_TRAFFIC = USES_RELEASE_CLEARTEXT_TRAFFIC
         }
     }
     flavorDimensions = ["environment"]
     productFlavors {
         dev {
             dimension "environment"
+            manifestPlaceholders.USES_CLEARTEXT_TRAFFIC = USES_DEV_CLEARTEXT_TRAFFIC
             buildConfigField("String", "FALLBACK_BASE_URL", FALLBACK_BASE_URL_DEV)
             buildConfigField("String", "REMOTE_CONFIG_BASE_URL_KEY", "\"api_base_url_dev\"")
             buildConfigField("String", "REMOTE_CONFIG_BASE_URL_SIGNATURE_KEY", "\"api_base_url_dev_signature\"")
         }
         prod {
             dimension "environment"
+            manifestPlaceholders.USES_CLEARTEXT_TRAFFIC = USES_PROD_CLEARTEXT_TRAFFIC
             buildConfigField("String", "FALLBACK_BASE_URL", FALLBACK_BASE_URL_PROD)
             buildConfigField("String", "REMOTE_CONFIG_BASE_URL_KEY", "\"api_base_url_prod\"")
             buildConfigField("String", "REMOTE_CONFIG_BASE_URL_SIGNATURE_KEY", "\"api_base_url_prod_signature\"")

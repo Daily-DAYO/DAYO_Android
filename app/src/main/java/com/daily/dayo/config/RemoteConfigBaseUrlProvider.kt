@@ -68,10 +68,11 @@ class RemoteConfigBaseUrlProvider(
             }
 
             val remoteBaseUrl = remoteBaseUrlValue.asString()
+            val remoteBaseUrlSignature = remoteConfig.getString(BuildConfig.REMOTE_CONFIG_BASE_URL_SIGNATURE_KEY)
             val normalizedBaseUrl = normalizeBaseUrl(remoteBaseUrl) ?: run {
                 return false
             }
-            if (!isTrustedRemoteBaseUrl(normalizedBaseUrl)) {
+            if (!isTrustedRemoteBaseUrl(normalizedBaseUrl, remoteBaseUrlSignature)) {
                 return false
             }
 
@@ -81,6 +82,7 @@ class RemoteConfigBaseUrlProvider(
             )
             sharedPreferences.edit()
                 .putString(KEY_LAST_SUCCESSFUL_BASE_URL, normalizedBaseUrl)
+                .putString(KEY_LAST_SUCCESSFUL_BASE_URL_SIGNATURE, remoteBaseUrlSignature)
                 .apply()
             true
         } catch (exception: CancellationException) {
@@ -92,11 +94,20 @@ class RemoteConfigBaseUrlProvider(
 
     private fun getInitialBaseUrlState(): BaseUrlState {
         val cachedBaseUrl = sharedPreferences.getString(KEY_LAST_SUCCESSFUL_BASE_URL, null)
-        normalizeBaseUrl(cachedBaseUrl)?.let { baseUrl ->
-            return BaseUrlState(
-                baseUrl = baseUrl,
-                source = BaseUrlSource.CACHED_LAST_SUCCESS
-            )
+        val cachedBaseUrlSignature = sharedPreferences.getString(KEY_LAST_SUCCESSFUL_BASE_URL_SIGNATURE, null)
+        normalizeBaseUrl(cachedBaseUrl)
+            ?.takeIf { baseUrl -> isTrustedCachedBaseUrl(baseUrl, cachedBaseUrlSignature) }
+            ?.let { baseUrl ->
+                return BaseUrlState(
+                    baseUrl = baseUrl,
+                    source = BaseUrlSource.CACHED_LAST_SUCCESS
+                )
+            }
+        if (cachedBaseUrl != null) {
+            sharedPreferences.edit()
+                .remove(KEY_LAST_SUCCESSFUL_BASE_URL)
+                .remove(KEY_LAST_SUCCESSFUL_BASE_URL_SIGNATURE)
+                .apply()
         }
 
         return BaseUrlState(
@@ -147,13 +158,23 @@ class RemoteConfigBaseUrlProvider(
         }
     }
 
-    private fun isTrustedRemoteBaseUrl(normalizedBaseUrl: String): Boolean {
+    private fun isTrustedRemoteBaseUrl(normalizedBaseUrl: String, signature: String): Boolean {
         if (normalizedBaseUrl == normalizeBaseUrl(BuildConfig.FALLBACK_BASE_URL)) return true
         if (BuildConfig.DEBUG) return true
 
         return verifyBaseUrlSignature(
             baseUrl = normalizedBaseUrl,
-            signature = remoteConfig.getString(BuildConfig.REMOTE_CONFIG_BASE_URL_SIGNATURE_KEY)
+            signature = signature
+        )
+    }
+
+    private fun isTrustedCachedBaseUrl(normalizedBaseUrl: String, signature: String?): Boolean {
+        if (normalizedBaseUrl == normalizeBaseUrl(BuildConfig.FALLBACK_BASE_URL)) return true
+        if (BuildConfig.DEBUG) return true
+
+        return verifyBaseUrlSignature(
+            baseUrl = normalizedBaseUrl,
+            signature = signature.orEmpty()
         )
     }
 
@@ -216,6 +237,7 @@ class RemoteConfigBaseUrlProvider(
     companion object {
         private const val PREFERENCES_NAME = "remote_config_base_url"
         private const val KEY_LAST_SUCCESSFUL_BASE_URL = "last_successful_base_url"
+        private const val KEY_LAST_SUCCESSFUL_BASE_URL_SIGNATURE = "last_successful_base_url_signature"
         private const val FETCH_TIMEOUT_SECONDS = 5L
         private const val TASK_TIMEOUT_MILLIS = 6_000L
         private val MINIMUM_FETCH_INTERVAL_SECONDS = if (BuildConfig.DEBUG) 0L else 3_600L
