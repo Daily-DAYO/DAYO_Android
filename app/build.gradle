@@ -13,7 +13,7 @@ Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 def NATIVE_APP_KEY = properties.getProperty('NATIVE_APP_KEY')
 def ADS_APPLICATION_ID = properties.getProperty('ADS_APPLICATION_ID')
-def REMOTE_CONFIG_BASE_URL_PUBLIC_KEY = properties.getProperty('REMOTE_CONFIG_BASE_URL_PUBLIC_KEY', '')
+def REMOTE_CONFIG_BASE_URL_PUBLIC_KEY = properties.getProperty('REMOTE_CONFIG_BASE_URL_PUBLIC_KEY', '').trim()
 def keystorePropertiesFile = rootProject.file("app/keystore-release.properties")
 def buildConfigString = { String value ->
     def escaped = (value ?: '')
@@ -112,6 +112,24 @@ android {
         }
     }
     namespace 'com.daily.dayo'
+}
+
+def validateRemoteConfigBaseUrlPublicKeyForRelease = tasks.register(
+        'validateRemoteConfigBaseUrlPublicKeyForRelease'
+) {
+    doLast {
+        if (!REMOTE_CONFIG_BASE_URL_PUBLIC_KEY) {
+            throw new GradleException(
+                    'Missing REMOTE_CONFIG_BASE_URL_PUBLIC_KEY in local.properties for release build'
+            )
+        }
+    }
+}
+
+tasks.configureEach { task ->
+    if (task.name ==~ /^pre.*ReleaseBuild$/) {
+        task.dependsOn(validateRemoteConfigBaseUrlPublicKeyForRelease)
+    }
 }
 
 dependencies {
