@@ -16,5 +16,12 @@ fun remoteUrl(baseUrl: String, path: String): String {
     }
 }
 
-fun remoteImageUrl(baseUrl: String, imageFileName: String?): String =
-    remoteUrl(baseUrl = baseUrl, path = "images/$imageFileName")
+fun remoteImageUrl(baseUrl: String, imageFileName: String?): String {
+    val normalizedImageFileName = imageFileName?.trim().orEmpty()
+
+    return if (normalizedImageFileName.isEmpty()) {
+        ""
+    } else {
+        remoteUrl(baseUrl = baseUrl, path = "images/$normalizedImageFileName")
+    }
+}
