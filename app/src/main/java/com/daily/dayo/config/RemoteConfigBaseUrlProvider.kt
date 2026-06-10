@@ -142,7 +142,7 @@ class RemoteConfigBaseUrlProvider(
             if (uri.rawQuery != null || uri.rawFragment != null) return null
 
             val scheme = uri.scheme?.lowercase(Locale.US) ?: return null
-            val host = uri.host?.takeIf { it.isNotBlank() } ?: return null
+            val host = uri.host?.takeIf { it.isNotBlank() }?.lowercase(Locale.US) ?: return null
             if (scheme != SCHEME_HTTP && scheme != SCHEME_HTTPS) return null
             if (!BuildConfig.DEBUG && scheme == SCHEME_HTTP && !isReleaseHttpAllowed()) return null
             if (uri.userInfo != null) return null
@@ -151,7 +151,13 @@ class RemoteConfigBaseUrlProvider(
             val path = uri.path.orEmpty()
             if (path.isNotBlank() && path != "/") return null
 
-            val normalizedUri = URI(scheme, null, host, uri.port, "/", null, null)
+            val canonicalPort = when {
+                scheme == SCHEME_HTTP && uri.port == DEFAULT_HTTP_PORT -> -1
+                scheme == SCHEME_HTTPS && uri.port == DEFAULT_HTTPS_PORT -> -1
+                else -> uri.port
+            }
+
+            val normalizedUri = URI(scheme, null, host, canonicalPort, "/", null, null)
             normalizedUri.toString().ensureTrailingSlash()
         } catch (exception: Exception) {
             null
@@ -243,6 +249,8 @@ class RemoteConfigBaseUrlProvider(
         private val MINIMUM_FETCH_INTERVAL_SECONDS = if (BuildConfig.DEBUG) 0L else 3_600L
         private const val SCHEME_HTTP = "http"
         private const val SCHEME_HTTPS = "https"
+        private const val DEFAULT_HTTP_PORT = 80
+        private const val DEFAULT_HTTPS_PORT = 443
         private const val KEY_ALGORITHM_RSA = "RSA"
         private const val SIGNATURE_ALGORITHM = "SHA256withRSA"
         private const val PEM_PUBLIC_KEY_BEGIN = "-----BEGIN PUBLIC KEY-----"
