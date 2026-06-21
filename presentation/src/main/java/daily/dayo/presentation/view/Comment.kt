@@ -58,10 +58,11 @@ import daily.dayo.domain.model.Comment
 import daily.dayo.domain.model.Comments
 import daily.dayo.domain.model.MentionUser
 import daily.dayo.domain.model.SearchUser
-import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.TimeChangerUtil
 import daily.dayo.presentation.common.extension.clickableSingle
+import daily.dayo.presentation.common.url.LocalBaseUrl
+import daily.dayo.presentation.common.url.remoteImageUrl
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
@@ -187,12 +188,14 @@ fun CommentView(
     onClickReport: (Long) -> Unit,
     modifier: Modifier
 ) {
+    val baseUrl = LocalBaseUrl.current
+
     Column(
         modifier = modifier,
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             RoundImageView(
-                imageUrl = "${BuildConfig.BASE_URL}/images/${comment.profileImg}",
+                imageUrl = remoteImageUrl(baseUrl, comment.profileImg),
                 context = LocalContext.current,
                 modifier = Modifier
                     .clip(CircleShape)
@@ -322,6 +325,7 @@ fun getAnnotatedCommentContent(content: String, mentionList: List<MentionUser>):
 @Composable
 fun CommentMentionSearchView(userResults: LazyPagingItems<SearchUser>, onClickFollowUser: (SearchUser) -> Unit) {
     val placeholder = AppCompatResources.getDrawable(LocalContext.current, R.drawable.ic_profile_default)
+    val baseUrl = LocalBaseUrl.current
     LazyColumn(
         modifier = Modifier
             .background(DayoTheme.colorScheme.background)
@@ -347,7 +351,7 @@ fun CommentMentionSearchView(userResults: LazyPagingItems<SearchUser>, onClickFo
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     RoundImageView(
-                        imageUrl = "${BuildConfig.BASE_URL}/images/${user.profileImg}",
+                        imageUrl = remoteImageUrl(baseUrl, user.profileImg),
                         context = LocalContext.current,
                         modifier = Modifier
                             .clip(CircleShape)

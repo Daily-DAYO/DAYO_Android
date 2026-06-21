@@ -59,13 +59,14 @@ import daily.dayo.domain.model.FolderInfo
 import daily.dayo.domain.model.FolderOrder
 import daily.dayo.domain.model.FolderPost
 import daily.dayo.domain.model.Privacy
-import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog.createLoadingDialog
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog.hideLoadingDialog
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog.resizeDialogFragment
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog.showLoadingDialog
 import daily.dayo.presentation.common.extension.clickableSingle
+import daily.dayo.presentation.common.url.LocalBaseUrl
+import daily.dayo.presentation.common.url.remoteImageUrl
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
@@ -549,6 +550,7 @@ private fun FolderPostItem(
     onPostSelect: (Long) -> Unit
 ) {
     val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    val baseUrl = LocalBaseUrl.current
 
     Box(
         modifier = Modifier.clickable(
@@ -565,7 +567,7 @@ private fun FolderPostItem(
     ) {
         RoundImageView(
             context = LocalContext.current,
-            imageUrl = "${BuildConfig.BASE_URL}/images/${post.thumbnailImage}",
+            imageUrl = remoteImageUrl(baseUrl, post.thumbnailImage),
             imageDescription = "bookmark post thumbnail",
             modifier = Modifier
                 .fillMaxWidth()

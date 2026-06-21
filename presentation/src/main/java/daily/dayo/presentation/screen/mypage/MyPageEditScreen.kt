@@ -58,7 +58,6 @@ import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import daily.dayo.domain.model.Profile
-import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Resource
 import daily.dayo.presentation.common.Status
@@ -67,6 +66,8 @@ import daily.dayo.presentation.common.dialog.LoadingAlertDialog.hideLoadingDialo
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog.resizeDialogFragment
 import daily.dayo.presentation.common.dialog.LoadingAlertDialog.showLoadingDialog
 import daily.dayo.presentation.common.extension.clickableSingle
+import daily.dayo.presentation.common.url.LocalBaseUrl
+import daily.dayo.presentation.common.url.remoteImageUrl
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
@@ -93,6 +94,7 @@ internal fun MyPageEditScreen(
     val focusManager = LocalFocusManager.current
     val alertDialog = remember { mutableStateOf(createLoadingDialog(context)) }
     val bottomSheetController = LocalBottomSheetController.current
+    val baseUrl = LocalBaseUrl.current
 
     val profileUiState by profileSettingViewModel.profileInfo.observeAsState(Resource.loading(null))
     val isNicknameDuplicate by profileSettingViewModel.isNicknameDuplicate.collectAsStateWithLifecycle(false)
@@ -132,9 +134,9 @@ internal fun MyPageEditScreen(
         }
     }
 
-    LaunchedEffect(profileInfo.value?.profileImg, modifiedProfileImage) {
+    LaunchedEffect(profileInfo.value?.profileImg, modifiedProfileImage, baseUrl) {
         profileInfo.value?.profileImg?.let { profileImg ->
-            modifiedProfileImage.value = "${BuildConfig.BASE_URL}/images/${profileImg}"
+            modifiedProfileImage.value = remoteImageUrl(baseUrl, profileImg)
         }
     }
 

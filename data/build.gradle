@@ -16,6 +16,15 @@ kotlin {
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def fallbackBaseUrlProperty = { String fallbackKey, String legacyKey ->
+    def value = properties.getProperty(fallbackKey) ?: properties.getProperty(legacyKey)
+    if (!value) {
+        throw new GradleException("Missing ${fallbackKey} in local.properties")
+    }
+    return value
+}
+def FALLBACK_BASE_URL_DEV = fallbackBaseUrlProperty('FALLBACK_BASE_URL_DEV', 'BASE_URL_DEV')
+def FALLBACK_BASE_URL_PROD = fallbackBaseUrlProperty('FALLBACK_BASE_URL_PROD', 'BASE_URL_PROD')
 
 android {
     namespace 'daily.dayo.data'
@@ -43,11 +52,11 @@ android {
     productFlavors {
         dev {
             dimension "environment"
-            buildConfigField("String", "BASE_URL", properties['BASE_URL_DEV'])
+            buildConfigField("String", "FALLBACK_BASE_URL", FALLBACK_BASE_URL_DEV)
         }
         prod {
             dimension "environment"
-            buildConfigField("String", "BASE_URL", properties['BASE_URL_PROD'])
+            buildConfigField("String", "FALLBACK_BASE_URL", FALLBACK_BASE_URL_PROD)
         }
     }
     compileOptions {

@@ -39,9 +39,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.size.Size
-import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
+import daily.dayo.presentation.common.url.LocalBaseUrl
+import daily.dayo.presentation.common.url.remoteImageUrl
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray3_9FA5AE
@@ -227,6 +228,8 @@ fun BlockedUser(
     onUnblockClick: (String) -> Unit = {},
     context: Context = LocalContext.current,
 ) {
+    val baseUrl = LocalBaseUrl.current
+
     Row(
         modifier = Modifier
             .background(DayoTheme.colorScheme.background)
@@ -237,7 +240,7 @@ fun BlockedUser(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         RoundImageView(
-            imageUrl = "${BuildConfig.BASE_URL}/images/${imageFileName}",
+            imageUrl = remoteImageUrl(baseUrl, imageFileName),
             context = context,
             modifier = Modifier
                 .size(36.dp)

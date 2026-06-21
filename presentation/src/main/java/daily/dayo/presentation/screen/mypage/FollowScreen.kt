@@ -52,9 +52,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import daily.dayo.domain.model.Follow
 import daily.dayo.domain.model.Profile
-import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.extension.clickableSingle
+import daily.dayo.presentation.common.url.LocalBaseUrl
+import daily.dayo.presentation.common.url.remoteImageUrl
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
@@ -293,6 +294,8 @@ private fun FollowUserInfo(
     onProfileClick: (String) -> Unit,
     onFollowClick: (Follow) -> Unit
 ) {
+    val baseUrl = LocalBaseUrl.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -308,7 +311,7 @@ private fun FollowUserInfo(
         ) {
             RoundImageView(
                 context = context,
-                imageUrl = "${BuildConfig.BASE_URL}/images/${follow.profileImg}",
+                imageUrl = remoteImageUrl(baseUrl, follow.profileImg),
                 roundSize = 18.dp,
                 modifier = Modifier
                     .size(36.dp)

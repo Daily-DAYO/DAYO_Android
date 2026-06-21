@@ -58,9 +58,10 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.size.Size
 import daily.dayo.domain.model.Notification
 import daily.dayo.domain.model.Topic
-import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.TimeChangerUtil
+import daily.dayo.presentation.common.url.LocalBaseUrl
+import daily.dayo.presentation.common.url.remoteImageUrl
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray3_9FA5AE
@@ -318,6 +319,7 @@ fun NotificationView(
     onProfileClick: (String) -> Unit = {},
 ) {
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
+    val baseUrl = LocalBaseUrl.current
     val notificationMessage = buildAnnotatedString {
         // 1. 닉네임 포함된 메시지 인지 체크
         if (!notification.nickname.isNullOrBlank()) {
@@ -355,7 +357,7 @@ fun NotificationView(
             modifier = Modifier.weight(1f),
         ) {
             RoundImageView(
-                imageUrl = "${BuildConfig.BASE_URL}/images/${notification.profileImage}",
+                imageUrl = remoteImageUrl(baseUrl, notification.profileImage),
                 context = context,
                 modifier = Modifier
                     .size(28.dp)
@@ -428,7 +430,7 @@ fun NotificationView(
                         .fillMaxHeight()
                 )
                 RoundImageView(
-                    imageUrl = "${BuildConfig.BASE_URL}/images/${notification.image!!}",
+                    imageUrl = remoteImageUrl(baseUrl, notification.image!!),
                     context = context,
                     modifier = Modifier
                         .size(56.dp),

@@ -49,10 +49,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import daily.dayo.domain.model.Folder
 import daily.dayo.domain.model.Profile
-import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.Status
 import daily.dayo.presentation.common.extension.clickableSingle
+import daily.dayo.presentation.common.url.LocalBaseUrl
+import daily.dayo.presentation.common.url.remoteImageUrl
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray1_50545B
@@ -276,6 +277,8 @@ private fun UserProfile(
     profile: Profile,
     onFollowMenuClick: (String, Int) -> Unit
 ) {
+    val baseUrl = LocalBaseUrl.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -286,7 +289,7 @@ private fun UserProfile(
         // profile image
         RoundImageView(
             context = LocalContext.current,
-            imageUrl = "${BuildConfig.BASE_URL}/images/${profile.profileImg}",
+            imageUrl = remoteImageUrl(baseUrl, profile.profileImg),
             imageDescription = "profile image",
             roundSize = 24.dp,
             modifier = Modifier
@@ -484,4 +487,3 @@ private val DEFAULT_PROFILE = Profile(
     followingCount = 10,
     follow = null,
 )
-

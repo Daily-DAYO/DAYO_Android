@@ -13,7 +13,26 @@ Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 def NATIVE_APP_KEY = properties.getProperty('NATIVE_APP_KEY')
 def ADS_APPLICATION_ID = properties.getProperty('ADS_APPLICATION_ID')
+def REMOTE_CONFIG_BASE_URL_PUBLIC_KEY = properties.getProperty('REMOTE_CONFIG_BASE_URL_PUBLIC_KEY', '').trim()
 def keystorePropertiesFile = rootProject.file("app/keystore-release.properties")
+def buildConfigString = { String value ->
+    def escaped = (value ?: '')
+            .replace('\\', '\\\\')
+            .replace('"', '\\"')
+            .replace('\n', '\\n')
+    return "\"${escaped}\""
+}
+def fallbackBaseUrlProperty = { String fallbackKey, String legacyKey ->
+    def value = properties.getProperty(fallbackKey) ?: properties.getProperty(legacyKey)
+    if (!value) {
+        throw new GradleException("Missing ${fallbackKey} in local.properties")
+    }
+    return value
+}
+def FALLBACK_BASE_URL_DEV = fallbackBaseUrlProperty('FALLBACK_BASE_URL_DEV', 'BASE_URL_DEV')
+def FALLBACK_BASE_URL_PROD = fallbackBaseUrlProperty('FALLBACK_BASE_URL_PROD', 'BASE_URL_PROD')
+def USES_DEV_CLEARTEXT_TRAFFIC = FALLBACK_BASE_URL_DEV?.contains('http://') == true
+def USES_PROD_CLEARTEXT_TRAFFIC = FALLBACK_BASE_URL_PROD?.contains('http://') == true
 
 kotlin {
     jvmToolchain(17)
@@ -35,9 +54,11 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField ("String", "NATIVE_APP_KEY", properties['NATIVE_APP_KEY_STR'])
+        buildConfigField("String", "REMOTE_CONFIG_BASE_URL_PUBLIC_KEY", buildConfigString(REMOTE_CONFIG_BASE_URL_PUBLIC_KEY))
         manifestPlaceholders = [
-                NATIVE_APP_KEY    : NATIVE_APP_KEY,
-                ADS_APPLICATION_ID: ADS_APPLICATION_ID
+                NATIVE_APP_KEY        : NATIVE_APP_KEY,
+                ADS_APPLICATION_ID    : ADS_APPLICATION_ID,
+                USES_CLEARTEXT_TRAFFIC: false
         ]
     }
 
@@ -64,6 +85,7 @@ android {
             applicationIdSuffix ".debug"
             versionNameSuffix "-debug"
             resValue "string", "app_name", "DAYO (Debug)"
+            manifestPlaceholders.USES_CLEARTEXT_TRAFFIC = true
         }
         release {
             resValue "string", "app_name", "DAYO"
@@ -76,14 +98,38 @@ android {
     productFlavors {
         dev {
             dimension "environment"
-            buildConfigField("String", "BASE_URL", properties['BASE_URL_DEV'])
+            manifestPlaceholders.USES_CLEARTEXT_TRAFFIC = USES_DEV_CLEARTEXT_TRAFFIC
+            buildConfigField("String", "FALLBACK_BASE_URL", FALLBACK_BASE_URL_DEV)
+            buildConfigField("String", "REMOTE_CONFIG_BASE_URL_KEY", "\"api_base_url_dev\"")
+            buildConfigField("String", "REMOTE_CONFIG_BASE_URL_SIGNATURE_KEY", "\"api_base_url_dev_signature\"")
         }
         prod {
             dimension "environment"
-            buildConfigField("String", "BASE_URL", properties['BASE_URL_PROD'])
+            manifestPlaceholders.USES_CLEARTEXT_TRAFFIC = USES_PROD_CLEARTEXT_TRAFFIC
+            buildConfigField("String", "FALLBACK_BASE_URL", FALLBACK_BASE_URL_PROD)
+            buildConfigField("String", "REMOTE_CONFIG_BASE_URL_KEY", "\"api_base_url_prod\"")
+            buildConfigField("String", "REMOTE_CONFIG_BASE_URL_SIGNATURE_KEY", "\"api_base_url_prod_signature\"")
         }
     }
     namespace 'com.daily.dayo'
+}
+
+def validateRemoteConfigBaseUrlPublicKeyForRelease = tasks.register(
+        'validateRemoteConfigBaseUrlPublicKeyForRelease'
+) {
+    doLast {
+        if (!REMOTE_CONFIG_BASE_URL_PUBLIC_KEY) {
+            throw new GradleException(
+                    'Missing REMOTE_CONFIG_BASE_URL_PUBLIC_KEY in local.properties for release build'
+            )
+        }
+    }
+}
+
+tasks.configureEach { task ->
+    if (task.name ==~ /^pre.*ReleaseBuild$/) {
+        task.dependsOn(validateRemoteConfigBaseUrlPublicKeyForRelease)
+    }
 }
 
 dependencies {
@@ -107,6 +153,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:34.6.0')
     implementation "com.google.firebase:firebase-crashlytics"
     implementation "com.google.firebase:firebase-analytics"
+    implementation "com.google.firebase:firebase-config"
 
     // Google Ads
     implementation 'com.google.android.gms:play-services-ads:24.7.0'

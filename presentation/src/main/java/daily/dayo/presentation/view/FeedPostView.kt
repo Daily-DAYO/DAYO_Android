@@ -61,10 +61,11 @@ import coil.request.ImageRequest
 import daily.dayo.domain.model.Category
 import daily.dayo.domain.model.Post
 import daily.dayo.domain.model.categoryKR
-import daily.dayo.presentation.BuildConfig
 import daily.dayo.presentation.R
 import daily.dayo.presentation.common.TimeChangerUtil
 import daily.dayo.presentation.common.extension.clickableSingle
+import daily.dayo.presentation.common.url.LocalBaseUrl
+import daily.dayo.presentation.common.url.remoteImageUrl
 import daily.dayo.presentation.theme.Dark
 import daily.dayo.presentation.theme.DayoTheme
 import daily.dayo.presentation.theme.Gray2_767B83
@@ -98,6 +99,7 @@ fun FeedPostView(
     var showDialog by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+    val baseUrl = LocalBaseUrl.current
 
     Column(modifier = modifier) {
         // publisher info
@@ -111,7 +113,7 @@ fun FeedPostView(
             // user profile image
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("${BuildConfig.BASE_URL}/images/${post.userProfileImage}")
+                    .data(remoteImageUrl(baseUrl, post.userProfileImage))
                     .build(),
                 contentDescription = "${post.nickname} + profile",
                 contentScale = ContentScale.Crop,
@@ -179,7 +181,7 @@ fun FeedPostView(
                 HorizontalPager(state = pagerState) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data("${BuildConfig.BASE_URL}/images/${postImages[it]}")
+                            .data(remoteImageUrl(baseUrl, postImages[it]))
                             .build(),
                         contentDescription = "post images",
                         contentScale = ContentScale.Crop,
